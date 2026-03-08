@@ -1,0 +1,2215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The World of Partial Differential Equations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inconsolata:wght@400;500&display=swap" rel="stylesheet">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  startup: { typeset: false }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<style>
+:root {
+  --bg: #0a1628;
+  --bg2: #0f1e36;
+  --bg3: #142844;
+  --ink: #d4e8f0;
+  --ink2: #a0b8c8;
+  --ink3: #6a7a88;
+  --cyan: #00d4aa;
+  --cyan2: #00f5c4;
+  --gold: #00d4aa;
+  --gold2: #00f5c4;
+  --blue: #4da6ff;
+  --blue2: #80c0ff;
+  --red: #c8605a;
+  --green: #6aab7a;
+  --border: rgba(0,212,170,0.25);
+  --border2: rgba(0,212,170,0.12);
+  --serif: 'EB Garamond', Georgia, serif;
+  --display: 'Playfair Display', Georgia, serif;
+  --mono: 'Inconsolata', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+/* ─── STAR FIELD ─────────────────────────────────────────── */
+#starfield {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+.star {
+  position: absolute; border-radius: 50%;
+  background: white; opacity: 0;
+  animation: twinkle var(--dur) ease-in-out infinite var(--delay);
+}
+@keyframes twinkle {
+  0%,100%{opacity:0} 50%{opacity:var(--bright)}
+}
+
+/* ─── LAYOUT ─────────────────────────────────────────────── */
+#app { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+
+/* ─── SIDEBAR ────────────────────────────────────────────── */
+#sidebar {
+  width: 260px; flex-shrink: 0;
+  background: rgba(8,12,24,0.92);
+  border-right: 1px solid var(--border);
+  position: fixed; top: 0; left: 0; height: 100vh;
+  overflow-y: auto; z-index: 100;
+  backdrop-filter: blur(20px);
+  padding: 28px 0 40px;
+  transition: transform 0.3s ease;
+}
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sidebar-logo {
+  padding: 0 24px 24px;
+  border-bottom: 1px solid var(--border2);
+  margin-bottom: 20px;
+}
+.sidebar-logo .greek {
+  font-family: var(--display); font-size: 2.4rem;
+  color: var(--gold); line-height: 1;
+  display: block; margin-bottom: 6px;
+}
+.sidebar-logo .subtitle {
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--ink3); font-family: var(--mono);
+}
+
+.chapter-group { margin-bottom: 6px; }
+.chapter-group-title {
+  font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--ink3); padding: 10px 24px 4px;
+  font-family: var(--mono);
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 24px; cursor: pointer;
+  color: var(--ink2); font-size: 13.5px;
+  line-height: 1.4; transition: all 0.2s;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+}
+.nav-item:hover { color: var(--gold); background: rgba(0,212,170,0.05); }
+.nav-item.active {
+  color: var(--gold2); border-left-color: var(--gold);
+  background: rgba(0,212,170,0.08);
+}
+.nav-num {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--ink3); min-width: 22px;
+}
+.nav-item.active .nav-num { color: var(--gold); }
+
+/* ─── PROGRESS BAR ───────────────────────────────────────── */
+#progress-bar {
+  position: fixed; top: 0; left: 260px; right: 0; height: 2px;
+  background: rgba(0,212,170,0.15); z-index: 200;
+}
+#progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold2));
+  width: 0%; transition: width 0.3s ease;
+  box-shadow: 0 0 8px var(--gold);
+}
+
+/* ─── MAIN CONTENT ───────────────────────────────────────── */
+#main { margin-left: 260px; min-height: 100vh; }
+
+.page {
+  display: none; min-height: 100vh;
+  padding: 80px 80px 100px 90px;
+  max-width: 900px;
+  animation: fadeIn 0.5s ease;
+}
+.page.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity:0; transform: translateY(16px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* ─── TYPOGRAPHY ─────────────────────────────────────────── */
+.page-eyebrow {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 16px;
+}
+.page-title {
+  font-family: var(--display); font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 900; line-height: 1.12;
+  color: var(--ink); margin-bottom: 10px;
+}
+.page-title em { color: var(--gold); font-style: italic; }
+.page-subtitle {
+  font-size: 1.15rem; color: var(--ink2); font-style: italic;
+  margin-bottom: 50px; padding-bottom: 30px;
+  border-bottom: 1px solid var(--border2);
+}
+
+h2 {
+  font-family: var(--display); font-size: 1.7rem; font-weight: 700;
+  color: var(--ink); margin: 52px 0 18px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border2);
+}
+h3 {
+  font-family: var(--display); font-size: 1.25rem; font-weight: 700;
+  color: var(--gold2); margin: 36px 0 12px;
+}
+h4 {
+  font-family: var(--mono); font-size: 0.85rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--blue2); margin: 28px 0 10px;
+}
+
+p { margin-bottom: 1.2em; }
+
+a { color: var(--blue2); text-decoration: none; border-bottom: 1px solid rgba(137,180,240,0.3); }
+a:hover { color: var(--gold2); border-color: var(--gold); }
+
+/* ─── COMPONENTS ─────────────────────────────────────────── */
+.pullquote {
+  margin: 40px 0; padding: 28px 36px;
+  border-left: 3px solid var(--gold);
+  background: rgba(0,212,170,0.04);
+  font-family: var(--display); font-size: 1.15rem;
+  font-style: italic; color: var(--gold2);
+  line-height: 1.6;
+  position: relative;
+}
+.pullquote::before {
+  content: '\201C'; position: absolute; top: -10px; left: 28px;
+  font-size: 5rem; color: var(--gold); opacity: 0.25;
+  font-family: var(--display); line-height: 1;
+}
+.pullquote cite {
+  display: block; margin-top: 14px; font-size: 0.85rem;
+  color: var(--ink3); font-style: normal; letter-spacing: 0.05em;
+}
+
+.callout {
+  margin: 32px 0; padding: 22px 28px;
+  border-radius: 4px; font-size: 0.95rem;
+}
+.callout.info {
+  background: rgba(91,143,212,0.08);
+  border: 1px solid rgba(91,143,212,0.2);
+}
+.callout.definition {
+  background: rgba(0,212,170,0.06);
+  border: 1px solid rgba(0,212,170,0.2);
+}
+.callout.theorem {
+  background: rgba(106,171,122,0.06);
+  border: 1px solid rgba(106,171,122,0.2);
+}
+.callout.warning {
+  background: rgba(200,96,90,0.06);
+  border: 1px solid rgba(200,96,90,0.2);
+}
+.callout-label {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.callout.info .callout-label { color: var(--blue2); }
+.callout.definition .callout-label { color: var(--gold2); }
+.callout.theorem .callout-label { color: var(--green); }
+.callout.warning .callout-label { color: var(--red); }
+
+.mathbox {
+  margin: 32px 0; padding: 24px 32px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px; text-align: center;
+  font-size: 1.05rem;
+  overflow-x: auto;
+}
+.mathbox .label {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--ink3);
+  margin-bottom: 14px; text-align: left;
+}
+
+.history-card {
+  margin: 36px 0; padding: 26px 30px;
+  background: rgba(13,18,37,0.8);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: grid; grid-template-columns: 80px 1fr; gap: 20px;
+  align-items: start;
+}
+.history-year {
+  font-family: var(--display); font-size: 1.4rem;
+  font-weight: 900; color: var(--gold); line-height: 1.2;
+  text-align: center; padding-top: 4px;
+}
+.history-body h4 { margin: 0 0 8px; font-size: 0.8rem; }
+.history-body p { font-size: 0.93rem; color: var(--ink2); margin: 0; }
+
+.person-card {
+  margin: 32px 0; padding: 22px 26px;
+  background: var(--bg2); border-radius: 4px;
+  border-left: 3px solid var(--blue);
+}
+.person-name {
+  font-family: var(--display); font-size: 1.1rem;
+  font-weight: 700; color: var(--blue2); margin-bottom: 4px;
+}
+.person-dates {
+  font-family: var(--mono); font-size: 11px; color: var(--ink3);
+  margin-bottom: 10px;
+}
+
+.grid-2 {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px; margin: 28px 0;
+}
+.grid-3 {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px; margin: 28px 0;
+}
+.card {
+  padding: 22px; background: var(--bg2);
+  border: 1px solid var(--border2); border-radius: 4px;
+}
+.card h4 { margin-top: 0; }
+
+.badge {
+  display: inline-block; font-family: var(--mono);
+  font-size: 11px; padding: 3px 10px;
+  border-radius: 2px; letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.badge.elliptic { background: rgba(91,143,212,0.15); color: var(--blue2); border: 1px solid rgba(91,143,212,0.3); }
+.badge.parabolic { background: rgba(200,96,90,0.15); color: #e8908a; border: 1px solid rgba(200,96,90,0.3); }
+.badge.hyperbolic { background: rgba(106,171,122,0.15); color: var(--green); border: 1px solid rgba(106,171,122,0.3); }
+
+/* ─── NAVIGATION BUTTONS ─────────────────────────────────── */
+.page-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 70px; padding-top: 30px;
+  border-top: 1px solid var(--border2);
+}
+.btn-nav {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 24px; cursor: pointer;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--ink2); font-family: var(--serif); font-size: 15px;
+  border-radius: 3px; transition: all 0.2s;
+}
+.btn-nav:hover { border-color: var(--gold); color: var(--gold2); background: rgba(0,212,170,0.05); }
+.btn-nav.disabled { opacity: 0.3; pointer-events: none; }
+.page-indicator {
+  font-family: var(--mono); font-size: 12px; color: var(--ink3);
+}
+
+/* ─── INTERACTIVE CLASSIFIER ─────────────────────────────── */
+.classifier-demo {
+  margin: 36px 0; padding: 28px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.classifier-demo h4 { margin-top: 0; }
+.classify-input {
+  display: flex; gap: 12px; margin: 16px 0; flex-wrap: wrap;
+}
+.coeff-input {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.coeff-input label {
+  font-family: var(--mono); font-size: 11px; color: var(--ink3);
+  letter-spacing: 0.1em;
+}
+.coeff-input input {
+  width: 70px; padding: 8px 10px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--ink); font-family: var(--mono); font-size: 14px;
+  border-radius: 3px; text-align: center;
+}
+.coeff-input input:focus { outline: none; border-color: var(--gold); }
+.classify-btn {
+  padding: 8px 20px; align-self: flex-end;
+  background: rgba(0,212,170,0.1); border: 1px solid var(--gold);
+  color: var(--gold2); font-family: var(--mono); font-size: 13px;
+  cursor: pointer; border-radius: 3px; transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+.classify-btn:hover { background: rgba(0,212,170,0.2); }
+.classify-result {
+  margin-top: 16px; padding: 16px 20px;
+  border-radius: 3px; display: none;
+  font-size: 0.95rem;
+}
+.classify-result.show { display: block; animation: fadeIn 0.3s ease; }
+
+/* ─── ACCORDION ──────────────────────────────────────────── */
+.accordion { margin: 24px 0; }
+.acc-item { border: 1px solid var(--border2); margin-bottom: 8px; border-radius: 3px; overflow: hidden; }
+.acc-header {
+  padding: 15px 20px; cursor: pointer; display: flex;
+  justify-content: space-between; align-items: center;
+  background: var(--bg2); transition: background 0.2s;
+  font-size: 0.95rem;
+}
+.acc-header:hover { background: rgba(0,212,170,0.05); color: var(--gold2); }
+.acc-toggle { color: var(--gold); font-size: 1.2rem; transition: transform 0.3s; }
+.acc-item.open .acc-toggle { transform: rotate(45deg); }
+.acc-body { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; }
+.acc-item.open .acc-body { max-height: 800px; padding: 16px 20px 20px; }
+
+/* ─── TIMELINE ───────────────────────────────────────────── */
+.timeline { position: relative; margin: 40px 0; padding-left: 30px; }
+.timeline::before {
+  content: ''; position: absolute; left: 6px; top: 8px; bottom: 8px;
+  width: 2px; background: linear-gradient(to bottom, var(--gold), transparent);
+}
+.tl-item { position: relative; margin-bottom: 32px; }
+.tl-dot {
+  position: absolute; left: -28px; top: 6px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--gold); border: 2px solid var(--bg);
+  box-shadow: 0 0 8px var(--gold);
+}
+.tl-year {
+  font-family: var(--display); font-weight: 700; color: var(--gold);
+  font-size: 0.9rem; margin-bottom: 4px;
+}
+.tl-content { font-size: 0.93rem; color: var(--ink2); }
+.tl-content strong { color: var(--ink); }
+
+/* ─── MOBILE ─────────────────────────────────────────────── */
+#menu-toggle {
+  display: none; position: fixed; top: 14px; left: 14px;
+  z-index: 300; background: var(--bg2); border: 1px solid var(--border);
+  color: var(--gold); padding: 8px 12px; cursor: pointer;
+  border-radius: 3px; font-size: 1.1rem;
+}
+@media (max-width: 900px) {
+  #sidebar { transform: translateX(-260px); }
+  #sidebar.open { transform: translateX(0); }
+  #main { margin-left: 0; }
+  #progress-bar { left: 0; }
+  .page { padding: 60px 24px 80px; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .history-card { grid-template-columns: 1fr; }
+  #menu-toggle { display: block; }
+}
+
+/* ─── WAVE CANVAS ────────────────────────────────────────── */
+#waveCanvas {
+  display: block; margin: 24px auto; border-radius: 4px;
+  border: 1px solid var(--border); background: var(--bg3);
+}
+
+/* ─── HEAT SIM ───────────────────────────────────────────── */
+#heatCanvas {
+  display: block; margin: 16px auto; border-radius: 4px;
+  border: 1px solid var(--border);
+}
+.sim-controls {
+  display: flex; gap: 12px; margin: 14px 0; flex-wrap: wrap; align-items: center;
+}
+.sim-btn {
+  padding: 7px 18px; background: transparent;
+  border: 1px solid var(--border); color: var(--ink2);
+  font-family: var(--mono); font-size: 12px; cursor: pointer;
+  border-radius: 3px; transition: all 0.2s; letter-spacing: 0.05em;
+}
+.sim-btn:hover, .sim-btn.active { border-color: var(--gold); color: var(--gold2); background: rgba(0,212,170,0.08); }
+
+/* ─── SCROLL HINT ────────────────────────────────────────── */
+.scroll-hint {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--ink3); font-family: var(--mono);
+  font-size: 11px; margin-top: 50px; letter-spacing: 0.1em;
+  animation: bounce 2s infinite;
+}
+@keyframes bounce {
+  0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)}
+}
+
+/* ─── TABLE ──────────────────────────────────────────────── */
+table {
+  width: 100%; border-collapse: collapse; margin: 28px 0;
+  font-size: 0.92rem;
+}
+th {
+  background: var(--bg2); padding: 12px 16px;
+  text-align: left; font-family: var(--mono);
+  font-size: 11px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--gold);
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 12px 16px; border-bottom: 1px solid var(--border2);
+  vertical-align: top; color: var(--ink2);
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(0,212,170,0.03); }
+
+/* ─── FOOTNOTES ──────────────────────────────────────────── */
+.footnote {
+  font-size: 0.82rem; color: var(--ink3);
+  border-top: 1px solid var(--border2);
+  margin-top: 50px; padding-top: 16px;
+}
+
+/* big decorative drop-cap */
+.dropcap::first-letter {
+  font-family: var(--display); float: left;
+  font-size: 4.5rem; line-height: 0.75;
+  color: var(--gold); margin-right: 8px; margin-top: 8px;
+  font-weight: 900;
+}
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div id="starfield"></div>
+
+<!-- Menu toggle for mobile -->
+<button id="menu-toggle" onclick="toggleMenu()">☰</button>
+
+<!-- Progress bar -->
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<!-- App -->
+<div id="app">
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <span class="greek">∂</span>
+    <span class="subtitle">Partial Differential Equations</span>
+  </div>
+
+  <div class="chapter-group">
+    <div class="chapter-group-title">Prologue</div>
+    <a class="nav-item active" onclick="goTo(0)"><span class="nav-num">00</span>Why This Matters</a>
+    <a class="nav-item" onclick="goTo(1)"><span class="nav-num">01</span>A History in People</a>
+  </div>
+  <div class="chapter-group">
+    <div class="chapter-group-title">Foundations</div>
+    <a class="nav-item" onclick="goTo(2)"><span class="nav-num">02</span>What Is a PDE?</a>
+    <a class="nav-item" onclick="goTo(3)"><span class="nav-num">03</span>The Grand Classification</a>
+    <a class="nav-item" onclick="goTo(4)"><span class="nav-num">04</span>Boundary & Initial Conditions</a>
+    <a class="nav-item" onclick="goTo(5)"><span class="nav-num">05</span>Well-Posedness</a>
+  </div>
+  <div class="chapter-group">
+    <div class="chapter-group-title">The Big Three</div>
+    <a class="nav-item" onclick="goTo(6)"><span class="nav-num">06</span>The Heat Equation</a>
+    <a class="nav-item" onclick="goTo(7)"><span class="nav-num">07</span>The Wave Equation</a>
+    <a class="nav-item" onclick="goTo(8)"><span class="nav-num">08</span>Laplace & Poisson</a>
+  </div>
+  <div class="chapter-group">
+    <div class="chapter-group-title">Tools & Methods</div>
+    <a class="nav-item" onclick="goTo(9)"><span class="nav-num">09</span>Separation of Variables</a>
+    <a class="nav-item" onclick="goTo(10)"><span class="nav-num">10</span>Fourier's Revolution</a>
+    <a class="nav-item" onclick="goTo(11)"><span class="nav-num">11</span>Method of Characteristics</a>
+    <a class="nav-item" onclick="goTo(12)"><span class="nav-num">12</span>Green's Functions</a>
+  </div>
+  <div class="chapter-group">
+    <div class="chapter-group-title">Modern Framework</div>
+    <a class="nav-item" onclick="goTo(13)"><span class="nav-num">13</span>Distributions</a>
+    <a class="nav-item" onclick="goTo(14)"><span class="nav-num">14</span>Sobolev Spaces</a>
+    <a class="nav-item" onclick="goTo(15)"><span class="nav-num">15</span>Weak Solutions</a>
+    <a class="nav-item" onclick="goTo(16)"><span class="nav-num">16</span>Variational Methods</a>
+  </div>
+  <div class="chapter-group">
+    <div class="chapter-group-title">Advanced Topics</div>
+    <a class="nav-item" onclick="goTo(17)"><span class="nav-num">17</span>Spectral Theory</a>
+    <a class="nav-item" onclick="goTo(18)"><span class="nav-num">18</span>Nonlinear PDEs & Shocks</a>
+    <a class="nav-item" onclick="goTo(19)"><span class="nav-num">19</span>Geometric PDEs</a>
+    <a class="nav-item" onclick="goTo(20)"><span class="nav-num">20</span>Frontier & Open Problems</a>
+    <a class="nav-item" onclick="goTo(21)"><span class="nav-num">21</span>Further Study</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════ MAIN ═══════════════════════ -->
+<main id="main">
+
+<!-- ══════════ PAGE 0 ══════════ -->
+<div class="page active" id="p0">
+  <div class="page-eyebrow">Prologue · Page 00</div>
+  <h1 class="page-title">Why the Universe <em>Speaks</em> in Partial Derivatives</h1>
+  <p class="page-subtitle">A journey through the most powerful language mathematics has ever discovered</p>
+
+  <p class="dropcap">There is a peculiar and profound fact about physical reality: the laws that govern it are almost universally expressed not as relationships between quantities themselves, but between rates of change in multiple directions simultaneously. Heat flows according to how temperature varies through space and time. Sound propagates according to how pressure varies through air. Light obeys equations about how electric and magnetic fields evolve. Even the fabric of spacetime — the geometric stage on which all physics plays out — is governed by a system of equations relating curvature to matter content. Every one of these is a partial differential equation.</p>
+
+  <p>This is not a coincidence. It reflects something deep about how nature operates: locally. A point of material does not "know" the global state of the universe — it only responds to what its immediate neighbourhood is doing. The mathematical encoding of this local causality is the derivative, and when the quantity in question lives in a world with more than one dimension (which everything does), we get partial derivatives.</p>
+
+  <div class="pullquote">
+    The unreasonable effectiveness of mathematics in the natural sciences is something bordering on the mysterious.
+    <cite>— Eugene Wigner, 1960</cite>
+  </div>
+
+  <h2>The Scale of the Subject</h2>
+  <p>PDEs are not a niche curiosity. They are the backbone of nearly every quantitative field of human inquiry. Consider:</p>
+
+  <div class="grid-3">
+    <div class="card">
+      <h4>Physics</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">Maxwell's equations govern all of electromagnetism. Schrödinger's equation governs quantum mechanics. Einstein's field equations govern gravity. All PDEs.</p>
+    </div>
+    <div class="card">
+      <h4>Engineering</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">Fluid dynamics (Navier-Stokes), structural analysis (elasticity equations), heat transfer, aerodynamics — all built on PDEs.</p>
+    </div>
+    <div class="card">
+      <h4>Finance</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">The Black-Scholes equation — which revolutionised derivatives pricing — is a PDE. Stochastic control theory runs on Hamilton-Jacobi-Bellman equations.</p>
+    </div>
+    <div class="card">
+      <h4>Biology</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">Turing's reaction-diffusion equations explain how animal coat patterns form. Neural field equations model brain dynamics. Epidemic models use PDE systems.</p>
+    </div>
+    <div class="card">
+      <h4>Geometry</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">The Ricci flow — a PDE on the metric of a manifold — was used by Perelman to prove the Poincaré Conjecture, one of mathematics' greatest achievements.</p>
+    </div>
+    <div class="card">
+      <h4>AI & Imaging</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">Image denoising, segmentation, and the theoretical underpinning of many machine learning methods are rooted in PDE theory and variational calculus.</p>
+    </div>
+  </div>
+
+  <h2>What You Will Learn</h2>
+  <p>This course takes you from first principles all the way to the frontier of modern research. We start with intuition and build steadily toward rigour. You will understand not just <em>how</em> to solve PDEs, but <em>why</em> the theory is structured the way it is — and why mathematicians had to invent entirely new concepts (Sobolev spaces, distributions, weak solutions) just to make sense of them.</p>
+
+  <div class="callout info">
+    <div class="callout-label">How to use this guide</div>
+    Each page builds on the previous. The early pages are accessible to anyone with calculus. As we progress, the pages grow denser — more content, more depth, more technical precision. Interactive elements let you experiment with concepts. Take your time.
+  </div>
+
+  <p>The journey ahead is challenging but beautiful. PDEs sit at the intersection of analysis, geometry, physics, and computation. Learning their theory means learning how mathematicians think about infinity, continuity, and the structure of space itself. Few areas of mathematics are as alive, as useful, or as deep.</p>
+
+  <p>Let us begin.</p>
+
+  <div class="scroll-hint">↓ &nbsp; navigate using the sidebar or the arrows below</div>
+
+  <div class="page-nav">
+    <button class="btn-nav disabled">← Previous</button>
+    <span class="page-indicator">01 / 22</span>
+    <button class="btn-nav" onclick="goTo(1)">Next: A History in People →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 1 ══════════ -->
+<div class="page" id="p1">
+  <div class="page-eyebrow">Prologue · Page 01</div>
+  <h1 class="page-title">A History in <em>People</em></h1>
+  <p class="page-subtitle">Three centuries of genius, rivalry, and discovery that built the theory</p>
+
+  <p class="dropcap">The history of PDEs is inseparable from the history of physics. Every major equation was born from a physical problem, and every major mathematical breakthrough was forced by a physical reality that refused to fit into existing frameworks. This is a story of extraordinary individuals, bitter controversies, and moments of sudden illumination that changed how humanity understands the world.</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1687</div>
+      <div class="tl-content"><strong>Newton</strong> publishes the <em>Principia Mathematica</em>. His laws of motion are ordinary differential equations — but the conceptual foundation for PDEs is implicitly there. The notion that nature obeys local, instantaneous rules is born.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1746</div>
+      <div class="tl-content"><strong>Jean le Rond d'Alembert</strong> writes down the first PDE — the one-dimensional wave equation — while studying the vibrating string problem. He obtains the general solution $u = f(x+ct) + g(x-ct)$. A new era begins.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1750s</div>
+      <div class="tl-content"><strong>Euler and Daniel Bernoulli</strong> enter a famous dispute over what "functions" are allowed as solutions to the wave equation. Bernoulli insists trigonometric series suffice; Euler disagrees. They are both right, in ways neither fully understood. The controversy would take 70 years to resolve.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1782</div>
+      <div class="tl-content"><strong>Laplace</strong> writes down $\nabla^2 u = 0$ while studying gravitational potential theory. The equation bearing his name will prove to be one of the most fundamental objects in all of mathematics.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1807–22</div>
+      <div class="tl-content"><strong>Joseph Fourier</strong> submits his theory of heat conduction to the Paris Academy. His idea — that any function can be written as a (possibly infinite) sum of sines and cosines — is so radical that Lagrange and Laplace initially reject it. His eventual masterwork <em>Théorie Analytique de la Chaleur</em> (1822) transforms mathematics forever.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1828</div>
+      <div class="tl-content"><strong>George Green</strong>, a self-taught miller's son with only one year of university, publishes his theorem relating volume integrals to surface integrals. Green's functions — his key tool — will become the foundation of a vast solution theory.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1860s</div>
+      <div class="tl-content"><strong>Riemann</strong> classifies second-order PDEs and introduces the concept of characteristics. <strong>Maxwell</strong> unifies electricity and magnetism in four PDEs. The wave-like nature of light falls out as a prediction. Science is never the same.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1900</div>
+      <div class="tl-content"><strong>Hadamard</strong> formulates the concept of a well-posed problem — perhaps the most important conceptual contribution to PDE theory. He shows that some physically meaningful problems have solutions that are catastrophically unstable, raising deep questions about what "solving" a PDE even means.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1926</div>
+      <div class="tl-content"><strong>Schrödinger</strong> writes down the equation governing quantum wavefunctions — a PDE that underpins all of modern physics and chemistry.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1945–50</div>
+      <div class="tl-content"><strong>Laurent Schwartz</strong> develops the theory of distributions, giving rigorous meaning to objects like the Dirac delta function (which physicists had been using informally for decades). He wins the Fields Medal in 1950. PDEs finally have a language adequate to their needs.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1950s–70s</div>
+      <div class="tl-content"><strong>Sobolev, Gårding, Lax, Nirenberg</strong> and others build the modern functional analytic framework. Sobolev spaces become the natural habitat for solutions. The abstract theory reaches full maturity.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">2003</div>
+      <div class="tl-content"><strong>Grigori Perelman</strong> uses the Ricci flow PDE — introduced by Richard Hamilton in 1982 — to prove the Poincaré Conjecture, one of the seven Millennium Prize Problems. The power of geometric PDEs reaches its apex.</div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-label">The Living Subject</div>
+    PDEs remain one of the most active areas of mathematical research. The Navier-Stokes existence and smoothness problem — whether solutions to the fluid dynamics equations always exist and remain smooth — is still unsolved and carries a $1,000,000 prize from the Clay Mathematics Institute.
+  </div>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(0)">← Previous</button>
+    <span class="page-indicator">02 / 22</span>
+    <button class="btn-nav" onclick="goTo(2)">Next: What Is a PDE? →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 2 ══════════ -->
+<div class="page" id="p2">
+  <div class="page-eyebrow">Foundations · Page 02</div>
+  <h1 class="page-title">What Is a <em>PDE?</em></h1>
+  <p class="page-subtitle">Building the language from the ground up — notation, order, and linearity</p>
+
+  <p class="dropcap">Before we can study partial differential equations, we need to understand precisely what kind of object they are. An ordinary differential equation (ODE) involves a function of one variable and its derivatives. A partial differential equation involves a function of two or more variables, and its partial derivatives with respect to those variables. The jump from one variable to many is, it turns out, a qualitative leap — not merely a quantitative one.</p>
+
+  <h2>The Basic Concept</h2>
+  <p>Suppose $u = u(x, y)$ is a function of two real variables. The <strong>partial derivative</strong> $\frac{\partial u}{\partial x}$ measures how $u$ changes as $x$ varies while $y$ is held fixed. Similarly $\frac{\partial u}{\partial y}$ measures change with respect to $y$ alone. A partial differential equation is any equation relating $u$ to some combination of its partial derivatives.</p>
+
+  <div class="mathbox">
+    <div class="label">General form of a PDE</div>
+    $$F\!\left(x,\, y,\, u,\, \frac{\partial u}{\partial x},\, \frac{\partial u}{\partial y},\, \frac{\partial^2 u}{\partial x^2},\, \frac{\partial^2 u}{\partial x \partial y},\, \frac{\partial^2 u}{\partial y^2},\, \ldots\right) = 0$$
+  </div>
+
+  <h2>Notation</h2>
+  <p>Several notations are in common use, and fluency with all of them is essential. We illustrate with a function $u(x,t)$ of space $x$ and time $t$:</p>
+
+  <table>
+    <tr><th>Notation</th><th>Meaning</th><th>Common in</th></tr>
+    <tr><td>$\dfrac{\partial u}{\partial t}$</td><td>Partial derivative of $u$ with respect to $t$</td><td>Analysis, physics texts</td></tr>
+    <tr><td>$u_t$</td><td>Same — subscript notation</td><td>Most PDE textbooks</td></tr>
+    <tr><td>$\partial_t u$</td><td>Same — operator notation</td><td>Modern analysis</td></tr>
+    <tr><td>$u_{xx}$</td><td>Second partial in $x$: $\frac{\partial^2 u}{\partial x^2}$</td><td>Standard</td></tr>
+    <tr><td>$\nabla u$</td><td>Gradient: $(u_{x_1}, \ldots, u_{x_n})$</td><td>Vector calculus, geometry</td></tr>
+    <tr><td>$\Delta u$ or $\nabla^2 u$</td><td>Laplacian: $u_{x_1 x_1} + \cdots + u_{x_n x_n}$</td><td>Universal</td></tr>
+    <tr><td>$D^\alpha u$</td><td>Multi-index notation for any partial derivative</td><td>Sobolev spaces, distributions</td></tr>
+  </table>
+
+  <h2>Order</h2>
+  <p>The <strong>order</strong> of a PDE is the order of the highest derivative that appears. Most equations arising in applications are second-order or lower. First-order equations arise in conservation laws and transport phenomena. Second-order equations arise from every kind of wave, diffusion, or equilibrium problem.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h4>First Order Examples</h4>
+      <p style="font-size:0.9rem;color:var(--ink2)">The transport (advection) equation: $u_t + c\, u_x = 0$</p>
+      <p style="font-size:0.9rem;color:var(--ink2)">The eikonal equation: $|\nabla u| = \frac{1}{c(x)}$</p>
+    </div>
+    <div class="card">
+      <h4>Second Order Examples</h4>
+      <p style="font-size:0.9rem;color:var(--ink2)">The heat equation: $u_t = \kappa \Delta u$</p>
+      <p style="font-size:0.9rem;color:var(--ink2)">The wave equation: $u_{tt} = c^2 \Delta u$</p>
+      <p style="font-size:0.9rem;color:var(--ink2)">Laplace's equation: $\Delta u = 0$</p>
+    </div>
+  </div>
+
+  <h2>Linearity — The Most Important Distinction</h2>
+  <p>A PDE is <strong>linear</strong> if it can be written in the form $Lu = f$, where $L$ is a linear operator (meaning $L(au + bv) = aLu + bLv$ for constants $a,b$), and $f$ is a given function. This seemingly technical condition has enormous consequences:</p>
+
+  <div class="callout theorem">
+    <div class="callout-label">The Superposition Principle</div>
+    If $u_1$ and $u_2$ are both solutions of the homogeneous equation $Lu = 0$, then so is any linear combination $c_1 u_1 + c_2 u_2$. More powerfully, so is any (possibly infinite) superposition $\sum_{n} c_n u_n$, provided convergence holds. This is the foundation of Fourier methods.
+  </div>
+
+  <p>Nonlinear PDEs lack superposition. They are vastly harder — but also richer, capable of describing shocks, turbulence, solitons, and phase transitions that linear equations cannot capture.</p>
+
+  <h3>A Taxonomy of Linearity</h3>
+  <div class="accordion">
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Linear PDEs <span class="acc-toggle">+</span></div>
+      <div class="acc-body">All coefficients depend only on the independent variables (not on $u$ or its derivatives). E.g., $u_t = \kappa(x) u_{xx}$ where $\kappa$ is a given function of $x$ only. Superposition holds fully.</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Semilinear PDEs <span class="acc-toggle">+</span></div>
+      <div class="acc-body">Linear in the highest-order derivatives only; lower-order terms may be nonlinear. E.g., $\Delta u = f(u)$ where $f$ is some nonlinear function of $u$ itself (like $u^3$). Much of nonlinear elliptic theory deals with these.</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Quasilinear PDEs <span class="acc-toggle">+</span></div>
+      <div class="acc-body">Linear in the highest-order derivatives, but coefficients may depend on lower-order derivatives of $u$. The minimal surface equation and many equations of nonlinear elasticity fall here. The method of characteristics extends to these.</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Fully Nonlinear PDEs <span class="acc-toggle">+</span></div>
+      <div class="acc-body">Nonlinear even in the highest-order derivatives. Examples: the Monge-Ampère equation $\det(D^2 u) = f$ and the Hamilton-Jacobi equation $u_t + H(Du) = 0$. Require entirely different solution theories (viscosity solutions).</div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(1)">← Previous</button>
+    <span class="page-indicator">03 / 22</span>
+    <button class="btn-nav" onclick="goTo(3)">Next: The Grand Classification →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 3 ══════════ -->
+<div class="page" id="p3">
+  <div class="page-eyebrow">Foundations · Page 03</div>
+  <h1 class="page-title">The <em>Grand Classification</em></h1>
+  <p class="page-subtitle">Elliptic, parabolic, and hyperbolic — the three species of second-order PDE</p>
+
+  <p class="dropcap">The classification of second-order linear PDEs is one of the most beautiful and consequential results in the entire theory. It tells us not just how to <em>label</em> equations, but that fundamentally different types of phenomena — equilibrium, diffusion, and wave propagation — obey qualitatively different mathematical laws. The classification determines what kind of data you need to prescribe, how information travels through the domain, and what kind of regularity to expect from solutions.</p>
+
+  <h2>The General Second-Order Linear PDE</h2>
+  <p>In two independent variables $x$ and $y$, the most general second-order linear PDE is:</p>
+
+  <div class="mathbox">
+    <div class="label">Principal Part</div>
+    $$A\, u_{xx} + 2B\, u_{xy} + C\, u_{yy} + D\, u_x + E\, u_y + F\, u = G$$
+    <p style="font-size:0.85rem;color:var(--ink3);text-align:left;margin-top:14px">where $A, B, C, D, E, F, G$ may be functions of $x$ and $y$.</p>
+  </div>
+
+  <p>The key is the <strong>discriminant</strong> $\Delta = B^2 - AC$ — exactly analogous to the discriminant of a conic section in algebra. This analogy is not superficial: the equation's behaviour near each point $(x_0, y_0)$ is governed by the sign of $\Delta(x_0, y_0)$.</p>
+
+  <div class="grid-3">
+    <div class="card" style="border-top: 3px solid var(--blue)">
+      <span class="badge elliptic">Elliptic</span>
+      <div class="mathbox" style="margin:12px 0;padding:12px">$$B^2 - AC < 0$$</div>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Prototype:</strong> Laplace's equation $\Delta u = 0$</p>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Physics:</strong> Equilibrium, steady-state</p>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Data:</strong> Boundary values everywhere</p>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Character:</strong> Infinitely smooth, information from all directions</p>
+    </div>
+    <div class="card" style="border-top: 3px solid var(--red)">
+      <span class="badge parabolic">Parabolic</span>
+      <div class="mathbox" style="margin:12px 0;padding:12px">$$B^2 - AC = 0$$</div>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Prototype:</strong> Heat equation $u_t = \Delta u$</p>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Physics:</strong> Diffusion, irreversible</p>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Data:</strong> Initial values + boundary values</p>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Character:</strong> Instantly smooths, forward in time only</p>
+    </div>
+    <div class="card" style="border-top: 3px solid var(--green)">
+      <span class="badge hyperbolic">Hyperbolic</span>
+      <div class="mathbox" style="margin:12px 0;padding:12px">$$B^2 - AC > 0$$</div>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Prototype:</strong> Wave equation $u_{tt} = c^2 \Delta u$</p>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Physics:</strong> Propagation, reversible</p>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Data:</strong> Initial position + velocity</p>
+      <p style="font-size:0.85rem;color:var(--ink2)"><strong>Character:</strong> Preserves singularities, finite speed</p>
+    </div>
+  </div>
+
+  <h2>Why This Classification Matters So Deeply</h2>
+  <p>The type of a PDE is not just a label — it determines the entire solution theory:</p>
+
+  <h3>Elliptic: The Language of Equilibrium</h3>
+  <p>Elliptic equations describe systems that have reached a steady state. There is no time variable — the solution represents a balance of forces throughout a region. Crucially, the solution at any interior point is influenced by the boundary conditions everywhere. Change the temperature at any part of the boundary of a room, and the equilibrium temperature throughout the entire room shifts. Solutions are <em>infinitely smooth</em> in the interior — even if the data is rough, the equation irons out singularities.</p>
+
+  <h3>Parabolic: The Language of Diffusion</h3>
+  <p>Parabolic equations model processes that evolve irreversibly in time and tend toward equilibrium. The heat equation is the archetype: heat spreads from hot to cold, smoothing temperature gradients. The remarkable fact is that an initial temperature profile that is discontinuous (say, a step function) instantly becomes a smooth function for any $t > 0$. This <em>infinite propagation speed</em> is unphysical but mathematically elegant and approximately correct in diffusion contexts.</p>
+
+  <h3>Hyperbolic: The Language of Waves</h3>
+  <p>Hyperbolic equations model wave propagation. They have <em>finite propagation speed</em> — disturbances travel at speed $c$ and no faster. This is deeply physical (nothing travels faster than light). Crucially, singularities in the initial data are preserved and propagated along characteristic curves. If you start a wave with a sharp front, the front remains sharp forever (in the absence of dissipation).</p>
+
+  <div class="callout info">
+    <div class="callout-label">Variable Type — An Important Subtlety</div>
+    A PDE can change type from point to point if its coefficients depend on position. The Tricomi equation $y\, u_{xx} + u_{yy} = 0$ is elliptic for $y > 0$, parabolic on $y = 0$, and hyperbolic for $y < 0$. Such mixed-type equations arise in transonic aerodynamics, where airflow transitions from subsonic (elliptic) to supersonic (hyperbolic) through the sound barrier.
+  </div>
+
+  <h2>Interactive Classifier</h2>
+  <div class="classifier-demo">
+    <h4>Classify a Second-Order PDE</h4>
+    <p style="font-size:0.9rem;color:var(--ink2);margin-bottom:16px">Enter coefficients $A$, $B$, $C$ of the principal part $Au_{xx} + 2Bu_{xy} + Cu_{yy} + \ldots$ at a point, and see the classification.</p>
+    <div class="classify-input">
+      <div class="coeff-input"><label>A</label><input type="number" id="cA" value="1" step="any"></div>
+      <div class="coeff-input"><label>B</label><input type="number" id="cB" value="0" step="any"></div>
+      <div class="coeff-input"><label>C</label><input type="number" id="cC" value="1" step="any"></div>
+      <button class="classify-btn" onclick="classifyPDE()">Classify</button>
+    </div>
+    <div class="classify-result" id="classifyResult"></div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(2)">← Previous</button>
+    <span class="page-indicator">04 / 22</span>
+    <button class="btn-nav" onclick="goTo(4)">Next: Boundary & Initial Conditions →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 4 ══════════ -->
+<div class="page" id="p4">
+  <div class="page-eyebrow">Foundations · Page 04</div>
+  <h1 class="page-title">Boundary &amp; Initial <em>Conditions</em></h1>
+  <p class="page-subtitle">A PDE alone is not a problem — you need to tell it where to start and what the walls look like</p>
+
+  <p class="dropcap">One of the subtlest and most important lessons in PDE theory is that an equation by itself typically has infinitely many solutions — or perhaps none at all if you choose your supplementary conditions badly. The art is in pairing each equation with exactly the right kind of data. Too little data and the solution is not unique; too much and the problem is overdetermined and has no solution. Getting this right is not arbitrary — the classification of the PDE tells you precisely what kind of data is geometrically and analytically appropriate.</p>
+
+  <h2>The Domain and Its Boundary</h2>
+  <p>We are always solving a PDE on some domain $\Omega \subset \mathbb{R}^n$. The boundary $\partial\Omega$ is the edge of this domain, and it is where we impose <strong>boundary conditions</strong>. For time-dependent problems, we also have an initial time $t=0$ where we impose <strong>initial conditions</strong>.</p>
+
+  <h2>Types of Boundary Conditions</h2>
+  <p>For a second-order PDE on a domain $\Omega$ with boundary $\partial\Omega$, there are three classical types:</p>
+
+  <div class="accordion">
+    <div class="acc-item open">
+      <div class="acc-header" onclick="toggleAcc(this)">Dirichlet Conditions: prescribe $u$ on $\partial\Omega$ <span class="acc-toggle">+</span></div>
+      <div class="acc-body">
+        <p>$$u\big|_{\partial\Omega} = g(x)$$</p>
+        <p>Named after Lejeune Dirichlet. You prescribe the <em>value</em> of the function on the boundary. Physical interpretation: fixed temperature on the walls of a room, or fixed displacement at the endpoints of a string.</p>
+        <p>Example: Find the steady-state temperature $u$ in a metal plate given fixed temperatures on all edges.</p>
+      </div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Neumann Conditions: prescribe the normal derivative on $\partial\Omega$ <span class="acc-toggle">+</span></div>
+      <div class="acc-body">
+        <p>$$\frac{\partial u}{\partial \mathbf{n}}\bigg|_{\partial\Omega} = h(x)$$</p>
+        <p>You prescribe the outward normal derivative of $u$ at the boundary. Physical interpretation: prescribing the heat <em>flux</em> through the walls (rather than their temperature). If $h = 0$, the walls are perfectly insulated.</p>
+        <p>Crucially, for the Laplace equation with pure Neumann conditions, a compatibility condition $\int_{\partial\Omega} h\, dS = 0$ is necessary for a solution to exist (net flux in must equal net flux out). And the solution is unique only up to a constant.</p>
+      </div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Robin (Mixed) Conditions: combine $u$ and its normal derivative <span class="acc-toggle">+</span></div>
+      <div class="acc-body">
+        <p>$$\alpha\, u + \beta\, \frac{\partial u}{\partial \mathbf{n}} = g \quad \text{on } \partial\Omega$$</p>
+        <p>Named after Victor Gustave Robin (though he was not the first to study them — a recurring theme in mathematical naming). Models a boundary that partially conducts heat: the flux through the wall is proportional to the temperature difference between the wall and the outside. Newton's law of cooling is a Robin condition.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Initial Conditions</h2>
+  <p>For time-dependent problems, we need to specify the state of the system at $t=0$. How much data is needed depends on the order in time:</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h4>First-order in time (Parabolic)</h4>
+      <p style="font-size:0.9rem;color:var(--ink2)">For the heat equation $u_t = \kappa u_{xx}$, we need one initial condition:</p>
+      <div class="mathbox" style="padding:12px;margin:10px 0">$$u(x,0) = f(x)$$</div>
+      <p style="font-size:0.9rem;color:var(--ink2)">Specifying just the initial temperature profile is enough to determine all future evolution.</p>
+    </div>
+    <div class="card">
+      <h4>Second-order in time (Hyperbolic)</h4>
+      <p style="font-size:0.9rem;color:var(--ink2)">For the wave equation $u_{tt} = c^2 u_{xx}$, we need <em>two</em> initial conditions:</p>
+      <div class="mathbox" style="padding:12px;margin:10px 0">$$u(x,0) = f(x), \quad u_t(x,0) = g(x)$$</div>
+      <p style="font-size:0.9rem;color:var(--ink2)">Both position and velocity at $t=0$ are needed. (Just as for second-order ODEs.)</p>
+    </div>
+  </div>
+
+  <h2>The Principle of Correct Prescription</h2>
+  <p>Each type of equation requires a geometrically natural type of supplementary data, determined by the direction of information flow:</p>
+
+  <table>
+    <tr><th>Type</th><th>Where to prescribe data</th><th>Reason</th></tr>
+    <tr><td><span class="badge elliptic">Elliptic</span></td><td>On the entire closed boundary $\partial\Omega$</td><td>No "direction of propagation"; information fills the domain from all sides</td></tr>
+    <tr><td><span class="badge parabolic">Parabolic</span></td><td>At $t=0$ (initial) + on spatial boundary for all $t>0$</td><td>Information flows forward in time from initial data</td></tr>
+    <tr><td><span class="badge hyperbolic">Hyperbolic</span></td><td>On a spacelike surface (+ initial velocity)</td><td>Characteristics determine which data is "seen" by each point</td></tr>
+  </table>
+
+  <div class="callout warning">
+    <div class="callout-label">Cauchy-Kowalevski: A Warning</div>
+    The classical Cauchy-Kowalevski theorem says: for an analytic PDE with analytic data, a unique analytic solution exists locally. It is tempting to conclude that you can always prescribe data on any surface. <strong>Hadamard's example</strong> demolished this hope: the Laplace equation with Cauchy data (both $u$ and $u_n$ on a curve) can have a unique formal solution that blows up arbitrarily fast — the problem is ill-posed. Nature does not allow arbitrary prescription of data for elliptic equations; only boundary values are appropriate.
+  </div>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(3)">← Previous</button>
+    <span class="page-indicator">05 / 22</span>
+    <button class="btn-nav" onclick="goTo(5)">Next: Well-Posedness →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 5 ══════════ -->
+<div class="page" id="p5">
+  <div class="page-eyebrow">Foundations · Page 05</div>
+  <h1 class="page-title">Well-<em>Posedness</em></h1>
+  <p class="page-subtitle">The most important conceptual framework in all of PDE theory — what it means for a problem to be mathematically sound</p>
+
+  <p class="dropcap">In 1902, the French mathematician Jacques Hadamard posed a question so fundamental that it reoriented the entire field of PDEs: what does it mean for a mathematical problem to be <em>correctly formulated</em>? His answer, crystallised in what we now call Hadamard's conditions, is still the gold standard for evaluating any PDE problem today. A problem is <strong>well-posed</strong> if it satisfies all three conditions: existence, uniqueness, and stability. If any one fails, the problem is <strong>ill-posed</strong> — and however elegant its mathematics, it cannot be trusted as a model of physical reality.</p>
+
+  <div class="person-card">
+    <div class="person-name">Jacques Salomon Hadamard</div>
+    <div class="person-dates">1865–1963 · French mathematician</div>
+    <p style="font-size:0.93rem;color:var(--ink2)">Hadamard's contributions span complex analysis (prime number theorem), differential geometry, and PDEs. His 1902 formulation of well-posedness was initially controversial — mathematicians were reluctant to accept that some formally sensible problems were fundamentally pathological. His concrete example of an ill-posed elliptic problem (described below) was the decisive argument. He lived to 97, remaining intellectually active until near the end.</p>
+  </div>
+
+  <h2>The Three Conditions</h2>
+
+  <h3>I. Existence</h3>
+  <p>There must exist at least one solution to the problem. This seems obvious — if you've written down an equation, surely it has a solution? But consider:</p>
+  <ul style="margin: 12px 0 20px 24px; color: var(--ink2);">
+    <li style="margin-bottom:8px">The Neumann problem for Laplace's equation on a bounded domain has <em>no solution</em> if the boundary data fails the compatibility condition.</li>
+    <li style="margin-bottom:8px">Nonlinear PDEs can fail to have even local solutions if the initial data is too rough.</li>
+    <li style="margin-bottom:8px">The most famous open problem in mathematics — whether solutions to Navier-Stokes always exist globally — is an existence question.</li>
+  </ul>
+  <p>Proving existence is often the deepest part of PDE analysis. Modern approaches use functional analysis: reformulate the PDE as a fixed-point problem in an appropriate function space, then invoke a fixed-point theorem (Schauder, Brouwer, Banach) to guarantee a solution exists.</p>
+
+  <h3>II. Uniqueness</h3>
+  <p>There must be <em>at most</em> one solution. If a problem has multiple solutions, the equation does not determine the physical state from the data — which data should you choose? Uniqueness failures often signal that the problem is underdetermined (not enough conditions imposed).</p>
+
+  <div class="mathbox">
+    <div class="label">Energy Method for Uniqueness (Heat Equation)</div>
+    $$\text{If } u_1, u_2 \text{ both solve } u_t = \kappa u_{xx} \text{ with the same data, let } w = u_1 - u_2.$$
+    $$\text{Then } w_t = \kappa w_{xx},\; w(x,0) = 0,\; w|_{\partial\Omega} = 0.$$
+    $$\frac{d}{dt}\int_\Omega w^2\, dx = 2\int_\Omega w w_t\, dx = 2\kappa \int_\Omega w w_{xx}\, dx \stackrel{\text{IBP}}{=} -2\kappa\int_\Omega w_x^2\, dx \leq 0$$
+    $$\Rightarrow \int_\Omega w^2 dx \leq 0 \Rightarrow w \equiv 0 \Rightarrow u_1 \equiv u_2. \quad \blacksquare$$
+  </div>
+
+  <h3>III. Stability (Continuous Dependence on Data)</h3>
+  <p>Small changes in the data (initial conditions, boundary values, source terms) must produce small changes in the solution. This is the most physically and computationally critical condition. Without it, any measurement error or numerical rounding in the data leads to completely untrustworthy solutions.</p>
+
+  <div class="callout warning">
+    <div class="callout-label">Hadamard's Ill-Posed Example</div>
+    Consider Laplace's equation on the upper half-plane with Cauchy data:
+    $$\Delta u = 0 \quad (y > 0), \qquad u(x,0) = 0, \quad u_y(x,0) = \frac{\sin(nx)}{n}$$
+    The unique solution is $u_n(x,y) = \frac{\sinh(ny)\sin(nx)}{n^2}$. As $n\to\infty$, the initial data $\frac{\sin(nx)}{n} \to 0$ uniformly — the data becomes arbitrarily small. But the solution grows like $\frac{e^{ny}}{n^2}$, which for any fixed $y > 0$ becomes arbitrarily large. The problem is catastrophically unstable. This is why Cauchy data for Laplace's equation is not physically meaningful.
+  </div>
+
+  <h2>Ill-Posedness and Regularisation</h2>
+  <p>Ill-posed problems are not merely academic curiosities — they arise constantly in applications, particularly in <strong>inverse problems</strong>: recovering the source of a signal from measured data, reconstructing an image from blurred measurements, or determining subsurface geological structure from surface observations. These are inherently ill-posed.</p>
+
+  <p>The standard remedy is <strong>Tikhonov regularisation</strong>: instead of solving the original ill-posed problem exactly, solve a nearby well-posed problem that incorporates a priori information (e.g., that the solution should be smooth). The regularisation parameter balances fidelity to data against smoothness of solution.</p>
+
+  <div class="callout theorem">
+    <div class="callout-label">Moral of Well-Posedness</div>
+    Well-posedness is not a technical nicety — it is the minimum requirement for a PDE problem to be trustworthy as a physical model. Whenever you set up a PDE problem, you should ask: does it have a solution? Is it unique? And critically: if I perturb my data by a tiny amount, does my solution change by a tiny amount? If the answer to the last question is "no", you have a problem that will fail in simulation and fail as a model.
+  </div>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(4)">← Previous</button>
+    <span class="page-indicator">06 / 22</span>
+    <button class="btn-nav" onclick="goTo(6)">Next: The Heat Equation →</button>
+  </div>
+</div>
+</div><!-- end main -->
+</div><!-- end app -->
+
+
+<!-- ══════════ PAGE 6 ══════════ -->
+<div class="page" id="p6">
+  <div class="page-eyebrow">The Big Three · Page 06</div>
+  <h1 class="page-title">The <em>Heat Equation</em></h1>
+  <p class="page-subtitle">Diffusion, smoothing, and Fourier's revolutionary insight</p>
+
+  <p class="dropcap">The heat equation is one of mathematics' most studied objects — and for good reason. It is the simplest parabolic PDE, yet it contains within it almost every idea that makes the subject deep: Fourier series, eigenfunction expansions, fundamental solutions, the maximum principle, and the profound distinction between reversible and irreversible processes. To fully understand the heat equation is to understand most of classical PDE analysis.</p>
+
+  <h2>Derivation from First Principles</h2>
+  <p>Consider a homogeneous rod of length $L$ along which heat flows. Let $u(x,t)$ be the temperature at position $x$ and time $t$. The physical laws governing this are:</p>
+
+  <div class="callout info">
+    <div class="callout-label">Fourier's Law of Heat Conduction</div>
+    Heat flux is proportional to (and in the direction opposite to) the temperature gradient: $\mathbf{q} = -\kappa \nabla u$, where $\kappa > 0$ is the thermal conductivity.
+  </div>
+
+  <p>Combine this with conservation of energy (heat stored in a small volume = heat flowing in minus heat flowing out), and you obtain:</p>
+
+  <div class="mathbox">
+    <div class="label">The Heat Equation</div>
+    $$u_t = \kappa\, \Delta u$$
+    <p style="font-size:0.85rem;color:var(--ink3);text-align:left;margin-top:12px">In 1D: $u_t = \kappa\, u_{xx}$. In $\mathbb{R}^n$: $u_t = \kappa\, (u_{x_1x_1} + \cdots + u_{x_nx_n})$. The constant $\kappa > 0$ is the thermal diffusivity.</p>
+  </div>
+
+  <p>The Laplacian $\Delta u$ measures the average of $u$ in a small sphere minus the value at the centre. When $\Delta u > 0$, the neighbourhood is on average hotter than the point — so heat flows in, and $u_t > 0$. The equation says: heat flows from hotter to cooler, always. This is the content of the Second Law of Thermodynamics.</p>
+
+  <h2>The Fundamental Solution</h2>
+  <p>The most important single solution of the heat equation is the <strong>heat kernel</strong> — the solution to the problem with initial condition $u(x,0) = \delta(x)$ (a unit concentration of heat at the origin at time zero):</p>
+
+  <div class="mathbox">
+    <div class="label">Heat Kernel on $\mathbb{R}$</div>
+    $$\Phi(x,t) = \frac{1}{\sqrt{4\pi\kappa t}}\, e^{-x^2/(4\kappa t)}, \qquad t > 0$$
+  </div>
+
+  <p>This is a Gaussian distribution whose width grows like $\sqrt{t}$ — the famous square-root scaling of diffusion. At $t=0^+$, it is sharply concentrated. For any $t>0$, it has spread to a bell curve with standard deviation $\sqrt{2\kappa t}$. The total area under the curve is always exactly 1 (heat is conserved). By convolution, the general initial value problem has solution:</p>
+
+  <div class="mathbox">
+    $$u(x,t) = \int_{-\infty}^{\infty} \Phi(x-y,\, t)\, u_0(y)\, dy$$
+  </div>
+
+  <p>This formula is exact for any integrable initial data $u_0$ and produces a smooth solution for all $t > 0$ — even if $u_0$ was discontinuous. This <strong>instant smoothing</strong> is the hallmark of parabolic equations.</p>
+
+  <h2>The Maximum Principle</h2>
+  <p>One of the most powerful qualitative tools in PDE theory is the maximum principle for the heat equation: the maximum (and minimum) of the temperature over the entire domain-plus-boundary is achieved either at the initial time or on the spatial boundary — never in the interior for $t > 0$. This is physically obvious (heat spontaneously concentrating to a hot spot contradicts the Second Law) but mathematically rich, with far-reaching generalisations to nonlinear equations.</p>
+
+  <h2>Live Simulation</h2>
+  <p style="font-size:0.9rem;color:var(--ink2)">Watch heat diffuse in real time. Choose an initial profile and observe the smoothing.</p>
+  <canvas id="heatCanvas" width="600" height="180"></canvas>
+  <div class="sim-controls">
+    <button class="sim-btn active" id="hBtn0" onclick="setHeatIC(0)">Step Function</button>
+    <button class="sim-btn" id="hBtn1" onclick="setHeatIC(1)">Delta Spike</button>
+    <button class="sim-btn" id="hBtn2" onclick="setHeatIC(2)">Sine Wave</button>
+    <button class="sim-btn" id="hBtn3" onclick="setHeatIC(3)">Two Pulses</button>
+    <button class="sim-btn" onclick="resetHeat()">Reset</button>
+  </div>
+
+  <h2>Irreversibility and the Arrow of Time</h2>
+  <p>The heat equation is <em>not</em> time-reversible. If you run it backwards (replace $t \to -t$, giving $u_t = -\kappa u_{xx}$), the equation becomes backward parabolic — and Hadamard-type instabilities arise. Starting from a slightly noisy state at time $T$ and trying to recover the initial condition at $t=0$ is extremely ill-posed. This is not a mathematical limitation; it reflects the genuine physical irreversibility of diffusion.</p>
+
+  <p>Fourier himself was aware of this asymmetry, but it was Boltzmann and later mathematicians who made the connection to entropy rigorous. The heat equation is one of the simplest examples where a time-symmetric physical law (conservation of energy) gives rise to time-asymmetric macroscopic behaviour.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(5)">← Previous</button>
+    <span class="page-indicator">07 / 22</span>
+    <button class="btn-nav" onclick="goTo(7)">Next: The Wave Equation →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 7 ══════════ -->
+<div class="page" id="p7">
+  <div class="page-eyebrow">The Big Three · Page 07</div>
+  <h1 class="page-title">The <em>Wave Equation</em></h1>
+  <p class="page-subtitle">Vibration, causality, and the geometry of signal propagation</p>
+
+  <p class="dropcap">The wave equation was the first PDE ever written down, born from d'Alembert's 1746 study of the vibrating string. It is the prototype of all hyperbolic equations — the mathematical embodiment of oscillation and propagation. Where the heat equation smooths and forgets, the wave equation preserves and transmits. It governs sound, light, water waves, seismic activity, and gravitational radiation. Understanding it means understanding how information travels through space.</p>
+
+  <h2>The Equation and Its Derivation</h2>
+  <p>Consider a perfectly elastic string under tension $T$ with mass density $\rho$. If $u(x,t)$ is the transverse displacement at position $x$ and time $t$, Newton's second law applied to a small segment gives:</p>
+
+  <div class="mathbox">
+    <div class="label">Wave Equation</div>
+    $$u_{tt} = c^2\, \Delta u, \qquad c = \sqrt{T/\rho}$$
+    <p style="font-size:0.85rem;color:var(--ink3);text-align:left;margin-top:10px">$c$ is the wave speed. In 1D: $u_{tt} = c^2 u_{xx}$. For light in vacuum: $c = 3\times 10^8$ m/s.</p>
+  </div>
+
+  <h2>d'Alembert's Formula</h2>
+  <p>The 1D wave equation can be factored: $\left(\partial_t - c\partial_x\right)\left(\partial_t + c\partial_x\right) u = 0$. This suggests introducing $\xi = x + ct$, $\eta = x - ct$, which transforms the equation to $u_{\xi\eta} = 0$, giving immediately $u = f(\xi) + g(\eta)$. Imposing initial conditions $u(x,0)=\phi(x)$, $u_t(x,0) = \psi(x)$ yields:</p>
+
+  <div class="mathbox">
+    <div class="label">d'Alembert's Formula (1746)</div>
+    $$u(x,t) = \frac{\phi(x+ct) + \phi(x-ct)}{2} + \frac{1}{2c}\int_{x-ct}^{x+ct} \psi(s)\, ds$$
+  </div>
+
+  <p>This formula is exact, explicit, and beautiful. It says the solution is the average of two copies of the initial data — one travelling right at speed $c$, one travelling left. The second term adds the effect of the initial velocity.</p>
+
+  <h3>The Domain of Dependence</h3>
+  <p>The value of $u(x_0, t_0)$ depends only on the initial data in the interval $[x_0 - ct_0,\; x_0 + ct_0]$. This interval is the <strong>domain of dependence</strong> of the point $(x_0, t_0)$. It embodies the principle of <em>finite propagation speed</em>: no signal can travel faster than $c$. This is the mathematical expression of special relativity (for light), and of the physically observed fact that sound, water waves, and seismic waves all travel at specific finite speeds.</p>
+
+  <canvas id="waveCanvas" width="620" height="200"></canvas>
+  <p style="text-align:center;font-size:0.82rem;color:var(--ink3);font-family:var(--mono)">↑ two waves travelling in opposite directions (d'Alembert decomposition)</p>
+
+  <h2>Energy Conservation</h2>
+  <p>The wave equation, unlike the heat equation, conserves energy. The total energy (kinetic + potential) is:</p>
+
+  <div class="mathbox">
+    $$E(t) = \frac{1}{2}\int_\Omega \left(u_t^2 + c^2|\nabla u|^2\right) dx = \text{const}$$
+  </div>
+
+  <p>This follows from multiplying the wave equation by $u_t$ and integrating. The fact that energy is conserved reflects the time-reversibility of the wave equation: unlike the heat equation, you can run waves backwards and recover the original state exactly.</p>
+
+  <h2>Huygens' Principle</h2>
+  <p>In <em>odd spatial dimensions</em> $n \geq 3$, the wave equation satisfies a remarkable property: disturbances propagate on the wavefront only — not inside it. If you drop a stone into still water (2D), you see concentric rings, but the water inside the rings also disturbs. However, in 3D, a brief sound source produces a sharp pulse — silence before, then the pulse, then silence again. This is Huygens' principle, and it is the reason we can hear speech clearly rather than as a blurry echo of all past sounds.</p>
+
+  <div class="callout info">
+    <div class="callout-label">Why odd dimensions are special</div>
+    Huygens' principle holds in 3D, 5D, 7D,… but not in 2D, 4D, 6D,… This is related to the structure of the fundamental solution: in odd dimensions it is a delta function supported on the sphere of radius $ct$; in even dimensions it has support inside the sphere too. The reason is connected to properties of Bessel functions and the Radon transform. It remains a deep and beautiful fact.
+  </div>
+
+  <h2>The Wave Equation and Electromagnetism</h2>
+  <p>In 1865, Maxwell wrote down his four equations unifying electricity and magnetism. From them, one can derive that both the electric field $\mathbf{E}$ and magnetic field $\mathbf{B}$ satisfy the wave equation with $c = 1/\sqrt{\mu_0 \varepsilon_0}$. Plugging in the measured values of $\mu_0$ and $\varepsilon_0$, Maxwell obtained $c \approx 3 \times 10^8$ m/s — the known speed of light. His conclusion: light is an electromagnetic wave. This was one of the greatest unifications in the history of science, and it was achieved by solving a PDE.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(6)">← Previous</button>
+    <span class="page-indicator">08 / 22</span>
+    <button class="btn-nav" onclick="goTo(8)">Next: Laplace & Poisson →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 8 ══════════ -->
+<div class="page" id="p8">
+  <div class="page-eyebrow">The Big Three · Page 08</div>
+  <h1 class="page-title">Laplace &amp; <em>Poisson</em></h1>
+  <p class="page-subtitle">Harmony, equilibrium, and the geometry of potential fields</p>
+
+  <p class="dropcap">Laplace's equation $\Delta u = 0$ is perhaps the most studied equation in all of mathematics. Its solutions — called <em>harmonic functions</em> — arise in gravitation, electrostatics, fluid flow, complex analysis, and probability. They are extraordinary objects: infinitely smooth, determined entirely by their boundary values, satisfying a remarkable mean value property. The Poisson equation $\Delta u = f$ adds a source term and extends the theory to problems with distributed charges or masses.</p>
+
+  <h2>Physical Origins</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Gravitational Potential</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">Newton's gravity: the potential $\phi$ of a mass distribution satisfies $\Delta\phi = 4\pi G\rho$ (Poisson) where $\rho$ is mass density. In free space where $\rho=0$: Laplace's equation.</p>
+    </div>
+    <div class="card">
+      <h4>Electrostatics</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">The electric potential $V$ satisfies $\Delta V = -\rho/\varepsilon_0$ (Poisson). The electric field is $\mathbf{E} = -\nabla V$. Finding the potential from charge distributions is the central problem of electrostatics.</p>
+    </div>
+    <div class="card">
+      <h4>Steady-State Heat</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">As $t\to\infty$, the heat equation $u_t = \kappa\Delta u$ approaches steady state: $u_t = 0$, giving $\Delta u = 0$. The equilibrium temperature distribution is harmonic.</p>
+    </div>
+    <div class="card">
+      <h4>Ideal Fluid Flow</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">An incompressible, irrotational fluid flow has a velocity potential $\phi$ satisfying $\Delta\phi = 0$. Complex analysis (conformal mapping) can then be used to find exact flow patterns.</p>
+    </div>
+  </div>
+
+  <h2>The Mean Value Property</h2>
+  <p>The most characteristic property of harmonic functions is:</p>
+
+  <div class="callout theorem">
+    <div class="callout-label">Mean Value Theorem for Harmonic Functions</div>
+    If $u$ is harmonic in a domain $\Omega$ and $B_r(x_0) \subset\subset \Omega$ is any ball compactly contained in $\Omega$, then:
+    $$u(x_0) = \frac{1}{|\partial B_r|}\int_{\partial B_r(x_0)} u\, dS = \frac{1}{|B_r|}\int_{B_r(x_0)} u\, dV$$
+    The value at any point is exactly the average over any sphere (or ball) centred at that point.
+  </div>
+
+  <p>This is a purely local condition that completely characterises harmonic functions. It has a probabilistic interpretation: the value at a point is the expected value of a Brownian motion started there when it first exits the ball. This connects PDE theory to probability in a deep way.</p>
+
+  <h2>The Maximum Principle</h2>
+  <div class="callout theorem">
+    <div class="callout-label">Strong Maximum Principle</div>
+    A non-constant harmonic function on a connected domain $\Omega$ cannot attain its maximum (or minimum) in the interior of $\Omega$. Therefore the maximum and minimum are attained on $\partial\Omega$.
+  </div>
+
+  <p>Consequence: the Dirichlet problem for Laplace's equation has at most one solution (uniqueness). If two solutions agreed on the boundary, their difference would be harmonic, zero on the boundary, hence zero everywhere. Also: the solution is stable — small perturbations of boundary data produce small perturbations of the solution (since the sup norm of the solution is bounded by the sup norm of the boundary data).</p>
+
+  <h2>Harmonic Functions in Complex Analysis</h2>
+  <p>In two dimensions, harmonic functions and complex analysis are intimately related. If $f(z) = u(x,y) + iv(x,y)$ is a holomorphic function of $z = x+iy$, then both its real part $u$ and imaginary part $v$ are harmonic. Conversely, every harmonic function on a simply connected domain is the real part of some holomorphic function. This means the full machinery of complex analysis — Laurent series, residues, conformal mapping — is available for studying 2D harmonic functions. The resulting theory is extraordinarily rich.</p>
+
+  <h2>Fundamental Solution of Laplace's Equation</h2>
+  <p>The fundamental solution is the potential of a point source:</p>
+  <div class="mathbox">
+    $$\Phi(x) = \begin{cases} -\dfrac{1}{2\pi}\ln|x| & n = 2 \\[10pt] \dfrac{1}{n(n-2)\omega_n}\, \dfrac{1}{|x|^{n-2}} & n \geq 3 \end{cases}$$
+    <p style="font-size:0.85rem;color:var(--ink3);text-align:left;margin-top:10px">where $\omega_n$ is the volume of the unit ball in $\mathbb{R}^n$. In 3D: $\Phi(x) = \frac{1}{4\pi|x|}$ — the Coulomb potential.</p>
+  </div>
+  <p>This satisfies $-\Delta\Phi = \delta_0$ (the Dirac delta at the origin) — it is the potential of a unit point charge. By superposition, the potential of any charge distribution $f$ is $u(x) = \int \Phi(x-y)\, f(y)\, dy$, which solves $-\Delta u = f$.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(7)">← Previous</button>
+    <span class="page-indicator">09 / 22</span>
+    <button class="btn-nav" onclick="goTo(9)">Next: Separation of Variables →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 9 ══════════ -->
+<div class="page" id="p9">
+  <div class="page-eyebrow">Tools & Methods · Page 09</div>
+  <h1 class="page-title">Separation of <em>Variables</em></h1>
+  <p class="page-subtitle">The oldest and most productive technique for generating explicit solutions</p>
+
+  <p class="dropcap">Separation of variables is the great workhorse of classical PDE analysis. It is beautifully simple in principle: assume the solution can be written as a product of functions, each depending on only one variable. This reduces the PDE to a system of ODEs, which are far easier to solve. When combined with superposition (linearity!) and Fourier analysis, it yields complete solution formulae for a remarkable range of problems. Every physics student encounters it; its depth, however, runs much further than the textbook treatment suggests.</p>
+
+  <h2>The Method: Heat Equation on $[0,L]$</h2>
+  <p>Solve $u_t = \kappa u_{xx}$ on $0 < x < L$, $t > 0$, with $u(0,t) = u(L,t) = 0$ (zero temperature at endpoints) and $u(x,0) = f(x)$.</p>
+
+  <p><strong>Step 1: Assume</strong> $u(x,t) = X(x) T(t)$ and substitute:</p>
+  <div class="mathbox">
+    $$X(x)\, T'(t) = \kappa\, X''(x)\, T(t) \implies \frac{T'(t)}{\kappa T(t)} = \frac{X''(x)}{X(x)} = -\lambda$$
+  </div>
+
+  <p>Since the left side depends only on $t$ and the right only on $x$, both must equal the same constant $-\lambda$. This gives two ODEs:</p>
+
+  <div class="mathbox">
+    $$X'' + \lambda X = 0, \qquad T' + \kappa\lambda T = 0$$
+  </div>
+
+  <p><strong>Step 2: Solve the $X$ problem</strong> with boundary conditions $X(0) = X(L) = 0$. The non-trivial solutions are:</p>
+  <div class="mathbox">
+    $$X_n(x) = \sin\!\left(\frac{n\pi x}{L}\right), \quad \lambda_n = \left(\frac{n\pi}{L}\right)^2, \quad n = 1, 2, 3, \ldots$$
+  </div>
+
+  <p><strong>Step 3: Solve the $T$ equation</strong>: $T_n(t) = e^{-\kappa\lambda_n t} = e^{-\kappa(n\pi/L)^2 t}$</p>
+
+  <p><strong>Step 4: Superpose</strong> and match initial condition:</p>
+  <div class="mathbox">
+    <div class="label">Complete Solution</div>
+    $$u(x,t) = \sum_{n=1}^{\infty} b_n\, \sin\!\!\left(\frac{n\pi x}{L}\right) e^{-\kappa(n\pi/L)^2 t}$$
+    $$b_n = \frac{2}{L}\int_0^L f(x)\, \sin\!\!\left(\frac{n\pi x}{L}\right) dx$$
+  </div>
+
+  <p>This is complete: the terms decay exponentially in time (higher modes faster), smoothing the solution. As $t\to\infty$, all terms vanish — the rod cools to zero.</p>
+
+  <h2>Why It Works: Eigenfunctions</h2>
+  <p>The separation procedure reduces to finding the <strong>eigenfunctions</strong> of the spatial operator $-d^2/dx^2$ with Dirichlet boundary conditions. The functions $\sin(n\pi x/L)$ are those eigenfunctions; the numbers $\lambda_n = (n\pi/L)^2$ are the corresponding eigenvalues. The superposition step works because the eigenfunctions are orthogonal:</p>
+
+  <div class="mathbox">
+    $$\int_0^L \sin\!\!\left(\frac{n\pi x}{L}\right)\sin\!\!\left(\frac{m\pi x}{L}\right) dx = \frac{L}{2}\delta_{nm}$$
+  </div>
+
+  <p>This orthogonality is the Fourier sine series. It allows us to extract each coefficient $b_n$ independently.</p>
+
+  <h2>Generalisation: Sturm-Liouville Problems</h2>
+  <p>More generally, separation of variables on non-constant-coefficient operators leads to Sturm-Liouville eigenvalue problems:</p>
+  <div class="mathbox">
+    $$\frac{d}{dx}\!\left[p(x)\frac{dX}{dx}\right] + \left[q(x) + \lambda r(x)\right] X = 0$$
+  </div>
+  <p>The Sturm-Liouville theory guarantees a countable infinite set of real eigenvalues $\lambda_1 < \lambda_2 < \ldots \to \infty$ and orthogonal eigenfunctions that form a complete basis. This is the foundation of spectral theory for PDEs (page 17).</p>
+
+  <div class="callout info">
+    <div class="callout-label">Limitations</div>
+    Separation of variables requires: (1) a linear equation, (2) a separable domain (rectangle, ball, cylinder, etc.), and (3) boundary conditions aligned with the coordinate system. For irregularly shaped domains, other techniques (Green's functions, numerical methods) are needed. Despite these limitations, it generates the richest explicit solution theory in the subject.
+  </div>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(8)">← Previous</button>
+    <span class="page-indicator">10 / 22</span>
+    <button class="btn-nav" onclick="goTo(10)">Next: Fourier's Revolution →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 10 ══════════ -->
+<div class="page" id="p10">
+  <div class="page-eyebrow">Tools & Methods · Page 10</div>
+  <h1 class="page-title">Fourier's <em>Revolution</em></h1>
+  <p class="page-subtitle">The idea that shattered mathematical orthodoxy and changed science forever</p>
+
+  <p class="dropcap">In 1807, Joseph Fourier submitted a paper to the Paris Academy claiming that an arbitrary function could be expressed as an infinite sum of sines and cosines. The referees — who included Lagrange and Laplace, the greatest mathematicians of the age — rejected it. They could not accept that a "discontinuous" function (like a step function with a jump) could equal a sum of perfectly smooth sinusoids. Fourier was right, and the controversy he ignited transformed analysis, laid the foundations for signal processing, quantum mechanics, and communication theory, and led to the modern rigorous treatment of the concept of "function" itself.</p>
+
+  <div class="person-card">
+    <div class="person-name">Jean-Baptiste Joseph Fourier</div>
+    <div class="person-dates">1768–1830 · French mathematician and Egyptologist</div>
+    <p style="font-size:0.93rem;color:var(--ink2)">Orphaned at eight, educated by Benedictine monks, imprisoned twice during the Revolution, accompanied Napoleon to Egypt, eventually became prefect of Isère. He studied heat conduction not for abstract reasons but because he wanted to understand the temperature of the Earth's interior and the effect of the atmosphere. His thesis, refined over fifteen years, became the <em>Théorie Analytique de la Chaleur</em> (1822) — a masterpiece that Kelvin called "a great mathematical poem."</p>
+  </div>
+
+  <h2>Fourier Series</h2>
+  <p>A function $f$ on $[-L, L]$ (under mild conditions) can be written:</p>
+  <div class="mathbox">
+    <div class="label">Fourier Series</div>
+    $$f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty}\!\left[a_n \cos\!\!\left(\frac{n\pi x}{L}\right) + b_n \sin\!\!\left(\frac{n\pi x}{L}\right)\right]$$
+    $$a_n = \frac{1}{L}\int_{-L}^{L} f(x)\cos\!\!\left(\frac{n\pi x}{L}\right) dx, \qquad b_n = \frac{1}{L}\int_{-L}^{L} f(x)\sin\!\!\left(\frac{n\pi x}{L}\right) dx$$
+  </div>
+
+  <p>The key insight is orthogonality: sines and cosines of different frequencies are orthogonal in $L^2[-L,L]$. This makes the Fourier coefficients extractable independently, and makes the whole theory work.</p>
+
+  <h2>The Fourier Transform</h2>
+  <p>Extending Fourier series from a finite interval to all of $\mathbb{R}$ (by taking $L\to\infty$) gives the Fourier transform:</p>
+  <div class="mathbox">
+    <div class="label">Fourier Transform Pair</div>
+    $$\hat{f}(\xi) = \int_{-\infty}^{\infty} f(x)\, e^{-2\pi i\xi x}\, dx, \qquad f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi)\, e^{2\pi i\xi x}\, d\xi$$
+  </div>
+
+  <p>The Fourier transform is the most powerful tool for solving constant-coefficient PDEs. Its key property: it converts differentiation to multiplication:</p>
+  <div class="mathbox">
+    $$\widehat{\frac{\partial^k u}{\partial x^k}}(\xi) = (2\pi i\xi)^k\, \hat{u}(\xi)$$
+  </div>
+
+  <p>This turns a PDE (hard: differential equation in $x$, $t$) into an algebraic or ODE problem in the frequency variable $\xi$ (easy). Solve, then invert the transform.</p>
+
+  <h2>Applying the Fourier Transform to the Heat Equation</h2>
+  <p>Take the Fourier transform in $x$ of $u_t = \kappa u_{xx}$:</p>
+  <div class="mathbox">
+    $$\partial_t \hat{u}(\xi, t) = -4\pi^2\kappa\xi^2\, \hat{u}(\xi, t) \implies \hat{u}(\xi,t) = \hat{u}_0(\xi)\, e^{-4\pi^2\kappa\xi^2 t}$$
+    $$\implies u(x,t) = \int \hat{u}_0(\xi)\, e^{-4\pi^2\kappa\xi^2 t}\, e^{2\pi i\xi x}\, d\xi$$
+  </div>
+  <p>The factor $e^{-4\pi^2\kappa\xi^2 t}$ decays rapidly for large $|\xi|$ (high frequencies). This confirms that the heat equation damps high-frequency oscillations — the smoothing property manifested in frequency space.</p>
+
+  <h2>Parseval's Theorem and Energy</h2>
+  <div class="callout theorem">
+    <div class="callout-label">Parseval / Plancherel Theorem</div>
+    $$\int_{-\infty}^{\infty} |f(x)|^2\, dx = \int_{-\infty}^{\infty} |\hat{f}(\xi)|^2\, d\xi$$
+    The Fourier transform is an isometry of $L^2(\mathbb{R})$ — it preserves the total energy (the $L^2$ norm). This allows one to extend the Fourier transform to all square-integrable functions, not just smooth ones.
+  </div>
+
+  <h2>The Uncertainty Principle</h2>
+  <p>Perhaps the most famous consequence of Fourier analysis is Heisenberg's uncertainty principle in quantum mechanics. The position wavefunction $\psi(x)$ and momentum wavefunction $\hat{\psi}(\xi)$ are related by the Fourier transform. The mathematical uncertainty principle states:</p>
+  <div class="mathbox">
+    $$\Delta x \cdot \Delta\xi \geq \frac{1}{4\pi}$$
+    <p style="text-align:left;font-size:0.85rem;color:var(--ink3);margin-top:10px">A function cannot be simultaneously concentrated in both space and frequency. The more localised $f$ is in $x$, the more spread out $\hat{f}$ must be in $\xi$ — and vice versa.</p>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(9)">← Previous</button>
+    <span class="page-indicator">11 / 22</span>
+    <button class="btn-nav" onclick="goTo(11)">Next: Method of Characteristics →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 11 ══════════ -->
+<div class="page" id="p11">
+  <div class="page-eyebrow">Tools & Methods · Page 11</div>
+  <h1 class="page-title">Method of <em>Characteristics</em></h1>
+  <p class="page-subtitle">Following information along curves — the geometric heart of first-order theory</p>
+
+  <p class="dropcap">The method of characteristics is based on a beautiful geometric insight: for first-order PDEs, there exist special curves in the $(x,t)$-plane along which the PDE reduces to an ordinary differential equation. These curves, called characteristics, are the paths along which information propagates. Following them, you can trace every value of the solution back to the initial data. The method is exact, geometrically transparent, and extends to quasilinear equations — where it reveals the mechanism of shock formation.</p>
+
+  <h2>The Linear Transport Equation</h2>
+  <p>Start with the simplest case: $u_t + c\, u_x = 0$ (constant advection speed $c$). Along any curve $x = x_0 + ct$ (a straight line), the directional derivative of $u$ is zero:
+  $$\frac{d}{dt} u(x_0+ct,\, t) = u_x \cdot c + u_t = 0$$
+  So $u$ is constant along each such line — the <strong>characteristic</strong>. Solution: $u(x,t) = u_0(x - ct)$. The initial profile translates to the right at speed $c$ without changing shape.</p>
+
+  <h2>General First-Order Quasilinear PDEs</h2>
+  <p>For $a(x,t,u)\, u_x + b(x,t,u)\, u_t = c(x,t,u)$, the characteristic ODEs are:</p>
+  <div class="mathbox">
+    <div class="label">Characteristic System</div>
+    $$\frac{dx}{ds} = a(x,t,u), \quad \frac{dt}{ds} = b(x,t,u), \quad \frac{du}{ds} = c(x,t,u)$$
+    <p style="font-size:0.85rem;color:var(--ink3);text-align:left;margin-top:10px">Solve this ODE system with initial data along the initial curve. The solution surface is swept out by the characteristics.</p>
+  </div>
+
+  <h2>Shock Formation: When Characteristics Cross</h2>
+  <p>The real drama of the method of characteristics comes from quasilinear equations where the wave speed depends on the solution itself. Consider <strong>Burgers' equation</strong> (inviscid): $u_t + u\, u_x = 0$. Here the characteristic speed is $c = u$ — waves travel at their own height. The characteristics are lines $x = x_0 + u_0(x_0)\, t$. If the initial data has a decreasing part ($u_0' < 0$), faster waves from behind will eventually catch up to slower waves ahead.</p>
+
+  <div class="callout warning">
+    <div class="callout-label">Shock Formation Time</div>
+    $$t_{\text{shock}} = \frac{-1}{\min_{x} u_0'(x)}$$
+    At this time, characteristics cross — the method breaks down and the classical solution ceases to exist. A discontinuity (shock) forms. Nature resolves this through viscosity; mathematics resolves it through the theory of weak solutions and entropy conditions.
+  </div>
+
+  <h2>Eikonal Equation and Geometric Optics</h2>
+  <p>The eikonal equation $|\nabla u| = \frac{1}{c(\mathbf{x})}$ governs the wavefronts of high-frequency waves in an inhomogeneous medium. Its characteristics are the <strong>rays</strong> of geometric optics — the paths along which light travels. The method of characteristics applied to the eikonal equation gives Snell's law of refraction and explains the bending of light rays. It is the rigorous foundation of geometric optics and the mathematical basis for lens design, fibre optics, and gravitational lensing.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(10)">← Previous</button>
+    <span class="page-indicator">12 / 22</span>
+    <button class="btn-nav" onclick="goTo(12)">Next: Green's Functions →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 12 ══════════ -->
+<div class="page" id="p12">
+  <div class="page-eyebrow">Tools & Methods · Page 12</div>
+  <h1 class="page-title">Green's <em>Functions</em></h1>
+  <p class="page-subtitle">The impulse response — the most powerful tool for linear PDE theory</p>
+
+  <p class="dropcap">George Green was a miller's son from Nottingham who taught himself higher mathematics by borrowing books from a subscription library. In 1828, working largely in isolation, he published "An Essay on the Application of Mathematical Analysis to the Theories of Electricity and Magnetism" — one of the most original pieces of mathematical physics of the 19th century. In it, he introduced what we now call Green's functions: solutions due to a point source, from which solutions to arbitrary source distributions can be built by superposition. The work was almost entirely ignored until William Thomson (Lord Kelvin) rediscovered it in 1845 and recognised its importance.</p>
+
+  <h2>The Core Idea</h2>
+  <p>Consider a linear PDE $Lu = f$ on domain $\Omega$. The <strong>Green's function</strong> $G(x, y)$ is defined by:</p>
+  <div class="mathbox">
+    $$L_x\, G(x,y) = \delta(x-y) \quad \text{in } \Omega, \qquad G(x,y) = 0 \quad \text{on } \partial\Omega$$
+  </div>
+  <p>It is the response of the system to a unit point source at $y$. Once $G$ is known, the solution to $Lu = f$ with homogeneous boundary conditions is:</p>
+  <div class="mathbox">
+    $$u(x) = \int_\Omega G(x,y)\, f(y)\, dy$$
+  </div>
+  <p>This is the PDE version of "knowing the response to a delta function lets you compute the response to any input by superposition" — the fundamental principle of linear systems theory.</p>
+
+  <h2>Green's Function for the Laplacian on a Half-Space</h2>
+  <p>On the upper half-plane $\{y > 0\}$ with $u = 0$ on $\{y = 0\}$, the Green's function is obtained by the <strong>method of images</strong>: place a "mirror charge" at the reflection of the source point:</p>
+  <div class="mathbox">
+    $$G(x, x_0) = \Phi(x - x_0) - \Phi(x - x_0^*)$$
+  </div>
+  <p>where $x_0^*$ is the reflection of $x_0$ in the boundary, and $\Phi$ is the fundamental solution of Laplace's equation. This elegant trick — which has a beautiful physical interpretation as an image charge in electrostatics — gives exact formulae in many geometries.</p>
+
+  <h2>Poisson's Formula via Green's Functions</h2>
+  <p>For the disk $|x| < R$, the Green's function leads to the <strong>Poisson integral formula</strong>: the solution to $\Delta u = 0$ inside the disk with boundary data $u = g$ on $|x| = R$ is:</p>
+  <div class="mathbox">
+    <div class="label">Poisson Integral Formula</div>
+    $$u(r, \theta) = \frac{1}{2\pi}\int_0^{2\pi} \frac{R^2 - r^2}{R^2 - 2Rr\cos(\theta-\phi) + r^2}\, g(\phi)\, d\phi$$
+  </div>
+  <p>This is a weighted average of the boundary data, with the weight (Poisson kernel) largest near the point on the boundary directly "facing" the interior point. It gives an explicit, closed-form solution for Laplace's equation on the disk — valid for any continuous boundary data.</p>
+
+  <h2>Green's Theorem and the Representation Formula</h2>
+  <p>Green's functions are intimately tied to <strong>Green's second identity</strong>:</p>
+  <div class="mathbox">
+    $$\int_\Omega (u\, \Delta v - v\, \Delta u)\, dx = \int_{\partial\Omega}\!\!\left(u\, \frac{\partial v}{\partial n} - v\, \frac{\partial u}{\partial n}\right) dS$$
+  </div>
+  <p>Setting $v = G(\cdot, x_0)$ and using $\Delta G = -\delta_{x_0}$ gives an integral representation of any harmonic function in terms of its boundary values — the foundation of boundary element methods in numerical PDE.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(11)">← Previous</button>
+    <span class="page-indicator">13 / 22</span>
+    <button class="btn-nav" onclick="goTo(13)">Next: Distributions →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 13 ══════════ -->
+<div class="page" id="p13">
+  <div class="page-eyebrow">Modern Framework · Page 13</div>
+  <h1 class="page-title"><em>Distributions</em></h1>
+  <p class="page-subtitle">Generalising functions so that everything is differentiable</p>
+
+  <p class="dropcap">By the 1930s, physicists had become accustomed to using the "Dirac delta function" $\delta(x)$ — an object that is "zero everywhere except at the origin, but integrates to 1." It appeared in quantum mechanics, electromagnetism, and signal processing, and it was enormously useful. The problem was that no such function actually existed in classical analysis. No function that is zero almost everywhere can have a nonzero integral. Physicists worked around this by treating $\delta$ as a limit of ordinary functions, but this was unsatisfying. The rigorous resolution — the theory of <strong>distributions</strong>, or generalised functions — was developed by Laurent Schwartz in the late 1940s, earning him a Fields Medal.</p>
+
+  <div class="person-card">
+    <div class="person-name">Laurent Schwartz</div>
+    <div class="person-dates">1915–2002 · French mathematician</div>
+    <p style="font-size:0.93rem;color:var(--ink2)">Schwartz described the moment of his discovery of distribution theory in 1944 as a sudden revelation during a night walk: he realised that instead of trying to define the "function" $\delta$, one should define it by its action on test functions. The Fields Medal committee in 1950 praised the work as "one of the most important contributions to mathematics in recent times." Schwartz was also notable for his political activism, spending years on Bertrand Russell's anti-war committees.</p>
+  </div>
+
+  <h2>Test Functions and Duality</h2>
+  <p>The key insight is to reverse the roles: instead of defining $\delta$ as a function, define it as a <em>functional</em> — something that acts on test functions and returns numbers. A <strong>test function</strong> is a smooth function of compact support: $\phi \in \mathcal{D}(\Omega) = C_c^\infty(\Omega)$.</p>
+
+  <p>A <strong>distribution</strong> is a continuous linear functional on $\mathcal{D}(\Omega)$. That is, a map $T: \mathcal{D}(\Omega) \to \mathbb{R}$ with:</p>
+  <ul style="margin:12px 0 20px 24px;color:var(--ink2)">
+    <li style="margin-bottom:8px">$T(\alpha\phi + \beta\psi) = \alpha T(\phi) + \beta T(\psi)$ (linearity)</li>
+    <li style="margin-bottom:8px">$T(\phi_n) \to T(\phi)$ whenever $\phi_n \to \phi$ in $\mathcal{D}$ (continuity)</li>
+  </ul>
+
+  <p>The notation is $T(\phi) = \langle T, \phi \rangle$. Every ordinary function $f$ gives a distribution $T_f(\phi) = \int f\phi\, dx$, but there are distributions that are not functions.</p>
+
+  <div class="callout definition">
+    <div class="callout-label">The Dirac Delta</div>
+    $$\langle \delta, \phi \rangle = \phi(0) \quad \text{for all } \phi \in \mathcal{D}$$
+    This is a perfectly rigorous definition. $\delta$ is a distribution, not a function. But it behaves exactly as physicists intended.
+  </div>
+
+  <h2>Differentiation of Distributions</h2>
+  <p>The revolutionary step: <em>every</em> distribution has a well-defined derivative — defined so as to extend the classical integration by parts formula:</p>
+  <div class="mathbox">
+    <div class="label">Derivative of a Distribution</div>
+    $$\langle T', \phi \rangle = -\langle T, \phi' \rangle$$
+  </div>
+
+  <p>For ordinary functions, this is just integration by parts: $\int f' \phi = -\int f\phi'$. For distributions, it's a definition. The consequence: distributions can be differentiated infinitely many times, even if they are discontinuous (like the Heaviside step function), or are not functions at all (like $\delta$).</p>
+
+  <div class="callout theorem">
+    <div class="callout-label">Heaviside and Dirac are Related</div>
+    Let $H(x)$ be the Heaviside step function ($H=0$ for $x<0$, $H=1$ for $x>0$). Then in the distributional sense:
+    $$H'(x) = \delta(x)$$
+    $\int H'\phi = -\int H\phi' = -\int_0^\infty \phi' = \phi(0) = \langle\delta,\phi\rangle$. The derivative of the step function is the delta function — the formalisation of the physicists' intuition.
+  </div>
+
+  <h2>Why This Matters for PDEs</h2>
+  <p>Distributions allow us to:</p>
+  <ol style="margin:12px 0 20px 24px;color:var(--ink2);line-height:2">
+    <li>Give rigorous meaning to fundamental solutions $-\Delta\Phi = \delta$</li>
+    <li>Define derivatives of discontinuous functions (shocks in hyperbolic PDEs)</li>
+    <li>Formulate <em>weak</em> (distributional) solutions to PDEs</li>
+    <li>Use the Fourier transform on extremely general classes of functions</li>
+    <li>Connect PDEs to probability through the theory of generalized stochastic processes</li>
+  </ol>
+
+  <p>The Schwartz space $\mathcal{S}(\mathbb{R}^n)$ of rapidly decreasing functions and its dual $\mathcal{S}'$ (tempered distributions) provide the ideal setting for the Fourier transform — which extends to a continuous bijection on $\mathcal{S}'$. This is the foundation of the modern theory of linear PDEs with constant coefficients.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(12)">← Previous</button>
+    <span class="page-indicator">14 / 22</span>
+    <button class="btn-nav" onclick="goTo(14)">Next: Sobolev Spaces →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 14 ══════════ -->
+<div class="page" id="p14">
+  <div class="page-eyebrow">Modern Framework · Page 14</div>
+  <h1 class="page-title"><em>Sobolev</em> Spaces</h1>
+  <p class="page-subtitle">The natural habitat of PDE solutions — where analysis meets geometry</p>
+
+  <p class="dropcap">Classical analysis studies functions that are differentiable in the pointwise sense. But PDE theory forced mathematicians to realise that this is too restrictive: many physically meaningful problems have solutions with limited regularity — functions that are "almost differentiable" in some averaged sense, even if they have singularities at isolated points or along curves. Sobolev spaces, introduced by Sergei Sobolev in the 1930s, provide the right framework: they encode both function values and derivative values in an integrated, $L^2$ sense. They are simultaneously the most natural setting for the theory of weak solutions and the essential tool for all modern regularity theory.</p>
+
+  <div class="person-card">
+    <div class="person-name">Sergei Lvovich Sobolev</div>
+    <div class="person-dates">1908–1989 · Soviet mathematician</div>
+    <p style="font-size:0.93rem;color:var(--ink2)">Sobolev introduced his function spaces in the 1930s while working on hyperbolic PDEs and the problem of wave propagation in inhomogeneous media. He did much of his most important work in Novosibirsk, where he helped establish the Siberian Branch of the Soviet Academy of Sciences. The Sobolev spaces that bear his name became indispensable only gradually — it took the post-war generation of analysts (Nirenberg, Agmon, Douglis) to fully exploit them.</p>
+  </div>
+
+  <h2>Definition</h2>
+  <p>For $k \geq 0$ a non-negative integer and $1 \leq p \leq \infty$, the Sobolev space $W^{k,p}(\Omega)$ consists of all functions $u \in L^p(\Omega)$ whose weak (distributional) partial derivatives up to order $k$ also lie in $L^p(\Omega)$:</p>
+
+  <div class="mathbox">
+    <div class="label">Sobolev Space</div>
+    $$W^{k,p}(\Omega) = \bigl\{u \in L^p(\Omega) : D^\alpha u \in L^p(\Omega) \text{ for all } |\alpha| \leq k\bigr\}$$
+    $$\|u\|_{W^{k,p}} = \left(\sum_{|\alpha|\leq k}\int_\Omega |D^\alpha u|^p\, dx\right)^{1/p}$$
+  </div>
+
+  <p>The most important case is $p=2$, written $H^k(\Omega) = W^{k,2}(\Omega)$ — these are Hilbert spaces, and Hilbert space methods (inner products, projections, spectral theory) apply. The norm is:</p>
+  <div class="mathbox">
+    $$\|u\|_{H^k}^2 = \sum_{|\alpha|\leq k}\int_\Omega |D^\alpha u|^2\, dx$$
+  </div>
+
+  <h2>Why Weak Derivatives?</h2>
+  <p>A function $v = D^\alpha u$ is a <strong>weak derivative</strong> of $u$ if for all test functions $\phi \in C_c^\infty(\Omega)$:</p>
+  <div class="mathbox">
+    $$\int_\Omega u\, D^\alpha \phi\, dx = (-1)^{|\alpha|}\int_\Omega v\, \phi\, dx$$
+  </div>
+  <p>This is integration by parts without any boundary terms (since $\phi$ has compact support). For smooth $u$, the classical and weak derivatives agree. But weak derivatives exist for much rougher functions — for instance, the function $|x|$ on $(-1,1)$ has weak derivative $\text{sgn}(x)$, even though it is not classically differentiable at $0$.</p>
+
+  <h2>The Sobolev Embedding Theorems</h2>
+  <p>These are among the most important results in all of analysis, relating membership in a Sobolev space to regularity in classical function spaces:</p>
+
+  <div class="callout theorem">
+    <div class="callout-label">Sobolev Embedding (key cases)</div>
+    Let $\Omega \subset \mathbb{R}^n$ be a bounded domain with smooth boundary.
+    <ul style="margin-top:12px;line-height:2.2">
+      <li>If $k > n/p$, then $W^{k,p}(\Omega) \hookrightarrow C^{k-\lfloor n/p\rfloor - 1}(\bar\Omega)$ — enough derivatives guarantee classical differentiability</li>
+      <li>If $kp < n$, then $W^{k,p}(\Omega) \hookrightarrow L^{p^*}(\Omega)$ where $\frac{1}{p^*} = \frac{1}{p} - \frac{k}{n}$ (Sobolev conjugate exponent)</li>
+      <li>The case $n = 3$, $k=1$, $p=2$: $H^1(\Omega) \hookrightarrow L^6(\Omega)$ — a key estimate in nonlinear analysis</li>
+    </ul>
+  </div>
+
+  <p>The embedding theorems are the key to <em>bootstrapping regularity</em>: if you can show a solution is in $W^{1,2}$, and the embedding theorem promotes that to $L^6$, and you can then use this to show you're actually in $W^{2,2}$, and iterate… Eventually, for elliptic equations with smooth data, you conclude $u$ is actually $C^\infty$. This is the regularity theory program.</p>
+
+  <h2>Trace Theory</h2>
+  <p>A subtle but critical issue: elements of $H^1(\Omega)$ are defined only <em>almost everywhere</em> — so what does it mean to prescribe boundary values? The <strong>trace theorem</strong> guarantees that there is a continuous map $\gamma_0: H^1(\Omega) \to H^{1/2}(\partial\Omega)$ — the boundary trace. Fractional-order Sobolev spaces $H^{1/2}(\partial\Omega)$ naturally appear as the spaces of "admissible boundary data" for elliptic equations. This is one of several places where non-integer orders of differentiability arise naturally.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(13)">← Previous</button>
+    <span class="page-indicator">15 / 22</span>
+    <button class="btn-nav" onclick="goTo(15)">Next: Weak Solutions →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 15 ══════════ -->
+<div class="page" id="p15">
+  <div class="page-eyebrow">Modern Framework · Page 15</div>
+  <h1 class="page-title"><em>Weak</em> Solutions</h1>
+  <p class="page-subtitle">Solving PDEs without solving them — the distributional formulation and the Lax-Milgram theorem</p>
+
+  <p class="dropcap">The theory of weak solutions represents the crowning achievement of functional analysis applied to PDEs. The basic philosophy is a subtle reversal: instead of requiring the PDE to hold pointwise (which demands classical differentiability), we multiply by a test function, integrate, and use integration by parts to move derivatives onto the test function. The resulting <em>weak formulation</em> makes sense for functions with far less regularity than classical solutions require — and in the Hilbert space setting, the Lax-Milgram theorem guarantees existence and uniqueness almost effortlessly. This is not a computational trick; it is a genuine change in what we mean by "solution."</p>
+
+  <h2>From Strong to Weak: The Dirichlet Problem</h2>
+  <p>Consider $-\Delta u = f$ in $\Omega$, $u = 0$ on $\partial\Omega$. A <strong>classical (strong) solution</strong> requires $u \in C^2(\Omega) \cap C(\bar\Omega)$. To derive the weak form: multiply by $v \in H^1_0(\Omega)$ (test function, zero on boundary) and integrate:</p>
+  <div class="mathbox">
+    $$\int_\Omega (-\Delta u)\, v\, dx = \int_\Omega f\, v\, dx$$
+    $$\stackrel{\text{IBP}}{=\!=\!=} \int_\Omega \nabla u \cdot \nabla v\, dx - \underbrace{\int_{\partial\Omega} v\, \frac{\partial u}{\partial n}\, dS}_{= 0 \text{ since } v|_{\partial\Omega}=0} = \int_\Omega f\, v\, dx$$
+  </div>
+
+  <div class="callout definition">
+    <div class="callout-label">Weak Formulation of the Dirichlet Problem</div>
+    Find $u \in H^1_0(\Omega)$ such that:
+    $$a(u,v) := \int_\Omega \nabla u \cdot \nabla v\, dx = \int_\Omega f\, v\, dx =: \ell(v) \quad \forall v \in H^1_0(\Omega)$$
+  </div>
+
+  <p>Notice: we have moved one derivative off $u$ and onto $v$. A weak solution only needs to be in $H^1_0(\Omega)$ (one weak derivative in $L^2$) — not $C^2$. The Dirichlet boundary condition $u=0$ on $\partial\Omega$ is now built into the function space $H^1_0$ (functions vanishing in the trace sense).</p>
+
+  <h2>Lax-Milgram Theorem</h2>
+
+  <div class="callout theorem">
+    <div class="callout-label">Lax-Milgram Theorem</div>
+    Let $H$ be a Hilbert space, $a: H \times H \to \mathbb{R}$ a bilinear form that is:
+    <ul style="margin-top:10px;line-height:2">
+      <li><strong>Bounded:</strong> $|a(u,v)| \leq C\|u\|\|v\|$ for all $u,v \in H$</li>
+      <li><strong>Coercive:</strong> $a(u,u) \geq \alpha\|u\|^2$ for all $u \in H$, for some $\alpha > 0$</li>
+    </ul>
+    Then for every bounded linear functional $\ell \in H^*$, there exists a unique $u \in H$ such that $a(u,v) = \ell(v)$ for all $v \in H$.
+  </div>
+
+  <p>For our Dirichlet problem: $a(u,v) = \int \nabla u \cdot \nabla v\, dx$. Boundedness follows from Cauchy-Schwarz. Coercivity follows from the <strong>Poincaré inequality</strong>: $\|u\|_{L^2} \leq C\|\nabla u\|_{L^2}$ for $u \in H^1_0(\Omega)$ (the boundary condition is essential here). Applying Lax-Milgram: <em>the Dirichlet problem always has a unique weak solution in $H^1_0(\Omega)$</em>. Existence and uniqueness in two lines of argument.</p>
+
+  <h2>Regularity: Getting from Weak to Classical</h2>
+  <p>Showing a weak solution exists is only the beginning. The <strong>elliptic regularity theorem</strong> says: if the data $f$ is smooth and $\partial\Omega$ is smooth, the weak solution is actually a classical solution.</p>
+
+  <div class="callout theorem">
+    <div class="callout-label">Elliptic Regularity (Schauder Estimates)</div>
+    If $-\Delta u = f \in H^{k}(\Omega)$ in the weak sense, and $\partial\Omega \in C^{k+2}$, then $u \in H^{k+2}(\Omega)$ and:
+    $$\|u\|_{H^{k+2}} \leq C\!\left(\|f\|_{H^k} + \|u\|_{L^2}\right)$$
+    In particular: $f \in C^\infty \Rightarrow u \in C^\infty$.
+  </div>
+
+  <p>The program of weak solutions and regularity theory is one of the great triumphs of 20th century analysis. It gives a clean, complete existence-uniqueness-regularity theory for elliptic equations with smooth data, and extends — with more effort — to parabolic equations (Lions-Magenes) and linear hyperbolic equations (Kreiss symmetriser theory).</p>
+
+  <h2>Weak Solutions and Numerical Methods</h2>
+  <p>The weak formulation is also the foundation of the <strong>finite element method</strong> — the dominant numerical method for PDEs in engineering. One replaces $H^1_0(\Omega)$ with a finite-dimensional subspace of piecewise polynomial functions (the "finite element space") and solves the discrete weak problem. The Lax-Milgram theorem guarantees the discrete problem is well-posed, and Céa's lemma gives a best-approximation property: the finite element solution is the best approximation to the true solution in the energy norm.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(14)">← Previous</button>
+    <span class="page-indicator">16 / 22</span>
+    <button class="btn-nav" onclick="goTo(16)">Next: Variational Methods →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 16 ══════════ -->
+<div class="page" id="p16">
+  <div class="page-eyebrow">Modern Framework · Page 16</div>
+  <h1 class="page-title">Variational <em>Methods</em></h1>
+  <p class="page-subtitle">Solutions as minimisers — calculus of variations and the Euler-Lagrange equation</p>
+
+  <p class="dropcap">There is another way to think about PDEs — one that connects them to the most ancient and philosophical questions in physics: why does nature choose the paths and shapes it does? The calculus of variations answers: because nature minimises (or makes stationary) some energy or action functional. Every physical law derived from a variational principle automatically comes with a PDE as its Euler-Lagrange equation. This is not a coincidence — it is the deep structure of mechanics, electrodynamics, general relativity, and quantum field theory. Variational methods are simultaneously a solution technique and a worldview.</p>
+
+  <h2>The Dirichlet Principle</h2>
+  <p>Consider the functional:</p>
+  <div class="mathbox">
+    <div class="label">Dirichlet Energy</div>
+    $$E[u] = \int_\Omega |\nabla u|^2\, dx$$
+  </div>
+  <p>Claim: Among all functions $u \in H^1(\Omega)$ with $u = g$ on $\partial\Omega$, the minimiser of $E[u]$ satisfies $\Delta u = 0$. The Laplacian is the Euler-Lagrange equation of the Dirichlet energy. Harmonic functions are energy minimisers.</p>
+
+  <p>Riemann stated the Dirichlet principle as "obviously true" in his 1851 dissertation and used it to prove fundamental theorems of complex function theory. Weierstrass then showed that Riemann's argument was circular: he had assumed a minimiser existed without proof. The scandal shook the mathematical world. Hilbert's 1900 resolution — he proved the existence of a minimiser using the direct method in the calculus of variations — launched modern functional analysis.</p>
+
+  <h2>The Direct Method</h2>
+  <p>The modern proof of existence for variational problems has a clean structure:</p>
+
+  <div class="callout theorem">
+    <div class="callout-label">Direct Method in the Calculus of Variations</div>
+    <ol style="margin-top:10px;line-height:2">
+      <li>Take a minimising sequence: $u_n \in \mathcal{A}$ with $E[u_n] \to \inf E$</li>
+      <li>Show the sequence is bounded in an appropriate Sobolev space</li>
+      <li>Extract a weakly convergent subsequence $u_{n_k} \rightharpoonup u$ (using Hilbert/reflexive Banach space structure)</li>
+      <li>Show $E$ is weakly lower semicontinuous: $E[u] \leq \liminf E[u_{n_k}]$</li>
+      <li>Conclude $u$ is a minimiser</li>
+    </ol>
+  </div>
+
+  <p>Step 3 is the compactness step — this is where Sobolev embeddings are critical. Step 4 follows from convexity of $E$. The method is robust and applies to a vast range of problems.</p>
+
+  <h2>Euler-Lagrange Equations</h2>
+  <p>For a general functional $E[u] = \int_\Omega L(x, u, \nabla u)\, dx$, the condition for $u$ to be a critical point (first variation = 0) gives the Euler-Lagrange equation:</p>
+  <div class="mathbox">
+    $$-\sum_{i=1}^n \frac{\partial}{\partial x_i}\frac{\partial L}{\partial u_{x_i}} + \frac{\partial L}{\partial u} = 0$$
+  </div>
+
+  <table>
+    <tr><th>Lagrangian $L$</th><th>Euler-Lagrange PDE</th><th>Name</th></tr>
+    <tr><td>$|\nabla u|^2$</td><td>$\Delta u = 0$</td><td>Laplace's equation</td></tr>
+    <tr><td>$|\nabla u|^2 - fu$</td><td>$\Delta u = f$</td><td>Poisson's equation</td></tr>
+    <tr><td>$\sqrt{1+|\nabla u|^2}$</td><td>$\text{div}\frac{\nabla u}{\sqrt{1+|\nabla u|^2}} = 0$</td><td>Minimal surface equation</td></tr>
+    <tr><td>$|\nabla u|^2 + \frac{1}{\varepsilon^2}(u^2-1)^2$</td><td>$\Delta u = \frac{2}{\varepsilon^2}u(u^2-1)$</td><td>Allen-Cahn equation</td></tr>
+  </table>
+
+  <h2>Noether's Theorem: Symmetry and Conservation Laws</h2>
+  <p>One of the most beautiful theorems in all of mathematics connects the variational perspective to conserved quantities. Emmy Noether's 1915 theorem states: every continuous symmetry of a variational problem gives rise to a conservation law.</p>
+  <ul style="margin:12px 0 20px 24px;color:var(--ink2);line-height:2">
+    <li>Time translation symmetry $\to$ conservation of energy</li>
+    <li>Spatial translation symmetry $\to$ conservation of momentum</li>
+    <li>Rotational symmetry $\to$ conservation of angular momentum</li>
+    <li>Gauge symmetry $\to$ conservation of electric charge</li>
+  </ul>
+  <p>Every conservation law in physics is (in this sense) a consequence of a symmetry, mediated through a variational formulation. The PDE version of Noether's theorem — relating divergence-free quantities to symmetries of Lagrangians — is the foundation of modern mathematical physics.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(15)">← Previous</button>
+    <span class="page-indicator">17 / 22</span>
+    <button class="btn-nav" onclick="goTo(17)">Next: Spectral Theory →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 17 ══════════ -->
+<div class="page" id="p17">
+  <div class="page-eyebrow">Advanced Topics · Page 17</div>
+  <h1 class="page-title">Spectral <em>Theory</em></h1>
+  <p class="page-subtitle">Eigenvalues, eigenfunctions, and the harmonic analysis of differential operators</p>
+
+  <p class="dropcap">Spectral theory asks: what are the "natural frequencies" of a differential operator? The question is motivated directly by physics — the eigenvalues of the Laplacian on a domain are the resonant frequencies of a drum, the energy levels of a quantum particle in a box, and the decay rates of heat on a surface. The mathematical theory — built on the abstract spectral theory of operators in Hilbert spaces, developed by Hilbert himself and vastly generalised by von Neumann — is one of the deepest and most beautiful in all of mathematics. Mark Kac's famous 1966 question, "Can you hear the shape of a drum?" is a spectral theory question. (The answer, it turned out, is generally no.)</p>
+
+  <h2>The Laplacian Eigenvalue Problem</h2>
+  <div class="mathbox">
+    <div class="label">Dirichlet Eigenvalue Problem</div>
+    $$-\Delta u = \lambda u \text{ in } \Omega, \qquad u = 0 \text{ on } \partial\Omega$$
+  </div>
+
+  <p>The set of values $\lambda$ for which this has non-trivial solutions is the <strong>spectrum</strong> of $-\Delta$ on $\Omega$. The key results:</p>
+
+  <div class="callout theorem">
+    <div class="callout-label">Spectral Theorem for the Laplacian</div>
+    On a bounded domain $\Omega \subset \mathbb{R}^n$ with smooth boundary:
+    <ul style="margin-top:10px;line-height:2">
+      <li>There exist countably many eigenvalues $0 < \lambda_1 < \lambda_2 \leq \lambda_3 \leq \ldots \to \infty$</li>
+      <li>The corresponding eigenfunctions $\{u_n\}$ form an orthonormal basis for $L^2(\Omega)$</li>
+      <li>Every $f \in L^2(\Omega)$ expands as $f = \sum_n (f, u_n) u_n$</li>
+      <li>The smallest eigenvalue $\lambda_1 > 0$ characterises the Poincaré constant</li>
+    </ul>
+  </div>
+
+  <h2>Weyl's Law: Counting Eigenvalues</h2>
+  <p>How do eigenvalues grow? Hermann Weyl proved in 1911 the beautiful asymptotic:</p>
+  <div class="mathbox">
+    <div class="label">Weyl's Asymptotic Law</div>
+    $$\lambda_n \sim \frac{4\pi^2 n^{2/n}}{(\omega_n |\Omega|)^{2/n}} \quad \text{as } n \to \infty$$
+    <p style="font-size:0.85rem;color:var(--ink3);text-align:left;margin-top:10px">In particular: $N(\lambda) = \#\{\lambda_n \leq \lambda\} \sim \frac{\omega_n |\Omega|}{(2\pi)^n} \lambda^{n/2}$. The count of eigenvalues up to $\lambda$ grows like $\lambda^{n/2}$, and the proportionality constant depends only on the <em>volume</em> $|\Omega|$ — not on the shape.</p>
+  </div>
+
+  <p>Weyl's law means you can "hear" the dimension and volume of a domain from its eigenvalue spectrum. More refined terms in the asymptotic detect the boundary length (in 2D) and higher geometric invariants. This launched an entire field connecting spectral theory to geometry — spectral geometry.</p>
+
+  <h2>"Can You Hear the Shape of a Drum?"</h2>
+  <p>Kac's 1966 question: are there two non-isometric domains with the same eigenvalue spectrum? For 20 years it was open. In 1992, Gordon, Webb, and Wolpert constructed explicit examples of non-congruent planar domains (built from triangles) with identical spectra. The answer is no — you cannot always hear the shape. But the problem remains rich: for smooth convex domains, the question is still open.</p>
+
+  <h2>Spectral Theory and Quantum Mechanics</h2>
+  <p>In quantum mechanics, observables are self-adjoint operators on a Hilbert space. The Hamiltonian $H = -\frac{\hbar^2}{2m}\Delta + V(x)$ (Schrödinger operator) governs energy. Its eigenvalues $E_n$ are the quantised energy levels, and its eigenfunctions $\psi_n$ are the quantum states. The spectral theorem for self-adjoint operators — which extends the finite-dimensional spectral theorem to infinite dimensions — guarantees these operators can be "diagonalised" and that their eigenfunction expansions converge.</p>
+
+  <p>For the hydrogen atom, $V(x) = -e^2/|x|$, the Schrödinger equation can be solved exactly by separation of variables in spherical coordinates. The eigenvalues are $E_n = -\frac{me^4}{2\hbar^2 n^2}$ — the Bohr energy levels, recovering the experimentally observed spectral lines of hydrogen. This was one of the greatest successes of the marriage of PDE theory and quantum mechanics.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(16)">← Previous</button>
+    <span class="page-indicator">18 / 22</span>
+    <button class="btn-nav" onclick="goTo(18)">Next: Nonlinear PDEs & Shocks →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 18 ══════════ -->
+<div class="page" id="p18">
+  <div class="page-eyebrow">Advanced Topics · Page 18</div>
+  <h1 class="page-title">Nonlinear PDEs <em>&amp; Shocks</em></h1>
+  <p class="page-subtitle">Where linearity breaks down and the real world begins — conservation laws, shocks, and entropy</p>
+
+  <p class="dropcap">Linear PDEs are beautiful, tractable, and extensively understood. But the real physical world is profoundly nonlinear: the flow of air around an aircraft cannot be fully captured by linear equations; breaking ocean waves, traffic jams that form and dissolve, the crack propagation in a stressed material — all require nonlinear theory. Nonlinear PDEs resist systematic treatment. There is no general superposition principle, no Fourier decomposition, no Green's function. Instead, one must exploit the specific structure of each equation. The reward is a rich phenomenology: shocks, solitons, turbulence, and spontaneous pattern formation — none of which can occur in linear systems.</p>
+
+  <h2>Conservation Laws</h2>
+  <p>The prototype nonlinear PDE is the scalar conservation law:</p>
+  <div class="mathbox">
+    <div class="label">Scalar Conservation Law</div>
+    $$u_t + \left[f(u)\right]_x = 0, \qquad u(x,0) = u_0(x)$$
+    <p style="font-size:0.85rem;color:var(--ink3);text-align:left;margin-top:10px">$f(u)$ is the flux function. Total "mass" $\int u\, dx$ is conserved. The characteristics of this equation are $\dot x = f'(u)$ — they travel at speed $f'(u(x,t))$, which varies with the solution.</p>
+  </div>
+
+  <p>The inviscid Burgers equation $u_t + uu_x = 0$ (flux $f(u) = u^2/2$) is the simplest example. Characteristics travel at speed $u$, so regions where $u$ is large move faster than regions where $u$ is small. If $u_0$ is decreasing in some region, the faster-moving left part of the wave overtakes the slower-moving right part — and characteristics cross in finite time.</p>
+
+  <h2>Shocks and the Rankine-Hugoniot Condition</h2>
+  <p>When characteristics cross, the classical solution breaks down — $u$ would become multi-valued. Physically, a discontinuity (shock wave) forms. To allow discontinuous solutions, we must reinterpret the conservation law in the weak (distributional) sense. A function $u$ is a weak solution if:</p>
+  <div class="mathbox">
+    $$\iint \left(u\,\phi_t + f(u)\,\phi_x\right) dx\, dt + \int u_0\, \phi(\cdot,0)\, dx = 0 \quad \forall \phi \in C_c^\infty$$
+  </div>
+  <p>At a shock moving with speed $s$ along a curve of discontinuity, the weak formulation reduces to the Rankine-Hugoniot condition:</p>
+  <div class="mathbox">
+    <div class="label">Rankine-Hugoniot Jump Condition</div>
+    $$s = \frac{f(u_R) - f(u_L)}{u_R - u_L}$$
+    <p style="font-size:0.85rem;color:var(--ink3);text-align:left;margin-top:10px">$u_L$, $u_R$ are the solution values immediately left and right of the shock. The shock speed is determined by the jump in flux divided by the jump in $u$.</p>
+  </div>
+
+  <h2>Entropy Conditions: Selecting Physical Solutions</h2>
+  <p>The weak formulation allows too many solutions — discontinuities can go in any direction. The physical shock is selected by an additional condition. Lax's entropy condition for a convex flux: $f'(u_L) > s > f'(u_R)$ (characteristics run into the shock from both sides). The equivalent Oleinik entropy condition and Kruzkov's entropy solution framework provide the complete, well-posed theory for scalar conservation laws:</p>
+
+  <div class="callout theorem">
+    <div class="callout-label">Kruzkov's Theorem (1970)</div>
+    For $u_0 \in L^\infty(\mathbb{R})$, the Cauchy problem for $u_t + [f(u)]_x = 0$ has a unique entropy solution $u \in L^\infty(\mathbb{R}\times[0,\infty))$. The solution satisfies an $L^1$ contraction estimate: if $u, v$ are entropy solutions with data $u_0, v_0$, then for all $t > 0$:
+    $$\int_{\mathbb{R}} |u(x,t) - v(x,t)|\, dx \leq \int_{\mathbb{R}} |u_0(x) - v_0(x)|\, dx$$
+  </div>
+
+  <h2>Systems: The Euler Equations</h2>
+  <p>The full Euler equations for inviscid compressible flow form a hyperbolic system of conservation laws:</p>
+  <div class="mathbox">
+    $$\partial_t \begin{pmatrix}\rho\\\rho u\\E\end{pmatrix} + \partial_x\begin{pmatrix}\rho u\\\rho u^2 + p\\(E+p)u\end{pmatrix} = 0$$
+    <p style="font-size:0.85rem;color:var(--ink3);text-align:left;margin-top:10px">$\rho$ = density, $u$ = velocity, $E$ = total energy, $p$ = pressure. Closing the system requires an equation of state $p = p(\rho, E)$.</p>
+  </div>
+  <p>This system supports both shock waves and rarefaction waves. Its theory — systems of hyperbolic conservation laws — is vastly more complex than the scalar case. Glimm's existence theorem (1965) is a major result; the general theory remains an active research area.</p>
+
+  <h2>Viscosity Solutions: Beyond Classical PDE</h2>
+  <p>For first-order nonlinear equations like the Hamilton-Jacobi equation $u_t + H(Du) = 0$, the notion of a classical solution is too restrictive. The theory of <strong>viscosity solutions</strong> (Crandall-Lions, 1983) provides a notion of weak solution using comparison with smooth sub- and supersolutions. It gives a unique, stable solution theory — and connects to optimal control, differential games, front propagation, and Riemannian geometry. This was another Fields Medal-level breakthrough in PDE theory.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(17)">← Previous</button>
+    <span class="page-indicator">19 / 22</span>
+    <button class="btn-nav" onclick="goTo(19)">Next: Geometric PDEs →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 19 ══════════ -->
+<div class="page" id="p19">
+  <div class="page-eyebrow">Advanced Topics · Page 19</div>
+  <h1 class="page-title">Geometric <em>PDEs</em></h1>
+  <p class="page-subtitle">When geometry flows — minimal surfaces, Ricci flow, and the proof of the Poincaré Conjecture</p>
+
+  <p class="dropcap">The 20th century witnessed a deep and fruitful unification of PDEs with differential geometry. Geometric PDEs are equations that relate the geometry of a manifold or surface — its curvature, length, area, metric — to differential conditions derived from natural variational principles. They include some of the most celebrated equations in mathematics: the minimal surface equation (arising from soap films), the harmonic map equations (from generalised elasticity and quantum field theory), and the Ricci flow — a PDE introduced by Richard Hamilton in 1982 that became, in the hands of Grigori Perelman, the instrument for resolving the Poincaré Conjecture in 2003.</p>
+
+  <h2>Minimal Surfaces</h2>
+  <p>A surface $S$ in $\mathbb{R}^3$ is <strong>minimal</strong> if it is a critical point of the area functional — equivalently, if its mean curvature $H$ vanishes everywhere. The Euler-Lagrange equation for area gives:</p>
+  <div class="mathbox">
+    $$\text{div}\left(\frac{\nabla u}{\sqrt{1+|\nabla u|^2}}\right) = 0$$
+  </div>
+  <p>This is a quasilinear elliptic PDE for the height function $u(x,y)$ of the surface. The simplest solution is $u = \text{const}$ (a flat plane). The helicoid and catenoid are other classical solutions. The question of when the Plateau problem (finding a minimal surface spanning a given boundary curve) has a solution, and how many, is a rich and still-active area of research.</p>
+
+  <h2>Mean Curvature Flow</h2>
+  <p>If a surface moves so that each point moves at speed equal to its mean curvature (in the inward normal direction), we get mean curvature flow:</p>
+  <div class="mathbox">
+    $$\frac{\partial X}{\partial t} = H\, \mathbf{n}$$
+  </div>
+  <p>This is a parabolic PDE for the position vector $X$ of the evolving surface. It is the gradient flow for area — the steepest descent for the area functional. Convex surfaces shrink to points in finite time (Huisken, 1984), becoming increasingly spherical. The flow develops singularities (the surface becomes "pinched") which must be handled by surgery — cutting out the singular region and replacing it with a smooth cap. Mean curvature flow with surgery is the foundation of Perelman's work.</p>
+
+  <h2>Ricci Flow</h2>
+  <p>Introduced by Richard Hamilton in 1982, the Ricci flow is an evolution equation for the metric $g$ of a Riemannian manifold:</p>
+  <div class="mathbox">
+    <div class="label">Ricci Flow</div>
+    $$\frac{\partial g_{ij}}{\partial t} = -2\, R_{ij}$$
+    <p style="font-size:0.85rem;color:var(--ink3);text-align:left;margin-top:10px">$R_{ij}$ is the Ricci curvature tensor — a trace of the Riemann curvature tensor. The equation is a nonlinear parabolic system in the metric coefficients $g_{ij}$.</p>
+  </div>
+  <p>Ricci flow deforms the metric in the direction of decreasing curvature — it tends to "round out" positive curvature regions and spread curvature more uniformly. Hamilton proved in 1982 that any compact 3-manifold with positive Ricci curvature (initial condition) must be diffeomorphic to a sphere. But for general 3-manifolds, the flow can develop singularities.</p>
+
+  <div class="person-card">
+    <div class="person-name">Grigori Perelman</div>
+    <div class="person-dates">1966 – · Russian mathematician</div>
+    <p style="font-size:0.93rem;color:var(--ink2)">Perelman posted three preprints to arXiv in 2002–2003 proving the Poincaré Conjecture (and the more general Geometrisation Conjecture) using Ricci flow with surgery. He developed profound new estimates for the geometry of the flow (monotonicity formulas, non-collapsing theorems) that allowed singularities to be classified and surgically removed. He declined the Fields Medal (2006) and the $1,000,000 Clay Millennium Prize. He remains one of the most extraordinary mathematical minds of the modern era.</p>
+  </div>
+
+  <h2>Perelman's Proof: A Sketch</h2>
+  <p>The Poincaré Conjecture (1904) states: any simply connected, closed 3-manifold is homeomorphic to the 3-sphere $S^3$. Perelman's strategy:</p>
+  <ol style="margin:12px 0 20px 24px;color:var(--ink2);line-height:2">
+    <li>Start with an arbitrary simply connected 3-manifold $M$</li>
+    <li>Run the Ricci flow: $\partial_t g = -2\text{Ric}$</li>
+    <li>The flow develops singularities ("necks" that pinch) at finite time</li>
+    <li>Perform <em>Ricci flow with surgery</em>: excise the singular regions and cap them off</li>
+    <li>Using monotonicity of his "entropy functional" and non-collapsing estimates, show the topology is preserved through surgery</li>
+    <li>The flow eventually terminates in a round metric on $S^3$ — proving $M \cong S^3$</li>
+  </ol>
+  <p>Every step involves deep PDE analysis: parabolic regularity, Shi's estimates for curvature bounds, Hamilton's compactness theorem for Ricci flows, and entirely new analytical tools invented by Perelman. The proof is a monument to the power of PDE methods in pure mathematics.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(18)">← Previous</button>
+    <span class="page-indicator">20 / 22</span>
+    <button class="btn-nav" onclick="goTo(20)">Next: Frontier & Open Problems →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 20 ══════════ -->
+<div class="page" id="p20">
+  <div class="page-eyebrow">Advanced Topics · Page 20</div>
+  <h1 class="page-title">The <em>Frontier</em> &amp; Open Problems</h1>
+  <p class="page-subtitle">The deepest unsolved questions at the edge of human knowledge</p>
+
+  <p class="dropcap">PDE theory in the 21st century sits at a remarkable intersection: classical problems remain unsolved (Navier-Stokes, Yang-Mills mass gap), new connections to other fields are discovered regularly (random matrix theory, machine learning, quantum information), and entire new sub-fields continue to emerge. What follows is a survey of the most important open problems and active frontiers — the cutting edge of one of mathematics' most dynamic subjects.</p>
+
+  <h2>The Navier-Stokes Millennium Problem</h2>
+  <p>The Navier-Stokes equations govern viscous, incompressible fluid flow:</p>
+  <div class="mathbox">
+    <div class="label">Navier-Stokes Equations</div>
+    $$\mathbf{u}_t + (\mathbf{u}\cdot\nabla)\mathbf{u} - \nu\Delta\mathbf{u} + \nabla p = \mathbf{f}$$
+    $$\nabla \cdot \mathbf{u} = 0$$
+    <p style="font-size:0.85rem;color:var(--ink3);text-align:left;margin-top:10px">$\mathbf{u}(\mathbf{x},t)$ is the velocity field, $p$ is pressure, $\nu$ is kinematic viscosity, $\mathbf{f}$ is body force.</p>
+  </div>
+
+  <p>In 2D, global existence and uniqueness of smooth solutions is known (Ladyzhenskaya, 1960s). In 3D, it is an open problem — one of the seven Clay Millennium Prize Problems, carrying a $1,000,000 reward.</p>
+
+  <div class="callout warning">
+    <div class="callout-label">The Open Question</div>
+    Given smooth initial data $\mathbf{u}_0 \in C^\infty(\mathbb{R}^3)$ with $\nabla\cdot\mathbf{u}_0 = 0$, do smooth solutions to the 3D Navier-Stokes equations exist for all time $t > 0$? If so, must they remain bounded? Or can the velocity field blow up in finite time (develop a singularity)? The physical significance: does turbulence arise from finite-time blow-up of smooth solutions?
+  </div>
+
+  <p>The best current results: Leray (1934) proved global existence of weak solutions but not uniqueness. Partial results rule out blow-up at isolated spacetime points. The gap between the critical regularity at which blow-up is possible and the known a priori estimates remains frustratingly narrow.</p>
+
+  <h2>Yang-Mills Existence and Mass Gap</h2>
+  <p>The Yang-Mills equations generalise Maxwell's equations to non-Abelian gauge theories — the mathematical foundation of the Standard Model of particle physics. The Millennium Problem asks: in 4D Euclidean space, does a quantum Yang-Mills theory exist rigorously (as a probability measure on the space of connections), and does it have a mass gap (a positive lower bound on the energies of excitations above the vacuum)? This would give a mathematical foundation for the observed masses of subatomic particles. It remains completely open.</p>
+
+  <h2>Turbulence and the Kolmogorov Theory</h2>
+  <p>Turbulence is one of the last great mysteries of classical physics. The phenomenological theory of Kolmogorov (1941) predicts energy cascades from large to small scales with a $k^{-5/3}$ power spectrum. This is observed experimentally with extraordinary precision, but has never been derived from the Navier-Stokes equations. Making Kolmogorov's predictions rigorous — or showing they follow from first principles — would be a revolution in both mathematics and physics.</p>
+
+  <h2>Singularities in Geometric Flows</h2>
+  <p>Following Perelman's success, Ricci flow and mean curvature flow in higher dimensions remain incompletely understood. In dimensions $\geq 4$, singularities can be more complex than the cylindrical blow-ups that arise in 3D. Classifying all possible singularities of Ricci flow in dimension 4 (relevant for understanding 4-manifold topology) is a major open problem.</p>
+
+  <h2>PDEs and Machine Learning</h2>
+  <p>A striking development of the last decade: PDEs are appearing at the foundation of machine learning theory. Neural networks can be understood as discretisations of ODE/PDE dynamical systems (ResNets correspond to explicit Euler schemes for an ODE on the space of features). Implicit regularisation in stochastic gradient descent has PDE descriptions. Mean-field theory for neural network training gives McKean-Vlasov PDEs. Score-based diffusion models (underlying tools like DALL-E and Stable Diffusion) are directly built on the theory of the Fokker-Planck equation and the heat equation.</p>
+
+  <div class="callout info">
+    <div class="callout-label">The Physics-Informed Neural Networks (PINNs) Frontier</div>
+    A new paradigm for solving PDEs numerically uses deep neural networks trained to satisfy PDE constraints. The network is trained by minimising a loss that includes the PDE residual, boundary conditions, and (if available) observed data. PINNs can handle high-dimensional PDEs that are intractable for classical methods, at the cost of reduced rigorousness and uncertain convergence guarantees. Establishing rigorous convergence theory for PINNs is an active research area bridging PDEs and machine learning.
+  </div>
+
+  <h2>Dispersive PDEs and Solitons</h2>
+  <p>Nonlinear dispersive PDEs — like the nonlinear Schrödinger equation (NLS) $iu_t + \Delta u + |u|^{2\sigma} u = 0$ and the Korteweg-de Vries equation (KdV) $u_t + 6uu_x + u_{xxx} = 0$ — exhibit striking phenomena: solitons (stable localised waves that maintain their shape indefinitely and pass through each other elastically), blow-up, scattering. The complete classification of long-time dynamics (does every solution eventually scatter to free waves? Or form solitons? Can blow-up occur?) is deeply studied but largely open for the critical and supercritical nonlinear Schrödinger equation in high dimensions.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(19)">← Previous</button>
+    <span class="page-indicator">21 / 22</span>
+    <button class="btn-nav" onclick="goTo(21)">Next: Further Study →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 21 ══════════ -->
+<div class="page" id="p21">
+  <div class="page-eyebrow">Coda · Page 21</div>
+  <h1 class="page-title">Further <em>Study</em></h1>
+  <p class="page-subtitle">A carefully curated reading path from first principles to the research frontier</p>
+
+  <p class="dropcap">The journey through PDE theory has many paths, and the right one depends on your background and goals. What follows is an honest, opinionated guide to the best resources at each level — the books that are actually read and taught from, the online resources that are genuinely useful, and the connections to other fields that make the subject inexhaustible.</p>
+
+  <h2>Prerequisites</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Essential Background</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">Multivariable calculus (gradients, divergence, Stokes theorem), ordinary differential equations (existence-uniqueness, phase portraits), and real analysis (limits, continuity, uniform convergence) are non-negotiable. Linear algebra (eigenvalues, inner products) is heavily used.</p>
+    </div>
+    <div class="card">
+      <h4>Helpful Background</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">Complex analysis (conformal mapping, residues) is deeply useful for 2D problems. Functional analysis (Banach/Hilbert spaces, operators) becomes essential at the graduate level. Riemannian geometry is needed for geometric PDEs.</p>
+    </div>
+  </div>
+
+  <h2>Introductory Level</h2>
+  <div class="accordion">
+    <div class="acc-item open">
+      <div class="acc-header" onclick="toggleAcc(this)">Strauss — Partial Differential Equations: An Introduction <span class="acc-toggle">+</span></div>
+      <div class="acc-body">The best first textbook. Focuses on the Big Three (heat, wave, Laplace) and solution techniques (separation, Fourier transforms, characteristics). Approachable with only calculus background. Beautifully written with good physical motivation. The standard undergraduate text at top universities.</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Evans — Partial Differential Equations (AMS Graduate Studies) <span class="acc-toggle">+</span></div>
+      <div class="acc-body">The definitive graduate textbook. Comprehensive, rigorous, and brilliantly organised. Covers representation formulas, Sobolev spaces, second-order elliptic/parabolic/hyperbolic theory, calculus of variations, nonlinear first-order PDEs, and more. Dense but rewarding. The standard first graduate course text.</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Folland — Introduction to Partial Differential Equations <span class="acc-toggle">+</span></div>
+      <div class="acc-body">Emphasises harmonic analysis, Fourier transform, and distributions. Beautiful treatment of fundamental solutions and the Laplacian. Best read alongside Evans for a more analysis-flavoured treatment. Folland's writing is exceptionally clear.</div>
+    </div>
+  </div>
+
+  <h2>Advanced and Specialised</h2>
+  <div class="accordion">
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Gilbarg & Trudinger — Elliptic PDEs of Second Order <span class="acc-toggle">+</span></div>
+      <div class="acc-body">The encyclopaedic reference for elliptic theory. Contains essentially everything known about second-order elliptic equations: maximum principles, Schauder estimates, Calderón-Zygmund theory, quasilinear equations, the Monge-Ampère equation. Demanding but indispensable for serious research.</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Taylor — Partial Differential Equations (3 volumes) <span class="acc-toggle">+</span></div>
+      <div class="acc-body">Comprehensive treatment using pseudodifferential operators and microlocal analysis. Volume I covers basic theory, Volume II nonlinear equations, Volume III advanced topics. The modern approach for researchers who want to understand the full machinery of the subject.</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Smoller — Shock Waves and Reaction-Diffusion Equations <span class="acc-toggle">+</span></div>
+      <div class="acc-body">The standard reference for hyperbolic conservation laws and nonlinear wave theory. Covers Riemann problems, Glimm's scheme, viscosity solutions, and Turing patterns. Well-written and self-contained.</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">Chow & Knopf / Topping — Lectures on the Ricci Flow <span class="acc-toggle">+</span></div>
+      <div class="acc-body">For geometric PDEs. Chow & Knopf provide a thorough treatment of the technical foundations. Topping's notes (freely available online) give a more accessible introduction. Essential for understanding Perelman's work.</div>
+    </div>
+  </div>
+
+  <h2>Online Resources</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>MIT OpenCourseWare</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">18.152 Introduction to PDEs and 18.156 Differential Analysis both have complete lecture notes, problem sets, and in some cases video lectures. Free and rigorous.</p>
+    </div>
+    <div class="card">
+      <h4>Terry Tao's Blog</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">terrytao.wordpress.com. Fields Medallist Terence Tao posts expository articles on PDEs, harmonic analysis, and related topics at research level. The notes on wave equations, Navier-Stokes, and dispersive PDEs are exceptional.</p>
+    </div>
+    <div class="card">
+      <h4>ICM Proceedings</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">The International Congress of Mathematicians proceedings contain survey articles by the world's best mathematicians on active frontiers. Free online. An excellent way to understand where the subject is heading.</p>
+    </div>
+    <div class="card">
+      <h4>arXiv math.AP</h4>
+      <p style="font-size:0.88rem;color:var(--ink2)">The preprint server for new research in Analysis of PDEs. Follow it regularly once you're at the graduate level. It gives you a real-time view of what the community is working on.</p>
+    </div>
+  </div>
+
+  <h2>A Learning Path</h2>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Phase 1</div>
+      <div class="tl-content"><strong>Foundation (3–6 months):</strong> Work through Strauss completely. Do all the exercises. Understand the Big Three deeply. Know separation of variables, Fourier series, d'Alembert's formula, Green's theorem.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Phase 2</div>
+      <div class="tl-content"><strong>Modern analysis foundations (6–12 months):</strong> Rudin's Real Analysis, functional analysis (Kreyszig or Brezis), Schwartz distributions. Build the language for graduate PDE.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Phase 3</div>
+      <div class="tl-content"><strong>Graduate PDE (1–2 years):</strong> Evans, front to back. Sobolev spaces, weak solutions, elliptic regularity, parabolic equations, hyperbolic systems. This is the core of the subject.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Phase 4</div>
+      <div class="tl-content"><strong>Specialisation:</strong> Choose a direction — elliptic nonlinear equations (Gilbarg-Trudinger), geometric PDEs (Topping, Chow), dispersive PDEs (Tao's notes), or numerical analysis (Brenner-Scott for finite elements). Read recent papers in your area.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Phase 5</div>
+      <div class="tl-content"><strong>Research:</strong> Find an advisor working on problems you care about. Read their papers. Understand one theorem deeply enough to find a nearby open question. The frontier awaits.</div>
+    </div>
+  </div>
+
+  <div class="pullquote">
+    Mathematics is not a careful march down a well-cleared highway, but a journey into a strange wilderness, where the explorers often get lost.
+    <cite>— W.S. Anglin</cite>
+  </div>
+
+  <p>You now have a map of this wilderness. Some parts are fully charted; others — the Navier-Stokes problem, the deep theory of turbulence, the marriage of geometric flows with topology — remain terra incognita. That is not a defect of the subject. It is its most glorious feature. The story of PDEs is still being written.</p>
+
+  <div class="page-nav">
+    <button class="btn-nav" onclick="goTo(20)">← Previous</button>
+    <span class="page-indicator">22 / 22</span>
+    <button class="btn-nav disabled">End of Guide</button>
+  </div>
+
+  <p class="footnote">This guide covers foundational to graduate-level PDE theory. Mathematical statements are given in standard form; some technical conditions are suppressed for readability. For full rigour, consult Evans (2010), Folland (1995), or the primary literature cited throughout.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+// ─── HEAT SIMULATION ──────────────────────────────────────
+const heatCanvas = document.getElementById('heatCanvas');
+let heatCtx, heatU, heatN, heatRunning;
+
+function initHeat() {
+  const canvas = document.getElementById('heatCanvas');
+  if(!canvas) return;
+  heatCtx = canvas.getContext('2d');
+  heatN = 300;
+  resetHeat();
+}
+
+function setHeatIC(mode) {
+  document.querySelectorAll('[id^=hBtn]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('hBtn'+mode).classList.add('active');
+  heatU = new Float64Array(heatN);
+  if(mode===0) { for(let i=0;i<heatN;i++) heatU[i] = i<heatN/2 ? 1:0; }
+  else if(mode===1) { heatU[Math.floor(heatN/2)] = 10; }
+  else if(mode===2) { for(let i=0;i<heatN;i++) heatU[i] = Math.sin(4*Math.PI*i/heatN); }
+  else { for(let i=0;i<heatN;i++) heatU[i]=(Math.abs(i-heatN/3)<15||Math.abs(i-2*heatN/3)<15)?1:0; }
+}
+
+function resetHeat() {
+  setHeatIC(0);
+  if(!heatRunning) { heatRunning=true; heatStep(); }
+}
+
+function heatStep() {
+  if(!heatCtx) return;
+  requestAnimationFrame(heatStep);
+  const kappa=0.3, dt=0.5;
+  const next = new Float64Array(heatN);
+  for(let i=1;i<heatN-1;i++) next[i]=heatU[i]+kappa*dt*(heatU[i+1]-2*heatU[i]+heatU[i-1]);
+  next[0]=next[heatN-1]=0;
+  heatU=next;
+  // draw
+  const W=heatCanvas.width, H=heatCanvas.height;
+  heatCtx.fillStyle='#121830'; heatCtx.fillRect(0,0,W,H);
+  // colour gradient
+  const imgd = heatCtx.createImageData(W,H);
+  const dx = W/heatN;
+  for(let i=0;i<heatN;i++){
+    const v=Math.max(0,Math.min(1,heatU[i]/1));
+    const r=Math.floor(255*Math.pow(v,0.5)), g=Math.floor(80*v), b=Math.floor(200*(1-v));
+    for(let xi=Math.floor(i*dx);xi<Math.floor((i+1)*dx);xi++){
+      for(let yi=0;yi<H;yi++){
+        const idx=4*(yi*W+xi);
+        imgd.data[idx]=r; imgd.data[idx+1]=g; imgd.data[idx+2]=b; imgd.data[idx+3]=255;
+      }
+    }
+  }
+  heatCtx.putImageData(imgd,0,0);
+  // overlay curve
+  heatCtx.beginPath(); heatCtx.strokeStyle='rgba(0,212,170,0.9)'; heatCtx.lineWidth=2;
+  for(let i=0;i<heatN;i++){
+    const x=i*W/heatN, y=H-10-heatU[i]*(H-20);
+    i===0?heatCtx.moveTo(x,y):heatCtx.lineTo(x,y);
+  }
+  heatCtx.stroke();
+}
+
+// ─── WAVE ANIMATION ──────────────────────────────────────
+function initWave() {
+  const canvas = document.getElementById('waveCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  let t=0;
+  function waveFrame(){
+    requestAnimationFrame(waveFrame);
+    ctx.fillStyle='#121830'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(91,143,212,0.6)'; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    for(let x=0;x<W;x++){
+      const xi=x/W*8-4;
+      const y=H/2-40*Math.exp(-Math.pow(xi-t*0.8,2)/0.3);
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.strokeStyle='rgba(200,96,90,0.6)'; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    for(let x=0;x<W;x++){
+      const xi=x/W*8-4;
+      const y=H/2-40*Math.exp(-Math.pow(xi+t*0.8-8,2)/0.3);
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.strokeStyle='rgba(0,212,170,0.85)'; ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let x=0;x<W;x++){
+      const xi=x/W*8-4;
+      const y=H/2-40*(Math.exp(-Math.pow(xi-t*0.8,2)/0.3)+Math.exp(-Math.pow(xi+t*0.8-8,2)/0.3));
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    // labels
+    ctx.font='11px Inconsolata'; ctx.fillStyle='rgba(91,143,212,0.8)';
+    ctx.fillText('f(x-ct)',12,16);
+    ctx.fillStyle='rgba(200,96,90,0.8)';
+    ctx.fillText('g(x+ct)',12,30);
+    ctx.fillStyle='rgba(0,212,170,0.9)';
+    ctx.fillText('u = f+g',12,44);
+    t+=0.012; if(t>10) t=0;
+  }
+  waveFrame();
+}
+
+// Init when pages become visible
+const observer = new MutationObserver(mutations=>{
+  mutations.forEach(m=>{
+    if(m.type==='attributes'){
+      const el=m.target;
+      if(el.classList.contains('active')){
+        if(el.id==='p6') setTimeout(initHeat,50);
+        if(el.id==='p7') setTimeout(initWave,50);
+      }
+    }
+  });
+});
+document.querySelectorAll('.page').forEach(p=>observer.observe(p,{attributes:true}));
+</script>
+
+
+<script>
+// ─── STARS ───────────────────────────────────────────────
+(function(){
+  const sf = document.getElementById('starfield');
+  for(let i=0;i<120;i++){
+    const s = document.createElement('div');
+    s.className='star';
+    const sz = Math.random()*2+0.5;
+    s.style.cssText=`
+      width:${sz}px;height:${sz}px;
+      left:${Math.random()*100}%;top:${Math.random()*100}%;
+      --dur:${(Math.random()*4+2).toFixed(1)}s;
+      --delay:-${(Math.random()*6).toFixed(1)}s;
+      --bright:${(Math.random()*0.6+0.2).toFixed(2)};
+    `;
+    sf.appendChild(s);
+  }
+})();
+
+// ─── NAVIGATION ──────────────────────────────────────────
+let currentPage = 0;
+const totalPages = 22;
+
+function goTo(n) {
+  if(n < 0 || n >= totalPages) return;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  const pg = document.getElementById('p'+n);
+  if(pg) pg.classList.add('active');
+  document.querySelectorAll('.nav-item')[n]?.classList.add('active');
+  currentPage = n;
+  document.getElementById('progress-fill').style.width = ((n/(totalPages-1))*100)+'%';
+  window.scrollTo(0,0);
+  if(typeof MathJax !== 'undefined') MathJax.typesetPromise();
+}
+
+function toggleMenu() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ─── ACCORDION ───────────────────────────────────────────
+function toggleAcc(header) {
+  const item = header.parentElement;
+  item.classList.toggle('open');
+}
+
+// ─── CLASSIFIER ──────────────────────────────────────────
+function classifyPDE() {
+  const A = parseFloat(document.getElementById('cA').value);
+  const B = parseFloat(document.getElementById('cB').value);
+  const C = parseFloat(document.getElementById('cC').value);
+  const disc = B*B - A*C;
+  const el = document.getElementById('classifyResult');
+  let type, color, desc;
+  if(Math.abs(disc) < 1e-10) {
+    type='Parabolic'; color='rgba(200,96,90,0.1)';
+    desc='B² − AC = 0. Prototype: heat equation. Models diffusion processes. One family of real characteristics.';
+  } else if(disc < 0) {
+    type='Elliptic'; color='rgba(91,143,212,0.1)';
+    desc='B² − AC < 0. Prototype: Laplace\'s equation. Models equilibrium. No real characteristics — information comes from all directions.';
+  } else {
+    type='Hyperbolic'; color='rgba(106,171,122,0.1)';
+    desc='B² − AC > 0. Prototype: wave equation. Models propagation. Two families of real characteristics.';
+  }
+  el.style.background = color;
+  el.style.border = '1px solid currentColor';
+  el.innerHTML = `<strong style="color:var(--gold2)">${type}</strong><br><span style="font-family:var(--mono);font-size:12px;color:var(--ink3)">B² − AC = ${disc.toFixed(4)}</span><p style="margin-top:8px;font-size:0.9rem;color:var(--ink2)">${desc}</p>`;
+  el.classList.add('show');
+  if(typeof MathJax !== 'undefined') MathJax.typesetPromise([el]);
+}
+</script>
