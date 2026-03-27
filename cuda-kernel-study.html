@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPU Kernel Engineer — 6 Month Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Roboto:wght@300;400;500&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #FF3621;
+    --navy: #1B2431;
+    --navy-light: #2a3750;
+    --grey-50: #F8F9FA;
+    --grey-100: #F0F2F5;
+    --grey-200: #E1E4E8;
+    --grey-400: #9EA7B3;
+    --grey-600: #5A6478;
+    --grey-800: #2D3748;
+    --white: #FFFFFF;
+    --green: #1a7a3c;
+    --green-light: #EBF8F0;
+    --green-border: #B7E8C5;
+    --amber: #9a6200;
+    --amber-light: #FFF8E6;
+    --amber-border: #FFE0A0;
+    --blue: #0055AA;
+    --blue-light: #EEF4FF;
+    --blue-border: #C7D9FF;
+    --purple: #5B3FA6;
+    --purple-light: #F3F0FF;
+    --purple-border: #C9BCFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Roboto', sans-serif; background: var(--grey-50); color: var(--navy); min-height: 100vh; }
+
+  header {
+    background: var(--white);
+    border-bottom: 3px solid var(--red);
+    padding: 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(27,36,49,0.08);
+  }
+
+  .logo-area { display: flex; align-items: center; gap: 14px; }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--navy);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 800; font-size: 13px; color: var(--red);
+  }
+  .logo-text { font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 17px; color: var(--navy); letter-spacing: -0.3px; }
+  .logo-text span { color: var(--red); }
+  .header-badge {
+    font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600;
+    background: var(--grey-100); color: var(--grey-600);
+    padding: 4px 10px; border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+
+  .hero {
+    background: var(--navy);
+    padding: 48px 48px 40px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before { content: ''; position: absolute; top: -80px; right: -80px; width: 400px; height: 400px; background: var(--red); opacity: 0.06; border-radius: 50%; }
+  .hero::after { content: ''; position: absolute; bottom: -60px; left: 30%; width: 280px; height: 280px; background: var(--red); opacity: 0.04; border-radius: 50%; }
+  .hero-inner { position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+  .hero h1 { font-family: 'Barlow', sans-serif; font-size: 36px; font-weight: 800; color: var(--white); letter-spacing: -0.5px; line-height: 1.15; }
+  .hero h1 span { color: var(--red); }
+  .hero p { font-size: 14px; color: rgba(255,255,255,0.6); margin-top: 10px; font-weight: 300; max-width: 520px; line-height: 1.7; }
+  .hero-meta { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+  .hero-stat { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 10px 18px; text-align: right; }
+  .hero-stat .val { font-family: 'Barlow', sans-serif; font-size: 20px; font-weight: 800; color: var(--red); line-height: 1; }
+  .hero-stat .lbl { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 3px; }
+
+  .timeline-strip {
+    background: var(--white);
+    border-bottom: 1px solid var(--grey-200);
+    padding: 0 48px;
+    display: flex; gap: 0; overflow-x: auto;
+    position: sticky; top: 72px; z-index: 90;
+    box-shadow: 0 2px 8px rgba(27,36,49,0.04);
+  }
+
+  .month-tab {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 18px;
+    cursor: pointer; border: none; background: none;
+    border-bottom: 3px solid transparent; margin-bottom: -1px;
+    transition: all 0.2s; white-space: nowrap;
+    font-family: 'Barlow', sans-serif;
+  }
+  .month-tab:hover .month-label { color: var(--navy); }
+  .month-tab.active { border-bottom-color: var(--red); }
+
+  .month-chip {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 800;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .month-tab:not(.active) .month-chip { background: var(--grey-100); color: var(--grey-400); border: 2px solid var(--grey-200); }
+  .month-tab.active .month-chip { background: var(--red); color: white; border: 2px solid var(--red); }
+  .month-tab.done .month-chip { background: var(--green); color: white; border: 2px solid var(--green); }
+  .month-tab.setup-tab.active .month-chip { background: var(--purple); border-color: var(--purple); }
+  .month-tab.setup-tab { border-bottom-color: transparent; }
+  .month-tab.setup-tab.active { border-bottom-color: var(--purple); }
+
+  .month-label { font-size: 13px; font-weight: 600; color: var(--grey-600); transition: color 0.2s; line-height: 1.2; }
+  .month-tab.active .month-label { color: var(--red); }
+  .month-tab.setup-tab.active .month-label { color: var(--purple); }
+  .month-tab.done .month-label { color: var(--green); }
+  .month-sublabel { font-size: 10px; color: var(--grey-400); font-weight: 400; }
+
+  .content { max-width: 940px; margin: 0 auto; padding: 36px 24px 80px; }
+
+  .month-panel { display: none; }
+  .month-panel.active { display: block; animation: fadeIn 0.22s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+  .month-header {
+    display: flex; gap: 20px; align-items: flex-start;
+    padding: 22px 26px;
+    background: var(--white); border-radius: 10px;
+    border-left: 4px solid var(--red);
+    box-shadow: 0 1px 6px rgba(27,36,49,0.06); margin-bottom: 22px;
+  }
+  .month-header.setup-header { border-left-color: var(--purple); }
+
+  .month-badge {
+    width: 54px; height: 54px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--red) 0%, #cc2b18 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex-shrink: 0; font-family: 'Barlow', sans-serif; color: white;
+  }
+  .month-badge.setup { background: linear-gradient(135deg, var(--purple) 0%, #3d2a78 100%); }
+  .month-badge .mo { font-size: 10px; font-weight: 600; opacity: 0.8; letter-spacing: 0.5px; text-transform: uppercase; }
+  .month-badge .mn { font-size: 20px; font-weight: 800; line-height: 1; }
+
+  .month-header h2 { font-family: 'Barlow', sans-serif; font-size: 21px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .month-header p { font-size: 14px; color: var(--grey-600); line-height: 1.6; }
+
+  .overview-strip { display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
+  .overview-pill {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--white); border: 1.5px solid var(--grey-200); border-radius: 8px;
+    padding: 10px 16px; flex: 1; min-width: 130px;
+  }
+  .overview-pill .num { font-family: 'Barlow', sans-serif; font-size: 19px; font-weight: 800; color: var(--red); line-height: 1; }
+  .overview-pill .lbl { font-size: 11px; color: var(--grey-600); line-height: 1.3; }
+
+  .progress-area { margin-bottom: 18px; }
+  .progress-label {
+    font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600;
+    color: var(--grey-400); text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 7px; display: flex; justify-content: space-between;
+  }
+  .progress-label .count { color: var(--red); }
+  .progress-bar { height: 5px; background: var(--grey-200); border-radius: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--red); border-radius: 10px; transition: width 0.4s ease; }
+
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+
+  .step {
+    background: var(--white); border-radius: 10px;
+    border: 1.5px solid var(--grey-200); overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .step.done { border-color: var(--green-border); }
+  .step.open { border-color: var(--red); box-shadow: 0 2px 16px rgba(255,54,33,0.09); }
+  .step.open.setup-step { border-color: var(--purple); box-shadow: 0 2px 16px rgba(91,63,166,0.09); }
+
+  .step-header { display: flex; align-items: center; gap: 14px; padding: 15px 18px; cursor: pointer; user-select: none; }
+
+  .step-num {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 12px;
+    flex-shrink: 0; transition: all 0.2s;
+  }
+  .step:not(.done):not(.open) .step-num { background: var(--grey-100); color: var(--grey-400); border: 2px solid var(--grey-200); }
+  .step.open .step-num { background: var(--red); color: white; border: 2px solid var(--red); }
+  .step.open.setup-step .step-num { background: var(--purple); border-color: var(--purple); }
+  .step.done .step-num { background: var(--green); color: white; border: 2px solid var(--green); font-size: 11px; }
+
+  .step-title-group { flex: 1; }
+  .step-title { font-family: 'Barlow', sans-serif; font-weight: 600; font-size: 14px; color: var(--navy); line-height: 1.3; }
+  .step.done .step-title { color: var(--grey-600); text-decoration: line-through; }
+  .step-subtitle { font-size: 12px; color: var(--grey-400); margin-top: 2px; }
+  .step-week {
+    font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 700;
+    background: var(--grey-100); color: var(--grey-600);
+    padding: 3px 8px; border-radius: 20px; letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
+  }
+  .step.open .step-week { background: #FFECEA; color: var(--red); }
+  .step.open.setup-step .step-week { background: var(--purple-light); color: var(--purple); }
+  .step.done .step-week { background: var(--green-light); color: var(--green); }
+
+  .step-hours {
+    font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 700;
+    background: var(--blue-light); color: var(--blue);
+    padding: 3px 8px; border-radius: 20px; letter-spacing: 0.3px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .step.done .step-hours { background: var(--green-light); color: var(--green); }
+  .step.open .step-hours { background: var(--blue-light); color: var(--blue); }
+
+  /* CLAUDE CODE BADGES */
+  .cc-banner {
+    border-radius: 7px; padding: 10px 14px; font-size: 13px; line-height: 1.6;
+    margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start;
+    background: #F0FBF4; border: 1.5px solid #6EE7A0; color: #0f5c2e;
+  }
+  .cc-banner.manual {
+    background: #FFF5F3; border-color: #FFCCC4; color: #8B2500;
+  }
+  .cc-icon {
+    flex-shrink: 0; font-family: 'Barlow', sans-serif; font-size: 10px; font-weight: 800;
+    padding: 2px 6px; border-radius: 4px; margin-top: 1px; white-space: nowrap;
+    background: #6EE7A0; color: #0f5c2e; letter-spacing: 0.3px;
+  }
+  .cc-banner.manual .cc-icon { background: #FFCCC4; color: #8B2500; }
+  .step-title-group .cc-chip {
+    display: inline-block; margin-left: 6px;
+    font-family: 'Barlow', sans-serif; font-size: 10px; font-weight: 800;
+    background: #D1FAE5; color: #065f46; padding: 1px 6px; border-radius: 10px;
+    vertical-align: middle; letter-spacing: 0.3px;
+  }
+  .step-title-group .manual-chip {
+    display: inline-block; margin-left: 6px;
+    font-family: 'Barlow', sans-serif; font-size: 10px; font-weight: 800;
+    background: #FFECEA; color: #8B2500; padding: 1px 6px; border-radius: 10px;
+    vertical-align: middle; letter-spacing: 0.3px;
+  }
+  /* LEGEND */
+  .cc-legend {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    background: var(--white); border: 1.5px solid var(--grey-200);
+    border-radius: 8px; padding: 12px 18px; margin-bottom: 16px; align-items: center;
+  }
+  .cc-legend-label {
+    font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.6px; color: var(--grey-400); margin-right: 4px;
+  }
+  .cc-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--grey-600); }
+  .cc-legend-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .cc-legend-dot.green { background: #6EE7A0; }
+  .cc-legend-dot.red { background: #FFCCC4; }
+  .cc-legend-dot.orange { background: #FFD580; }
+  .step-caret { color: var(--grey-400); font-size: 11px; transition: transform 0.2s; flex-shrink: 0; }
+  .step.open .step-caret { transform: rotate(180deg); color: var(--red); }
+
+  .step-body { display: none; padding: 0 18px 18px 62px; }
+  .step.open .step-body { display: block; animation: slideDown 0.18s ease; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .step-body p { font-size: 14px; line-height: 1.75; color: var(--grey-800); margin-bottom: 12px; }
+
+  .step-body ul { list-style: none; display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+  .step-body ul li { font-size: 14px; color: var(--grey-800); line-height: 1.65; padding-left: 18px; position: relative; }
+  .step-body ul li::before { content: '—'; position: absolute; left: 0; color: var(--red); font-size: 11px; top: 3px; }
+
+  .callout {
+    border-radius: 7px; padding: 11px 14px; font-size: 13px; line-height: 1.65;
+    margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start;
+    background: #FFF5F3; border: 1px solid #FFCCC4; color: #8B2500;
+  }
+  .callout.info { background: var(--blue-light); border-color: var(--blue-border); color: #1a3a7a; }
+  .callout.success { background: var(--green-light); border-color: var(--green-border); color: var(--green); }
+  .callout.amber { background: var(--amber-light); border-color: var(--amber-border); color: var(--amber); }
+  .callout.purple { background: var(--purple-light); border-color: var(--purple-border); color: var(--purple); }
+
+  .callout-icon {
+    flex-shrink: 0; font-family: 'Barlow', sans-serif; font-size: 10px; font-weight: 800;
+    width: 17px; height: 17px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .callout .callout-icon { background: #FFCCC4; color: #8B2500; }
+  .callout.info .callout-icon { background: var(--blue-border); color: #1a3a7a; }
+  .callout.success .callout-icon { background: var(--green-border); color: var(--green); }
+  .callout.amber .callout-icon { background: var(--amber-border); color: var(--amber); }
+  .callout.purple .callout-icon { background: var(--purple-border); color: var(--purple); }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .tag { font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; letter-spacing: 0.3px; }
+  .tag.red { background: #FFECEA; color: var(--red); }
+  .tag.navy { background: var(--grey-100); color: var(--navy); }
+  .tag.green { background: var(--green-light); color: var(--green); }
+  .tag.amber { background: var(--amber-light); color: var(--amber); }
+  .tag.blue { background: var(--blue-light); color: var(--blue); }
+  .tag.purple { background: var(--purple-light); color: var(--purple); }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.8px; color: var(--grey-400);
+    margin-bottom: 8px; margin-top: 16px;
+  }
+
+  /* RESOURCES GRID */
+  .resources { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 14px; }
+  .resource-card { background: var(--grey-50); border: 1.5px solid var(--grey-200); border-radius: 8px; padding: 12px 14px; }
+  .resource-card .rc-type { font-family: 'Barlow', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--grey-400); margin-bottom: 3px; }
+  .resource-card h4 { font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 3px; line-height: 1.3; }
+  .resource-card p { font-size: 12px; color: var(--grey-600); margin: 0; line-height: 1.5; }
+  .resource-card a { font-size: 11px; color: var(--red); text-decoration: none; font-weight: 600; display: inline-block; margin-top: 4px; }
+  .resource-card a:hover { text-decoration: underline; }
+
+  /* PLATFORM BADGES */
+  .platform-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 14px; }
+  .platform-badge {
+    display: flex; align-items: center; gap: 7px;
+    border: 1.5px solid var(--grey-200); border-radius: 8px;
+    padding: 9px 14px; background: var(--white); flex: 1; min-width: 150px;
+  }
+  .platform-badge .pb-icon {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow', sans-serif; font-size: 10px; font-weight: 800;
+    color: white; flex-shrink: 0;
+  }
+  .pb-runpod { background: #4F46E5; }
+  .pb-vast { background: #0891B2; }
+  .pb-lambda { background: #16A34A; }
+  .pb-local { background: var(--navy); }
+  .platform-badge .pb-name { font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy); line-height: 1.2; }
+  .platform-badge .pb-sub { font-size: 11px; color: var(--grey-400); }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--navy); color: #e8edf3;
+    font-family: 'Roboto Mono', monospace; font-size: 12px; line-height: 1.75;
+    border-radius: 7px; padding: 14px 16px; margin-bottom: 12px; overflow-x: auto;
+  }
+  .code-block .comment { color: #5a7a9a; }
+  .code-block .kw { color: #FF3621; }
+  .code-block .fn { color: #7ec8e3; }
+  .code-block .str { color: #a8d8a8; }
+  .code-block .cmd { color: #FFD580; }
+
+  /* TESTING GROUND */
+  .test-ground {
+    background: var(--green-light); border: 1.5px solid var(--green-border);
+    border-radius: 8px; padding: 14px 16px; margin: 12px 0;
+  }
+  .test-ground-label {
+    font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.6px; color: var(--green); margin-bottom: 8px;
+  }
+  .test-ground p { font-size: 13px; color: #1a4a2e; margin-bottom: 8px; line-height: 1.6; }
+  .test-ground ul { margin-bottom: 0; }
+  .test-ground ul li { font-size: 13px; color: #1a4a2e; }
+  .test-ground ul li::before { color: var(--green); }
+
+  .divider { height: 1px; background: var(--grey-200); margin: 14px 0; }
+
+  .step-actions { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
+  .btn-done {
+    font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600;
+    padding: 8px 18px; border-radius: 6px; border: none; cursor: pointer;
+    background: var(--red); color: white; transition: background 0.15s;
+  }
+  .btn-done:hover { background: #cc2b18; }
+
+  .completion-banner {
+    display: none;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-radius: 12px; padding: 26px 30px; margin-top: 22px;
+    position: relative; overflow: hidden;
+  }
+  .completion-banner::before { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: var(--red); opacity: 0.09; border-radius: 50%; }
+  .completion-banner.show { display: block; animation: fadeIn 0.3s ease; }
+  .completion-banner h3 { font-family: 'Barlow', sans-serif; font-size: 21px; font-weight: 800; color: white; margin-bottom: 5px; position: relative; }
+  .completion-banner p { font-size: 14px; color: rgba(255,255,255,0.55); position: relative; }
+  .next-btn {
+    font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 700;
+    padding: 10px 22px; border-radius: 6px;
+    border: 2px solid rgba(255,255,255,0.25); background: transparent; color: white;
+    cursor: pointer; transition: all 0.15s; margin-top: 14px; display: inline-block;
+  }
+  .next-btn:hover { background: rgba(255,255,255,0.1); }
+
+  .overall-progress {
+    background: var(--white); border: 1.5px solid var(--grey-200); border-radius: 8px;
+    padding: 13px 20px; margin-bottom: 26px; display: flex; align-items: center; gap: 20px;
+  }
+  .overall-label { font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700; color: var(--grey-600); text-transform: uppercase; letter-spacing: 0.6px; flex-shrink: 0; }
+  .overall-bar { flex: 1; height: 6px; background: var(--grey-200); border-radius: 10px; overflow: hidden; }
+  .overall-fill { height: 100%; background: linear-gradient(90deg, var(--red) 0%, #ff6b4a 100%); border-radius: 10px; transition: width 0.5s ease; width: 0%; }
+  .overall-pct { font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 700; color: var(--red); flex-shrink: 0; width: 40px; text-align: right; }
+
+  @media (max-width: 680px) {
+    header { padding: 0 16px; }
+    .hero { padding: 28px 16px; }
+    .hero h1 { font-size: 24px; }
+    .hero-inner { flex-direction: column; gap: 16px; }
+    .hero-meta { flex-direction: row; }
+    .timeline-strip { padding: 0 12px; }
+    .month-tab { padding: 12px 10px; }
+    .content { padding: 18px 10px 60px; }
+    .resources { grid-template-columns: 1fr; }
+    .step-body { padding-left: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area">
+    <div class="logo-mark">GPU</div>
+    <div class="logo-text">CUDA Kernel <span>Roadmap</span></div>
+  </div>
+  <div class="header-badge">6 Month Plan</div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1>From field engineer<br>to <span>GPU kernel dev.</span></h1>
+      <p>A structured 6-month path from C++ foundations to writing production CUDA kernels for AI and ML workloads. Includes environment setup, exact study materials, cloud login details, and a testing exercise for every step.</p>
+    </div>
+    <div class="hero-meta">
+      <div class="hero-stat"><div class="val">7</div><div class="lbl">Sections</div></div>
+      <div class="hero-stat"><div class="val">29</div><div class="lbl">Topics</div></div>
+      <div class="hero-stat"><div class="val">CUDA</div><div class="lbl">Target</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-strip">
+  <button class="month-tab setup-tab active" onclick="switchMonth('setup', this)">
+    <div class="month-chip" id="chip-setup">00</div>
+    <div><div class="month-label">Setup</div><div class="month-sublabel">Tools and accounts</div></div>
+  </button>
+  <button class="month-tab" onclick="switchMonth(1, this)">
+    <div class="month-chip" id="chip-1">M1</div>
+    <div><div class="month-label">C++ Mastery</div><div class="month-sublabel">Systems foundations</div></div>
+  </button>
+  <button class="month-tab" onclick="switchMonth(2, this)">
+    <div class="month-chip" id="chip-2">M2</div>
+    <div><div class="month-label">GPU Architecture</div><div class="month-sublabel">CUDA programming model</div></div>
+  </button>
+  <button class="month-tab" onclick="switchMonth(3, this)">
+    <div class="month-chip" id="chip-3">M3</div>
+    <div><div class="month-label">Performance</div><div class="month-sublabel">Optimization and profiling</div></div>
+  </button>
+  <button class="month-tab" onclick="switchMonth(4, this)">
+    <div class="month-chip" id="chip-4">M4</div>
+    <div><div class="month-label">ML Primitives</div><div class="month-sublabel">GEMM, attention, norms</div></div>
+  </button>
+  <button class="month-tab" onclick="switchMonth(5, this)">
+    <div class="month-chip" id="chip-5">M5</div>
+    <div><div class="month-label">Advanced CUDA</div><div class="month-sublabel">Tensor Cores and Triton</div></div>
+  </button>
+  <button class="month-tab" onclick="switchMonth(6, this)">
+    <div class="month-chip" id="chip-6">M6</div>
+    <div><div class="month-label">Ship It</div><div class="month-sublabel">Real projects and OSS</div></div>
+  </button>
+</div>
+
+<div class="content">
+
+  <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap"><div style="background:var(--white);border:1.5px solid var(--grey-200);border-radius:8px;padding:10px 18px;display:flex;align-items:center;gap:10px;flex:1;min-width:160px"><div style="font-family:Barlow,sans-serif;font-size:20px;font-weight:800;color:var(--red)">~259</div><div style="font-size:11px;color:var(--grey-600);line-height:1.3">Total study<br>hours</div></div><div style="background:var(--white);border:1.5px solid var(--grey-200);border-radius:8px;padding:10px 18px;display:flex;align-items:center;gap:10px;flex:1;min-width:160px"><div style="font-family:Barlow,sans-serif;font-size:20px;font-weight:800;color:var(--navy)">~10</div><div style="font-size:11px;color:var(--grey-600);line-height:1.3">Hours per week<br>recommended</div></div><div style="background:var(--white);border:1.5px solid var(--grey-200);border-radius:8px;padding:10px 18px;display:flex;align-items:center;gap:10px;flex:1;min-width:160px"><div style="font-family:Barlow,sans-serif;font-size:20px;font-weight:800;color:var(--green)">1.5</div><div style="font-size:11px;color:var(--grey-600);line-height:1.3">Hrs/day on<br>weekdays</div></div></div><div class="cc-legend">
+  <span class="cc-legend-label">Claude Code</span>
+  <span class="cc-legend-item"><span class="cc-legend-dot green"></span>CC can handle — delegate or skim</span>
+  <span class="cc-legend-item"><span class="cc-legend-dot red"></span>Must master yourself — this is the actual job</span>
+  <span class="cc-legend-item"><span class="cc-legend-dot orange"></span>CC for scaffold, you write the kernel logic</span>
+</div>
+<div class="overall-progress">
+    <div class="overall-label">Overall</div>
+    <div class="overall-bar"><div class="overall-fill" id="overall-fill"></div></div>
+    <div class="overall-pct" id="overall-pct">0%</div>
+  </div>
+
+<!-- ═══════════════ SETUP ═══════════════ -->
+<div class="month-panel active" id="panel-setup">
+  <div class="month-header setup-header">
+    <div class="month-badge setup"><div class="mo">Start</div><div class="mn">00</div></div>
+    <div>
+      <h2>Environment Setup — Tools, Accounts, and Workspaces</h2>
+      <p>Everything you need installed and configured before Month 1 begins. You are on an Apple Silicon Mac, so CUDA runs on cloud. C++ work in Month 1 runs locally. Everything from Month 2 onward runs on RunPod or Vast.ai via VS Code Remote SSH.</p>
+    </div>
+  </div>
+
+  <div class="overview-strip">
+    <div class="overview-pill"><div class="num">5</div><div class="lbl">Setup<br>steps</div></div>
+    <div class="overview-pill"><div class="num">~4</div><div class="lbl">Total hours<br>this section</div></div><div class="overview-pill"><div class="num">Mac</div><div class="lbl">Local C++<br>Month 1 only</div></div>
+    <div class="overview-pill"><div class="num">Cloud</div><div class="lbl">All CUDA work<br>Month 2 onward</div></div>
+  </div>
+
+  <div class="progress-area">
+    <div class="progress-label"><span>Setup Progress</span><span class="count" id="count-setup">0 / 5 complete</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="fill-setup" style="width:0%"></div></div>
+  </div>
+
+  <div class="steps" id="steps-setup">
+
+    <div class="step open setup-step" id="setup-1">
+      <div class="step-header" onclick="toggleStep('setup-1')">
+        <div class="step-num" id="num-setup-1">1</div>
+        <div class="step-title-group">
+          <div class="step-title">Create your cloud GPU accounts<span class="cc-chip">Claude Code</span></div>
+          <div class="step-subtitle">RunPod, Vast.ai, Lambda Labs — all free to create, pay as you go</div>
+        </div>
+        <div class="step-week">Do first</div>
+        <div class="step-hours">1 hr</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>These are the three platforms you will use. Create all three accounts now — it takes under 10 minutes total. Add credits when you need them.</p>
+
+        <div class="section-label">Accounts to create</div>
+        <div class="platform-row">
+          <div class="platform-badge">
+            <div class="pb-icon pb-runpod">RP</div>
+            <div>
+              <div class="pb-name">RunPod</div>
+              <div class="pb-sub">app.runpod.io — primary workspace</div>
+            </div>
+          </div>
+          <div class="platform-badge">
+            <div class="pb-icon pb-vast">VA</div>
+            <div>
+              <div class="pb-name">Vast.ai</div>
+              <div class="pb-sub">vast.ai — cheapest H100 spot rates</div>
+            </div>
+          </div>
+          <div class="platform-badge">
+            <div class="pb-icon pb-lambda">LL</div>
+            <div>
+              <div class="pb-name">Lambda Labs</div>
+              <div class="pb-sub">lambdalabs.com — reliable A100 backup</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">How to use RunPod (your main platform)</div>
+        <ul>
+          <li>Sign up at <strong>app.runpod.io</strong> with your email</li>
+          <li>Go to <strong>Billing</strong> and add $50 to start — RunPod charges per second so you won't waste money on idle time</li>
+          <li>Navigate to <strong>Pods</strong> and click <strong>Deploy</strong> — this is how you launch a GPU instance</li>
+          <li>For Month 2 onward: select <strong>RTX 3090</strong> (~$0.22/hr) or <strong>A100 80GB</strong> (~$0.79/hr) depending on the task</li>
+          <li>Choose the <strong>RunPod PyTorch 2.x</strong> template — this pre-installs CUDA 12.x, PyTorch, Python 3.11, and basic dev tools</li>
+          <li>Enable <strong>SSH access</strong> in the deployment options — this is how VS Code connects</li>
+        </ul>
+
+        <div class="section-label">How to use Vast.ai (for cheap H100 spot instances)</div>
+        <ul>
+          <li>Sign up at <strong>vast.ai</strong>, add $50 credit</li>
+          <li>Use the <strong>Search</strong> tab to filter by GPU type. Sort by <strong>$/hr</strong> ascending to find cheapest instances.</li>
+          <li>Filter: GPU = H100 80GB, min VRAM = 79GB, DLPerf score above 30</li>
+          <li>Select an instance with a <strong>verified host</strong> badge (blue checkmark)</li>
+          <li>Choose <strong>PyTorch</strong> Docker image. Enable <strong>Jupyter + SSH</strong> access.</li>
+          <li>Current H100 rates on Vast.ai are approximately $1.49–$1.87/hr on the marketplace</li>
+        </ul>
+
+        <div class="callout info"><div class="callout-icon">i</div><div>GitHub is also required — create an account at <strong>github.com</strong> if you do not have one. You will clone repos there from Month 2 onward.</div></div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Verify</div>
+          <p>Launch a free RunPod CPU-only instance (no GPU, $0.05/hr), connect via the web terminal, and confirm you can type commands. Stop it immediately. This proves your account and billing work.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>Give Claude Code: "Create RunPod, Vast.ai, and Lambda Labs accounts. Generate an SSH key for RunPod and a step-by-step connection guide for VS Code Remote SSH." It will produce the exact commands.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('setup-1', 'setup', 5)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step setup-step" id="setup-2">
+      <div class="step-header" onclick="toggleStep('setup-2')">
+        <div class="step-num" id="num-setup-2">2</div>
+        <div class="step-title-group">
+          <div class="step-title">Set up your local Mac for Month 1 C++ work<span class="cc-chip">Claude Code</span></div>
+          <div class="step-subtitle">VS Code, Xcode CLI, CMake, GCC via Homebrew</div>
+        </div>
+        <div class="step-week">Local</div>
+        <div class="step-hours">1 hr</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Apple Silicon does not support CUDA. Your Mac handles Month 1 (C++ fundamentals) locally and serves as the SSH client for all cloud GPU work from Month 2 onward.</p>
+
+        <div class="section-label">Install via Homebrew (brew.sh)</div>
+        <div class="code-block"><span class="comment"># Install Homebrew if not present</span>
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+<span class="comment"># Core tools</span>
+<span class="cmd">brew install cmake gcc llvm <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aeded7dac6c1c0ee9d809f9f">[email&#160;protected]</a> git</span>
+
+<span class="comment"># Verify</span>
+<span class="cmd">cmake --version</span>     <span class="comment"># should be 3.27+</span>
+<span class="cmd">gcc-13 --version</span>   <span class="comment"># or whichever GCC brew installs</span>
+<span class="cmd">python3 --version</span>  <span class="comment"># 3.11+</span></div>
+
+        <div class="section-label">VS Code extensions to install</div>
+        <ul>
+          <li><strong>C/C++ Extension Pack</strong> (Microsoft) — IntelliSense, debugging, CMake integration</li>
+          <li><strong>CMake Tools</strong> (Microsoft) — configure/build from the VS Code sidebar</li>
+          <li><strong>Remote - SSH</strong> (Microsoft) — connects VS Code to your cloud GPU instance. This is essential from Month 2 onward.</li>
+          <li><strong>Remote Explorer</strong> (Microsoft) — companion to Remote SSH</li>
+          <li><strong>CUDA C++ Syntax Highlighting</strong> (search "CUDA" in extensions) — colour-codes .cu and .cuh files</li>
+          <li><strong>GitLens</strong> — useful for navigating large repos like CUTLASS</li>
+        </ul>
+
+        <div class="callout amber"><div class="callout-icon">!</div><div>You use Colima for containers — that is fine for Month 1 builds. From Month 2 everything runs on cloud Linux via SSH. You do not need Docker for CUDA development.</div></div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Verify local C++ toolchain</div>
+          <p>Create a file <code>hello.cpp</code> with a basic main that allocates a 1MB array and fills it. Compile with:</p>
+          <div class="code-block"><span class="cmd">g++ -O2 -o hello hello.cpp && ./hello</span></div>
+          <p>If it runs without errors, your local C++ environment is ready for Month 1.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Set up a Mac for C++ development with Homebrew. Install cmake, gcc, python@3.11, git. Output the exact brew commands and VS Code extensions to install with their IDs." Paste and run.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('setup-2', 'setup', 5)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step setup-step" id="setup-3">
+      <div class="step-header" onclick="toggleStep('setup-3')">
+        <div class="step-num" id="num-setup-3">3</div>
+        <div class="step-title-group">
+          <div class="step-title">Launch your first cloud GPU instance and connect via VS Code<span class="cc-chip">Claude Code</span></div>
+          <div class="step-subtitle">RunPod RTX 3090 — SSH key setup — Remote SSH connection</div>
+        </div>
+        <div class="step-week">Cloud</div>
+        <div class="step-hours">1 hr</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>This is the workflow you will use every day from Month 2 onward. Do it now so it is muscle memory.</p>
+
+        <div class="section-label">Step-by-step: RunPod to VS Code</div>
+        <ul>
+          <li><strong>1. Generate SSH key:</strong> run <code>ssh-keygen -t ed25519 -C "<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="077e68727547626a666e6b2964686a">[email&#160;protected]</a>"</code> in your Mac terminal. Add the public key (<code>~/.ssh/id_ed25519.pub</code>) to RunPod under Settings → SSH Keys.</li>
+          <li><strong>2. Launch instance:</strong> RunPod Pods → Deploy → RTX 3090 (cheapest) → RunPod PyTorch 2.x template → enable SSH → Deploy.</li>
+          <li><strong>3. Get the SSH command:</strong> once the pod is running, click <strong>Connect</strong> → <strong>SSH over exposed TCP</strong>. RunPod gives you a command like <code>ssh <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e99b86869da9b1b1b1c7b1b1b1c7b1b1b1c7b1b1b1">[email&#160;protected]</a> -p XXXXX -i ~/.ssh/id_ed25519</code>.</li>
+          <li><strong>4. Connect in VS Code:</strong> open VS Code → Command Palette (Cmd+Shift+P) → <strong>Remote-SSH: Connect to Host</strong> → paste the host details. VS Code installs its server on the remote and you now have a full IDE on the GPU machine.</li>
+          <li><strong>5. Open a terminal in VS Code:</strong> Terminal → New Terminal. You are now on the GPU box.</li>
+        </ul>
+
+        <div class="callout info"><div class="callout-icon">i</div><div>Always <strong>stop your pod</strong> when not working (RunPod Pod page → Stop). You are charged by the second. A stopped pod does not incur GPU charges — only storage (~$0.05/GB/month).</div></div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Verify GPU access</div>
+          <p>In the VS Code terminal on your RunPod instance, run:</p>
+          <div class="code-block"><span class="cmd">nvidia-smi</span>           <span class="comment"># shows GPU model, VRAM, driver version</span>
+<span class="cmd">nvcc --version</span>        <span class="comment"># shows CUDA compiler version (should be 12.x)</span>
+<span class="cmd">python3 -c "import torch; print(torch.cuda.is_available())"</span>  <span class="comment"># True</span></div>
+          <p>All three commands should return real data. If <code>nvcc</code> is missing, run <code>apt install nvidia-cuda-toolkit</code>.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Write a step-by-step guide to connect VS Code Remote SSH to RunPod. Include SSH key generation, adding to RunPod settings, and the VS Code command palette flow." This is pure procedure.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('setup-3', 'setup', 5)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step setup-step" id="setup-4">
+      <div class="step-header" onclick="toggleStep('setup-4')">
+        <div class="step-num" id="num-setup-4">4</div>
+        <div class="step-title-group">
+          <div class="step-title">Install key tools on your cloud instance<span class="cc-chip">Claude Code</span></div>
+          <div class="step-subtitle">Nsight Compute, CMake, Triton, CUTLASS — the full CUDA toolkit</div>
+        </div>
+        <div class="step-week">Cloud</div>
+        <div class="step-hours">30 min</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>The RunPod PyTorch template gives you CUDA and PyTorch. You need a few more tools. Run these on the cloud instance:</p>
+
+        <div class="section-label">System tools (apt)</div>
+        <div class="code-block"><span class="cmd">apt update && apt install -y cmake build-essential git wget curl htop</span>
+
+<span class="comment"># Nsight Compute (profiler — needed from Month 3)</span>
+<span class="cmd">apt install -y nsight-compute</span>
+<span class="comment"># If not in apt: download from developer.nvidia.com/nsight-compute</span>
+
+<span class="comment"># Nsight Systems (timeline profiler)</span>
+<span class="cmd">apt install -y nsight-systems</span></div>
+
+        <div class="section-label">Python packages</div>
+        <div class="code-block"><span class="cmd">pip install triton</span>           <span class="comment"># OpenAI Triton — used in Month 5</span>
+<span class="cmd">pip install ninja</span>           <span class="comment"># fast PyTorch extension compilation</span>
+<span class="cmd">pip install matplotlib numpy</span> <span class="comment"># for benchmark plotting</span>
+<span class="cmd">pip install einops</span>          <span class="comment"># tensor manipulation used in ML kernels</span></div>
+
+        <div class="section-label">Key repos to clone (do now, use later)</div>
+        <div class="code-block"><span class="comment"># NVIDIA CUDA Samples — reference implementations for every topic</span>
+<span class="cmd">git clone https://github.com/NVIDIA/cuda-samples ~/cuda-samples</span>
+
+<span class="comment"># CUTLASS — NVIDIA's production template library for GEMM/attention</span>
+<span class="cmd">git clone https://github.com/NVIDIA/cutlass ~/cutlass</span>
+
+<span class="comment"># Flash Attention — reference implementation you will study in Month 4-5</span>
+<span class="cmd">git clone https://github.com/Dao-AILab/flash-attention ~/flash-attention</span>
+
+<span class="comment"># Triton tutorials</span>
+<span class="cmd">git clone https://github.com/triton-lang/triton ~/triton-repo</span></div>
+
+        <div class="callout info"><div class="callout-icon">i</div><div>These repos are large. Clone them once and use persistent disk on RunPod (under Storage) so they survive pod restarts without re-downloading.</div></div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Verify Nsight Compute</div>
+          <div class="code-block"><span class="cmd">ncu --version</span>   <span class="comment"># should print Nsight Compute version</span>
+<span class="cmd">nsys --version</span>  <span class="comment"># should print Nsight Systems version</span></div>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Write a bash script that installs nsight-compute, nsight-systems, triton, ninja, matplotlib on a RunPod Ubuntu instance with CUDA 12.x already installed, then clones cuda-samples, cutlass, flash-attention, and triton repos to ~/." Run it on the pod.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('setup-4', 'setup', 5)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step setup-step" id="setup-5">
+      <div class="step-header" onclick="toggleStep('setup-5')">
+        <div class="step-num" id="num-setup-5">5</div>
+        <div class="step-title-group">
+          <div class="step-title">Bookmark your study materials and reference docs<span class="cc-chip">Claude Code</span></div>
+          <div class="step-subtitle">Everything you need — official docs, books, courses, papers</div>
+        </div>
+        <div class="step-week">Reference</div>
+        <div class="step-hours">1 hr</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>These are the authoritative sources you will use across all 6 months. Bookmark all of them now.</p>
+
+        <div class="section-label">Official documentation (free)</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Official</div><h4>CUDA C++ Programming Guide</h4><p>The definitive reference. Read Chapters 1-4 in Month 2, return throughout.</p><a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/" target="_blank">docs.nvidia.com/cuda</a></div>
+          <div class="resource-card"><div class="rc-type">Official</div><h4>CUDA Best Practices Guide</h4><p>Performance optimisation reference. Core reading for Month 3.</p><a href="https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/" target="_blank">docs.nvidia.com/cuda/best-practices</a></div>
+          <div class="resource-card"><div class="rc-type">Official</div><h4>Nsight Compute Documentation</h4><p>Learn to read profiler output. Essential for Month 3-6.</p><a href="https://docs.nvidia.com/nsight-compute/" target="_blank">docs.nvidia.com/nsight-compute</a></div>
+          <div class="resource-card"><div class="rc-type">Official</div><h4>cuBLAS API Reference</h4><p>Learn the GEMM API in Month 4. cublasGemmEx and batched variants.</p><a href="https://docs.nvidia.com/cuda/cublas/" target="_blank">docs.nvidia.com/cuda/cublas</a></div>
+          <div class="resource-card"><div class="rc-type">Reference</div><h4>cppreference.com</h4><p>Definitive C++ reference. Bookmark the templates, memory, and containers sections.</p><a href="https://en.cppreference.com" target="_blank">cppreference.com</a></div>
+          <div class="resource-card"><div class="rc-type">Reference</div><h4>Triton Tutorials</h4><p>Official OpenAI Triton tutorials. Vector add through Flash Attention. Month 5.</p><a href="https://triton-lang.org/main/getting-started/tutorials/" target="_blank">triton-lang.org/tutorials</a></div>
+        </div>
+
+        <div class="section-label">Books to buy</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Book — Month 1</div><h4>Effective Modern C++ — Scott Meyers</h4><p>The C++ memory and semantics bible. Read all 42 items. ~$45.</p><a href="https://www.oreilly.com/library/view/effective-modern-c/9781491908419/" target="_blank">O'Reilly link</a></div>
+          <div class="resource-card"><div class="rc-type">Book — Month 2</div><h4>CUDA by Example — Sanders &amp; Kandrot</h4><p>Practical, code-first CUDA introduction. Best for getting to a working kernel fast. ~$40.</p><a href="https://www.amazon.com/CUDA-Example-Introduction-General-Purpose-Programming/dp/0131387685" target="_blank">Amazon link</a></div>
+          <div class="resource-card"><div class="rc-type">Book — Month 2-4</div><h4>Programming Massively Parallel Processors — Kirk &amp; Hwu</h4><p>The textbook. 4th edition covers Tensor Cores and modern optimisation. ~$55.</p><a href="https://www.amazon.com/Programming-Massively-Parallel-Processors-Hands/dp/0323912311" target="_blank">Amazon link</a></div>
+          <div class="resource-card"><div class="rc-type">Book — Month 3</div><h4>Performance Analysis and Tuning on Modern CPUs — Canitez</h4><p>CPU roofline model — maps directly to GPU equivalents. Free PDF on the author's site.</p><a href="https://faculty.cs.niu.edu/~winans/notes/patmc.pdf" target="_blank">Free PDF</a></div>
+        </div>
+
+        <div class="section-label">Free courses and video series</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Course — Month 1</div><h4>The Cherno C++ Series — YouTube</h4><p>Best free C++ series. Start at Episode 30 (Memory) through 85 (Templates). 100+ episodes total.</p><a href="https://www.youtube.com/playlist?list=PLlrATfBNZ98dudnM48yfGUldqGD0S4FFb" target="_blank">YouTube playlist</a></div>
+          <div class="resource-card"><div class="rc-type">Course — Month 2-3</div><h4>CoffeeBeforeArch — CUDA YouTube</h4><p>Excellent practical CUDA series. Covers memory hierarchy, reduction, shared memory with real code.</p><a href="https://www.youtube.com/c/CoffeeBeforeArch" target="_blank">YouTube channel</a></div>
+          <div class="resource-card"><div class="rc-type">Course — Month 2</div><h4>CS344 Intro to Parallel Programming (Udacity)</h4><p>Full university course, free on YouTube. Problem sets directly relevant — matrix multiply module is essential.</p><a href="https://www.youtube.com/playlist?list=PLAwxTw4SYaPnFKojVQrmyOGFCqHTxfdv2" target="_blank">YouTube playlist</a></div>
+          <div class="resource-card"><div class="rc-type">Lecture — Month 3</div><h4>Mark Harris "Optimizing Parallel Reduction" — NVIDIA</h4><p>Classic GPU optimisation talk. Six progressively faster reductions. Required viewing before Month 3 Step 3.</p><a href="https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf" target="_blank">Slides PDF</a></div>
+          <div class="resource-card"><div class="rc-type">Course — Month 4-5</div><h4>Andrej Karpathy — "Let's build GPT from scratch"</h4><p>Not CUDA-specific, but builds the mental model for what transformers compute. Watch before Month 4.</p><a href="https://www.youtube.com/watch?v=kCc8FmEb1nY" target="_blank">YouTube</a></div>
+          <div class="resource-card"><div class="rc-type">Lectures — Month 5</div><h4>NVIDIA GTC Session Archive</h4><p>Free recorded talks on Ampere, Hopper, Tensor Core programming, and Triton. Filter by "kernel" or "Tensor Core".</p><a href="https://www.nvidia.com/gtc/session-catalog/" target="_blank">GTC catalog</a></div>
+        </div>
+
+        <div class="section-label">Key papers (read in the month indicated)</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Paper — Month 4</div><h4>Flash Attention — Dao et al. 2022</h4><p>The IO-aware attention algorithm. Core reading before Month 4 Step 3.</p><a href="https://arxiv.org/abs/2205.14135" target="_blank">arxiv.org/abs/2205.14135</a></div>
+          <div class="resource-card"><div class="rc-type">Paper — Month 5</div><h4>Flash Attention 2 — Dao 2023</h4><p>Parallelism improvements, GQA support. The Triton implementation is the Month 5 capstone.</p><a href="https://arxiv.org/abs/2307.08691" target="_blank">arxiv.org/abs/2307.08691</a></div>
+          <div class="resource-card"><div class="rc-type">Paper — Month 6</div><h4>Paged Attention (vLLM) — Kwon et al. 2023</h4><p>The kernel behind continuous batching in LLM inference. Read before Month 6 Step 2.</p><a href="https://arxiv.org/abs/2309.06180" target="_blank">arxiv.org/abs/2309.06180</a></div>
+          <div class="resource-card"><div class="rc-type">Blog — Month 3</div><h4>Lei Mao's GPU Performance Notes</h4><p>Detailed, technical blog posts on CUDA optimisation, roofline, and memory coalescing.</p><a href="https://leimao.github.io/blog/CUDA-Performance/" target="_blank">leimao.github.io</a></div>
+        </div>
+
+        <div class="callout success"><div class="callout-icon">✓</div><div>Setup complete once: cloud accounts created, VS Code Remote SSH tested, all repos cloned, all URLs bookmarked in a browser folder called "CUDA Study".</div></div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>The bookmarks list is already in this guide. Ask Claude Code to generate a browser bookmarks HTML file from the URLs here — import it directly into Chrome.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('setup-5', 'setup', 5)">Mark complete</button></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="completion-banner" id="done-setup">
+    <h3>Environment ready.</h3>
+    <p>All accounts created, tools installed, repos cloned. Start Month 1 — run locally on your Mac.</p>
+    <button class="next-btn" onclick="switchMonth(1, document.querySelectorAll('.month-tab')[1])">Start Month 1 — C++ Mastery</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MONTH 1 ═══════════════ -->
+<div class="month-panel" id="panel-1">
+  <div class="month-header">
+    <div class="month-badge"><div class="mo">Month</div><div class="mn">01</div></div>
+    <div>
+      <h2>C++ Mastery for Systems Programming</h2>
+      <p>All work this month runs locally on your Mac. Close the gap between basic C++ familiarity and the systems-level fluency CUDA demands — raw memory, pointer arithmetic, templates, and CMake.</p>
+    </div>
+  </div>
+
+  <div class="overview-strip">
+    <div class="overview-pill"><div class="num">4</div><div class="lbl">Topics</div></div>
+    <div class="overview-pill"><div class="num">~40</div><div class="lbl">Total hours<br>this month</div></div><div class="overview-pill"><div class="num">Local</div><div class="lbl">Mac only<br>no cloud needed</div></div>
+    <div class="overview-pill"><div class="num">PMPP</div><div class="lbl">Ch. 1 to read<br>this month</div></div>
+  </div>
+
+  <div class="progress-area">
+    <div class="progress-label"><span>Month 1 Progress</span><span class="count" id="count-1">0 / 4 complete</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="fill-1" style="width:0%"></div></div>
+  </div>
+
+  <div class="steps" id="steps-1">
+
+    <div class="step open" id="1-1">
+      <div class="step-header" onclick="toggleStep('1-1')">
+        <div class="step-num" id="num-1-1">1</div>
+        <div class="step-title-group">
+          <div class="step-title">Memory model and manual memory management<span class="manual-chip">Master this</span></div>
+          <div class="step-subtitle">Stack vs heap, new/delete, RAII, smart pointers, alignment</div>
+        </div>
+        <div class="step-week">Week 1</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>CUDA kernels live and die by memory. Before you write a single GPU line, you need to own C++ memory at the lowest level — because on the GPU, you are the allocator and there is no GC.</p>
+        <ul>
+          <li>Understand stack vs heap allocation. Stack is fast, size-limited, auto-freed. Heap is flexible, manual.</li>
+          <li>Practice raw <code>new</code> / <code>delete</code> and <code>new[]</code> / <code>delete[]</code> — CUDA memory APIs use raw pointers everywhere</li>
+          <li>RAII: destructors, copy constructors, move constructors — prevent leaks without GC</li>
+          <li>Memory alignment: <code>alignas</code>, struct padding, cache line size (64 bytes on x86). GPU memory has similar constraints.</li>
+          <li>Smart pointers: <code>unique_ptr</code>, <code>shared_ptr</code> — understand what they do, and why you often cannot use them at GPU boundaries</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Book — Read first</div><h4>Effective Modern C++ — Items 18–22</h4><p>Smart pointers. Then Items 23–29: move semantics and perfect forwarding. Then Items 11–16: modern C++ memory.</p></div>
+          <div class="resource-card"><div class="rc-type">Video — Watch after reading</div><h4>The Cherno C++ — Episodes 44, 45, 85, 86</h4><p>Ep 44: Stack vs Heap. Ep 45: new/delete. Ep 85: Move semantics. Ep 86: Move constructor.</p><a href="https://www.youtube.com/playlist?list=PLlrATfBNZ98dudnM48yfGUldqGD0S4FFb" target="_blank">YouTube playlist</a></div>
+          <div class="resource-card"><div class="rc-type">Practice site</div><h4>Compiler Explorer — godbolt.org</h4><p>Paste your C++ code, see the assembly it generates. Use to understand what the compiler does with your memory code.</p><a href="https://godbolt.org" target="_blank">godbolt.org</a></div>
+          <div class="resource-card"><div class="rc-type">Book — Chapter</div><h4>PMPP 4th Ed — Chapter 1</h4><p>Read Chapter 1 now even though you haven't touched CUDA. It frames why you are learning all this.</p></div>
+        </div>
+
+        <div class="callout amber"><div class="callout-icon">!</div><div>Coming from Databricks: think of this like understanding JVM heap allocation under Spark — but you control it manually and there is no GC safety net.</div></div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground — Arena Allocator</div>
+          <p>Write a custom arena allocator in ~50 lines: allocate a 1MB buffer with <code>new</code>, implement <code>alloc(size_t n)</code> that bumps a pointer, implement <code>reset()</code>. Run under AddressSanitizer:</p>
+          <div class="code-block"><span class="cmd">g++ -fsanitize=address -g -O1 arena.cpp -o arena && ./arena</span></div>
+          <p>Zero errors = pass. This is a foundational GPU programming pattern — GPU allocators work the same way.</p>
+        </div>
+
+        <div class="cc-banner manual"><div class="cc-icon">YOU</div><div>This is foundational. You cannot ask Claude Code to understand memory for you. Write the arena allocator yourself — struggling through it is the point. CC can check your implementation afterward.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('1-1', 1, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="1-2">
+      <div class="step-header" onclick="toggleStep('1-2')">
+        <div class="step-num" id="num-1-2">2</div>
+        <div class="step-title-group">
+          <div class="step-title">Pointers, references, and row-major array arithmetic<span class="manual-chip">Master this</span></div>
+          <div class="step-subtitle">Pointer arithmetic, 2D arrays as 1D, const correctness, void*</div>
+        </div>
+        <div class="step-week">Week 1</div>
+        <div class="step-hours">8 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>GPU kernels work with flat memory. Matrices are stored as 1D arrays. Pointer arithmetic needs to be instinctive.</p>
+        <ul>
+          <li>Pointer arithmetic: <code>ptr + n</code> advances by <code>n * sizeof(T)</code> — drill until automatic</li>
+          <li>2D matrix as 1D: element <code>[i][j]</code> = index <code>i * cols + j</code>. This is the most-used formula in kernel code.</li>
+          <li>Const correctness: <code>const T*</code> vs <code>T* const</code> vs <code>const T* const</code> — critical for CUDA kernel parameters</li>
+          <li><code>void*</code> and casting — appears constantly in CUDA memory APIs (<code>cudaMalloc(void**)</code>)</li>
+          <li>Function pointers — appears in CUDA callback and dispatch patterns</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Reference</div><h4>cppreference — Pointer Arithmetic</h4><p>Read the Pointer section thoroughly. Understand how pointer subtraction gives element count.</p><a href="https://en.cppreference.com/w/cpp/language/pointer" target="_blank">cppreference.com/pointer</a></div>
+          <div class="resource-card"><div class="rc-type">Video</div><h4>The Cherno — Episodes 16, 17 (Pointers, References)</h4><p>Short and clear. Watch both before doing the exercise below.</p><a href="https://www.youtube.com/watch?v=DTxHyVn0ODg" target="_blank">YouTube Ep 16</a></div>
+        </div>
+
+        <div class="code-block"><span class="comment">// Row-major 2D matrix access — memorise this formula</span>
+<span class="kw">float</span>* A = <span class="kw">new</span> <span class="kw">float</span>[M * N];
+<span class="kw">float</span> val = A[row * N + col]; <span class="comment">// element [row][col]</span>
+A[row * N + col] = 3.14f;    <span class="comment">// set element [row][col]</span></div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground — Matrix Transpose (CPU)</div>
+          <p>Implement a naive CPU transpose of a 1024x1024 float matrix stored as a 1D array. Write a correctness check: for each <code>[i][j]</code>, verify <code>B[j*M+i] == A[i*N+j]</code>. This exact exercise reappears in Month 3 on the GPU with shared memory optimisation.</p>
+        </div>
+
+        <div class="cc-banner manual"><div class="cc-icon">YOU</div><div>Pointer arithmetic and row-major indexing must be automatic. Write the transpose yourself. You can ask Claude Code to generate correctness tests: "Write a C++ test that verifies a 1024x1024 matrix transpose is correct."</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('1-2', 1, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="1-3">
+      <div class="step-header" onclick="toggleStep('1-3')">
+        <div class="step-num" id="num-1-3">3</div>
+        <div class="step-title-group">
+          <div class="step-title">Templates and compile-time programming<span class="cc-chip">Hybrid</span></div>
+          <div class="step-subtitle">Function templates, class templates, constexpr, specialisation</div>
+        </div>
+        <div class="step-week">Week 2–3</div>
+        <div class="step-hours">12 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>CUTLASS (NVIDIA's production GEMM library) is deeply template-heavy. You need to read and write parameterised code confidently — not master metaprogramming, but be fluent.</p>
+        <ul>
+          <li>Function templates: <code>template&lt;typename T&gt;</code> — parameterise by data type (float, half, int8)</li>
+          <li>Class templates: write a generic <code>Matrix&lt;T, Rows, Cols&gt;</code> wrapper</li>
+          <li><code>constexpr</code>: compile-time constants and functions — used for tile sizes in every CUDA kernel</li>
+          <li>Template specialisation: provide different implementations for <code>float</code> vs <code>__half</code></li>
+          <li>Non-type template parameters: <code>template&lt;int BLOCK_SIZE&gt;</code> — standard in CUDA kernel design</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Book</div><h4>Effective Modern C++ — Items 1–4</h4><p>Template type deduction. Then Items 15–16: constexpr. These are the patterns you'll see in CUTLASS daily.</p></div>
+          <div class="resource-card"><div class="rc-type">Video</div><h4>The Cherno — Episodes 53–55 (Templates)</h4><p>Practical template introduction. Then CppCon 2021: "C++ Templates: A Quick (and Practical) Introduction".</p><a href="https://www.youtube.com/watch?v=I-hZkUa9mIs" target="_blank">YouTube Ep 53</a></div>
+          <div class="resource-card"><div class="rc-type">Reading</div><h4>CUTLASS 3.x — Getting Started</h4><p>Skim the CUTLASS README and one gemm example now, not to understand it fully, but to see what templates look like at production scale.</p><a href="https://github.com/NVIDIA/cutlass/blob/main/README.md" target="_blank">GitHub CUTLASS</a></div>
+          <div class="resource-card"><div class="rc-type">Reference</div><h4>cppreference — Templates</h4><p>Bookmark: function templates, class templates, template specialisation, constexpr.</p><a href="https://en.cppreference.com/w/cpp/language/templates" target="_blank">cppreference.com/templates</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground — Generic GEMM Stub</div>
+          <p>Write <code>template&lt;typename T, int BLOCK&gt; void gemm_cpu(T* A, T* B, T* C, int M, int N, int K)</code>. Instantiate for <code>float</code> and <code>double</code>. Verify output matches a naive triple-loop reference. You will GPU-ify this in Month 4.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>Template syntax boilerplate is CC territory: "Generate a C++ class template Matrix&lt;T, Rows, Cols&gt; with row-major storage, get/set methods, and explicit instantiations for float and double." You still need to read and understand what it generates.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('1-3', 1, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="1-4">
+      <div class="step-header" onclick="toggleStep('1-4')">
+        <div class="step-num" id="num-1-4">4</div>
+        <div class="step-title-group">
+          <div class="step-title">CMake, profiling tools, and the CPU memory hierarchy<span class="cc-chip">Mostly CC</span></div>
+          <div class="step-subtitle">CMake project setup, AddressSanitizer, perf, cache lines, NUMA</div>
+        </div>
+        <div class="step-week">Week 4</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>A kernel engineer who cannot profile is flying blind. Learn CPU-side tools now — the GPU equivalents (Nsight) follow the same mental model.</p>
+        <ul>
+          <li><strong>CMake:</strong> write a <code>CMakeLists.txt</code> that compiles C++ and (from Month 2) CUDA. You will use this every month.</li>
+          <li><strong>CPU memory hierarchy:</strong> L1/L2/L3 cache sizes, cache lines (64 bytes), TLB — maps directly to GPU shared memory / L1 / HBM hierarchy</li>
+          <li><strong>AddressSanitizer:</strong> compile with <code>-fsanitize=address</code>. Zero tolerance for memory errors — GPU bugs are 10x harder to debug than CPU bugs.</li>
+          <li><strong>NUMA:</strong> non-uniform memory access — mirrors PCIe bandwidth constraints between CPU and GPU. High NUMA penalty = PCIe bottleneck in CUDA.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Official docs</div><h4>CMake Tutorial — cmake.org</h4><p>Work through Steps 1–6 of the official CMake tutorial. Step 6 covers adding libraries — needed for CUDA extensions in Month 6.</p><a href="https://cmake.org/cmake/help/latest/guide/tutorial/" target="_blank">cmake.org/tutorial</a></div>
+          <div class="resource-card"><div class="rc-type">Free book</div><h4>Performance Analysis and Tuning on Modern CPUs</h4><p>Chapter 4: CPU Memory Hierarchy. Chapter 8: Roofline Model. The GPU roofline in Month 3 is identical in concept.</p><a href="https://faculty.cs.niu.edu/~winans/notes/patmc.pdf" target="_blank">Free PDF</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground — Month 1 Capstone</div>
+          <p>Build a CMake project that: allocates two 1024x1024 float matrices, multiplies them (naive triple loop), verifies with a spot-check, and runs clean under AddressSanitizer. Should look like:</p>
+          <div class="code-block"><span class="comment"># CMakeLists.txt</span>
+cmake_minimum_required(VERSION 3.20)
+project(gemm_cpu LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+add_executable(gemm_cpu main.cpp)
+target_compile_options(gemm_cpu PRIVATE -fsanitize=address -g)
+target_link_options(gemm_cpu PRIVATE -fsanitize=address)
+
+<span class="comment"># Build and run</span>
+<span class="cmd">mkdir build && cd build && cmake .. && make && ./gemm_cpu</span></div>
+          <p>Zero AddressSanitizer errors = Month 1 complete.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Write a CMakeLists.txt for a C++ project that compiles main.cpp with -fsanitize=address and -O2, targeting C++17." CMake is pure boilerplate — never write it from scratch. The memory hierarchy concepts you still need to read.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('1-4', 1, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="completion-banner" id="done-1">
+    <h3>Month 1 complete.</h3>
+    <p>You have the C++ systems foundation GPU programming is built on. Switch to your cloud instance — Month 2 requires a real GPU.</p>
+    <button class="next-btn" onclick="switchMonth(2, document.querySelectorAll('.month-tab')[2])">Start Month 2 — GPU Architecture</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MONTH 2 ═══════════════ -->
+<div class="month-panel" id="panel-2">
+  <div class="month-header">
+    <div class="month-badge"><div class="mo">Month</div><div class="mn">02</div></div>
+    <div>
+      <h2>GPU Architecture and CUDA Foundations</h2>
+      <p>All work this month runs on RunPod (RTX 3090, ~$0.22/hr). Learn how a GPU works, write your first kernels, and understand the full memory hierarchy.</p>
+    </div>
+  </div>
+
+  <div class="overview-strip">
+    <div class="overview-pill"><div class="num">4</div><div class="lbl">Topics</div></div>
+    <div class="overview-pill"><div class="num">~35</div><div class="lbl">Total hours<br>this month</div></div><div class="overview-pill"><div class="num">RunPod</div><div class="lbl">RTX 3090<br>~$0.22/hr</div></div>
+    <div class="overview-pill"><div class="num">PMPP</div><div class="lbl">Ch. 2–5<br>this month</div></div>
+  </div>
+
+  <div class="progress-area">
+    <div class="progress-label"><span>Month 2 Progress</span><span class="count" id="count-2">0 / 4 complete</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="fill-2" style="width:0%"></div></div>
+  </div>
+
+  <div class="steps" id="steps-2">
+
+    <div class="step open" id="2-1">
+      <div class="step-header" onclick="toggleStep('2-1')">
+        <div class="step-num" id="num-2-1">1</div>
+        <div class="step-title-group">
+          <div class="step-title">How a GPU differs from a CPU<span class="manual-chip">Must understand</span></div>
+          <div class="step-subtitle">SIMT, SMs, warps, latency hiding vs latency avoidance</div>
+        </div>
+        <div class="step-week">Week 1</div>
+        <div class="step-hours">8 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>A CPU minimises latency for a single thread. A GPU maximises throughput across thousands of threads. This is the core mental shift everything else builds on.</p>
+        <ul>
+          <li><strong>Streaming Multiprocessors (SMs):</strong> the GPU equivalent of a CPU core. RTX 3090 has 82 SMs. An A100 has 108. Each SM runs many threads concurrently.</li>
+          <li><strong>Warps:</strong> groups of 32 threads that execute in lockstep (SIMT). If threads diverge at a branch, both paths execute serially — performance drops.</li>
+          <li><strong>Latency hiding:</strong> GPUs issue memory requests and switch to other warps while waiting. Requires enough active warps to keep the SM busy.</li>
+          <li>Key numbers to memorise: warp size = 32, RTX 3090 peak bandwidth = 936 GB/s, A100 = 2 TB/s HBM2e</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Official — Read first</div><h4>CUDA Programming Guide — Ch. 1–3</h4><p>Programming Model, Execution Model, Memory Model. 60 pages. Read before writing any code.</p><a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/" target="_blank">docs.nvidia.com/cuda</a></div>
+          <div class="resource-card"><div class="rc-type">Book</div><h4>PMPP 4th Ed — Ch. 2–3</h4><p>Ch. 2: Heterogeneous Data Parallel Computing. Ch. 3: Multidimensional Grids and Data. Essential foundation.</p></div>
+          <div class="resource-card"><div class="rc-type">Video</div><h4>CoffeeBeforeArch — "CUDA Crash Course"</h4><p>10-video series. Watch Videos 1–3 this week alongside reading PMPP Ch. 2–3.</p><a href="https://www.youtube.com/playlist?list=PLxNPSjHT5qvtYRVdNN1yDcdSl39uHV_sU" target="_blank">YouTube playlist</a></div>
+          <div class="resource-card"><div class="rc-type">GTC Talk</div><h4>"Inside Volta" — GTC 2017 (S7732)</h4><p>Deep dive into a modern SM microarchitecture. Free on GTC archive — search "Inside Volta".</p><a href="https://www.nvidia.com/gtc/session-catalog/" target="_blank">GTC archive</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground</div>
+          <p>Run <code>nvidia-smi -q</code> on your RunPod instance. Locate: number of SMs, CUDA version, memory bus width, peak bandwidth. Write them down — you will reference these numbers throughout the course.</p>
+        </div>
+
+        <div class="cc-banner manual"><div class="cc-icon">YOU</div><div>You cannot ask Claude Code to understand SM/warp/latency-hiding for you. This mental model is the lens through which every profiling decision is made. Read PMPP Ch. 2–3 and CUDA Guide Ch. 1–3. CC can quiz you afterward.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('2-1', 2, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="2-2">
+      <div class="step-header" onclick="toggleStep('2-2')">
+        <div class="step-num" id="num-2-2">2</div>
+        <div class="step-title-group">
+          <div class="step-title">The CUDA programming model — threads, blocks, grids<span class="manual-chip">Write yourself</span></div>
+          <div class="step-subtitle">Kernel launch syntax, thread indexing, nvcc, your first kernel</div>
+        </div>
+        <div class="step-week">Week 1–2</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>CUDA extends C++ with a small set of keywords. Learn the syntax, then understand what it maps to in hardware.</p>
+        <ul>
+          <li><strong>Thread hierarchy:</strong> thread → block → grid. Threads in a block share memory and can synchronise. Blocks cannot directly communicate.</li>
+          <li><strong>Launch config:</strong> <code>kernel&lt;&lt;&lt;gridDim, blockDim&gt;&gt;&gt;(args)</code></li>
+          <li><strong>Thread indexing:</strong> <code>int i = blockIdx.x * blockDim.x + threadIdx.x</code> — memorise this formula</li>
+          <li><strong>nvcc:</strong> CUDA compiler. Splits host (CPU) and device (GPU) code. Compiles device code to PTX then SASS.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Book</div><h4>CUDA by Example — Ch. 3–4</h4><p>Ch. 3: Introduction to CUDA. Ch. 4: Parallel Programming in CUDA. Code-first approach. Type every example by hand.</p></div>
+          <div class="resource-card"><div class="rc-type">Reference repo</div><h4>NVIDIA CUDA Samples — 0_Introduction</h4><p>Already cloned at ~/cuda-samples. Study: vectorAdd, matrixMul, simpleTemplates. Build and run each one.</p><a href="https://github.com/NVIDIA/cuda-samples/tree/master/Samples/0_Introduction" target="_blank">GitHub</a></div>
+          <div class="resource-card"><div class="rc-type">Udacity</div><h4>CS344 — Units 1 and 2</h4><p>Best free course for understanding grids and blocks conceptually before coding them.</p><a href="https://www.youtube.com/playlist?list=PLAwxTw4SYaPnFKojVQrmyOGFCqHTxfdv2" target="_blank">YouTube</a></div>
+          <div class="resource-card"><div class="rc-type">CMake</div><h4>CMake CUDA Support — Official Docs</h4><p>Add <code>enable_language(CUDA)</code> and <code>set_property(TARGET x PROPERTY CUDA_ARCHITECTURES 86)</code> for RTX 3090 (SM 8.6).</p><a href="https://cmake.org/cmake/help/latest/module/FindCUDA.html" target="_blank">cmake.org</a></div>
+        </div>
+
+        <div class="code-block"><span class="kw">__global__</span> <span class="kw">void</span> <span class="fn">vectorAdd</span>(<span class="kw">const float</span>* A, <span class="kw">const float</span>* B, <span class="kw">float</span>* C, <span class="kw">int</span> N) {
+    <span class="kw">int</span> i = blockIdx.x * blockDim.x + threadIdx.x;
+    <span class="kw">if</span> (i &lt; N) C[i] = A[i] + B[i];
+}
+<span class="comment">// Launch with 256 threads per block</span>
+<span class="fn">vectorAdd</span>&lt;&lt;&lt;(N + 255) / 256, 256&gt;&gt;&gt;(d_A, d_B, d_C, N);
+<span class="fn">cudaGetLastError</span>(); <span class="comment">// always check</span></div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground</div>
+          <p>Write vectorAdd from scratch (no copy-paste). Compile with nvcc, run it, verify output against CPU. Then modify it: make block size a compile-time template parameter <code>template&lt;int BLOCK&gt;</code> and instantiate for 128 and 256. Confirm both produce correct output.</p>
+          <div class="code-block"><span class="cmd">nvcc -O2 -arch=sm_86 vectorAdd.cu -o vectorAdd && ./vectorAdd</span></div>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>The CMake CUDA setup is CC: "Write a CMakeLists.txt that compiles a .cu file with nvcc targeting sm_86, links CUDA runtime." But write vectorAdd.cu yourself — the thread indexing formula must become muscle memory.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('2-2', 2, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="2-3">
+      <div class="step-header" onclick="toggleStep('2-3')">
+        <div class="step-num" id="num-2-3">3</div>
+        <div class="step-title-group">
+          <div class="step-title">The GPU memory hierarchy<span class="manual-chip">Concepts first</span></div>
+          <div class="step-subtitle">Global, shared, constant, registers — bandwidth, size, scope</div>
+        </div>
+        <div class="step-week">Week 2–3</div>
+        <div class="step-hours">7 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Memory is where GPU performance is won or lost. The different memory types have drastically different speeds, sizes, and scopes.</p>
+        <ul>
+          <li><strong>Global memory:</strong> largest, slowest (936 GB/s on RTX 3090), accessible by all threads. Your main working memory.</li>
+          <li><strong>Shared memory:</strong> fast (~19 TB/s equivalent on-chip), small (48–100KB per SM on RTX 3090), shared within a block. The key to fast kernels — manually managed L1 cache.</li>
+          <li><strong>Registers:</strong> fastest, private per thread, limited (~255 per thread). Spilling to local memory (slow) happens when exceeded.</li>
+          <li><strong>Constant memory:</strong> 64KB read-only cached — for kernel parameters that all threads read identically.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Book</div><h4>PMPP 4th Ed — Ch. 5</h4><p>Memory Architecture and Data Locality. The authoritative treatment of GPU memory types. Read alongside CUDA Samples.</p></div>
+          <div class="resource-card"><div class="rc-type">Video</div><h4>CoffeeBeforeArch — "CUDA Memory Model"</h4><p>Videos 4–6 in the crash course series. Covers shared memory and coalescing with code examples.</p><a href="https://www.youtube.com/playlist?list=PLxNPSjHT5qvtYRVdNN1yDcdSl39uHV_sU" target="_blank">YouTube</a></div>
+        </div>
+
+        <div class="tag-row">
+          <span class="tag red">Global: ~936 GB/s (3090)</span>
+          <span class="tag amber">Shared: ~19 TB/s on-chip</span>
+          <span class="tag green">Registers: fastest, limited</span>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground — Shared Memory Staging</div>
+          <p>Rewrite vectorAdd to load data into shared memory first, then compute. It will not be faster (shared memory is not helpful for elementwise ops), but the pattern is identical to what makes tiled GEMM fast. Verify correctness. Understand why the extra code added no speed here — and when it would.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>After you understand the memory types conceptually, CC can generate the shared memory staging version: "Rewrite this vectorAdd kernel to load into __shared__ float before computing." Use it to check your own attempt.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('2-3', 2, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="2-4">
+      <div class="step-header" onclick="toggleStep('2-4')">
+        <div class="step-num" id="num-2-4">4</div>
+        <div class="step-title-group">
+          <div class="step-title">Write your first real kernels — cudaMalloc, naive GEMM, tiled GEMM<span class="manual-chip">Write tiled yourself</span></div>
+          <div class="step-subtitle">Host-device transfers, error checking, correctness verification</div>
+        </div>
+        <div class="step-week">Week 3–4</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Write these three kernels in order. Each one builds on the last.</p>
+        <ul>
+          <li><strong>cudaMalloc / cudaMemcpy / cudaFree:</strong> always check every return code</li>
+          <li><strong>Naive matrix multiply:</strong> each thread computes one output element. Profile it — you will see why it is slow.</li>
+          <li><strong>Tiled matrix multiply:</strong> use shared memory tiles. The canonical GPU optimisation and the template for most ML kernels.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Book</div><h4>PMPP 4th Ed — Ch. 4</h4><p>Compute Architecture and Scheduling. Then Ch. 5 for the memory model that explains why tiling works.</p></div>
+          <div class="resource-card"><div class="rc-type">Sample</div><h4>cuda-samples/matrixMul</h4><p>At ~/cuda-samples/Samples/0_Introduction/matrixMul. Study it after writing your own — not before. Then diff your solution against theirs.</p><a href="https://github.com/NVIDIA/cuda-samples/tree/master/Samples/0_Introduction/matrixMul" target="_blank">GitHub</a></div>
+          <div class="resource-card"><div class="rc-type">Blog</div><h4>Lei Mao — "CUDA Matrix Multiplication"</h4><p>Excellent step-by-step with diagrams. Tiled GEMM explained better than most textbooks.</p><a href="https://leimao.github.io/blog/CUDA-Matrix-Multiplication-Naive/" target="_blank">leimao.github.io</a></div>
+          <div class="resource-card"><div class="rc-type">Video</div><h4>CS344 — Unit 3 (Fundamental GPU Algorithms)</h4><p>Covers tiling and shared memory in the context of matrix multiply. Watch after reading PMPP Ch. 4–5.</p><a href="https://www.youtube.com/playlist?list=PLAwxTw4SYaPnFKojVQrmyOGFCqHTxfdv2" target="_blank">YouTube</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground — Month 2 Capstone</div>
+          <p>Working tiled GEMM that produces correct results, verified against CPU reference. For a 1024x1024 float multiply your GPU should be at least 20x faster than the CPU naive version:</p>
+          <div class="code-block"><span class="comment"># Build with CMake</span>
+<span class="cmd">cmake -DCMAKE_CUDA_ARCHITECTURES=86 .. && make</span>
+<span class="cmd">./tiledGemm</span>
+<span class="comment"># Expected output: "Max error: 0.000000 | GPU time: ~Xms | CPU time: ~Yms"</span></div>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Generate a naive CUDA matrix multiply kernel for M x N x K matrices with cudaMalloc, cudaMemcpy, and a correctness check against CPU." Use CC for the naive version and boilerplate. Write the tiled version yourself — that is the exercise.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('2-4', 2, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="completion-banner" id="done-2">
+    <h3>Month 2 complete.</h3>
+    <p>You can write, compile, and run GPU kernels. Month 3 is where you make them fast — stay on RunPod but start using Nsight.</p>
+    <button class="next-btn" onclick="switchMonth(3, document.querySelectorAll('.month-tab')[3])">Start Month 3 — Performance Optimisation</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MONTH 3 ═══════════════ -->
+<div class="month-panel" id="panel-3">
+  <div class="month-header">
+    <div class="month-badge"><div class="mo">Month</div><div class="mn">03</div></div>
+    <div>
+      <h2>Performance Optimisation</h2>
+      <p>RunPod RTX 3090 or A100. Correct is necessary — fast is the job. Learn the four levers of GPU performance and how to measure each one with Nsight Compute.</p>
+    </div>
+  </div>
+
+  <div class="overview-strip">
+    <div class="overview-pill"><div class="num">4</div><div class="lbl">Topics</div></div>
+    <div class="overview-pill"><div class="num">~40</div><div class="lbl">Total hours<br>this month</div></div><div class="overview-pill"><div class="num">Nsight</div><div class="lbl">Primary<br>profiling tool</div></div>
+    <div class="overview-pill"><div class="num">Roofline</div><div class="lbl">Key mental<br>model</div></div>
+  </div>
+
+  <div class="progress-area">
+    <div class="progress-label"><span>Month 3 Progress</span><span class="count" id="count-3">0 / 4 complete</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="fill-3" style="width:0%"></div></div>
+  </div>
+
+  <div class="steps" id="steps-3">
+
+    <div class="step open" id="3-1">
+      <div class="step-header" onclick="toggleStep('3-1')">
+        <div class="step-num" id="num-3-1">1</div>
+        <div class="step-title-group">
+          <div class="step-title">Memory coalescing and access patterns<span class="manual-chip">Must profile yourself</span></div>
+          <div class="step-subtitle">The single most impactful global memory optimisation</div>
+        </div>
+        <div class="step-week">Week 1</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>When threads in a warp access consecutive memory addresses, the GPU services them in a single transaction. When they do not, performance degrades up to 32x.</p>
+        <ul>
+          <li>32 threads accessing <code>A[threadIdx.x]</code> through <code>A[threadIdx.x + 31]</code>: coalesced — one transaction</li>
+          <li>Same 32 threads accessing every 32nd element: uncoalesced — 32 separate transactions</li>
+          <li>Matrix transpose is the canonical example: naive is uncoalesced on writes. Fix with shared memory staging.</li>
+          <li>Understand Nsight Compute metric: <code>l1tex__t_sectors_pipe_lsu_mem_global_op_ld_lookup_hit</code> — the coalescing efficiency score</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Book</div><h4>PMPP 4th Ed — Ch. 6</h4><p>Performance Considerations. Section 6.1 covers global memory bandwidth and coalescing in detail.</p></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>CUDA Best Practices Guide — Ch. 9</h4><p>Memory Optimizations. The official treatment of coalescing with hardware-specific details.</p><a href="https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/#memory-optimizations" target="_blank">docs.nvidia.com</a></div>
+          <div class="resource-card"><div class="rc-type">Blog</div><h4>Lei Mao — "CUDA Memory Coalescing"</h4><p>Detailed worked examples with Nsight Compute screenshots showing the difference.</p><a href="https://leimao.github.io/blog/CUDA-Performance/" target="_blank">leimao.github.io</a></div>
+          <div class="resource-card"><div class="rc-type">Sample</div><h4>cuda-samples/transpose</h4><p>Seven progressively better transpose kernels. The ultimate coalescing exercise. Study and run all seven.</p><a href="https://github.com/NVIDIA/cuda-samples/tree/master/Samples/2_Concepts_and_Techniques/transpose" target="_blank">GitHub</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground</div>
+          <p>Profile your naive GEMM from Month 2 with Nsight Compute. Look at the Memory Workload Analysis section. Record the global memory throughput. Then profile the tiled version. The tiled version should show dramatically higher effective bandwidth utilisation.</p>
+          <div class="code-block"><span class="cmd">ncu --set full ./tiledGemm 2>&gt; ncu_report.txt</span>
+<span class="cmd">ncu --import ncu_report.ncu-rep</span>  <span class="comment"># or use the GUI</span></div>
+        </div>
+
+        <div class="cc-banner manual"><div class="cc-icon">YOU</div><div>CC cannot read your specific Nsight output. You run the profiler, you interpret the numbers. CC can explain what a metric means in general: "What does l1tex__t_sectors_pipe_lsu_mem_global_op_ld mean in Nsight Compute?" — but the diagnosis is yours.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('3-1', 3, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="3-2">
+      <div class="step-header" onclick="toggleStep('3-2')">
+        <div class="step-num" id="num-3-2">2</div>
+        <div class="step-title-group">
+          <div class="step-title">Shared memory and bank conflicts<span class="cc-chip">Hybrid</span></div>
+          <div class="step-subtitle">32 banks, bank conflicts, padding fix, broadcast exception</div>
+        </div>
+        <div class="step-week">Week 2</div>
+        <div class="step-hours">8 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Shared memory is divided into 32 banks. Multiple threads in a warp accessing the same bank simultaneously causes serialisation — a bank conflict.</p>
+        <ul>
+          <li>Thread <code>i</code> maps to bank <code>i % 32</code></li>
+          <li>Common conflict: accessing column of a 2D shared array (strided access). Fix: pad width by 1.</li>
+          <li>Broadcast exception: all threads reading the same address in the same bank — no conflict, broadcasts to all.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Book</div><h4>PMPP 4th Ed — Ch. 5, Section 5.4</h4><p>Memory Access Patterns and Shared Memory Bank Conflicts. Covers the padding fix with diagrams.</p></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>CUDA Best Practices Guide — Shared Memory</h4><p>Section 9.2.3. Includes the architecture-specific bank count and width for each CUDA compute capability.</p><a href="https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/#shared-memory" target="_blank">docs.nvidia.com</a></div>
+        </div>
+
+        <div class="code-block"><span class="comment">// Classic bank conflict fix — pad shared array width by 1</span>
+<span class="kw">__shared__</span> <span class="kw">float</span> tile[BLOCK_SIZE][BLOCK_SIZE + 1]; <span class="comment">// +1 eliminates conflicts</span></div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground</div>
+          <p>Deliberately introduce a bank conflict in your tiled GEMM (remove the +1 padding). Profile with <code>ncu --metrics l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum</code>. Record the conflict count. Add the padding back. Confirm the count drops to zero.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Add the +1 padding fix to this shared memory array to eliminate bank conflicts: [paste your code]." CC knows the pattern. But run the before/after profiler yourself — the metric drop is what proves you understood it.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('3-2', 3, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="3-3">
+      <div class="step-header" onclick="toggleStep('3-3')">
+        <div class="step-num" id="num-3-3">3</div>
+        <div class="step-title-group">
+          <div class="step-title">Occupancy, warp efficiency, and parallel reduction<span class="manual-chip">Write reduction yourself</span></div>
+          <div class="step-subtitle">Active warps vs maximum warps, divergence, warp shuffle reductions</div>
+        </div>
+        <div class="step-week">Week 2–3</div>
+        <div class="step-hours">12 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <ul>
+          <li><strong>Occupancy:</strong> ratio of active warps to maximum possible. Increases latency hiding. Limited by registers per thread and shared memory per block.</li>
+          <li><strong>Warp divergence:</strong> if/else branches on thread ID cause both paths to execute serially. Minimise branching inside kernels.</li>
+          <li><strong>Warp shuffle:</strong> <code>__shfl_down_sync()</code> — threads in a warp exchange data without shared memory. Fastest reduction primitive.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Slides — Essential</div><h4>Mark Harris "Optimizing Parallel Reduction in CUDA"</h4><p>Six progressively faster reduction kernels. One of the most important CUDA documents ever written. 38 slides.</p><a href="https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf" target="_blank">Free PDF</a></div>
+          <div class="resource-card"><div class="rc-type">Tool</div><h4>CUDA Occupancy Calculator</h4><p>Spreadsheet from NVIDIA. Enter register count and shared memory per block to read occupancy.</p><a href="https://developer.download.nvidia.com/compute/cuda/CUDA_Occupancy_calculator.xls" target="_blank">Download XLS</a></div>
+          <div class="resource-card"><div class="rc-type">Sample</div><h4>cuda-samples/reduction</h4><p>Reference implementations of all reduction variants from Harris's slides. Build and profile each one.</p><a href="https://github.com/NVIDIA/cuda-samples/tree/master/Samples/2_Concepts_and_Techniques/reduction" target="_blank">GitHub</a></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>CUDA Programming Guide — Warp-Level Primitives</h4><p>Section on __shfl_sync, __shfl_down_sync, __shfl_xor_sync. The shuffle intrinsics are what makes fast reductions possible.</p><a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/#warp-shuffle-functions" target="_blank">docs.nvidia.com</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground — Parallel Reduction</div>
+          <p>Implement a sum reduction of 32M floats. Four versions: naive, tree-reduction, warp shuffle, warp shuffle + loop unrolling. Benchmark with <code>cudaEvent</code> timing. Target: warp shuffle version should be at least 4x faster than naive.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Write a CUDA benchmark harness using cudaEvent_t that times a kernel 100 times and reports mean and std dev in microseconds." CC handles the timing boilerplate. Write the reduction kernels yourself — the warp shuffle logic must be yours.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('3-3', 3, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="3-4">
+      <div class="step-header" onclick="toggleStep('3-4')">
+        <div class="step-num" id="num-3-4">4</div>
+        <div class="step-title-group">
+          <div class="step-title">Roofline model and Nsight Compute profiling<span class="manual-chip">Interpret yourself</span></div>
+          <div class="step-subtitle">Arithmetic intensity, compute-bound vs memory-bound, Nsight workflow</div>
+        </div>
+        <div class="step-week">Week 3–4</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>The roofline model tells you whether your kernel is limited by compute or by memory bandwidth. Everything you optimise should be driven by this answer first.</p>
+        <ul>
+          <li><strong>Arithmetic intensity:</strong> FLOPs / bytes accessed. High = compute-bound. Low = memory-bound.</li>
+          <li>A 1024x1024 GEMM: ~2B FLOPs, ~12MB memory = 167 FLOP/byte. Compute-bound on any modern GPU.</li>
+          <li>ReLU: 1 FLOP per element, 8 bytes read+write = 0.125 FLOP/byte. Heavily memory-bound.</li>
+          <li>Nsight Compute generates a roofline chart automatically — use <code>ncu --set roofline</code></li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>Nsight Compute Roofline Guide</h4><p>Official tutorial on interpreting the Nsight roofline chart. Read before using the tool.</p><a href="https://docs.nvidia.com/nsight-compute/NsightComputeCli/index.html#roofline" target="_blank">docs.nvidia.com</a></div>
+          <div class="resource-card"><div class="rc-type">GTC Talk</div><h4>"Roofline Model and CUDA Kernel Performance" — GTC 2019</h4><p>Best video explanation of roofline applied to GPU kernels. Free on GTC archive.</p><a href="https://www.nvidia.com/gtc/session-catalog/" target="_blank">GTC archive</a></div>
+          <div class="resource-card"><div class="rc-type">Blog</div><h4>Simon Boehm — "How to Optimize a CUDA Matmul Kernel"</h4><p>Excellent step-by-step: goes from 1 TFLOPS to 90% of cuBLAS in 9 kernels. Read alongside Month 3.</p><a href="https://siboehm.com/articles/22/CUDA-MMM" target="_blank">siboehm.com</a></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>Nsight Compute CLI Guide</h4><p>Learn ncu command line options. Key flags: --set full, --metrics, --target-processes.</p><a href="https://docs.nvidia.com/nsight-compute/NsightComputeCli/" target="_blank">docs.nvidia.com</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground — Month 3 Capstone</div>
+          <p>Profile your tiled GEMM with <code>ncu --set roofline</code>. Generate the roofline chart. Write a 200-word explanation of: (1) is it compute or memory bound? (2) what is limiting it? (3) what would you change next? Save as <code>month3_report.md</code> — this is your first portfolio artifact.</p>
+          <div class="code-block"><span class="cmd">ncu --set roofline -o gemm_profile ./tiledGemm</span>
+<span class="comment"># Open gemm_profile.ncu-rep in Nsight Compute GUI</span></div>
+        </div>
+
+        <div class="cc-banner manual"><div class="cc-icon">YOU</div><div>The roofline chart interpretation and the decision about what to optimise next cannot be delegated. CC can explain: "What does it mean if my kernel sits below the memory roof on the roofline?" but reading your specific kernel's position and deciding what to change is the core skill.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('3-4', 3, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="completion-banner" id="done-3">
+    <h3>Month 3 complete.</h3>
+    <p>You can write fast kernels and explain why they are fast. Month 4 applies this to real ML operations — switch to A100 on RunPod for the GEMM benchmarks.</p>
+    <button class="next-btn" onclick="switchMonth(4, document.querySelectorAll('.month-tab')[4])">Start Month 4 — ML Primitives</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MONTH 4 ═══════════════ -->
+<div class="month-panel" id="panel-4">
+  <div class="month-header">
+    <div class="month-badge"><div class="mo">Month</div><div class="mn">04</div></div>
+    <div>
+      <h2>ML Primitives from Scratch</h2>
+      <p>Use RunPod A100 (~$0.79/hr). GEMM, fused softmax, layer norm, attention — the operations that account for most compute in transformer models. Implement each, profile each.</p>
+    </div>
+  </div>
+
+  <div class="overview-strip">
+    <div class="overview-pill"><div class="num">4</div><div class="lbl">Topics</div></div>
+    <div class="overview-pill"><div class="num">~45</div><div class="lbl">Total hours<br>this month</div></div><div class="overview-pill"><div class="num">A100</div><div class="lbl">RunPod<br>~$0.79/hr</div></div>
+    <div class="overview-pill"><div class="num">cuBLAS</div><div class="lbl">Your benchmark<br>target</div></div>
+  </div>
+
+  <div class="progress-area">
+    <div class="progress-label"><span>Month 4 Progress</span><span class="count" id="count-4">0 / 4 complete</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="fill-4" style="width:0%"></div></div>
+  </div>
+
+  <div class="steps" id="steps-4">
+
+    <div class="step open" id="4-1">
+      <div class="step-header" onclick="toggleStep('4-1')">
+        <div class="step-num" id="num-4-1">1</div>
+        <div class="step-title-group">
+          <div class="step-title">GEMM from scratch, then cuBLAS<span class="manual-chip">Write GEMM yourself</span></div>
+          <div class="step-subtitle">Generalise your tiled GEMM, benchmark against cuBLAS, study the gap</div>
+        </div>
+        <div class="step-week">Week 1</div>
+        <div class="step-hours">12 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Every linear layer, attention projection, and weight update in a transformer is a GEMM. Understanding it deeply means understanding 80% of model compute.</p>
+        <ul>
+          <li>Generalise Month 2 GEMM: support non-square matrices (M, N, K), alpha/beta scaling, arbitrary batch dimension</li>
+          <li>Understand the three GEMM dimensions: M (rows of C), N (cols of C), K (reduction dimension)</li>
+          <li>Use <code>cublasGemmEx</code> with <code>CUDA_R_32F</code> precision. Benchmark your version vs cuBLAS on A100.</li>
+          <li>Read Simon Boehm's 9-kernel optimisation path to understand how cuBLAS achieves what it does</li>
+          <li>Batched GEMM: <code>cublasGemmBatchedEx</code> — needed for multi-head attention</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Blog — Essential</div><h4>Simon Boehm — "How to Optimize a CUDA Matmul"</h4><p>9 progressively faster kernels from naive to 90% cuBLAS speed. The best GEMM optimisation tutorial available.</p><a href="https://siboehm.com/articles/22/CUDA-MMM" target="_blank">siboehm.com</a></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>cuBLAS Developer Guide — cublasGemmEx</h4><p>Full API reference including data type mixing rules and compute type options.</p><a href="https://docs.nvidia.com/cuda/cublas/#cublasgemmex" target="_blank">docs.nvidia.com/cublas</a></div>
+          <div class="resource-card"><div class="rc-type">Repo</div><h4>wangzyon/NVIDIA-SGEMM-PRACTICE</h4><p>GitHub repo implementing the same kernels as Simon Boehm's blog, with benchmarks. Study the code.</p><a href="https://github.com/wangzyon/NVIDIA-SGEMM-PRACTICE" target="_blank">GitHub</a></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>CUTLASS Getting Started</h4><p>Now that you know GEMM deeply, read how CUTLASS structures its abstractions. Month 5 uses it.</p><a href="https://github.com/NVIDIA/cutlass/blob/main/media/docs/quickstart.md" target="_blank">GitHub CUTLASS</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground</div>
+          <p>Benchmark your best GEMM vs cuBLAS for three shapes: (4096, 4096, 4096), (512, 8192, 8192), (1, 4096, 4096). Record TFLOPS for each. The gap on the square shape reveals your optimisation headroom. Document findings in <code>gemm_benchmark.md</code>.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Write a cublasGemmEx call for FP32 M=4096 N=4096 K=4096 with CUBLAS_OP_N, CUBLAS_OP_N and CUDA_R_32F compute type, including cublasHandle_t setup and error checking." The cuBLAS wiring is boilerplate. The GEMM kernel logic is yours.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('4-1', 4, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="4-2">
+      <div class="step-header" onclick="toggleStep('4-2')">
+        <div class="step-num" id="num-4-2">2</div>
+        <div class="step-title-group">
+          <div class="step-title">Fused softmax and layer norm kernels<span class="manual-chip">Write fusion yourself</span></div>
+          <div class="step-subtitle">Online algorithms, warp shuffles, single-pass fusion</div>
+        </div>
+        <div class="step-week">Week 2</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <ul>
+          <li><strong>Online softmax:</strong> compute max and sum in a single pass using warp shuffles. Avoids rereading input — halves memory traffic vs two-pass approach.</li>
+          <li><strong>Welford's algorithm:</strong> compute mean and variance in a single pass numerically stably. Use for fused LayerNorm.</li>
+          <li><code>__shfl_down_sync(0xFFFFFFFF, val, offset)</code> — warp-level reduction without shared memory</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Paper</div><h4>Flash Attention — Dao et al. 2022</h4><p>Read Section 3.1 carefully — the online softmax algorithm is explained here. This is the foundation of Month 4 Step 3.</p><a href="https://arxiv.org/abs/2205.14135" target="_blank">arxiv.org/abs/2205.14135</a></div>
+          <div class="resource-card"><div class="rc-type">Blog</div><h4>Aleksa Gordic — "Flash Attention Explained"</h4><p>Best visual explanation of online softmax and IO complexity. Read before implementing.</p><a href="https://gordicaleksa.medium.com/eli5-flash-attention-5c44017022ad" target="_blank">Medium</a></div>
+          <div class="resource-card"><div class="rc-type">Repo</div><h4>EpicKernels / fused-softmax</h4><p>Reference fused softmax implementations in CUDA with benchmarks vs unfused PyTorch.</p><a href="https://github.com/unixpickle/cuda-kernels" target="_blank">GitHub</a></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>CUDA Warp-Level Functions — __shfl_down_sync</h4><p>Official documentation on all warp shuffle intrinsics including mask requirements and width parameter.</p><a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/#warp-shuffle-functions" target="_blank">docs.nvidia.com</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground</div>
+          <p>Implement fused online softmax. Compare DRAM bytes accessed vs unfused two-pass version using Nsight Compute metric <code>dram__bytes.sum</code>. The fused version should read roughly half the DRAM bytes. Verify numerically against <code>torch.nn.functional.softmax</code>.</p>
+        </div>
+
+        <div class="cc-banner manual"><div class="cc-icon">YOU</div><div>The online softmax algorithm and Welford variance — write these yourself. The insight of doing it in one pass is what you are learning. CC can generate test code: "Write a Python script that compares a custom CUDA softmax output to torch.nn.functional.softmax within 1e-5 tolerance."</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('4-2', 4, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="4-3">
+      <div class="step-header" onclick="toggleStep('4-3')">
+        <div class="step-num" id="num-4-3">3</div>
+        <div class="step-title-group">
+          <div class="step-title">Scaled dot-product attention kernel<span class="manual-chip">Must implement yourself</span></div>
+          <div class="step-subtitle">Naive NxN materialisation, IO complexity, Flash Attention v1 concept</div>
+        </div>
+        <div class="step-week">Week 3</div>
+        <div class="step-hours">13 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <ul>
+          <li>Implement naive attention: QK^T GEMM → softmax → V GEMM. Profile at N=2048 — observe HBM traffic explosion.</li>
+          <li>Read Flash Attention paper — the key insight: tile Q, K, V to keep attention matrix in shared memory. Never write the NxN matrix to HBM.</li>
+          <li>Implement simplified Flash Attention v1 for single-head, fixed sequence length. Correctness check against PyTorch <code>F.scaled_dot_product_attention</code>.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Paper — Read fully</div><h4>Flash Attention — Dao et al. 2022</h4><p>Read all of Sections 1–3. Section 2 has the IO complexity analysis. Section 3 is the algorithm.</p><a href="https://arxiv.org/abs/2205.14135" target="_blank">arxiv.org/abs/2205.14135</a></div>
+          <div class="resource-card"><div class="rc-type">Blog</div><h4>Lilian Weng — "Efficient Transformers: A Survey"</h4><p>Context for why attention memory is the bottleneck. Flash Attention section is well explained.</p><a href="https://lilianweng.github.io/posts/2020-04-07-the-transformer-family/" target="_blank">lilianweng.github.io</a></div>
+          <div class="resource-card"><div class="rc-type">Video</div><h4>Andrej Karpathy — "Let's build GPT"</h4><p>Watch if you need to solidify the transformer mental model before implementing attention.</p><a href="https://www.youtube.com/watch?v=kCc8FmEb1nY" target="_blank">YouTube</a></div>
+          <div class="resource-card"><div class="rc-type">Repo</div><h4>tspeterkim/flash-attention-minimal</h4><p>Minimal Flash Attention v1 implementation in ~100 lines of CUDA. Study after your own attempt.</p><a href="https://github.com/tspeterkim/flash-attention-minimal" target="_blank">GitHub</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground</div>
+          <p>Profile naive attention vs your Flash Attention v1 at sequence length 2048, head dim 64. Record: (1) DRAM bytes read for each, (2) runtime in ms for each. Flash Attention should use O(N) HBM memory vs O(N^2). Verify output matches PyTorch within 1e-3 tolerance.</p>
+        </div>
+
+        <div class="cc-banner manual"><div class="cc-icon">YOU</div><div>Do not ask CC to implement Flash Attention. The mapping from the paper algorithm to thread/tile indexing is the exercise. After your attempt, you can ask CC: "Explain why my tiled softmax accumulation is numerically unstable" or "What is wrong with this warp shuffle reduction?" — targeted debugging only.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('4-3', 4, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="4-4">
+      <div class="step-header" onclick="toggleStep('4-4')">
+        <div class="step-num" id="num-4-4">4</div>
+        <div class="step-title-group">
+          <div class="step-title">Build a PyTorch-callable transformer layer<span class="cc-chip">Claude Code</span></div>
+          <div class="step-subtitle">cuBLAS projections + your fused kernels + pybind11 wrapper</div>
+        </div>
+        <div class="step-week">Week 4</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <ul>
+          <li>Wrap your fused softmax, LayerNorm, and simplified attention in a PyTorch C++ extension using <code>torch.utils.cpp_extension.load</code></li>
+          <li>Use cuBLAS (<code>cublasGemmEx</code>) for Q, K, V, and output projections</li>
+          <li>Test against <code>torch.nn.TransformerEncoderLayer</code> — outputs should match within FP32 tolerance</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Official tutorial</div><h4>PyTorch Custom C++ and CUDA Extensions</h4><p>The official guide for building torch extensions. Covers setup.py, JIT compilation, and tensor access.</p><a href="https://pytorch.org/tutorials/advanced/cpp_extension.html" target="_blank">pytorch.org/tutorials</a></div>
+          <div class="resource-card"><div class="rc-type">Repo</div><h4>pytorch/extension-cpp</h4><p>Official PyTorch example extension. Study the CMakeLists.txt and setup.py for the correct build pattern.</p><a href="https://github.com/pytorch/extension-cpp" target="_blank">GitHub</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground — Month 4 Capstone</div>
+          <p>Single transformer layer (attention + MLP) callable from Python. Run a correctness check:</p>
+          <div class="code-block"><span class="comment"># Python test</span>
+<span class="kw">import</span> torch, my_extension
+x = torch.randn(8, 512, 768, device=<span class="str">'cuda'</span>)
+out_custom = my_extension.forward(x)
+out_ref = torch_layer(x)
+<span class="fn">print</span>(f<span class="str">"Max diff: {(out_custom - out_ref).abs().max():.6f}"</span>) <span class="comment"># target: &lt; 1e-4</span></div>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Write a PyTorch C++ extension that exposes two CUDA functions: fused_layernorm(torch::Tensor x) and flash_attention(torch::Tensor Q, K, V). Include setup.py with CUDAExtension, the pybind11 PYBIND11_MODULE block, and torch::Tensor argument validation." This is pure scaffolding — CC handles all of it.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('4-4', 4, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="completion-banner" id="done-4">
+    <h3>Month 4 complete.</h3>
+    <p>You have implemented and wrapped the core ML primitives. Month 5 adds Tensor Cores and Triton — upgrade to H100 on Vast.ai for FP8 experiments.</p>
+    <button class="next-btn" onclick="switchMonth(5, document.querySelectorAll('.month-tab')[5])">Start Month 5 — Advanced CUDA</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MONTH 5 ═══════════════ -->
+<div class="month-panel" id="panel-5">
+  <div class="month-header">
+    <div class="month-badge"><div class="mo">Month</div><div class="mn">05</div></div>
+    <div>
+      <h2>Advanced CUDA and Triton</h2>
+      <p>H100 on Vast.ai (~$1.49–1.87/hr) for FP8 and Tensor Core work. Triton on A100 is fine. Tensor Cores, mixed precision, Triton kernel writing, multi-GPU collective ops.</p>
+    </div>
+  </div>
+
+  <div class="overview-strip">
+    <div class="overview-pill"><div class="num">4</div><div class="lbl">Topics</div></div>
+    <div class="overview-pill"><div class="num">~45</div><div class="lbl">Total hours<br>this month</div></div><div class="overview-pill"><div class="num">H100</div><div class="lbl">Vast.ai<br>~$1.65/hr</div></div>
+    <div class="overview-pill"><div class="num">Triton</div><div class="lbl">Python-first<br>kernel writing</div></div>
+  </div>
+
+  <div class="progress-area">
+    <div class="progress-label"><span>Month 5 Progress</span><span class="count" id="count-5">0 / 4 complete</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="fill-5" style="width:0%"></div></div>
+  </div>
+
+  <div class="steps" id="steps-5">
+
+    <div class="step open" id="5-1">
+      <div class="step-header" onclick="toggleStep('5-1')">
+        <div class="step-num" id="num-5-1">1</div>
+        <div class="step-title-group">
+          <div class="step-title">Tensor Cores and the WMMA API<span class="manual-chip">Write WMMA yourself</span></div>
+          <div class="step-subtitle">16x16x16 MMA in hardware, fragments, CUTLASS abstraction</div>
+        </div>
+        <div class="step-week">Week 1</div>
+        <div class="step-hours">12 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <ul>
+          <li><strong>WMMA API:</strong> <code>wmma::load_matrix_sync</code>, <code>wmma::mma_sync</code>, <code>wmma::store_matrix_sync</code></li>
+          <li>Fragments: warp-level data structures distributed across 32 threads. Treat as opaque — the hardware manages the layout.</li>
+          <li>Matrix dimensions must be multiples of 16. Pad odd-shaped matrices.</li>
+          <li>CUTLASS: the production abstraction over Tensor Cores. After writing your own WMMA kernel, switch to CUTLASS for production use.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>CUDA Programming Guide — Warp Matrix Functions</h4><p>Complete WMMA API reference. Read before any code. Covers all supported types and tile sizes.</p><a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/#wmma" target="_blank">docs.nvidia.com</a></div>
+          <div class="resource-card"><div class="rc-type">Sample</div><h4>cuda-samples/cudaTensorCoreGemm</h4><p>NVIDIA's reference WMMA GEMM. Study before writing your own — understanding the fragment layout is the hard part.</p><a href="https://github.com/NVIDIA/cuda-samples/tree/master/Samples/3_CUDA_Features/cudaTensorCoreGemm" target="_blank">GitHub</a></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>CUTLASS 3.x Quickstart</h4><p>The production alternative to raw WMMA. Run the CUTLASS GEMM example and compare to your WMMA kernel.</p><a href="https://github.com/NVIDIA/cutlass/blob/main/media/docs/quickstart.md" target="_blank">GitHub</a></div>
+          <div class="resource-card"><div class="rc-type">Blog</div><h4>Zach Nussbaum — "Getting Started with Tensor Cores in CUDA"</h4><p>Step-by-step WMMA tutorial with complete code. Best single article for WMMA beginners.</p><a href="https://developer.nvidia.com/blog/programming-tensor-cores-cuda-9/" target="_blank">developer.nvidia.com</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground</div>
+          <p>Implement a WMMA-based GEMM for 4096x4096 FP16 matrices. Benchmark against your Month 3 FP32 tiled GEMM. You should see roughly 4–8x throughput improvement on A100 (Tensor Cores vs CUDA cores for FP16).</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Write a CUTLASS 3.x GemmUniversal example for FP16 A, FP16 B, FP32 C accumulation on sm_80 with tile shape 128x128x32." The CUTLASS config is pure boilerplate. Your WMMA kernel write-up is not.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('5-1', 5, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="5-2">
+      <div class="step-header" onclick="toggleStep('5-2')">
+        <div class="step-num" id="num-5-2">2</div>
+        <div class="step-title-group">
+          <div class="step-title">Mixed precision — FP16, BF16, and FP8<span class="cc-chip">Hybrid</span></div>
+          <div class="step-subtitle">Numerical formats, loss scaling, AMP, per-tensor scaling for FP8</div>
+        </div>
+        <div class="step-week">Week 2</div>
+        <div class="step-hours">8 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <ul>
+          <li><strong>FP16:</strong> 5 exponent bits, 10 mantissa bits. Overflow-prone — requires loss scaling during training.</li>
+          <li><strong>BF16:</strong> 8 exponent bits, 7 mantissa bits. Same range as FP32. Preferred for training on Ampere+.</li>
+          <li><strong>FP8 (H100 only):</strong> E4M3 for activations, E5M2 for gradients. Requires per-tensor scaling factors. 2x throughput over FP16.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">NVIDIA Blog</div><h4>"Mixed-Precision Training" — NVIDIA Developer Blog</h4><p>Covers loss scaling, AMP, and the practical steps for mixed-precision training. Official and authoritative.</p><a href="https://developer.nvidia.com/blog/mixed-precision-training-deep-neural-networks/" target="_blank">developer.nvidia.com</a></div>
+          <div class="resource-card"><div class="rc-type">Paper</div><h4>FP8 Formats for Deep Learning — Micikevičius et al. 2022</h4><p>The FP8 specification paper. Explains E4M3 vs E5M2 trade-offs and per-tensor scaling.</p><a href="https://arxiv.org/abs/2209.05433" target="_blank">arxiv.org/abs/2209.05433</a></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>PyTorch AMP — torch.autocast</h4><p>Official guide to Automatic Mixed Precision. Understand which ops run in FP16 vs FP32 and why.</p><a href="https://pytorch.org/docs/stable/amp.html" target="_blank">pytorch.org/docs/amp</a></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>CUDA __half and __nv_bfloat16 API</h4><p>The CUDA intrinsics for half-precision arithmetic. Learn __hadd, __hmul, __hfma.</p><a href="https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__HALF.html" target="_blank">docs.nvidia.com</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground</div>
+          <p>Run your WMMA GEMM in three modes: FP32, FP16 (with FP32 accumulation), BF16. For FP8, use H100 on Vast.ai with <code>cublasGemmEx</code> using <code>CUDA_R_8F_E4M3</code>. Record TFLOPS for each. The ratio FP32:FP16:FP8 should be approximately 1:2:4.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Write a Python benchmark that runs a 4096x4096 GEMM in FP32, FP16, and BF16 using torch.autocast and reports TFLOPS for each. Include GPU synchronisation and 10-run warmup." The benchmark harness is CC. The numerical trade-offs you must read and understand.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('5-2', 5, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="5-3">
+      <div class="step-header" onclick="toggleStep('5-3')">
+        <div class="step-num" id="num-5-3">3</div>
+        <div class="step-title-group">
+          <div class="step-title">Triton — Python-first kernel development<span class="manual-chip">Type tutorials yourself</span></div>
+          <div class="step-subtitle">Tile-based programming model, tl.load/store, Flash Attention in Triton</div>
+        </div>
+        <div class="step-week">Week 2–3</div>
+        <div class="step-hours">15 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Triton is increasingly the first choice for custom ML kernels. Flash Attention 2 is written in it. Being fluent in both CUDA and Triton is a significant hiring signal.</p>
+        <ul>
+          <li>Triton's programming model: programs operate on <em>tiles</em> of data. <code>tl.load</code> and <code>tl.store</code> handle coalescing and shared memory automatically.</li>
+          <li>The compiler handles Tensor Core selection, tiling strategy, and memory layout — you specify the tile size.</li>
+          <li>Work through all five official tutorials in order: vector add, matrix multiply, fused softmax, Flash Attention, layer norm.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Official — Do all 5</div><h4>Triton Official Tutorials</h4><p>Vector Addition → Matrix Multiplication → Fused Softmax → Flash Attention → Layer Norm. Work through all five, typing all code manually.</p><a href="https://triton-lang.org/main/getting-started/tutorials/" target="_blank">triton-lang.org/tutorials</a></div>
+          <div class="resource-card"><div class="rc-type">Repo — Study code</div><h4>Dao-AILab/flash-attention — Triton impl</h4><p>The production Flash Attention 2 Triton implementation. Read after completing the tutorials. This is what production Triton looks like.</p><a href="https://github.com/Dao-AILab/flash-attention/blob/main/flash_attn/flash_attn_triton.py" target="_blank">GitHub</a></div>
+          <div class="resource-card"><div class="rc-type">Paper</div><h4>Triton — Tillet et al. 2019</h4><p>The original Triton paper. Section 3 explains the tile-based programming model and why it compiles to efficient Tensor Core code.</p><a href="https://www.eecs.harvard.edu/~htk/publication/2019-mapl-tillet-kung-cox.pdf" target="_blank">Harvard PDF</a></div>
+          <div class="resource-card"><div class="rc-type">Blog</div><h4>Liger-Kernel — OSS ML kernels in Triton</h4><p>Production Triton kernels for common LLM ops (RoPE, SwiGLU, cross-entropy). Study the code for real-world patterns.</p><a href="https://github.com/linkedin/Liger-Kernel" target="_blank">GitHub</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground</div>
+          <p>Implement Flash Attention in Triton (tutorial 4). Then benchmark it against your Month 4 CUDA Flash Attention at sequence lengths 512, 1024, 2048, 4096. Plot TFLOPS vs sequence length for both. Triton should match or exceed your hand-written CUDA version at longer sequences. Save the plot as <code>fa_benchmark.png</code>.</p>
+          <div class="code-block"><span class="cmd">pip install triton && python flash_attention_triton.py</span></div>
+        </div>
+
+        <div class="cc-banner manual"><div class="cc-icon">YOU</div><div>Do not have CC write the Triton tutorials. Type them manually — the tl.load/tl.store/tl.dot patterns must become familiar through repetition. After completing the tutorials, CC is useful for: "Why is my Triton kernel slower than expected on sequence length 4096? Here is the kernel: [paste]"</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('5-3', 5, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="5-4">
+      <div class="step-header" onclick="toggleStep('5-4')">
+        <div class="step-num" id="num-5-4">4</div>
+        <div class="step-title-group">
+          <div class="step-title">Multi-GPU basics and collective operations<span class="cc-chip">Mostly CC</span></div>
+          <div class="step-subtitle">NCCL, all-reduce, ring-allreduce, tensor parallelism</div>
+        </div>
+        <div class="step-week">Week 4</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <ul>
+          <li><strong>NCCL:</strong> NVIDIA's collective communications library. Handles all-reduce, all-gather, broadcast, reduce-scatter across GPUs.</li>
+          <li><strong>Ring-allreduce:</strong> each GPU sends to its neighbour in a ring. O(N) data movement regardless of GPU count. Understand why.</li>
+          <li><strong>Tensor parallelism:</strong> split weight matrices across GPUs, fuse communication into the GEMM. Megatron-LM style.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>NCCL Developer Guide</h4><p>Full NCCL API. Focus on ncclAllReduce, ncclAllGather, and the group communication pattern.</p><a href="https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/" target="_blank">docs.nvidia.com/nccl</a></div>
+          <div class="resource-card"><div class="rc-type">Paper</div><h4>Megatron-LM — Shoeybi et al. 2019</h4><p>The tensor parallelism paper. Section 3 explains how column-parallel and row-parallel linear layers work. Required reading.</p><a href="https://arxiv.org/abs/1909.08053" target="_blank">arxiv.org/abs/1909.08053</a></div>
+          <div class="resource-card"><div class="rc-type">Blog</div><h4>Lilian Weng — "Large Transformer Model Inference Optimization"</h4><p>Covers tensor parallelism, pipeline parallelism, and KV cache management in one place.</p><a href="https://lilianweng.github.io/posts/2023-01-10-inference-optimization/" target="_blank">lilianweng.github.io</a></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>PyTorch Distributed Overview</h4><p>torch.distributed API including NCCL backend setup, process groups, and collective primitives.</p><a href="https://pytorch.org/docs/stable/distributed.html" target="_blank">pytorch.org/distributed</a></div>
+        </div>
+
+        <div class="callout amber"><div class="callout-icon">!</div><div>Use a 2-GPU instance on RunPod or Vast.ai for the exercise below. Look for instances tagged NVLink — GPU-to-GPU bandwidth is ~600 GB/s on NVLink vs ~64 GB/s on PCIe, which matters for all-reduce.</div></div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground — Month 5 Capstone</div>
+          <p>On a 2-GPU instance: run a manual NCCL all-reduce of a 1GB tensor. Measure bandwidth (GB/s) achieved vs theoretical NVLink peak. Then run a simple tensor-parallel linear layer: split the weight matrix column-wise across both GPUs, compute local GEMMs, all-gather the result. Verify output matches single-GPU reference.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Write a Python script using torch.distributed with NCCL backend that runs an all-reduce of a 1GB float32 tensor across 2 GPUs and measures bandwidth in GB/s." The NCCL setup boilerplate is CC. Understanding why ring-allreduce is O(N) and what NVLink vs PCIe means for your kernels — read that.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('5-4', 5, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="completion-banner" id="done-5">
+    <h3>Month 5 complete.</h3>
+    <p>Tensor Cores, mixed precision, Triton, multi-GPU. Month 6 is about building a public portfolio that others can evaluate.</p>
+    <button class="next-btn" onclick="switchMonth(6, document.querySelectorAll('.month-tab')[6])">Start Month 6 — Ship It</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MONTH 6 ═══════════════ -->
+<div class="month-panel" id="panel-6">
+  <div class="month-header">
+    <div class="month-badge"><div class="mo">Month</div><div class="mn">06</div></div>
+    <div>
+      <h2>Ship Real Work</h2>
+      <p>No more exercises. Build a production-callable extension, implement a research paper, profile a real model end-to-end, and put your name on an open source contribution.</p>
+    </div>
+  </div>
+
+  <div class="overview-strip">
+    <div class="overview-pill"><div class="num">4</div><div class="lbl">Topics</div></div>
+    <div class="overview-pill"><div class="num">~50</div><div class="lbl">Total hours<br>this month</div></div><div class="overview-pill"><div class="num">OSS PR</div><div class="lbl">Merged contribution<br>required</div></div>
+    <div class="overview-pill"><div class="num">Paper</div><div class="lbl">Implement one<br>from scratch</div></div>
+  </div>
+
+  <div class="progress-area">
+    <div class="progress-label"><span>Month 6 Progress</span><span class="count" id="count-6">0 / 4 complete</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="fill-6" style="width:0%"></div></div>
+  </div>
+
+  <div class="steps" id="steps-6">
+
+    <div class="step open" id="6-1">
+      <div class="step-header" onclick="toggleStep('6-1')">
+        <div class="step-num" id="num-6-1">1</div>
+        <div class="step-title-group">
+          <div class="step-title">Package your kernels as a PyTorch C++ extension<span class="cc-chip">Claude Code</span></div>
+          <div class="step-subtitle">pybind11, CUDAExtension, torch.Tensor interop, benchmarking harness</div>
+        </div>
+        <div class="step-week">Week 1</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>The bridge between your CUDA kernels and the ML ecosystem is a PyTorch extension. This is how flash-attention, bitsandbytes, and xformers are packaged.</p>
+        <ul>
+          <li>Use <code>torch.utils.cpp_extension.load</code> for fast JIT compilation during development</li>
+          <li>Use <code>CUDAExtension</code> in <code>setup.py</code> for distributable packages</li>
+          <li>Handle tensor layout: <code>tensor.contiguous()</code>, stride access, <code>at::cuda::getCurrentCUDAStream()</code></li>
+          <li>Write benchmarks with <code>torch.utils.benchmark.Timer</code> — this is the standard ML benchmark format</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Official</div><h4>PyTorch Custom C++ and CUDA Extensions</h4><p>The full tutorial including JIT compilation, setup.py, and ATen tensor operations.</p><a href="https://pytorch.org/tutorials/advanced/cpp_extension.html" target="_blank">pytorch.org/tutorials</a></div>
+          <div class="resource-card"><div class="rc-type">Repo — Study</div><h4>Liger-Kernel — linkedin/Liger-Kernel</h4><p>Production Triton + CUDA extension with proper packaging, testing, and benchmarks. The best OSS example of how to structure a kernel library.</p><a href="https://github.com/linkedin/Liger-Kernel" target="_blank">GitHub</a></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>torch.utils.benchmark — Timer</h4><p>The correct way to benchmark PyTorch operations. Handles warmup, synchronisation, and statistical reporting automatically.</p><a href="https://pytorch.org/docs/stable/benchmark_utils.html" target="_blank">pytorch.org</a></div>
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>pybind11 Documentation</h4><p>The C++/Python binding library used by all PyTorch extensions. Read the "Basics" and "Type Conversions" sections.</p><a href="https://pybind11.readthedocs.io/" target="_blank">pybind11.readthedocs.io</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">Testing Ground</div>
+          <p>Package your fused LayerNorm and Flash Attention kernels into a pip-installable extension called <code>fast_kernels</code>. Write a benchmark comparing each to the PyTorch built-in. Upload to a public GitHub repo with a README showing the benchmark results table. This is the first artifact of your public portfolio.</p>
+        </div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Create a pip-installable Python package called fast_kernels for GitHub user pravinva. Include: setup.py with CUDAExtension for two .cu files, __init__.py, a benchmark script using torch.utils.benchmark.Timer comparing each kernel to the PyTorch built-in, and a README template with a benchmark results table." Hand this entire step to CC.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('6-1', 6, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="6-2">
+      <div class="step-header" onclick="toggleStep('6-2')">
+        <div class="step-num" id="num-6-2">2</div>
+        <div class="step-title-group">
+          <div class="step-title">Implement a research paper kernel from scratch<span class="manual-chip">Must be yours</span></div>
+          <div class="step-subtitle">Read the paper, implement blind, benchmark against the reference</div>
+        </div>
+        <div class="step-week">Week 1–2</div>
+        <div class="step-hours">20 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Implementing a paper from scratch is the strongest signal of competence in this field. Pick one of the four options below.</p>
+
+        <div class="section-label">Choose one</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Recommended</div><h4>Flash Attention 2 — Dao 2023</h4><p>Full implementation with causal masking and GQA support. Benchmark target: within 20% of the reference at seq len 4096.</p><a href="https://arxiv.org/abs/2307.08691" target="_blank">arxiv.org/abs/2307.08691</a></div>
+          <div class="resource-card"><div class="rc-type">Recommended</div><h4>Fused RoPE (Rotary Position Embedding)</h4><p>Used in LLaMA, Mistral, Gemma. Fuse into the QK projection for max efficiency. Well-scoped for 1–2 weeks.</p><a href="https://arxiv.org/abs/2104.09864" target="_blank">RoPE paper</a></div>
+          <div class="resource-card"><div class="rc-type">Alternative</div><h4>Paged Attention — Kwon et al. 2023 (vLLM)</h4><p>The kernel behind continuous batching in LLM inference. More complex, high real-world impact.</p><a href="https://arxiv.org/abs/2309.06180" target="_blank">arxiv.org/abs/2309.06180</a></div>
+          <div class="resource-card"><div class="rc-type">Alternative</div><h4>SwiGLU / GELU activation fusion</h4><p>Fuse gate + activation into a single kernel. Appears in every modern MLP. Good if you want a fast win with clear metrics.</p><a href="https://arxiv.org/abs/2002.05202" target="_blank">SwiGLU paper</a></div>
+        </div>
+
+        <ul>
+          <li>Read the paper until you can explain the kernel design verbally without notes</li>
+          <li>Implement from scratch — do not read reference code first</li>
+          <li>Benchmark against the reference implementation. Document where and why you fall short.</li>
+        </ul>
+
+        <div class="cc-banner manual"><div class="cc-icon">YOU</div><div>This must be your own implementation. If you use CC to write it, you have nothing to show. CC is allowed for: "Generate a correctness test that compares my Flash Attention 2 output to the reference implementation across 5 random inputs at seq_len 512, 1024, 2048" — testing infrastructure only.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('6-2', 6, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="6-3">
+      <div class="step-header" onclick="toggleStep('6-3')">
+        <div class="step-num" id="num-6-3">3</div>
+        <div class="step-title-group">
+          <div class="step-title">Profile a real transformer inference pass end-to-end<span class="manual-chip">Analysis is yours</span></div>
+          <div class="step-subtitle">Nsight Systems timeline, Nsight Compute deep dive, written report</div>
+        </div>
+        <div class="step-week">Week 3</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>Take a real model — GPT-2 medium or LLaMA 7B quantised — run a forward pass, and produce a full performance analysis. This is exactly what a kernel engineering interview takes-home looks like.</p>
+        <ul>
+          <li>Use <code>nsys profile python run_inference.py</code> to get a timeline. Identify which kernels consume the most time, where idle gaps are, where PCIe transfers happen.</li>
+          <li>Use <code>ncu --set full</code> on the two slowest kernels. Explain what limits each using the roofline.</li>
+          <li>Propose and implement one concrete optimisation — a kernel fusion, a layout change, or a precision reduction. Quantify the improvement.</li>
+          <li>Write a structured performance report. This becomes a portfolio artifact.</li>
+        </ul>
+
+        <div class="section-label">Study materials</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Docs</div><h4>Nsight Systems CLI Guide</h4><p>nsys CLI reference. Learn: profile, stats, export to SQLite, and the key sampling options.</p><a href="https://docs.nvidia.com/nsight-systems/UserGuide/index.html" target="_blank">docs.nvidia.com</a></div>
+          <div class="resource-card"><div class="rc-type">Model</div><h4>GPT-2 inference (HuggingFace)</h4><p>Use <code>transformers</code> library to run GPT-2 medium. Easy to profile, well-understood, and results are comparable to published benchmarks.</p><a href="https://huggingface.co/gpt2-medium" target="_blank">huggingface.co/gpt2-medium</a></div>
+        </div>
+
+        <div class="code-block"><span class="cmd">nsys profile --trace=cuda,nvtx -o gpt2_profile python gpt2_inference.py</span>
+<span class="cmd">nsys stats gpt2_profile.nsys-rep --report cuda_gpu_kern_sum</span>
+<span class="comment"># Then deep-dive two slowest kernels with ncu</span></div>
+
+        <div class="callout amber"><div class="callout-icon">!</div><div>A written performance report with roofline analysis and a measured improvement is worth more in a kernel engineering interview than any certification or course completion.</div></div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>The profiling interpretation is yours. CC can format the report: "Convert these Nsight Compute metrics into a structured markdown performance report with sections: Executive Summary, Kernel Hotspots, Roofline Analysis, Optimisation Applied, Results. Data: [paste your numbers]." The analysis and decision go in the report — you write those.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('6-3', 6, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+    <div class="step" id="6-4">
+      <div class="step-header" onclick="toggleStep('6-4')">
+        <div class="step-num" id="num-6-4">4</div>
+        <div class="step-title-group">
+          <div class="step-title">Open source contribution — get a PR merged<span class="cc-chip">Hybrid</span></div>
+          <div class="step-subtitle">xformers, Triton, Liger-Kernel, flash-attention — put your name on something public</div>
+        </div>
+        <div class="step-week">Week 4</div>
+        <div class="step-hours">10 hrs</div>
+        <div class="step-caret">▼</div>
+      </div>
+      <div class="step-body">
+        <p>A merged PR in a serious GPU library is the strongest external validation of your skills. Start small and work up. Your public work will be visible at <strong>github.com/pravinva</strong> — keep all repos public from the start.</p>
+
+        <div class="section-label">Target repositories (in order of approachability)</div>
+        <div class="resources">
+          <div class="resource-card"><div class="rc-type">Easiest start</div><h4>Liger-Kernel — linkedin/Liger-Kernel</h4><p>Active, welcoming community. Issues tagged good-first-issue. Adding a new fused kernel (e.g. GeGLU) is a realistic first contribution.</p><a href="https://github.com/linkedin/Liger-Kernel/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22" target="_blank">Good first issues</a></div>
+          <div class="resource-card"><div class="rc-type">Medium difficulty</div><h4>Triton — triton-lang/triton</h4><p>Tutorial improvements, documentation, and new kernel contributions. The community is responsive and issues are well-labelled.</p><a href="https://github.com/triton-lang/triton/issues" target="_blank">GitHub issues</a></div>
+          <div class="resource-card"><div class="rc-type">Medium difficulty</div><h4>xformers — facebookresearch/xformers</h4><p>Meta's attention and transformer kernel library. Issues tagged good-first-issue include missing operator support and benchmark additions.</p><a href="https://github.com/facebookresearch/xformers/issues?q=label%3A%22good+first+issue%22" target="_blank">Good first issues</a></div>
+          <div class="resource-card"><div class="rc-type">Harder</div><h4>flash-attention — Dao-AILab/flash-attention</h4><p>Missing support for specific head dimensions, BF16 edge cases, and additional attention variants. Higher bar but high visibility.</p><a href="https://github.com/Dao-AILab/flash-attention/issues" target="_blank">GitHub issues</a></div>
+        </div>
+
+        <div class="test-ground">
+          <div class="test-ground-label">6-Month Portfolio Checklist</div>
+          <div class="test-ground ul">
+          <ul>
+            <li><code>fast_kernels</code> GitHub repo: fused LayerNorm + Flash Attention extension with benchmark README</li>
+            <li><code>paper_impl</code> GitHub repo: your research paper implementation with correctness and performance results</li>
+            <li><code>gpt2_perf_report.md</code>: end-to-end profiling report with roofline analysis and one measured optimisation</li>
+            <li>At least one merged OSS PR in Liger-Kernel, Triton, xformers, or flash-attention</li>
+            <li>All four linked from your GitHub profile README at <strong>github.com/pravinva</strong></li>
+          </ul>
+          </div>
+        </div>
+
+        <div class="callout success"><div class="callout-icon">✓</div><div>This is a hiring-ready GPU kernel engineering portfolio. It demonstrates correctness, performance awareness, research implementation ability, and community contribution — the four things kernel engineering teams look for.</div></div>
+
+        <div class="cc-banner"><div class="cc-icon">CC</div><div>"Search the Liger-Kernel GitHub issues for good-first-issue tags and suggest which ones match someone with skills in: fused softmax, Flash Attention, LayerNorm, Triton." CC can help identify the right issue. The implementation is yours.</div></div>
+        <div class="step-actions"><button class="btn-done" onclick="markDone('6-4', 6, 4)">Mark complete</button></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="completion-banner" id="done-6">
+    <h3>Six months. Done.</h3>
+    <p>You went from "a little C++" to a published, profiled, production-aware GPU kernel engineer with a public track record. Pick one direction to go deeper: inference systems, training systems, or compiler work (Triton backend, MLIR). The path from here is depth, not breadth.</p>
+  </div>
+</div>
+
+</div><!-- end .content -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+
+<script>
+  const totalSteps = { setup: 5, 1: 4, 2: 4, 3: 4, 4: 4, 5: 4, 6: 4 };
+  const state = { setup: {} };
+  for (let i = 1; i <= 6; i++) state[i] = {};
+
+  function switchMonth(n, btn) {
+    document.querySelectorAll('.month-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.month-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + n).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggleStep(id) {
+    const step = document.getElementById(id);
+    if (step.classList.contains('done')) return;
+    const isOpen = step.classList.contains('open');
+    step.parentElement.querySelectorAll('.step').forEach(s => s.classList.remove('open'));
+    if (!isOpen) step.classList.add('open');
+  }
+
+  function markDone(id, section, total) {
+    state[section][id] = true;
+    const step = document.getElementById(id);
+    step.classList.remove('open');
+    step.classList.add('done');
+    document.getElementById('num-' + id).innerHTML = '&#10003;';
+
+    const done = Object.keys(state[section]).length;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('fill-' + section).style.width = pct + '%';
+    document.getElementById('count-' + section).textContent = done + ' / ' + total + ' complete';
+
+    const steps = document.querySelectorAll('#steps-' + section + ' .step');
+    let found = false;
+    steps.forEach(s => {
+      if (found && !s.classList.contains('done')) { s.classList.add('open'); found = false; }
+      if (s.id === id) found = true;
+    });
+
+    if (done === total) {
+      const banner = document.getElementById('done-' + section);
+      if (banner) banner.classList.add('show');
+      const chip = document.getElementById('chip-' + section);
+      if (chip) chip.innerHTML = '&#10003;';
+      document.querySelectorAll('.month-tab').forEach(tab => {
+        const oc = tab.getAttribute('onclick') || '';
+        if (oc.includes("'" + section + "'") || oc.includes('"' + section + '"')) {
+          tab.classList.add('done');
+        }
+      });
+    }
+
+    let totalDone = 0, totalAll = 0;
+    Object.keys(totalSteps).forEach(m => {
+      totalDone += Object.keys(state[m] || {}).length;
+      totalAll += totalSteps[m];
+    });
+    const overallPct = Math.round((totalDone / totalAll) * 100);
+    document.getElementById('overall-fill').style.width = overallPct + '%';
+    document.getElementById('overall-pct').textContent = overallPct + '%';
+  }
+</script>
+</body>
+</html>
