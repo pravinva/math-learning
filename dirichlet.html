@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dirichlet Distribution</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800&family=Roboto:wght@300;400;500&family=Roboto+Mono&display=swap');
+
+  :root {
+    --navy: #1B2559;
+    --navy-light: #1B3A5C;
+    --orange: #FF3621;
+    --orange-soft: #FF6B4A;
+    --gold: #F5A623;
+    --teal: #00C7B5;
+    --purple: #7C4DFF;
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --surface2: #eef2f7;
+    --text: #2d3f52;
+    --text-muted: #6b8096;
+    --border: #cfd9e6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    line-height: 1.75;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 2rem;
+    height: 56px; overflow-x: auto; white-space: nowrap;
+  }
+  nav a {
+    color: var(--text-muted); text-decoration: none;
+    font-family: 'Barlow', sans-serif; font-size: 0.82rem; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 4px 0; border-bottom: 2px solid transparent;
+    transition: all .2s;
+  }
+  nav a:hover, nav a.active { color: var(--orange); border-bottom-color: var(--orange); }
+  .nav-brand { color: var(--text); font-weight: 700; font-size: 0.9rem; margin-right: 1rem; flex-shrink: 0; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #0D1B2A 60%, #0A1520 100%);
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,54,33,0.12) 0%, transparent 70%);
+  }
+  .hero h1 {
+    font-family: 'Barlow', sans-serif; font-weight: 800;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    line-height: 1.1; margin-bottom: 1rem;
+    background: linear-gradient(135deg, #fff 30%, var(--orange));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    position: relative;
+  }
+  .hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 640px; margin: 0 auto 2rem; position: relative; }
+  .hero-tags { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; position: relative; }
+  .tag {
+    padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 500;
+    font-family: 'Barlow', sans-serif; letter-spacing: 0.04em;
+  }
+  .tag-orange { background: rgba(255,54,33,0.15); color: var(--orange); border: 1px solid rgba(255,54,33,0.3); }
+  .tag-teal   { background: rgba(0,199,181,0.1);  color: var(--teal);   border: 1px solid rgba(0,199,181,0.25); }
+  .tag-purple { background: rgba(124,77,255,0.1); color: var(--purple); border: 1px solid rgba(124,77,255,0.25); }
+  .tag-gold   { background: rgba(245,166,35,0.1); color: var(--gold);   border: 1px solid rgba(245,166,35,0.25); }
+
+  /* LAYOUT */
+  .container { max-width: 860px; margin: 0 auto; padding: 0 2rem; }
+
+  /* SECTIONS */
+  section { padding: 4rem 0; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 0.72rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 0.5rem;
+  }
+  h2 {
+    font-family: 'Barlow', sans-serif; font-weight: 800;
+    font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.2;
+    margin-bottom: 1.5rem; color: #fff;
+  }
+  h3 {
+    font-family: 'Barlow', sans-serif; font-weight: 700;
+    font-size: 1.15rem; color: var(--teal); margin: 2rem 0 0.75rem;
+  }
+  p { margin-bottom: 1rem; color: var(--text); }
+
+  /* CARDS */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0;
+  }
+  .card-orange { border-left: 3px solid var(--orange); }
+  .card-teal   { border-left: 3px solid var(--teal); }
+  .card-purple { border-left: 3px solid var(--purple); }
+  .card-gold   { border-left: 3px solid var(--gold); }
+
+  .analogy-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem; margin: 1.5rem 0;
+  }
+  .analogy-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.25rem;
+  }
+  .analogy-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .analogy-title { font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 0.9rem; color: #fff; margin-bottom: 0.3rem; }
+  .analogy-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+
+  /* MATH */
+  .math-block {
+    background: #070E18; border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.25rem 0;
+    font-family: 'Roboto Mono', monospace; font-size: 0.9rem;
+    overflow-x: auto; color: #C9D8EB;
+    line-height: 2;
+  }
+  .math-block .hl  { color: var(--orange); font-weight: 500; }
+  .math-block .hl2 { color: var(--teal); }
+  .math-block .hl3 { color: var(--gold); }
+  .math-block .comment { color: #4A6A8A; font-style: italic; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 2rem; margin: 2rem 0; }
+  .timeline::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 2px; background: linear-gradient(to bottom, var(--orange), var(--purple));
+  }
+  .tl-item { position: relative; padding: 0 0 2rem 1.5rem; }
+  .tl-item::before {
+    content: ''; position: absolute; left: -0.45rem; top: 0.35rem;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--orange); border: 2px solid var(--bg);
+  }
+  .tl-year { font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 0.8rem;
+    color: var(--orange); letter-spacing: 0.06em; margin-bottom: 0.2rem; }
+  .tl-content { font-size: 0.9rem; color: var(--text-muted); }
+  .tl-content strong { color: var(--text); }
+
+  /* INTERACTIVE */
+  .demo-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0;
+  }
+  .demo-title {
+    font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 0.85rem;
+    color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .slider-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+  .slider-label { font-size: 0.82rem; color: var(--text-muted); width: 60px; flex-shrink: 0; font-family: 'Roboto Mono'; }
+  input[type=range] {
+    flex: 1; -webkit-appearance: none; height: 4px;
+    background: var(--border); border-radius: 2px; outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--orange); cursor: pointer;
+  }
+  .slider-val { font-family: 'Roboto Mono'; font-size: 0.82rem; color: var(--orange); width: 36px; text-align: right; }
+
+  canvas { width: 100%; border-radius: 8px; display: block; }
+
+  .bar-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+  .bar-label { font-size: 0.78rem; color: var(--text-muted); width: 40px; font-family: 'Roboto Mono'; }
+  .bar-track { flex: 1; background: var(--border); border-radius: 4px; height: 18px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; display: flex; align-items: center; padding-left: 6px; }
+  .bar-pct { font-size: 0.72rem; font-weight: 500; color: #fff; font-family: 'Roboto Mono'; }
+
+  /* INDUSTRY */
+  .industry-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem; margin: 1.5rem 0;
+  }
+  .industry-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.25rem;
+    transition: border-color .2s, transform .2s;
+    cursor: default;
+  }
+  .industry-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .ind-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+  .ind-icon { font-size: 1.5rem; }
+  .ind-title { font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 0.95rem; color: #fff; }
+  .ind-sector { font-size: 0.72rem; color: var(--teal); font-weight: 500; letter-spacing: 0.05em; }
+  .ind-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.85rem; }
+  th {
+    background: var(--surface); padding: 0.75rem 1rem;
+    text-align: left; font-family: 'Barlow', sans-serif; font-weight: 700;
+    font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-muted); border-bottom: 1px solid var(--border);
+  }
+  td { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(37,61,90,0.5); color: var(--text-muted); }
+  td:first-child { color: var(--text); font-weight: 500; }
+  tr:hover td { background: var(--surface2); }
+
+  /* CALLOUT */
+  .callout {
+    display: flex; gap: 1rem; align-items: flex-start;
+    background: var(--surface2); border-radius: 10px;
+    padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+    border: 1px solid var(--border);
+  }
+  .callout-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+  .callout-body { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+  .callout-body strong { color: var(--text); }
+
+  /* FORMULA EXPLAINED */
+  .formula-parts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 1rem 0; }
+  .fp { background: var(--surface2); border-radius: 8px; padding: 0.9rem 1rem; font-size: 0.82rem; color: var(--text-muted); }
+  .fp code { font-family: 'Roboto Mono'; color: var(--orange); font-size: 0.85rem; display: block; margin-bottom: 0.3rem; }
+
+  code { font-family: 'Roboto Mono'; color: var(--teal); font-size: 0.88em; }
+
+  /* ABSTRACTION LADDER */
+  .ladder { margin: 1.5rem 0; }
+  .ladder-step {
+    display: flex; gap: 1rem; margin-bottom: 1px;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 1rem 1.25rem; position: relative;
+  }
+  .ladder-step:first-child { border-radius: 10px 10px 0 0; }
+  .ladder-step:last-child { border-radius: 0 0 10px 10px; }
+  .ladder-num {
+    font-family: 'Barlow', sans-serif; font-weight: 800; font-size: 1.1rem;
+    color: var(--orange); flex-shrink: 0; width: 28px; text-align: center;
+    margin-top: 2px;
+  }
+  .ladder-content h4 { font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 0.95rem; color: #fff; margin-bottom: 0.3rem; }
+  .ladder-content p { font-size: 0.82rem; color: var(--text-muted); margin: 0; line-height: 1.5; }
+
+  /* SCROLLSPY */
+  section[id] { scroll-margin-top: 72px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .formula-parts { grid-template-columns: 1fr; }
+    .hero { padding: 3rem 1.5rem 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="topnav">
+  <span class="nav-brand">Dirichlet</span>
+  <a href="#motivation">Motivation</a>
+  <a href="#history">History</a>
+  <a href="#ground">Ground Up</a>
+  <a href="#medium">Medium</a>
+  <a href="#advanced">Advanced</a>
+  <a href="#industry">Industry</a>
+  <a href="#generalisation">Generalisation</a>
+</nav>
+
+<div class="hero">
+  <h1>The Dirichlet Distribution</h1>
+  <p>A probability distribution over probability distributions. From dice and paint to Bayesian inference, topic models, and infinite-dimensional measure theory.</p>
+  <div class="hero-tags">
+    <span class="tag tag-orange">Bayesian Statistics</span>
+    <span class="tag tag-teal">Machine Learning</span>
+    <span class="tag tag-purple">NLP / LDA</span>
+    <span class="tag tag-gold">Information Theory</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ MOTIVATION ═══ -->
+<section id="motivation">
+<div class="container">
+  <div class="section-label">Why should you care?</div>
+  <h2>The Core Problem</h2>
+
+  <p>Imagine you're asked: <em>"What are the chances that the next customer buys Product A, B, or C?"</em> You have some sales data, but not much. You need a probability for each product — and those probabilities must sum to 1.</p>
+
+  <p>Now here's the twist: you're not confident in your estimate. Maybe your data is thin. Maybe the market is shifting. You don't want a single fixed answer — you want to express a <strong>range of plausible probability vectors</strong>, some more likely than others.</p>
+
+  <div class="card card-orange">
+    <p><strong>The Dirichlet distribution is the answer.</strong> It is a distribution whose outcomes are themselves probability vectors. Instead of sampling a number, you sample an entire pie chart — a complete allocation of probability across categories.</p>
+  </div>
+
+  <p>This makes it foundational for:</p>
+  <div class="analogy-grid">
+    <div class="analogy-card">
+      <div class="analogy-icon">🎲</div>
+      <div class="analogy-title">Bayesian Inference</div>
+      <div class="analogy-desc">Express uncertainty about the "true" probability of outcomes before seeing data, then update cleanly after seeing it.</div>
+    </div>
+    <div class="analogy-card">
+      <div class="analogy-icon">📰</div>
+      <div class="analogy-title">Topic Modelling</div>
+      <div class="analogy-desc">Every document is a mixture of topics. Every topic is a mixture of words. Dirichlet governs both mixtures in LDA.</div>
+    </div>
+    <div class="analogy-card">
+      <div class="analogy-icon">🧬</div>
+      <div class="analogy-title">Population Genetics</div>
+      <div class="analogy-desc">Model allele frequency distributions across subpopulations with uncertainty baked in.</div>
+    </div>
+    <div class="analogy-card">
+      <div class="analogy-icon">🤖</div>
+      <div class="analogy-title">Generative AI</div>
+      <div class="analogy-desc">Dirichlet Processes are the backbone of infinite mixture models and nonparametric Bayesian learning.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════ HISTORY ═══ -->
+<section id="history">
+<div class="container">
+  <div class="section-label">Context & Lineage</div>
+  <h2>A Brief History</h2>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">1805–1859</div>
+      <div class="tl-content"><strong>Peter Gustav Lejeune Dirichlet</strong> — German mathematician, student of Gauss. Known for Dirichlet series, the pigeonhole principle, and foundational work in analytic number theory. The distribution bears his name by analogy: his mathematical spirit of rigorous decomposition onto simplices influenced those who formalised it later.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1900s–1950s</div>
+      <div class="tl-content"><strong>Beta distribution formalised</strong> as the conjugate prior for the Binomial. The Dirichlet is the natural multivariate generalisation of the Beta. Early use in <strong>genetics</strong> (Sewall Wright) to model allele frequencies.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1973</div>
+      <div class="tl-content"><strong>Ferguson (1973)</strong> defined the <strong>Dirichlet Process</strong> — an infinite-dimensional generalisation — enabling nonparametric Bayesian statistics. This paper is one of the most cited in all of statistics.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1980s–1990s</div>
+      <div class="tl-content">Widespread adoption in <strong>Bayesian statistics</strong>. The Dirichlet-Multinomial model becomes the workhorse for categorical data with uncertainty about category probabilities.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2003</div>
+      <div class="tl-content"><strong>Blei, Ng, Jordan</strong> publish <em>Latent Dirichlet Allocation</em> — LDA. One of the most influential ML papers of the 21st century. Dirichlet enters mainstream NLP, information retrieval, and later bioinformatics and recsys.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2010s–present</div>
+      <div class="tl-content">Dirichlet likelihoods appear in <strong>neural network training</strong> (label smoothing), <strong>variational autoencoders</strong>, <strong>Bayesian deep learning</strong>, and <strong>federated learning</strong> (heterogeneous data partitioning). Still actively researched.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════ GROUND UP ═══ -->
+<section id="ground">
+<div class="container">
+  <div class="section-label">Level 1 — Simple Terms</div>
+  <h2>Ground Up: Thinking with Paint</h2>
+
+  <h3>Start with a simplex</h3>
+  <p>Suppose you have 3 colours — red, blue, green — and you must paint a wall using all three. The constraint is that the fractions must sum to 100%. So (50%, 30%, 20%) is valid. (60%, 60%, 0%) is not.</p>
+
+  <p>All valid fractions form a triangle — called the <strong>2-simplex</strong>. Every point inside this triangle is a valid colour allocation. The corners represent pure allocations (all red, all blue, all green).</p>
+
+  <div class="callout">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body"><strong>The Dirichlet distribution is just a way to assign a probability — a level of plausibility — to every point in this triangle.</strong> Some colour allocations seem more likely than others. Dirichlet tells you which.</div>
+  </div>
+
+  <h3>The role of α (alpha)</h3>
+  <p>The Dirichlet has one key parameter: a vector <strong>α = (α₁, α₂, α₃)</strong>. Think of each αᵢ as a "pseudo-count" — as if you'd already seen that colour appear αᵢ times before any real data.</p>
+
+  <div class="demo-box">
+    <div class="demo-title">🎨 Interactive — Feel the α Parameter</div>
+    <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;">Drag the sliders to change α values. The bars show the average fraction each category receives when you sample from this Dirichlet.</p>
+    <div class="slider-row"><span class="slider-label">α₁ (Red)</span><input type="range" id="a1" min="0.1" max="10" step="0.1" value="1"><span class="slider-val" id="v1">1.0</span></div>
+    <div class="slider-row"><span class="slider-label">α₂ (Blue)</span><input type="range" id="a2" min="0.1" max="10" step="0.1" value="1"><span class="slider-val" id="v2">1.0</span></div>
+    <div class="slider-row"><span class="slider-label">α₃ (Green)</span><input type="range" id="a3" min="0.1" max="10" step="0.1" value="1"><span class="slider-val" id="v3">1.0</span></div>
+    <div style="margin-top:1.25rem;">
+      <div class="bar-row"><span class="bar-label">Red</span><div class="bar-track"><div class="bar-fill" id="b1" style="background:var(--orange);width:33%"><span class="bar-pct" id="p1">33%</span></div></div></div>
+      <div class="bar-row"><span class="bar-label">Blue</span><div class="bar-track"><div class="bar-fill" id="b2" style="background:#4A90E2;width:33%"><span class="bar-pct" id="p2">33%</span></div></div></div>
+      <div class="bar-row"><span class="bar-label">Green</span><div class="bar-track"><div class="bar-fill" id="b3" style="background:var(--teal);width:33%"><span class="bar-pct" id="p3">33%</span></div></div></div>
+    </div>
+    <p id="interp" style="font-size:0.8rem;color:var(--text-muted);margin-top:1rem;font-style:italic;"></p>
+  </div>
+
+  <h3>The concentration story</h3>
+  <p>The <strong>sum α₀ = α₁ + α₂ + α₃</strong> controls how concentrated (certain) your belief is:</p>
+
+  <table>
+    <tr><th>α values</th><th>Effect</th><th>Metaphor</th></tr>
+    <tr><td>All αᵢ = 0.1</td><td>Samples are extreme — almost all weight on one category</td><td>Sparse, spiky</td></tr>
+    <tr><td>All αᵢ = 1</td><td>Uniform — every allocation equally likely</td><td>Ignorance prior</td></tr>
+    <tr><td>All αᵢ = 10</td><td>Samples cluster near the centre (equal fractions)</td><td>Confident, smooth</td></tr>
+    <tr><td>α = (5, 1, 1)</td><td>Red gets most weight most of the time</td><td>Informed prior</td></tr>
+  </table>
+
+  <div class="callout">
+    <div class="callout-icon">🔑</div>
+    <div class="callout-body"><strong>Key insight:</strong> When all αᵢ = 1, you have a completely flat (uniform) prior — you have no preference. When αᵢ &gt; 1, you expect category i to appear more. When αᵢ &lt; 1, you expect sparsity — only a few categories dominate at a time.</div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════ MEDIUM ═══ -->
+<section id="medium">
+<div class="container">
+  <div class="section-label">Level 2 — Medium Terms</div>
+  <h2>The Mathematics, Made Accessible</h2>
+
+  <h3>The probability density function</h3>
+  <p>The Dirichlet distribution over a <em>K</em>-category probability vector <strong>p = (p₁, …, pK)</strong> has this density:</p>
+
+  <div class="math-block">
+    <span class="hl">Dir(p | α)</span> = <span class="hl3">1/B(α)</span> · ∏ᵢ <span class="hl2">pᵢ^(αᵢ − 1)</span>
+    <br/><br/>
+    <span class="comment">where the normalising constant B(α) is the multivariate Beta function:</span><br/>
+    B(α) = ∏ᵢ Γ(αᵢ) / Γ(α₀)   <span class="comment">and α₀ = Σᵢ αᵢ</span>
+    <br/><br/>
+    <span class="comment">Subject to: p₁ + p₂ + … + pK = 1,  all pᵢ ≥ 0</span>
+  </div>
+
+  <div class="formula-parts">
+    <div class="fp"><code>∏ᵢ pᵢ^(αᵢ − 1)</code>The kernel. Each category gets a "reward" based on how much probability it receives. αᵢ − 1 controls whether the distribution favours or penalises that category getting mass.</div>
+    <div class="fp"><code>Γ(αᵢ)</code>The Gamma function — the continuous generalisation of factorial: Γ(n) = (n−1)! for integers. Makes the formula work for any positive real α.</div>
+    <div class="fp"><code>1/B(α)</code>The normalising constant — ensures the density integrates to 1 over the simplex. We rarely compute it explicitly; it cancels in Bayesian updates.</div>
+    <div class="fp"><code>α₀ = Σαᵢ</code>Total concentration. Larger α₀ = sharper, more peaked distribution. Smaller = more diffuse. Controls effective "sample size" of the prior.</div>
+  </div>
+
+  <h3>Key statistics</h3>
+  <table>
+    <tr><th>Property</th><th>Formula</th><th>Meaning</th></tr>
+    <tr><td>Mean</td><td>E[pᵢ] = αᵢ / α₀</td><td>Expected fraction for category i</td></tr>
+    <tr><td>Variance</td><td>Var[pᵢ] = αᵢ(α₀−αᵢ) / α₀²(α₀+1)</td><td>Uncertainty shrinks as α₀ grows</td></tr>
+    <tr><td>Mode</td><td>(αᵢ − 1) / (α₀ − K), αᵢ &gt; 1</td><td>Most likely allocation (if αᵢ &gt; 1)</td></tr>
+    <tr><td>Entropy</td><td>ln B(α) + (α₀−K)ψ(α₀) − Σ(αᵢ−1)ψ(αᵢ)</td><td>ψ = digamma function</td></tr>
+  </table>
+
+  <h3>Connection to the Beta distribution</h3>
+  <p>The Beta distribution is the special case with K = 2 categories. If p ~ Beta(α₁, α₂), that's the same as (p, 1−p) ~ Dir(α₁, α₂). The Beta is the Dirichlet on a line segment; the Dirichlet lives on higher-dimensional triangles (simplices).</p>
+
+  <h3>Conjugate prior for the Multinomial</h3>
+  <p>This is where the elegance lives. If you observe data from a Multinomial (K-sided die rolled N times, counts = c₁, …, cK), and your prior belief about the die's probabilities is Dirichlet(α), then after seeing the data your updated belief is:</p>
+
+  <div class="math-block">
+    <span class="comment">Prior:</span>   <span class="hl">p ~ Dir(α₁, …, αK)</span>
+    <br/>
+    <span class="comment">Data:</span>    <span class="hl2">x ~ Multinomial(p)</span>,  observed counts c = (c₁, …, cK)
+    <br/>
+    <span class="comment">Posterior:</span> <span class="hl3">p | x ~ Dir(α₁+c₁, …, αK+cK)</span>
+    <br/><br/>
+    <span class="comment">→ Just add counts to α. That's it. No integrals needed.</span>
+  </div>
+
+  <div class="callout">
+    <div class="callout-icon">✨</div>
+    <div class="callout-body"><strong>Conjugate prior</strong> means the prior and posterior have the same distributional form. The Dirichlet-Multinomial pair is the canonical example — updating your belief is as simple as adding observation counts to your pseudo-counts. This closure is why Dirichlet is so computationally convenient.</div>
+  </div>
+
+  <h3>How to sample from a Dirichlet</h3>
+  <div class="math-block">
+    <span class="comment">Algorithm: Gamma trick (used in practice)</span><br/>
+    1. For each i = 1…K, sample:  <span class="hl">yᵢ ~ Gamma(αᵢ, 1)</span><br/>
+    2. Normalise:                  <span class="hl2">pᵢ = yᵢ / Σⱼ yⱼ</span><br/>
+    3. Return p = (p₁, …, pK)   <span class="comment">← valid Dirichlet sample</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════ ADVANCED ═══ -->
+<section id="advanced">
+<div class="container">
+  <div class="section-label">Level 3 — Advanced</div>
+  <h2>The Deep Structure</h2>
+
+  <h3>Geometric view: measure on the simplex</h3>
+  <p>The (K−1)-simplex Δ^(K−1) = {p ∈ ℝᴷ : pᵢ ≥ 0, Σpᵢ = 1} is a (K−1)-dimensional manifold embedded in ℝᴷ. The Dirichlet is an <strong>absolutely continuous probability measure</strong> on this manifold with respect to the Lebesgue measure restricted to the simplex.</p>
+
+  <p>The parameter vector α encodes a Riemannian geometry on the simplex. The Fisher information metric of the Dirichlet family is:</p>
+
+  <div class="math-block">
+    g_{ij}(α) = <span class="hl">ψ₁(αᵢ)δᵢⱼ − ψ₁(α₀)</span>
+    <br/><br/>
+    <span class="comment">where ψ₁ is the trigamma function (second derivative of log Γ).</span><br/>
+    <span class="comment">This makes the Dirichlet family an exponential family with natural parameters (α₁−1, …, αK−1).</span>
+  </div>
+
+  <h3>Exponential family form</h3>
+  <p>Written in exponential family form with natural parameters <strong>η = α − 1</strong>:</p>
+
+  <div class="math-block">
+    p(x | η) = <span class="hl">h(x) · exp( ηᵀT(x) − A(η) )</span>
+    <br/><br/>
+    h(x) = 1  <span class="comment">(base measure)</span><br/>
+    T(x) = (log x₁, …, log xK)  <span class="comment">(sufficient statistic)</span><br/>
+    A(η) = log B(η+1)  <span class="comment">(log-partition function)</span>
+  </div>
+
+  <p>The sufficient statistic being log xᵢ (not xᵢ itself) means the Dirichlet lives in <strong>log-space</strong> — it measures geometric averages, not arithmetic ones. This connects it to the theory of compositions and the Aitchison geometry of the simplex.</p>
+
+  <h3>Aitchison geometry</h3>
+  <p>The simplex with the Aitchison inner product forms a Hilbert space under <strong>centred log-ratio (clr) coordinates</strong>. The Dirichlet in this space is analogous to the Gaussian in Euclidean space — it's the maximum entropy distribution on the simplex subject to constraints on the expected log-ratios.</p>
+
+  <div class="math-block">
+    clr(p)ᵢ = log pᵢ − (1/K)Σⱼ log pⱼ
+    <br/><br/>
+    <span class="comment">The Dirichlet is characterised by:</span><br/>
+    E[clr(p)ᵢ] = ψ(αᵢ) − ψ(α₀)   <span class="comment">(digamma difference)</span>
+  </div>
+
+  <h3>KL divergence between Dirichlets</h3>
+  <p>Closed-form KL divergence — critical for variational inference:</p>
+
+  <div class="math-block">
+    KL[ Dir(α) ‖ Dir(β) ] =
+      <span class="hl">log B(β)/B(α)</span>
+      + Σᵢ (αᵢ − βᵢ) · <span class="hl2">ψ(αᵢ) − ψ(α₀)</span>
+  </div>
+
+  <h3>Latent Dirichlet Allocation — the generative model</h3>
+
+  <div class="math-block">
+    <span class="comment">For each document d in corpus:</span><br/>
+      θ_d ~ <span class="hl">Dir(α)</span>               <span class="comment">← topic mixture for doc d</span>
+    <br/><br/>
+    <span class="comment">For each word position n in doc d:</span><br/>
+      z_dn ~ <span class="hl2">Categorical(θ_d)</span>     <span class="comment">← pick a topic</span><br/>
+      w_dn ~ <span class="hl3">Categorical(φ_{z_dn})</span> <span class="comment">← pick a word from that topic</span>
+    <br/><br/>
+    <span class="comment">For each topic k:</span><br/>
+      φ_k  ~ <span class="hl">Dir(β)</span>               <span class="comment">← word distribution for topic k</span>
+  </div>
+
+  <p>Inference is intractable exactly, so LDA uses variational EM (Blei et al.) or collapsed Gibbs sampling (Griffiths & Steyvers). Both exploit the Dirichlet-Multinomial conjugacy to marginalise out the discrete assignments analytically.</p>
+
+  <h3>The logistic-normal alternative</h3>
+  <p>The Dirichlet has <strong>no covariance structure</strong> between categories (correlation between pᵢ and pⱼ is always negative — increasing one must decrease others). The <strong>logistic-normal</strong> distribution, obtained by pushing a multivariate Gaussian through a softmax, allows arbitrary covariance. It is less analytically tractable but more expressive. This trade-off drives much modern research.</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════ INDUSTRY ═══ -->
+<section id="industry">
+<div class="container">
+  <div class="section-label">Practical Life &amp; Industry</div>
+  <h2>Where Dirichlet Shows Up at Work</h2>
+
+  <div class="industry-grid">
+    <div class="industry-card">
+      <div class="ind-header"><div class="ind-icon">📚</div><div><div class="ind-title">Topic Modelling</div><div class="ind-sector">NLP / Media</div></div></div>
+      <div class="ind-desc">LDA (built on Dirichlet) is used to discover themes in news corpora, legal documents, support tickets, and research papers. Each document is a Dirichlet sample over topics.</div>
+    </div>
+    <div class="industry-card">
+      <div class="ind-header"><div class="ind-icon">🛒</div><div><div class="ind-title">Recommendation Systems</div><div class="ind-sector">E-commerce / Streaming</div></div></div>
+      <div class="ind-desc">User interests modelled as Dirichlet mixtures over item categories. Collaborative filtering variants use Dirichlet priors to handle cold-start and sparse preference data.</div>
+    </div>
+    <div class="industry-card">
+      <div class="ind-header"><div class="ind-icon">🧪</div><div><div class="ind-title">A/B Testing &amp; Bandits</div><div class="ind-sector">Product / Growth</div></div></div>
+      <div class="ind-desc">Bayesian A/B tests with K variants use Dirichlet as the prior over conversion probabilities. Thompson Sampling for multi-armed bandits samples from the posterior Dirichlet.</div>
+    </div>
+    <div class="industry-card">
+      <div class="ind-header"><div class="ind-icon">🏥</div><div><div class="ind-title">Clinical Trials &amp; Genomics</div><div class="ind-sector">Biotech / Pharma</div></div></div>
+      <div class="ind-desc">Allele frequency estimation, microbiome composition modelling, and cell-type deconvolution from RNA-seq bulk samples all rely on the Dirichlet-Multinomial model.</div>
+    </div>
+    <div class="industry-card">
+      <div class="ind-header"><div class="ind-icon">📊</div><div><div class="ind-title">Survey &amp; Market Research</div><div class="ind-sector">Consulting / FMCG</div></div></div>
+      <div class="ind-desc">Modelling market share uncertainty across brands. Dirichlet model of consumer purchase behaviour (Ehrenberg-Bass Institute) predicts repeat purchase rates and penetration.</div>
+    </div>
+    <div class="industry-card">
+      <div class="ind-header"><div class="ind-icon">🤝</div><div><div class="ind-title">Federated Learning</div><div class="ind-sector">ML / Privacy Tech</div></div></div>
+      <div class="ind-desc">Dirichlet distributions simulate heterogeneous data partitions across clients (non-IID splits). α controls heterogeneity — standard benchmark in FL research.</div>
+    </div>
+    <div class="industry-card">
+      <div class="ind-header"><div class="ind-icon">🏭</div><div><div class="ind-title">Industrial Fault Classification</div><div class="ind-sector">Manufacturing / OT</div></div></div>
+      <div class="ind-desc">Sensor fault patterns modelled as mixtures. Bayesian Dirichlet priors updated online as new fault events arrive — especially useful for rare failure mode estimation.</div>
+    </div>
+    <div class="industry-card">
+      <div class="ind-header"><div class="ind-icon">💸</div><div><div class="ind-title">Portfolio &amp; Risk</div><div class="ind-sector">Finance / Insurance</div></div></div>
+      <div class="ind-desc">Uncertainty over asset allocation vectors. Actuarial credibility theory uses Dirichlet-like models to pool across risk classes with limited data — relevant to IFRS 17 reserving.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════ GENERALISATION ═══ -->
+<section id="generalisation">
+<div class="container">
+  <div class="section-label">Abstraction &amp; Higher Structures</div>
+  <h2>The Generalisation Ladder</h2>
+
+  <p>The Dirichlet is a node in a much larger web of mathematical structures. Here is the ascent:</p>
+
+  <div class="ladder">
+    <div class="ladder-step">
+      <div class="ladder-num">1</div>
+      <div class="ladder-content">
+        <h4>Beta Distribution — K=2 case</h4>
+        <p>Dir(α₁, α₂) on [0,1]. The simplest nontrivial case — models a single probability. Prior for a biased coin. All Beta intuitions generalise to Dirichlet.</p>
+      </div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">2</div>
+      <div class="ladder-content">
+        <h4>Dirichlet Distribution — finite K categories</h4>
+        <p>The K-category generalisation. Lives on the (K−1)-simplex. Conjugate prior for the Multinomial. The subject of this entire document.</p>
+      </div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">3</div>
+      <div class="ladder-content">
+        <h4>Dirichlet-Multinomial (Polya Distribution)</h4>
+        <p>The marginal distribution over counts after integrating out the Dirichlet-distributed probabilities. Exhibits overdispersion relative to Multinomial — captures clustering (Polya urn scheme: balls beget balls of the same colour).</p>
+      </div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">4</div>
+      <div class="ladder-content">
+        <h4>Hierarchical Dirichlet — mixture of Dirichlets</h4>
+        <p>Each component of an LDA topic model is itself a Dirichlet. α is no longer fixed but drawn from a higher-level prior. This nesting allows shared structure across groups (e.g., topics shared across document collections).</p>
+      </div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">5</div>
+      <div class="ladder-content">
+        <h4>Dirichlet Process (DP) — K → ∞</h4>
+        <p>Ferguson (1973): a distribution over infinite discrete probability measures. Written G ~ DP(α, G₀). G₀ is the base measure (where atoms are drawn from); α controls concentration. A DP sample is an almost-surely discrete measure — a countably infinite set of atoms with probabilities summing to 1. The "infinite dimensional Dirichlet."</p>
+      </div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">6</div>
+      <div class="ladder-content">
+        <h4>Chinese Restaurant Process &amp; Stick-Breaking</h4>
+        <p>Two equivalent representations of the DP. Stick-breaking: pₖ = vₖ ∏ⱼ&lt;ₖ (1−vⱼ), vₖ ~ Beta(1,α). The Chinese Restaurant Process gives the partition structure: customer n joins table k with prob proportional to table size, or opens a new table with prob ∝ α. Rich-get-richer dynamics (Polya urn at infinite scale).</p>
+      </div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">7</div>
+      <div class="ladder-content">
+        <h4>Hierarchical Dirichlet Process (HDP)</h4>
+        <p>Teh et al. (2006). Shares atoms (topics) across groups. Each group's distribution is a DP drawn from a global DP. Used in topic modelling when the number of topics is unknown. The global DP defines the shared "menu"; each document draws its own distribution over that menu.</p>
+      </div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">8</div>
+      <div class="ladder-content">
+        <h4>Pitman-Yor Process — power-law generalisation</h4>
+        <p>PY(d, α, G₀) with discount parameter d ∈ [0,1). When d = 0, reduces to DP. When d > 0, produces power-law distributed cluster sizes (Zipf's law). Critical for natural language (word frequencies follow Zipf), used in language model smoothing (Kneser-Ney is an approximate PY process).</p>
+      </div>
+    </div>
+    <div class="ladder-step">
+      <div class="ladder-num">9</div>
+      <div class="ladder-content">
+        <h4>Completely Random Measures &amp; Lévy Processes</h4>
+        <p>The most general framework. A completely random measure (CRM) assigns independent random masses to disjoint sets. The DP is a CRM normalised to be a probability measure. Unnormalised CRMs (Gamma process, Beta process) underlie Indian Buffet Processes and feature allocation models. Connects Bayesian nonparametrics to Lévy process theory and infinite divisibility.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-teal" style="margin-top:2rem;">
+    <h3 style="color:var(--teal);margin-top:0;">The Unifying Thread</h3>
+    <p>At every level, the core idea is the same: <strong>represent uncertainty about a probability distribution itself, not just about outcomes.</strong> The Dirichlet is the simplest rigorous answer to "what distribution should I put over the simplex?" Every generalisation relaxes a constraint: infinite categories (DP), shared atoms across groups (HDP), power-law tails (PY), or full independence structure (CRMs). The mathematics always traces back to the Gamma function and the simplex.</p>
+  </div>
+
+  <h3>Relation to Information Geometry</h3>
+  <p>The exponential family of Dirichlet distributions, parameterised by α, forms a statistical manifold. The Fisher-Rao metric on this manifold is curved — the geometry is not flat Euclidean. Natural gradient descent (used in modern deep learning) corresponds to gradient descent in this curved geometry, underpinning why methods like Adam converge faster than vanilla SGD.</p>
+
+  <h3>Maximum Entropy Characterisation</h3>
+  <p>The Dirichlet Dir(α) is the maximum entropy distribution on the simplex subject to fixing:</p>
+  <div class="math-block">
+    E[log pᵢ] = ψ(αᵢ) − ψ(α₀)   <span class="comment">for all i</span>
+  </div>
+  <p>This connects the Dirichlet to the principle of maximum entropy (Jaynes) — it is the "most ignorant" distribution consistent with given constraints on expected log-probabilities. This is the precise sense in which Dir(1,…,1) expresses "total ignorance."</p>
+
+</div>
+</section>
+
+<footer style="text-align:center;padding:3rem 2rem;color:var(--text-muted);font-size:0.8rem;border-top:1px solid var(--border);">
+  <p>Built with Barlow + Roboto · Databricks palette · No external analytics</p>
+  <p style="margin-top:0.4rem;">References: Ferguson (1973), Blei-Ng-Jordan (2003), Aitchison (1986), Teh et al. (2006), Pitman-Yor (1997)</p>
+</footer>
+
+<script>
+// ── Scrollspy ──────────────────────────────────────────
+const sections = document.querySelectorAll('section[id]');
+const navLinks  = document.querySelectorAll('nav a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id);
+      });
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+
+// ── Dirichlet demo ─────────────────────────────────────
+const sliders = ['a1','a2','a3'];
+const vals    = ['v1','v2','v3'];
+const bars    = ['b1','b2','b3'];
+const pcts    = ['p1','p2','p3'];
+
+function getAlphas() {
+  return sliders.map(id => parseFloat(document.getElementById(id).value));
+}
+
+function updateBars() {
+  const a = getAlphas();
+  const sum = a.reduce((s,x) => s+x, 0);
+  const means = a.map(x => x/sum);
+  sliders.forEach((id,i) => {
+    document.getElementById(vals[i]).textContent = parseFloat(document.getElementById(id).value).toFixed(1);
+    const pct = Math.round(means[i]*100);
+    document.getElementById(bars[i]).style.width = pct + '%';
+    document.getElementById(pcts[i]).textContent = pct + '%';
+  });
+
+  const a0 = sum;
+  let msg = '';
+  if (a0 < 1.5)       msg = 'Very sparse samples — most weight will land on one category at a time.';
+  else if (a0 < 4)    msg = 'Moderately diffuse — samples vary quite a bit around the means.';
+  else if (a0 < 15)   msg = 'Reasonably concentrated — samples stay close to the mean fractions.';
+  else                msg = 'Highly concentrated — samples are nearly identical to the mean every time.';
+  document.getElementById('interp').textContent = '→ ' + msg;
+}
+
+sliders.forEach(id => {
+  document.getElementById(id).addEventListener('input', updateBars);
+});
+updateBars();
+</script>
+
+</body>
+</html>
