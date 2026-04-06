@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algebraic Number Theory: From Fermat to Langlands</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f0f4f8;
+  --surf:    #ffffff;
+  --surf2:   #eef2f7;
+  --bord:    #cfd9e6;
+  --text:    #2d3f52;
+  --muted:   #6b8096;
+  --bright:  #1a2b3c;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.75;
+  min-height: 100vh;
+}
+#prog { position:fixed;top:0;left:0;right:0;height:3px;background:var(--bord);z-index:200; }
+#prog-fill { height:100%;background:linear-gradient(90deg,#7c3aed,#0097e2,#00a972,#ff3621);width:0;transition:width .2s; }
+.wrap { max-width:860px;margin:0 auto;padding:56px 24px 100px; }
+.back-link {
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;
+  color:var(--muted);text-decoration:none;margin-bottom:32px;display:inline-block;
+  transition:color .2s;
+}
+.back-link:hover { color:var(--bright); }
+.back-link::before { content:'← ';font-weight:500; }
+.hdr { text-align:center;margin-bottom:52px; }
+.hdr h1 { font-family:'Cinzel',serif;font-size:clamp(20px,4vw,40px);font-weight:600;color:var(--bright);letter-spacing:.05em;line-height:1.2; }
+.hdr p { color:var(--muted);font-style:italic;margin-top:10px;font-size:17px;max-width:600px;margin-left:auto;margin-right:auto; }
+.hdr-rule { width:60px;height:1px;background:var(--bord);margin:16px auto; }
+.epigraph {
+  max-width:520px;margin:0 auto 40px;text-align:center;
+  font-style:italic;color:var(--muted);font-size:15.5px;line-height:1.8;
+  border-top:1px solid var(--bord);border-bottom:1px solid var(--bord);
+  padding:18px 0;
+}
+.epigraph cite { display:block;margin-top:8px;font-size:13px;letter-spacing:.05em;font-style:normal;color:var(--bright); }
+.layout { display:flex;gap:28px;align-items:flex-start; }
+.tower { width:172px;flex-shrink:0;position:sticky;top:28px; }
+.tower-label { font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;padding-left:4px; }
+.tnav { display:flex;flex-direction:column;gap:1px; }
+.ti {
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;
+  padding:7px 10px;border-left:2px solid var(--bord);
+  color:var(--muted);cursor:pointer;transition:all .2s;line-height:1.3;user-select:none;
+}
+.ti:hover { color:var(--bright);border-left-color:var(--muted); }
+.ti.active { color:var(--bright); }
+.cards { flex:1;min-width:0; }
+.cw { margin-bottom:6px;opacity:0;transform:translateY(14px);transition:opacity .4s,transform .4s; }
+.cw.show { opacity:1;transform:none; }
+.conn { width:2px;height:18px;background:var(--bord);margin:0 0 0 20px; }
+.card {
+  border:1px solid var(--bord);border-radius:6px;background:var(--surf);
+  overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.07);
+}
+.card:hover { border-color:var(--ac); }
+.card.open  { border-color:var(--ac);box-shadow:0 2px 20px -4px var(--ac-shadow); }
+.card-head { display:flex;align-items:center;gap:12px;padding:15px 18px;user-select:none; }
+.bdg {
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;
+  border:1px solid var(--ac);color:var(--ac);padding:3px 7px;border-radius:2px;
+  white-space:nowrap;flex-shrink:0;
+}
+.ctitle { font-family:'Cinzel',serif;font-size:15px;color:var(--bright);letter-spacing:.03em;flex:1;line-height:1.3; }
+.csub { font-style:italic;font-size:13px;color:var(--muted);flex-shrink:0; }
+.chev { color:var(--muted);font-size:11px;transition:transform .3s;flex-shrink:0; }
+.card.open .chev { transform:rotate(180deg); }
+.card-body { max-height:0;overflow:hidden;transition:max-height .55s cubic-bezier(.4,0,.2,1); }
+.card-body.open { max-height:12000px; }
+.card-inner { border-top:1px solid var(--bord);padding:22px 22px 28px; }
+.bsec-heading {
+  font-family:'Cinzel',serif;font-size:13px;letter-spacing:.04em;
+  color:var(--ac);margin-top:24px;margin-bottom:4px;
+  border-bottom:1px solid var(--bord);padding-bottom:6px;
+}
+.prose { color:var(--text);font-size:16.5px;line-height:1.82;margin-top:10px; }
+.prose em { font-style:italic;color:var(--bright); }
+.prose strong { font-weight:600;color:var(--ac); }
+.fbox {
+  background:#f7f9fc;border-left:3px solid var(--ac);border-radius:0 4px 4px 0;
+  padding:13px 16px;margin-top:12px;font-family:'EB Garamond',serif;
+  font-size:15.5px;color:var(--bright);line-height:2.0;white-space:pre-wrap;
+}
+.ex {
+  background:#f7f9fc;border:1px dashed var(--bord);border-radius:4px;
+  padding:12px 16px;margin-top:10px;font-size:14.5px;color:var(--muted);
+  white-space:pre-wrap;line-height:1.75;
+}
+.exl { display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--ac);margin-bottom:6px;text-transform:uppercase; }
+.ins {
+  border-radius:4px;padding:13px 16px;margin-top:12px;
+  font-size:15.5px;font-style:italic;
+  background:var(--ac-faint);border:1px solid var(--ac-mid);color:var(--text);
+}
+.ins::before { content:"✦  ";color:var(--ac);font-style:normal; }
+.timeline-item { display:flex;gap:14px;margin-top:14px;align-items:flex-start; }
+.tl-year {
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;
+  color:var(--ac);min-width:42px;padding-top:3px;font-weight:500;flex-shrink:0;
+}
+.tl-text { font-size:14.5px;color:var(--muted);line-height:1.65; }
+.tl-text strong { color:var(--text); }
+.person-block {
+  background:var(--surf2);border:1px solid var(--bord);border-left:3px solid var(--ac);
+  border-radius:0 4px 4px 0;padding:13px 16px;margin-top:14px;
+}
+.person-name { font-family:'Cinzel',serif;font-size:14px;color:var(--bright);margin-bottom:3px; }
+.person-dates { font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:7px; }
+.person-text { font-size:14.5px;color:var(--muted);line-height:1.65; }
+.table-wrap { overflow-x:auto;margin-top:14px; }
+table { border-collapse:collapse;width:100%;font-size:14px; }
+th { font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+     color:var(--muted);border-bottom:2px solid var(--bord);padding:8px 12px;text-align:left; }
+td { padding:8px 12px;border-bottom:1px solid var(--surf2);color:var(--text);vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--surf2); }
+.badge-row { display:flex;flex-wrap:wrap;gap:6px;margin-top:8px; }
+.badge {
+  font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 9px;
+  border-radius:2px;border:1px solid var(--ac);color:var(--ac);
+  background:var(--ac-faint);letter-spacing:.06em;
+}
+/* Interactive class number */
+#cnt-demo { margin-top:14px;background:var(--surf2);border:1px solid var(--bord);border-radius:4px;padding:16px; }
+#cnt-demo label { font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.08em; }
+#cnt-demo select { margin-left:8px;background:var(--surf);border:1px solid var(--bord);color:var(--bright);
+  font-family:'EB Garamond',serif;font-size:15px;padding:4px 8px;border-radius:3px;cursor:pointer; }
+#cnt-result { margin-top:12px;font-size:15px;line-height:1.75;color:var(--text); }
+#cnt-result .highlight { color:var(--ac);font-weight:600; }
+
+.footer { text-align:center;color:var(--muted);font-style:italic;font-size:15px;margin-top:52px;padding-top:26px;border-top:1px solid var(--bord); }
+@media(max-width:640px){ .tower{display:none;} .csub{display:none;} .card-head{flex-wrap:wrap;} }
+</style>
+</head>
+<body>
+<div id="prog"><div id="prog-fill"></div></div>
+<div class="wrap">
+  <a href="index.html" class="back-link">Back to Mathematics Hub</a>
+  <div class="hdr">
+    <h1>Algebraic Number Theory</h1>
+    <div class="hdr-rule"></div>
+    <p>From the failure of unique factorisation to the Langlands programme — the deepest arithmetic of number fields.</p>
+  </div>
+  <div class="epigraph">
+    "The study of the integers is the study of the universe itself, for the integers are the universe's most fundamental language."
+    <cite>— Leopold Kronecker (attrib.)</cite>
+  </div>
+  <div class="layout">
+    <div class="tower">
+      <div class="tower-label">Sections</div>
+      <div class="tnav" id="tnav"></div>
+    </div>
+    <div class="cards" id="cards"></div>
+  </div>
+  <div class="footer">
+    Every ideal, every ramified prime, every L-function<br>
+    traces back to a question Fermat wrote in a margin.
+  </div>
+</div>
+
+<script>
+var LV = [
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"MOTIVATION", title:"Why Algebraic Number Theory?", sub:"the problems that created a field",
+color:"#7c3aed",
+body:[
+  {t:"h", s:"A margin note that changed mathematics"},
+  {t:"p", s:"In 1637, Pierre de Fermat wrote in the margin of his copy of Diophantus's <em>Arithmetica</em> that he had found a marvellous proof that x³ + y³ = z³ has no positive integer solutions — and that the same holds for all exponents n ≥ 3. He died without writing the proof down. For 358 years, mathematicians tried and failed to reconstruct it."},
+  {t:"p", s:"The attempts at Fermat's Last Theorem did not fail quietly. Each failure revealed something new. Euler's attack on the n=3 case required working in the ring ℤ[ω] where ω = e^(2πi/3) is a cube root of unity. His proof had a gap: he assumed unique factorisation holds in this ring — that every element factors into primes in essentially one way, just as in ℤ. That assumption turned out to be subtly <strong>wrong</strong>, and the investigation of why it fails became the foundation of an entirely new subject."},
+  {t:"h", s:"The three driving problems"},
+  {t:"p", s:"Algebraic number theory was forged in the crucible of three great problems, each centuries old:"},
+  {t:"f", s:"Problem 1 — Fermat's Last Theorem (1637)\nxⁿ + yⁿ = zⁿ has no positive integer solutions for n ≥ 3.\nProved by Wiles, 1995 — using machinery that took 350 years to build.\n\nProblem 2 — Quadratic Reciprocity (Gauss, 1796)\nWhen is p a square modulo q? The answer has a beautiful symmetry between p and q.\nThis is the 'gateway drug' to class field theory and Galois representations.\n\nProblem 3 — Primes in Arithmetic Progressions (Dirichlet, 1837)\nAre there infinitely many primes of the form 4k+1? Of the form 4k+3?\nThe proof required inventing L-functions — the prototype for all modern analytic number theory."},
+  {t:"h", s:"What the subject actually does"},
+  {t:"p", s:"Algebraic number theory replaces the rational integers ℤ with richer rings — <em>rings of integers of number fields</em> — obtained by adjoining algebraic numbers like √2, √−5, or e^(2πi/5) to ℚ. It then asks: what is the arithmetic of these rings? How do primes split and recombine? How far does unique factorisation fail, and can that failure be measured?"},
+  {t:"p", s:"The answer, developed over 150 years from Kummer through Dedekind, Hilbert, Artin, and beyond, is one of the most beautiful structures in all of mathematics. The failure of unique factorisation is measured by the <strong>class group</strong> — a finite abelian group attached to every number field. Its size, the class number, encodes deep arithmetic information. The patterns of how primes split are governed by Galois groups and, ultimately, by the Langlands correspondence."},
+  {t:"i", s:"The subject begins with a crisis — unique factorisation fails — and every major theorem is, in some sense, a response to that crisis. Keep this in mind as you read: the constructions that look arbitrary are weapons forged to fight a specific enemy."}
+]},
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"THE CRISIS", title:"When Unique Factorisation Fails", sub:"ℤ[√−5] and the catastrophe",
+color:"#dc2626",
+body:[
+  {t:"h", s:"Unique factorisation in ℤ"},
+  {t:"p", s:"The Fundamental Theorem of Arithmetic states: every positive integer n ≥ 2 can be written uniquely (up to order) as a product of primes. This is so familiar it feels inevitable. It is not."},
+  {t:"p", s:"The theorem has two parts: <strong>existence</strong> (every integer factors into primes — easy, by induction) and <strong>uniqueness</strong> (the factorisation is essentially unique — this requires a proof, specifically Euclid's lemma: if p | ab and p is prime, then p | a or p | b). Euclid's lemma is the real content, and it fails in more general rings."},
+  {t:"h", s:"The ring ℤ[√−5]"},
+  {t:"p", s:"Adjoin √−5 to the integers: ℤ[√−5] = {a + b√−5 : a, b ∈ ℤ}. This is a ring under the usual addition and multiplication. Now consider the number 6:"},
+  {t:"f", s:"6 = 2 × 3\n6 = (1 + √−5)(1 − √−5)\n\nThese are TWO genuinely different factorisations into irreducible elements.\n\nVerification: Norms\nN(2) = 4,   N(3) = 9\nN(1 + √−5) = 1 + 5 = 6,   N(1 − √−5) = 6\n\nAll four elements are irreducible (their norms are not products of two norms of non-units),\nbut 2 does not divide 1 + √−5 or 1 − √−5 in ℤ[√−5].\nSo 2 is irreducible but NOT prime in this ring. Unique factorisation fails."},
+  {t:"p", s:"This is not a curiosity. The failure is systematic and reflects a genuine topological/arithmetic fact about the ring ℤ[√−5]. The class number of ℤ[√−5] is 2, meaning there are exactly two 'classes' of ideals, and the failure of unique factorisation is precisely measured by this."},
+  {t:"h", s:"Why Kummer's proof of Fermat for regular primes had a gap"},
+  {t:"p", s:"Ernst Eduard Kummer (1810–1893) attempted to prove Fermat's Last Theorem for a prime exponent p by working in the ring ℤ[ζ_p] where ζ_p = e^(2πi/p) is a primitive p-th root of unity. He needed xᵖ + yᵖ = zᵖ to have no solutions, and he factored the left side as:"},
+  {t:"f", s:"xᵖ + yᵖ = (x + y)(x + ζy)(x + ζ²y)···(x + ζᵖ⁻¹y)\n\nIf this ring had unique factorisation, he could deduce a contradiction.\nBut ℤ[ζ_p] does NOT have unique factorisation for most primes p.\n\nFor p = 23, the class number of ℤ[ζ_23] is 3.\nKummer's gap, noticed around 1847, was precisely this failure."},
+  {t:"p", s:"Kummer's response was brilliant: he invented <strong>ideal numbers</strong> — virtual objects that restore unique factorisation. His successor Dedekind made this precise with the theory of ideals. The crisis of 1847 gave birth to algebraic number theory."},
+  {t:"h", s:"The historical moment"},
+  {t:"p", s:"In 1847, Gabriel Lamé stood before the Paris Academy and announced he had proved Fermat's Last Theorem. Joseph Liouville immediately pointed out the gap: Lamé had assumed unique factorisation. Ernst Kummer, working in Berlin, had already identified the problem and was developing the fix. Liouville read Kummer's letter to the Academy. Within a decade, Kummer had a complete theory of ideal numbers for cyclotomic fields, and Dedekind had generalised it to all number fields."},
+  {t:"i", s:"The failure of unique factorisation in ℤ[√−5] is not an exotic pathology — it is the typical behaviour. Most rings of integers of number fields do NOT have unique factorisation. The entire edifice of algebraic number theory is, at its heart, a precise accounting of this failure."}
+]},
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"FOUNDATIONS", title:"Number Fields and Algebraic Integers", sub:"the objects we study",
+color:"#0097e2",
+body:[
+  {t:"h", s:"Algebraic numbers"},
+  {t:"p", s:"A complex number α is <strong>algebraic</strong> if it satisfies a polynomial equation with rational (equivalently, integer) coefficients: a_n αⁿ + a_{n-1}αⁿ⁻¹ + ··· + a₁α + a₀ = 0. The set of all algebraic numbers forms a field Q̄ ⊂ ℂ. Examples: √2 (root of x²−2), i = √−1 (root of x²+1), ∛3 (root of x³−3), e^(2πi/5) (root of x⁵−1)."},
+  {t:"p", s:"The <strong>minimal polynomial</strong> of α over ℚ is the unique monic irreducible polynomial with rational coefficients having α as a root. Its degree is the degree of α over ℚ. For √2, the minimal polynomial is x²−2. For a primitive 5th root of unity ζ₅, it is x⁴+x³+x²+x+1 (the 5th cyclotomic polynomial)."},
+  {t:"h", s:"Number fields"},
+  {t:"f", s:"A number field K is a finite extension of ℚ.\nEquivalently: K = ℚ(α) for some algebraic α.\n\nThe degree [K:ℚ] = degree of the minimal polynomial of α.\n\nExamples:\nℚ(√2):   degree 2, elements a + b√2 (a, b ∈ ℚ)\nℚ(√−5):  degree 2, quadratic imaginary\nℚ(∛2):   degree 3\nℚ(ζ_p):  degree p−1 for a primitive p-th root of unity\nℚ:       degree 1 (the base case)"},
+  {t:"p", s:"A quadratic field is ℚ(√d) for a squarefree integer d ≠ 0,1. If d > 0, it is a <em>real quadratic field</em>; if d < 0, an <em>imaginary quadratic field</em>. These are the simplest and most-studied cases, but already exhibit the full range of phenomena."},
+  {t:"h", s:"Rings of integers"},
+  {t:"p", s:"An algebraic integer is an algebraic number whose minimal polynomial over ℚ is monic with integer coefficients. For example: √2 is an algebraic integer (root of x²−2), but 1/2 is not (its minimal polynomial over ℚ is x − 1/2, which has non-integer leading coefficient when written with denominator)."},
+  {t:"f", s:"The ring of integers 𝒪_K of a number field K is the set of all algebraic integers in K.\n\nKey properties:\n— 𝒪_K is a free ℤ-module of rank n = [K:ℚ]\n— 𝒪_K ∩ ℚ = ℤ  (the only rational algebraic integers are ordinary integers)\n— 𝒪_K is integrally closed in K  (Dedekind domain)\n— Every non-zero ideal of 𝒪_K contains an ordinary integer\n\nExamples:\n𝒪_ℚ = ℤ\n𝒪_{ℚ(√d)} = ℤ[√d]       if d ≡ 2 or 3 (mod 4)\n𝒪_{ℚ(√d)} = ℤ[(1+√d)/2] if d ≡ 1 (mod 4)\n𝒪_{ℚ(ζ_p)} = ℤ[ζ_p]     for prime p"},
+  {t:"p", s:"The case d ≡ 1 (mod 4) is a surprise: the ring of integers contains (1+√d)/2 even though this looks like a fraction. For d = 5: ℤ[(1+√5)/2] contains the golden ratio φ = (1+√5)/2, which satisfies φ² − φ − 1 = 0. For d = −3: the Eisenstein integers ℤ[ω] where ω = (1+√−3)/2 = e^(2πi/3), which gives a honeycomb lattice in ℂ."},
+  {t:"h", s:"The norm and trace"},
+  {t:"p", s:"For a number field K of degree n over ℚ, there are n field embeddings σ₁,...,σₙ : K → ℂ. The <strong>norm</strong> N_{K/ℚ}(α) = σ₁(α)···σₙ(α) and the <strong>trace</strong> Tr_{K/ℚ}(α) = σ₁(α)+···+σₙ(α) are both rational numbers (in fact integers when α ∈ 𝒪_K). The norm is multiplicative: N(αβ) = N(α)N(β). This is essential for studying divisibility: if α | β in 𝒪_K, then N(α) | N(β) in ℤ."},
+  {t:"e", l:"WORKED EXAMPLE: ℤ[√−5]", s:"K = ℚ(√−5),  𝒪_K = ℤ[√−5]  (since −5 ≡ 3 (mod 4))\nThe two embeddings: σ₁(a+b√−5) = a+b√−5, σ₂(a+b√−5) = a−b√−5\nNorm: N(a+b√−5) = (a+b√−5)(a−b√−5) = a² + 5b²\n\nN(2) = 4,  N(3) = 9,  N(1±√−5) = 6\n\nAny element with norm equal to a prime p must itself be irreducible in 𝒪_K.\nSince 4, 9, 6 are not prime, we must check divisibility directly.\nFinding: 2, 3, (1±√−5) are all irreducible but none is prime. UFD fails."},
+  {t:"i", s:"The norm is the fundamental tool for doing arithmetic in 𝒪_K: it converts abstract divisibility questions in the ring to concrete questions about integers. Understanding norms is understanding the first half of the subject."}
+]},
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"THE FIX", title:"Ideals and Dedekind's Theorem", sub:"restoring unique factorisation",
+color:"#00a972",
+body:[
+  {t:"h", s:"Dedekind's vision"},
+  {t:"p", s:"Richard Dedekind (1831–1916), a student of Gauss and Riemann, found the right way to restore unique factorisation. Kummer had introduced 'ideal numbers' — virtual auxiliary elements. Dedekind instead introduced <strong>ideals</strong>: certain subsets of 𝒪_K that behave like principal ideals (a) = {aα : α ∈ 𝒪_K} even when no single element generates them."},
+  {t:"p", s:"The key insight: in ℤ[√−5], the element 2 is not prime as an element. But the ideal (2) = 2·ℤ[√−5] can be factored as a product of <em>prime ideals</em>: (2) = 𝔭₁ · 𝔭₂ where 𝔭₁ = (2, 1+√−5) and 𝔭₂ = (2, 1−√−5). These prime ideals are not principal — there is no single element of ℤ[√−5] that generates them — but they are genuine arithmetic objects with all the right properties."},
+  {t:"h", s:"The definition of an ideal"},
+  {t:"f", s:"An ideal 𝔞 ⊂ 𝒪_K is an additive subgroup that is closed under multiplication by 𝒪_K:\nα ∈ 𝔞 and r ∈ 𝒪_K implies rα ∈ 𝔞\n\nProduct of ideals:\n𝔞𝔟 = {Σ aᵢbᵢ : aᵢ ∈ 𝔞, bᵢ ∈ 𝔟}  (finite sums)\n\nA prime ideal 𝔭 satisfies: 𝔭 ≠ (1) and ab ∈ 𝔭 implies a ∈ 𝔭 or b ∈ 𝔭\n(exactly the property that makes elements prime, now for ideals)\n\nDivisibility: 𝔞 | 𝔟 iff 𝔟 ⊂ 𝔞  ('to contain is to divide')"},
+  {t:"p", s:"The crucial theorem, which Dedekind proved rigorously and which is the heart of the subject:"},
+  {t:"f", s:"FUNDAMENTAL THEOREM OF IDEAL THEORY (Dedekind, 1871)\n\nEvery non-zero ideal 𝔞 ⊂ 𝒪_K factors uniquely as a product of prime ideals:\n𝔞 = 𝔭₁^{e₁} · 𝔭₂^{e₂} ··· 𝔭_r^{e_r}\n\nwhere 𝔭_i are distinct prime ideals and e_i ≥ 1.\n\nThis is the Fundamental Theorem of Arithmetic, restored at the level of ideals.\nUnique factorisation may fail for elements; it holds perfectly for ideals."},
+  {t:"p", s:"The proof rests on a key algebraic property of 𝒪_K: it is a <strong>Dedekind domain</strong> — an integral domain that is Noetherian, integrally closed in its fraction field, and has the property that every non-zero prime ideal is maximal. These three conditions together are exactly what makes the unique factorisation theorem work."},
+  {t:"h", s:"Prime ideals in ℤ[√−5]: the resolution"},
+  {t:"f", s:"In ℤ[√−5], the element 2 is irreducible but not prime as an element.\nAs ideals, however:\n(2) = 𝔭₁ · 𝔭₁    where 𝔭₁ = (2, 1+√−5)\n(3) = 𝔭₂ · 𝔭₂    where 𝔭₂ = (3, 1+√−5)\n(1+√−5) = 𝔭₁ · 𝔭₂\n(1−√−5) = 𝔭₁ · 𝔭₂\n\nNow the factorisation of 6 = 2 × 3 = (1+√−5)(1−√−5)\nbecomes, as ideals:\n(6) = 𝔭₁² · 𝔭₂²\n\nBoth factorisations give the SAME ideal factorisation. The apparent\nnon-uniqueness at the element level is a shadow of the unique factorisation at the ideal level."},
+  {t:"h", s:"The person who built this"},
+  {t:"p", s:"Dedekind published his theory of ideals in 1871 as a supplement to his edition of Dirichlet's <em>Vorlesungen über Zahlentheorie</em>. He revised it three times, and the final version (1893) is essentially the modern treatment. He was extraordinarily careful and waited decades to publish because he wanted everything to be correct. His style — axiomatic, conceptual, abstract — was ahead of its time and influenced how all of algebra developed in the 20th century."},
+  {t:"e", l:"THE NORM OF AN IDEAL", s:"For an ideal 𝔞 ⊂ 𝒪_K, its norm N(𝔞) = |𝒪_K / 𝔞|, the size of the quotient ring.\nFor a prime ideal 𝔭 lying above the rational prime p, N(𝔭) = p^f for some f ≥ 1.\nThe norm is completely multiplicative: N(𝔞𝔟) = N(𝔞)·N(𝔟).\nFor a principal ideal (α): N((α)) = |N(α)|, consistent with the element norm.\n\nThis gives a bridge between the abstract ideal world and concrete integers."},
+  {t:"i", s:"Dedekind's theorem is a resurrection. What died (unique factorisation for elements) lives again at a higher level (for ideals). The price is that ideals are more abstract than elements. The reward is that the unique factorisation structure is genuine and complete. Every theorem in classical number theory that relied on unique factorisation can now be extended to all number fields — correctly — using ideal factorisation."}
+]},
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"MEASUREMENT", title:"The Ideal Class Group", sub:"quantifying how badly UFD fails",
+color:"#7c3aed",
+body:[
+  {t:"h", s:"The class group"},
+  {t:"p", s:"Unique factorisation holds for elements of 𝒪_K if and only if every ideal of 𝒪_K is principal. So the failure of UFD is measured precisely by how far 𝒪_K is from having all ideals principal. This is captured by a finite abelian group."},
+  {t:"f", s:"Two non-zero ideals 𝔞, 𝔟 are equivalent (𝔞 ~ 𝔟) if there exist non-zero\nα, β ∈ 𝒪_K with α·𝔞 = β·𝔟  (i.e., they differ by a principal ideal).\n\nThe set of equivalence classes forms a group under multiplication:\nCl(K) = {ideal classes} = (non-zero fractional ideals) / (principal ideals)\n\nThe class number h_K = |Cl(K)|.\n\nKey equivalences:\n— h_K = 1 ↔ 𝒪_K is a UFD ↔ 𝒪_K is a PID\n— h_K > 1 ↔ unique factorisation fails\n— For ℤ[√−5]: h = 2  (failure is 'minimal')\n— For ℤ[ζ_{23}]: h = 3"},
+  {t:"p", s:"The class group is finite — this is a deep theorem (proved using Minkowski's geometry of numbers, Section 8). Its structure encodes subtle arithmetic. The class group is an abelian group, and its invariant factor decomposition gives refined information about how ideals fail to be principal."},
+  {t:"h", s:"The class group as obstruction"},
+  {t:"p", s:"Think of the class group as recording obstructions to solving equations. The equation x² + 5y² = n (representing integers by the norm form of ℤ[√−5]) has a solution if and only if a certain condition on ideal classes holds. The solvability of a Diophantine equation is controlled by the class group of the relevant number field — this is the beginning of a vast web of connections."},
+  {t:"h", s:"Imaginary quadratic fields: a complete picture"},
+  {t:"p", s:"For imaginary quadratic fields ℚ(√−d) with d > 0, the class number is completely determined and computable. Gauss conjectured, and Heegner-Baker-Stark proved (1952–1967), that there are exactly 9 imaginary quadratic fields with class number 1:"},
+  {t:"f", s:"The nine Heegner fields (h = 1, unique factorisation holds):\nd = 1, 2, 3, 7, 11, 19, 43, 67, 163\n\nThe corresponding rings of integers are Euclidean domains (and hence PIDs):\nℤ[i]       (Gaussian integers, d=1)\nℤ[√−2]     (d=2)\nℤ[ω]       (Eisenstein integers, d=3, ω = (−1+√−3)/2)\n\nFor all other squarefree d > 0, ℚ(√−d) has class number ≥ 2.\nThe class number grows without bound as d → ∞."},
+  {t:"p", s:"The number 163 is strikingly large. It appears in a famous near-coincidence: e^(π√163) = 262537412640768743.99999999999925... is astonishingly close to an integer. This is not a coincidence — it is a consequence of the theory of complex multiplication and the fact that h(ℚ(√−163)) = 1."},
+  {t:"h", s:"Interactive: class numbers of quadratic fields"},
+  {t:"d", s:"cnt-demo"},
+  {t:"h", s:"Real quadratic fields: the mysterious case"},
+  {t:"p", s:"For real quadratic fields ℚ(√d) with d > 0, the class group is far more mysterious. Gauss conjectured that infinitely many real quadratic fields have class number 1 (equivalently, h(ℚ(√d)) = 1 for infinitely many squarefree d > 0). This conjecture remains <strong>completely open</strong>. It is one of the most tantalizing problems in the subject. There are hundreds of known real quadratic fields with h = 1, and heuristics suggest they should be infinitely many, but no proof exists."},
+  {t:"i", s:"The class group is the first great invariant of a number field. It is finite, computable (with effort), and controls the arithmetic of 𝒪_K in a precise way. But it is the beginning, not the end: the Langlands programme is, in part, an attempt to understand class groups through the theory of automorphic representations."}
+]},
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"UNITS", title:"Dirichlet's Unit Theorem", sub:"the structure of invertible elements",
+color:"#ea580c",
+body:[
+  {t:"h", s:"What are the units?"},
+  {t:"p", s:"The units of a ring are its invertible elements. In ℤ, the units are just {±1} — a finite group of order 2. In a general ring of integers 𝒪_K, the unit group 𝒪_K* is more interesting. Understanding it is essential: units appear in every statement about unique factorisation (elements are equal 'up to units'), in the computation of class groups, and in the analytic class number formula."},
+  {t:"h", s:"Dirichlet's theorem"},
+  {t:"p", s:"Dirichlet proved in 1846 the complete structure theorem for unit groups. Let K be a number field of degree n. Write n = r₁ + 2r₂ where r₁ is the number of real embeddings K → ℝ and r₂ is the number of pairs of complex (non-real) embeddings K → ℂ. Set r = r₁ + r₂ − 1."},
+  {t:"f", s:"DIRICHLET'S UNIT THEOREM (1846)\n\n𝒪_K* ≅ μ(K) × ℤʳ\n\nwhere:\n— μ(K) is the finite cyclic group of roots of unity in K\n— ℤʳ is a free abelian group of rank r = r₁ + r₂ − 1\n— r₁ = number of real embeddings, r₂ = number of complex embedding pairs\n\nThe r free generators are called fundamental units.\nThey generate the non-torsion part of the unit group."},
+  {t:"p", s:"The rank r = r₁ + r₂ − 1 is called the unit rank. The key cases:"},
+  {t:"f", s:"ℚ:           r₁=1, r₂=0  →  r=0  →  ℤ* = {±1}   ✓\nℚ(√d), d>0: r₁=2, r₂=0  →  r=1  →  need 1 fundamental unit\nℚ(√d), d<0: r₁=0, r₂=1  →  r=0  →  finitely many units\nℚ(ζ_p):     r₁=0, r₂=(p−1)/2  →  r=(p−3)/2 for prime p"},
+  {t:"h", s:"Real quadratic fields: Pell's equation"},
+  {t:"p", s:"For a real quadratic field K = ℚ(√d) with d > 0 squarefree, the unit rank is 1. The units are ±ε^n for n ∈ ℤ, where ε > 1 is the fundamental unit. Finding the fundamental unit is equivalent to solving the famous <strong>Pell equation</strong>: x² − dy² = ±1."},
+  {t:"f", s:"PELL'S EQUATION:  x² − dy² = ±1\n\nThe fundamental unit of ℤ[√d] (or ℤ[(1+√d)/2]) is ε = x + y√d\nwhere (x, y) is the smallest positive integer solution.\n\nExamples:\nd = 2:  ε = 1+√2        (1² − 2·1² = −1)\nd = 3:  ε = 2+√3        (2² − 3·1² = 1)\nd = 5:  ε = (1+√5)/2    (the golden ratio!)\nd = 7:  ε = 8+3√7       (64 − 63 = 1)\nd = 61: ε = 1766319049 + 226153980√61  (enormous!)"},
+  {t:"p", s:"The continued fraction expansion of √d gives the fundamental unit via its convergents. The period length of the continued fraction can be arbitrarily large, making the fundamental unit exponentially large. For d = 661, the fundamental unit has over 100 digits."},
+  {t:"h", s:"The regulator"},
+  {t:"p", s:"The <strong>regulator</strong> R_K of a number field is the absolute value of the determinant of the (r × r) matrix of logarithms of the fundamental units under the various real and complex embeddings. It measures the 'covolume' of the unit lattice in log space. The regulator appears alongside the class number in the analytic class number formula — they always appear together, as their ratio controls the residue of the Dedekind zeta function."},
+  {t:"e", l:"IMAGINARY QUADRATIC: FINITE UNITS", s:"For K = ℚ(√−d) with d > 0, we have r₁ = r₂ = 0, so r = 0.\nThe unit group is purely the roots of unity in K.\n\nd ≠ 1, 3: 𝒪_K* = {±1}  (just ±1, same as ℤ)\nd = 1:     𝒪_K* = {±1, ±i}  (4th roots of unity, Gaussian integers)\nd = 3:     𝒪_K* = {±1, ±ω, ±ω²}  (6th roots of unity, Eisenstein integers)\n\nThis is why 2 (real quadratic) and 4 (d=1) and 6 (d=3) appear in genus theory\nand in the study of sums of squares."},
+  {t:"i", s:"Dirichlet's unit theorem is a masterpiece: it gives complete structural information about 𝒪_K* in terms of purely topological data about K (the numbers r₁ and r₂, which count embeddings into ℝ and ℂ). The proof uses the log embedding to send 𝒪_K* into ℝ^r and applies the geometry of numbers — a method Dirichlet invented essentially for this purpose."}
+]},
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"SPLITTING", title:"How Primes Split", sub:"the arithmetic of prime ideals over rational primes",
+color:"#0097e2",
+body:[
+  {t:"h", s:"The central question"},
+  {t:"p", s:"Given a rational prime p ∈ ℤ and a number field K, what happens to the ideal (p) in 𝒪_K? By the Dedekind theorem, (p) = 𝔭₁^{e₁} ··· 𝔭_g^{e_g} for distinct prime ideals 𝔭_i. How many factors are there? How big are the exponents? How large is each 𝔭_i? The answers to these questions encode the deepest arithmetic of the extension K/ℚ."},
+  {t:"f", s:"Fundamental equation:\np · 𝒪_K = 𝔭₁^{e₁} · 𝔭₂^{e₂} ··· 𝔭_g^{e_g}\n\nFor each 𝔭_i, define the inertia degree f_i = [𝒪_K/𝔭_i : ℤ/pℤ]\n(the degree of the residue field extension)\n\nThe fundamental identity:\ne₁f₁ + e₂f₂ + ··· + e_g f_g = n = [K:ℚ]\n\nThe prime p is called:\n— Ramified if any e_i > 1  (exponent greater than 1)\n— Split (or decomposed) if all e_i = 1 and f_i = 1 and g = n\n— Inert if g = 1, e₁ = 1, f₁ = n (stays prime as a single ideal)\n— Partially split for cases in between"},
+  {t:"h", s:"The three behaviours: split, inert, ramify"},
+  {t:"p", s:"In a quadratic field K = ℚ(√d), every prime p behaves in one of exactly three ways:"},
+  {t:"f", s:"QUADRATIC FIELD ℚ(√d): SPLITTING OF p\n\n(1) SPLIT: (p) = 𝔭 · 𝔭'  (e=1, f=1, g=2)\n    p splits into two distinct prime ideals of norm p.\n    This happens ↔ (d/p) = +1  (d is a square mod p)\n\n(2) INERT: (p) = 𝔭  (e=1, f=2, g=1)\n    p stays prime, but as an ideal of norm p².\n    This happens ↔ (d/p) = −1  (d is not a square mod p)\n\n(3) RAMIFIED: (p) = 𝔭²  (e=2, f=1, g=1)\n    p becomes a perfect square of ideals.\n    This happens ↔ p | disc(K/ℚ)  (p divides the discriminant)\n\nHere (d/p) is the Legendre symbol: ±1 or 0."},
+  {t:"p", s:"This is the connection to quadratic reciprocity. Whether p splits or stays inert in ℚ(√q) is controlled by whether q splits or stays inert in ℚ(√p) — that mutual relationship is exactly quadratic reciprocity. The arithmetic of splitting of primes and the law of quadratic reciprocity are the same theorem, seen from different perspectives."},
+  {t:"h", s:"The Frobenius element"},
+  {t:"p", s:"When K/ℚ is a Galois extension (see Section 9) and 𝔭 is a prime ideal of 𝒪_K above p (with p unramified), there is a canonical element Frob_𝔭 in the Galois group Gal(K/ℚ): it is the unique automorphism σ such that σ(α) ≡ αᵖ (mod 𝔭) for all α ∈ 𝒪_K. This <strong>Frobenius element</strong> is one of the most important objects in number theory."},
+  {t:"p", s:"The Frobenius element controls how p splits: the number of prime ideals above p equals the number of orbits of ⟨Frob_𝔭⟩ on the roots of the minimal polynomial. The inertia degree f is the order of Frob_𝔭. Knowing the Frobenius elements of all primes determines the extension K/ℚ up to isomorphism (by the Chebotarev density theorem)."},
+  {t:"h", s:"The discriminant and ramification"},
+  {t:"p", s:"A prime p ramifies in K if and only if p divides the discriminant disc(K/ℚ). The discriminant is an integer computed from the ring of integers, and only finitely many primes divide it. This means: only finitely many primes can ramify in any given number field. The ramified primes are the 'special' primes intrinsic to the field."},
+  {t:"e", l:"SPLITTING IN ℚ(√−5)", s:"disc(ℚ(√−5)/ℚ) = −20 = −4·5. Ramified primes: 2 and 5.\n\nFor p = 2: (2) = 𝔭₁²  where 𝔭₁ = (2, 1+√−5)  [ramified]\nFor p = 5: (5) = 𝔭₂²  where 𝔭₂ = (√−5)       [ramified]\nFor p = 3: (3) stays prime  [inert, since (−5/3) = (1/3) = 1? check: −5 ≡ 1 (mod 3), and 1 is a square mod 3... actually (−5/3) = (1/3) = 1, so 3 splits. Let me verify: we need x² ≡ −5 ≡ 1 (mod 3), and 1² = 1. Yes, 3 splits: (3) = (3, 1+√−5)(3, 1−√−5)]\nFor p = 7: (7) is inert  [since −5 ≡ 2 (mod 7), (2/7) = 1 since 3²=9≡2... check more carefully)\n\nThe splitting behaviour traces the structure of the class group."},
+  {t:"i", s:"The splitting of primes is where arithmetic, Galois theory, and analysis all meet. The Chebotarev density theorem says each Frobenius conjugacy class appears for a positive proportion of primes — and that proportion is its size divided by the group order. This is a vast generalisation of Dirichlet's theorem on primes in arithmetic progressions, and it is one of the most useful theorems in the subject."}
+]},
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"GEOMETRY", title:"Minkowski's Geometry of Numbers", sub:"lattices, fundamental domains, finiteness of class number",
+color:"#00c4a0",
+body:[
+  {t:"h", s:"The geometric insight"},
+  {t:"p", s:"Hermann Minkowski (1864–1909) had a profound insight: problems about integers can be solved using geometry. He developed the <em>geometry of numbers</em> — a bridge between Euclidean geometry and arithmetic. Two of its most important applications are proving the finiteness of the class number and establishing the Minkowski bound, which makes class groups computable."},
+  {t:"h", s:"The Minkowski embedding"},
+  {t:"p", s:"Given a number field K of degree n with r₁ real embeddings σ₁,...,σ_{r₁} and r₂ pairs of complex embeddings τ₁,τ̄₁,...,τ_{r₂},τ̄_{r₂}, define the Minkowski embedding:"},
+  {t:"f", s:"j : K → ℝ^{r₁} × ℂ^{r₂} ≅ ℝⁿ\n\nj(α) = (σ₁(α), ..., σ_{r₁}(α), τ₁(α), ..., τ_{r₂}(α))\n\nThe image j(𝒪_K) is a LATTICE in ℝⁿ:\na discrete subgroup spanning ℝⁿ, with covolume = Vol(ℝⁿ/j(𝒪_K)) = 2^{-r₂} √|disc(K)|"},
+  {t:"p", s:"A <strong>lattice</strong> in ℝⁿ is the ℤ-span of n linearly independent vectors. The fundamental domain is a parallelepiped whose translates tile ℝⁿ without overlap. The volume of this fundamental domain is the covolume of the lattice."},
+  {t:"h", s:"Minkowski's convex body theorem"},
+  {t:"f", s:"MINKOWSKI'S THEOREM (1889)\n\nLet Λ ⊂ ℝⁿ be a lattice with covolume vol(Λ).\nLet S ⊂ ℝⁿ be a convex, symmetric-about-origin set with\nvol(S) > 2ⁿ · vol(Λ).\n\nThen S contains a non-zero lattice point: S ∩ Λ ≠ {0}.\n\nIntuitively: if a convex body is big enough relative to the lattice,\nit must contain a non-zero lattice point."},
+  {t:"p", s:"Applied to the ideal lattice j(𝔞) for an ideal 𝔞 ⊂ 𝒪_K: by choosing S appropriately, Minkowski showed that every ideal class contains an ideal of small norm. This gives:"},
+  {t:"f", s:"THE MINKOWSKI BOUND M_K:\n\nM_K = (n!/nⁿ) · (4/π)^{r₂} · √|disc(K)|\n\nEvery ideal class contains an ideal 𝔞 with N(𝔞) ≤ M_K.\n\nConsequence: the class group Cl(K) is generated by prime ideals 𝔭 with N(𝔭) ≤ M_K.\nSince there are only finitely many such prime ideals, Cl(K) is FINITE.\n\nConsequence: To compute Cl(K), you only need to check finitely many primes p ≤ M_K."},
+  {t:"h", s:"Example: computing the class group of ℚ(√−23)"},
+  {t:"f", s:"K = ℚ(√−23),  n = 2,  r₁ = 0,  r₂ = 1\ndisc(K) = −23  (since −23 ≡ 1 mod 4)\nM_K = (2!/4) · (4/π) · √23 = (1/2)(4/π)√23 ≈ 2.16\n\nOnly need to check primes p ≤ 2.16, i.e., p = 2.\n\nCheck p = 2: (−23/2) — is −23 a square mod 2? Trivially, every odd number is 1 mod 2.\nThe Legendre symbol requires p odd; instead: disc ≡ 1 mod 8, so 2 splits.\n(2) = 𝔭 · 𝔭'  where N(𝔭) = 2.\n\nIs 𝔭 principal? Need α ∈ 𝒪_K with N(α) = 2, i.e., a² + (23/4)b² = 2.\nFor b=0: a²=2, no integer solution. For b≠0: N ≥ 23/4 > 2. No solution.\n𝔭 is NOT principal. It generates a non-trivial class.\n\nCl(ℚ(√−23)) ≅ ℤ/3ℤ,  h = 3."},
+  {t:"h", s:"Fundamental domains"},
+  {t:"p", s:"The fundamental domain of the Minkowski embedding is the central object connecting the geometry to the arithmetic. Its volume covolume = 2^{−r₂}√|disc| gives the discriminant. The discriminant measures how 'spread out' the ring of integers is — and is bounded below by Minkowski's discriminant theorem: |disc(K)| ≥ (π/4)^{2r₂}(n^n/n!)², which grows rapidly with n. This means there are only finitely many number fields of bounded discriminant — another finiteness theorem from the geometry."},
+  {t:"i", s:"Minkowski's geometry of numbers is the proof that algebraic number theory is finite: the class group is finite, there are finitely many fields of bounded discriminant, and all the arithmetic is accessible by computation. Without this geometric ingredient, the subject would have beautiful definitions but no computable content."}
+]},
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"GALOIS", title:"Galois Theory and Ramification", sub:"symmetry groups of number fields",
+color:"#dc2626",
+body:[
+  {t:"h", s:"Galois extensions"},
+  {t:"p", s:"A field extension K/ℚ is <strong>Galois</strong> if it is both normal (every minimal polynomial of every element of K splits completely over K) and separable (no repeated roots). Galois extensions are the ones with the most symmetry: their automorphism group is as large as possible."},
+  {t:"f", s:"The Galois group:\nGal(K/ℚ) = {field automorphisms σ : K → K fixing ℚ}\n\n|Gal(K/ℚ)| = [K:ℚ]  for Galois extensions\n\nThe fundamental theorem of Galois theory:\n{subgroups H ≤ Gal(K/ℚ)} ↔ {intermediate fields ℚ ⊆ F ⊆ K}\nH ↦ K^H = {α ∈ K : σ(α) = α for all σ ∈ H}\n\nThis gives a complete lattice isomorphism, reversing containment."},
+  {t:"h", s:"Decomposition and inertia groups"},
+  {t:"p", s:"For a Galois extension K/ℚ and a prime ideal 𝔭 ⊂ 𝒪_K above p, two key subgroups of G = Gal(K/ℚ) govern the local arithmetic at 𝔭:"},
+  {t:"f", s:"DECOMPOSITION GROUP:\nD(𝔭|p) = {σ ∈ G : σ(𝔭) = 𝔭}\n(the σ that stabilize 𝔭 as a set)\n\nINERTIA GROUP:\nI(𝔭|p) = {σ ∈ D(𝔭|p) : σ(α) ≡ α (mod 𝔭) for all α ∈ 𝒪_K}\n(the σ that act trivially on the residue field)\n\nKey facts:\n|D(𝔭|p)| = ef   (e = ramification index, f = inertia degree)\n|I(𝔭|p)| = e\nD/I ≅ Gal(𝔽_{p^f}/𝔽_p) ≅ ℤ/fℤ  (cyclic, generated by Frobenius)\n\nNumber of prime ideals above p: g = |G|/|D| = n/(ef)"},
+  {t:"p", s:"The Frobenius element Frob_𝔭 is the unique element of D/I satisfying Frob_𝔭(α) ≡ α^p (mod 𝔭). When p is unramified (|I| = 1), Frob_𝔭 is a well-defined element of G (up to conjugacy), called the <strong>Frobenius conjugacy class</strong>. This is the single most important invariant attached to a prime in number theory."},
+  {t:"h", s:"Wild and tame ramification"},
+  {t:"p", s:"The inertia group I(𝔭|p) has a filtration by 'ramification groups' I = I₀ ⊃ I₁ ⊃ I₂ ⊃ ··· where I_k = {σ : v(σ(π)−π) ≥ k+1} (here π is a uniformiser at 𝔭 and v is the 𝔭-adic valuation). Ramification is <strong>tame</strong> if p does not divide e (|I|), in which case I₁ = {1} and the filtration is simple. Ramification is <strong>wild</strong> if p | e, in which case I₁ (the wild inertia group) is a non-trivial p-group, and the ramification is much more complex. Wild ramification is the source of the hardest phenomena in local number theory."},
+  {t:"h", s:"The discriminant revisited"},
+  {t:"f", s:"The discriminant of K/ℚ encodes ramification:\ndisc(K/ℚ) = ∏_𝔭 𝔭^{a(𝔭)}\n\nwhere a(𝔭) = Σ_{k≥0} (|I_k| − 1)  (the Artin conductor exponent)\n\nFor tame ramification (p ∤ e): a(𝔭) = e − 1\nFor wild ramification: a(𝔭) ≥ e (typically larger)\n\nConsequence: p ramifies in K ↔ p | disc(K/ℚ)\nThe discriminant tells you exactly which primes behave 'badly'."},
+  {t:"h", s:"Cyclotomic fields: the model case"},
+  {t:"p", s:"The cyclotomic field ℚ(ζ_n) (where ζ_n = e^(2πi/n)) is Galois over ℚ with Galois group Gal(ℚ(ζ_n)/ℚ) ≅ (ℤ/nℤ)*, the multiplicative group of units mod n. The automorphisms are σ_a : ζ_n ↦ ζ_n^a for a coprime to n. Primes and their splitting:"},
+  {t:"f", s:"In ℚ(ζ_n), the prime p splits as:\n(p) = (𝔭₁ · 𝔭₂ ··· 𝔭_g)^e\nwhere e = ord_{n/gcd(n,p^∞)}(p) determines ramification,\nf = ord_{(ℤ/nℤ)*}(p) (order of p in (ℤ/nℤ)*)\ng = φ(n)/(ef)\n\nIn particular: p ramifies ↔ p | n\nAnd: p splits completely ↔ p ≡ 1 (mod n)\n\nThe split condition p ≡ 1 (mod n) is the prototype\nfor ALL splitting conditions in abelian extensions."},
+  {t:"e", l:"EXAMPLE: ℚ(ζ_5)", s:"Gal(ℚ(ζ_5)/ℚ) ≅ (ℤ/5ℤ)* ≅ ℤ/4ℤ  (cyclic of order 4)\nOnly ramified prime: 5  (since 5 | 5)\n\np = 2: ord₅(2) = 4  (since 2¹=2, 2²=4, 2³=3, 2⁴=1 mod 5)\n  So f=4, g=1: 2 is INERT. (2) stays prime in ℤ[ζ_5].\n\np = 11: ord₅(11) = ord₅(1) = 1  (since 11 ≡ 1 mod 5)\n  So f=1, g=4: 11 SPLITS COMPLETELY into 4 prime ideals of norm 11.\n\np = 19: ord₅(19) = ord₅(4) = 2  (4¹=4, 4²=16≡1 mod 5)\n  So f=2, g=2: 19 PARTIALLY SPLITS into 2 prime ideals of norm 19²."},
+  {t:"i", s:"The Galois group is the symmetry group that controls everything. Decomposition and inertia groups are local symmetries at individual primes. The Frobenius element is the single most powerful piece of data in modern number theory — it determines L-functions, controls class field theory, and is the central object studied by the Langlands programme."}
+]},
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"ANALYSIS", title:"L-Functions and the Analytic Class Number Formula", sub:"the bridge between algebra and analysis",
+color:"#ffb830",
+body:[
+  {t:"h", s:"From arithmetic to analysis"},
+  {t:"p", s:"One of the deepest discoveries in number theory is that arithmetic questions — about class numbers, units, splitting of primes — can be answered by analytic methods, specifically by studying certain complex functions and their behaviour near special points. This bridge, forged by Dirichlet and Dedekind in the 19th century, has become one of the central highways of modern mathematics."},
+  {t:"h", s:"The Dedekind zeta function"},
+  {t:"f", s:"DEDEKIND ZETA FUNCTION:\nζ_K(s) = Σ_{𝔞 ≠ 0} N(𝔞)^{-s}  (sum over non-zero ideals of 𝒪_K)\n\nFor K = ℚ: ζ_ℚ(s) = ζ(s) = Σ n^{-s} (the Riemann zeta function)\n\nThe Euler product (from unique prime ideal factorisation):\nζ_K(s) = ∏_{𝔭 prime} (1 − N(𝔭)^{-s})^{-1}\n\nThis converges absolutely for Re(s) > 1 and extends to a meromorphic\nfunction on ℂ with a single pole at s = 1."},
+  {t:"p", s:"The Dedekind zeta function satisfies a functional equation relating ζ_K(s) and ζ_K(1−s), and has an analytic continuation to all of ℂ. The behaviour near s = 1 encodes the arithmetic of K through one of the most beautiful formulas in mathematics."},
+  {t:"h", s:"The analytic class number formula"},
+  {t:"f", s:"THE ANALYTIC CLASS NUMBER FORMULA (Dirichlet-Dedekind)\n\nlim_{s→1} (s−1) ζ_K(s)  =  (2^{r₁} · (2π)^{r₂} · h_K · R_K) / (w_K · √|disc(K)|)\n\nwhere:\nh_K = class number\nR_K = regulator (volume of the unit lattice in log space)\nw_K = number of roots of unity in K\nr₁, r₂ = number of real / complex embedding pairs\ndisc(K) = discriminant of K\n\nThis residue is computable analytically (via zeta function techniques)\nand determines the product h_K · R_K.\n\nFor imaginary quadratic fields (r₁=0, r₂=1, R_K=1):\nh_K = (w_K · √|disc(K)|) / (2π) · lim_{s→1}(s−1)ζ_K(s)"},
+  {t:"p", s:"This formula is extraordinary. The left side is an analytic object — the residue of a complex function. The right side packages together: the class number (a measure of failure of unique factorisation), the regulator (a measure of the size of the unit group), the discriminant (a measure of ramification), and other invariants. They must combine to give exactly the analytic quantity on the left. Algebra and analysis are in perfect balance."},
+  {t:"h", s:"Dirichlet L-functions and primes in progressions"},
+  {t:"p", s:"For a Dirichlet character χ : (ℤ/mℤ)* → ℂ* (a multiplicative homomorphism to the unit circle), the Dirichlet L-function is:"},
+  {t:"f", s:"L(s, χ) = Σ_{n=1}^∞ χ(n) n^{-s} = ∏_p (1 − χ(p)p^{-s})^{-1}\n\nDirichlet's theorem on primes in progressions (1837):\nFor gcd(a, m) = 1, there are infinitely many primes p ≡ a (mod m).\nIn fact: the primes are equidistributed among the φ(m) residue classes.\n\nProof key: L(1, χ) ≠ 0 for χ ≠ χ₀ (principal character).\nThis non-vanishing is the analytic heart of the theorem.\n\nA prime p ≡ a (mod m) contributes χ(p) = χ(a) to L(s, χ).\nSumming over all characters picks out the specific residue class."},
+  {t:"p", s:"This was the first successful use of complex analysis to prove a theorem about integers. It inspired Riemann's study of the zeta function and the eventual proof of the Prime Number Theorem (the number of primes up to x is asymptotically x/log x). The non-vanishing of L(1,χ) remains a central technique in modern analytic number theory."},
+  {t:"h", s:"The Riemann hypothesis and its generalisation"},
+  {t:"p", s:"The Riemann hypothesis (1859, still unsolved) states that all non-trivial zeros of ζ(s) lie on the line Re(s) = 1/2. Its generalisation, the <strong>Generalised Riemann Hypothesis (GRH)</strong>, asserts the same for all Dirichlet L-functions L(s,χ) and, further, for all Dedekind zeta functions ζ_K(s). GRH implies extremely precise results about the distribution of primes and the structure of class groups. Most results in modern number theory are conditional on GRH or proved unconditionally only with great additional effort."},
+  {t:"i", s:"The analytic class number formula is the first great success of the philosophy that arithmetic and analysis are dual aspects of the same reality. Every major subsequent development — class field theory, the Langlands programme, the Birch–Swinnerton-Dyer conjecture — is an elaboration of this duality."}
+]},
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"CROWN", title:"Class Field Theory", sub:"the structure of all abelian extensions",
+color:"#00a972",
+body:[
+  {t:"h", s:"The culmination of classical algebraic number theory"},
+  {t:"p", s:"Class field theory is the crowning achievement of the subject as it stood in 1920. It completely classifies all abelian extensions of a number field K (extensions whose Galois group is abelian) in terms of the arithmetic of K itself. The answer is astonishing: abelian extensions are controlled by <em>generalisations of the class group</em>. Symmetry groups of field extensions are the same thing as arithmetic quotients."},
+  {t:"h", s:"The main theorem"},
+  {t:"f", s:"CLASS FIELD THEORY (Hilbert, Weber, Takagi, Artin — 1890–1927)\n\nLet K be a number field. There is a canonical bijection:\n\n{finite abelian extensions L/K} ↔ {open finite-index subgroups of the idèle class group C_K}\n\nIn more classical language:\n{abelian extensions of K with conductor dividing 𝔪} ↔ {subgroups of (𝒪_K/𝔪)* × ∏ real places}\n\nThe extension L/K corresponding to a subgroup H has:\nGal(L/K) ≅ (idèle class group) / H\n\nThe Artin map provides the explicit isomorphism:\nArt_{L/K} : C_K / N_{L/K}(C_L) → Gal(L/K)\nsending (a uniformiser at 𝔭) to (Frob_𝔭)"},
+  {t:"p", s:"The Artin map is the bridge: it takes arithmetic data (idèle class group elements, which encode factorisation data at all primes simultaneously) and produces Galois group elements (automorphisms of the field extension). The Frobenius at each unramified prime maps to a specific element of the Galois group, and the theorem says these all fit together coherently."},
+  {t:"h", s:"The Hilbert class field"},
+  {t:"p", s:"The most important abelian extension of K is the <strong>Hilbert class field</strong> H_K: the maximal abelian unramified extension. Class field theory gives:"},
+  {t:"f", s:"THE HILBERT CLASS FIELD\n\nGal(H_K/K) ≅ Cl(K)   (the ideal class group of K)\n\nSo: the class group of K IS the Galois group of an actual field extension!\n\nExample: K = ℚ(√−5),  Cl(K) ≅ ℤ/2ℤ\nH_K = ℚ(√−5, √−1) = ℚ(√5, i)   (degree 4 over ℚ)\n\nThe principal ideal theorem: every ideal of 𝒪_K becomes principal in 𝒪_{H_K}.\n(But 𝒪_{H_K} might have a larger class group — hence the class field tower problem)"},
+  {t:"p", s:"This is philosophically remarkable. The class group — an abstract abelian group measuring the failure of unique factorisation — is literally realised as a symmetry group of a larger field. The arithmetic defect of K is repaired by going to H_K: ideals that weren't principal in K become principal there. The Galois symmetry records exactly what needed to be added."},
+  {t:"h", s:"Kronecker-Weber and cyclotomic fields"},
+  {t:"p", s:"A beautiful special case: the Kronecker-Weber theorem (1886, proved by Hilbert in 1896) states that every abelian extension of ℚ is contained in a cyclotomic field ℚ(ζ_n) for some n. Class field theory for ℚ says: every abelian extension of ℚ is controlled by congruence conditions modulo some m. The cyclotomic field ℚ(ζ_m) is the 'ray class field' of ℚ with conductor m."},
+  {t:"f", s:"KRONECKER-WEBER THEOREM\n\nEvery finite abelian extension K/ℚ satisfies K ⊆ ℚ(ζ_n) for some n.\n\nGal(ℚ(ζ_n)/ℚ) ≅ (ℤ/nℤ)*\n\nSo every abelian extension of ℚ has Galois group\na quotient of (ℤ/nℤ)* for some n.\n\nThis is why primes in arithmetic progressions control abelian extensions:\np splits completely in K ↔ p ≡ 1 (mod n) ↔ Frob_p = id"},
+  {t:"h", s:"The class field tower problem"},
+  {t:"p", s:"Starting from K, form H = H_K (Hilbert class field). Then form H_K(H) (Hilbert class field of H). And so on. Does this tower of fields stabilise (terminate)? Shafarevich and Golod (1964) proved: <strong>no</strong> — there exist number fields for which the class field tower is infinite. Such fields have an infinite tower of unramified abelian extensions. Their class groups are always non-trivial. This was a major negative result: the class group cannot be 'eliminated' by passing to a single extension."},
+  {t:"h", s:"Explicit class field theory"},
+  {t:"p", s:"For imaginary quadratic fields K = ℚ(√−d), <strong>complex multiplication</strong> provides an explicit construction of abelian extensions using the theory of elliptic curves with CM. The j-invariant j(τ) of an elliptic curve with complex multiplication by 𝒪_K, evaluated at the CM point τ, is an algebraic integer that generates the Hilbert class field. For example: j((1+√−163)/2) = −2^{18}·3^3·5^3·23^3·29^3 is the algebraic integer generating H_{ℚ(√−163)}, and e^{π√163} ≈ j(τ) + 744 explains the near-integer behaviour."},
+  {t:"i", s:"Class field theory is the high-water mark of classical algebraic number theory. It solves the abelian case completely and explicitly. The non-abelian case — classifying non-abelian extensions — is the Langlands programme: the deepest and most ambitious project in mathematics today."}
+]},
+
+// ─────────────────────────────────────────────────────────────────────
+{
+badge:"FRONTIER", title:"The Frontier: Langlands, BSD, and Open Problems", sub:"where mathematics stands today",
+color:"#7c3aed",
+body:[
+  {t:"h", s:"The Langlands programme"},
+  {t:"p", s:"In 1967, Robert Langlands (then 30 years old) wrote a letter to André Weil containing a series of conjectures that unified, generalised, and transcended everything in algebraic number theory. The Langlands programme proposes a vast web of correspondences between:"},
+  {t:"f", s:"THE LANGLANDS CORRESPONDENCE (schematically)\n\nRepresentations of Galois groups of number fields\n        ↔\nAutomorphic representations of adelic groups\n\nMore precisely (geometric Langlands, global, local versions vary):\n{n-dimensional representations ρ : Gal(K̄/K) → GLₙ(ℂ)}\n        ↔\n{cuspidal automorphic representations π of GLₙ(𝔸_K)}\n\nunder a precise dictionary:\nL(s, ρ) = L(s, π)  (same L-function from both sides)\n\nFor n=1: this is CLASS FIELD THEORY (fully proved)\nFor n=2: relates to modular forms and elliptic curves\nFor n>2: partially proved, mostly open"},
+  {t:"p", s:"Class field theory is the n=1 case: one-dimensional Galois representations correspond to Hecke characters (automorphic representations of GL₁). For n=2, the correspondence relates two-dimensional Galois representations (arising from elliptic curves and other geometric objects) to classical modular forms. This is precisely what Wiles proved in 1995 for semistable elliptic curves, establishing Fermat's Last Theorem as a corollary."},
+  {t:"h", s:"Fermat's Last Theorem: the actual proof"},
+  {t:"p", s:"Wiles's proof does not directly attack xⁿ + yⁿ = zⁿ. Instead:"},
+  {t:"f", s:"The proof strategy:\n1. If aᵖ + bᵖ = cᵖ is a non-trivial solution (p prime ≥ 5),\n   construct the Frey elliptic curve: y² = x(x − aᵖ)(x + bᵖ)\n\n2. Ribet (1986): the Frey curve is NOT modular\n   (its 2-dimensional Galois representation has no corresponding modular form)\n\n3. Wiles (1995): every semistable elliptic curve over ℚ IS modular\n   (proved using deformation theory of Galois representations)\n\n4. Contradiction: a solution to Fermat would give a non-modular curve\n   that is also modular. So no solution exists.\n\nThe key step 3 is the Modularity Theorem (formerly Shimura-Taniyama-Weil conjecture).\nWiles proved it using the theory of Galois deformations: a new tool he invented."},
+  {t:"h", s:"The Birch–Swinnerton-Dyer conjecture (BSD)"},
+  {t:"p", s:"One of the seven Clay Millennium Prize Problems, carrying $1,000,000. An elliptic curve E over ℚ is an equation y² = x³ + ax + b. The rational points E(ℚ) form an abelian group, and the Mordell-Weil theorem says E(ℚ) ≅ ℤʳ ⊕ (finite group). The integer r ≥ 0 is the <em>rank</em> of E."},
+  {t:"f", s:"BIRCH–SWINNERTON-DYER CONJECTURE (1965)\n\nL(E, s) = Σ_n aₙ n^{-s}  (Hasse-Weil L-function of E)\n\nord_{s=1} L(E, s) = rank of E(ℚ)\n\nFurther: lim_{s→1} L(E,s)/(s−1)^r = (Ω · Reg · ∏ c_v · |Ш|) / |E(ℚ)_tors|²\n\nwhere Ш = Tate-Shafarevich group, Reg = regulator, Ω = period.\n\nCurrent status:\n— If ord_{s=1}L = 0 or 1: rank is as predicted (Coates-Wiles, Gross-Zagier-Kolyvagin)\n— For rank ≥ 2: essentially nothing is proved in full generality\n— BSD is one of the deepest open problems in mathematics"},
+  {t:"h", s:"The ABC conjecture"},
+  {t:"p", s:"Proposed by Masser and Oesterlé in 1985, the ABC conjecture is deceptively simple to state but implies a vast number of results in Diophantine geometry, including Fermat's Last Theorem (for all but finitely many exponents) as a corollary."},
+  {t:"f", s:"ABC CONJECTURE:\n\nFor coprime positive integers a + b = c, let\nrad(abc) = product of distinct prime factors of abc.\n\nFor every ε > 0, there exist only finitely many triples (a,b,c) with\nc > rad(abc)^{1+ε}\n\nEquivalently: c < K_ε · rad(abc)^{1+ε} for some constant K_ε.\n\nStatus: In 2012, Shinichi Mochizuki posted a 600-page proof using\nhis theory of 'inter-universal Teichmüller theory (IUT)'.\nAs of 2024, the mathematical community is deeply divided:\nsome believe the proof correct, many experts believe it contains\na gap in Corollary 3.12 of Part III. The consensus remains unresolved."},
+  {t:"h", s:"Currently active high-value research"},
+  {t:"p", s:"The frontiers of the subject are intensely active. The most important open problems as of 2024–25:"},
+  {t:"f", s:"1. THE RAMANUJAN CONJECTURE (generalised)\nFor a cuspidal automorphic representation π of GLₙ,\nthe Hecke eigenvalues λ_p should satisfy |λ_p| = p^{(n-1)/2}.\nProved by Deligne for GL₂ (1974, Fields Medal).\nFor GL_n (n ≥ 3): open, even for very specific cases.\n\n2. THE FONTAINE-MAZUR CONJECTURE\nEvery geometric (de Rham and Hodge-Tate) p-adic Galois representation\ncomes from algebraic geometry.\nPartially proved by Kisin, Emerton, Calegari-Geraghty.\nFull generality: open.\n\n3. THE INVERSE GALOIS PROBLEM\nIs every finite group G the Galois group of some extension of ℚ?\nKnown: all abelian groups (class field theory), all symmetric and alternating groups,\nmost sporadic groups. But a general theorem: wide open.\n\n4. THE CLASS NUMBER 1 PROBLEM FOR REAL QUADRATIC FIELDS\nAre there infinitely many real quadratic fields with class number 1?\nWidely believed: yes. Proved: no.\n\n5. EFFECTIVE MORDELL (Faltings/Vojta)\nFaltings proved: a curve of genus ≥ 2 over ℚ has finitely many rational points.\nBut the proof is non-effective: we cannot bound how large the points are.\nA computable bound: open, and connected to ABC."},
+  {t:"h", s:"The geometric Langlands programme"},
+  {t:"p", s:"In 2024, a team led by Dennis Gaitsgory released a proof of the <strong>geometric Langlands conjecture</strong> over ℂ — a vast 1000-page work spread across multiple papers. This is not the arithmetic Langlands conjecture (about Galois groups), but a geometric analogue over curves over ℂ, using derived algebraic geometry and ∞-categories. While this does not directly solve the arithmetic case, it establishes geometric techniques that are expected to flow back into arithmetic and represents the single largest advance in the Langlands programme in decades."},
+  {t:"h", s:"The Langlands web"},
+  {t:"p", s:"Here is where everything connects:"},
+  {t:"f", s:"Fermat → Kummer → Dedekind → Ideals → Class groups\n                                              ↓\n             Dirichlet → L-functions → Analytic class number formula\n                                              ↓\n          Artin → Galois representations → Local Langlands\n                                              ↓\n         Wiles → Modularity → Global Langlands (n=2)\n                                              ↓\n     Gaitsgory et al. → Geometric Langlands (2024)\n                                              ↓\n            ??? → Arithmetic Langlands in full generality ???\n\nThe full arithmetic Langlands correspondence for GLₙ over all number fields\nremains the central open problem in mathematics."},
+  {t:"i", s:"The subject began with Fermat's margin note and a failure of unique factorisation. Three and a half centuries later, the attempt to repair that failure has built one of the deepest and most beautiful mathematical structures known to humanity: a web of correspondences linking the symmetries of number fields, the harmonics of automorphic forms, and the geometry of algebraic varieties over finite fields. The endpoint — a complete Langlands correspondence — remains ahead of us, waiting."}
+]}
+
+]; // end LV
+
+// ── INTERACTIVE CLASS NUMBER DEMO ─────────────────────────────────────
+var CLASS_DATA = {
+  "-1":  {name:"ℚ(√−1)", label:"Gaussian integers", h:1, ufd:true,  note:"UFD. Units: {±1, ±i}. The Gaussian integers."},
+  "-2":  {name:"ℚ(√−2)", label:"", h:1, ufd:true,  note:"UFD. Units: {±1}."},
+  "-3":  {name:"ℚ(√−3)", label:"Eisenstein integers", h:1, ufd:true,  note:"UFD. Units: {±1, ±ω, ±ω²}. The Eisenstein integers."},
+  "-5":  {name:"ℚ(√−5)", label:"", h:2, ufd:false, note:"Cl(K) ≅ ℤ/2ℤ. The classic failure: 6 = 2·3 = (1+√−5)(1−√−5)."},
+  "-6":  {name:"ℚ(√−6)", label:"", h:2, ufd:false, note:"Cl(K) ≅ ℤ/2ℤ."},
+  "-7":  {name:"ℚ(√−7)", label:"", h:1, ufd:true,  note:"UFD. One of the 9 Heegner fields."},
+  "-10": {name:"ℚ(√−10)", label:"", h:2, ufd:false, note:"Cl(K) ≅ ℤ/2ℤ."},
+  "-11": {name:"ℚ(√−11)", label:"", h:1, ufd:true,  note:"UFD. One of the 9 Heegner fields."},
+  "-13": {name:"ℚ(√−13)", label:"", h:2, ufd:false, note:"Cl(K) ≅ ℤ/2ℤ."},
+  "-14": {name:"ℚ(√−14)", label:"", h:4, ufd:false, note:"Cl(K) ≅ ℤ/4ℤ."},
+  "-15": {name:"ℚ(√−15)", label:"", h:2, ufd:false, note:"Cl(K) ≅ ℤ/2ℤ."},
+  "-19": {name:"ℚ(√−19)", label:"", h:1, ufd:true,  note:"UFD. One of the 9 Heegner fields."},
+  "-23": {name:"ℚ(√−23)", label:"", h:3, ufd:false, note:"Cl(K) ≅ ℤ/3ℤ."},
+  "-43": {name:"ℚ(√−43)", label:"", h:1, ufd:true,  note:"UFD. One of the 9 Heegner fields."},
+  "-67": {name:"ℚ(√−67)", label:"", h:1, ufd:true,  note:"UFD. One of the 9 Heegner fields."},
+  "-163":{name:"ℚ(√−163)", label:"j-invariant", h:1, ufd:true,  note:"UFD. The largest Heegner field. e^(π√163) ≈ 262537412640768743.999999999999..."},
+  "2":   {name:"ℚ(√2)", label:"", h:1, ufd:true,  note:"UFD. Fundamental unit ε = 1+√2 (Pell: 1²−2·1²=−1)."},
+  "3":   {name:"ℚ(√3)", label:"", h:1, ufd:true,  note:"UFD. Fundamental unit ε = 2+√3 (Pell: 4−3=1)."},
+  "5":   {name:"ℚ(√5)", label:"golden ratio", h:1, ufd:true,  note:"UFD. Fundamental unit ε = φ = (1+√5)/2 (the golden ratio)."},
+  "6":   {name:"ℚ(√6)", label:"", h:1, ufd:true,  note:"UFD. Fundamental unit ε = 5+2√6."},
+  "10":  {name:"ℚ(√10)", label:"", h:2, ufd:false, note:"Cl(K) ≅ ℤ/2ℤ. Fundamental unit ε = 3+√10."},
+  "14":  {name:"ℚ(√14)", label:"", h:1, ufd:true,  note:"UFD. Fundamental unit ε = 15+4√14."},
+  "21":  {name:"ℚ(√21)", label:"", h:1, ufd:true,  note:"UFD."},
+  "30":  {name:"ℚ(√30)", label:"", h:2, ufd:false, note:"Cl(K) ≅ ℤ/2ℤ."}
+};
+
+function renderCNTDemo(container) {
+  container.innerHTML = '';
+  var label = document.createElement('label');
+  label.setAttribute('for','cnt-select');
+  label.innerHTML = 'SELECT A QUADRATIC FIELD:';
+  container.appendChild(label);
+  var sel = document.createElement('select');
+  sel.id = 'cnt-select';
+  sel.onchange = function(){ updateCNT(sel.value); };
+  // add options
+  var groups = [
+    {label:'Imaginary quadratic (d < 0)', keys:["-1","-2","-3","-5","-6","-7","-10","-11","-13","-14","-15","-19","-23","-43","-67","-163"]},
+    {label:'Real quadratic (d > 0)',       keys:["2","3","5","6","10","14","21","30"]}
+  ];
+  groups.forEach(function(g){
+    var og = document.createElement('optgroup');
+    og.label = g.label;
+    g.keys.forEach(function(k){
+      var d = CLASS_DATA[k];
+      var opt = document.createElement('option');
+      opt.value = k;
+      opt.textContent = d.name + (d.label ? ' — '+d.label : '') + '  (h='+d.h+')';
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  });
+  sel.value = '-5';
+  container.appendChild(sel);
+  var res = document.createElement('div');
+  res.id = 'cnt-result';
+  container.appendChild(res);
+  updateCNT('-5');
+}
+
+function updateCNT(key) {
+  var d = CLASS_DATA[key];
+  var res = document.getElementById('cnt-result');
+  if(!d || !res) return;
+  var ufdStr = d.ufd
+    ? '<span class="highlight">✓ Unique factorisation holds</span> — 𝒪_K is a PID'
+    : '<span style="color:#dc2626;font-weight:600">✗ Unique factorisation FAILS</span> — non-principal ideals exist';
+  var hColor = d.h === 1 ? '#00a972' : '#dc2626';
+  res.innerHTML = '<table style="margin-top:4px"><tr><th>Field</th><th>Class number h</th><th>UFD?</th></tr>'
+    +'<tr><td><strong>'+d.name+'</strong></td>'
+    +'<td style="color:'+hColor+';font-weight:600;font-size:16px">'+d.h+'</td>'
+    +'<td>'+ufdStr+'</td></tr></table>'
+    +'<div style="margin-top:8px;font-size:14.5px;color:var(--muted)">'+d.note+'</div>';
+}
+
+// ── CORE RENDERING FUNCTIONS ──────────────────────────────────────────
+function rgba(hex, a) {
+  var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return "rgba("+r+","+g+","+b+","+a+")";
+}
+function buildBody(blocks, ac) {
+  var html = '';
+  blocks.forEach(function(b) {
+    if (b.t === "h") html += '<div class="bsec-heading">'+b.s+'</div>';
+    else if (b.t === "p") html += '<div class="prose">'+b.s+'</div>';
+    else if (b.t === "f") html += '<div class="fbox">'+b.s+'</div>';
+    else if (b.t === "e") html += '<div class="ex"><span class="exl">'+b.l+'</span>'+b.s+'</div>';
+    else if (b.t === "i") html += '<div class="ins">'+b.s+'</div>';
+    else if (b.t === "tl") html += '<div class="timeline-item"><span class="tl-year">'+b.yr+'</span><div class="tl-text">'+b.s+'</div></div>';
+    else if (b.t === "d") html += '<div id="'+b.s+'"></div>';
+  });
+  return html;
+}
+function init() {
+  var tnav = document.getElementById("tnav");
+  var cards = document.getElementById("cards");
+  LV.forEach(function(lv, i) {
+    var ti = document.createElement("div");
+    ti.className = "ti"; ti.textContent = lv.title; ti.dataset.i = i;
+    ti.addEventListener("click", function() {
+      var cw = document.querySelector(".cw[data-i='"+i+"']");
+      if (cw) { cw.scrollIntoView({behavior:"smooth",block:"center"}); setTimeout(function(){ openCard(i); },350); }
+    });
+    tnav.appendChild(ti);
+
+    var cw = document.createElement("div");
+    cw.className = "cw"; cw.dataset.i = i;
+    cw.innerHTML =
+      (i > 0 ? '<div class="conn"></div>' : '') +
+      '<div class="card" style="--ac:'+lv.color+';--ac-faint:'+rgba(lv.color,.08)+';--ac-mid:'+rgba(lv.color,.22)+';--ac-shadow:'+rgba(lv.color,.35)+'">' +
+        '<div class="card-head">' +
+          '<span class="bdg">'+lv.badge+'</span>' +
+          '<span class="ctitle">'+lv.title+'</span>' +
+          '<span class="csub">'+lv.sub+'</span>' +
+          '<span class="chev">&#9660;</span>' +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="card-inner">' +
+            buildBody(lv.body, lv.color) +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    cards.appendChild(cw);
+
+    var card = cw.querySelector(".card"), body = cw.querySelector(".card-body");
+    card.addEventListener("click", function() {
+      var open = card.classList.contains("open");
+      card.classList.toggle("open", !open); body.classList.toggle("open", !open);
+      document.querySelectorAll(".ti").forEach(function(t,j){ t.classList.toggle("active",!open && j===i); });
+      if (!open) { ti.style.borderLeftColor = lv.color; ti.style.color = lv.color;
+        // init demo if needed
+        var demo = cw.querySelector("#cnt-demo");
+        if(demo && !demo.dataset.init){ renderCNTDemo(demo); demo.dataset.init='1'; }
+      } else { ti.style.borderLeftColor = ""; ti.style.color = ""; }
+    });
+  });
+
+  // scroll progress
+  var fill = document.getElementById("prog-fill");
+  window.addEventListener("scroll", function(){
+    var pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    fill.style.width = Math.min(pct,100)+"%";
+  },{passive:true});
+
+  // intersection observer for reveals
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("show"); });
+  },{threshold:0.05});
+  document.querySelectorAll(".cw").forEach(function(el){ obs.observe(el); });
+
+  // open first card
+  setTimeout(function(){ openCard(0); }, 150);
+}
+
+function openCard(i) {
+  var cw = document.querySelector(".cw[data-i='"+i+"']");
+  if (!cw) return;
+  var card = cw.querySelector(".card"), body = cw.querySelector(".card-body");
+  if (!card.classList.contains("open")) {
+    card.classList.add("open"); body.classList.add("open");
+    var ti = document.querySelector(".ti[data-i='"+i+"']");
+    if (ti) { ti.style.borderLeftColor = LV[i].color; ti.style.color = LV[i].color; }
+    document.querySelectorAll(".ti").forEach(function(t,j){ t.classList.toggle("active",j===i); });
+    var demo = cw.querySelector("#cnt-demo");
+    if(demo && !demo.dataset.init){ renderCNTDemo(demo); demo.dataset.init='1'; }
+  }
+}
+init();
+</script>
+</body>
+</html>
