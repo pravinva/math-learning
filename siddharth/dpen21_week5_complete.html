@@ -1,0 +1,3046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN21 Week 5 — Functions and Relations</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B3A5C;
+  --navy-lt: #1e4570;
+  --orange: #FF3621;
+  --blue-lt: #E6F1FB;
+  --blue-mid: #185FA5;
+  --amber-lt: #FAEEDA;
+  --amber-dk: #7A4800;
+  --green-lt: #E1F5EE;
+  --green-dk: #0a5c3f;
+  --coral-lt: #FAECE7;
+  --coral-dk: #8a2f1a;
+  --grey-lt: #F6F5F2;
+  --grey-md: #e8e6e0;
+  --grey-dk: #3a3835;
+  --text: #2c2a28;
+  --text-muted: #6b6762;
+  --sidebar-w: 280px;
+  --content-max: 820px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #fafaf8;
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.3;
+}
+.sidebar-brand-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+.progress-wrap {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.progress-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.nav-section {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  padding: 6px 20px 4px;
+  text-transform: uppercase;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-link:hover { color: white; background: rgba(255,255,255,0.06); }
+.nav-link.active { color: white; background: rgba(255,255,255,0.1); border-left: 2px solid var(--orange); padding-left: 18px; }
+.nav-num {
+  font-size: 10px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.nav-link.active .nav-num { background: var(--orange); color: white; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.reset-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.reset-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.8);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.reset-btn span {
+  font-size: 14px;
+}
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--grey-md);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-breadcrumb {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.topbar-breadcrumb span {
+  color: var(--navy);
+  font-weight: 500;
+}
+.topbar-btns {
+  display: flex;
+  gap: 8px;
+}
+.tb-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.tb-btn:hover { border-color: var(--navy); color: var(--navy); }
+.tb-btn.primary { background: var(--navy); color: white; border-color: var(--navy); }
+.tb-btn.primary:hover { background: var(--navy-lt); }
+
+.content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+/* ── HERO ── */
+.page-hero {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--grey-md);
+}
+.page-hero-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--orange);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.page-hero-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.page-hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── MOTIVATION BOX ── */
+.motiv {
+  background: var(--blue-lt);
+  border-left: 3px solid var(--blue-mid);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #0d3d73;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.motiv strong { font-weight: 500; }
+
+/* ── DPEN SECTIONS ── */
+.dpen-block {
+  margin-bottom: 12px;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dpen-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+  transition: background 0.15s;
+}
+.dpen-header:hover { background: var(--grey-lt); }
+.dpen-pill {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.pill-d { background: var(--blue-lt); color: var(--blue-mid); }
+.pill-p { background: var(--amber-lt); color: var(--amber-dk); }
+.pill-e { background: var(--green-lt); color: var(--green-dk); }
+.pill-n { background: var(--coral-lt); color: var(--coral-dk); }
+.dpen-header-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+}
+.dpen-chevron {
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.dpen-chevron.open { transform: rotate(90deg); }
+.dpen-body {
+  display: none;
+  padding: 18px 20px 20px;
+  border-top: 1px solid var(--grey-md);
+  background: var(--grey-lt);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+}
+.dpen-body.open { display: block; }
+.dpen-body p { margin-bottom: 10px; }
+.dpen-body p:last-child { margin-bottom: 0; }
+
+/* ── MATH ── */
+.math-block {
+  text-align: center;
+  margin: 14px 0;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  overflow-x: auto;
+}
+
+/* ── STEPS ── */
+.step-list { margin: 10px 0; }
+.step-item { display: flex; gap: 12px; margin: 8px 0; align-items: flex-start; }
+.step-num-badge {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--blue-lt);
+  color: var(--blue-mid);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-text { flex: 1; font-size: 14px; line-height: 1.7; }
+
+/* ── CALLOUTS ── */
+.callout {
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.callout-warn { background: var(--amber-lt); border-left: 3px solid #EF9F27; color: var(--amber-dk); }
+.callout-info { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout strong { font-weight: 500; }
+
+/* ── WORKED EXAMPLES ── */
+.worked {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+.worked-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.answer-box {
+  background: var(--navy);
+  color: white;
+  border-radius: 6px;
+  padding: 9px 14px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.answer-label {
+  font-size: 10px;
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+/* ── PRACTICE PROBLEMS ── */
+.practice-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid var(--grey-md);
+}
+.practice-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-lt) 100%);
+  color: white;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+.practice-header h3 {
+  font-family: 'Crimson Pro', serif;
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+.practice-header p {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.problem-card {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.problem-card.completed {
+  background: var(--green-lt);
+  border-color: var(--green-dk);
+  opacity: 0.85;
+}
+
+.problem-card.completed .problem-num {
+  background: var(--green-dk);
+}
+
+.problem-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.problem-header:hover { background: var(--grey-lt); }
+
+.problem-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: var(--green-dk);
+}
+
+.problem-num {
+  background: var(--navy);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.problem-text {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+.problem-chevron {
+  color: var(--text-muted);
+  font-size: 11px;
+  transition: transform 0.2s;
+}
+.problem-chevron.open { transform: rotate(90deg); }
+.problem-body {
+  display: none;
+  padding: 18px 20px 20px;
+  border-top: 1px solid var(--grey-md);
+  background: var(--grey-lt);
+}
+.problem-body.open { display: block; }
+
+.hint-box {
+  background: var(--amber-lt);
+  border-left: 3px solid var(--amber-dk);
+  padding: 10px 14px;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--amber-dk);
+}
+
+/* ── PAGE NAV ── */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--grey-md);
+}
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.page-nav-btn:hover { border-color: var(--navy); color: var(--navy); }
+.page-nav-btn.next { background: var(--navy); color: white; border-color: var(--navy); }
+.page-nav-btn.next:hover { background: var(--navy-lt); }
+.page-nav-btn.ghost { visibility: hidden; }
+
+/* ── HOME ── */
+.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 24px 0; }
+.home-card {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.home-card:hover { border-color: var(--navy); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.home-card-num { font-size: 11px; color: var(--orange); font-weight: 500; margin-bottom: 4px; }
+.home-card-title { font-family: 'Crimson Pro', serif; font-size: 20px; color: var(--navy); margin-bottom: 6px; font-weight: 600; }
+.home-card-sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .content { padding: 24px 20px 60px; }
+  .home-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">DPEN21 Week 5</div>
+    <div class="sidebar-brand-sub">Functions and Relations</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">YOUR PROGRESS</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">↑</span> Start Here</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Week 5A</div>
+    <button class="nav-link" onclick="goTo('composite')"><span class="nav-num">5A.1</span> Composite Functions</button>
+    <button class="nav-link" onclick="goTo('quadratic-intro')"><span class="nav-num">5A.2</span> Quadratic Functions</button>
+    <button class="nav-link" onclick="goTo('discriminant')"><span class="nav-num">5A.3</span> Discriminant</button>
+    <button class="nav-link" onclick="goTo('practice-5a')"><span class="nav-num">★</span> Practice: Week 5A</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Week 5B</div>
+    <button class="nav-link" onclick="goTo('parabola-graph')"><span class="nav-num">5B.1</span> Graphing Parabolas</button>
+    <button class="nav-link" onclick="goTo('parabola-sketch')"><span class="nav-num">5B.2</span> Sketching Parabolas</button>
+    <button class="nav-link" onclick="goTo('domain-range')"><span class="nav-num">5B.3</span> Domain &amp; Range</button>
+    <button class="nav-link" onclick="goTo('absolute-value')"><span class="nav-num">5B.4</span> Absolute Value Functions</button>
+    <button class="nav-link" onclick="goTo('practice-5b')"><span class="nav-num">★</span> Practice: Week 5B</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Challenge</div>
+    <button class="nav-link" onclick="goTo('mixed-practice')"><span class="nav-num">💪</span> Mixed Practice Test</button>
+  </div>
+  <div class="sidebar-footer">
+    <button class="reset-btn" onclick="resetProgress()">
+      <span>🔄</span> Reset Progress
+    </button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">DPEN21 Week 5 &nbsp;›&nbsp; <span id="breadcrumbPage">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="collapseAll()">Collapse All</button>
+      <button class="tb-btn" onclick="expandAll()">Expand All</button>
+      <button class="tb-btn primary" onclick="goTo('composite')">Start Learning →</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+<!-- ══════════════════════════════════════════════════════════════
+     HOME
+══════════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="page-hero">
+    <div class="page-hero-label">DPEN21 · Week 5</div>
+    <div class="page-hero-title">Functions and Relations</div>
+    <div class="page-hero-sub">Master composite functions, quadratic functions, parabolas, and absolute value functions. This comprehensive guide covers all Week 5 content with extensive practice problems.</div>
+  </div>
+
+  <div class="home-grid">
+    <div class="home-card" onclick="goTo('composite')">
+      <div class="home-card-num">WEEK 5A.1</div>
+      <div class="home-card-title">Composite Functions</div>
+      <div class="home-card-sub">Learn how to combine functions by placing one inside another. Master function composition notation and evaluation.</div>
+    </div>
+    <div class="home-card" onclick="goTo('quadratic-intro')">
+      <div class="home-card-num">WEEK 5A.2</div>
+      <div class="home-card-title">Quadratic Functions</div>
+      <div class="home-card-sub">Understand parabolas, their properties, and the quadratic formula. Learn about concavity and vertices.</div>
+    </div>
+    <div class="home-card" onclick="goTo('discriminant')">
+      <div class="home-card-num">WEEK 5A.3</div>
+      <div class="home-card-title">The Discriminant</div>
+      <div class="home-card-sub">Use the discriminant to determine the nature and number of roots without solving the equation.</div>
+    </div>
+    <div class="home-card" onclick="goTo('parabola-graph')">
+      <div class="home-card-num">WEEK 5B.1-2</div>
+      <div class="home-card-title">Parabola Graphing</div>
+      <div class="home-card-sub">Master finding intercepts, vertices, axes of symmetry, and sketching parabolas accurately.</div>
+    </div>
+    <div class="home-card" onclick="goTo('domain-range')">
+      <div class="home-card-num">WEEK 5B.3</div>
+      <div class="home-card-title">Domain &amp; Range</div>
+      <div class="home-card-sub">Determine domain and range graphically and algebraically for quadratic functions.</div>
+    </div>
+    <div class="home-card" onclick="goTo('absolute-value')">
+      <div class="home-card-num">WEEK 5B.4</div>
+      <div class="home-card-title">Absolute Value Functions</div>
+      <div class="home-card-sub">Graph and analyze absolute value functions, including translations and transformations.</div>
+    </div>
+  </div>
+
+  <div class="motiv" style="margin-top:24px;">
+    <strong>How to use this guide:</strong> Work through each topic in order. Click to expand DPEN blocks (Definition, Pattern, Example, Note). Try all practice problems on paper before revealing solutions. Each topic has 10+ practice problems!
+  </div>
+
+  <div class="page-nav">
+    <button class="page-nav-btn ghost">←</button>
+    <button class="page-nav-btn next" onclick="goTo('composite')">Week 5A: Composite Functions →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     WEEK 5A.1: COMPOSITE FUNCTIONS
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-composite">
+  <div class="page-hero">
+    <div class="page-hero-label">Week 5A · Topic 1</div>
+    <div class="page-hero-title">Composite Functions</div>
+    <div class="page-hero-sub">Functions of functions — combining functions by placing one inside another.</div>
+  </div>
+
+  <div class="motiv">
+    Composite functions let you build complex transformations from simple ones. Think of it like a machine inside another machine: the output of the first function becomes the input of the second. <strong>The notation \((f \circ g)(x) = f(g(x))\) means "f of g of x".</strong>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-d">Definition</span>
+      <span class="dpen-header-title">Composite Functions</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p>Functions can be added, subtracted, multiplied, and divided.</p>
+      <p>Further, we can find the <strong>composition of two functions</strong> by placing one inside the other. For two functions \(f\) and \(g\), this is denoted by:</p>
+      <div class="math-block">\[(f \circ g)(x) = f(g(x))\]</div>
+      <div class="callout callout-info">
+        <strong>Key idea:</strong> Start from the inside! Evaluate \(g(x)\) first, then use that result as the input for \(f\).
+      </div>
+      <p style="margin-top:10px;"><strong>Important:</strong> \((f \circ g)(x)\) is generally NOT equal to \((g \circ f)(x)\). The order matters!</p>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-p">Pattern</span>
+      <span class="dpen-header-title">How to evaluate composite functions</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p><strong>Method 1: Evaluate at a specific value</strong></p>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Evaluate the inner function at the given value</div></div>
+        <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Use that result as input for the outer function</div></div>
+        <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Simplify</div></div>
+      </div>
+      <p style="margin-top:14px;"><strong>Method 2: Find the general formula</strong></p>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Replace every \(x\) in the outer function with the entire inner function</div></div>
+        <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Expand and simplify completely</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-e">Example</span>
+      <span class="dpen-header-title">Worked Examples</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <div class="worked">
+        <div class="worked-label">Example 1 — Given \(f(x) = x^2 - 2\) and \(g(x) = 2 - x\), find \(f(g(x))\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Start with \(f(x) = x^2 - 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Replace every \(x\) with \((2-x)\): \(f(g(x)) = (2-x)^2 - 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Expand: \((2-x)^2 = 4 - 4x + x^2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Simplify: \(4 - 4x + x^2 - 2 = x^2 - 4x + 2\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(f(g(x)) = x^2 - 4x + 2\)</div>
+      </div>
+
+      <div class="worked" style="margin-top:14px;">
+        <div class="worked-label">Example 2 — Given \(f(x) = x^2 - 2\) and \(g(x) = 2 - x\), find \(g(f(x))\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Start with \(g(x) = 2 - x\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Replace every \(x\) with \((x^2-2)\): \(g(f(x)) = 2 - (x^2-2)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Simplify: \(2 - x^2 + 2 = 4 - x^2\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(g(f(x)) = 4 - x^2\)</div>
+        <div class="callout callout-warn" style="margin-top:10px;">
+          Notice: \(f(g(x)) \neq g(f(x))\). The order of composition matters!
+        </div>
+      </div>
+
+      <div class="worked" style="margin-top:14px;">
+        <div class="worked-label">Example 3 — Given \(f(x) = x^2 + x\) and \(g(t) = \frac{1}{t}\), find \(f(g(2))\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">First evaluate \(g(2) = \frac{1}{2}\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Now evaluate \(f(\frac{1}{2}) = (\frac{1}{2})^2 + \frac{1}{2}\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Simplify: \(\frac{1}{4} + \frac{1}{2} = \frac{1}{4} + \frac{2}{4} = \frac{3}{4}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(\frac{3}{4}\)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-n">Note</span>
+      <span class="dpen-header-title">Common Mistakes</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <div class="callout callout-warn">
+        <strong>Mistake 1:</strong> Confusing \(f(g(x))\) with \(f(x) \cdot g(x)\). Composition is NOT multiplication!
+      </div>
+      <div class="callout callout-warn" style="margin-top:8px;">
+        <strong>Mistake 2:</strong> Forgetting to use parentheses when substituting. Always write \(f(g(x))\) as \(f(\text{entire expression for } g(x))\).
+      </div>
+      <div class="callout callout-warn" style="margin-top:8px;">
+        <strong>Mistake 3:</strong> Thinking order doesn't matter. Remember: \((f \circ g)(x) \neq (g \circ f)(x)\) in general.
+      </div>
+    </div>
+  </div>
+
+  <!-- PRACTICE PROBLEMS FOR COMPOSITE FUNCTIONS -->
+  <div class="practice-section">
+    <div class="practice-header">
+      <h3>Practice Problems: Composite Functions</h3>
+      <p>12 problems to master function composition. Try each on paper before revealing the solution!</p>
+    </div>
+
+    <!-- Problem 1 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">1</div>
+        <div class="problem-text">If \(f(x) = 3x + 1\) and \(g(x) = x - 2\), find \(f(g(x))\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="hint-box">
+          <strong>Hint:</strong> Replace every \(x\) in \(f\) with the expression \((x-2)\).
+        </div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(f(g(x)) = f(x-2) = 3(x-2) + 1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(= 3x - 6 + 1 = 3x - 5\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(f(g(x)) = 3x - 5\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 2 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">2</div>
+        <div class="problem-text">If \(f(x) = 3x + 1\) and \(g(x) = x - 2\), find \(g(f(x))\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(g(f(x)) = g(3x+1) = (3x+1) - 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(= 3x + 1 - 2 = 3x - 1\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(g(f(x)) = 3x - 1\)</div>
+        <div class="callout callout-info" style="margin-top:10px;">
+          Notice: \(f(g(x)) = 3x - 5\) but \(g(f(x)) = 3x - 1\). They're different!
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 3 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">3</div>
+        <div class="problem-text">If \(f(x) = x^2\) and \(g(x) = x + 4\), find \(f(g(x))\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(f(g(x)) = f(x+4) = (x+4)^2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(= x^2 + 8x + 16\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(f(g(x)) = x^2 + 8x + 16\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 4 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">4</div>
+        <div class="problem-text">If \(f(x) = x^2\) and \(g(x) = x + 4\), find \(g(f(x))\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(g(f(x)) = g(x^2) = x^2 + 4\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(g(f(x)) = x^2 + 4\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 5 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">5</div>
+        <div class="problem-text">If \(f(x) = 2x - 3\) and \(g(x) = x^2 + 1\), find \(f(g(x))\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(f(g(x)) = f(x^2+1) = 2(x^2+1) - 3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(= 2x^2 + 2 - 3 = 2x^2 - 1\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(f(g(x)) = 2x^2 - 1\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 6 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">6</div>
+        <div class="problem-text">If \(f(x) = \sqrt{x}\) and \(g(x) = x - 5\), find \(f(g(9))\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">First, evaluate \(g(9) = 9 - 5 = 4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Now, \(f(4) = \sqrt{4} = 2\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(f(g(9)) = 2\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 7 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">7</div>
+        <div class="problem-text">If \(h(x) = x^2 + 1\) and \(k(x) = \frac{1}{x}\), find \(h(k(x))\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(h(k(x)) = h\left(\frac{1}{x}\right) = \left(\frac{1}{x}\right)^2 + 1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(= \frac{1}{x^2} + 1 = \frac{1 + x^2}{x^2}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(h(k(x)) = \frac{1 + x^2}{x^2}\) or \(\frac{1}{x^2} + 1\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 8 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">8</div>
+        <div class="problem-text">If \(f(x) = 3x - 4\) and \(g(x) = 2x + 7\), find \((f \circ g)(x)\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(f(g(x)) = f(2x+7) = 3(2x+7) - 4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(= 6x + 21 - 4 = 6x + 17\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \((f \circ g)(x) = 6x + 17\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 9 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">9</div>
+        <div class="problem-text">If \(p(x) = x^2 - 3x + 2\) and \(q(x) = x + 1\), find \(p(q(x))\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(p(q(x)) = p(x+1) = (x+1)^2 - 3(x+1) + 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Expand: \(= x^2 + 2x + 1 - 3x - 3 + 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Simplify: \(= x^2 - x\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(p(q(x)) = x^2 - x\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 10 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">10</div>
+        <div class="problem-text">If \(f(x) = x^3\) and \(g(x) = 2x - 1\), find \(f(g(2))\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">First, \(g(2) = 2(2) - 1 = 4 - 1 = 3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Then, \(f(3) = 3^3 = 27\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(f(g(2)) = 27\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 11 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">11</div>
+        <div class="problem-text">If \(f(x) = |x|\) and \(g(x) = x - 5\), find \(f(g(x))\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(f(g(x)) = f(x-5) = |x-5|\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(f(g(x)) = |x-5|\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 12 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">12</div>
+        <div class="problem-text">If \(m(x) = \frac{1}{x+1}\) and \(n(x) = x^2\), find \(m(n(x))\) and state its domain</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(m(n(x)) = m(x^2) = \frac{1}{x^2+1}\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Domain: \(x^2 + 1\) is never zero (always positive), so domain is all real numbers</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(m(n(x)) = \frac{1}{x^2+1}\), Domain: \((-\infty, \infty)\)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="page-nav-btn" onclick="goTo('home')">← Overview</button>
+    <button class="page-nav-btn next" onclick="goTo('quadratic-intro')">Next: Quadratic Functions →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     WEEK 5A.2: QUADRATIC FUNCTIONS
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-quadratic-intro">
+  <div class="page-hero">
+    <div class="page-hero-label">Week 5A · Topic 2</div>
+    <div class="page-hero-title">Quadratic Functions</div>
+    <div class="page-hero-sub">Understanding parabolas, their properties, and the quadratic formula.</div>
+  </div>
+
+  <div class="motiv">
+    Quadratic functions model countless real-world phenomena: projectile motion, profit functions, suspension bridge cables, satellite dishes, and more. <strong>The general form is \(f(x) = ax^2 + bx + c\)</strong> where \(a \neq 0\), and its graph is always a parabola.
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-d">Definition</span>
+      <span class="dpen-header-title">The Quadratic Function</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p>The general form of a quadratic function is:</p>
+      <div class="math-block">\[f(x) = ax^2 + bx + c, \quad a \neq 0\]</div>
+      <p>Where:</p>
+      <ul style="margin-left:20px; margin-top:8px; line-height:1.8;">
+        <li><strong>\(a\)</strong> determines the concavity (if \(a > 0\), parabola opens upward; if \(a < 0\), downward)</li>
+        <li><strong>\(b\)</strong> affects the position of the vertex</li>
+        <li><strong>\(c\)</strong> is the y-intercept</li>
+      </ul>
+      <p style="margin-top:12px;">The graph of a quadratic function is called a <strong>parabola</strong>.</p>
+      <div class="callout callout-info" style="margin-top:10px;">
+        <strong>Real-world applications:</strong> Projectile paths, profit/revenue functions, bridge cables, satellite dish shapes, optimization problems.
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-p">Pattern</span>
+      <span class="dpen-header-title">The Quadratic Formula</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p>To find where a parabola crosses the x-axis, we solve \(ax^2 + bx + c = 0\) using the <strong>quadratic formula</strong>:</p>
+      <div class="math-block">\[x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}\]</div>
+      <p>The solutions are called the <strong>roots</strong> or <strong>x-intercepts</strong> of the parabola.</p>
+      <div class="step-list" style="margin-top:12px;">
+        <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Identify coefficients \(a\), \(b\), and \(c\)</div></div>
+        <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Calculate the discriminant: \(\Delta = b^2 - 4ac\)</div></div>
+        <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Substitute into the formula and simplify</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-e">Example</span>
+      <span class="dpen-header-title">Identifying Quadratic Functions</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <div class="worked">
+        <div class="worked-label">Example 1 — Identify the coefficients in \(f(x) = 3x^2 - 5x + 2\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 3\) (coefficient of \(x^2\))</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(b = -5\) (coefficient of \(x\))</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(c = 2\) (constant term)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Since \(a = 3 > 0\), the parabola opens upward</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(a = 3, b = -5, c = 2\); opens upward</div>
+      </div>
+
+      <div class="worked" style="margin-top:14px;">
+        <div class="worked-label">Example 2 — Find the y-intercept of \(y = 2x^2 + 4x - 3\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">The y-intercept occurs when \(x = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(y = 2(0)^2 + 4(0) - 3 = -3\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> y-intercept: \((0, -3)\)</div>
+        <div class="callout callout-info" style="margin-top:10px;">
+          <strong>Quick tip:</strong> The y-intercept is always \(c\) in the form \(ax^2 + bx + c\).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-n">Note</span>
+      <span class="dpen-header-title">Key Properties of Parabolas</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <ul style="margin-left:20px; line-height:1.9;">
+        <li><strong>Concavity:</strong> If \(a > 0\), parabola opens UP (minimum point); if \(a < 0\), opens DOWN (maximum point)</li>
+        <li><strong>Vertex:</strong> The highest or lowest point on the parabola</li>
+        <li><strong>Axis of symmetry:</strong> Vertical line through the vertex: \(x = -\frac{b}{2a}\)</li>
+        <li><strong>Y-intercept:</strong> Always at \((0, c)\)</li>
+        <li><strong>X-intercepts:</strong> Found using the quadratic formula (may be 0, 1, or 2 intercepts)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PRACTICE PROBLEMS FOR QUADRATIC FUNCTIONS -->
+  <div class="practice-section">
+    <div class="practice-header">
+      <h3>Practice Problems: Quadratic Functions</h3>
+      <p>12 problems to build your understanding of quadratic functions and parabolas.</p>
+    </div>
+
+    <!-- Problem 1 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">1</div>
+        <div class="problem-text">Identify \(a\), \(b\), and \(c\) in \(f(x) = 2x^2 + 7x - 4\). Does the parabola open up or down?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 2\), \(b = 7\), \(c = -4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Since \(a = 2 > 0\), the parabola opens upward</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(a = 2, b = 7, c = -4\); opens upward</div>
+      </div>
+    </div>
+
+    <!-- Problem 2 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">2</div>
+        <div class="problem-text">Find the y-intercept of \(y = -x^2 + 3x + 5\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Y-intercept occurs when \(x = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(y = -(0)^2 + 3(0) + 5 = 5\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \((0, 5)\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 3 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">3</div>
+        <div class="problem-text">Find the axis of symmetry for \(y = 2x^2 - 8x + 3\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="hint-box">
+          <strong>Hint:</strong> Use \(x = -\frac{b}{2a}\)
+        </div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 2\), \(b = -8\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(x = -\frac{-8}{2(2)} = \frac{8}{4} = 2\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(x = 2\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 4 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">4</div>
+        <div class="problem-text">Use the quadratic formula to solve \(x^2 + 5x + 6 = 0\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 1\), \(b = 5\), \(c = 6\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(x = \frac{-5 \pm \sqrt{25 - 24}}{2} = \frac{-5 \pm 1}{2}\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(x = \frac{-5 + 1}{2} = -2\) or \(x = \frac{-5 - 1}{2} = -3\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(x = -2\) or \(x = -3\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 5 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">5</div>
+        <div class="problem-text">Solve \(2x^2 - 7x + 3 = 0\) using the quadratic formula</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 2\), \(b = -7\), \(c = 3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(x = \frac{7 \pm \sqrt{49 - 24}}{4} = \frac{7 \pm \sqrt{25}}{4} = \frac{7 \pm 5}{4}\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(x = \frac{7 + 5}{4} = 3\) or \(x = \frac{7 - 5}{4} = \frac{1}{2}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(x = 3\) or \(x = \frac{1}{2}\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 6 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">6</div>
+        <div class="problem-text">Find the vertex of \(y = x^2 - 4x + 3\) (Hint: Use \(x = -\frac{b}{2a}\) first)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Find x-coordinate: \(x = -\frac{-4}{2(1)} = 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Find y-coordinate: \(y = (2)^2 - 4(2) + 3 = 4 - 8 + 3 = -1\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Vertex: \((2, -1)\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 7 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">7</div>
+        <div class="problem-text">Does \(f(x) = -3x^2 + 2x - 1\) have a maximum or minimum value?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = -3 < 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Since \(a < 0\), the parabola opens downward</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">A downward-opening parabola has a maximum value at its vertex</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Maximum value</div>
+      </div>
+    </div>
+
+    <!-- Problem 8 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">8</div>
+        <div class="problem-text">Solve \(x^2 - 6x + 9 = 0\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="hint-box">
+          <strong>Hint:</strong> Notice this is a perfect square: \((x-3)^2 = 0\)
+        </div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Using quadratic formula: \(x = \frac{6 \pm \sqrt{36 - 36}}{2} = \frac{6 \pm 0}{2}\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(x = 3\) (one repeated root)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(x = 3\) (repeated root)</div>
+      </div>
+    </div>
+
+    <!-- Problem 9 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">9</div>
+        <div class="problem-text">Find both intercepts of \(y = x^2 - x - 6\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Y-intercept: \((0, -6)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">X-intercepts: Solve \(x^2 - x - 6 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Factor: \((x-3)(x+2) = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(x = 3\) or \(x = -2\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Y-intercept: \((0, -6)\); X-intercepts: \((3, 0)\) and \((-2, 0)\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 10 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">10</div>
+        <div class="problem-text">Rewrite \(y = 2(x-1)^2 + 3\) in standard form \(ax^2 + bx + c\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Expand: \(y = 2(x^2 - 2x + 1) + 3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(y = 2x^2 - 4x + 2 + 3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(y = 2x^2 - 4x + 5\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(y = 2x^2 - 4x + 5\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 11 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">11</div>
+        <div class="problem-text">A ball is thrown upward with height \(h(t) = -5t^2 + 20t + 1\) meters. When does it reach maximum height?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="hint-box">
+          <strong>Hint:</strong> Maximum occurs at the vertex, where \(t = -\frac{b}{2a}\)
+        </div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = -5\), \(b = 20\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(t = -\frac{20}{2(-5)} = \frac{20}{10} = 2\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(t = 2\) seconds</div>
+      </div>
+    </div>
+
+    <!-- Problem 12 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">12</div>
+        <div class="problem-text">Solve \(3x^2 + 2x - 1 = 0\) using the quadratic formula</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 3\), \(b = 2\), \(c = -1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(x = \frac{-2 \pm \sqrt{4 - 4(3)(-1)}}{6} = \frac{-2 \pm \sqrt{16}}{6}\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(x = \frac{-2 \pm 4}{6}\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(x = \frac{2}{6} = \frac{1}{3}\) or \(x = \frac{-6}{6} = -1\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(x = \frac{1}{3}\) or \(x = -1\)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="page-nav-btn" onclick="goTo('composite')">← Composite Functions</button>
+    <button class="page-nav-btn next" onclick="goTo('discriminant')">Next: The Discriminant →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     WEEK 5A.3: THE DISCRIMINANT
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-discriminant">
+  <div class="page-hero">
+    <div class="page-hero-label">Week 5A · Topic 3</div>
+    <div class="page-hero-title">The Discriminant</div>
+    <div class="page-hero-sub">Determine the nature and number of roots without solving the equation.</div>
+  </div>
+
+  <div class="motiv">
+    The discriminant \(\Delta = b^2 - 4ac\) is a powerful tool that tells you <strong>everything about the roots</strong> before you even solve the equation. It reveals whether roots are real or complex, rational or irrational, and how many there are!
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-d">Definition</span>
+      <span class="dpen-header-title">What is the Discriminant?</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p>In the quadratic formula \(x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}\), the quantity under the square root is called the <strong>discriminant</strong>:</p>
+      <div class="math-block">\[\Delta = b^2 - 4ac\]</div>
+      <p>The Greek letter \(\Delta\) (delta) represents the discriminant.</p>
+      <div class="callout callout-info">
+        <strong>Why it matters:</strong> The discriminant determines whether the roots exist (are real), how many roots there are, and whether they're rational or irrational — all without solving!
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-p">Pattern</span>
+      <span class="dpen-header-title">Interpreting the Discriminant</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p><strong>For the quadratic equation \(ax^2 + bx + c = 0\):</strong></p>
+
+      <div class="worked" style="margin-top:12px; background: var(--green-lt); border-left: 3px solid var(--green-dk);">
+        <div class="worked-label" style="color: var(--green-dk);">✓ CASE 1: \(\Delta > 0\)</div>
+        <p style="color: var(--green-dk); margin: 0; font-size:13px; line-height:1.6;">
+          <strong>Two distinct real roots</strong><br>
+          The parabola crosses the x-axis at two points.<br>
+          <em>Special case:</em> If \(\Delta\) is a perfect square, the roots are <strong>rational</strong>.
+        </p>
+      </div>
+
+      <div class="worked" style="margin-top:10px; background: var(--amber-lt); border-left: 3px solid var(--amber-dk);">
+        <div class="worked-label" style="color: var(--amber-dk);">✓ CASE 2: \(\Delta = 0\)</div>
+        <p style="color: var(--amber-dk); margin: 0; font-size:13px; line-height:1.6;">
+          <strong>One real root (repeated/equal roots)</strong><br>
+          The parabola touches the x-axis at exactly one point (the vertex).
+        </p>
+      </div>
+
+      <div class="worked" style="margin-top:10px; background: var(--coral-lt); border-left: 3px solid var(--coral-dk);">
+        <div class="worked-label" style="color: var(--coral-dk);">✗ CASE 3: \(\Delta < 0\)</div>
+        <p style="color: var(--coral-dk); margin: 0; font-size:13px; line-height:1.6;">
+          <strong>No real roots</strong><br>
+          The parabola does not touch or cross the x-axis.<br>
+          (The roots are complex/imaginary numbers)
+        </p>
+      </div>
+
+      <div class="callout callout-info" style="margin-top:14px;">
+        <strong>Memory aid:</strong> Positive discriminant = 2 roots; Zero discriminant = 1 root; Negative discriminant = 0 real roots
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-e">Example</span>
+      <span class="dpen-header-title">Worked Examples</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <div class="worked">
+        <div class="worked-label">Example 1 — Find the nature of roots for \(4x^2 + 11x - 3 = 0\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Identify: \(a = 4\), \(b = 11\), \(c = -3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Calculate: \(\Delta = (11)^2 - 4(4)(-3) = 121 + 48 = 169\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Since \(\Delta = 169 > 0\), there are two real roots</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Since \(\sqrt{169} = 13\) is rational, the roots are rational</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Two distinct real rational roots</div>
+      </div>
+
+      <div class="worked" style="margin-top:14px;">
+        <div class="worked-label">Example 2 — Find the nature of roots for \(x^2 - 4x + 4 = 0\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Identify: \(a = 1\), \(b = -4\), \(c = 4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Calculate: \(\Delta = (-4)^2 - 4(1)(4) = 16 - 16 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Since \(\Delta = 0\), there is one real root (equal roots)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> One real root (parabola touches x-axis at vertex)</div>
+      </div>
+
+      <div class="worked" style="margin-top:14px;">
+        <div class="worked-label">Example 3 — Find the nature of roots for \(4x^2 + 3x + 1 = 0\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Identify: \(a = 4\), \(b = 3\), \(c = 1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Calculate: \(\Delta = (3)^2 - 4(4)(1) = 9 - 16 = -7\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Since \(\Delta = -7 < 0\), there are no real roots</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> No real roots (parabola doesn't touch x-axis)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-n">Note</span>
+      <span class="dpen-header-title">Advanced: Finding Values of Parameters</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p>You can use the discriminant to find values of unknown parameters that produce specific types of roots.</p>
+
+      <div class="worked" style="margin-top:12px;">
+        <div class="worked-label">Example — For what values of \(k\) does \(2x^2 + 4x + 3k = 0\) have one solution?</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">For one solution, \(\Delta = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(a = 2\), \(b = 4\), \(c = 3k\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\((4)^2 - 4(2)(3k) = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(16 - 24k = 0 \Rightarrow k = \frac{16}{24} = \frac{2}{3}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(k = \frac{2}{3}\)</div>
+      </div>
+
+      <div class="callout callout-warn" style="margin-top:10px;">
+        <strong>Remember:</strong> When solving for parameters, you often need to solve inequalities (\(\Delta > 0\), \(\Delta < 0\)) or equations (\(\Delta = 0\)).
+      </div>
+    </div>
+  </div>
+
+  <!-- PRACTICE PROBLEMS FOR DISCRIMINANT -->
+  <div class="practice-section">
+    <div class="practice-header">
+      <h3>Practice Problems: The Discriminant</h3>
+      <p>15 problems covering basic discriminant analysis and parameter problems.</p>
+    </div>
+
+    <!-- Problem 1 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">1</div>
+        <div class="problem-text">Find the discriminant and nature of roots for \(x^2 + 7x + 10 = 0\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 1\), \(b = 7\), \(c = 10\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(\Delta = 49 - 40 = 9\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(\Delta > 0\) and \(\sqrt{9} = 3\) is rational</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(\Delta = 9\); Two real rational roots</div>
+      </div>
+    </div>
+
+    <!-- Problem 2 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">2</div>
+        <div class="problem-text">Find the discriminant and nature of roots for \(2x^2 - 5x - 1 = 0\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 2\), \(b = -5\), \(c = -1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(\Delta = (-5)^2 - 4(2)(-1) = 25 + 8 = 33\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(\Delta > 0\) but 33 is not a perfect square</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(\Delta = 33\); Two real irrational roots</div>
+      </div>
+    </div>
+
+    <!-- Problem 3 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">3</div>
+        <div class="problem-text">Find the discriminant and nature of roots for \(3x^2 - 2x - 1 = 0\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 3\), \(b = -2\), \(c = -1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(\Delta = (-2)^2 - 4(3)(-1) = 4 + 12 = 16\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(\Delta = 16 > 0\) and \(\sqrt{16} = 4\) is rational</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(\Delta = 16\); Two real rational roots</div>
+      </div>
+    </div>
+
+    <!-- Problem 4 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">4</div>
+        <div class="problem-text">Find the discriminant and nature of roots for \(x^2 + 4x + 5 = 0\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 1\), \(b = 4\), \(c = 5\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(\Delta = 16 - 20 = -4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(\Delta < 0\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(\Delta = -4\); No real roots</div>
+      </div>
+    </div>
+
+    <!-- Problem 5 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">5</div>
+        <div class="problem-text">Find the discriminant and nature of roots for \(9x^2 - 12x + 4 = 0\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 9\), \(b = -12\), \(c = 4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(\Delta = (-12)^2 - 4(9)(4) = 144 - 144 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(\Delta = 0\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(\Delta = 0\); One real root (equal roots)</div>
+      </div>
+    </div>
+
+    <!-- Problem 6 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">6</div>
+        <div class="problem-text">For what value(s) of \(k\) does \(x^2 + 3x + k = 0\) have equal roots?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="hint-box">
+          <strong>Hint:</strong> Equal roots means \(\Delta = 0\)
+        </div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 1\), \(b = 3\), \(c = k\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Set \(\Delta = 0\): \(9 - 4k = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(k = \frac{9}{4}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(k = \frac{9}{4}\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 7 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">7</div>
+        <div class="problem-text">For what value(s) of \(k\) does \(2x^2 + 4x + 3k = 0\) have one solution?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 2\), \(b = 4\), \(c = 3k\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Set \(\Delta = 0\): \(16 - 24k = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(24k = 16 \Rightarrow k = \frac{2}{3}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(k = \frac{2}{3}\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 8 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">8</div>
+        <div class="problem-text">For what value(s) of \(k\) does \(2x^2 + 4x + 3k = 0\) have two solutions?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="hint-box">
+          <strong>Hint:</strong> Two solutions means \(\Delta > 0\)
+        </div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 2\), \(b = 4\), \(c = 3k\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Solve \(\Delta > 0\): \(16 - 24k > 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(16 > 24k \Rightarrow k < \frac{16}{24} = \frac{2}{3}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(k < \frac{2}{3}\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 9 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">9</div>
+        <div class="problem-text">For what value(s) of \(k\) does \(2x^2 + 4x + 3k = 0\) have no solutions?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">No solutions means \(\Delta < 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Solve \(16 - 24k < 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(16 < 24k \Rightarrow k > \frac{2}{3}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(k > \frac{2}{3}\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 10 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">10</div>
+        <div class="problem-text">For what values of \(k\) does \((2k-3)x^2 + (k+1)x - 1 = 0\) have one real root?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 2k-3\), \(b = k+1\), \(c = -1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Set \(\Delta = 0\): \((k+1)^2 - 4(2k-3)(-1) = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(k^2 + 2k + 1 + 8k - 12 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(k^2 + 10k - 11 = 0 \Rightarrow (k+11)(k-1) = 0\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(k = -11\) or \(k = 1\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 11 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">11</div>
+        <div class="problem-text">For what values of \(k\) does \(x^2 + (k-1)x + (-2k-1) = 0\) have one real root?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 1\), \(b = k-1\), \(c = -2k-1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Set \(\Delta = 0\): \((k-1)^2 - 4(1)(-2k-1) = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(k^2 - 2k + 1 + 8k + 4 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(k^2 + 6k + 5 = 0 \Rightarrow (k+5)(k+1) = 0\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(k = -5\) or \(k = -1\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 12 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">12</div>
+        <div class="problem-text">How many x-intercepts does \(y = x^2 - 2x + 3\) have?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(\Delta = (-2)^2 - 4(1)(3) = 4 - 12 = -8\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Since \(\Delta < 0\), no real roots</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">No x-intercepts (parabola doesn't touch x-axis)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Zero x-intercepts</div>
+      </div>
+    </div>
+
+    <!-- Problem 13 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">13</div>
+        <div class="problem-text">Determine if \(y = -2x^2 + 5x - 2\) crosses, touches, or misses the x-axis</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(\Delta = 25 - 4(-2)(-2) = 25 - 16 = 9\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Since \(\Delta = 9 > 0\), two real roots</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">The parabola crosses the x-axis at two points</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Crosses the x-axis (two x-intercepts)</div>
+      </div>
+    </div>
+
+    <!-- Problem 14 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">14</div>
+        <div class="problem-text">Show that \(y = x^2 + 2x + 10\) has no x-intercepts</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Calculate \(\Delta = 4 - 4(1)(10) = 4 - 40 = -36\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Since \(\Delta = -36 < 0\), there are no real roots</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Therefore, no x-intercepts exist</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Proven: \(\Delta < 0\) means no x-intercepts</div>
+      </div>
+    </div>
+
+    <!-- Problem 15 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">15</div>
+        <div class="problem-text">For what values of \(k\) does \((2k-3)x^2 + x - 1 = 0\) have two real roots?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 2k-3\), \(b = 1\), \(c = -1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Solve \(\Delta > 0\): \(1 - 4(2k-3)(-1) > 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(1 + 4(2k-3) > 0 \Rightarrow 1 + 8k - 12 > 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(8k - 11 > 0 \Rightarrow k > \frac{11}{8}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(k > \frac{11}{8}\)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="page-nav-btn" onclick="goTo('quadratic-intro')">← Quadratic Functions</button>
+    <button class="page-nav-btn next" onclick="goTo('parabola-graph')">Next: Week 5B (Parabola Graphing) →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     WEEK 5B.1-2: GRAPHING & SKETCHING PARABOLAS
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-parabola-graph">
+  <div class="page-hero">
+    <div class="page-hero-label">Week 5B · Topics 1-2</div>
+    <div class="page-hero-title">Graphing & Sketching Parabolas</div>
+    <div class="page-hero-sub">Learn to find intercepts, vertices, axes of symmetry, and sketch accurate parabolas.</div>
+  </div>
+
+  <div class="motiv">
+    Understanding how to graph parabolas is essential for analyzing quadratic functions. You'll learn to identify key features: <strong>concavity (up/down), intercepts, vertex, and axis of symmetry</strong>. These skills apply to physics (projectile motion), economics (profit optimization), and engineering!
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-d">Definition</span>
+      <span class="dpen-header-title">Points of Intersection</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p><strong>Y-intercept:</strong> The graph crosses the y-axis when \(x = 0\)</p>
+      <div class="math-block">\[y = ax^2 + bx + c \Rightarrow \text{if } x = 0, \text{ then } y = c\]</div>
+
+      <p style="margin-top:12px;"><strong>X-intercepts:</strong> The graph crosses the x-axis when \(y = 0\)</p>
+      <div class="math-block">\[y = ax^2 + bx + c \Rightarrow ax^2 + bx + c = 0\]</div>
+
+      <p>Solve using factoring or the quadratic formula. A parabola may have:</p>
+      <ul style="margin-left:20px; margin-top:8px; line-height:1.9;">
+        <li><strong>Two x-intercepts</strong> when \(\Delta > 0\) (cuts x-axis twice)</li>
+        <li><strong>One x-intercept</strong> when \(\Delta = 0\) (touches x-axis once)</li>
+        <li><strong>No x-intercepts</strong> when \(\Delta < 0\) (doesn't touch x-axis)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-p">Pattern</span>
+      <span class="dpen-header-title">Finding the Vertex and Axis of Symmetry</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p>Every parabola has a vertical <strong>axis of symmetry</strong> passing through its vertex.</p>
+
+      <p style="margin-top:12px;"><strong>Method 1: Using x-intercepts (when parabola crosses x-axis)</strong></p>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Find the midpoint of the two x-intercepts</div></div>
+        <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">This x-value is the axis of symmetry</div></div>
+        <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Substitute into the function to find the y-coordinate of the vertex</div></div>
+      </div>
+
+      <p style="margin-top:14px;"><strong>Method 2: Using the formula (always works)</strong></p>
+      <div class="math-block">\[\text{Axis of symmetry: } x = -\frac{b}{2a}\]</div>
+      <div class="math-block">\[\text{Vertex: } \left(-\frac{b}{2a}, f\left(-\frac{b}{2a}\right)\right)\]</div>
+
+      <div class="callout callout-info" style="margin-top:10px;">
+        <strong>Pro tip:</strong> Use Method 2 when the parabola doesn't cross the x-axis or when you want to find the vertex quickly!
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-e">Example</span>
+      <span class="dpen-header-title">Sketching Parabolas — Step by Step</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <div class="worked">
+        <div class="worked-label">Example — Sketch \(y = x^2 - x - 2\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text"><strong>Concavity:</strong> \(a = 1 > 0\), so parabola opens upward</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text"><strong>Y-intercept:</strong> \(y = 0^2 - 0 - 2 = -2\) → \((0, -2)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text"><strong>X-intercepts:</strong> \(x^2 - x - 2 = 0 \Rightarrow (x-2)(x+1) = 0\) → \(x = 2\) or \(x = -1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text"><strong>Vertex:</strong> Midpoint of \(x = -1\) and \(x = 2\) is \(x = 0.5\)</div></div>
+          <div class="step-item"><div class="step-num-badge">5</div><div class="step-text">At \(x = 0.5\): \(y = (0.5)^2 - 0.5 - 2 = -2.25\) → Vertex: \((0.5, -2.25)\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">KEY FEATURES</span> Vertex: \((0.5, -2.25)\); X-int: \((-1,0), (2,0)\); Y-int: \((0,-2)\)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-n">Note</span>
+      <span class="dpen-header-title">Steps to Sketch Any Parabola</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p><strong>Complete checklist for sketching \(y = ax^2 + bx + c\):</strong></p>
+      <ol style="margin-left:20px; margin-top:8px; line-height:1.9;">
+        <li>Determine concavity: \(a > 0\) (opens up) or \(a < 0\) (opens down)</li>
+        <li>Find y-intercept: set \(x = 0\), get \(y = c\)</li>
+        <li>Find x-intercepts: set \(y = 0\), solve for \(x\) (may be 0, 1, or 2 solutions)</li>
+        <li>Find vertex using \(x = -\frac{b}{2a}\), then substitute to get y-coordinate</li>
+        <li>Plot all points and draw a smooth U-shaped curve</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- PRACTICE PROBLEMS -->
+  <div class="practice-section">
+    <div class="practice-header">
+      <h3>Practice Problems: Graphing & Sketching Parabolas</h3>
+      <p>15 problems to master finding intercepts, vertices, and sketching parabolas.</p>
+    </div>
+
+    <!-- Problem 1 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">1</div>
+        <div class="problem-text">Find the x and y-intercepts of \(f(x) = x^2 - 5x + 6\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="hint-box">
+          <strong>Hint:</strong> Y-intercept when \(x=0\); X-intercepts when \(y=0\) (try factoring!)
+        </div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Y-intercept: \(y = 0^2 - 5(0) + 6 = 6\) → \((0,6)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">X-intercepts: \(x^2 - 5x + 6 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Factor: \((x-2)(x-3) = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(x = 2\) or \(x = 3\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Y-int: \((0,6)\); X-int: \((2,0)\) and \((3,0)\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 2 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">2</div>
+        <div class="problem-text">Find the vertex and axis of symmetry for \(y = x^2 - 4x + 3\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a = 1\), \(b = -4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Axis of symmetry: \(x = -\frac{-4}{2(1)} = 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">At \(x = 2\): \(y = 4 - 8 + 3 = -1\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Axis: \(x = 2\); Vertex: \((2, -1)\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 3 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">3</div>
+        <div class="problem-text">Find the vertex of \(f(x) = (x-1)(x-3)\) using the x-intercepts</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">X-intercepts: \(x = 1\) and \(x = 3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Midpoint: \(x = \frac{1+3}{2} = 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(f(2) = (2-1)(2-3) = (1)(-1) = -1\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Vertex: \((2, -1)\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 4 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">4</div>
+        <div class="problem-text">Find all key features and sketch \(y = -x^2 + 2x + 3\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Concavity: \(a = -1 < 0\) (opens down)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Y-intercept: \(y = 3\) → \((0,3)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">X-intercepts: \(-x^2 + 2x + 3 = 0 \Rightarrow x^2 - 2x - 3 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Factor: \((x-3)(x+1) = 0\) → \(x = 3\) or \(x = -1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">5</div><div class="step-text">Vertex: \(x = -\frac{2}{2(-1)} = 1\); \(y = -1 + 2 + 3 = 4\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Vertex: \((1,4)\) (max); X-int: \((3,0), (-1,0)\); Y-int: \((0,3)\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 5 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">5</div>
+        <div class="problem-text">Find the vertex of \(y = 2x^2 - 8x + 5\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(x = -\frac{-8}{2(2)} = \frac{8}{4} = 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(y = 2(2)^2 - 8(2) + 5 = 8 - 16 + 5 = -3\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Vertex: \((2, -3)\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 6 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">6</div>
+        <div class="problem-text">Determine if \(y = x^2 + 2x + 5\) has any x-intercepts. If not, find the vertex.</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Check discriminant: \(\Delta = 4 - 4(1)(5) = 4 - 20 = -16 < 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">No x-intercepts (parabola doesn't touch x-axis)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Vertex: \(x = -\frac{2}{2} = -1\); \(y = 1 - 2 + 5 = 4\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> No x-intercepts; Vertex: \((-1, 4)\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 7 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">7</div>
+        <div class="problem-text">Find the intercepts of \(y = 3x^2 - 12x\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Y-intercept: \(y = 0\) → \((0,0)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">X-intercepts: \(3x^2 - 12x = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Factor: \(3x(x - 4) = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(x = 0\) or \(x = 4\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Y-int: \((0,0)\); X-int: \((0,0)\) and \((4,0)\)</div>
+      </div>
+    </div>
+
+    <!-- Problem 8 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">8</div>
+        <div class="problem-text">Sketch \(y = -2x^2 + 8x - 6\) showing all key features</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Concave down (\(a = -2 < 0\))</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Y-int: \((0, -6)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">X-int: \(-2x^2 + 8x - 6 = 0 \Rightarrow x^2 - 4x + 3 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Factor: \((x-1)(x-3) = 0\) → \(x = 1, 3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">5</div><div class="step-text">Vertex: \(x = 2\); \(y = -8 + 16 - 6 = 2\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Vertex: \((2,2)\) (max); X-int: \((1,0), (3,0)\); Y-int: \((0,-6)\)</div>
+      </div>
+    </div>
+
+    <!-- Problems 9-15 continue similarly -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">9</div>
+        <div class="problem-text">Find the axis of symmetry for \(f(x) = -3x^2 + 6x - 1\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(x = -\frac{6}{2(-3)} = -\frac{6}{-6} = 1\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(x = 1\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">10</div>
+        <div class="problem-text">A parabola has x-intercepts at \(x = -2\) and \(x = 4\). Find the axis of symmetry.</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Midpoint: \(x = \frac{-2 + 4}{2} = \frac{2}{2} = 1\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(x = 1\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">11</div>
+        <div class="problem-text">Find all intercepts of \(y = x^2 + 6x + 9\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Y-int: \(y = 9\) → \((0,9)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">X-int: \(x^2 + 6x + 9 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Perfect square: \((x+3)^2 = 0\) → \(x = -3\) (one repeated root)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Y-int: \((0,9)\); X-int: \((-3,0)\) (touches at vertex)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">12</div>
+        <div class="problem-text">Sketch \(y = (x-2)^2 + 1\). Find the vertex and convert to standard form.</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex form: \(y = (x-h)^2 + k\) → Vertex: \((2,1)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Expand: \(y = x^2 - 4x + 4 + 1 = x^2 - 4x + 5\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Check for x-int: \(\Delta = 16 - 20 = -4 < 0\) (none)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Vertex: \((2,1)\); Standard form: \(y = x^2 - 4x + 5\); No x-intercepts</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">13</div>
+        <div class="problem-text">Find where \(y = 2x^2 - 3x - 2\) crosses the axes</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Y-int: \(y = -2\) → \((0,-2)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">X-int: \(2x^2 - 3x - 2 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Factor: \((2x+1)(x-2) = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(x = -\frac{1}{2}\) or \(x = 2\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Y-int: \((0,-2)\); X-int: \((-\frac{1}{2},0)\) and \((2,0)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">14</div>
+        <div class="problem-text">The vertex of a parabola is at \((3, -4)\) and it passes through \((0, 5)\). Does it open up or down?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="hint-box">
+          <strong>Hint:</strong> Compare the y-values!
+        </div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex at \((3, -4)\) is the minimum/maximum</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Point \((0, 5)\) has \(y = 5 > -4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Since other points are above the vertex, vertex is a minimum</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Opens upward (\(a > 0\))</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">15</div>
+        <div class="problem-text">A ball is thrown with height \(h(t) = -5t^2 + 20t + 2\) meters. Find when it hits the ground and its maximum height.</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Hits ground when \(h = 0\): \(-5t^2 + 20t + 2 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Using quadratic formula: \(t = \frac{-20 \pm \sqrt{400 + 40}}{-10} = \frac{-20 \pm \sqrt{440}}{-10}\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(t \approx 4.10\) seconds (taking positive value)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Max height at vertex: \(t = -\frac{20}{-10} = 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">5</div><div class="step-text">\(h(2) = -20 + 40 + 2 = 22\) meters</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Hits ground at \(t \approx 4.10\) sec; Max height: 22 m at \(t = 2\) sec</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="page-nav-btn" onclick="goTo('discriminant')">← The Discriminant</button>
+    <button class="page-nav-btn next" onclick="goTo('domain-range')">Next: Domain & Range →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     WEEK 5B.3: DOMAIN & RANGE
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-domain-range">
+  <div class="page-hero">
+    <div class="page-hero-label">Week 5B · Topic 3</div>
+    <div class="page-hero-title">Domain & Range of Parabolas</div>
+    <div class="page-hero-sub">Determine the input (domain) and output (range) values for quadratic functions.</div>
+  </div>
+
+  <div class="motiv">
+    Understanding domain and range is crucial for analyzing functions. <strong>Domain = all possible x-values (inputs); Range = all possible y-values (outputs)</strong>. For parabolas, domain is always all real numbers, but range depends on whether the parabola opens up or down!
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-d">Definition</span>
+      <span class="dpen-header-title">Domain and Range</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p><strong>Domain:</strong> The set of all x-values for which \(f(x)\) is defined (inputs)</p>
+      <p><strong>Range:</strong> The set of all y-values obtained from the domain (outputs)</p>
+
+      <div class="callout callout-info" style="margin-top:12px;">
+        <strong>For all quadratic functions</strong> \(y = ax^2 + bx + c\):<br>
+        Domain is ALWAYS \((-\infty, \infty)\) — all real numbers!
+      </div>
+
+      <p style="margin-top:12px;"><strong>Finding the Range:</strong></p>
+      <ul style="margin-left:20px; margin-top:8px; line-height:1.9;">
+        <li>Find the y-coordinate of the vertex (the maximum or minimum value)</li>
+        <li>If \(a > 0\): parabola opens up → range is \([y_{\text{vertex}}, \infty)\)</li>
+        <li>If \(a < 0\): parabola opens down → range is \((-\infty, y_{\text{vertex}}]\)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-p">Pattern</span>
+      <span class="dpen-header-title">Steps to Find Domain & Range Algebraically</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <div class="step-list">
+        <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: Write \((-\infty, \infty)\) (always for quadratics!)</div></div>
+        <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Find x-coordinate of vertex: \(x = -\frac{b}{2a}\)</div></div>
+        <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Substitute to find y-coordinate of vertex</div></div>
+        <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">If \(a > 0\): range is \([y_{\text{vertex}}, \infty)\)</div></div>
+        <div class="step-item"><div class="step-num-badge">5</div><div class="step-text">If \(a < 0\): range is \((-\infty, y_{\text{vertex}}]\)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-e">Example</span>
+      <span class="dpen-header-title">Worked Examples</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <div class="worked">
+        <div class="worked-label">Example 1 — Find domain and range of \(y = x^2 - 3\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(a = 1 > 0\), so parabola opens upward (has minimum)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Vertex: \(x = 0\), \(y = -3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Minimum value is -3, so range: \(y \geq -3\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \([-3, \infty)\)</div>
+      </div>
+
+      <div class="worked" style="margin-top:14px;">
+        <div class="worked-label">Example 2 — Find domain and range of \(f(x) = -x^2 + 1\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(a = -1 < 0\), so parabola opens downward (has maximum)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Vertex: \(x = 0\), \(y = 1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Maximum value is 1, so range: \(y \leq 1\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \((-\infty, 1]\)</div>
+      </div>
+
+      <div class="worked" style="margin-top:14px;">
+        <div class="worked-label">Example 3 — Find domain and range of \(y = x^2 - 3x + 4\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(a = 1 > 0\) (opens up, has minimum)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Vertex x-coordinate: \(x = -\frac{-3}{2} = \frac{3}{2}\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(y = (\frac{3}{2})^2 - 3(\frac{3}{2}) + 4 = \frac{9}{4} - \frac{9}{2} + 4 = \frac{7}{4}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \([\frac{7}{4}, \infty)\)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-n">Note</span>
+      <span class="dpen-header-title">Common Mistakes</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <div class="callout callout-warn">
+        <strong>Mistake 1:</strong> Forgetting to use interval notation correctly. Use square brackets \([\text{ or }]\) when including the endpoint, round brackets \((\text{ or })\) when excluding.
+      </div>
+      <div class="callout callout-warn" style="margin-top:8px;">
+        <strong>Mistake 2:</strong> Confusing domain and range direction. Domain is always horizontal (x-axis), range is vertical (y-axis).
+      </div>
+      <div class="callout callout-warn" style="margin-top:8px;">
+        <strong>Mistake 3:</strong> Not checking concavity. If \(a < 0\), range has upper bound, not lower bound!
+      </div>
+    </div>
+  </div>
+
+  <!-- PRACTICE PROBLEMS -->
+  <div class="practice-section">
+    <div class="practice-header">
+      <h3>Practice Problems: Domain & Range</h3>
+      <p>12 problems to master finding domain and range of quadratic functions.</p>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">1</div>
+        <div class="problem-text">Find the domain and range of \(y = x^2 + 4\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(a = 1 > 0\), minimum at vertex \((0, 4)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Range: \(y \geq 4\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \([4, \infty)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">2</div>
+        <div class="problem-text">Find the domain and range of \(y = -2x^2 + 8\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(a = -2 < 0\), maximum at vertex \((0, 8)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Range: \(y \leq 8\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \((-\infty, 8]\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">3</div>
+        <div class="problem-text">Find the domain and range of \(f(x) = x^2 - 4x + 5\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Vertex: \(x = \frac{4}{2} = 2\); \(y = 4 - 8 + 5 = 1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Opens up, minimum is 1</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \([1, \infty)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">4</div>
+        <div class="problem-text">Find the domain and range of \(y = -(x-3)^2 + 7\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Vertex form shows vertex at \((3, 7)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Opens down (\(a = -1 < 0\)), maximum is 7</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \((-\infty, 7]\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">5</div>
+        <div class="problem-text">Find the domain and range of \(g(x) = 3x^2 + 6x - 1\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Vertex: \(x = -\frac{6}{6} = -1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(y = 3(1) - 6 - 1 = -4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Opens up, minimum is -4</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \([-4, \infty)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">6</div>
+        <div class="problem-text">Find the domain and range of \(h(x) = -x^2 - 2x + 3\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Vertex: \(x = -\frac{-2}{-2} = -1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(y = -1 + 2 + 3 = 4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Opens down, maximum is 4</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \((-\infty, 4]\)</div>
+      </div>
+    </div>
+
+    <!-- Problems 7-12 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">7</div>
+        <div class="problem-text">Find the range of \(y = 2(x+1)^2 - 5\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex form: \(a = 2 > 0\), vertex at \((-1, -5)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Minimum is -5</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \([-5, \infty)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">8</div>
+        <div class="problem-text">What values can \(y\) take if \(y = x^2 + 2x + 10\)?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex: \(x = -1\); \(y = 1 - 2 + 10 = 9\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Opens up, minimum is 9</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(y \geq 9\) or \([9, \infty)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">9</div>
+        <div class="problem-text">Find the range of \(f(x) = -\frac{1}{2}x^2 + 3x - 2\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex: \(x = -\frac{3}{-1} = 3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(y = -\frac{9}{2} + 9 - 2 = \frac{5}{2}\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Opens down, maximum is \(\frac{5}{2}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \((-\infty, \frac{5}{2}]\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">10</div>
+        <div class="problem-text">If \(y = (x-2)^2\), what are the possible values of \(y\)?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex at \((2, 0)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Opens up, minimum is 0</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(y\) can never be negative</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(y \geq 0\) or \([0, \infty)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">11</div>
+        <div class="problem-text">Find domain and range of \(y = 4 - x^2\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Vertex at \((0, 4)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Opens down, maximum is 4</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \((-\infty, 4]\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">12</div>
+        <div class="problem-text">A function has range \((-\infty, 5]\). Could it be \(y = 2x^2 + 3\)?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(y = 2x^2 + 3\) has \(a = 2 > 0\) (opens up)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Opens up means minimum value, range \([3, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">This doesn't match \((-\infty, 5]\) (which needs maximum)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> No, the parabola opens up (minimum), not down (maximum)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="page-nav-btn" onclick="goTo('parabola-graph')">← Graphing Parabolas</button>
+    <button class="page-nav-btn next" onclick="goTo('absolute-value')">Next: Absolute Value Functions →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     WEEK 5B.4: ABSOLUTE VALUE FUNCTIONS
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-absolute-value">
+  <div class="page-hero">
+    <div class="page-hero-label">Week 5B · Topic 4</div>
+    <div class="page-hero-title">Absolute Value Functions</div>
+    <div class="page-hero-sub">Graph and analyze absolute value functions and their transformations.</div>
+  </div>
+
+  <div class="motiv">
+    Absolute value functions create <strong>V-shaped graphs</strong>. The absolute value \(|x|\) makes all negative values positive, creating a reflection in the x-axis. These functions appear in distance problems, error analysis, and optimization!
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-d">Definition</span>
+      <span class="dpen-header-title">Absolute Value Function</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p><strong>Definition of absolute value:</strong></p>
+      <div class="math-block">\[|x| = \begin{cases} x, & \text{if } x \geq 0 \\ -x, & \text{if } x < 0 \end{cases}\]</div>
+
+      <p>The basic absolute value function is \(y = |x|\), which forms a V-shape with vertex at the origin.</p>
+
+      <div class="callout callout-info" style="margin-top:12px;">
+        <strong>Key property:</strong> Taking the absolute value of a negative number makes it positive. This reflects the negative portion of the graph across the x-axis.
+      </div>
+
+      <p style="margin-top:12px;"><strong>General form:</strong> \(y = |ax + b| + c\)</p>
+      <ul style="margin-left:20px; margin-top:8px; line-height:1.9;">
+        <li>\(b\) causes horizontal shift: \(y = |x + b|\) shifts left/right</li>
+        <li>\(c\) causes vertical shift: \(y = |x| + c\) shifts up/down</li>
+        <li>\(a\) affects steepness: larger \(|a|\) means steeper V-shape</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-p">Pattern</span>
+      <span class="dpen-header-title">Graphing Absolute Value Functions</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p><strong>Method: Find intercepts and use symmetry</strong></p>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Find y-intercept: set \(x = 0\)</div></div>
+        <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Find x-intercept(s): set \(y = 0\) and solve \(|ax + b| + c = 0\)</div></div>
+        <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">The x-intercept is the vertex (lowest/highest point)</div></div>
+        <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Find one more point on each side for accuracy</div></div>
+        <div class="step-item"><div class="step-num-badge">5</div><div class="step-text">Draw V-shape symmetric about the vertex</div></div>
+      </div>
+
+      <div class="callout callout-info" style="margin-top:12px;">
+        <strong>Shortcut for \(y = |ax + b| + c\):</strong> The vertex is where the expression inside absolute value equals zero: \(ax + b = 0\)
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-e">Example</span>
+      <span class="dpen-header-title">Worked Examples</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <div class="worked">
+        <div class="worked-label">Example 1 — Graph \(y = |x| - 5\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex form with \(c = -5\): shifted down 5 units</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Vertex at \((0, -5)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">X-intercepts: \(|x| - 5 = 0 \Rightarrow |x| = 5 \Rightarrow x = \pm 5\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Y-intercept: \(y = -5\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">KEY FEATURES</span> Vertex: \((0,-5)\); X-int: \((-5,0), (5,0)\); Y-int: \((0,-5)\)</div>
+      </div>
+
+      <div class="worked" style="margin-top:14px;">
+        <div class="worked-label">Example 2 — Graph \(y = |x + 2| - 3\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Shifted left 2, down 3</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Vertex where \(x + 2 = 0\): \(x = -2\), \(y = -3\) → \((-2, -3)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Y-intercept: \(y = |2| - 3 = -1\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">X-intercepts: \(|x+2| = 3 \Rightarrow x + 2 = \pm 3\) → \(x = 1\) or \(x = -5\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">KEY FEATURES</span> Vertex: \((-2,-3)\); X-int: \((1,0), (-5,0)\); Y-int: \((0,-1)\)</div>
+      </div>
+
+      <div class="worked" style="margin-top:14px;">
+        <div class="worked-label">Example 3 — Graph \(y = |2x - 3|\)</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex where \(2x - 3 = 0\): \(x = \frac{3}{2}\), \(y = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Y-intercept: \(y = |-3| = 3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">X-intercept is the vertex: \((\frac{3}{2}, 0)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Test point at \(x = 3\): \(y = |6-3| = 3\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">KEY FEATURES</span> Vertex: \((\frac{3}{2}, 0)\); X-int: \((\frac{3}{2}, 0)\); Y-int: \((0,3)\)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-pill pill-n">Note</span>
+      <span class="dpen-header-title">Domain & Range of Absolute Value Functions</span>
+      <span class="dpen-chevron">▶</span>
+    </div>
+    <div class="dpen-body">
+      <p><strong>For all absolute value functions \(y = |ax + b| + c\):</strong></p>
+
+      <p style="margin-top:10px;"><strong>Domain:</strong> Always \((-\infty, \infty)\) — no restrictions on x</p>
+
+      <p style="margin-top:10px;"><strong>Range:</strong> Depends on the minimum value (the y-coordinate of the vertex)</p>
+      <ul style="margin-left:20px; margin-top:8px; line-height:1.9;">
+        <li>Since \(|ax + b| \geq 0\) always, the minimum value of \(|ax + b| + c\) is \(c\)</li>
+        <li>Range: \([c, \infty)\)</li>
+      </ul>
+
+      <div class="callout callout-info" style="margin-top:10px;">
+        <strong>Quick rule:</strong> For \(y = |ax + b| + c\), range is always \([c, \infty)\)
+      </div>
+    </div>
+  </div>
+
+  <!-- PRACTICE PROBLEMS -->
+  <div class="practice-section">
+    <div class="practice-header">
+      <h3>Practice Problems: Absolute Value Functions</h3>
+      <p>15 problems to master graphing and analyzing absolute value functions.</p>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">1</div>
+        <div class="problem-text">Find the vertex of \(y = |x - 4|\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex where \(x - 4 = 0\): \(x = 4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(y = 0\) at vertex</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Vertex: \((4, 0)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">2</div>
+        <div class="problem-text">Find domain and range of \(y = |x| + 3\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Minimum value is \(c = 3\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \([3, \infty)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">3</div>
+        <div class="problem-text">Find all intercepts of \(y = |x + 1|\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Y-int: \(y = |0 + 1| = 1\) → \((0,1)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">X-int: \(|x + 1| = 0 \Rightarrow x = -1\) → \((-1,0)\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Y-int: \((0,1)\); X-int: \((-1,0)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">4</div>
+        <div class="problem-text">Find all intercepts of \(y = |x - 2| - 3\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Y-int: \(y = |0 - 2| - 3 = 2 - 3 = -1\) → \((0,-1)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">X-int: \(|x - 2| = 3 \Rightarrow x - 2 = \pm 3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(x = 5\) or \(x = -1\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Y-int: \((0,-1)\); X-int: \((5,0), (-1,0)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">5</div>
+        <div class="problem-text">Sketch \(y = |x| + 2\) and find its range</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Shifted up 2 from basic \(y = |x|\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Vertex at \((0, 2)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">No x-intercepts (always above x-axis)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Range: \([2, \infty)\); Vertex: \((0,2)\); No x-intercepts</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">6</div>
+        <div class="problem-text">Find domain and range of \(y = |x - 3| + 2\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: \((-\infty, \infty)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Minimum value \(c = 2\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Domain: \((-\infty, \infty)\); Range: \([2, \infty)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">7</div>
+        <div class="problem-text">Find the intercepts of \(y = |2x + 1|\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Y-int: \(y = |1| = 1\) → \((0,1)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">X-int: \(2x + 1 = 0 \Rightarrow x = -\frac{1}{2}\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Y-int: \((0,1)\); X-int: \((-\frac{1}{2},0)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">8</div>
+        <div class="problem-text">Graph \(y = |3x - 2|\) showing vertex and intercepts</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex: \(3x - 2 = 0 \Rightarrow x = \frac{2}{3}\), \(y = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Y-int: \(y = |-2| = 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">X-int is vertex: \((\frac{2}{3}, 0)\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Vertex: \((\frac{2}{3}, 0)\); Y-int: \((0,2)\); X-int: \((\frac{2}{3}, 0)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">9</div>
+        <div class="problem-text">Does \(y = |x + 5| - 2\) have any x-intercepts? If so, find them.</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Set \(y = 0\): \(|x + 5| - 2 = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(|x + 5| = 2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(x + 5 = 2\) or \(x + 5 = -2\)</div></div>
+          <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(x = -3\) or \(x = -7\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Yes; X-int: \((-3,0)\) and \((-7,0)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">10</div>
+        <div class="problem-text">Find the range of \(f(x) = |2x + 1| - 3\)</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Minimum value is \(c = -3\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \([-3, \infty)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">11</div>
+        <div class="problem-text">Sketch \(y = |x + 1|\) and \(y = |x - 2|\) on the same axes</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(y = |x + 1|\): vertex at \((-1, 0)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(y = |x - 2|\): vertex at \((2, 0)\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Both are V-shapes opening upward</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Two V-shapes with vertices at \((-1,0)\) and \((2,0)\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">12</div>
+        <div class="problem-text">If \(y = |ax + b| + c\) has vertex at \((4, -5)\), what are \(b\) and \(c\)? (Assume \(a = 1\))</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex x-coordinate: \(x + b = 0\) when \(x = 4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(4 + b = 0 \Rightarrow b = -4\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Vertex y-coordinate is \(c = -5\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(b = -4\), \(c = -5\); Function: \(y = |x - 4| - 5\)</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">13</div>
+        <div class="problem-text">Find where the graphs \(y = |x|\) and \(y = |x| - 3\) differ</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(y = |x| - 3\) is shifted down 3 units</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Same shape, different vertical position</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(y = |x|\) has vertex \((0,0)\); \(y = |x| - 3\) has vertex \((0,-3)\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Vertical shift of 3 units downward</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">14</div>
+        <div class="problem-text">What is the minimum value of \(y = |4x - 8| + 7\)?</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Minimum occurs when \(|4x - 8| = 0\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Minimum value is \(y = 0 + 7 = 7\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> Minimum value: 7</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">15</div>
+        <div class="problem-text">A function has the form \(y = |x + a| + b\). If the vertex is at \((-3, 4)\), find \(a\) and \(b\).</div>
+        <div class="problem-chevron">▶</div>
+      </div>
+      <div class="problem-body">
+        <div class="step-list">
+          <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex x-coordinate: \(x + a = 0\) when \(x = -3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(-3 + a = 0 \Rightarrow a = 3\)</div></div>
+          <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Vertex y-coordinate: \(b = 4\)</div></div>
+        </div>
+        <div class="answer-box"><span class="answer-label">ANSWER</span> \(a = 3\), \(b = 4\); Function: \(y = |x + 3| + 4\)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="page-nav-btn" onclick="goTo('domain-range')">← Domain & Range</button>
+    <button class="page-nav-btn next" onclick="goTo('home')">Complete! Return to Overview →</button>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+// PROGRESS TRACKING SYSTEM
+// ─────────────────────────────────────────────────────────────────
+
+// Initialize progress tracking
+const STORAGE_KEY = 'dpen21_week5_progress';
+let progressData = {
+  completedProblems: [],
+  lastVisited: null,
+  problemAnswers: {}
+};
+
+// Load saved progress from localStorage
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      progressData = JSON.parse(saved);
+    }
+  } catch (e) {
+    console.warn('Could not load progress:', e);
+  }
+}
+
+// Save progress to localStorage
+function saveProgress() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progressData));
+  } catch (e) {
+    console.warn('Could not save progress:', e);
+  }
+}
+
+// Mark a problem as complete/incomplete
+function toggleProblemComplete(problemId) {
+  const index = progressData.completedProblems.indexOf(problemId);
+  if (index === -1) {
+    progressData.completedProblems.push(problemId);
+  } else {
+    progressData.completedProblems.splice(index, 1);
+  }
+  saveProgress();
+  updateProgressBar();
+  updateProblemCheckboxes();
+}
+
+// Update the progress bar
+function updateProgressBar() {
+  const totalProblems = document.querySelectorAll('.problem-card').length;
+  const completedCount = progressData.completedProblems.length;
+  const percentage = totalProblems > 0 ? (completedCount / totalProblems) * 100 : 0;
+
+  const progressFill = document.querySelector('.progress-fill');
+  if (progressFill) {
+    progressFill.style.width = percentage.toFixed(1) + '%';
+  }
+
+  const progressLabel = document.querySelector('.progress-label');
+  if (progressLabel) {
+    progressLabel.textContent = `PROGRESS: ${completedCount} / ${totalProblems} PROBLEMS`;
+  }
+}
+
+// Update all problem checkboxes to reflect saved state
+function updateProblemCheckboxes() {
+  document.querySelectorAll('.problem-card').forEach((card, index) => {
+    const problemId = `problem-${index}`;
+    const checkbox = card.querySelector('.problem-checkbox');
+    if (checkbox) {
+      checkbox.checked = progressData.completedProblems.includes(problemId);
+
+      // Add visual feedback to completed problems
+      if (checkbox.checked) {
+        card.classList.add('completed');
+      } else {
+        card.classList.remove('completed');
+      }
+    }
+  });
+}
+
+// Save answer input values
+function saveAnswer(problemId, value) {
+  progressData.problemAnswers[problemId] = value;
+  saveProgress();
+}
+
+// Restore answer input values
+function restoreAnswers() {
+  document.querySelectorAll('.answer-box').forEach((input, index) => {
+    const problemId = `problem-${index}`;
+    if (progressData.problemAnswers[problemId]) {
+      input.value = progressData.problemAnswers[problemId];
+    }
+  });
+}
+
+// Reset all progress
+function resetProgress() {
+  if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+    progressData = {
+      completedProblems: [],
+      lastVisited: null,
+      problemAnswers: {}
+    };
+    saveProgress();
+    updateProgressBar();
+    updateProblemCheckboxes();
+
+    // Clear all answer boxes
+    document.querySelectorAll('.answer-box').forEach(input => {
+      input.value = '';
+    });
+
+    alert('Progress has been reset!');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────────────────────────
+
+function goTo(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + pageId).classList.add('active');
+
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  event.target.closest('.nav-link')?.classList.add('active');
+
+  const pageTitles = {
+    'home': 'Overview',
+    'composite': 'Composite Functions',
+    'quadratic-intro': 'Quadratic Functions',
+    'discriminant': 'Discriminant',
+    'practice-5a': 'Practice: Week 5A',
+    'parabola-graph': 'Graphing Parabolas',
+    'parabola-sketch': 'Sketching Parabolas',
+    'domain-range': 'Domain & Range',
+    'absolute-value': 'Absolute Value Functions',
+    'practice-5b': 'Practice: Week 5B',
+    'mixed-practice': 'Mixed Practice Test'
+  };
+
+  document.getElementById('breadcrumbPage').textContent = pageTitles[pageId] || 'Overview';
+
+  // Save last visited page
+  progressData.lastVisited = pageId;
+  saveProgress();
+
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// TOGGLE FUNCTIONS
+// ─────────────────────────────────────────────────────────────────
+
+// Toggle DPEN blocks
+function toggleDPEN(header) {
+  const chevron = header.querySelector('.dpen-chevron');
+  const body = header.nextElementSibling;
+  chevron.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// Toggle practice problems
+function toggleProblem(header) {
+  const chevron = header.querySelector('.problem-chevron');
+  const body = header.nextElementSibling;
+  chevron.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// Expand all DPEN blocks
+function expandAll() {
+  document.querySelectorAll('.dpen-body').forEach(body => {
+    body.classList.add('open');
+    body.previousElementSibling.querySelector('.dpen-chevron').classList.add('open');
+  });
+}
+
+// Collapse all DPEN blocks
+function collapseAll() {
+  document.querySelectorAll('.dpen-body').forEach(body => {
+    body.classList.remove('open');
+    body.previousElementSibling.querySelector('.dpen-chevron').classList.remove('open');
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────
+// INITIALIZATION
+// ─────────────────────────────────────────────────────────────────
+
+// Initialize everything when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  // Load saved progress
+  loadProgress();
+
+  // Add checkboxes to all problem cards
+  document.querySelectorAll('.problem-card').forEach((card, index) => {
+    const problemId = `problem-${index}`;
+    const header = card.querySelector('.problem-header');
+
+    if (header) {
+      // Create checkbox
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'problem-checkbox';
+      checkbox.title = 'Mark as complete';
+      checkbox.addEventListener('change', () => toggleProblemComplete(problemId));
+
+      // Insert checkbox at the beginning of header
+      header.insertBefore(checkbox, header.firstChild);
+    }
+  });
+
+  // Add event listeners to answer boxes to save input
+  document.querySelectorAll('.answer-box').forEach((input, index) => {
+    const problemId = `problem-${index}`;
+    input.addEventListener('input', (e) => saveAnswer(problemId, e.target.value));
+  });
+
+  // Restore saved state
+  updateProgressBar();
+  updateProblemCheckboxes();
+  restoreAnswers();
+
+  // Restore last visited page if available
+  if (progressData.lastVisited && document.getElementById('page-' + progressData.lastVisited)) {
+    goTo(progressData.lastVisited);
+  }
+
+  // Render math with KaTeX
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: '\\[', right: '\\]', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ],
+    throwOnError: false
+  });
+});
+</script>
+
+</body>
+</html>

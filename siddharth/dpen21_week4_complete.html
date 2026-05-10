@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN21 Week 4 — Lines and Functions</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B3A5C;
+  --navy-lt: #1e4570;
+  --orange: #FF3621;
+  --blue-lt: #E6F1FB;
+  --blue-mid: #185FA5;
+  --amber-lt: #FAEEDA;
+  --amber-dk: #7A4800;
+  --green-lt: #E1F5EE;
+  --green-dk: #0a5c3f;
+  --coral-lt: #FAECE7;
+  --coral-dk: #8a2f1a;
+  --grey-lt: #F6F5F2;
+  --grey-md: #e8e6e0;
+  --grey-dk: #3a3835;
+  --text: #2c2a28;
+  --text-muted: #6b6762;
+  --sidebar-w: 280px;
+  --content-max: 820px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #fafaf8;
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.3;
+}
+.sidebar-brand-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+.progress-wrap {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.progress-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.nav-section {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  padding: 6px 20px 4px;
+  text-transform: uppercase;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-link:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
+.nav-link.active { color: white; background: rgba(255,255,255,0.1); border-left: 2px solid var(--orange); padding-left: 18px; }
+.nav-num {
+  font-size: 10px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.nav-link.active .nav-num { background: var(--orange); color: white; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.reset-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.reset-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.8);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.reset-btn span {
+  font-size: 14px;
+}
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--grey-md);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.topbar-breadcrumb {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.topbar-btns {
+  display: flex;
+  gap: 10px;
+}
+.tb-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+  color: var(--text);
+}
+.tb-btn:hover { background: var(--grey-lt); }
+.tb-btn.primary {
+  background: var(--navy);
+  color: white;
+  border-color: var(--navy);
+}
+.tb-btn.primary:hover { background: var(--navy-lt); border-color: var(--navy-lt); }
+
+.content {
+  padding: 40px;
+  max-width: calc(var(--content-max) + 80px);
+}
+
+.page {
+  display: none;
+}
+.page.active {
+  display: block;
+}
+
+.page-hero {
+  margin-bottom: 40px;
+}
+.page-hero-label {
+  font-size: 11px;
+  color: var(--orange);
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.page-hero-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+.page-hero-sub {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 680px;
+}
+
+/* ── DPEN BLOCKS ── */
+.dpen-block {
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--grey-md);
+}
+
+.dpen-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: background 0.15s;
+  background: white;
+}
+.dpen-header:hover { background: var(--grey-lt); }
+
+.dpen-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.dpen-label.definition { background: var(--blue-lt); color: var(--blue-mid); }
+.dpen-label.pattern { background: var(--amber-lt); color: var(--amber-dk); }
+.dpen-label.example { background: var(--green-lt); color: var(--green-dk); }
+.dpen-label.note { background: var(--coral-lt); color: var(--coral-dk); }
+
+.dpen-title {
+  flex: 1;
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.dpen-chevron {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--text-muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.dpen-chevron.open {
+  transform: rotate(180deg);
+}
+
+.dpen-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: white;
+}
+.dpen-body.open {
+  max-height: 3000px;
+}
+.dpen-content {
+  padding: 20px 18px;
+  border-top: 1px solid var(--grey-md);
+  line-height: 1.7;
+  font-size: 15px;
+}
+.dpen-content p {
+  margin-bottom: 12px;
+}
+.dpen-content ul {
+  margin-left: 20px;
+  margin-bottom: 12px;
+}
+.dpen-content li {
+  margin-bottom: 6px;
+}
+.dpen-content .formula {
+  background: var(--grey-lt);
+  padding: 16px;
+  border-radius: 6px;
+  margin: 16px 0;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* ── PRACTICE PROBLEMS ── */
+.practice-section {
+  margin-top: 40px;
+}
+.practice-section-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.practice-section-title::before {
+  content: "★";
+  color: var(--orange);
+  font-size: 28px;
+}
+
+.problem-card {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.problem-card.completed {
+  background: var(--green-lt);
+  border-color: var(--green-dk);
+  opacity: 0.85;
+}
+
+.problem-card.completed .problem-num {
+  background: var(--green-dk);
+}
+
+.problem-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.problem-header:hover { background: var(--grey-lt); }
+
+.problem-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: var(--green-dk);
+}
+
+.problem-num {
+  background: var(--navy);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.problem-text {
+  flex: 1;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.problem-chevron {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--text-muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.problem-chevron.open {
+  transform: rotate(180deg);
+}
+
+.problem-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.problem-body.open {
+  max-height: 2000px;
+}
+.problem-content {
+  padding: 20px 18px;
+  border-top: 1px solid var(--grey-md);
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.problem-hint {
+  background: var(--amber-lt);
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--amber-dk);
+}
+.problem-hint strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+.problem-solution {
+  background: var(--blue-lt);
+  padding: 16px;
+  border-radius: 6px;
+  margin-top: 16px;
+}
+.problem-solution-title {
+  font-weight: 600;
+  color: var(--blue-mid);
+  margin-bottom: 12px;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+}
+.problem-solution-steps {
+  line-height: 1.8;
+}
+.problem-solution-steps p {
+  margin-bottom: 10px;
+}
+
+.answer-box {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--grey-md);
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  margin-top: 12px;
+  transition: border-color 0.2s;
+}
+.answer-box:focus {
+  outline: none;
+  border-color: var(--navy);
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.overview-card {
+  background: white;
+  padding: 24px;
+  border-radius: 10px;
+  border: 1px solid var(--grey-md);
+  transition: all 0.2s;
+}
+.overview-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.overview-card-label {
+  font-size: 11px;
+  color: var(--orange);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.overview-card-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 10px;
+}
+.overview-card-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">DPEN21 Week 4</div>
+    <div class="sidebar-brand-sub">Lines and Functions</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">YOUR PROGRESS</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">↑</span> Start Here</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Additional Topics</div>
+    <button class="nav-link" onclick="goTo('angle-inclination')"><span class="nav-num">4.1</span> Angle of Inclination</button>
+    <button class="nav-link" onclick="goTo('collinear-points')"><span class="nav-num">4.2</span> Collinear Points</button>
+  </div>
+  <div class="sidebar-footer">
+    <button class="reset-btn" onclick="resetProgress()">
+      <span>🔄</span> Reset Progress
+    </button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">DPEN21 Week 4 &nbsp;›&nbsp; <span id="breadcrumbPage">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="collapseAll()">Collapse All</button>
+      <button class="tb-btn" onclick="expandAll()">Expand All</button>
+      <button class="tb-btn primary" onclick="goTo('angle-inclination')">Start Learning →</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+<!-- ══════════════════════════════════════════════════════════════
+     HOME
+══════════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="page-hero">
+    <div class="page-hero-label">DPEN21 · Week 4</div>
+    <div class="page-hero-title">Lines and Functions</div>
+    <div class="page-hero-sub">Explore the angle of inclination, collinear points, and more advanced concepts in coordinate geometry and functions.</div>
+  </div>
+
+  <div class="overview-grid">
+    <div class="overview-card">
+      <div class="overview-card-label">TOPIC 4.1</div>
+      <div class="overview-card-title">Angle of Inclination</div>
+      <div class="overview-card-desc">Learn the relationship between gradient and the angle a line makes with the positive x-axis. Master the formula \( m = \tan\theta \).</div>
+    </div>
+
+    <div class="overview-card">
+      <div class="overview-card-label">TOPIC 4.2</div>
+      <div class="overview-card-title">Collinear Points</div>
+      <div class="overview-card-desc">Determine whether three or more points lie on the same straight line by comparing gradients.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TOPIC 4.1: ANGLE OF INCLINATION
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-angle-inclination">
+  <div class="page-hero">
+    <div class="page-hero-label">TOPIC 4.1</div>
+    <div class="page-hero-title">Angle of Inclination</div>
+    <div class="page-hero-sub">Explore the relationship between the gradient of a line and the angle it makes with the positive x-axis.</div>
+  </div>
+
+  <!-- DPEN Block 1: Definition -->
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-label definition">DEFINITION</span>
+      <span class="dpen-title">Angle of Inclination</span>
+      <div class="dpen-chevron"></div>
+    </div>
+    <div class="dpen-body">
+      <div class="dpen-content">
+        <p>The <strong>angle of inclination</strong> of a line is the angle \( \theta \) measured anti-clockwise from the positive x-axis to the line.</p>
+        <p>The angle of inclination is always in the range \( 0° \leq \theta \leq 180° \).</p>
+        <div class="formula">
+          \( 0° \leq \theta \leq 180° \)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DPEN Block 2: Pattern -->
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-label pattern">PATTERN</span>
+      <span class="dpen-title">Gradient and Angle Relationship</span>
+      <div class="dpen-chevron"></div>
+    </div>
+    <div class="dpen-body">
+      <div class="dpen-content">
+        <p>The gradient \( m \) of a line is related to its angle of inclination \( \theta \) by the formula:</p>
+        <div class="formula">
+          \( m = \tan \theta \)
+        </div>
+        <p>This means:</p>
+        <ul>
+          <li>If \( m > 0 \), then \( 0° < \theta < 90° \) (acute angle)</li>
+          <li>If \( m < 0 \), then \( 90° < \theta < 180° \) (obtuse angle)</li>
+          <li>If \( m = 0 \), then \( \theta = 0° \) (horizontal line)</li>
+          <li>If the line is vertical, then \( \theta = 90° \) (gradient undefined)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DPEN Block 3: Example -->
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-label example">EXAMPLE</span>
+      <span class="dpen-title">Finding the Angle of Inclination</span>
+      <div class="dpen-chevron"></div>
+    </div>
+    <div class="dpen-body">
+      <div class="dpen-content">
+        <p><strong>Question:</strong> Find the angle of inclination of the line passing through the points \( A(1, 2) \) and \( B(4, 8) \).</p>
+
+        <p><strong>Solution:</strong></p>
+        <p><strong>Step 1:</strong> Find the gradient using \( m = \frac{y_2 - y_1}{x_2 - x_1} \)</p>
+        <p>\( m = \frac{8 - 2}{4 - 1} = \frac{6}{3} = 2 \)</p>
+
+        <p><strong>Step 2:</strong> Use \( m = \tan \theta \) to find \( \theta \)</p>
+        <p>\( 2 = \tan \theta \)</p>
+        <p>\( \theta = \tan^{-1}(2) \)</p>
+        <p>\( \theta \approx 63.4° \)</p>
+
+        <p><strong>Answer:</strong> The angle of inclination is approximately \( 63.4° \).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DPEN Block 4: Note -->
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-label note">NOTE</span>
+      <span class="dpen-title">Working with Obtuse Angles</span>
+      <div class="dpen-chevron"></div>
+    </div>
+    <div class="dpen-body">
+      <div class="dpen-content">
+        <p>When the gradient is negative, the angle of inclination is obtuse (between 90° and 180°).</p>
+        <p>For example, if \( m = -1 \), then:</p>
+        <p>\( \tan \theta = -1 \)</p>
+        <p>Your calculator will give \( \theta = -45° \), but we need \( 0° \leq \theta \leq 180° \).</p>
+        <p>So we add 180°: \( \theta = -45° + 180° = 135° \)</p>
+        <p><strong>General rule:</strong> If your calculator gives a negative angle, add 180° to get the angle of inclination.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Practice Problems -->
+  <div class="practice-section">
+    <div class="practice-section-title">Practice Problems</div>
+
+    <!-- Problem 1 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">1</div>
+        <div class="problem-text">Find the angle of inclination of the line passing through \( A(2, 3) \) and \( B(5, 9) \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            First find the gradient using \( m = \frac{y_2 - y_1}{x_2 - x_1} \), then use \( \theta = \tan^{-1}(m) \).
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find the gradient</p>
+              <p>\( m = \frac{9 - 3}{5 - 2} = \frac{6}{3} = 2 \)</p>
+
+              <p><strong>Step 2:</strong> Find the angle</p>
+              <p>\( \theta = \tan^{-1}(2) \approx 63.4° \)</p>
+
+              <p><strong>Answer:</strong> \( \theta \approx 63.4° \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 2 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">2</div>
+        <div class="problem-text">A line has an angle of inclination of \( 30° \). What is its gradient?</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Use the formula \( m = \tan \theta \).
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p>\( m = \tan(30°) = \frac{1}{\sqrt{3}} \approx 0.577 \)</p>
+
+              <p><strong>Answer:</strong> \( m = \frac{1}{\sqrt{3}} \approx 0.577 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 3 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">3</div>
+        <div class="problem-text">Find the angle of inclination of the line passing through \( P(-2, 5) \) and \( Q(3, -1) \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            The gradient will be negative, so the angle will be obtuse. Remember to add 180° to the calculator result.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find the gradient</p>
+              <p>\( m = \frac{-1 - 5}{3 - (-2)} = \frac{-6}{5} = -1.2 \)</p>
+
+              <p><strong>Step 2:</strong> Find the angle</p>
+              <p>\( \tan \theta = -1.2 \)</p>
+              <p>Calculator gives: \( \theta \approx -50.2° \)</p>
+              <p>Since this is negative, add 180°: \( \theta = -50.2° + 180° = 129.8° \)</p>
+
+              <p><strong>Answer:</strong> \( \theta \approx 129.8° \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 4 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">4</div>
+        <div class="problem-text">A line has gradient \( m = \sqrt{3} \). Find its angle of inclination.</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            This is a standard angle. Think about special triangles.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p>\( m = \tan \theta = \sqrt{3} \)</p>
+              <p>\( \theta = \tan^{-1}(\sqrt{3}) = 60° \)</p>
+
+              <p><strong>Answer:</strong> \( \theta = 60° \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 5 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">5</div>
+        <div class="problem-text">Find the equation of the line passing through \( (2, 5) \) with an angle of inclination of \( 45° \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            First find the gradient using \( m = \tan(45°) \), then use the point-gradient form \( y - y_1 = m(x - x_1) \).
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find the gradient</p>
+              <p>\( m = \tan(45°) = 1 \)</p>
+
+              <p><strong>Step 2:</strong> Use point-gradient form</p>
+              <p>\( y - 5 = 1(x - 2) \)</p>
+              <p>\( y - 5 = x - 2 \)</p>
+              <p>\( y = x + 3 \)</p>
+
+              <p><strong>Answer:</strong> \( y = x + 3 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 6 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">6</div>
+        <div class="problem-text">A line has an angle of inclination of \( 120° \). What is its gradient?</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Use \( m = \tan(120°) \). The gradient will be negative since the angle is obtuse.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p>\( m = \tan(120°) = -\sqrt{3} \approx -1.732 \)</p>
+
+              <p><strong>Answer:</strong> \( m = -\sqrt{3} \approx -1.732 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 7 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">7</div>
+        <div class="problem-text">Find the angle of inclination of the line \( 2y - 3x + 6 = 0 \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            First rearrange to slope-intercept form \( y = mx + c \) to find the gradient.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Rearrange to find gradient</p>
+              <p>\( 2y - 3x + 6 = 0 \)</p>
+              <p>\( 2y = 3x - 6 \)</p>
+              <p>\( y = \frac{3}{2}x - 3 \)</p>
+              <p>So \( m = \frac{3}{2} = 1.5 \)</p>
+
+              <p><strong>Step 2:</strong> Find the angle</p>
+              <p>\( \theta = \tan^{-1}(1.5) \approx 56.3° \)</p>
+
+              <p><strong>Answer:</strong> \( \theta \approx 56.3° \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 8 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">8</div>
+        <div class="problem-text">Two lines have angles of inclination \( 30° \) and \( 60° \). Find the product of their gradients.</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Find each gradient separately using \( m = \tan \theta \), then multiply them.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find gradient of first line</p>
+              <p>\( m_1 = \tan(30°) = \frac{1}{\sqrt{3}} \)</p>
+
+              <p><strong>Step 2:</strong> Find gradient of second line</p>
+              <p>\( m_2 = \tan(60°) = \sqrt{3} \)</p>
+
+              <p><strong>Step 3:</strong> Find the product</p>
+              <p>\( m_1 \times m_2 = \frac{1}{\sqrt{3}} \times \sqrt{3} = 1 \)</p>
+
+              <p><strong>Answer:</strong> The product is \( 1 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 9 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">9</div>
+        <div class="problem-text">A line passes through the origin and has an angle of inclination of \( 135° \). Write its equation.</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Find the gradient first. Since the line passes through the origin, \( c = 0 \) in \( y = mx + c \).
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find the gradient</p>
+              <p>\( m = \tan(135°) = -1 \)</p>
+
+              <p><strong>Step 2:</strong> Write the equation</p>
+              <p>Since it passes through the origin: \( y = mx \)</p>
+              <p>\( y = -x \)</p>
+
+              <p><strong>Answer:</strong> \( y = -x \) or \( x + y = 0 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 10 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">10</div>
+        <div class="problem-text">Find the angle of inclination of the line passing through \( M(0, 4) \) and \( N(4, 0) \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            This line has a negative gradient. Don't forget to add 180° to your calculator result.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find the gradient</p>
+              <p>\( m = \frac{0 - 4}{4 - 0} = \frac{-4}{4} = -1 \)</p>
+
+              <p><strong>Step 2:</strong> Find the angle</p>
+              <p>\( \tan \theta = -1 \)</p>
+              <p>Calculator gives: \( \theta = -45° \)</p>
+              <p>Add 180°: \( \theta = -45° + 180° = 135° \)</p>
+
+              <p><strong>Answer:</strong> \( \theta = 135° \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 11 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">11</div>
+        <div class="problem-text">A line has gradient \( m = -\frac{1}{2} \). Is its angle of inclination acute or obtuse? Find the exact value.</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Since the gradient is negative, the angle is obtuse (between 90° and 180°).
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p>Since \( m = -\frac{1}{2} < 0 \), the angle is <strong>obtuse</strong>.</p>
+
+              <p>\( \tan \theta = -\frac{1}{2} \)</p>
+              <p>Calculator gives: \( \theta \approx -26.6° \)</p>
+              <p>Add 180°: \( \theta = -26.6° + 180° = 153.4° \)</p>
+
+              <p><strong>Answer:</strong> Obtuse, \( \theta \approx 153.4° \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 12 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">12</div>
+        <div class="problem-text">Find the equation of the line with angle of inclination \( 150° \) passing through \( (3, -2) \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            First find \( m = \tan(150°) \), then use point-gradient form.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find the gradient</p>
+              <p>\( m = \tan(150°) = -\frac{1}{\sqrt{3}} \approx -0.577 \)</p>
+
+              <p><strong>Step 2:</strong> Use point-gradient form</p>
+              <p>\( y - (-2) = -\frac{1}{\sqrt{3}}(x - 3) \)</p>
+              <p>\( y + 2 = -\frac{1}{\sqrt{3}}(x - 3) \)</p>
+              <p>\( y = -\frac{1}{\sqrt{3}}x + \frac{3}{\sqrt{3}} - 2 \)</p>
+              <p>\( y = -\frac{1}{\sqrt{3}}x + \sqrt{3} - 2 \)</p>
+
+              <p><strong>Answer:</strong> \( y = -\frac{1}{\sqrt{3}}x + \sqrt{3} - 2 \) or \( y \approx -0.577x - 0.268 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TOPIC 4.2: COLLINEAR POINTS
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-collinear-points">
+  <div class="page-hero">
+    <div class="page-hero-label">TOPIC 4.2</div>
+    <div class="page-hero-title">Collinear Points</div>
+    <div class="page-hero-sub">Learn how to determine whether three or more points lie on the same straight line.</div>
+  </div>
+
+  <!-- DPEN Block 1: Definition -->
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-label definition">DEFINITION</span>
+      <span class="dpen-title">Collinear Points</span>
+      <div class="dpen-chevron"></div>
+    </div>
+    <div class="dpen-body">
+      <div class="dpen-content">
+        <p>Three or more points are said to be <strong>collinear</strong> if they all lie on the same straight line.</p>
+        <p>To test if points are collinear, we check whether the gradients between consecutive pairs of points are equal.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DPEN Block 2: Pattern -->
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-label pattern">PATTERN</span>
+      <span class="dpen-title">Testing for Collinearity</span>
+      <div class="dpen-chevron"></div>
+    </div>
+    <div class="dpen-body">
+      <div class="dpen-content">
+        <p>For three points \( A \), \( B \), and \( C \) to be collinear:</p>
+        <div class="formula">
+          \( m_{AB} = m_{BC} = m_{AC} \)
+        </div>
+        <p>You only need to show that <strong>two</strong> of these gradients are equal.</p>
+        <p>For example, if \( m_{AB} = m_{BC} \), then \( A \), \( B \), and \( C \) are collinear.</p>
+        <p><strong>Remember:</strong> Use the gradient formula \( m = \frac{y_2 - y_1}{x_2 - x_1} \)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DPEN Block 3: Example -->
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-label example">EXAMPLE</span>
+      <span class="dpen-title">Testing if Points are Collinear</span>
+      <div class="dpen-chevron"></div>
+    </div>
+    <div class="dpen-body">
+      <div class="dpen-content">
+        <p><strong>Question:</strong> Determine whether the points \( A(1, 2) \), \( B(3, 6) \), and \( C(5, 10) \) are collinear.</p>
+
+        <p><strong>Solution:</strong></p>
+        <p><strong>Step 1:</strong> Find the gradient from A to B</p>
+        <p>\( m_{AB} = \frac{6 - 2}{3 - 1} = \frac{4}{2} = 2 \)</p>
+
+        <p><strong>Step 2:</strong> Find the gradient from B to C</p>
+        <p>\( m_{BC} = \frac{10 - 6}{5 - 3} = \frac{4}{2} = 2 \)</p>
+
+        <p><strong>Step 3:</strong> Compare the gradients</p>
+        <p>Since \( m_{AB} = m_{BC} = 2 \), the points are <strong>collinear</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DPEN Block 4: Note -->
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-label note">NOTE</span>
+      <span class="dpen-title">Finding Unknown Coordinates</span>
+      <div class="dpen-chevron"></div>
+    </div>
+    <div class="dpen-body">
+      <div class="dpen-content">
+        <p>You can use collinearity to find unknown coordinates.</p>
+        <p><strong>Example:</strong> If \( A(2, 3) \), \( B(4, 7) \), and \( C(6, k) \) are collinear, find \( k \).</p>
+
+        <p><strong>Solution:</strong></p>
+        <p>Since the points are collinear: \( m_{AB} = m_{BC} \)</p>
+        <p>\( \frac{7 - 3}{4 - 2} = \frac{k - 7}{6 - 4} \)</p>
+        <p>\( \frac{4}{2} = \frac{k - 7}{2} \)</p>
+        <p>\( 2 = \frac{k - 7}{2} \)</p>
+        <p>\( 4 = k - 7 \)</p>
+        <p>\( k = 11 \)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Practice Problems -->
+  <div class="practice-section">
+    <div class="practice-section-title">Practice Problems</div>
+
+    <!-- Problem 1 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">1</div>
+        <div class="problem-text">Are the points \( A(1, 3) \), \( B(2, 5) \), and \( C(4, 9) \) collinear?</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Find \( m_{AB} \) and \( m_{BC} \). If they're equal, the points are collinear.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find \( m_{AB} \)</p>
+              <p>\( m_{AB} = \frac{5 - 3}{2 - 1} = \frac{2}{1} = 2 \)</p>
+
+              <p><strong>Step 2:</strong> Find \( m_{BC} \)</p>
+              <p>\( m_{BC} = \frac{9 - 5}{4 - 2} = \frac{4}{2} = 2 \)</p>
+
+              <p><strong>Step 3:</strong> Compare</p>
+              <p>Since \( m_{AB} = m_{BC} = 2 \), the points <strong>are collinear</strong>.</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 2 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">2</div>
+        <div class="problem-text">Are the points \( P(0, 1) \), \( Q(2, 4) \), and \( R(5, 8) \) collinear?</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Calculate both gradients carefully and compare them.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find \( m_{PQ} \)</p>
+              <p>\( m_{PQ} = \frac{4 - 1}{2 - 0} = \frac{3}{2} = 1.5 \)</p>
+
+              <p><strong>Step 2:</strong> Find \( m_{QR} \)</p>
+              <p>\( m_{QR} = \frac{8 - 4}{5 - 2} = \frac{4}{3} \approx 1.33 \)</p>
+
+              <p><strong>Step 3:</strong> Compare</p>
+              <p>Since \( m_{PQ} \neq m_{QR} \), the points <strong>are NOT collinear</strong>.</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 3 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">3</div>
+        <div class="problem-text">If \( A(1, 2) \), \( B(3, 6) \), and \( C(5, k) \) are collinear, find the value of \( k \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Set \( m_{AB} = m_{BC} \) and solve for \( k \).
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find \( m_{AB} \)</p>
+              <p>\( m_{AB} = \frac{6 - 2}{3 - 1} = \frac{4}{2} = 2 \)</p>
+
+              <p><strong>Step 2:</strong> Set up equation</p>
+              <p>Since collinear: \( m_{BC} = m_{AB} \)</p>
+              <p>\( \frac{k - 6}{5 - 3} = 2 \)</p>
+              <p>\( \frac{k - 6}{2} = 2 \)</p>
+              <p>\( k - 6 = 4 \)</p>
+              <p>\( k = 10 \)</p>
+
+              <p><strong>Answer:</strong> \( k = 10 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 4 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">4</div>
+        <div class="problem-text">The points \( M(-2, 5) \), \( N(0, 1) \), and \( P(3, y) \) are collinear. Find \( y \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            First find the gradient from M to N, then use it to find y.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find \( m_{MN} \)</p>
+              <p>\( m_{MN} = \frac{1 - 5}{0 - (-2)} = \frac{-4}{2} = -2 \)</p>
+
+              <p><strong>Step 2:</strong> Set up equation</p>
+              <p>\( m_{NP} = m_{MN} \)</p>
+              <p>\( \frac{y - 1}{3 - 0} = -2 \)</p>
+              <p>\( \frac{y - 1}{3} = -2 \)</p>
+              <p>\( y - 1 = -6 \)</p>
+              <p>\( y = -5 \)</p>
+
+              <p><strong>Answer:</strong> \( y = -5 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 5 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">5</div>
+        <div class="problem-text">Show that the points \( A(2, -1) \), \( B(5, 5) \), and \( C(6, 7) \) are collinear.</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Calculate two gradients and show they are equal.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find \( m_{AB} \)</p>
+              <p>\( m_{AB} = \frac{5 - (-1)}{5 - 2} = \frac{6}{3} = 2 \)</p>
+
+              <p><strong>Step 2:</strong> Find \( m_{BC} \)</p>
+              <p>\( m_{BC} = \frac{7 - 5}{6 - 5} = \frac{2}{1} = 2 \)</p>
+
+              <p><strong>Conclusion:</strong> Since \( m_{AB} = m_{BC} = 2 \), the points are collinear. ✓</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 6 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">6</div>
+        <div class="problem-text">Are the points \( (0, 0) \), \( (3, -6) \), and \( (-2, 4) \) collinear?</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            One of the points is the origin, which makes calculations simpler.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p>Let \( A(0, 0) \), \( B(3, -6) \), \( C(-2, 4) \)</p>
+
+              <p><strong>Step 1:</strong> Find \( m_{AB} \)</p>
+              <p>\( m_{AB} = \frac{-6 - 0}{3 - 0} = \frac{-6}{3} = -2 \)</p>
+
+              <p><strong>Step 2:</strong> Find \( m_{BC} \)</p>
+              <p>\( m_{BC} = \frac{4 - (-6)}{-2 - 3} = \frac{10}{-5} = -2 \)</p>
+
+              <p><strong>Step 3:</strong> Conclusion</p>
+              <p>Since \( m_{AB} = m_{BC} = -2 \), the points <strong>are collinear</strong>.</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 7 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">7</div>
+        <div class="problem-text">If \( P(a, 2) \), \( Q(3, 5) \), and \( R(5, 7) \) are collinear, find \( a \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            First find the gradient from Q to R, then use it to find a.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find \( m_{QR} \)</p>
+              <p>\( m_{QR} = \frac{7 - 5}{5 - 3} = \frac{2}{2} = 1 \)</p>
+
+              <p><strong>Step 2:</strong> Set up equation</p>
+              <p>\( m_{PQ} = m_{QR} \)</p>
+              <p>\( \frac{5 - 2}{3 - a} = 1 \)</p>
+              <p>\( \frac{3}{3 - a} = 1 \)</p>
+              <p>\( 3 = 3 - a \)</p>
+              <p>\( a = 0 \)</p>
+
+              <p><strong>Answer:</strong> \( a = 0 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 8 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">8</div>
+        <div class="problem-text">Four points \( A(1, 2) \), \( B(2, 4) \), \( C(3, 6) \), and \( D(5, 10) \) are given. Are all four points collinear?</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            For four points to be collinear, all consecutive pairs must have the same gradient.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find \( m_{AB} \)</p>
+              <p>\( m_{AB} = \frac{4 - 2}{2 - 1} = \frac{2}{1} = 2 \)</p>
+
+              <p><strong>Step 2:</strong> Find \( m_{BC} \)</p>
+              <p>\( m_{BC} = \frac{6 - 4}{3 - 2} = \frac{2}{1} = 2 \)</p>
+
+              <p><strong>Step 3:</strong> Find \( m_{CD} \)</p>
+              <p>\( m_{CD} = \frac{10 - 6}{5 - 3} = \frac{4}{2} = 2 \)</p>
+
+              <p><strong>Conclusion:</strong> Since all gradients equal 2, all four points <strong>are collinear</strong>.</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 9 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">9</div>
+        <div class="problem-text">The points \( A(2, 1) \), \( B(x, 4) \), and \( C(8, 7) \) lie on a straight line. Find the value of \( x \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Use \( m_{AB} = m_{AC} \) to set up an equation.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find \( m_{AC} \)</p>
+              <p>\( m_{AC} = \frac{7 - 1}{8 - 2} = \frac{6}{6} = 1 \)</p>
+
+              <p><strong>Step 2:</strong> Set up equation</p>
+              <p>\( m_{AB} = m_{AC} \)</p>
+              <p>\( \frac{4 - 1}{x - 2} = 1 \)</p>
+              <p>\( \frac{3}{x - 2} = 1 \)</p>
+              <p>\( 3 = x - 2 \)</p>
+              <p>\( x = 5 \)</p>
+
+              <p><strong>Answer:</strong> \( x = 5 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 10 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">10</div>
+        <div class="problem-text">Prove that the points \( (3, 8) \), \( (5, 2) \), and \( (6, -1) \) are collinear.</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Show that the gradients between pairs of points are equal.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p>Let \( A(3, 8) \), \( B(5, 2) \), \( C(6, -1) \)</p>
+
+              <p><strong>Step 1:</strong> Find \( m_{AB} \)</p>
+              <p>\( m_{AB} = \frac{2 - 8}{5 - 3} = \frac{-6}{2} = -3 \)</p>
+
+              <p><strong>Step 2:</strong> Find \( m_{BC} \)</p>
+              <p>\( m_{BC} = \frac{-1 - 2}{6 - 5} = \frac{-3}{1} = -3 \)</p>
+
+              <p><strong>Proof:</strong> Since \( m_{AB} = m_{BC} = -3 \), the three points are collinear. ✓</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 11 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">11</div>
+        <div class="problem-text">If \( A(-1, y) \), \( B(2, 3) \), and \( C(5, 6) \) are collinear, find \( y \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            Find the gradient from B to C first, then use it to find y.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find \( m_{BC} \)</p>
+              <p>\( m_{BC} = \frac{6 - 3}{5 - 2} = \frac{3}{3} = 1 \)</p>
+
+              <p><strong>Step 2:</strong> Set up equation</p>
+              <p>\( m_{AB} = m_{BC} \)</p>
+              <p>\( \frac{3 - y}{2 - (-1)} = 1 \)</p>
+              <p>\( \frac{3 - y}{3} = 1 \)</p>
+              <p>\( 3 - y = 3 \)</p>
+              <p>\( y = 0 \)</p>
+
+              <p><strong>Answer:</strong> \( y = 0 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Problem 12 -->
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">12</div>
+        <div class="problem-text">The points \( P(k, 2k) \), \( Q(3, 8) \), and \( R(4, 11) \) are collinear. Find the value of \( k \).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-content">
+          <div class="problem-hint">
+            <strong>HINT:</strong>
+            First find the gradient from Q to R, then use it with point P to find k.
+          </div>
+
+          <div class="problem-solution">
+            <div class="problem-solution-title">SOLUTION</div>
+            <div class="problem-solution-steps">
+              <p><strong>Step 1:</strong> Find \( m_{QR} \)</p>
+              <p>\( m_{QR} = \frac{11 - 8}{4 - 3} = \frac{3}{1} = 3 \)</p>
+
+              <p><strong>Step 2:</strong> Set up equation</p>
+              <p>\( m_{PQ} = m_{QR} \)</p>
+              <p>\( \frac{8 - 2k}{3 - k} = 3 \)</p>
+              <p>\( 8 - 2k = 3(3 - k) \)</p>
+              <p>\( 8 - 2k = 9 - 3k \)</p>
+              <p>\( -2k + 3k = 9 - 8 \)</p>
+              <p>\( k = 1 \)</p>
+
+              <p><strong>Answer:</strong> \( k = 1 \)</p>
+            </div>
+          </div>
+
+          <input type="text" class="answer-box" placeholder="Type your answer here...">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+// PROGRESS TRACKING SYSTEM
+// ─────────────────────────────────────────────────────────────────
+
+const STORAGE_KEY = 'dpen21_week4_progress';
+let progressData = {
+  completedProblems: [],
+  lastVisited: null,
+  problemAnswers: {}
+};
+
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      progressData = JSON.parse(saved);
+    }
+  } catch (e) {
+    console.warn('Could not load progress:', e);
+  }
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progressData));
+  } catch (e) {
+    console.warn('Could not save progress:', e);
+  }
+}
+
+function toggleProblemComplete(problemId) {
+  const index = progressData.completedProblems.indexOf(problemId);
+  if (index === -1) {
+    progressData.completedProblems.push(problemId);
+  } else {
+    progressData.completedProblems.splice(index, 1);
+  }
+  saveProgress();
+  updateProgressBar();
+  updateProblemCheckboxes();
+}
+
+function updateProgressBar() {
+  const totalProblems = document.querySelectorAll('.problem-card').length;
+  const completedCount = progressData.completedProblems.length;
+  const percentage = totalProblems > 0 ? (completedCount / totalProblems) * 100 : 0;
+
+  const progressFill = document.querySelector('.progress-fill');
+  if (progressFill) {
+    progressFill.style.width = percentage.toFixed(1) + '%';
+  }
+
+  const progressLabel = document.querySelector('.progress-label');
+  if (progressLabel) {
+    progressLabel.textContent = `PROGRESS: ${completedCount} / ${totalProblems} PROBLEMS`;
+  }
+}
+
+function updateProblemCheckboxes() {
+  document.querySelectorAll('.problem-card').forEach((card, index) => {
+    const problemId = `problem-${index}`;
+    const checkbox = card.querySelector('.problem-checkbox');
+    if (checkbox) {
+      checkbox.checked = progressData.completedProblems.includes(problemId);
+
+      if (checkbox.checked) {
+        card.classList.add('completed');
+      } else {
+        card.classList.remove('completed');
+      }
+    }
+  });
+}
+
+function saveAnswer(problemId, value) {
+  progressData.problemAnswers[problemId] = value;
+  saveProgress();
+}
+
+function restoreAnswers() {
+  document.querySelectorAll('.answer-box').forEach((input, index) => {
+    const problemId = `problem-${index}`;
+    if (progressData.problemAnswers[problemId]) {
+      input.value = progressData.problemAnswers[problemId];
+    }
+  });
+}
+
+function resetProgress() {
+  if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+    progressData = {
+      completedProblems: [],
+      lastVisited: null,
+      problemAnswers: {}
+    };
+    saveProgress();
+    updateProgressBar();
+    updateProblemCheckboxes();
+
+    document.querySelectorAll('.answer-box').forEach(input => {
+      input.value = '';
+    });
+
+    alert('Progress has been reset!');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────────────────────────
+
+function goTo(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + pageId).classList.add('active');
+
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  event.target.closest('.nav-link')?.classList.add('active');
+
+  const pageTitles = {
+    'home': 'Overview',
+    'angle-inclination': 'Angle of Inclination',
+    'collinear-points': 'Collinear Points'
+  };
+
+  document.getElementById('breadcrumbPage').textContent = pageTitles[pageId] || 'Overview';
+
+  progressData.lastVisited = pageId;
+  saveProgress();
+
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// TOGGLE FUNCTIONS
+// ─────────────────────────────────────────────────────────────────
+
+function toggleDPEN(header) {
+  const chevron = header.querySelector('.dpen-chevron');
+  const body = header.nextElementSibling;
+  chevron.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function toggleProblem(header) {
+  const chevron = header.querySelector('.problem-chevron');
+  const body = header.nextElementSibling;
+  chevron.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function expandAll() {
+  document.querySelectorAll('.dpen-body').forEach(body => {
+    body.classList.add('open');
+    body.previousElementSibling.querySelector('.dpen-chevron').classList.add('open');
+  });
+}
+
+function collapseAll() {
+  document.querySelectorAll('.dpen-body').forEach(body => {
+    body.classList.remove('open');
+    body.previousElementSibling.querySelector('.dpen-chevron').classList.remove('open');
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────
+// INITIALIZATION
+// ─────────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadProgress();
+
+  document.querySelectorAll('.problem-card').forEach((card, index) => {
+    const problemId = `problem-${index}`;
+    const header = card.querySelector('.problem-header');
+
+    if (header) {
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'problem-checkbox';
+      checkbox.title = 'Mark as complete';
+      checkbox.addEventListener('change', () => toggleProblemComplete(problemId));
+
+      header.insertBefore(checkbox, header.firstChild);
+    }
+  });
+
+  document.querySelectorAll('.answer-box').forEach((input, index) => {
+    const problemId = `problem-${index}`;
+    input.addEventListener('input', (e) => saveAnswer(problemId, e.target.value));
+  });
+
+  updateProgressBar();
+  updateProblemCheckboxes();
+  restoreAnswers();
+
+  if (progressData.lastVisited && document.getElementById('page-' + progressData.lastVisited)) {
+    goTo(progressData.lastVisited);
+  }
+
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: '\\[', right: '\\]', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ],
+    throwOnError: false
+  });
+});
+</script>
+
+</body>
+</html>
