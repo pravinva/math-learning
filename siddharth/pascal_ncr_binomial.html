@@ -253,6 +253,26 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--t
 .id-op{font-size:22px;color:var(--text-muted);flex-shrink:0;display:flex;align-items:center;padding:0 1px}
 .id-note{font-size:11px;color:var(--text-muted);margin-top:8px;font-style:italic;line-height:1.4}
 
+/* Problem-first layout */
+.id-problem{background:var(--navy);color:white;border-radius:8px;padding:10px 13px;margin-bottom:8px}
+.id-prob-label{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:5px}
+.id-prob-val{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px}
+.id-pool-label{font-size:10px;color:var(--text-muted);margin:5px 0 2px}
+.person-chips{display:flex;flex-wrap:wrap;gap:3px;margin:4px 0 2px}
+.pchip{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;border:1px solid;line-height:1.7}
+.pchip-normal{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.85)}
+.pchip-focus{background:var(--orange);border-color:var(--orange);color:white}
+.pchip-pool{background:var(--blue-lt);border-color:var(--blue);color:var(--blue)}
+.id-decision{display:flex;align-items:flex-start;gap:7px;margin:7px 2px 9px}
+.id-dec-arrow{font-size:15px;color:var(--text-muted);flex-shrink:0;line-height:1.4}
+.id-dec-text{font-size:12px;color:var(--text);line-height:1.55}
+.id-outcomes{display:flex;align-items:stretch;gap:5px;margin-bottom:8px}
+.id-choosing{font-size:10px;color:var(--text-muted);margin:5px 0 1px}
+.id-from{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px;line-height:1.1}
+.id-in .id-from{color:var(--blue)} .id-out .id-from{color:#3a3835}
+.id-result-row{background:var(--orange-lt);border:1.5px solid var(--orange);border-radius:7px;padding:8px 13px;font-size:13px;text-align:center;line-height:1.5;color:var(--text)}
+.id-result-row strong{color:var(--orange);font-weight:700;font-size:15px}
+
 /* Cell role badges (IN / OUT on parent cells) */
 .par[data-role]::after{
   content:attr(data-role);
@@ -788,40 +808,69 @@ function renderIdentityBox(n,r){
   if(n===0||r===0||r===n){box.classList.remove('show');return;}
 
   const val=C[n][r], p1=C[n-1][r-1], p2=C[n-1][r];
-  const focusName = n<=9 ? NAMES[n] : `person ${n}`;
-  const pool = n<=6
-    ? '{'+NAMES.slice(1,n).join(', ')+'}'
-    : `the other ${n-1} people`;
+  const focusName=n<=9?NAMES[n]:`Person ${n}`;
+
+  // All n people as chips — focus person in orange
+  function fullChips(){
+    let h='<div class="person-chips">';
+    for(let i=1;i<=n;i++){
+      const nm=i<=9?NAMES[i]:`P${i}`;
+      h+=`<span class="pchip ${i===n?'pchip-focus':'pchip-normal'}">${nm}</span>`;
+    }
+    return h+'</div>';
+  }
+
+  // The n-1 remaining people (everyone except person n) as chips
+  function poolChips(){
+    let h='<div class="person-chips">';
+    for(let i=1;i<n;i++){
+      const nm=i<=9?NAMES[i]:`P${i}`;
+      h+=`<span class="pchip pchip-pool">${nm}</span>`;
+    }
+    return h+'</div>';
+  }
 
   box.innerHTML=`
     <div class="id-title">Pascal's Identity — live example</div>
-    <div class="id-focus">
-      Choosing ${r} from ${n} people. Focus on <strong>${focusName}</strong>.<br>
-      They are either <strong style="color:var(--blue)">in</strong> the group or <strong style="color:var(--text-muted)">out</strong>. No third option. That one decision drops the problem from row ${n} → row ${n-1}.
+
+    <div class="id-problem">
+      <div class="id-prob-label">The problem — choosing ${r} from these ${n} people</div>
+      ${fullChips()}
+      <div class="id-prob-val">C(${n}, ${r}) = ${val} different groups possible</div>
     </div>
-    <div class="id-cards">
+
+    <div class="id-decision">
+      <div class="id-dec-arrow">↓</div>
+      <div class="id-dec-text">Focus on <strong style="color:var(--orange)">${focusName}</strong>.
+        In the group or not? One decision — two sub-problems, both now in row&nbsp;${n-1}.</div>
+    </div>
+
+    <div class="id-outcomes">
       <div class="id-card id-in">
         <div class="id-ctag">${focusName} IN ✓</div>
+        <div class="id-pool-label">1 slot used. Pick ${r-1} more from:</div>
+        ${poolChips()}
+        <div class="id-choosing">now choosing</div>
+        <div class="id-from">${r-1} from ${n-1}</div>
         <div class="id-cval">${p1}</div>
-        <div class="id-ceq">C(${n-1}, ${r-1})</div>
-        <div class="id-csub">1 spot filled.<br>Pick ${r-1} more from<br>${pool}</div>
+        <div class="id-ceq">C(${n-1},\u2009${r-1})</div>
       </div>
       <div class="id-op">+</div>
       <div class="id-card id-out">
         <div class="id-ctag">${focusName} OUT ✗</div>
+        <div class="id-pool-label">${focusName} gone. Pick all ${r} from:</div>
+        ${poolChips()}
+        <div class="id-choosing">now choosing</div>
+        <div class="id-from">${r} from ${n-1}</div>
         <div class="id-cval">${p2}</div>
-        <div class="id-ceq">C(${n-1}, ${r})</div>
-        <div class="id-csub">${focusName} ignored.<br>Pick all ${r} from<br>${pool}</div>
-      </div>
-      <div class="id-op">=</div>
-      <div class="id-card id-tot">
-        <div class="id-ctag">Total</div>
-        <div class="id-cval">${val}</div>
-        <div class="id-ceq">C(${n}, ${r})</div>
-        <div class="id-csub">Groups of ${r}<br>from ${n} people</div>
+        <div class="id-ceq">C(${n-1},\u2009${r})</div>
       </div>
     </div>
-    <div class="id-note">↑ The two blue cells in the triangle are exactly these two numbers. That's all Pascal's Identity is.</div>
+
+    <div class="id-result-row">
+      ${p1} + ${p2} = <strong>${val}</strong> &nbsp;=&nbsp; C(${n},&thinsp;${r}) ✓
+    </div>
+    <div class="id-note">↑ The two blue cells in the triangle are these exact two numbers.</div>
   `;
   box.classList.add('show');
 }
