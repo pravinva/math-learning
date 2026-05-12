@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pascal · C(n,r) · Binomial — Connected Visualiser</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══ TOKENS ══════════════════════════════════════════════════ */
+:root{
+  --navy:#1B3A5C; --navy-lt:#1e4570; --navy-xlt:#EEF4FB;
+  --orange:#FF3621; --orange-lt:#fff5f3; --orange-md:#ffd6d0;
+  --blue:#185FA5; --blue-lt:#E6F1FB;
+  --green:#0a5c3f; --green-lt:#E1F5EE;
+  --amber-lt:#FAEEDA; --amber:#7A4800;
+  --grey-lt:#F6F5F2; --grey-md:#e8e6e0;
+  --text:#2c2a28; --text-muted:#6b6762;
+  /* diagonal palette */
+  --d0:#1B3A5C; --d1:#185FA5; --d2:#0a5c3f; --d3:#7A4800; --d4:#8a2f1a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--text);min-height:100vh}
+
+/* ═══ PAGE ════════════════════════════════════════════════════ */
+.app{max-width:1160px;margin:0 auto;padding:24px 20px 60px}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:18px 0 22px;border-bottom:2px solid var(--grey-md);margin-bottom:20px}
+.hero-badge{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--orange);text-transform:uppercase;margin-bottom:6px}
+.hero-title{font-family:'Crimson Pro',Georgia,serif;font-size:30px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.hero-sub{font-size:14px;color:var(--text-muted);margin-bottom:14px}
+
+.cs-strip{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap}
+.cs-item{padding:6px 13px;border-radius:8px;font-size:12px;font-weight:500;letter-spacing:.01em}
+.cs-p{background:var(--orange-lt);color:var(--orange);border:1.5px solid var(--orange)}
+.cs-n{background:var(--blue-lt);color:var(--blue);border:1.5px solid var(--blue)}
+.cs-b{background:var(--green-lt);color:var(--green);border:1.5px solid var(--green)}
+.cs-arr{font-size:11px;color:var(--text-muted);font-style:italic}
+.sel-pill{background:var(--navy);color:white;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:500;display:none;animation:popIn .25s ease}
+.sel-pill.show{display:inline-block}
+@keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+
+/* ── MAIN GRID ── */
+.main-grid{display:grid;grid-template-columns:468px 1fr;gap:16px;align-items:start}
+.right-col{display:flex;flex-direction:column;gap:16px}
+
+/* ── PANELS ── */
+.panel{background:white;border:1px solid var(--grey-md);border-radius:12px;overflow:hidden}
+.panel-hd{padding:13px 18px;border-bottom:1px solid var(--grey-md);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.panel-title{font-family:'Crimson Pro',Georgia,serif;font-size:17px;font-weight:600;color:var(--navy)}
+.badge{font-size:9px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.b-or{background:var(--orange-lt);color:var(--orange)}
+.b-bl{background:var(--blue-lt);color:var(--blue)}
+.b-gr{background:var(--green-lt);color:var(--green)}
+
+/* ── PATTERN BUTTONS ── */
+.pat-btns{display:flex;gap:5px;padding:9px 13px;border-bottom:1px solid var(--grey-md);flex-wrap:wrap}
+.pb{padding:4px 10px;border-radius:6px;border:1px solid var(--grey-md);background:var(--grey-lt);font-size:11px;color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.pb:hover{border-color:var(--navy);color:var(--navy)}
+.pb.active{background:var(--navy);color:white;border-color:var(--navy)}
+
+/* ── TRIANGLE ── */
+.tri-area{padding:12px 6px 8px;overflow-x:auto}
+#tri{display:flex;flex-direction:column;gap:3px;min-width:410px}
+.tri-row{display:flex;align-items:center}
+.row-lbl{font-size:9px;color:var(--text-muted);width:33px;text-align:right;padding-right:5px;flex-shrink:0}
+.cells-wrap{display:flex;gap:3px}
+.row-sum{font-size:9px;color:var(--text-muted);padding-left:6px;width:54px;flex-shrink:0;line-height:1.3}
+
+.tc{
+  width:38px;height:38px;border-radius:7px;border:1.5px solid var(--grey-md);
+  background:white;color:var(--navy);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;
+  position:relative;z-index:1;display:flex;align-items:center;justify-content:center
+}
+.tc:hover{border-color:var(--navy);background:var(--grey-lt);z-index:2}
+.tc.row-hi{background:#fff7f5;border-color:var(--orange-md)}
+.tc.par{background:var(--blue-lt);border-color:var(--blue);z-index:2}
+.tc.sel{
+  background:var(--orange);border-color:var(--orange);color:white;
+  transform:scale(1.13);z-index:4;
+  box-shadow:0 3px 12px rgba(255,54,33,.38)
+}
+/* Pattern states */
+.tc.odd{background:var(--navy);color:white;border-color:var(--navy-lt)}
+.tc.even{background:var(--grey-lt);color:var(--grey-md);border-color:var(--grey-md)}
+
+.tri-foot{font-size:10px;color:var(--text-muted);padding:5px 14px 10px;border-top:1px solid var(--grey-md);display:flex;gap:14px;flex-wrap:wrap}
+.tri-foot span{display:flex;align-items:center;gap:5px}
+.swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+
+#diag-key{padding:8px 13px;border-top:1px solid var(--grey-md);display:none;flex-wrap:wrap;gap:8px}
+.dk{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-muted)}
+.dk-sw{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+
+/* ── PANEL BODY ── */
+.pbody{padding:15px 17px;max-height:380px;overflow-y:auto}
+.pbody-scroll{padding:15px 17px}
+.empty-msg{color:var(--text-muted);font-size:13px;padding:24px;text-align:center;font-style:italic}
+
+/* ── NCR PANEL ── */
+.result-row{display:flex;align-items:baseline;gap:10px;padding:8px 0 13px;border-bottom:2px solid var(--grey-md);margin-bottom:13px}
+.r-nr{font-family:'Crimson Pro',Georgia,serif;font-size:22px;font-weight:600;color:var(--navy)}
+.r-eq{font-size:16px;color:var(--text-muted)}
+.r-val{font-family:'Crimson Pro',Georgia,serif;font-size:44px;font-weight:600;color:var(--orange);line-height:1}
+
+.steps{margin:2px 0 12px}
+.sr{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--grey-lt);align-items:flex-start}
+.sr:last-child{border-bottom:none}
+.stag{font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);min-width:68px;padding-top:2px;flex-shrink:0;line-height:1.3}
+.smath{flex:1;font-size:13px;line-height:1.6;overflow-x:auto}
+
+.cb{border-radius:0 8px 8px 0;padding:9px 13px;margin:8px 0}
+.cb-b{background:var(--blue-lt);border-left:3px solid var(--blue)}
+.cb-a{background:var(--amber-lt);border-left:3px solid #c07a00}
+.cb .ct{font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.cb-b .ct{color:var(--blue)} .cb-a .ct{color:var(--amber)}
+.cb .cm{font-size:13px;line-height:1.6;margin-bottom:3px;overflow-x:auto}
+.cb .cn{font-size:11px;color:var(--text-muted);line-height:1.4}
+
+.dots-box{background:var(--grey-lt);border-radius:8px;padding:10px 12px;margin-top:10px}
+.dots-lbl{font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px}
+.dots-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px}
+.dot{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--grey-md);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:var(--text-muted);background:white;transition:all .2s}
+.dot.on{background:var(--orange);border-color:var(--orange);color:white}
+.dots-note{font-size:11px;color:var(--text-muted);line-height:1.4}
+
+/* ── BINOMIAL PANEL ── */
+.binom-eq{text-align:center;font-size:14px;padding:4px 0 10px;border-bottom:1px solid var(--grey-md);margin-bottom:11px;overflow-x:auto}
+.terms-row{display:flex;align-items:center;gap:4px;overflow-x:auto;padding:4px 0 10px;-webkit-overflow-scrolling:touch}
+.term{min-width:64px;padding:8px 5px;border-radius:8px;border:1.5px solid var(--grey-md);text-align:center;flex-shrink:0;background:var(--grey-lt);transition:all .2s;cursor:default}
+.term.tsel{background:var(--orange-lt);border-color:var(--orange);transform:scale(1.07)}
+.term-r{font-size:8px;color:var(--text-muted);margin-bottom:3px}
+.term-v{font-size:14px;font-weight:600;color:var(--navy);font-family:'Crimson Pro',Georgia,serif;line-height:1}
+.term-c{font-size:8px;color:var(--text-muted);margin-top:3px}
+.term.tsel .term-v{color:var(--orange)}
+.tplus{font-size:14px;color:var(--text-muted);flex-shrink:0}
+
+.td{background:var(--grey-lt);border-radius:8px;padding:10px 13px;margin:6px 0}
+.td-lbl{font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
+.td-m{font-size:14px;line-height:1.6;overflow-x:auto;margin-bottom:5px}
+.td-conn{font-size:12px;color:var(--text-muted);line-height:1.5}
+.td-conn strong{color:var(--orange)}
+
+.why{background:var(--green-lt);border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:10px 13px;margin-top:8px}
+.why-t{font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:5px}
+.why-b{font-size:12px;color:var(--text);line-height:1.65}
+.why-b p{margin-bottom:5px}
+.why-b p:last-child{margin-bottom:0}
+
+/* ── CONNECTION BAR ── */
+.conn-bar{background:var(--navy);color:rgba(255,255,255,.9);border-radius:10px;padding:14px 22px;margin-top:16px;font-size:13px;line-height:1.65}
+.conn-bar strong{color:white}
+
+/* orange inline */
+.ov{color:var(--orange);font-weight:600}
+
+@media(max-width:920px){.main-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">Chapter 1 · §1.3 · Combinatorics</div>
+    <h1 class="hero-title">Pascal's Triangle · C(n, r) · Binomial Theorem</h1>
+    <p class="hero-sub">Three representations of one mathematical object — click any cell to see every connection</p>
+    <div class="cs-strip">
+      <div class="cs-item cs-p">Pascal's Triangle</div>
+      <div class="cs-arr">= same number =</div>
+      <div class="cs-item cs-n">C(n, r) formula</div>
+      <div class="cs-arr">= same number =</div>
+      <div class="cs-item cs-b">Binomial coefficient</div>
+      <div class="sel-pill" id="selPill"></div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-grid">
+
+    <!-- LEFT: Pascal's Triangle -->
+    <div class="panel">
+      <div class="panel-hd">
+        <div class="panel-title">Pascal's Triangle</div>
+        <span class="badge b-or">Geometric</span>
+      </div>
+      <div class="pat-btns">
+        <button class="pb active" data-p="values"  onclick="setPat('values')">Values</button>
+        <button class="pb"        data-p="ncr"     onclick="setPat('ncr')">C(n, r)</button>
+        <button class="pb"        data-p="odd"     onclick="setPat('odd')">Sierpiński</button>
+        <button class="pb"        data-p="diag"    onclick="setPat('diag')">Diagonals</button>
+      </div>
+      <div class="tri-area"><div id="tri"></div></div>
+      <div id="diag-key" class="diag-key"></div>
+      <div class="tri-foot">
+        <span><div class="swatch" style="background:var(--orange)"></div>Selected cell</span>
+        <span><div class="swatch" style="background:var(--blue-lt);border:1px solid var(--blue)"></div>Parents (Pascal's Rule)</span>
+        <span style="color:var(--text-muted)">Right labels = 2ⁿ (row sum)</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: stacked panels -->
+    <div class="right-col">
+
+      <!-- NCR -->
+      <div class="panel">
+        <div class="panel-hd">
+          <div class="panel-title">Combination — C(n, r)</div>
+          <span class="badge b-bl">Step-by-step</span>
+        </div>
+        <div class="pbody" id="ncr-body">
+          <div class="empty-msg">← Click any cell in Pascal's Triangle</div>
+        </div>
+      </div>
+
+      <!-- BINOMIAL -->
+      <div class="panel">
+        <div class="panel-hd">
+          <div class="panel-title">Binomial Expansion — (a + b)ⁿ</div>
+          <span class="badge b-gr">Polynomial</span>
+        </div>
+        <div class="pbody-scroll" id="binom-body">
+          <div class="empty-msg">← Click any cell in Pascal's Triangle</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONNECTION BAR -->
+  <div class="conn-bar">
+    <strong>The Key Connection:</strong>
+    When expanding (a + b)ⁿ, each term a^(n−r)·b^r arises from choosing which r of the n brackets contribute b.
+    The count of those choices is <strong>C(n, r)</strong> — and Pascal's Triangle geometrically stores all these counts:
+    every cell is the sum of the two directly above it (Pascal's Rule), because C(n,r) = C(n−1,r−1) + C(n−1,r).
+    All three — the triangle cell, the formula result, and the binomial coefficient — are exactly the same number.
+  </div>
+
+</div><!-- /app -->
+
+<script>
+/* ════════════════════════════════════════════
+   DATA
+   ════════════════════════════════════════════ */
+const NMAX = 9;  // rows 0 .. 8
+const C = Array.from({length:NMAX}, () => []);
+for(let n=0;n<NMAX;n++)
+  for(let r=0;r<=n;r++)
+    C[n][r] = (r===0||r===n) ? 1 : C[n-1][r-1]+C[n-1][r];
+
+let selN=null, selR=null, pat='values';
+
+const DCOL  = ['#1B3A5C','#185FA5','#0a5c3f','#7A4800','#8a2f1a'];
+const DNAME = ['Boundary (all 1s)','Natural numbers: 1, 2, 3 …','Triangular numbers: 1, 3, 6, 10 …','Tetrahedral: 1, 4, 10, 20 …','Pentatope: 1, 5, 15, 35 …'];
+
+/* ════════════════════════════════════════════
+   UTILS
+   ════════════════════════════════════════════ */
+function fact(n){ let r=1; for(let i=2;i<=n;i++) r*=i; return r; }
+
+function farr(n){
+  if(n===0) return ['1'];
+  const a=[]; for(let i=n;i>=1;i--) a.push(i); return a;
+}
+
+// Unicode superscripts for display (non-KaTeX)
+const SUPS = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹'];
+function sup(n){ return String(n).split('').map(c=>SUPS[+c]).join(''); }
+
+// Term as unicode string for term cards
+function termUni(n, k){
+  const v=C[n][k], ae=n-k, be=k;
+  let s='';
+  const nc = v>1||(ae===0&&be===0);
+  if(nc) s+=v;
+  if(ae===1) s+='a'; else if(ae>1) s+='a'+sup(ae);
+  if(be===1) s+='b'; else if(be>1) s+='b'+sup(be);
+  return s||'1';
+}
+
+// Term as LaTeX string
+function termTex(n, k){
+  const v=C[n][k], ae=n-k, be=k;
+  let s='';
+  const nc = v>1||(ae===0&&be===0);
+  if(nc) s+=v;
+  if(ae===1) s+='a'; else if(ae>1) s+=`a^{${ae}}`;
+  if(be===1) s+='b'; else if(be>1) s+=`b^{${be}}`;
+  return s||'1';
+}
+
+// Compute the cancellation parts for C(n,r)
+function cancelParts(n, r){
+  const big=Math.max(r,n-r), small=Math.min(r,n-r);
+  const keep=[],cancel=[],den=[];
+  for(let i=n;i>big;i--)  keep.push(i);
+  for(let i=big;i>=1;i--) cancel.push(i);
+  for(let i=small;i>=1;i--) den.push(i);
+  return {
+    keep, cancel, den, big, small,
+    numRes: keep.length ? keep.reduce((a,b)=>a*b,1) : 1,
+    denRes: den.length  ? den.reduce((a,b)=>a*b,1)  : 1
+  };
+}
+
+function rmath(el){
+  if(window.renderMathInElement)
+    renderMathInElement(el, {
+      delimiters:[
+        {left:'\\[',right:'\\]',display:true},
+        {left:'\\(',right:'\\)',display:false}
+      ],
+      throwOnError:false
+    });
+}
+
+/* ════════════════════════════════════════════
+   TRIANGLE BUILD
+   ════════════════════════════════════════════ */
+function buildTri(){
+  const root=document.getElementById('tri');
+  root.innerHTML='';
+  for(let n=0;n<NMAX;n++){
+    const row=document.createElement('div');
+    row.className='tri-row';
+
+    const lbl=document.createElement('div');
+    lbl.className='row-lbl'; lbl.textContent=`n=${n}`;
+    row.appendChild(lbl);
+
+    const cw=document.createElement('div');
+    cw.className='cells-wrap';
+    for(let r=0;r<=n;r++){
+      const btn=document.createElement('button');
+      btn.className='tc';
+      btn.dataset.n=n; btn.dataset.r=r;
+      btn.onclick=()=>select(n,r);
+      setCell(btn,n,r);
+      cw.appendChild(btn);
+    }
+    row.appendChild(cw);
+
+    const rs=document.createElement('div');
+    rs.className='row-sum';
+    rs.innerHTML=`2<sup>${n}</sup><br>=&thinsp;${1<<n}`;
+    row.appendChild(rs);
+
+    root.appendChild(row);
+  }
+  applyPat();
+  applySel();
+}
+
+function setCell(btn,n,r){
+  if(pat==='ncr'){
+    btn.textContent=`C(${n},${r})`;
+    btn.style.fontSize='8.5px';
+  } else {
+    btn.textContent=C[n][r];
+    btn.style.fontSize='';
+  }
+}
+
+/* ════════════════════════════════════════════
+   PATTERN
+   ════════════════════════════════════════════ */
+function setPat(p){
+  pat=p;
+  document.querySelectorAll('.pb').forEach(b=>b.classList.toggle('active',b.dataset.p===p));
+  const dk=document.getElementById('diag-key');
+  dk.style.display= p==='diag'?'flex':'none';
+  buildTri();
+}
+
+function applyPat(){
+  document.querySelectorAll('.tc').forEach(btn=>{
+    const n=+btn.dataset.n, r=+btn.dataset.r;
+    btn.classList.remove('odd','even');
+    btn.style.background=''; btn.style.color=''; btn.style.borderColor='';
+    setCell(btn,n,r);
+    if(pat==='odd'){
+      btn.classList.add(C[n][r]%2!==0 ? 'odd' : 'even');
+    } else if(pat==='diag'){
+      const d=Math.min(r,n-r);
+      const col=DCOL[Math.min(d,DCOL.length-1)];
+      btn.style.background=col; btn.style.color='white'; btn.style.borderColor=col;
+    }
+  });
+  // diagonal legend
+  if(pat==='diag'){
+    document.getElementById('diag-key').innerHTML =
+      DNAME.map((nm,i)=>
+        `<div class="dk"><div class="dk-sw" style="background:${DCOL[i]}"></div>${nm}</div>`
+      ).join('');
+  }
+}
+
+/* ════════════════════════════════════════════
+   SELECTION
+   ════════════════════════════════════════════ */
+function applySel(){
+  document.querySelectorAll('.tc').forEach(b=>b.classList.remove('sel','row-hi','par'));
+  if(selN===null) return;
+
+  // Row
+  document.querySelectorAll(`.tc[data-n="${selN}"]`).forEach(b=>b.classList.add('row-hi'));
+  // Cell
+  const sc=document.querySelector(`.tc[data-n="${selN}"][data-r="${selR}"]`);
+  if(sc) sc.classList.add('sel');
+  // Parents (Pascal's Rule)
+  if(selN>0 && selR>0){
+    const p=document.querySelector(`.tc[data-n="${selN-1}"][data-r="${selR-1}"]`);
+    if(p) p.classList.add('par');
+  }
+  if(selN>0 && selR<selN){
+    const p=document.querySelector(`.tc[data-n="${selN-1}"][data-r="${selR}"]`);
+    if(p) p.classList.add('par');
+  }
+  // Update pill
+  const pill=document.getElementById('selPill');
+  pill.textContent=`Selected: C(${selN},${selR}) = ${C[selN][selR]}`;
+  pill.classList.add('show');
+}
+
+function select(n,r){
+  selN=n; selR=r;
+  applySel();
+  renderNcr(n,r);
+  renderBinom(n,r);
+}
+
+/* ════════════════════════════════════════════
+   C(n,r) PANEL
+   ════════════════════════════════════════════ */
+function renderNcr(n,r){
+  const val=C[n][r];
+  const el=document.getElementById('ncr-body');
+  let html='';
+
+  // ── Large result ──
+  html+=`<div class="result-row">
+    <span class="r-nr">C(${n},\u2009${r})</span>
+    <span class="r-eq">=</span>
+    <span class="r-val">${val}</span>
+  </div>`;
+
+  // ── Steps ──
+  if(r===0||r===n){
+    html+=`<div class="steps">
+      <div class="sr">
+        <div class="stag">Formula</div>
+        <div class="smath">\\(\\dbinom{${n}}{${r}} = \\dfrac{${n}!}{${r}!\\cdot${n-r}!}\\)</div>
+      </div>
+      <div class="sr">
+        <div class="stag">Evaluate</div>
+        <div class="smath">\\(= \\dfrac{1}{1 \\cdot 1} = 1\\)</div>
+      </div>
+    </div>
+    <div class="cb cb-a"><div class="ct">Edge rule</div>
+      <div class="cm">There is always exactly <strong>1</strong> way to choose 0 items, or to choose all n items.</div>
+    </div>`;
+  } else {
+    const {keep,cancel,den,big,small,numRes,denRes}=cancelParts(n,r);
+    const nFull=farr(n).join('\\times');
+    const rFull=farr(r).join('\\times');
+    const nrFull=farr(n-r).join('\\times');
+    const cancelTex=cancel.join('\\times');
+    const keepTex=keep.join('\\times');
+    const denTex=den.length>0 ? den.join('\\times') : '1';
+
+    const numLtx = keep.length
+      ? `${keepTex}\\times\\cancel{${cancelTex}}`
+      : `\\cancel{${cancelTex}}`;
+    const denLtx = den.length>0
+      ? `(${denTex})\\times\\cancel{${cancelTex}}`
+      : `1\\times\\cancel{${cancelTex}}`;
+
+    html+=`<div class="steps">
+      <div class="sr">
+        <div class="stag">Definition</div>
+        <div class="smath">\\(\\dbinom{${n}}{${r}} = \\dfrac{${n}!}{${r}!\\cdot${n-r}!}\\)</div>
+      </div>
+      <div class="sr">
+        <div class="stag">Expand</div>
+        <div class="smath">\\(= \\dfrac{${nFull}}{(${rFull})\\times(${nrFull})}\\)</div>
+      </div>
+      <div class="sr">
+        <div class="stag">Cancel ${big}!</div>
+        <div class="smath">\\(= \\dfrac{${numLtx}}{${denLtx}} = \\dfrac{${keepTex||'1'}}{${denTex}}\\)</div>
+      </div>
+      <div class="sr">
+        <div class="stag">Result</div>
+        <div class="smath">\\(= \\dfrac{${numRes}}{${denRes}} = \\mathbf{${val}}\\)</div>
+      </div>
+    </div>`;
+
+    // Pascal's Rule callout
+    if(n>0&&r>0&&r<n){
+      const p1=C[n-1][r-1], p2=C[n-1][r];
+      html+=`<div class="cb cb-b">
+        <div class="ct">Pascal's Rule — C(n,r) = C(n−1,r−1) + C(n−1,r)</div>
+        <div class="cm">\\(\\binom{${n-1}}{${r-1}}+\\binom{${n-1}}{${r}} = ${p1}+${p2} = ${val}\\)</div>
+        <div class="cn">The two blue cells above this one in the triangle confirm it.</div>
+      </div>`;
+    }
+  }
+
+  // ── Combinatorial dots ──
+  if(n>0&&n<=8){
+    html+=`<div class="dots-box">
+      <div class="dots-lbl">Choosing ${r} from ${n} \u2014 one possible selection:</div>
+      <div class="dots-row">`;
+    for(let i=0;i<n;i++)
+      html+=`<div class="dot${i<r?' on':''}">${i+1}</div>`;
+    html+=`</div>
+      <div class="dots-note">There are <strong>${val}</strong> distinct ways to choose ${r} item${r!==1?'s':''} from ${n}</div>
+    </div>`;
+  }
+
+  // ── Symmetry note ──
+  if(r!==0&&r!==n&&r!==n-r){
+    html+=`<div style="margin-top:8px;font-size:11px;color:var(--text-muted)">
+      Symmetry: \\(\\binom{${n}}{${r}}=\\binom{${n}}{${n-r}}=${val}\\) — choosing ${r} to include equals choosing ${n-r} to exclude.
+    </div>`;
+  }
+
+  el.innerHTML=html;
+  rmath(el);
+}
+
+/* ════════════════════════════════════════════
+   BINOMIAL PANEL
+   ════════════════════════════════════════════ */
+function renderBinom(n,r){
+  const el=document.getElementById('binom-body');
+  const val=C[n][r], ae=n-r, be=r;
+
+  // ── Summation formula ──
+  let html=`<div class="binom-eq">
+    \\[(a+b)^{${n}} = \\sum_{r=0}^{${n}} \\binom{${n}}{r}\\, a^{${n}-r}\\,b^{r}\\]
+  </div>`;
+
+  // ── Term cards ──
+  html+='<div class="terms-row">';
+  for(let k=0;k<=n;k++){
+    const isSel=k===r;
+    html+=`<div class="term${isSel?' tsel':''}">
+      <div class="term-r">r=${k}</div>
+      <div class="term-v">${termUni(n,k)}</div>
+      <div class="term-c">C(${n},${k})=${C[n][k]}</div>
+    </div>`;
+    if(k<n) html+='<div class="tplus">+</div>';
+  }
+  html+='</div>';
+
+  // ── Selected term detail ──
+  const gt=termTex(n,r);
+  html+=`<div class="td">
+    <div class="td-lbl">Selected term — r = ${r}, highlighted above</div>
+    <div class="td-m">\\[T_{${r+1}} = \\binom{${n}}{${r}}\\,a^{${ae}}\\,b^{${be}} = ${gt}\\]</div>
+    <div class="td-conn">
+      Coefficient = \\(\\binom{${n}}{${r}}\\) = <strong>${val}</strong> —
+      identical to Pascal's Triangle row&nbsp;${n}, position&nbsp;${r}
+    </div>
+  </div>`;
+
+  // ── Why callout ──
+  html+=`<div class="why">
+    <div class="why-t">Why is the coefficient C(${n},${r}) = ${val}?</div>
+    <div class="why-b">
+      <p>Write \\((a+b)^{${n}}\\) as ${n} separate brackets multiplied together.</p>
+      <p>To obtain the term \\(a^{${ae}}b^{${be}}\\), you must choose \\(b\\) from exactly
+         <strong>${r}</strong> of those ${n} brackets (and \\(a\\) from the remaining ${ae}).</p>
+      <p>The number of ways to pick which ${r} bracket${r!==1?'s give':'gives'} a \\(b\\)
+         = \\(\\binom{${n}}{${r}} = ${val}\\). &nbsp;This is why the coefficient equals C(${n},${r}).</p>
+    </div>
+  </div>`;
+
+  el.innerHTML=html;
+  rmath(el);
+}
+
+/* ════════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  buildTri();
+  // Auto-select C(4,2) on load to demonstrate
+  setTimeout(()=>{ select(4,2); }, 450);
+  setTimeout(()=>rmath(document.body), 350);
+});
+</script>
+</body>
+</html>
