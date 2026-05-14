@@ -42,7 +42,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--t
 .tb-btn:hover{border-color:var(--navy);color:var(--navy)}
 .tb-btn.primary{background:var(--navy);color:white;border-color:var(--navy)}
 .content{max-width:var(--content-max);margin:0 auto;padding:42px 40px 80px}
-.page{display:none}.page.active{display:block;animation:fadeIn 0.22s ease}
+.page{display:none!important}.page.active{display:block!important;opacity:1!important;visibility:visible!important;animation:fadeIn 0.22s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 .page-hero{margin-bottom:26px;padding-bottom:20px;border-bottom:2px solid var(--grey-md)}
 .hero-label{font-size:11px;font-weight:500;letter-spacing:0.08em;color:var(--orange);text-transform:uppercase;margin-bottom:5px}
@@ -890,15 +890,39 @@ const PAGES=['home','intuition','laws','onesided','continuity','infinity','speci
 const NAMES={home:'Overview',intuition:'1. Intuitive Limits',laws:'2. Limit Laws',onesided:'3. One-Sided Limits',continuity:'4. Continuity',infinity:'5. Limits at Infinity',special:'6. Special Limits',lhopital:"7. L'Hôpital's Rule",practice:'12 Practice Problems'};
 let visited=new Set(['home']);
 function goTo(id){
-  PAGES.forEach(p=>document.getElementById('page-'+p).classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
-  document.querySelectorAll('.nav-link').forEach(l=>{if(l.getAttribute('onclick')&&l.getAttribute('onclick').includes("'"+id+"'"))l.classList.add('active');});
-  document.getElementById('bc').textContent=NAMES[id]||id;
-  visited.add(id);
-  document.getElementById('pf').style.width=Math.round(visited.size/PAGES.length*100)+'%';
-  window.scrollTo(0,0);
-  setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.getElementById('page-'+id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},50);
+  try {
+    console.log('[goTo] Navigating to:', id);
+    const targetPage = document.getElementById('page-'+id);
+    if (!targetPage) {
+      console.error('[goTo] ERROR: Page not found -', 'page-'+id);
+      alert('Page not found: ' + id);
+      return;
+    }
+    PAGES.forEach(p=>{
+      const page = document.getElementById('page-'+p);
+      if (page) page.classList.remove('active');
+    });
+    targetPage.classList.add('active');
+    console.log('[goTo] Active class added to page-'+id);
+    document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l=>{if(l.getAttribute('onclick')&&l.getAttribute('onclick').includes("'"+id+"'"))l.classList.add('active');});
+    const bc = document.getElementById('bc');
+    if (bc) bc.textContent=NAMES[id]||id;
+    visited.add(id);
+    const pf = document.getElementById('pf');
+    if (pf) pf.style.width=Math.round(visited.size/PAGES.length*100)+'%';
+    window.scrollTo(0,0);
+    setTimeout(()=>{
+      if(window.renderMathInElement) {
+        console.log('[goTo] Rendering math for page-'+id);
+        renderMathInElement(targetPage,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+      }
+    },50);
+    console.log('[goTo] Navigation complete for:', id);
+  } catch (error) {
+    console.error('[goTo] EXCEPTION:', error);
+    alert('Error navigating to ' + id + ': ' + error.message);
+  }
 }
 function td(h){const b=h.nextElementSibling,c=h.querySelector('.dpen-ch'),o=b.classList.contains('open');b.classList.toggle('open',!o);c.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(b,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
 function tq(h){const b=h.nextElementSibling,a=h.querySelector('.q-arr'),o=b.classList.contains('open');b.classList.toggle('open',!o);a.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(b,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
