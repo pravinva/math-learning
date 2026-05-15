@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 5 — Matrix Algebra and Determinants</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1B3A5C; --orange:#FF3621; --blue-lt:#E6F1FB; --blue:#185FA5;
+  --green-lt:#E1F5EE; --amber-lt:#FAEEDA; --purple-lt:#EEEDFE;
+  --grey-lt:#F6F5F2; --line:#e8e6e0; --text:#2c2a28; --muted:#6b6762;
+  --sidebar:274px; --max:900px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);position:fixed;top:0;left:0;bottom:0;background:var(--navy);overflow:auto}
+.sb-head{padding:22px 20px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-title{font-family:'Crimson Pro',serif;color:#fff;font-size:18px;font-weight:600;line-height:1.2}
+.sb-sub{font-size:11px;color:rgba(255,255,255,.48);margin-top:3px;letter-spacing:.04em}
+.sb-sec{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-lbl{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.33);padding:6px 20px 4px;text-transform:uppercase}
+.sb-link{display:flex;align-items:center;gap:9px;padding:8px 20px;color:rgba(255,255,255,.65);text-decoration:none;font-size:12.5px}
+.sb-link:hover{background:rgba(255,255,255,.06);color:#fff}
+.sb-num{font-size:10px;background:rgba(255,255,255,.12);padding:1px 6px;border-radius:4px}
+.main{margin-left:var(--sidebar);width:calc(100% - var(--sidebar))}
+.top{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:11px 30px;display:flex;justify-content:space-between;z-index:20}
+.crumb{font-size:12px;color:var(--muted)}
+.btn{border:1px solid var(--line);background:#fff;padding:6px 12px;border-radius:6px;font-size:12px;color:var(--muted);cursor:pointer}
+.btn:hover{border-color:var(--navy);color:var(--navy)}
+.content{max-width:var(--max);margin:0 auto;padding:40px 26px 80px}
+.hero{padding-bottom:20px;border-bottom:2px solid var(--line);margin-bottom:24px}
+.hero-lbl{font-size:11px;color:var(--orange);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.hero h1{font-family:'Crimson Pro',serif;font-size:40px;color:var(--navy);line-height:1.12;margin-bottom:8px}
+.hero p{font-size:14px;color:var(--muted);line-height:1.65}
+.sec{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px;margin-bottom:18px}
+.sec h2{font-family:'Crimson Pro',serif;color:var(--navy);font-size:30px;margin-bottom:6px}
+.sub{font-size:14px;color:var(--muted);margin-bottom:12px}
+.lesson{background:#fcfcfb;border:1px solid var(--line);border-radius:8px;padding:13px 14px;margin:10px 0}
+.lesson h3{font-size:14px;color:var(--navy);margin-bottom:7px}
+.lesson p,.lesson li{font-size:14px;line-height:1.65}
+.lesson ul{padding-left:18px}
+.eq{background:#fff;border:1px solid var(--line);border-radius:7px;padding:10px 12px;margin:8px 0;overflow:auto}
+.ex{background:#fdfcfa;border:1px solid #d4e9d4;border-radius:8px;padding:12px 13px;margin:10px 0}
+.ex-lbl{font-size:10px;letter-spacing:.08em;color:#0a7a4a;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.call{border-left:3px solid var(--blue);background:var(--blue-lt);padding:10px 12px;border-radius:0 6px 6px 0;font-size:13px;margin:10px 0;color:#123f68}
+.warn{border-left:3px solid #c07a00;background:var(--amber-lt);padding:10px 12px;border-radius:0 6px 6px 0;font-size:13px;margin:10px 0;color:#7a4800}
+.viz{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;margin:12px 0}
+.viz-title{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.viz canvas{width:100%;max-width:100%;border:1px solid #eceae3;border-radius:6px;background:#fafaf8}
+.ctrls{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+.ctrl{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.ctrl input[type=range]{width:110px;accent-color:var(--navy)}
+.read{font-size:12.5px;color:var(--muted);margin-top:8px}
+.tbl{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+.tbl th{background:var(--navy);color:#fff;padding:8px 10px;text-align:left}
+.tbl td{border-bottom:1px solid var(--line);padding:8px 10px}
+.tbl tr:nth-child(even) td{background:var(--grey-lt)}
+.pr{background:#faf8fd;border:1px solid #d4d4e9;border-radius:8px;padding:14px;margin-top:12px}
+.pr h4{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:#6b5aa0;margin-bottom:8px}
+.pr ol{padding-left:18px}.pr li{font-size:14px;margin:8px 0}
+details{margin-top:6px;border:1px solid rgba(107,90,160,.22);border-radius:6px;background:rgba(107,90,160,.05)}
+summary{font-size:12px;color:#6b5aa0;padding:7px 10px;cursor:pointer}
+.ans{border-top:1px solid rgba(107,90,160,.22);padding:9px 10px;font-size:13.5px}
+.foot{margin-top:18px;font-size:13px}
+.foot a{color:var(--blue);text-decoration:none}.foot a:hover{text-decoration:underline}
+@media(max-width:920px){.sidebar{display:none}.main{margin-left:0;width:100%}.content{padding:24px 14px 60px}.top{padding:10px 14px}}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Chapter 5 — Matrix Algebra</div>
+    <div class="sb-sub">Modern Engineering Mathematics 6e</div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Lessons</div>
+    <a class="sb-link" href="#m1"><span class="sb-num">5.2</span>Matrix Basics</a>
+    <a class="sb-link" href="#m2"><span class="sb-num">5.3</span>Determinants</a>
+    <a class="sb-link" href="#m3"><span class="sb-num">5.4-5.5</span>Inverse & Linear Equations</a>
+    <a class="sb-link" href="#m4"><span class="sb-num">5.6-5.7</span>Rank & Eigenvalues</a>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Study Tools</div>
+    <a class="sb-link" href="#practice"><span class="sb-num">★</span>Mixed Practice</a>
+  </div>
+</nav>
+<div class="main">
+  <div class="top">
+    <div class="crumb">Modern Engineering Mathematics / Chapter 5</div>
+    <button class="btn" onclick="document.querySelectorAll('details').forEach(d=>d.open=true)">Expand All Answers</button>
+  </div>
+  <div class="content">
+    <div class="hero">
+      <div class="hero-lbl">Chapter 5</div>
+      <h1>Matrix Algebra and Determinants</h1>
+      <p>Think of matrices as machines: input vector goes in, transformed vector comes out. Determinants tell whether the machine squashes area/volume to zero. This page walks slowly and carefully with lots of examples and practice.</p>
+    </div>
+
+    <section class="sec" id="m1">
+      <h2>5.2 Matrix Basics and Operations</h2>
+      <div class="sub">Order, addition, scalar multiplication, matrix multiplication, and interpretation as transformations.</div>
+      <div class="lesson">
+        <h3>Motivation first</h3>
+        <p>Real engineering systems often use many simultaneous equations. Matrices package these equations into a compact, computable structure: \(A\mathbf x=\mathbf b\).</p>
+      </div>
+      <div class="eq">$$A=\begin{bmatrix}a&b\\c&d\end{bmatrix},\quad
+      A\begin{bmatrix}x\\y\end{bmatrix}=
+      \begin{bmatrix}ax+by\\cx+dy\end{bmatrix}$$</div>
+      <div class="viz">
+        <div class="viz-title">Interactive: matrix transformation of a unit square</div>
+        <canvas id="matCanvas" width="780" height="300"></canvas>
+        <div class="ctrls">
+          <div class="ctrl">a11 <input id="a11" type="range" min="-3" max="3" step="0.1" value="1.5"></div>
+          <div class="ctrl">a12 <input id="a12" type="range" min="-3" max="3" step="0.1" value="0.3"></div>
+          <div class="ctrl">a21 <input id="a21" type="range" min="-3" max="3" step="0.1" value="0.4"></div>
+          <div class="ctrl">a22 <input id="a22" type="range" min="-3" max="3" step="0.1" value="1.2"></div>
+        </div>
+        <div class="read" id="matRead"></div>
+      </div>
+      <div class="ex">
+        <div class="ex-lbl">Worked Example</div>
+        <p>\(A=\begin{bmatrix}2&1\\-1&3\end{bmatrix},\ \mathbf x=\begin{bmatrix}4\\2\end{bmatrix}\Rightarrow A\mathbf x=\begin{bmatrix}10\\2\end{bmatrix}\).</p>
+        <p>Read it row-by-row: first row gives first output equation, second row gives second output equation.</p>
+      </div>
+      <div class="pr">
+        <h4>Subtopic Practice (8) — Matrix Basics</h4>
+        <ol>
+          <li>Add \( \begin{bmatrix}1&2\\3&4\end{bmatrix}+\begin{bmatrix}2&0\\-1&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}3&2\\2&9\end{bmatrix}\).</div></details></li>
+          <li>Compute \(3\begin{bmatrix}2&-1\\0&4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}6&-3\\0&12\end{bmatrix}\).</div></details></li>
+          <li>Find transpose of \(\begin{bmatrix}1&0&2\\3&4&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}1&3\\0&4\\2&5\end{bmatrix}\).</div></details></li>
+          <li>Compute \( \begin{bmatrix}1&2\\0&1\end{bmatrix}\begin{bmatrix}3\\4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}11\\4\end{bmatrix}\).</div></details></li>
+          <li>Dimensions of \(A_{2\times3}B_{3\times2}\)?<details><summary>Show solution</summary><div class="ans">\(2\times2\).</div></details></li>
+          <li>Is \(AB=BA\) always true?<details><summary>Show solution</summary><div class="ans">No.</div></details></li>
+          <li>Identity matrix of order 2?<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}1&0\\0&1\end{bmatrix}\).</div></details></li>
+          <li>Multiply \( \begin{bmatrix}2&1\\1&0\end{bmatrix}\begin{bmatrix}1&3\\4&2\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}6&8\\1&3\end{bmatrix}\).</div></details></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" id="m2">
+      <h2>5.3 Determinants</h2>
+      <div class="sub">Determinant as scale factor and invertibility test.</div>
+      <div class="eq">$$\det\begin{bmatrix}a&b\\c&d\end{bmatrix}=ad-bc$$</div>
+      <div class="call">Geometric meaning: for 2×2 matrices, \(|\det(A)|\) is area scale of transformed shapes. If \(\det(A)=0\), area collapses to a line, so inverse does not exist.</div>
+      <table class="tbl">
+        <thead><tr><th>Determinant sign</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>\(\det(A)>0\)</td><td>Orientation preserved</td></tr>
+          <tr><td>\(\det(A)&lt;0\)</td><td>Orientation flipped (reflection included)</td></tr>
+          <tr><td>\(\det(A)=0\)</td><td>Singular, no unique inverse</td></tr>
+        </tbody>
+      </table>
+      <div class="ex">
+        <div class="ex-lbl">Worked Example</div>
+        <p>\(A=\begin{bmatrix}3&2\\5&4\end{bmatrix}\Rightarrow \det(A)=12-10=2\). Area doubles (up to orientation), and inverse exists.</p>
+      </div>
+      <div class="pr">
+        <h4>Subtopic Practice (8) — Determinants</h4>
+        <ol>
+          <li>\(\det\begin{bmatrix}2&1\\4&3\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(6-4=2\).</div></details></li>
+          <li>\(\det\begin{bmatrix}1&2\\2&4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(4-4=0\).</div></details></li>
+          <li>For what \(k\) is \(\begin{bmatrix}1&k\\2&4\end{bmatrix}\) singular?<details><summary>Show solution</summary><div class="ans">\(4-2k=0\Rightarrow k=2\).</div></details></li>
+          <li>\(\det\begin{bmatrix}3&0&1\\2&1&4\\0&2&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">Expand row1: \(3(1\cdot5-4\cdot2)+1(2\cdot2-1\cdot0)=-9+4=-5\).</div></details></li>
+          <li>If \(\det(A)\neq0\), inverse exists?<details><summary>Show solution</summary><div class="ans">Yes.</div></details></li>
+          <li>If \(\det(A)=0\), system \(Ax=b\) unique?<details><summary>Show solution</summary><div class="ans">Not guaranteed; no unique inverse.</div></details></li>
+          <li>Area scale for \(A\) with \(\det(A)=-3\)?<details><summary>Show solution</summary><div class="ans">Scale factor \(3\), orientation flips.</div></details></li>
+          <li>Compute \(\det(I_3)\).<details><summary>Show solution</summary><div class="ans">1.</div></details></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" id="m3">
+      <h2>5.4–5.5 Inverse and Solving Linear Equations</h2>
+      <div class="sub">Use inverse matrix and elimination methods; know when each method is practical.</div>
+      <div class="eq">$$A^{-1}=\frac{1}{ad-bc}\begin{bmatrix}d&-b\\-c&a\end{bmatrix}\quad(\det A\neq0)$$</div>
+      <div class="lesson">
+        <h3>Method selection for weak students</h3>
+        <ul>
+          <li>2×2 system: inverse method is fast.</li>
+          <li>3×3 and larger: elimination is usually safer.</li>
+          <li>Computers: LU/iterative methods for large sparse systems.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="viz-title">Interactive: two-line system and unique/no solution intuition</div>
+        <canvas id="sysCanvas" width="780" height="280"></canvas>
+        <div class="ctrls">
+          <div class="ctrl">m1 <input id="m1s" type="range" min="-4" max="4" step="0.1" value="1.2"></div>
+          <div class="ctrl">c1 <input id="c1s" type="range" min="-6" max="6" step="0.1" value="1"></div>
+          <div class="ctrl">m2 <input id="m2s" type="range" min="-4" max="4" step="0.1" value="-0.8"></div>
+          <div class="ctrl">c2 <input id="c2s" type="range" min="-6" max="6" step="0.1" value="2"></div>
+        </div>
+        <div class="read" id="sysRead"></div>
+      </div>
+      <div class="ex">
+        <div class="ex-lbl">Step-by-step Example</div>
+        <p>Solve \(\begin{cases}2x+y=7\\x-3y=-8\end{cases}\). From first, \(y=7-2x\). Substitute: \(x-3(7-2x)=-8\Rightarrow7x=13\Rightarrow x=13/7\), then \(y=23/7\).</p>
+      </div>
+      <div class="warn"><strong>Common mistake:</strong> forgetting to check determinant/non-singular condition before using inverse formula.</div>
+      <div class="pr">
+        <h4>Subtopic Practice (8) — Inverse and Linear Equations</h4>
+        <ol>
+          <li>Solve \(x+y=4,\ x-y=0\).<details><summary>Show solution</summary><div class="ans">\(x=2,\ y=2\).</div></details></li>
+          <li>Solve \(2x+y=5,\ 3x-y=5\).<details><summary>Show solution</summary><div class="ans">Add equations: \(5x=10\Rightarrow x=2,\ y=1\).</div></details></li>
+          <li>Find inverse of \(\begin{bmatrix}1&2\\3&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\det=-1\), inverse \(=\begin{bmatrix}-5&2\\3&-1\end{bmatrix}\).</div></details></li>
+          <li>Check if \(\begin{bmatrix}2&4\\1&2\end{bmatrix}\) invertible.<details><summary>Show solution</summary><div class="ans">\(\det=4-4=0\), not invertible.</div></details></li>
+          <li>Classify system \(x+y=2,\ 2x+2y=4\).<details><summary>Show solution</summary><div class="ans">Infinitely many solutions.</div></details></li>
+          <li>Classify \(x+y=2,\ 2x+2y=5\).<details><summary>Show solution</summary><div class="ans">No solution.</div></details></li>
+          <li>If \(A^{-1}\) exists, formula for solution of \(Ax=b\)?<details><summary>Show solution</summary><div class="ans">\(\mathbf x=A^{-1}\mathbf b\).</div></details></li>
+          <li>Why elimination preferred for large systems?<details><summary>Show solution</summary><div class="ans">More stable/practical computationally than explicit inverse.</div></details></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" id="m4">
+      <h2>5.6–5.7 Rank and Eigenvalues</h2>
+      <div class="sub">Rank tells independent information count; eigenvalues tell natural scaling directions.</div>
+      <div class="eq">$$A\mathbf v=\lambda\mathbf v,\qquad \det(A-\lambda I)=0$$</div>
+      <div class="lesson">
+        <h3>Intuition ladder</h3>
+        <ul>
+          <li><strong>Rank:</strong> how many independent rows/columns remain after elimination.</li>
+          <li><strong>Eigenvector:</strong> direction unchanged by matrix machine.</li>
+          <li><strong>Eigenvalue:</strong> stretch/shrink factor on that special direction.</li>
+        </ul>
+      </div>
+      <div class="ex">
+        <div class="ex-lbl">Worked Example</div>
+        <p>\(A=\begin{bmatrix}2&0\\0&3\end{bmatrix}\): x-axis and y-axis stay in same direction, with scaling 2 and 3. So eigenpairs are \((\lambda_1=2,\mathbf e_1)\), \((\lambda_2=3,\mathbf e_2)\).</p>
+      </div>
+      <div class="pr">
+        <h4>Subtopic Practice (8) — Rank and Eigenvalues</h4>
+        <ol>
+          <li>Rank of \(I_3\).<details><summary>Show solution</summary><div class="ans">3.</div></details></li>
+          <li>Rank of \(\begin{bmatrix}1&2\\2&4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">1.</div></details></li>
+          <li>Characteristic equation of \(\begin{bmatrix}2&0\\0&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\((2-\lambda)(5-\lambda)=0\).</div></details></li>
+          <li>Eigenvalues of previous matrix.<details><summary>Show solution</summary><div class="ans">2 and 5.</div></details></li>
+          <li>Eigenvector for \(\lambda=2\) in previous matrix.<details><summary>Show solution</summary><div class="ans">Any nonzero multiple of \((1,0)\).</div></details></li>
+          <li>Eigenvalues of \(\begin{bmatrix}1&0\\0&1\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">1, 1.</div></details></li>
+          <li>If \(\lambda=0\) is eigenvalue, \(\det(A)=?\)<details><summary>Show solution</summary><div class="ans">0.</div></details></li>
+          <li>Physical meaning of eigenvectors in systems?<details><summary>Show solution</summary><div class="ans">Natural mode directions that only scale, not rotate.</div></details></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>Solved Examples Bank (8)</h2>
+      <div class="sub">Extra solved examples for slower revision and confidence building.</div>
+      <div class="pr">
+        <ol>
+          <li>Compute \(AB\), where \(A=\begin{bmatrix}2&1\\0&-1\end{bmatrix},B=\begin{bmatrix}3&4\\5&6\end{bmatrix}\).<details><summary>Show full solution</summary><div class="ans">\(AB=\begin{bmatrix}11&14\\-5&-6\end{bmatrix}\).</div></details></li>
+          <li>Find \(\det\begin{bmatrix}4&7\\2&5\end{bmatrix}\).<details><summary>Show full solution</summary><div class="ans">\(\det=20-14=6\).</div></details></li>
+          <li>Find inverse of \(\begin{bmatrix}4&7\\2&5\end{bmatrix}\).<details><summary>Show full solution</summary><div class="ans">\(A^{-1}=\frac{1}{6}\begin{bmatrix}5&-7\\-2&4\end{bmatrix}\).</div></details></li>
+          <li>Solve \(3x+2y=7,\ x-y=1\).<details><summary>Show full solution</summary><div class="ans">From second \(x=1+y\). Substitute: \(3+5y=7\Rightarrow y=4/5\), \(x=9/5\).</div></details></li>
+          <li>Determine rank of \(\begin{bmatrix}1&2&3\\2&4&6\\1&1&1\end{bmatrix}\).<details><summary>Show full solution</summary><div class="ans">Row2 = 2*Row1, but Row3 independent of Row1. Rank = 2.</div></details></li>
+          <li>Find characteristic equation of \(\begin{bmatrix}1&2\\2&1\end{bmatrix}\).<details><summary>Show full solution</summary><div class="ans">\(\det\begin{bmatrix}1-\lambda&2\\2&1-\lambda\end{bmatrix}= (1-\lambda)^2-4=0\).</div></details></li>
+          <li>Find eigenvalues of previous matrix.<details><summary>Show full solution</summary><div class="ans">\((1-\lambda)^2=4\Rightarrow \lambda=3,-1\).</div></details></li>
+          <li>Check if \((1,1)\) is eigenvector for \(\begin{bmatrix}2&1\\1&2\end{bmatrix}\).<details><summary>Show full solution</summary><div class="ans">\(A(1,1)=(3,3)=3(1,1)\), so yes, eigenvalue \(3\).</div></details></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" id="practice">
+      <h2>Chapter 5 Mixed Practice</h2>
+      <div class="sub">32 exam-style questions with hidden solutions.</div>
+      <div class="pr">
+        <h4>Set A — Basics and multiplication (8)</h4>
+        <ol>
+          <li>Add \( \begin{bmatrix}1&2\\3&4\end{bmatrix}+\begin{bmatrix}2&-1\\5&0\end{bmatrix} \).<details><summary>Show answer</summary><div class="ans">\(\begin{bmatrix}3&1\\8&4\end{bmatrix}\).</div></details></li>
+          <li>Compute \(2\begin{bmatrix}3&-2\\1&4\end{bmatrix}\).<details><summary>Show answer</summary><div class="ans">\(\begin{bmatrix}6&-4\\2&8\end{bmatrix}\).</div></details></li>
+          <li>Find \(AB\): \(A=\begin{bmatrix}1&2\\0&3\end{bmatrix}, B=\begin{bmatrix}4&1\\2&5\end{bmatrix}\).<details><summary>Show answer</summary><div class="ans">\(\begin{bmatrix}8&11\\6&15\end{bmatrix}\).</div></details></li>
+          <li>Is matrix multiplication commutative?<details><summary>Show answer</summary><div class="ans">No, generally \(AB\neq BA\).</div></details></li>
+          <li>Find transpose of \(\begin{bmatrix}2&-1&0\\3&4&5\end{bmatrix}\).<details><summary>Show answer</summary><div class="ans">\(\begin{bmatrix}2&3\\-1&4\\0&5\end{bmatrix}\).</div></details></li>
+          <li>Dimensions of \(A_{3\times2}B_{2\times4}\)?<details><summary>Show answer</summary><div class="ans">Result is \(3\times4\).</div></details></li>
+          <li>If \(A\) is \(2\times3\), what size must \(B\) be so \(AB\) is defined?<details><summary>Show answer</summary><div class="ans">\(B\) must have 3 rows, i.e. \(3\times n\).</div></details></li>
+          <li>Compute \( \begin{bmatrix}1&0\\2&1\end{bmatrix}\begin{bmatrix}3\\4\end{bmatrix}\).<details><summary>Show answer</summary><div class="ans">\(\begin{bmatrix}3\\10\end{bmatrix}\).</div></details></li>
+        </ol>
+      </div>
+      <div class="pr">
+        <h4>Set B — Determinants and inverse (8)</h4>
+        <ol>
+          <li>\(\det\begin{bmatrix}5&2\\1&3\end{bmatrix}\).<details><summary>Show answer</summary><div class="ans">\(15-2=13\).</div></details></li>
+          <li>For which \(k\), matrix \(\begin{bmatrix}1&2\\k&4\end{bmatrix}\) is singular?<details><summary>Show answer</summary><div class="ans">\(4-2k=0\Rightarrow k=2\).</div></details></li>
+          <li>Find inverse of \(\begin{bmatrix}2&1\\3&2\end{bmatrix}\).<details><summary>Show answer</summary><div class="ans">\(\det=1,\ A^{-1}=\begin{bmatrix}2&-1\\-3&2\end{bmatrix}\).</div></details></li>
+          <li>State meaning of \(\det(A)=0\).<details><summary>Show answer</summary><div class="ans">Singular matrix, no unique inverse, no unique solution in \(Ax=b\).</div></details></li>
+          <li>\(\det\begin{bmatrix}1&0&2\\2&1&3\\0&1&4\end{bmatrix}\).<details><summary>Show answer</summary><div class="ans">Expand row1: \(1(1\cdot4-3\cdot1)+2(2\cdot1-1\cdot0)=1+4=5\).</div></details></li>
+          <li>If \(A\) is invertible and \(AB=I\), what is \(B\)?<details><summary>Show answer</summary><div class="ans">\(B=A^{-1}\).</div></details></li>
+          <li>Find \(\det\begin{bmatrix}2&3\\4&6\end{bmatrix}\).<details><summary>Show answer</summary><div class="ans">\(12-12=0\), singular.</div></details></li>
+          <li>Inverse exists for \(\begin{bmatrix}1&2\\2&4\end{bmatrix}\)?<details><summary>Show answer</summary><div class="ans">No, determinant is 0.</div></details></li>
+        </ol>
+      </div>
+      <div class="pr">
+        <h4>Set C — Linear systems and rank (8)</h4>
+        <ol>
+          <li>Solve \(x+y=5,\ 2x-y=1\).<details><summary>Show answer</summary><div class="ans">\(x=2,\ y=3\).</div></details></li>
+          <li>Classify: \(x+y=2,\ 2x+2y=4\).<details><summary>Show answer</summary><div class="ans">Infinitely many solutions (same line).</div></details></li>
+          <li>Classify: \(x+y=2,\ 2x+2y=5\).<details><summary>Show answer</summary><div class="ans">No solution (parallel inconsistent lines).</div></details></li>
+          <li>Rank of identity \(I_3\)?<details><summary>Show answer</summary><div class="ans">3.</div></details></li>
+          <li>Rank of \(\begin{bmatrix}1&2\\2&4\end{bmatrix}\)?<details><summary>Show answer</summary><div class="ans">1 (second row multiple of first).</div></details></li>
+          <li>What does full rank mean for square \(n\times n\)?<details><summary>Show answer</summary><div class="ans">Rank \(=n\), invertible, unique solution for every \(b\).</div></details></li>
+          <li>Solve \(x-2y=4,\ 3x+y=5\).<details><summary>Show answer</summary><div class="ans">From first \(x=4+2y\). Then \(12+7y=5\Rightarrow y=-1,\ x=2\).</div></details></li>
+          <li>How many independent equations max in a \(3\times4\) matrix?<details><summary>Show answer</summary><div class="ans">At most rank 3.</div></details></li>
+        </ol>
+      </div>
+      <div class="pr">
+        <h4>Set D — Eigenvalues and applications (8)</h4>
+        <ol>
+          <li>Eigenvalues of \(\begin{bmatrix}4&0\\0&-1\end{bmatrix}\).<details><summary>Show answer</summary><div class="ans">\(\lambda=4,-1\).</div></details></li>
+          <li>Find eigenvalues of \(\begin{bmatrix}2&1\\1&2\end{bmatrix}\).<details><summary>Show answer</summary><div class="ans">\(\det\begin{bmatrix}2-\lambda&1\\1&2-\lambda\end{bmatrix}=0\Rightarrow(2-\lambda)^2-1=0\), so \(\lambda=3,1\).</div></details></li>
+          <li>For \(\lambda=3\) in previous matrix, give one eigenvector.<details><summary>Show answer</summary><div class="ans">\((1,1)\) works.</div></details></li>
+          <li>Interpret negative eigenvalue physically.<details><summary>Show answer</summary><div class="ans">Direction flips plus scaling by absolute value.</div></details></li>
+          <li>Why eigenvalues matter in vibration/spring systems?<details><summary>Show answer</summary><div class="ans">They relate to natural modes and frequencies.</div></details></li>
+          <li>Steady-state heat equations in layered materials form what math object?<details><summary>Show answer</summary><div class="ans">A linear system \(A\mathbf x=\mathbf b\).</div></details></li>
+          <li>Eigenvalues of identity matrix \(I_3\)?<details><summary>Show answer</summary><div class="ans">All eigenvalues are 1 (triple).</div></details></li>
+          <li>If \(\lambda=0\) is an eigenvalue, what can you infer about \(A\)?<details><summary>Show answer</summary><div class="ans">\(\det(A)=0\), so matrix is singular.</div></details></li>
+        </ol>
+      </div>
+      <div class="pr">
+        <h4>Mini Test — 10 Questions (Chapter 5)</h4>
+        <ol>
+          <li>Compute \( \begin{bmatrix}1&2\\3&4\end{bmatrix}+\begin{bmatrix}0&1\\-1&2\end{bmatrix} \).<details><summary>Answer</summary><div class="ans">\(\begin{bmatrix}1&3\\2&6\end{bmatrix}\).</div></details></li>
+          <li>Find \(AB\), \(A=\begin{bmatrix}2&0\\1&3\end{bmatrix}\), \(B=\begin{bmatrix}1&4\\2&5\end{bmatrix}\).<details><summary>Answer</summary><div class="ans">\(\begin{bmatrix}2&8\\7&19\end{bmatrix}\).</div></details></li>
+          <li>Find \(\det\begin{bmatrix}3&1\\2&4\end{bmatrix}\).<details><summary>Answer</summary><div class="ans">\(12-2=10\).</div></details></li>
+          <li>Is \(\begin{bmatrix}1&2\\2&4\end{bmatrix}\) invertible?<details><summary>Answer</summary><div class="ans">No, determinant \(=0\).</div></details></li>
+          <li>Solve \(x+y=6,\ x-y=2\).<details><summary>Answer</summary><div class="ans">\(x=4,\ y=2\).</div></details></li>
+          <li>Rank of \(\begin{bmatrix}1&0&2\\0&1&3\\0&0&0\end{bmatrix}\).<details><summary>Answer</summary><div class="ans">2.</div></details></li>
+          <li>Characteristic equation of \(\begin{bmatrix}2&0\\0&5\end{bmatrix}\).<details><summary>Answer</summary><div class="ans">\((2-\lambda)(5-\lambda)=0\).</div></details></li>
+          <li>Eigenvalues of \(\begin{bmatrix}2&0\\0&5\end{bmatrix}\).<details><summary>Answer</summary><div class="ans">\(\lambda=2,5\).</div></details></li>
+          <li>If \(\det(A)\neq0\), what can you say about \(Ax=b\)?<details><summary>Answer</summary><div class="ans">Unique solution for every \(b\).</div></details></li>
+          <li>For \(A=\begin{bmatrix}0&-1\\1&0\end{bmatrix}\), what geometric action is represented?<details><summary>Answer</summary><div class="ans">Rotation by \(90^\circ\) counterclockwise.</div></details></li>
+        </ol>
+      </div>
+      <div class="foot"><a href="index.html">← Back to Modern Engineering Mathematics index</a></div>
+    </section>
+  </div>
+</div>
+<script>
+function drawAxes(ctx,w,h,cx,cy,scale){
+  ctx.strokeStyle='#d8d5ce';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.moveTo(cx,0);ctx.lineTo(cx,h);ctx.stroke();
+  for(let i=-6;i<=6;i++){const x=cx+i*scale,y=cy+i*scale;ctx.beginPath();ctx.moveTo(x,cy-4);ctx.lineTo(x,cy+4);ctx.moveTo(cx-4,y);ctx.lineTo(cx+4,y);ctx.stroke();}
+}
+// Matrix transform visual
+const matCanvas=document.getElementById('matCanvas');
+if(matCanvas){
+  const c=matCanvas.getContext('2d'), w=matCanvas.width, h=matCanvas.height, cx=160, cy=230, s=35;
+  const ids=['a11','a12','a21','a22'].map(id=>document.getElementById(id));
+  const sq=[[0,0],[1,0],[1,1],[0,1]];
+  function tpt(x,y,a,b,d,e){return [a*x+b*y,d*x+e*y];}
+  function poly(pts,color,fill){
+    c.beginPath(); c.moveTo(cx+pts[0][0]*s,cy-pts[0][1]*s);
+    for(let i=1;i<pts.length;i++) c.lineTo(cx+pts[i][0]*s,cy-pts[i][1]*s);
+    c.closePath(); c.strokeStyle=color; c.lineWidth=2; c.stroke();
+    c.fillStyle=fill; c.fill();
+  }
+  function render(){
+    const a=+ids[0].value,b=+ids[1].value,d=+ids[2].value,e=+ids[3].value;
+    c.clearRect(0,0,w,h); drawAxes(c,w,h,cx,cy,s);
+    poly(sq,'#1B3A5C','rgba(27,58,92,.08)');
+    const tsq=sq.map(p=>tpt(p[0],p[1],a,b,d,e));
+    poly(tsq,'#FF3621','rgba(255,54,33,.12)');
+    const det=a*e-b*d;
+    document.getElementById('matRead').innerHTML=`det(A) = ${det.toFixed(2)}. |det| is area scaling. ${Math.abs(det)<0.05?'Near singular: transformed square nearly collapses.':''}`;
+  }
+  ids.forEach(el=>el.addEventListener('input',render)); render();
+}
+// Linear system visual
+const sysCanvas=document.getElementById('sysCanvas');
+if(sysCanvas){
+  const c=sysCanvas.getContext('2d'), w=sysCanvas.width, h=sysCanvas.height, cx=w/2, cy=h/2, s=30;
+  const m1=document.getElementById('m1s'), c1=document.getElementById('c1s'), m2=document.getElementById('m2s'), c2=document.getElementById('c2s');
+  function ax(){c.strokeStyle='#d8d5ce';c.lineWidth=1;c.beginPath();c.moveTo(0,cy);c.lineTo(w,cy);c.moveTo(cx,0);c.lineTo(cx,h);c.stroke();}
+  function line(m,b,col){
+    c.strokeStyle=col; c.lineWidth=2; c.beginPath();
+    for(let px=0;px<=w;px++){const x=(px-cx)/s; const y=m*x+b; const py=cy-y*s; if(px===0)c.moveTo(px,py); else c.lineTo(px,py);}
+    c.stroke();
+  }
+  function render(){
+    const M1=+m1.value,B1=+c1.value,M2=+m2.value,B2=+c2.value;
+    c.clearRect(0,0,w,h); ax(); line(M1,B1,'#1B3A5C'); line(M2,B2,'#FF3621');
+    let msg='';
+    if(Math.abs(M1-M2)<0.02){ msg=Math.abs(B1-B2)<0.05 ? 'Infinite solutions (same line).' : 'No solution (parallel lines).'; }
+    else{
+      const x=(B2-B1)/(M1-M2), y=M1*x+B1;
+      c.fillStyle='#0a7a4a'; c.beginPath(); c.arc(cx+x*s,cy-y*s,4,0,Math.PI*2); c.fill();
+      msg=`Unique solution at x=${x.toFixed(2)}, y=${y.toFixed(2)}.`;
+    }
+    document.getElementById('sysRead').textContent=msg;
+  }
+  [m1,c1,m2,c2].forEach(el=>el.addEventListener('input',render)); render();
+}
+document.addEventListener('DOMContentLoaded',()=>{if(window.renderMathInElement){renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}]});}});
+</script>
+</body>
+</html>

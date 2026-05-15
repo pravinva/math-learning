@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 4 — Vector Algebra</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1B3A5C; --orange:#FF3621; --blue-lt:#E6F1FB; --blue:#185FA5;
+  --green-lt:#E1F5EE; --amber-lt:#FAEEDA; --purple-lt:#EEEDFE;
+  --grey-lt:#F6F5F2; --line:#e8e6e0; --text:#2c2a28; --muted:#6b6762;
+  --sidebar:268px; --max:860px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);position:fixed;top:0;left:0;bottom:0;background:var(--navy);overflow:auto}
+.sb-head{padding:22px 20px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-title{font-family:'Crimson Pro',serif;color:#fff;font-size:18px;font-weight:600;line-height:1.2}
+.sb-sub{font-size:11px;color:rgba(255,255,255,.48);margin-top:3px;letter-spacing:.04em}
+.sb-sec{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-lbl{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.33);padding:6px 20px 4px;text-transform:uppercase}
+.sb-link{display:flex;align-items:center;gap:9px;padding:8px 20px;color:rgba(255,255,255,.65);text-decoration:none;font-size:12.5px}
+.sb-link:hover{background:rgba(255,255,255,.06);color:#fff}
+.sb-num{font-size:10px;background:rgba(255,255,255,.12);padding:1px 6px;border-radius:4px}
+.main{margin-left:var(--sidebar);width:calc(100% - var(--sidebar))}
+.top{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:11px 30px;display:flex;justify-content:space-between;z-index:20}
+.crumb{font-size:12px;color:var(--muted)}
+.btn{border:1px solid var(--line);background:#fff;padding:6px 12px;border-radius:6px;font-size:12px;color:var(--muted);cursor:pointer}
+.btn:hover{border-color:var(--navy);color:var(--navy)}
+.content{max-width:var(--max);margin:0 auto;padding:40px 26px 80px}
+.hero{padding-bottom:20px;border-bottom:2px solid var(--line);margin-bottom:24px}
+.hero-lbl{font-size:11px;color:var(--orange);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.hero h1{font-family:'Crimson Pro',serif;font-size:42px;color:var(--navy);line-height:1.12;margin-bottom:8px}
+.hero p{font-size:14px;color:var(--muted);line-height:1.65}
+.map{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:14px}
+.map-grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:8px}
+.node{background:var(--blue-lt);border:1px solid #cfe3f7;border-radius:8px;padding:8px 10px;font-size:12px;color:#123f68;line-height:1.35}
+.arr{text-align:center;color:var(--orange);font-weight:700;margin-top:6px}
+.sec{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px 22px;margin-bottom:18px}
+.sec h2{font-family:'Crimson Pro',serif;color:var(--navy);font-size:30px;margin-bottom:6px}
+.sub{font-size:14px;color:var(--muted);margin-bottom:12px}
+.lesson{background:#fcfcfb;border:1px solid var(--line);border-radius:8px;padding:13px 14px;margin:10px 0}
+.lesson h3{font-size:14px;color:var(--navy);margin-bottom:7px}
+.lesson p,.lesson li{font-size:14px;line-height:1.65}
+.lesson ul{padding-left:18px}
+.eq{background:#fff;border:1px solid var(--line);border-radius:7px;padding:10px 12px;margin:8px 0;overflow:auto}
+.ex{background:#fdfcfa;border:1px solid #d4e9d4;border-radius:8px;padding:12px 13px;margin:10px 0}
+.ex-lbl{font-size:10px;letter-spacing:.08em;color:#0a7a4a;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.call{border-left:3px solid var(--blue);background:var(--blue-lt);padding:10px 12px;border-radius:0 6px 6px 0;font-size:13px;margin:10px 0;color:#123f68}
+.rec{border-left:3px solid #7F77DD;background:var(--purple-lt);padding:10px 12px;border-radius:0 6px 6px 0;font-size:13px;margin:10px 0;color:#3C3489}
+.viz{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;margin:12px 0}
+.viz-title{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.viz canvas{width:100%;max-width:100%;border:1px solid #eceae3;border-radius:6px;background:#fafaf8}
+.ctrls{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+.ctrl{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.ctrl input[type=range]{width:110px;accent-color:var(--navy)}
+.read{font-size:12.5px;color:var(--muted);margin-top:8px}
+.pr{background:#faf8fd;border:1px solid #d4d4e9;border-radius:8px;padding:14px;margin-top:12px}
+.pr h4{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:#6b5aa0;margin-bottom:8px}
+.pr ol{padding-left:18px}.pr li{font-size:14px;margin:8px 0}
+details{margin-top:6px;border:1px solid rgba(107,90,160,.22);border-radius:6px;background:rgba(107,90,160,.05)}
+summary{font-size:12px;color:#6b5aa0;padding:7px 10px;cursor:pointer}
+.ans{border-top:1px solid rgba(107,90,160,.22);padding:9px 10px;font-size:13.5px}
+.foot{margin-top:18px;font-size:13px}
+.foot a{color:var(--blue);text-decoration:none}.foot a:hover{text-decoration:underline}
+@media(max-width:860px){.sidebar{display:none}.main{margin-left:0;width:100%}.content{padding:24px 14px 60px}.top{padding:10px 14px}.map-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Chapter 4 — Vector Algebra</div>
+    <div class="sb-sub">Modern Engineering Mathematics 6e</div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Lessons</div>
+    <a class="sb-link" href="#t1"><span class="sb-num">4.2</span>Vectors & Components</a>
+    <a class="sb-link" href="#t2"><span class="sb-num">4.2.8</span>Scalar (Dot) Product</a>
+    <a class="sb-link" href="#t3"><span class="sb-num">4.2.10</span>Vector (Cross) Product</a>
+    <a class="sb-link" href="#t4"><span class="sb-num">4.3</span>Lines & Planes</a>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Study Tools</div>
+    <a class="sb-link" href="#practice"><span class="sb-num">★</span>Mixed Practice</a>
+  </div>
+</nav>
+<div class="main">
+  <div class="top">
+    <div class="crumb">Modern Engineering Mathematics / Chapter 4</div>
+    <button class="btn" onclick="document.querySelectorAll('details').forEach(d=>d.open=true)">Expand All Answers</button>
+  </div>
+  <div class="content">
+    <div class="hero">
+      <div class="hero-lbl">Chapter 4</div>
+      <h1>Vector Algebra</h1>
+      <p>This chapter is written for a weak student on purpose: slow explanation, visual intuition, and step-by-step examples. You’ll learn vectors as a language for direction, force, motion, and geometry in engineering.</p>
+      <div class="map">
+        <div class="viz-title">Idea Connection Map</div>
+        <div class="map-grid">
+          <div class="node"><strong>Vector components</strong><br>describe direction numerically</div>
+          <div class="node"><strong>Dot product</strong><br>measure alignment/projection</div>
+          <div class="node"><strong>Cross product</strong><br>normal direction + area</div>
+          <div class="node"><strong>Lines/planes</strong><br>3D engineering geometry</div>
+        </div>
+        <div class="arr">→ → →</div>
+      </div>
+    </div>
+
+    <section class="sec" id="t1">
+      <h2>4.2 Vectors and Components</h2>
+      <div class="sub">Scalars vs vectors, magnitude, unit vectors, addition, and component form.</div>
+      <div class="lesson">
+        <h3>Motivation first</h3>
+        <p>A scalar gives only "how much". A vector gives "how much + which direction". In engineering, force, velocity, acceleration, and electric field are vectors. If direction is ignored, answers can be dangerously wrong.</p>
+      </div>
+      <div class="eq">$$\mathbf v=(a,b,c),\quad |\mathbf v|=\sqrt{a^2+b^2+c^2},\quad \hat{\mathbf v}=\frac{\mathbf v}{|\mathbf v|}$$</div>
+      <div class="viz">
+        <div class="viz-title">Interactive: Head-to-tail vector addition</div>
+        <canvas id="addCanvas" width="760" height="280"></canvas>
+        <div class="ctrls">
+          <div class="ctrl">|v1| <input id="v1m" type="range" min="1" max="10" value="6"></div>
+          <div class="ctrl">θ1 <input id="v1a" type="range" min="0" max="180" value="30"></div>
+          <div class="ctrl">|v2| <input id="v2m" type="range" min="1" max="10" value="5"></div>
+          <div class="ctrl">θ2 <input id="v2a" type="range" min="0" max="180" value="120"></div>
+        </div>
+        <div class="read" id="addRead"></div>
+      </div>
+      <div class="ex"><div class="ex-lbl">Step-by-step Example</div>
+        <p>Given \(\mathbf v=(2,-1,3)\): magnitude \(=\sqrt{14}\). Unit vector is \(\left(\frac{2}{\sqrt{14}},-\frac{1}{\sqrt{14}},\frac{3}{\sqrt{14}}\right)\). Why divide by magnitude? To keep direction but force length to 1.</p>
+      </div>
+      <div class="rec"><strong>Recall:</strong> unit vectors are used to represent direction cleanly in force decomposition and in line equations.</div>
+      <div class="pr">
+        <h4>Subtopic Practice (8) — Vectors and Components</h4>
+        <ol>
+          <li>Find \(|(1,2,2)|\).<details><summary>Show solution</summary><div class="ans">\(\sqrt{1+4+4}=3\).</div></details></li>
+          <li>Find unit vector in direction \((3,4,0)\).<details><summary>Show solution</summary><div class="ans">\((3/5,4/5,0)\).</div></details></li>
+          <li>Add \((2,-1,5)+(3,4,-2)\).<details><summary>Show solution</summary><div class="ans">\((5,3,3)\).</div></details></li>
+          <li>Subtract \((4,0,1)-(1,2,3)\).<details><summary>Show solution</summary><div class="ans">\((3,-2,-2)\).</div></details></li>
+          <li>Scale \(2(1,-3,4)\).<details><summary>Show solution</summary><div class="ans">\((2,-6,8)\).</div></details></li>
+          <li>Find midpoint of \(A(0,2,4)\), \(B(2,6,0)\).<details><summary>Show solution</summary><div class="ans">\((1,4,2)\).</div></details></li>
+          <li>Are \((1,2,3)\) and \((2,4,6)\) parallel?<details><summary>Show solution</summary><div class="ans">Yes, second is \(2\times\) first.</div></details></li>
+          <li>Make a vector of magnitude 6 in direction of \((0,3,4)\).<details><summary>Show solution</summary><div class="ans">Unit direction \((0,3/5,4/5)\), required \((0,18/5,24/5)\).</div></details></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" id="t2">
+      <h2>4.2.8 Scalar (Dot) Product</h2>
+      <div class="sub">Dot product tells you how much one vector points along another.</div>
+      <div class="eq">$$\mathbf a\cdot\mathbf b=a_1b_1+a_2b_2+a_3b_3=|\mathbf a||\mathbf b|\cos\theta$$</div>
+      <div class="lesson">
+        <h3>Intuition in simple words</h3>
+        <p>If vectors point same way, dot product is large positive. If perpendicular, it is 0. If opposite, negative. So dot product is really an "alignment score".</p>
+      </div>
+      <div class="viz">
+        <div class="viz-title">Interactive: Dot product and projection</div>
+        <canvas id="dotCanvas" width="760" height="260"></canvas>
+        <div class="ctrls">
+          <div class="ctrl">|a| <input id="aMag" type="range" min="2" max="10" value="6"></div>
+          <div class="ctrl">|b| <input id="bMag" type="range" min="2" max="10" value="5"></div>
+          <div class="ctrl">θ <input id="abAng" type="range" min="0" max="180" value="50"></div>
+        </div>
+        <div class="read" id="dotRead"></div>
+      </div>
+      <div class="ex"><div class="ex-lbl">Worked Example</div>
+        <p>\(\mathbf a=(1,2,-1),\ \mathbf b=(3,0,2)\Rightarrow \mathbf a\cdot\mathbf b=1\). Then \(\cos\theta=\frac{1}{\sqrt6\sqrt{13}}\), so \(\theta\approx83.5^\circ\). Nearly perpendicular, consistent with small dot product.</p>
+      </div>
+      <div class="pr">
+        <h4>Subtopic Practice (8) — Dot Product</h4>
+        <ol>
+          <li>Compute \((1,0,2)\cdot(3,4,-1)\).<details><summary>Show solution</summary><div class="ans">\(3+0-2=1\).</div></details></li>
+          <li>Compute \((2,1,0)\cdot(1,-2,3)\).<details><summary>Show solution</summary><div class="ans">\(2-2+0=0\), perpendicular.</div></details></li>
+          <li>Find angle between \((1,1,0)\) and \((1,0,0)\).<details><summary>Show solution</summary><div class="ans">\(\cos\theta=1/\sqrt2\Rightarrow\theta=45^\circ\).</div></details></li>
+          <li>Find projection of \((4,3,0)\) on \((2,0,0)\).<details><summary>Show solution</summary><div class="ans">\((4,0,0)\).</div></details></li>
+          <li>Work by \(F=(2,1,3)\), \(s=(1,0,2)\).<details><summary>Show solution</summary><div class="ans">\(F\cdot s=8\) J.</div></details></li>
+          <li>If \(a\cdot b=|a||b|\), angle is?<details><summary>Show solution</summary><div class="ans">\(0^\circ\).</div></details></li>
+          <li>If \(a\cdot b=-|a||b|\), angle is?<details><summary>Show solution</summary><div class="ans">\(180^\circ\).</div></details></li>
+          <li>For \(|a|=5,|b|=6,\theta=60^\circ\), find \(a\cdot b\).<details><summary>Show solution</summary><div class="ans">\(5\cdot6\cdot\frac12=15\).</div></details></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" id="t3">
+      <h2>4.2.10 Vector (Cross) Product</h2>
+      <div class="sub">Cross product gives a vector perpendicular to both inputs.</div>
+      <div class="eq">$$\mathbf a\times\mathbf b=
+\begin{vmatrix}
+\mathbf i&\mathbf j&\mathbf k\\
+a_1&a_2&a_3\\
+b_1&b_2&b_3
+\end{vmatrix},\qquad |\mathbf a\times\mathbf b|=|\mathbf a||\mathbf b|\sin\theta$$</div>
+      <div class="lesson">
+        <h3>Why engineers care</h3>
+        <p>Cross product appears in torque, rotational motion, and normals to surfaces. Magnitude gives area of the parallelogram spanned by two vectors.</p>
+      </div>
+      <div class="viz">
+        <div class="viz-title">Interactive: Area and right-hand rule intuition</div>
+        <canvas id="crossCanvas" width="760" height="260"></canvas>
+        <div class="ctrls">
+          <div class="ctrl">|a| <input id="caMag" type="range" min="2" max="10" value="6"></div>
+          <div class="ctrl">|b| <input id="cbMag" type="range" min="2" max="10" value="5"></div>
+          <div class="ctrl">θ <input id="cabAng" type="range" min="0" max="180" value="65"></div>
+        </div>
+        <div class="read" id="crossRead"></div>
+      </div>
+      <div class="ex"><div class="ex-lbl">Worked Example</div>
+        <p>\(\mathbf a=(1,2,-1), \mathbf b=(3,0,2)\Rightarrow \mathbf a\times\mathbf b=(4,-5,-6)\). Check anti-commutative rule: \(\mathbf b\times\mathbf a=-(4,-5,-6)\).</p>
+      </div>
+      <div class="pr">
+        <h4>Subtopic Practice (8) — Cross Product</h4>
+        <ol>
+          <li>Compute \((1,0,0)\times(0,1,0)\).<details><summary>Show solution</summary><div class="ans">\((0,0,1)\).</div></details></li>
+          <li>Compute \((0,1,0)\times(1,0,0)\).<details><summary>Show solution</summary><div class="ans">\((0,0,-1)\).</div></details></li>
+          <li>Compute \((2,1,0)\times(1,3,0)\).<details><summary>Show solution</summary><div class="ans">\((0,0,5)\).</div></details></li>
+          <li>Area of parallelogram from previous vectors.<details><summary>Show solution</summary><div class="ans">\(|(0,0,5)|=5\).</div></details></li>
+          <li>Area of triangle from previous vectors.<details><summary>Show solution</summary><div class="ans">\(5/2=2.5\).</div></details></li>
+          <li>If \(a\times b=0\) (nonzero vectors), relation?<details><summary>Show solution</summary><div class="ans">Vectors are parallel.</div></details></li>
+          <li>For \(|a|=4,|b|=7,\theta=30^\circ\), find \(|a\times b|\).<details><summary>Show solution</summary><div class="ans">\(4\cdot7\cdot\frac12=14\).</div></details></li>
+          <li>Torque magnitude for \(|r|=0.2\), \(|F|=50\), \(\theta=90^\circ\).<details><summary>Show solution</summary><div class="ans">\(0.2\cdot50=10\) N·m.</div></details></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" id="t4">
+      <h2>4.3 Geometry of Lines and Planes</h2>
+      <div class="sub">Vector equations for lines/planes and geometric classification (parallel, intersecting, skew).</div>
+      <div class="eq">$$\mathbf r=\mathbf r_0+t\mathbf v\quad\text{(line)},\qquad \mathbf n\cdot(\mathbf r-\mathbf r_0)=0\quad\text{(plane)}$$</div>
+      <div class="lesson">
+        <h3>Step-by-step mental model</h3>
+        <ul>
+          <li>Line = starting point + travel direction.</li>
+          <li>Plane = one point + normal direction.</li>
+          <li>For two lines: check direction multiples first (parallel test), then solve simultaneously for intersection.</li>
+        </ul>
+      </div>
+      <div class="ex"><div class="ex-lbl">Worked Example</div>
+        <p>Line 1 through \((1,0,-1)\), direction \((2,1,3)\): \((x,y,z)=(1,0,-1)+t(2,1,3)\).</p>
+        <p>Line 2 through \((3,1,0)\), direction \((1,-1,2)\): solve component equations; contradiction -> skew lines.</p>
+      </div>
+      <div class="pr">
+        <h4>Subtopic Practice (8) — Lines and Planes</h4>
+        <ol>
+          <li>Line through \((1,2,0)\), direction \((2,-1,3)\).<details><summary>Show solution</summary><div class="ans">\((x,y,z)=(1,2,0)+t(2,-1,3)\).</div></details></li>
+          <li>Plane normal \((1,2,-1)\) through \((2,0,1)\).<details><summary>Show solution</summary><div class="ans">\((x-2)+2(y-0)-(z-1)=0\Rightarrow x+2y-z=1\).</div></details></li>
+          <li>Distance from \((0,0,0)\) to plane \(x+2y+2z=3\).<details><summary>Show solution</summary><div class="ans">\(3/\sqrt9=1\).</div></details></li>
+          <li>Are directions \((1,2,3)\), \((2,4,7)\) parallel?<details><summary>Show solution</summary><div class="ans">No (not scalar multiples).</div></details></li>
+          <li>Normal to plane through \(P(0,0,0),Q(1,0,0),R(0,1,0)\).<details><summary>Show solution</summary><div class="ans">\((0,0,1)\) (or scalar multiple).</div></details></li>
+          <li>Angle between planes with normals \((1,0,0)\) and \((0,1,0)\).<details><summary>Show solution</summary><div class="ans">\(90^\circ\).</div></details></li>
+          <li>If two lines are parallel and distinct, intersections?<details><summary>Show solution</summary><div class="ans">No intersection point.</div></details></li>
+          <li>If line direction is perpendicular to plane normal, relation?<details><summary>Show solution</summary><div class="ans">Line is parallel to plane.</div></details></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>Solved Examples Bank (8)</h2>
+      <div class="sub">Extra fully solved examples for slow, step-by-step revision.</div>
+      <div class="pr">
+        <ol>
+          <li>\(\mathbf a=(3,-2,6)\). Find \(|\mathbf a|\) and \(\hat{\mathbf a}\).<details><summary>Show full solution</summary><div class="ans">\(|\mathbf a|=\sqrt{9+4+36}=7\). Unit vector: \(\hat{\mathbf a}=(3/7,-2/7,6/7)\).</div></details></li>
+          <li>Resolve vector magnitude 10 at \(37^\circ\) from x-axis into components.<details><summary>Show full solution</summary><div class="ans">\(x=10\cos37^\circ\approx7.99,\ y=10\sin37^\circ\approx6.02\). So \((7.99,6.02)\).</div></details></li>
+          <li>Find angle between \((2,1,2)\) and \((1,2,2)\).<details><summary>Show full solution</summary><div class="ans">Dot \(=8\). Magnitudes are 3 and 3. \(\cos\theta=8/9\Rightarrow\theta\approx27.27^\circ\).</div></details></li>
+          <li>Compute scalar projection of \((5,4,0)\) on \((3,0,0)\).<details><summary>Show full solution</summary><div class="ans">\(\text{comp}_{a}b=\frac{a\cdot b}{|a|}=\frac{15}{3}=5\).</div></details></li>
+          <li>Find \((1,2,3)\times(4,5,6)\).<details><summary>Show full solution</summary><div class="ans">\(\mathbf i(12-15)-\mathbf j(6-12)+\mathbf k(5-8)=(-3,6,-3)\).</div></details></li>
+          <li>Area of triangle formed by vectors \((2,1,0)\), \((1,3,0)\).<details><summary>Show full solution</summary><div class="ans">\(|a\times b|=|0,0,5|=5\). Triangle area \(=5/2=2.5\).</div></details></li>
+          <li>Line through \((2,-1,4)\) parallel to \((1,0,-2)\): write parametric equations.<details><summary>Show full solution</summary><div class="ans">\((x,y,z)=(2,-1,4)+t(1,0,-2)\Rightarrow x=2+t,\ y=-1,\ z=4-2t\).</div></details></li>
+          <li>Plane through \((1,2,3)\) with normal \((2,-1,4)\).<details><summary>Show full solution</summary><div class="ans">\(2(x-1)-1(y-2)+4(z-3)=0\Rightarrow2x-y+4z=12\).</div></details></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" id="practice">
+      <h2>Chapter 4 Mixed Practice</h2>
+      <div class="sub">32 exam-style problems, with hidden solutions for independent attempt first.</div>
+      <div class="pr">
+        <h4>Set A — Fundamentals (8)</h4>
+        <ol>
+          <li>Find \(|(3,-4,12)|\).<details><summary>Show answer</summary><div class="ans">\(\sqrt{9+16+144}=13\).</div></details></li>
+          <li>Find unit vector in direction \((2,2,1)\).<details><summary>Show answer</summary><div class="ans">Magnitude \(=3\), so \((2/3,2/3,1/3)\).</div></details></li>
+          <li>Add vectors \((1,2,-3)+(4,-1,5)\).<details><summary>Show answer</summary><div class="ans">\((5,1,2)\).</div></details></li>
+          <li>Find direction cosines of \((1,2,2)\).<details><summary>Show answer</summary><div class="ans">Magnitude 3, cosines \(1/3,2/3,2/3\).</div></details></li>
+          <li>Is \((2,4,6)\) parallel to \((1,2,3)\)?<details><summary>Show answer</summary><div class="ans">Yes, scalar multiple 2.</div></details></li>
+          <li>Find vector from \(A(1,0,2)\) to \(B(4,-1,3)\).<details><summary>Show answer</summary><div class="ans">\((3,-1,1)\).</div></details></li>
+          <li>Find midpoint of points \(P(2,-1,4)\), \(Q(6,3,0)\).<details><summary>Show answer</summary><div class="ans">\(\left(\frac{2+6}{2},\frac{-1+3}{2},\frac{4+0}{2}\right)=(4,1,2)\).</div></details></li>
+          <li>Find vector of magnitude 5 in direction of \((1,2,2)\).<details><summary>Show answer</summary><div class="ans">Unit direction \(=(1/3,2/3,2/3)\). Required vector \(=5(1/3,2/3,2/3)=(5/3,10/3,10/3)\).</div></details></li>
+        </ol>
+      </div>
+      <div class="pr">
+        <h4>Set B — Dot and Cross (8)</h4>
+        <ol>
+          <li>Compute \((1,2,3)\cdot(2,0,-1)\).<details><summary>Show answer</summary><div class="ans">\(2+0-3=-1\).</div></details></li>
+          <li>Angle between \((1,0,1)\) and \((1,1,0)\).<details><summary>Show answer</summary><div class="ans">\(\cos\theta=1/2\Rightarrow\theta=60^\circ\).</div></details></li>
+          <li>Find \((2,-1,0)\times(1,3,4)\).<details><summary>Show answer</summary><div class="ans">\((-4,-8,7)\).</div></details></li>
+          <li>When is dot product zero?<details><summary>Show answer</summary><div class="ans">Vectors are perpendicular.</div></details></li>
+          <li>Area of parallelogram for \(|a|=5,\ |b|=8,\ \theta=30^\circ\).<details><summary>Show answer</summary><div class="ans">\(5\cdot8\cdot\sin30^\circ=20\).</div></details></li>
+          <li>If \(a\times b=(0,0,0)\), what does it imply (nonzero vectors)?<details><summary>Show answer</summary><div class="ans">Vectors are parallel.</div></details></li>
+          <li>Compute \((3,1,-2)\cdot(2,-4,1)\).<details><summary>Show answer</summary><div class="ans">\(6-4-2=0\), so vectors are perpendicular.</div></details></li>
+          <li>Find area of triangle spanned by \((1,0,2)\) and \((0,3,1)\).<details><summary>Show answer</summary><div class="ans">\(|a\times b|=|( -6,-1,3 )|=\sqrt{46}\). Triangle area \(=\sqrt{46}/2\).</div></details></li>
+        </ol>
+      </div>
+      <div class="pr">
+        <h4>Set C — Lines and Planes (8)</h4>
+        <ol>
+          <li>Write parametric form of line through \((1,2,3)\) direction \((2,-1,4)\).<details><summary>Show answer</summary><div class="ans">\(x=1+2t,\ y=2-t,\ z=3+4t\).</div></details></li>
+          <li>Plane with normal \((2,-1,3)\) through \((1,0,2)\).<details><summary>Show answer</summary><div class="ans">\(2(x-1)-1(y-0)+3(z-2)=0\Rightarrow2x-y+3z=8\).</div></details></li>
+          <li>Distance from \((1,1,1)\) to plane \(x+2y+2z=9\).<details><summary>Show answer</summary><div class="ans">\(|1+2+2-9|/\sqrt{1+4+4}=4/3\).</div></details></li>
+          <li>Are lines with directions \((1,2,3)\) and \((2,4,6)\) parallel?<details><summary>Show answer</summary><div class="ans">Yes.</div></details></li>
+          <li>Find normal to plane through points \(P(1,0,0),Q(0,1,0),R(0,0,1)\).<details><summary>Show answer</summary><div class="ans">\((Q-P)\times(R-P)=(1,1,1)\) up to scalar.</div></details></li>
+          <li>Classify if two lines are not parallel and no consistent intersection solution exists.<details><summary>Show answer</summary><div class="ans">Skew lines.</div></details></li>
+          <li>Line through \(A(0,1,2)\) and \(B(3,2,0)\): direction vector?<details><summary>Show answer</summary><div class="ans">\(B-A=(3,1,-2)\).</div></details></li>
+          <li>Angle between planes with normals \(n_1=(1,2,2)\), \(n_2=(2,0,1)\).<details><summary>Show answer</summary><div class="ans">\(\cos\theta=\frac{n_1\cdot n_2}{|n_1||n_2|}=\frac{4}{3\sqrt5}\Rightarrow \theta\approx53.4^\circ\).</div></details></li>
+        </ol>
+      </div>
+      <div class="pr">
+        <h4>Set D — Engineering-style mixed (8)</h4>
+        <ol>
+          <li>Force vectors \(F_1=(4,1,0),F_2=(-2,3,1)\). Find resultant magnitude.<details><summary>Show answer</summary><div class="ans">Resultant \((2,4,1)\), magnitude \(=\sqrt{21}\).</div></details></li>
+          <li>Work done by \(F=(3,2,-1)\) along displacement \(s=(4,0,2)\).<details><summary>Show answer</summary><div class="ans">\(F\cdot s=12+0-2=10\) J.</div></details></li>
+          <li>Torque magnitude from \(|r|=0.5\), \(|F|=40\), angle \(75^\circ\).<details><summary>Show answer</summary><div class="ans">\(|\tau|=|r\times F|=0.5\cdot40\sin75^\circ\approx19.32\ \text{N·m}\).</div></details></li>
+          <li>Find projection of \(b=(4,3,0)\) on \(a=(2,0,0)\).<details><summary>Show answer</summary><div class="ans">\(\text{proj}_a b=\frac{a\cdot b}{|a|^2}a=\frac{8}{4}(2,0,0)=(4,0,0)\).</div></details></li>
+          <li>Find angle between cable direction \((1,2,2)\) and vertical axis \(k=(0,0,1)\).<details><summary>Show answer</summary><div class="ans">\(\cos\theta=\frac{2}{3}\Rightarrow\theta\approx48.2^\circ\).</div></details></li>
+          <li>Plane normal to vector \(n=(1,-2,2)\) and through origin: equation?<details><summary>Show answer</summary><div class="ans">\(x-2y+2z=0\).</div></details></li>
+          <li>Two forces \(F_1=(10,0,0)\), \(F_2=(0,6,8)\). Find resultant magnitude.<details><summary>Show answer</summary><div class="ans">Resultant \((10,6,8)\), magnitude \(=\sqrt{100+36+64}=\sqrt{200}=10\sqrt2\).</div></details></li>
+          <li>Moment from \(r=(0.2,0,0)\) m and \(F=(0,50,0)\) N.<details><summary>Show answer</summary><div class="ans">\(\tau=r\times F=(0,0,10)\) N·m. Magnitude \(10\) N·m.</div></details></li>
+        </ol>
+      </div>
+      <div class="pr">
+        <h4>Mini Test — 10 Questions (Chapter 4)</h4>
+        <ol>
+          <li>Find magnitude of \((4,-4,7)\).<details><summary>Answer</summary><div class="ans">\(\sqrt{16+16+49}=9\).</div></details></li>
+          <li>Find unit vector along \((0,3,4)\).<details><summary>Answer</summary><div class="ans">\((0,3/5,4/5)\).</div></details></li>
+          <li>Compute \((2,-1,3)\cdot(1,4,-2)\).<details><summary>Answer</summary><div class="ans">\(2-4-6=-8\).</div></details></li>
+          <li>Find angle between vectors with dot product 0.<details><summary>Answer</summary><div class="ans">\(90^\circ\).</div></details></li>
+          <li>Compute \((1,0,2)\times(3,1,0)\).<details><summary>Answer</summary><div class="ans">\((-2,6,1)\).</div></details></li>
+          <li>Area of parallelogram for \(|a|=6, |b|=4, \theta=45^\circ\).<details><summary>Answer</summary><div class="ans">\(24\sin45^\circ=12\sqrt2\).</div></details></li>
+          <li>Write line through \((2,1,-1)\) parallel to \((1,2,0)\).<details><summary>Answer</summary><div class="ans">\((x,y,z)=(2,1,-1)+t(1,2,0)\).</div></details></li>
+          <li>Plane normal \((1,1,1)\) through \((1,2,3)\).<details><summary>Answer</summary><div class="ans">\((x-1)+(y-2)+(z-3)=0\Rightarrow x+y+z=6\).</div></details></li>
+          <li>Distance from origin to plane \(2x-y+2z=3\).<details><summary>Answer</summary><div class="ans">\(\frac{| -3 |}{\sqrt{4+1+4}}=1\).</div></details></li>
+          <li>Work by \(F=(5,0,1)\) over \(s=(2,3,4)\).<details><summary>Answer</summary><div class="ans">\(F\cdot s=10+0+4=14\) J.</div></details></li>
+        </ol>
+      </div>
+      <div class="foot"><a href="index.html">← Back to Modern Engineering Mathematics index</a></div>
+    </section>
+  </div>
+</div>
+<script>
+function drawAxes(ctx,w,h,cx,cy){ctx.strokeStyle='#d8d5ce';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.moveTo(cx,0);ctx.lineTo(cx,h);ctx.stroke();}
+// Vector addition visual
+const addCanvas=document.getElementById('addCanvas');
+if(addCanvas){
+  const c=addCanvas.getContext('2d'), w=addCanvas.width, h=addCanvas.height, cx=100, cy=220, s=20;
+  const ids=['v1m','v1a','v2m','v2a'].map(id=>document.getElementById(id));
+  function arrow(x1,y1,x2,y2,color){
+    c.strokeStyle=color;c.lineWidth=3;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();
+    const ang=Math.atan2(y2-y1,x2-x1), L=10;
+    c.beginPath(); c.moveTo(x2,y2);
+    c.lineTo(x2-L*Math.cos(ang-Math.PI/6),y2-L*Math.sin(ang-Math.PI/6));
+    c.lineTo(x2-L*Math.cos(ang+Math.PI/6),y2-L*Math.sin(ang+Math.PI/6));
+    c.closePath(); c.fillStyle=color; c.fill();
+  }
+  function render(){
+    const m1=+ids[0].value, a1=+ids[1].value*Math.PI/180, m2=+ids[2].value, a2=+ids[3].value*Math.PI/180;
+    const x1=m1*Math.cos(a1), y1=m1*Math.sin(a1), x2=m2*Math.cos(a2), y2=m2*Math.sin(a2);
+    const rx=x1+x2, ry=y1+y2, rm=Math.sqrt(rx*rx+ry*ry), rang=Math.atan2(ry,rx)*180/Math.PI;
+    c.clearRect(0,0,w,h); drawAxes(c,w,h,cx,cy);
+    arrow(cx,cy,cx+x1*s,cy-y1*s,'#1B3A5C');
+    arrow(cx+x1*s,cy-y1*s,cx+(x1+x2)*s,cy-(y1+y2)*s,'#FF3621');
+    arrow(cx,cy,cx+rx*s,cy-ry*s,'#0a7a4a');
+    document.getElementById('addRead').innerHTML=`Resultant: |R|=${rm.toFixed(2)}, angle=${rang.toFixed(1)}°, components (${rx.toFixed(2)}, ${ry.toFixed(2)})`;
+  }
+  ids.forEach(el=>el.addEventListener('input',render)); render();
+}
+// Dot visual
+const dotCanvas=document.getElementById('dotCanvas');
+if(dotCanvas){
+  const c=dotCanvas.getContext('2d'), w=dotCanvas.width, h=dotCanvas.height, cx=120, cy=190, s=22;
+  const aEl=document.getElementById('aMag'), bEl=document.getElementById('bMag'), tEl=document.getElementById('abAng');
+  function arrow(x,y,color){c.strokeStyle=color;c.lineWidth=3;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+x*s,cy-y*s);c.stroke();}
+  function render(){
+    const A=+aEl.value, B=+bEl.value, th=+tEl.value*Math.PI/180;
+    const ax=A, ay=0, bx=B*Math.cos(th), by=B*Math.sin(th);
+    c.clearRect(0,0,w,h); drawAxes(c,w,h,cx,cy);
+    arrow(ax,ay,'#1B3A5C'); arrow(bx,by,'#FF3621');
+    const proj=B*Math.cos(th), dot=A*proj;
+    c.strokeStyle='#0a7a4a'; c.setLineDash([5,4]); c.beginPath(); c.moveTo(cx+bx*s,cy-by*s); c.lineTo(cx+proj*s,cy); c.stroke(); c.setLineDash([]);
+    document.getElementById('dotRead').innerHTML=`dot = ${dot.toFixed(2)}, projection of b on a = ${proj.toFixed(2)}.`;
+  }
+  [aEl,bEl,tEl].forEach(el=>el.addEventListener('input',render)); render();
+}
+// Cross visual
+const crossCanvas=document.getElementById('crossCanvas');
+if(crossCanvas){
+  const c=crossCanvas.getContext('2d'), w=crossCanvas.width, h=crossCanvas.height, cx=130, cy=190, s=22;
+  const aEl=document.getElementById('caMag'), bEl=document.getElementById('cbMag'), tEl=document.getElementById('cabAng');
+  function render(){
+    const A=+aEl.value, B=+bEl.value, th=+tEl.value*Math.PI/180;
+    const ax=A, ay=0, bx=B*Math.cos(th), by=B*Math.sin(th);
+    c.clearRect(0,0,w,h); drawAxes(c,w,h,cx,cy);
+    const draw=(x,y,col)=>{c.strokeStyle=col;c.lineWidth=3;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+x*s,cy-y*s);c.stroke();};
+    draw(ax,ay,'#1B3A5C'); draw(bx,by,'#FF3621');
+    c.strokeStyle='rgba(10,122,74,.7)'; c.lineWidth=1.5; c.setLineDash([4,3]);
+    c.beginPath(); c.moveTo(cx+bx*s,cy-by*s); c.lineTo(cx+(ax+bx)*s,cy-(ay+by)*s); c.lineTo(cx+ax*s,cy-ay*s); c.closePath(); c.stroke(); c.setLineDash([]);
+    const area=Math.abs(A*B*Math.sin(th));
+    document.getElementById('crossRead').innerHTML=`|a×b| = |a||b|sinθ = ${area.toFixed(2)} (parallelogram area).`;
+  }
+  [aEl,bEl,tEl].forEach(el=>el.addEventListener('input',render)); render();
+}
+document.addEventListener('DOMContentLoaded',()=>{if(window.renderMathInElement){renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}]});}});
+</script>
+</body>
+</html>
