@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN103 — Materials in Design</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1B3A5C;--navy-lt:#1e4570;--orange:#FF3621;
+  --blue-lt:#E6F1FB;--blue-mid:#185FA5;
+  --amber-lt:#FAEEDA;--amber-dk:#7A4800;
+  --green-lt:#E1F5EE;--green-dk:#0a5c3f;
+  --grey-lt:#F6F5F2;--grey-md:#e8e6e0;
+  --text:#2c2a28;--text-muted:#6b6762;
+  --sidebar-w:260px;--content-max:900px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--text);display:flex;min-height:100vh}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sidebar-w);background:var(--navy);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.sidebar-brand{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-brand-title{font-family:'Crimson Pro',Georgia,serif;font-size:17px;font-weight:600;color:white;line-height:1.3}
+.sidebar-brand-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:.04em}
+.progress-wrap{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.progress-label{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.06em;margin-bottom:6px}
+.progress-bar{height:3px;background:rgba(255,255,255,.12);border-radius:2px}
+.progress-fill{height:100%;background:var(--orange);border-radius:2px;width:0%;transition:width .4s ease}
+.nav-section{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-section-label{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.3);padding:6px 20px 4px;text-transform:uppercase}
+.nav-link{display:flex;align-items:center;gap:10px;padding:8px 20px;color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;transition:all .15s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+.nav-link:hover{color:white;background:rgba(255,255,255,.06)}
+.nav-link.active{color:white;background:rgba(255,255,255,.1);border-left:2px solid var(--orange);padding-left:18px}
+.nav-icon{font-size:16px;flex-shrink:0;line-height:1}
+.nav-link.active .nav-icon{filter:brightness(1.2)}
+
+/* ══ MAIN CONTENT ══ */
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
+.topbar{background:white;border-bottom:1px solid var(--grey-md);padding:12px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-breadcrumb{font-size:12px;color:var(--text-muted)}
+.topbar-breadcrumb span{color:var(--navy);font-weight:500}
+.topbar-btns{display:flex;gap:8px}
+.tb-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--grey-md);background:white;font-size:12px;color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.tb-btn:hover{border-color:var(--navy);color:var(--navy)}
+.tb-btn.primary{background:var(--navy);color:white;border-color:var(--navy)}
+.tb-btn.primary:hover{background:var(--navy-lt)}
+.content{max-width:var(--content-max);margin:0 auto;padding:48px 40px 80px}
+
+/* ══ PAGES ══ */
+.page{display:none}
+.page.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ══ PAGE HERO ══ */
+.page-hero{margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid var(--grey-md)}
+.page-hero-label{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--orange);text-transform:uppercase;margin-bottom:6px}
+.page-hero-title{font-family:'Crimson Pro',Georgia,serif;font-size:38px;font-weight:600;color:var(--navy);line-height:1.15;margin-bottom:8px}
+.page-hero-sub{font-size:15px;color:var(--text-muted);line-height:1.6}
+
+/* ══ OVERVIEW GRID ══ */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.ov-card{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:18px 20px;cursor:pointer;transition:all .15s}
+.ov-card:hover{border-color:var(--navy);box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.ov-card-icon{font-size:24px;margin-bottom:8px;line-height:1}
+.ov-card-num{font-size:10px;font-weight:500;letter-spacing:.06em;color:var(--orange);text-transform:uppercase;margin-bottom:4px}
+.ov-card-title{font-family:'Crimson Pro',Georgia,serif;font-size:19px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.ov-card-sub{font-size:12px;color:var(--text-muted);line-height:1.5}
+
+/* ══ STATS ROW ══ */
+.stats-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:24px;padding:20px;background:white;border-radius:10px;border:1px solid var(--grey-md)}
+.stat-box{flex:1;min-width:100px;text-align:center}
+.stat-num{font-family:'Crimson Pro',Georgia,serif;font-size:32px;font-weight:600;color:var(--navy);line-height:1}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:4px;letter-spacing:.04em}
+
+/* ══ TOPIC CONTENT ══ */
+.topic-section{margin-bottom:28px}
+.topic-section-title{font-family:'Crimson Pro',Georgia,serif;font-size:24px;font-weight:600;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.topic-section-title .icon{font-size:28px}
+
+/* ══ CONCEPT LIST ══ */
+.concept-list{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+.concept-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--grey-lt);font-size:14px;line-height:1.6;align-items:flex-start}
+.concept-item:last-child{border-bottom:none}
+.concept-item::before{content:"◆";color:var(--orange);font-size:8px;flex-shrink:0;margin-top:6px}
+
+/* ══ FORMULA BLOCKS ══ */
+.formula-section{margin-top:20px}
+.formula-block{background:var(--grey-lt);border:1px solid var(--grey-md);border-radius:8px;padding:14px 18px;margin-bottom:12px}
+.formula-expr{font-family:'DM Mono',monospace;font-size:14px;color:var(--navy);margin-bottom:6px;font-weight:500}
+.formula-desc{font-size:12px;color:var(--text-muted);line-height:1.5}
+
+/* ══ FORMULA REFERENCE ══ */
+.formula-ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:18px}
+.formula-group{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:20px 24px}
+.formula-group-title{font-family:'Crimson Pro',Georgia,serif;font-weight:600;font-size:16px;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.formula-group-title .dot{width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0}
+
+/* ══ CALLOUTS ══ */
+.callout{border-radius:8px;padding:12px 16px;font-size:13px;line-height:1.6;margin:12px 0}
+.callout-info{background:var(--blue-lt);border-left:3px solid var(--blue-mid);color:#1a3a5c}
+.callout-warn{background:var(--amber-lt);border-left:3px solid #c07a00;color:var(--amber-dk)}
+.callout-success{background:var(--green-lt);border-left:3px solid #1a7a5a;color:var(--green-dk)}
+
+/* ══ QUIZ SECTION ══ */
+.quiz-section{margin-top:32px}
+.quiz-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.qfilter{font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;border:1px solid var(--grey-md);background:white;color:var(--text-muted);cursor:pointer;transition:all .15s}
+.qfilter.active,.qfilter:hover{background:var(--orange);color:white;border-color:var(--orange)}
+.quiz-progress{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:12px 18px;background:white;border-radius:8px;border:1px solid var(--grey-md)}
+.progress-track{flex:1;height:4px;background:var(--grey-lt);border-radius:2px;margin:0 16px}
+.progress-fill-quiz{height:100%;background:var(--orange);border-radius:2px;transition:width .4s ease}
+.progress-label-quiz{font-size:12px;color:var(--text-muted);font-weight:500}
+.score-display{font-size:12px;color:var(--navy);font-weight:500}
+.dots-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.dot-q{width:10px;height:10px;border-radius:50%;background:var(--grey-md);border:1px solid var(--grey-md);transition:all .2s}
+.dot-q.correct{background:var(--green-dk);border-color:var(--green-dk)}
+.dot-q.wrong{background:var(--orange);border-color:var(--orange)}
+.dot-q.current{background:var(--navy);border-color:var(--navy)}
+
+/* ══ QUIZ CARD ══ */
+.q-card{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:24px;margin-bottom:20px}
+.q-topic-badge{font-size:10px;letter-spacing:.06em;color:var(--blue-mid);background:var(--blue-lt);border-radius:4px;padding:4px 10px;display:inline-block;margin-bottom:12px;font-weight:500}
+.q-text{font-family:'Crimson Pro',Georgia,serif;font-size:18px;color:var(--navy);line-height:1.5;margin-bottom:16px;font-weight:600}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border:1px solid var(--grey-md);border-radius:8px;cursor:pointer;font-size:14px;color:var(--text);line-height:1.5;transition:all .15s;background:white}
+.q-opt:hover:not(.locked){border-color:var(--navy);background:var(--grey-lt)}
+.q-opt.correct{border-color:var(--green-dk);background:var(--green-lt);color:var(--green-dk)}
+.q-opt.wrong{border-color:var(--orange);background:#FFF5F3;color:#c63622}
+.q-opt-letter{font-weight:600;font-size:13px;flex-shrink:0;width:20px;margin-top:1px;color:var(--navy)}
+.q-explanation{display:none;margin-top:14px;padding:14px 18px;border-radius:8px;font-size:13px;line-height:1.6;font-style:italic}
+.q-explanation.show{display:block}
+.q-explanation.correct-exp{background:var(--green-lt);border-left:3px solid var(--green-dk);color:var(--green-dk)}
+.q-explanation.wrong-exp{background:#FFF5F3;border-left:3px solid var(--orange);color:#c63622}
+.q-nav{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.q-btn{font-size:13px;font-weight:500;padding:8px 18px;border-radius:8px;border:1px solid var(--grey-md);background:white;color:var(--text-muted);cursor:pointer;transition:all .15s}
+.q-btn:hover:not(:disabled){color:var(--navy);border-color:var(--navy)}
+.q-btn:disabled{opacity:0.4;cursor:not-allowed}
+.q-btn.primary{background:var(--navy);color:white;border-color:var(--navy)}
+.q-btn.primary:hover:not(:disabled){background:var(--navy-lt)}
+
+/* ══ SUMMARY ══ */
+.summary{text-align:center;padding:40px 30px;background:white;border:1px solid var(--grey-md);border-radius:10px}
+.summary-pct{font-family:'Crimson Pro',Georgia,serif;font-weight:600;font-size:64px;color:var(--navy);line-height:1;margin-bottom:8px}
+.summary-fraction{font-size:14px;color:var(--text-muted);margin-bottom:12px}
+.summary-msg{font-size:16px;color:var(--text);line-height:1.6;margin-bottom:24px;font-style:italic}
+.summary-restart{font-size:14px;font-weight:500;padding:10px 24px;border-radius:8px;background:var(--navy);color:white;border:none;cursor:pointer;transition:all .15s}
+.summary-restart:hover{background:var(--navy-lt)}
+
+/* ══ FOOTER ══ */
+footer{border-top:1px solid var(--grey-md);padding:24px 40px;text-align:center;font-size:12px;color:var(--text-muted);margin-top:40px}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:800px){
+  .sidebar{display:none}.main{margin-left:0}.content{padding:24px 18px 60px}
+  .overview-grid{grid-template-columns:1fr}.formula-ref-grid{grid-template-columns:1fr}
+  .topbar{padding:10px 18px}.stats-row{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">DPEN103 — Materials in Design</div>
+    <div class="sidebar-brand-sub">University of Wollongong · 8 Topic Modules</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">PROGRESS</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-icon">🏠</span>Home</button>
+    <button class="nav-link" onclick="goTo('formulas')"><span class="nav-icon">📐</span>Formula Sheet</button>
+    <button class="nav-link" onclick="goTo('quiz')"><span class="nav-icon">✓</span>Practice Quiz</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Topics</div>
+    <button class="nav-link" onclick="goTo('atomic')"><span class="nav-icon">⬡</span>Atomic Structure & Bonding</button>
+    <button class="nav-link" onclick="goTo('mechanical')"><span class="nav-icon">↔</span>Mechanical Properties</button>
+    <button class="nav-link" onclick="goTo('failure')"><span class="nav-icon">⚡</span>Failure: Fracture & Fatigue</button>
+    <button class="nav-link" onclick="goTo('strengthening')"><span class="nav-icon">◈</span>Strengthening Mechanisms</button>
+    <button class="nav-link" onclick="goTo('phase')"><span class="nav-icon">◎</span>Phase Diagrams</button>
+    <button class="nav-link" onclick="goTo('electrical')"><span class="nav-icon">⚡</span>Electrical Properties</button>
+    <button class="nav-link" onclick="goTo('magnetic')"><span class="nav-icon">◉</span>Magnetic Properties</button>
+    <button class="nav-link" onclick="goTo('composites')"><span class="nav-icon">▦</span>Materials Classes & Composites</button>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-breadcrumb">DPEN103 · <span id="currentPage">Materials in Design</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="goTo('formulas')">Formula Sheet</button>
+      <button class="tb-btn primary" onclick="goTo('quiz')">Practice Quiz</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ══ HOME PAGE ══ -->
+    <div id="home" class="page active">
+      <div class="page-hero">
+        <div class="page-hero-label">University of Wollongong · DPEN103</div>
+        <h1 class="page-hero-title">Materials in Design</h1>
+        <p class="page-hero-sub">An immersive study guide covering atomic structure, mechanical properties, failure analysis, phase diagrams, and more. Based on Callister & Rethwisch, Materials Science and Engineering: An Introduction.</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-num">8</div>
+          <div class="stat-label">Topic modules</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">60+</div>
+          <div class="stat-label">Key concepts</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">35+</div>
+          <div class="stat-label">Core formulas</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">24</div>
+          <div class="stat-label">Practice questions</div>
+        </div>
+      </div>
+
+      <h2 style="font-family:'Crimson Pro',Georgia,serif;font-size:24px;font-weight:600;color:var(--navy);margin-top:36px;margin-bottom:16px">Topic Modules</h2>
+      <div class="overview-grid" id="topics-overview"></div>
+    </div>
+
+    <!-- ══ TOPIC PAGES ══ -->
+    <div id="atomic" class="page">
+      <div class="page-hero">
+        <div class="page-hero-label">Topic 01</div>
+        <h1 class="page-hero-title">⬡ Atomic Structure & Bonding</h1>
+        <p class="page-hero-sub">Crystal structures, defects, bonding types · Weeks 1–2</p>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Concepts</h2>
+        <div class="concept-list" id="atomic-concepts"></div>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Formulas</h2>
+        <div class="formula-section" id="atomic-formulas"></div>
+      </div>
+    </div>
+
+    <div id="mechanical" class="page">
+      <div class="page-hero">
+        <div class="page-hero-label">Topic 02</div>
+        <h1 class="page-hero-title">↔ Mechanical Properties</h1>
+        <p class="page-hero-sub">Stress, strain, elasticity, plasticity, hardness · Weeks 2–4</p>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Concepts</h2>
+        <div class="concept-list" id="mechanical-concepts"></div>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Formulas</h2>
+        <div class="formula-section" id="mechanical-formulas"></div>
+      </div>
+    </div>
+
+    <div id="failure" class="page">
+      <div class="page-hero">
+        <div class="page-hero-label">Topic 03</div>
+        <h1 class="page-hero-title">⚡ Failure: Fracture & Fatigue</h1>
+        <p class="page-hero-sub">Fracture mechanics, fatigue, creep · Weeks 5–7</p>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Concepts</h2>
+        <div class="concept-list" id="failure-concepts"></div>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Formulas</h2>
+        <div class="formula-section" id="failure-formulas"></div>
+      </div>
+    </div>
+
+    <div id="strengthening" class="page">
+      <div class="page-hero">
+        <div class="page-hero-label">Topic 04</div>
+        <h1 class="page-hero-title">◈ Strengthening Mechanisms</h1>
+        <p class="page-hero-sub">Grain boundary, solid solution, work hardening, precipitation · Weeks 4–5</p>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Concepts</h2>
+        <div class="concept-list" id="strengthening-concepts"></div>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Formulas</h2>
+        <div class="formula-section" id="strengthening-formulas"></div>
+      </div>
+    </div>
+
+    <div id="phase" class="page">
+      <div class="page-hero">
+        <div class="page-hero-label">Topic 05</div>
+        <h1 class="page-hero-title">◎ Phase Diagrams</h1>
+        <p class="page-hero-sub">Binary systems, lever rule, Fe-Fe₃C, heat treatment · Weeks 6–8</p>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Concepts</h2>
+        <div class="concept-list" id="phase-concepts"></div>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Formulas</h2>
+        <div class="formula-section" id="phase-formulas"></div>
+      </div>
+    </div>
+
+    <div id="electrical" class="page">
+      <div class="page-hero">
+        <div class="page-hero-label">Topic 06</div>
+        <h1 class="page-hero-title">⚡ Electrical Properties</h1>
+        <p class="page-hero-sub">Conductivity, semiconductors, dielectrics, p-n junctions · Weeks 9–10</p>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Concepts</h2>
+        <div class="concept-list" id="electrical-concepts"></div>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Formulas</h2>
+        <div class="formula-section" id="electrical-formulas"></div>
+      </div>
+    </div>
+
+    <div id="magnetic" class="page">
+      <div class="page-hero">
+        <div class="page-hero-label">Topic 07</div>
+        <h1 class="page-hero-title">◉ Magnetic Properties</h1>
+        <p class="page-hero-sub">Ferromagnetism, hysteresis, hard vs soft magnets · Week 11</p>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Concepts</h2>
+        <div class="concept-list" id="magnetic-concepts"></div>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Formulas</h2>
+        <div class="formula-section" id="magnetic-formulas"></div>
+      </div>
+    </div>
+
+    <div id="composites" class="page">
+      <div class="page-hero">
+        <div class="page-hero-label">Topic 08</div>
+        <h1 class="page-hero-title">▦ Materials Classes & Composites</h1>
+        <p class="page-hero-sub">Metals, ceramics, polymers, fibre composites · Weeks 12–13</p>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Concepts</h2>
+        <div class="concept-list" id="composites-concepts"></div>
+      </div>
+
+      <div class="topic-section">
+        <h2 class="topic-section-title">Key Formulas</h2>
+        <div class="formula-section" id="composites-formulas"></div>
+      </div>
+    </div>
+
+    <!-- ══ FORMULAS PAGE ══ -->
+    <div id="formulas" class="page">
+      <div class="page-hero">
+        <div class="page-hero-label">Quick Reference</div>
+        <h1 class="page-hero-title">Formula Sheet</h1>
+        <p class="page-hero-sub">All key equations for DPEN103, grouped by topic.</p>
+      </div>
+      <div class="formula-ref-grid" id="formula-ref-grid"></div>
+    </div>
+
+    <!-- ══ QUIZ PAGE ══ -->
+    <div id="quiz" class="page">
+      <div class="page-hero">
+        <div class="page-hero-label">Practice</div>
+        <h1 class="page-hero-title">Quiz Yourself</h1>
+        <p class="page-hero-sub">Filter by topic or run all questions. Read the explanation after each answer.</p>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-filters" id="quiz-filters"></div>
+        <div class="quiz-progress">
+          <span class="progress-label-quiz" id="q-label">Q1 of 24</span>
+          <div class="progress-track"><div class="progress-fill-quiz" id="progress-fill-quiz" style="width:0%"></div></div>
+          <span class="score-display" id="score-display">0 / 0</span>
+        </div>
+        <div class="dots-row" id="dots-row"></div>
+        <div id="quiz-card"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    DPEN103 · Materials in Design · University of Wollongong · Study guide for educational use
+  </footer>
+</main>
+
+<script>
+const TOPICS = [
+  {
+    id:'atomic', icon:'⬡', name:'Atomic Structure & Bonding',
+    sub:'Crystal structures, defects, bonding types',
+    tag:'Weeks 1–2',
+    concepts:[
+      'Ionic, covalent, metallic, and van der Waals bonds — properties and engineering implications',
+      'FCC (face-centred cubic), BCC (body-centred cubic), HCP (hexagonal close-packed) crystal structures',
+      'Coordination number and atomic packing factor (APF) for each crystal structure',
+      'Unit cell calculations: relating lattice parameter a to atomic radius R',
+      'Point defects: vacancies, interstitials, substitutional impurities; Frenkel & Schottky defects',
+      'Line defects: edge and screw dislocations — Burgers vector describes magnitude and direction',
+      'Planar defects: grain boundaries, twin boundaries, stacking faults',
+      'Concentration of vacancies increases exponentially with temperature (Arrhenius)',
+      'Effect of defects on mechanical strength, electrical resistivity, and diffusion'
+    ],
+    formulas:[
+      {e:'APF = (N × 4/3πR³) / V_cell', d:'Atomic packing factor — N atoms per cell, R = atomic radius'},
+      {e:'a = 2R (SC) | a = 4R/√3 (BCC) | a = 2√2·R (FCC)', d:'Lattice parameter vs atomic radius'},
+      {e:'ρ = (n·A) / (V_c·N_A)', d:'Theoretical density — n atoms/cell, A atomic mass, Vc cell volume'},
+      {e:'N_v = N·exp(−Q_v / kT)', d:'Equilibrium vacancy concentration — Qv activation energy'}
+    ]
+  },
+  {
+    id:'mechanical', icon:'↔', name:'Mechanical Properties',
+    sub:'Stress, strain, elasticity, plasticity, hardness',
+    tag:'Weeks 2–4',
+    concepts:[
+      'Engineering stress σ = F/A₀ (units: Pa or MPa); engineering strain ε = ΔL/L₀ (dimensionless)',
+      'True stress σ_T = σ(1+ε) and true strain ε_T = ln(1+ε) — more accurate at large deformations',
+      'Elastic deformation: reversible, obeys Hooke\'s law; Young\'s modulus E = σ/ε',
+      'Poisson\'s ratio ν = −ε_lateral / ε_axial (typically 0.25–0.35 for metals)',
+      'Yield strength σ_y (0.002 offset method), Ultimate Tensile Strength (UTS), fracture strength',
+      'Ductility measured as %EL (elongation) and %RA (reduction in area)',
+      'Resilience: energy absorbed elastically per unit volume = σ_y²/2E',
+      'Toughness: total area under the stress-strain curve (energy to fracture)',
+      'Hardness testing: Rockwell (HRA/HRB/HRC), Brinell (HB), Vickers (HV) — correlation to UTS',
+      'Strain rate and temperature effects: higher T or lower strain rate → lower σ_y'
+    ],
+    formulas:[
+      {e:'σ = F / A₀', d:'Engineering stress (MPa) — F in N, A₀ original cross-section in m²'},
+      {e:'ε = (l_i − l₀) / l₀ = ΔL / L₀', d:'Engineering strain (dimensionless)'},
+      {e:'σ = Eε  (elastic region)', d:'Hooke\'s Law — E = Young\'s modulus (GPa)'},
+      {e:'ν = −ε_x / ε_z', d:'Poisson\'s ratio (lateral / axial strain)'},
+      {e:'U_r = σ_y² / 2E', d:'Modulus of resilience (energy per unit volume)'},
+      {e:'%EL = (l_f − l₀)/l₀ × 100', d:'Percent elongation — ductility measure'},
+      {e:'%RA = (A₀ − A_f)/A₀ × 100', d:'Percent reduction in area — ductility measure'}
+    ]
+  },
+  {
+    id:'failure', icon:'⚡', name:'Failure: Fracture & Fatigue',
+    sub:'Fracture mechanics, fatigue, creep',
+    tag:'Weeks 5–7',
+    concepts:[
+      'Ductile fracture: significant plastic deformation, cup-and-cone morphology, fibrous dull surface',
+      'Brittle fracture: little/no plastic deformation, flat shiny granular surface, cleavage facets',
+      'Stress concentration factor K_t at notches, holes, cracks — amplifies nominal stress',
+      'Griffith criterion: crack propagates when energy release rate G ≥ crack surface energy (2γ)',
+      'Fracture toughness K_IC: material property (MPa√m), resistance to crack propagation in plane strain',
+      'Design: ensure applied K = Yσ√(πa) < K_IC, where a = crack half-length, Y = geometry factor',
+      'Fatigue failure under cyclic loading — accounts for ~90% of metallic failures in service',
+      'S-N curve: stress amplitude S vs cycles to failure N; endurance limit for steels; no limit for Al alloys',
+      'Fatigue crack: initiation at surface defect → slow propagation (beach/clamshell marks) → fast fracture',
+      'Creep: time-dependent plastic deformation at elevated temperature (>0.4 T_m); three stages'
+    ],
+    formulas:[
+      {e:'K = Y·σ·√(πa)', d:'Stress intensity factor — Y geometry factor, a = crack half-length'},
+      {e:'K_IC = Y·σ_c·√(πa_c)', d:'Fracture toughness at critical stress/crack size'},
+      {e:'σ_m = (σ_max + σ_min) / 2', d:'Mean stress in fatigue cycle'},
+      {e:'σ_a = (σ_max − σ_min) / 2', d:'Stress amplitude in fatigue cycle'},
+      {e:'R = σ_min / σ_max', d:'Stress ratio (R = −1 for fully reversed bending)'},
+      {e:'Δσ = σ_max − σ_min', d:'Stress range in fatigue cycle'}
+    ]
+  },
+  {
+    id:'strengthening', icon:'◈', name:'Strengthening Mechanisms',
+    sub:'Grain boundary, solid solution, work hardening, precipitation',
+    tag:'Weeks 4–5',
+    concepts:[
+      'All strengthening methods work by impeding dislocation motion',
+      'Grain boundary strengthening (Hall-Petch): finer grains → more boundaries → higher σ_y',
+      'Solid solution strengthening: solute atoms distort lattice, creating stress fields that hinder dislocations',
+      'Strain hardening (work hardening / cold working): plastic deformation increases dislocation density',
+      'Precipitation hardening (age hardening): three stages — solution treatment, quench, ageing',
+      'During ageing, fine coherent precipitates nucleate and act as obstacles to dislocations',
+      'Over-ageing: precipitates coarsen, lose coherency, and strength decreases',
+      'Recovery, recrystallisation, grain growth: annealing stages that soften cold-worked metals',
+      'Recrystallisation temperature ≈ 0.3–0.5 T_m; grain growth occurs above recrystallisation T',
+      '%CW: percent cold work — increases strength/hardness but decreases ductility'
+    ],
+    formulas:[
+      {e:'σ_y = σ₀ + k_y · d^(−1/2)', d:'Hall-Petch equation — d = average grain diameter (m)'},
+      {e:'%CW = (A₀ − A_d) / A₀ × 100', d:'Percent cold work — A₀ original, A_d deformed area'}
+    ]
+  },
+  {
+    id:'phase', icon:'◎', name:'Phase Diagrams',
+    sub:'Binary systems, lever rule, Fe-Fe₃C, heat treatment',
+    tag:'Weeks 6–8',
+    concepts:[
+      'Phase rule F = C − P + 2 (general); F = C − P + 1 for isobaric binary systems',
+      'Isomorphous system (e.g. Cu-Ni): complete solid solubility, liquidus and solidus lines',
+      'Lever rule: at given T and overall composition C₀, gives weight fraction of each phase',
+      'Eutectic systems: eutectic point, eutectic reaction L → α + β; eutectic microstructure',
+      'Fe-Fe₃C phase diagram: key phases — δ ferrite, austenite (γ), α ferrite, cementite (Fe₃C)',
+      'Eutectoid reaction at 727°C, 0.76 wt%C: γ → α + Fe₃C, product = pearlite (lamellar)',
+      'Hypoeutectoid steel (<0.76%C): proeutectoid ferrite + pearlite',
+      'Hypereutectoid steel (>0.76%C): proeutectoid cementite + pearlite',
+      'Martensite: rapid quench of austenite → diffusionless BCT structure → very hard, brittle',
+      'Heat treatments: annealing (soften), normalising (refine grains), quench & temper (balance hardness/toughness)',
+      'TTT (Time-Temperature-Transformation) diagrams: predict microstructure from cooling rate'
+    ],
+    formulas:[
+      {e:'W_α = (C_β − C₀) / (C_β − C_α)', d:'Weight fraction of α phase (lever rule)'},
+      {e:'W_β = (C₀ − C_α) / (C_β − C_α)', d:'Weight fraction of β phase (lever rule)'},
+      {e:'F = C − P + 1  (isobaric)', d:'Gibbs phase rule for binary system at const. pressure'},
+      {e:'%α_proeutectoid = (C_eutectoid − C₀)/(C_eutectoid − C_α) × 100', d:'Proeutectoid ferrite fraction in hypoeutectoid steel'}
+    ]
+  },
+  {
+    id:'electrical', icon:'⚡', name:'Electrical Properties',
+    sub:'Conductivity, semiconductors, dielectrics, p-n junctions',
+    tag:'Weeks 9–10',
+    concepts:[
+      'Ohm\'s law in material form: J = σE (J = current density A/m², σ = conductivity S/m, E = field V/m)',
+      'Resistivity ρ = 1/σ; Resistance R = ρL/A (Ω)',
+      'Metals: partially filled energy band, σ ≈ 10⁶–10⁸ S/m; decreases with T',
+      'Insulators: wide band gap (E_g > 4 eV); semiconductors: narrow gap (Si: 1.1 eV, Ge: 0.67 eV)',
+      'Matthiessen\'s rule: ρ_total = ρ_thermal + ρ_impurity + ρ_deformation',
+      'Intrinsic semiconductor: thermally generated electron-hole pairs; n = p = n_i',
+      'Extrinsic: n-type adds donor atoms (Group V → extra e⁻); p-type adds acceptor atoms (Group III → hole)',
+      'Carrier mobility μ: σ = n|e|μ_e + p|e|μ_h; mobility decreases with T (lattice scattering)',
+      'p-n junction: depletion zone, forward bias reduces barrier → current flows; reverse bias → no current',
+      'Dielectrics: store electrical energy; dielectric constant K\' (permittivity); polarisation mechanisms'
+    ],
+    formulas:[
+      {e:'J = σE  →  V = IR', d:'Ohm\'s law (material form and circuit form)'},
+      {e:'R = ρL / A', d:'Resistance — ρ resistivity, L length, A cross-section'},
+      {e:'σ = n|e|μ_e + p|e|μ_h', d:'Semiconductor conductivity — n,p carrier conc., μ mobility'},
+      {e:'n_i² = N_c·N_v · exp(−E_g / kT)', d:'Intrinsic carrier concentration (n_i = p = n for intrinsic)'},
+      {e:'ρ(T) = ρ₀[1 + α(T − T₀)]', d:'Metal resistivity vs temperature — α temp. coefficient'},
+      {e:'C = K\'ε₀A / d', d:'Capacitance of parallel-plate capacitor with dielectric'}
+    ]
+  },
+  {
+    id:'magnetic', icon:'◉', name:'Magnetic Properties',
+    sub:'Ferromagnetism, hysteresis, hard vs soft magnets',
+    tag:'Week 11',
+    concepts:[
+      'Types of magnetism: diamagnetic (χ < 0), paramagnetic (χ > 0, small), ferromagnetic (large χ, spontaneous M)',
+      'Ferrimagnetic: anti-parallel moments of unequal magnitude → net M (e.g. ferrites)',
+      'Magnetic field H (A/m), flux density B (Tesla), magnetisation M (A/m)',
+      'Relationship: B = μ₀(H + M); in vacuum B = μ₀H',
+      'Relative permeability μ_r = μ/μ₀; susceptibility χ_m = M/H; μ_r = 1 + χ_m',
+      'Ferromagnetic domains: regions of aligned spins; domain walls move under applied H',
+      'Hysteresis loop: saturation M_s, remanence (retentivity) M_r, coercivity H_c',
+      'Soft magnets (low H_c, narrow loop): transformers, motors, inductors — low energy loss per cycle',
+      'Hard magnets (high H_c, wide loop): permanent magnets — resist demagnetisation',
+      'Curie temperature T_C: above this, ferromagnetic → paramagnetic (thermal energy disrupts order)'
+    ],
+    formulas:[
+      {e:'B = μ₀(H + M)', d:'Magnetic flux density — μ₀ = 4π×10⁻⁷ T·m/A'},
+      {e:'μ_r = 1 + χ_m', d:'Relative permeability from magnetic susceptibility'},
+      {e:'B = μ₀μ_r H', d:'Simplified B-H relation in linear (paramagnetic) media'},
+      {e:'χ_m = M / H', d:'Magnetic susceptibility definition'}
+    ]
+  },
+  {
+    id:'composites', icon:'▦', name:'Materials Classes & Composites',
+    sub:'Metals, ceramics, polymers, fibre composites',
+    tag:'Weeks 12–13',
+    concepts:[
+      'Metal alloys: steel (plain-carbon, alloy), cast iron, aluminium alloys, titanium alloys',
+      'Ceramics: ionic/covalent bonding, high hardness and melting point, brittle (no slip systems), e.g. Al₂O₃, SiC, Si₃N₄',
+      'Polymers: thermoplastic (re-meltable) vs thermoset (cross-linked, cannot re-melt)',
+      'Degree of polymerisation, molecular weight distribution, number-average and weight-average M_w',
+      'Glass transition temperature T_g: below → glassy (rigid); above → rubbery (mobile chains)',
+      'Viscoelastic behaviour: both viscous (time-dependent) and elastic (recoverable) response',
+      'Composite materials: matrix (transfers load) + reinforcement (carries load)',
+      'Types: particle-reinforced, short fibre, continuous fibre, laminar, sandwich panels',
+      'Rule of mixtures: longitudinal (isostrain) → upper bound; transverse (isostress) → lower bound',
+      'Specific strength (σ/ρ) and specific modulus (E/ρ): key for lightweight aerospace/automotive design',
+      'Failure modes: fibre fracture, matrix cracking, debonding, delamination, fibre pull-out'
+    ],
+    formulas:[
+      {e:'E_c(long) = E_m·V_m + E_f·V_f', d:'Longitudinal modulus — isostrain, rule of mixtures upper bound'},
+      {e:'1/E_c(trans) = V_m/E_m + V_f/E_f', d:'Transverse modulus — isostress, lower bound'},
+      {e:'M̄_n = Σ(x_i · M_i)', d:'Number-average molecular weight of polymer'},
+      {e:'M̄_w = Σ(w_i · M_i)', d:'Weight-average molecular weight of polymer'},
+      {e:'DP = M̄_n / m_r', d:'Degree of polymerisation — m_r = repeat unit molecular weight'}
+    ]
+  }
+];
+
+const QUESTIONS = [
+  {t:'atomic',q:'An FCC unit cell contains how many atoms per unit cell?',opts:['1','2','4','6'],a:2,exp:'FCC: 8 corners × 1/8 + 6 faces × 1/2 = 1 + 3 = 4 atoms. This is why FCC metals are denser than BCC (2 atoms/cell).'},
+  {t:'atomic',q:'Which bond type is primarily responsible for the high melting point of NaCl?',opts:['Covalent','Metallic','Ionic','van der Waals'],a:2,exp:'NaCl is held by ionic bonds — strong electrostatic attraction between Na⁺ and Cl⁻. These are non-directional and give NaCl a melting point of ~801°C.'},
+  {t:'atomic',q:'A Frenkel defect is best described as:',opts:['Two adjacent vacancies','An atom displaced to an interstitial site (vacancy-interstitial pair)','A substitutional foreign atom','A missing ion pair (cation + anion)'],a:1,exp:'Frenkel defect: an atom vacates its lattice site and moves to an interstitial position. This creates a vacancy-interstitial pair. Unlike Schottky defects, it does not change crystal density.'},
+  {t:'atomic',q:'Which crystal structure has the highest atomic packing factor?',opts:['Simple cubic (0.52)','BCC (0.68)','FCC (0.74)','Diamond cubic (0.34)'],a:2,exp:'FCC (and HCP) both have APF = 0.74 — the densest possible packing of equal spheres. BCC = 0.68, SC = 0.52, Diamond = 0.34.'},
+  {t:'mechanical',q:'A steel bar (A₀ = 100 mm², L₀ = 200 mm) carries a load F = 50 kN. What is the engineering stress?',opts:['50 MPa','250 MPa','500 MPa','5 MPa'],a:2,exp:'σ = F/A₀ = 50,000 N ÷ 100×10⁻⁶ m² = 500 MPa. Remember: 1 N/mm² = 1 MPa. Always check unit conversion.'},
+  {t:'mechanical',q:'The area under the elastic region of a stress–strain curve represents:',opts:['Toughness','Young\'s modulus','Modulus of resilience','Ductility'],a:2,exp:'Modulus of resilience = area under the elastic portion = σ_y²/2E. This is the energy per unit volume the material can absorb elastically. Toughness is the total area including plastic deformation.'},
+  {t:'mechanical',q:'If E = 200 GPa and elastic strain ε = 0.001, what is the stress?',opts:['0.2 MPa','20 MPa','200 MPa','2000 MPa'],a:2,exp:'σ = Eε = 200 × 10⁹ Pa × 0.001 = 200 × 10⁶ Pa = 200 MPa. Hooke\'s Law in action — always use consistent SI units.'},
+  {t:'mechanical',q:'Poisson\'s ratio ν relates:',opts:['Stress to strain','Lateral strain to axial strain','Shear modulus to Young\'s modulus','Yield strength to hardness'],a:1,exp:'ν = −ε_lateral / ε_axial. Under tension, a material elongates axially but contracts laterally. Most metals have ν ≈ 0.25–0.35. A perfectly incompressible material would have ν = 0.5.'},
+  {t:'failure',q:'Fracture toughness K_IC is best defined as:',opts:['The stress at which a crack first initiates','A material property: the critical stress intensity at which cracks propagate unstably','The endurance limit under cyclic loading','The Charpy impact energy absorbed'],a:1,exp:'K_IC (plane-strain fracture toughness) is a material property. When the applied stress intensity K = Yσ√(πa) reaches K_IC, unstable crack growth occurs. High K_IC = tougher material. Units: MPa·√m.'},
+  {t:'failure',q:'In an S-N fatigue curve for steel, the "endurance limit" means:',opts:['The stress causing immediate fracture','The stress amplitude below which fatigue failure will not occur','The maximum number of cycles before fracture','The creep threshold stress'],a:1,exp:'The endurance limit (fatigue limit) is the stress amplitude below which steel can withstand an infinite number of cycles. Typically ~50% of UTS for steel. Aluminium alloys do not have a true endurance limit.'},
+  {t:'failure',q:'Which fracture surface appearance indicates ductile failure?',opts:['Flat, shiny, granular surface','Intergranular cracking with no deformation','Cup-and-cone morphology with dull fibrous surface','Cleavage facets visible under SEM'],a:2,exp:'Ductile fracture shows cup-and-cone morphology — the result of extensive plastic deformation and void coalescence. The surface is dull and fibrous. Brittle fracture is flat, shiny, and shows little deformation.'},
+  {t:'failure',q:'Creep is defined as:',opts:['Rapid fracture under impact loading','Time-dependent plastic deformation at elevated temperature','Fatigue crack initiation at stress concentrations','Brittle fracture along grain boundaries'],a:1,exp:'Creep occurs at temperatures > ~0.4 T_m (homologous temperature). It proceeds in three stages: primary (decreasing creep rate), secondary (steady-state, Newtonian), and tertiary (accelerating to fracture).'},
+  {t:'strengthening',q:'The Hall-Petch relationship states that yield strength is proportional to:',opts:['d (grain diameter)','d² (grain diameter squared)','d^(−1/2) (inverse square root of grain diameter)','d^(1/3)'],a:2,exp:'σ_y = σ₀ + k_y·d^(−1/2). As grain size d decreases, yield strength increases. More grain boundaries act as barriers to dislocation motion. This is why grain refinement is a key strengthening strategy.'},
+  {t:'strengthening',q:'During the "ageing" step of precipitation hardening, what happens?',opts:['Rapid quench traps solute in supersaturated solid solution','Fine coherent precipitates nucleate and grow, impeding dislocations','The alloy is cold-worked to add dislocations','Grain growth occurs, reducing boundary area'],a:1,exp:'After solution treatment (dissolve precipitates) and quenching (trap supersaturated solution), ageing at intermediate T allows fine precipitate particles to nucleate. These coherent particles obstruct dislocation glide, raising strength.'},
+  {t:'strengthening',q:'Which of the following REDUCES yield strength?',opts:['Cold working','Grain refinement','Recrystallisation annealing','Solid solution alloying'],a:2,exp:'Recrystallisation annealing forms new, strain-free grains from the cold-worked microstructure. This removes the strain-hardened dislocation tangles, lowering yield strength and restoring ductility. It is the "softening" anneal.'},
+  {t:'phase',q:'The lever rule is used to determine:',opts:['The cooling rate in a casting process','Weight fraction and composition of each phase in a two-phase region','The number of phases allowed by the Gibbs phase rule','The melting temperature of a binary alloy'],a:1,exp:'In a two-phase region, the lever rule gives: W_α = (C_β − C₀)/(C_β − C_α). Think of C₀ as the fulcrum of a lever — the fraction of each phase is inversely proportional to its distance from C₀.'},
+  {t:'phase',q:'In the Fe-Fe₃C diagram, the eutectoid reaction at 727°C and 0.76 wt%C produces:',opts:['Martensite','Bainite','Pearlite','Ledeburite'],a:2,exp:'Eutectoid: γ (austenite, 0.76%C) → α ferrite + Fe₃C (cementite). The product is pearlite — alternating lamellae of soft ferrite and hard cementite. Finer lamellae spacing (faster cooling) → harder pearlite.'},
+  {t:'phase',q:'An alloy C₀ = 60% B sits in a two-phase region: α contains 40%B, β contains 80%B. Weight fraction of β is:',opts:['25%','50%','75%','33%'],a:1,exp:'W_β = (C₀ − C_α)/(C_β − C_α) = (60−40)/(80−40) = 20/40 = 0.50 = 50%. Check: W_α = (80−60)/(80−40) = 50% ✓. Total must equal 1.'},
+  {t:'phase',q:'Martensite in steel forms by:',opts:['Slow equilibrium cooling with diffusion','A diffusionless displacive transformation on rapid quenching','Extended ageing at room temperature','Recrystallisation of pearlite'],a:1,exp:'Martensite forms when austenite is quenched too fast for carbon to diffuse out. The FCC → BCT transformation is diffusionless (shear). Carbon is trapped interstitially, causing lattice distortion → extreme hardness and brittleness.'},
+  {t:'electrical',q:'Compared to metals at room temperature, intrinsic semiconductors have:',opts:['Higher conductivity','Similar conductivity','Much lower conductivity','Zero conductivity'],a:2,exp:'Semiconductors (Si σ ≈ 10⁻³ S/m, Ge ≈ 2 S/m) are many orders of magnitude less conductive than metals (Cu ≈ 6×10⁷ S/m). Most valence electrons are bound in covalent bonds; only thermally excited carriers conduct.'},
+  {t:'electrical',q:'Doping silicon with phosphorus (Group V) creates:',opts:['p-type semiconductor with majority holes','n-type semiconductor with majority electrons','An ionic conductor','An intrinsic semiconductor with wider band gap'],a:1,exp:'P has 5 valence electrons vs Si\'s 4. The extra electron is loosely bound (donor level just below conduction band) and easily ionised at room temperature → becomes a free electron. Majority carriers = electrons → n-type.'},
+  {t:'magnetic',q:'A wide hysteresis loop with high coercivity H_c indicates:',opts:['Soft magnetic material (e.g. transformer core)','Hard magnetic material (e.g. permanent magnet)','Paramagnetic material','Diamagnetic material'],a:1,exp:'Hard magnets have high coercivity — difficult to demagnetise. Wide loop = high energy product (B·H)_max. Used in permanent magnets (NdFeB, AlNiCo). Soft magnets need narrow loops to minimise hysteresis energy loss per AC cycle.'},
+  {t:'magnetic',q:'Above the Curie temperature T_C, a ferromagnetic material becomes:',opts:['Diamagnetic','Antiferromagnetic','Paramagnetic','Ferrimagnetic'],a:2,exp:'Above T_C, thermal energy exceeds the exchange interaction that aligns magnetic dipoles within domains. Domains break up and the material becomes paramagnetic — small, positive χ_m with no spontaneous magnetisation.'},
+  {t:'composites',q:'The rule of mixtures for the longitudinal modulus of a continuous fibre composite gives:',opts:['E_c = E_m·E_f/(E_m+E_f)','E_c = E_m·V_m + E_f·V_f','E_c = (E_m + E_f)/2','E_c = V_f·E_f − V_m·E_m'],a:1,exp:'For loading parallel to fibres (isostrain: ε_c = ε_m = ε_f), force balance gives E_c = E_m·V_m + E_f·V_f. This is the upper-bound (Voigt) estimate. For transverse loading (isostress), use the series (Reuss) model: 1/E_ct = V_m/E_m + V_f/E_f.'}
+];
+
+// ---- STATE ----
+let currentPageId = 'home';
+let quizFilter = 'all';
+let filteredQs = [];
+let qIdx = 0;
+let answered = false;
+let scores = {c:0, t:0};
+let results = [];
+
+// ---- NAVIGATION ----
+function goTo(pageId){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  const link = Array.from(document.querySelectorAll('.nav-link')).find(l=>l.getAttribute('onclick')?.includes(`'${pageId}'`));
+  if(link) link.classList.add('active');
+  currentPageId = pageId;
+  updateBreadcrumb();
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateBreadcrumb(){
+  const page = TOPICS.find(t=>t.id===currentPageId);
+  const label = page ? page.name : currentPageId==='formulas' ? 'Formula Sheet' : currentPageId==='quiz' ? 'Practice Quiz' : 'Materials in Design';
+  document.getElementById('currentPage').textContent = label;
+}
+
+function updateProgress(){
+  const visited = new Set(JSON.parse(localStorage.getItem('dpen103_visited')||'[]'));
+  if(currentPageId && currentPageId!=='home' && currentPageId!=='formulas' && currentPageId!=='quiz'){
+    visited.add(currentPageId);
+    localStorage.setItem('dpen103_visited',JSON.stringify([...visited]));
+  }
+  const pct = Math.round((visited.size/8)*100);
+  document.getElementById('progressFill').style.width = pct+'%';
+}
+
+// ---- RENDER OVERVIEW ----
+function renderOverview(){
+  const grid = document.getElementById('topics-overview');
+  grid.innerHTML = TOPICS.map((t,i)=>`
+    <div class="ov-card" onclick="goTo('${t.id}')">
+      <div class="ov-card-icon">${t.icon}</div>
+      <div class="ov-card-num">Topic ${String(i+1).padStart(2,'0')}</div>
+      <div class="ov-card-title">${t.name}</div>
+      <div class="ov-card-sub">${t.sub} · ${t.tag}</div>
+    </div>
+  `).join('');
+}
+
+// ---- RENDER TOPIC PAGES ----
+function renderTopicPages(){
+  TOPICS.forEach(t=>{
+    const conceptsDiv = document.getElementById(`${t.id}-concepts`);
+    if(conceptsDiv){
+      conceptsDiv.innerHTML = t.concepts.map(c=>`<div class="concept-item">${c}</div>`).join('');
+    }
+    const formulasDiv = document.getElementById(`${t.id}-formulas`);
+    if(formulasDiv){
+      formulasDiv.innerHTML = t.formulas.map(f=>`
+        <div class="formula-block">
+          <div class="formula-expr">${f.e}</div>
+          <div class="formula-desc">${f.d}</div>
+        </div>
+      `).join('');
+    }
+  });
+}
+
+// ---- RENDER FORMULAS ----
+function renderFormulas(){
+  const grid = document.getElementById('formula-ref-grid');
+  grid.innerHTML = TOPICS.map(t=>`
+    <div class="formula-group">
+      <div class="formula-group-title">
+        <div class="dot"></div>${t.name}
+      </div>
+      ${t.formulas.map(f=>`
+        <div class="formula-block">
+          <div class="formula-expr">${f.e}</div>
+          <div class="formula-desc">${f.d}</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+// ---- QUIZ ----
+function renderFilters(){
+  const fr = document.getElementById('quiz-filters');
+  const filters = [{id:'all',label:'All topics'},...TOPICS.map(t=>({id:t.id,label:t.name}))];
+  fr.innerHTML = filters.map(f=>`
+    <button class="qfilter${quizFilter===f.id?' active':''}" onclick="setFilter('${f.id}')">${f.label}</button>
+  `).join('');
+}
+
+function setFilter(id){
+  quizFilter = id;
+  qIdx = 0; answered = false; scores = {c:0,t:0}; results = [];
+  renderFilters();
+  buildFilteredQs();
+  renderDots();
+  renderQuestion();
+}
+
+function buildFilteredQs(){
+  filteredQs = quizFilter==='all' ? [...QUESTIONS] : QUESTIONS.filter(q=>q.t===quizFilter);
+}
+
+function renderDots(){
+  const row = document.getElementById('dots-row');
+  row.innerHTML = filteredQs.map((_,i)=>{
+    let cls='dot-q';
+    if(i<qIdx) cls+=' '+(results[i]?'correct':'wrong');
+    else if(i===qIdx) cls+=' current';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+}
+
+function renderProgress(){
+  const total = filteredQs.length;
+  const pct = total ? Math.round((qIdx/total)*100) : 0;
+  document.getElementById('progress-fill-quiz').style.width = pct+'%';
+  document.getElementById('q-label').textContent = total ? `Q${qIdx+1} of ${total}` : '—';
+  document.getElementById('score-display').textContent = `${scores.c} / ${scores.t}`;
+}
+
+function renderQuestion(){
+  renderProgress();
+  renderDots();
+  const card = document.getElementById('quiz-card');
+  if(filteredQs.length===0){card.innerHTML='<div style="color:var(--text-muted);font-size:15px;padding:2rem 0">No questions for this filter.</div>';return;}
+  if(qIdx>=filteredQs.length){renderSummary();return;}
+  const q = filteredQs[qIdx];
+  const topicName = TOPICS.find(t=>t.id===q.t)?.name||q.t;
+  card.innerHTML = `
+    <div class="q-card">
+      <div class="q-topic-badge">${topicName}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts" id="q-opts">
+        ${q.opts.map((o,i)=>`
+          <button class="q-opt" id="opt-${i}" onclick="pickAnswer(${i})">
+            <span class="q-opt-letter">${'ABCD'[i]}</span>${o}
+          </button>
+        `).join('')}
+      </div>
+      <div class="q-explanation" id="q-exp"></div>
+      <div class="q-nav">
+        <button class="q-btn" onclick="prevQ()" ${qIdx===0?'disabled':''}>← Previous</button>
+        <button class="q-btn primary" id="next-btn" onclick="nextQ()" disabled>Next →</button>
+      </div>
+    </div>
+  `;
+}
+
+function pickAnswer(i){
+  if(answered) return;
+  answered = true;
+  const q = filteredQs[qIdx];
+  const correct = i===q.a;
+  results[qIdx] = correct;
+  scores.t++;
+  if(correct) scores.c++;
+  document.querySelectorAll('.q-opt').forEach((btn,idx)=>{
+    btn.classList.add('locked');
+    btn.style.cursor='default';
+    if(idx===q.a) btn.classList.add('correct');
+    else if(idx===i&&!correct) btn.classList.add('wrong');
+  });
+  const exp = document.getElementById('q-exp');
+  exp.textContent = q.exp;
+  exp.classList.add('show', correct?'correct-exp':'wrong-exp');
+  document.getElementById('next-btn').disabled = false;
+  renderDots();
+  renderProgress();
+}
+
+function nextQ(){
+  qIdx++; answered=false; renderQuestion();
+}
+function prevQ(){
+  if(qIdx>0){qIdx--;answered=true;renderQuestion();
+    const q=filteredQs[qIdx];
+    document.querySelectorAll('.q-opt').forEach((btn,idx)=>{
+      btn.classList.add('locked');btn.style.cursor='default';
+      if(idx===q.a) btn.classList.add('correct');
+    });
+    const exp = document.getElementById('q-exp');
+    exp.textContent = q.exp;
+    exp.classList.add('show','correct-exp');
+    document.getElementById('next-btn').disabled=false;
+  }
+}
+
+function renderSummary(){
+  const pct = scores.t ? Math.round((scores.c/scores.t)*100) : 0;
+  const msgs = [
+    [80,'Excellent work! You have a strong grasp of the material.'],
+    [60,'Good effort — revisit the topics where you stumbled.'],
+    [0,'Keep studying — use the topic modules and formula sheet to review.']
+  ];
+  const msg = msgs.find(([min])=>pct>=min)[1];
+  document.getElementById('quiz-card').innerHTML = `
+    <div class="summary">
+      <div class="summary-pct">${pct}%</div>
+      <div class="summary-fraction">${scores.c} / ${scores.t} correct</div>
+      <div class="summary-msg">${msg}</div>
+      <button class="summary-restart" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+  `;
+  document.getElementById('progress-fill-quiz').style.width='100%';
+}
+
+function restartQuiz(){
+  qIdx=0;answered=false;scores={c:0,t:0};results=[];
+  renderDots();renderQuestion();
+}
+
+// ---- INIT ----
+renderOverview();
+renderTopicPages();
+renderFormulas();
+renderFilters();
+buildFilteredQs();
+renderDots();
+renderQuestion();
+updateProgress();
+
+// KaTeX auto-render for math
+if(window.renderMathInElement){
+  document.addEventListener('DOMContentLoaded',()=>{
+    renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
+  });
+}
+</script>
+</body>
+</html>
