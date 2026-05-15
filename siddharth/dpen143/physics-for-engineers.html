@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN143 — Physics for Engineers</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<style>
+:root{
+  --navy:#1B3A5C; --orange:#FF3621; --blue-mid:#185FA5;
+  --blue-lt:#E6F1FB; --green-lt:#E1F5EE; --amber-lt:#FAEEDA;
+  --purple-lt:#F3ECFF; --grey-lt:#F6F5F2; --grey-md:#e8e6e0;
+  --text:#2c2a28; --text-muted:#6b6762; --sidebar-w:265px; --content-max:850px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Crimson Pro',Georgia,serif;background:#fafaf8;color:var(--text);display:flex;min-height:100vh;line-height:1.7}
+
+.sidebar{width:var(--sidebar-w);background:var(--navy);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.sb-brand{padding:22px 20px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-title{font-family:'Crimson Pro',serif;font-size:17px;font-weight:600;color:#fff;line-height:1.3}
+.sb-sub{font-family:'DM Sans',sans-serif;font-size:11px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:.04em}
+.sb-section{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-label{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.3);padding:6px 20px 4px;text-transform:uppercase;font-family:'DM Sans',sans-serif}
+.sb-link{display:flex;align-items:center;gap:9px;padding:7px 20px;color:rgba(255,255,255,.62);text-decoration:none;font-size:12.5px;transition:all .15s;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
+.sb-link:hover{color:#fff;background:rgba(255,255,255,.06)}
+.sb-link.active{color:#fff;background:rgba(255,255,255,.1);border-left:2px solid var(--orange);padding-left:18px}
+.sb-num{font-size:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.5);border-radius:3px;padding:1px 5px;flex-shrink:0}
+.sb-link.active .sb-num{background:var(--orange);color:#fff}
+
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid var(--grey-md);padding:10px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.crumb{font-size:12px;color:var(--text-muted);font-family:'DM Sans',sans-serif}
+.crumb strong{color:var(--navy);font-weight:500}
+.tb-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--grey-md);background:#fff;font-size:12px;color:var(--text-muted);cursor:pointer;font-family:'DM Sans',sans-serif}
+.tb-btn:hover{border-color:var(--navy);color:var(--navy)}
+.content{max-width:var(--content-max);margin:0 auto;padding:44px 40px 80px}
+
+.page{display:none}
+.page.active{display:block;animation:fadeIn .22s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hero{margin-bottom:28px;padding-bottom:22px;border-bottom:2px solid var(--grey-md)}
+.hero-tag{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--orange);text-transform:uppercase;margin-bottom:6px;font-family:'DM Sans',sans-serif}
+.hero-title{font-family:'Crimson Pro',serif;font-size:38px;font-weight:600;color:var(--navy);line-height:1.12;margin-bottom:9px}
+.hero-sub{font-size:15px;color:var(--text-muted);line-height:1.65;font-family:'DM Sans',sans-serif}
+
+.card{background:#fff;border:1px solid var(--grey-md);border-radius:10px;padding:26px 28px;margin-bottom:20px}
+.card h3{font-family:'Crimson Pro',serif;font-size:22px;font-weight:600;color:var(--navy);margin:0 0 12px}
+.card h4{font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;color:var(--navy);letter-spacing:.02em;margin:16px 0 8px}
+.card p{font-size:14.5px;margin-bottom:10px}
+.card ul,.card ol{padding-left:22px;margin-bottom:10px;font-size:14.5px}
+.card li{margin-bottom:6px}
+
+.fbox{background:linear-gradient(135deg,rgba(255,54,33,.04),rgba(255,54,33,.01));border:1px solid rgba(255,54,33,.2);border-radius:8px;padding:14px 18px;margin:12px 0;text-align:center;overflow-x:auto}
+.fbox-label{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);margin-bottom:7px;font-weight:500}
+.info{background:var(--blue-lt);border-left:3px solid var(--blue-mid);padding:10px 14px;border-radius:0 6px 6px 0;font-size:13.5px;margin:12px 0}
+.warn{background:var(--amber-lt);border-left:3px solid #c07a00;padding:10px 14px;border-radius:0 6px 6px 0;font-size:13.5px;margin:12px 0;color:#7a4800}
+.good{background:var(--green-lt);border-left:3px solid #1a7a5a;padding:10px 14px;border-radius:0 6px 6px 0;font-size:13.5px;margin:12px 0;color:#0a5c3f}
+
+.example{background:#fdfcfa;border:1px solid #d4e9d4;border-radius:8px;padding:16px 18px;margin:14px 0}
+.ex-label{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.08em;color:#0a7a4a;font-weight:600;text-transform:uppercase;margin-bottom:8px}
+.step{margin:8px 0}
+.step strong{color:#0a5c3f}
+
+.practice{background:#faf8fd;border:1px solid #d4d4e9;border-radius:8px;padding:16px 18px;margin:14px 0}
+.practice-label{font-size:11px;letter-spacing:.08em;color:#6b5aa0;font-weight:600;text-transform:uppercase;margin-bottom:8px;font-family:'DM Sans',sans-serif}
+details.answer{margin-top:8px;background:rgba(107,90,160,.05);border-radius:6px;border:1px solid rgba(107,90,160,.2)}
+details.answer summary{font-family:'DM Sans',sans-serif;font-size:12px;padding:8px 12px;cursor:pointer;color:#6b5aa0;letter-spacing:.04em;font-weight:500}
+details.answer .ans{padding:10px 12px;border-top:1px solid rgba(107,90,160,.2);font-size:13.5px}
+
+.sim{background:#fff;border:1px solid var(--grey-md);border-radius:10px;padding:18px;margin:14px 0}
+.sim-title{font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+.sim canvas{width:100%;max-width:100%;background:#fafaf8;border-radius:6px;border:1px solid #eceae3}
+.controls{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;align-items:center}
+.ctrl{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-muted);font-family:'DM Sans',sans-serif}
+.ctrl input[type=range]{width:110px;accent-color:var(--navy)}
+.ctrl-val{font-variant-numeric:tabular-nums;color:var(--navy);font-weight:600;min-width:52px}
+.readout{font-family:'DM Sans',sans-serif;font-size:12.5px;background:var(--grey-lt);border-radius:6px;padding:9px 12px;margin-top:10px;color:var(--text-muted)}
+.readout strong{color:var(--navy)}
+
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+th{background:var(--navy);color:#fff;padding:8px 10px;text-align:left;font-family:'DM Sans',sans-serif;font-size:12px}
+td{padding:8px 10px;border-bottom:1px solid var(--grey-md)}
+tr:nth-child(even) td{background:var(--grey-lt)}
+
+@media(max-width:760px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .content{padding:26px 16px 54px}
+  .topbar{padding:10px 16px}
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-title">DPEN143 — Physics for Engineers</div>
+    <div class="sb-sub">UOW College Diploma · PHYS143 equivalent</div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Foundations</div>
+    <button class="sb-link active" onclick="goTo('t1')"><span class="sb-num">1</span>Vector Thinking</button>
+    <button class="sb-link" onclick="goTo('t2')"><span class="sb-num">2</span>Charge & Coulomb's Law</button>
+    <button class="sb-link" onclick="goTo('t3')"><span class="sb-num">3</span>Potential & Capacitance</button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Circuits & Magnetism</div>
+    <button class="sb-link" onclick="goTo('t4')"><span class="sb-num">4</span>Current, Resistance, Ohm</button>
+    <button class="sb-link" onclick="goTo('t5')"><span class="sb-num">5</span>DC Circuits & Kirchhoff</button>
+    <button class="sb-link" onclick="goTo('t6')"><span class="sb-num">6</span>Magnetic Fields & Forces</button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Waves & Modern Physics</div>
+    <button class="sb-link" onclick="goTo('t7')"><span class="sb-num">7</span>EM Waves & Spectrum</button>
+    <button class="sb-link" onclick="goTo('t8')"><span class="sb-num">8</span>Carrier Waves & Modulation</button>
+    <button class="sb-link" onclick="goTo('t9')"><span class="sb-num">9</span>Optics & Wave Effects</button>
+    <button class="sb-link" onclick="goTo('t10')"><span class="sb-num">10</span>Quantum & Bohr Atom</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="crumb">DPEN143 / <strong id="crumbPage">Topic 1</strong></div>
+    <button class="tb-btn" onclick="expandAll()">Expand All Answers</button>
+  </div>
+  <div class="content">
+
+<!-- TOPIC 1 -->
+<div class="page active" id="page-t1">
+  <div class="hero">
+    <div class="hero-tag">Topic 1 · Build intuition first</div>
+    <div class="hero-title">Vectors and Engineering Direction Thinking</div>
+    <div class="hero-sub">Physics becomes easy when you stop seeing numbers as scalars only and start seeing direction + magnitude together.</div>
+  </div>
+
+  <div class="card">
+    <h3>Why vectors matter in DPEN143</h3>
+    <p>Engineering systems rarely happen in one dimension. A force on a crane cable, an electric field from several charges, or a magnetic force on a current-carrying wire all require direction-aware reasoning. Vectors are the language that keeps your physics correct.</p>
+    <div class="fbox">
+      <div class="fbox-label">Core Vector Form</div>
+      $$\vec{A} = A_x \hat{i} + A_y \hat{j} + A_z \hat{k},\quad |\vec{A}| = \sqrt{A_x^2 + A_y^2 + A_z^2}$$
+    </div>
+    <h4>Concept build-up</h4>
+    <ul>
+      <li>Start with components: break angled vectors into x/y parts.</li>
+      <li>Add components, not magnitudes, when combining vectors.</li>
+      <li>Recover resultant magnitude and direction at the end.</li>
+    </ul>
+    <div class="info"><strong>Engineer mindset:</strong> never trust intuition alone for direction problems. Resolve, combine, reconstruct.</div>
+
+    <div class="sim">
+      <div class="sim-title">JavaScript Simulator · Vector Resultant Explorer</div>
+      <canvas id="vectorCanvas" width="760" height="260"></canvas>
+      <div class="controls">
+        <div class="ctrl">F1 <input id="f1" type="range" min="1" max="20" value="10"> <span id="f1v" class="ctrl-val">10 N</span></div>
+        <div class="ctrl">θ1 <input id="a1" type="range" min="0" max="180" value="30"> <span id="a1v" class="ctrl-val">30°</span></div>
+        <div class="ctrl">F2 <input id="f2" type="range" min="1" max="20" value="8"> <span id="f2v" class="ctrl-val">8 N</span></div>
+        <div class="ctrl">θ2 <input id="a2" type="range" min="0" max="180" value="120"> <span id="a2v" class="ctrl-val">120°</span></div>
+      </div>
+      <div class="readout" id="vectorReadout"></div>
+    </div>
+
+    <h3>Solved examples</h3>
+    <div class="example">
+      <div class="ex-label">Worked Example 1</div>
+      <p><strong>Given:</strong> $\vec{A}=8$ N at $40^\circ$, $\vec{B}=6$ N at $140^\circ$.</p>
+      <p class="step"><strong>Step 1:</strong> $A_x=8\cos40^\circ=6.13$, $A_y=8\sin40^\circ=5.14$</p>
+      <p class="step"><strong>Step 2:</strong> $B_x=6\cos140^\circ=-4.60$, $B_y=6\sin140^\circ=3.86$</p>
+      <p class="step"><strong>Step 3:</strong> $R_x=1.53$, $R_y=9.00$</p>
+      <p class="step"><strong>Step 4:</strong> $|\vec{R}|=\sqrt{1.53^2+9^2}=9.13$ N, $\theta=\tan^{-1}(9/1.53)=80.3^\circ$</p>
+    </div>
+    <div class="example">
+      <div class="ex-label">Worked Example 2</div>
+      <p>A drone has velocity components $v_x=12$ m/s and $v_y=-5$ m/s. Magnitude is $13$ m/s; direction is $22.6^\circ$ below +x. Negative component immediately tells you direction without guessing.</p>
+    </div>
+    <div class="example">
+      <div class="ex-label">Worked Example 3</div>
+      <p>For $\vec{F}=3\hat{i}+4\hat{j}$ and displacement $\vec{s}=2\hat{i}+1\hat{j}$, work is dot product:</p>
+      <p>$W=\vec{F}\cdot\vec{s}=3(2)+4(1)=10\ \text{J}$.</p>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Practice set (Topic 1)</div>
+      <ol>
+        <li>Two forces act at a pin joint: $F_1=18$ N at $35^\circ$ and $F_2=12$ N at $150^\circ$. Find resultant components, magnitude, and direction.
+          <details class="answer"><summary>Answer</summary><div class="ans">$F_{1x}=14.74$, $F_{1y}=10.33$ N; $F_{2x}=-10.39$, $F_{2y}=6.00$ N. So $R_x=4.35$ N, $R_y=16.33$ N, $|\vec R|=16.90$ N, $\theta=\tan^{-1}(16.33/4.35)=75.1^\circ$.</div></details>
+        </li>
+        <li>A force $\vec{P}$ balances $\vec{A}=6\hat{i}+8\hat{j}$ N and $\vec{B}=-2\hat{i}+3\hat{j}$ N. Find $\vec{P}$.
+          <details class="answer"><summary>Answer</summary><div class="ans">For equilibrium: $\vec A+\vec B+\vec P=0$. So $\vec P=-(\vec A+\vec B)=-(4\hat{i}+11\hat{j})=-4\hat{i}-11\hat{j}$ N. Magnitude $=11.70$ N.</div></details>
+        </li>
+        <li>A 20 N force acts at $40^\circ$ to the horizontal while displacement is 5 m along +x. Calculate work done.
+          <details class="answer"><summary>Answer</summary><div class="ans">$W=Fs\cos\theta=20\times5\times\cos40^\circ=76.6$ J.</div></details>
+        </li>
+        <li>Given $\vec{u}=3\hat{i}-4\hat{j}$, find the unit vector $\hat{u}$ and projection of $\vec{v}=8\hat{i}+6\hat{j}$ onto $\vec{u}$.
+          <details class="answer"><summary>Answer</summary><div class="ans">$|\vec u|=5$, so $\hat u=(3/5)\hat i-(4/5)\hat j$. Scalar projection: $\vec v\cdot\hat u=8(3/5)+6(-4/5)=0$. So $\vec v$ has zero projection on $\vec u$ (perpendicular).</div></details>
+        </li>
+        <li>For $\vec{a}=5\hat{i}+2\hat{j}$ and $\vec{b}=x\hat{i}-5\hat{j}$, find $x$ such that vectors are perpendicular.
+          <details class="answer"><summary>Answer</summary><div class="ans">Perpendicular $\Rightarrow \vec a\cdot\vec b=0$: $5x+2(-5)=0\Rightarrow 5x-10=0\Rightarrow x=2$.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 2 -->
+<div class="page" id="page-t2">
+  <div class="hero">
+    <div class="hero-tag">Topic 2 · Electrostatics start</div>
+    <div class="hero-title">Electric Charge and Coulomb's Law</div>
+    <div class="hero-sub">From force vectors in mechanics to force vectors between charges: same vector language, new physical source.</div>
+  </div>
+  <div class="card">
+    <h3>Concept ladder</h3>
+    <p>Charge creates electric interaction. Positive and negative signs determine attraction/repulsion. Physics gives a quantitative law, but engineering care is in units, signs, and geometry.</p>
+    <div class="fbox">
+      <div class="fbox-label">Coulomb's Law</div>
+      $$F = k\frac{|q_1 q_2|}{r^2}, \quad k=8.99\times10^9\ \text{N m}^2/\text{C}^2$$
+    </div>
+    <div class="info"><strong>Direction rule:</strong> unlike charges attract, like charges repel. Put this in words before equations.</div>
+    <h4>Common mistakes</h4>
+    <ul>
+      <li>Forgetting to convert $\mu C$ to C.</li>
+      <li>Using distance instead of squared distance.</li>
+      <li>Ignoring vector direction in multi-charge systems.</li>
+    </ul>
+
+    <h3>Solved examples</h3>
+    <div class="example"><div class="ex-label">Worked Example 1</div>
+      <p>$q_1=2\mu C$, $q_2=-3\mu C$, separated by 0.20 m.</p>
+      <p>$F=8.99\times10^9\cdot \frac{(2\times10^{-6})(3\times10^{-6})}{0.2^2}=1.35\ \text{N}$, attractive.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 2</div>
+      <p>Force doubles if separation changes by factor?</p>
+      <p>Since $F\propto 1/r^2$, to double force, $r$ must become $r/\sqrt{2}$.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 3</div>
+      <p>Net force on charge from two equal opposite-side charges of equal magnitude can cancel if geometry symmetric; always resolve as vectors and check.</p>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Practice set (Topic 2)</div>
+      <ol>
+        <li>Charges $q_1=+5\,\mu$C and $q_2=-2\,\mu$C are 0.30 m apart. Find force magnitude and state attraction/repulsion.
+          <details class="answer"><summary>Answer</summary><div class="ans">$F=k|q_1q_2|/r^2=8.99\times10^9(10\times10^{-12})/0.09=0.999\approx1.00$ N, attractive.</div></details>
+        </li>
+        <li>Two equal charges of $3\,\mu$C exert 2.0 N on each other. What separation is required?
+          <details class="answer"><summary>Answer</summary><div class="ans">$r=\sqrt{kq^2/F}=\sqrt{(8.99\times10^9)(9\times10^{-12})/2}=0.201$ m.</div></details>
+        </li>
+        <li>On the x-axis, $q_A=+4\,\mu$C at $x=0$, $q_B=+1\,\mu$C at $x=0.20$ m, and test charge $q_T=+2\,\mu$C at $x=0.10$ m. Find net force on $q_T$.
+          <details class="answer"><summary>Answer</summary><div class="ans">Forces are opposite directions. $F_{AT}=k(4\times2)\times10^{-12}/0.1^2=7.19$ N (to +x). $F_{BT}=k(1\times2)\times10^{-12}/0.1^2=1.80$ N (to -x). Net $=5.39$ N to +x.</div></details>
+        </li>
+        <li>Find electric field magnitude at 0.50 m from a point charge of $-6\,\mu$C.
+          <details class="answer"><summary>Answer</summary><div class="ans">$E=k|q|/r^2=8.99\times10^9(6\times10^{-6})/0.25=2.16\times10^5$ N/C, directed toward the negative charge.</div></details>
+        </li>
+        <li>Concept + math: if both charges are doubled and separation is halved, by what factor does Coulomb force change?
+          <details class="answer"><summary>Answer</summary><div class="ans">Charge product factor $=2\times2=4$. Distance factor in denominator $(1/2)^2=1/4$, so force gains another factor 4. Total factor $=16$ increase.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 3 -->
+<div class="page" id="page-t3">
+  <div class="hero">
+    <div class="hero-tag">Topic 3 · Energy view</div>
+    <div class="hero-title">Electric Field, Potential, Capacitance and Dielectrics</div>
+    <div class="hero-sub">Force tells what happens now; potential tells stored energy and what can happen next.</div>
+  </div>
+  <div class="card">
+    <h3>Build the big picture</h3>
+    <p>Electric field is force per unit charge. Electric potential is energy per unit charge. Capacitance describes how much charge can be stored for a given voltage. Dielectrics increase capacitance by reducing internal effective field.</p>
+    <div class="fbox"><div class="fbox-label">Key Relations</div>
+      $$E=\frac{F}{q},\quad V=\frac{W}{q},\quad C=\frac{Q}{V},\quad C_\text{parallel plate}=\epsilon_r\epsilon_0\frac{A}{d}$$
+    </div>
+    <table>
+      <tr><th>Quantity</th><th>Meaning</th><th>Unit</th></tr>
+      <tr><td>Electric field E</td><td>Force intensity in space</td><td>N/C (or V/m)</td></tr>
+      <tr><td>Potential V</td><td>Energy per charge</td><td>Volt</td></tr>
+      <tr><td>Capacitance C</td><td>Charge storage per volt</td><td>Farad</td></tr>
+      <tr><td>Relative permittivity εr</td><td>Dielectric enhancement factor</td><td>Dimensionless</td></tr>
+    </table>
+
+    <h3>Solved examples</h3>
+    <div class="example"><div class="ex-label">Worked Example 1</div>
+      <p>A 5 pC test charge feels 1 mN force. Field: $E=F/q=10^{-3}/(5\times10^{-12})=2\times10^8$ N/C.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 2</div>
+      <p>Parallel plate capacitor: $A=0.02$ m², $d=1$ mm, $\epsilon_r=4$.</p>
+      <p>$C=4(8.85\times10^{-12})(0.02/0.001)=7.08\times10^{-10}$ F = 708 pF.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 3</div>
+      <p>A capacitor has 12 V across it and stores 24 µC. $C=Q/V=2$ µF. If voltage doubles and C fixed, charge doubles.</p>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Practice set (Topic 3)</div>
+      <ol>
+        <li>Parallel-plate capacitor has $A=0.015$ m², $d=0.80$ mm, and dielectric $\epsilon_r=3.5$. Find capacitance.
+          <details class="answer"><summary>Answer</summary><div class="ans">$C=\epsilon_r\epsilon_0A/d=3.5(8.85\times10^{-12})(0.015/8.0\times10^{-4})=5.81\times10^{-10}$ F $=581$ pF.</div></details>
+        </li>
+        <li>A $22\,\mu$F capacitor is charged to 18 V. Find stored charge and stored energy.
+          <details class="answer"><summary>Answer</summary><div class="ans">$Q=CV=396\,\mu$C. $U=\frac12CV^2=0.5(22\times10^{-6})(18^2)=3.56\times10^{-3}$ J.</div></details>
+        </li>
+        <li>Field between plates is 4500 V/m and spacing is 2.5 mm. Find potential difference.
+          <details class="answer"><summary>Answer</summary><div class="ans">$V=Ed=4500(2.5\times10^{-3})=11.25$ V.</div></details>
+        </li>
+        <li>Two capacitors 6 µF and 3 µF are connected (a) series, (b) parallel. Find equivalent capacitance in each case.
+          <details class="answer"><summary>Answer</summary><div class="ans">(a) Series: $C_{eq}=(C_1C_2)/(C_1+C_2)=2$ µF. (b) Parallel: $C_{eq}=C_1+C_2=9$ µF.</div></details>
+        </li>
+        <li>Concept + math: a dielectric with $\epsilon_r=4$ is inserted fully into an isolated charged capacitor (constant Q). How do $C$, $V$, and stored energy change?
+          <details class="answer"><summary>Answer</summary><div class="ans">$C$ increases 4x. Since $V=Q/C$, $V$ becomes $1/4$ of original. Energy $U=Q^2/(2C)$ also becomes $1/4$.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 4 -->
+<div class="page" id="page-t4">
+  <div class="hero">
+    <div class="hero-tag">Topic 4 · Move from static to flow</div>
+    <div class="hero-title">Current, Resistance, Ohm's Law, and Superconductivity</div>
+    <div class="hero-sub">Charge flow links physics to real engineering systems: motors, sensors, communications hardware.</div>
+  </div>
+  <div class="card">
+    <h3>Concept progression</h3>
+    <p>Potential difference drives current. Resistance opposes current due to collisions in material. Ohm's law models linear conductors. At very low temperatures, some materials enter superconducting states with near-zero resistance.</p>
+    <div class="fbox">
+      <div class="fbox-label">Core Circuit Relations</div>
+      $$I=\frac{Q}{t},\quad V=IR,\quad P=VI=I^2R=\frac{V^2}{R}$$
+    </div>
+    <div class="warn"><strong>Engineering caution:</strong> "Ohmic" is a model range, not an eternal truth for every component.</div>
+
+    <h3>Solved examples</h3>
+    <div class="example"><div class="ex-label">Worked Example 1</div>
+      <p>12 V source across 6 Ω resistor gives $I=2$ A and $P=24$ W.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 2</div>
+      <p>Battery delivers 300 C in 2 minutes. Current: $I=300/120=2.5$ A.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 3</div>
+      <p>For fixed voltage, halving resistance doubles current and doubles heat dissipation risk in nearby components.</p>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Practice set (Topic 4)</div>
+      <ol>
+        <li>A heater is rated 240 V, 1200 W. Find its resistance and operating current.
+          <details class="answer"><summary>Answer</summary><div class="ans">$I=P/V=1200/240=5$ A. $R=V/I=48$ Ω (or $V^2/P$).</div></details>
+        </li>
+        <li>A resistor has maximum safe power 0.50 W and is connected to 12 V. What minimum resistance avoids overload?
+          <details class="answer"><summary>Answer</summary><div class="ans">$P=V^2/R \Rightarrow R\ge V^2/P = 144/0.5 = 288$ Ω.</div></details>
+        </li>
+        <li>Battery transfers 540 C in 3.0 minutes through a load. Find current and if load is 8 Ω, find voltage.
+          <details class="answer"><summary>Answer</summary><div class="ans">$I=Q/t=540/180=3.0$ A. Voltage $V=IR=24$ V.</div></details>
+        </li>
+        <li>A sensor circuit needs 15 mA from a 9 V source using one resistor. Find resistor value and nearest standard choice among 560 Ω, 620 Ω, 680 Ω.
+          <details class="answer"><summary>Answer</summary><div class="ans">$R=V/I=9/0.015=600$ Ω. Nearest standard is 620 Ω (safer, slightly lower current).</div></details>
+        </li>
+        <li>Concept + math: device A draws 1 A at 12 V, device B draws 2 A at 12 V. Compare power and heat risk.
+          <details class="answer"><summary>Answer</summary><div class="ans">$P_A=12$ W, $P_B=24$ W. Device B dissipates 2x power, so thermal management requirement is significantly higher.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 5 -->
+<div class="page" id="page-t5">
+  <div class="hero">
+    <div class="hero-tag">Topic 5 · Systems analysis</div>
+    <div class="hero-title">DC Circuits and Kirchhoff's Laws</div>
+    <div class="hero-sub">When circuits become networks, conservation laws are your map: charge conservation and energy conservation.</div>
+  </div>
+  <div class="card">
+    <h3>Core laws</h3>
+    <div class="fbox"><div class="fbox-label">Kirchhoff's Laws</div>
+      $$\sum I_\text{in}=\sum I_\text{out}\quad(\text{KCL}),\qquad \sum V=0\quad(\text{KVL})$$
+    </div>
+    <p>Use KCL at junctions and KVL around loops. This transforms messy wiring into solvable linear equations.</p>
+
+    <div class="sim">
+      <div class="sim-title">JavaScript Simulator · Series Circuit Explorer</div>
+      <canvas id="circuitCanvas" width="760" height="220"></canvas>
+      <div class="controls">
+        <div class="ctrl">Vsource <input id="vs" type="range" min="5" max="30" value="18"> <span id="vsv" class="ctrl-val">18 V</span></div>
+        <div class="ctrl">R1 <input id="r1" type="range" min="1" max="30" value="6"> <span id="r1v" class="ctrl-val">6 Ω</span></div>
+        <div class="ctrl">R2 <input id="r2" type="range" min="1" max="30" value="3"> <span id="r2v" class="ctrl-val">3 Ω</span></div>
+        <div class="ctrl">R3 <input id="r3" type="range" min="1" max="30" value="9"> <span id="r3v" class="ctrl-val">9 Ω</span></div>
+      </div>
+      <div class="readout" id="circuitReadout"></div>
+    </div>
+
+    <h3>Solved examples</h3>
+    <div class="example"><div class="ex-label">Worked Example 1</div>
+      <p>Series resistors 2 Ω, 3 Ω, 5 Ω with 10 V source. $R_{eq}=10$ Ω, $I=1$ A. Voltage drops: 2 V, 3 V, 5 V. KVL check: $2+3+5=10$ V.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 2</div>
+      <p>At a node, currents 2 A and 1.5 A enter; one branch leaves with 0.8 A. Unknown outgoing current is $2+1.5-0.8=2.7$ A.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 3</div>
+      <p>Parallel branch currents distribute inversely with resistance, but branch voltages remain equal.</p>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Practice set (Topic 5)</div>
+      <ol>
+        <li>A 24 V source feeds $R_1=4\Omega$ in series with a parallel pair $R_2=6\Omega$ and $R_3=3\Omega$. Find total current.
+          <details class="answer"><summary>Answer</summary><div class="ans">$R_{23}=(6\times3)/(6+3)=2\Omega$. Total $R_{eq}=4+2=6\Omega$. Current $I=24/6=4$ A.</div></details>
+        </li>
+        <li>Node equation: 5 A enters a node, branch currents are $I_1=1.2$ A, $I_2=0.9$ A and $I_3$ leaving. Find $I_3$.
+          <details class="answer"><summary>Answer</summary><div class="ans">KCL: $5=1.2+0.9+I_3 \Rightarrow I_3=2.9$ A.</div></details>
+        </li>
+        <li>Single loop with 18 V source and resistors 2 Ω, 4 Ω, 3 Ω in series. Find loop current and each voltage drop. Verify KVL.
+          <details class="answer"><summary>Answer</summary><div class="ans">$I=18/(2+4+3)=2$ A. Drops: 4 V, 8 V, 6 V. Sum $=18$ V, so KVL satisfied.</div></details>
+        </li>
+        <li>In a two-loop network solved by equations, you obtain branch currents $I_a=1.5$ A and $I_b=-0.4$ A (assumed direction opposite). What does negative current mean physically?
+          <details class="answer"><summary>Answer</summary><div class="ans">Magnitude is 0.4 A, flowing opposite to the assumed direction. This is normal in exam solutions.</div></details>
+        </li>
+        <li>Concept + math: for fixed source voltage, if one branch resistance in a parallel circuit is reduced, what happens to total current and source power?
+          <details class="answer"><summary>Answer</summary><div class="ans">Equivalent resistance decreases, so total current increases: $I_{tot}=V/R_{eq}$. Source power $P=VI_{tot}=V^2/R_{eq}$ increases.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 6 -->
+<div class="page" id="page-t6">
+  <div class="hero">
+    <div class="hero-tag">Topic 6 · E to B transition</div>
+    <div class="hero-title">Magnetic Fields and Magnetic Forces</div>
+    <div class="hero-sub">Moving charges and currents create magnetic effects that power motors, generators, and sensing systems.</div>
+  </div>
+  <div class="card">
+    <h3>Key laws and intuition</h3>
+    <div class="fbox"><div class="fbox-label">Magnetic Force</div>
+      $$\vec{F}=q\vec{v}\times\vec{B},\qquad F= qvB\sin\theta$$
+    </div>
+    <div class="fbox"><div class="fbox-label">Force on current-carrying wire</div>
+      $$F=BIL\sin\theta$$
+    </div>
+    <p>Magnetic force is perpendicular to both velocity and magnetic field direction (right-hand rule). This is why magnetic forces can bend trajectories without doing work on particle speed magnitude.</p>
+
+    <h3>Solved examples</h3>
+    <div class="example"><div class="ex-label">Worked Example 1</div>
+      <p>Electron speed $2\times10^6$ m/s enters $0.01$ T field at 90°. Magnitude: $F=evB=(1.6\times10^{-19})(2\times10^6)(0.01)=3.2\times10^{-15}$ N.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 2</div>
+      <p>Wire: $I=4$ A, $L=0.3$ m, $B=0.5$ T, perpendicular. $F=0.5\cdot4\cdot0.3=0.6$ N.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 3</div>
+      <p>Particle with velocity parallel to B-field has $\theta=0$ so magnetic force zero: a useful diagnostic check.</p>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Practice set (Topic 6)</div>
+      <ol>
+        <li>A proton moves at $3.0\times10^6$ m/s perpendicular to a 0.25 T field. Find magnetic force magnitude.
+          <details class="answer"><summary>Answer</summary><div class="ans">$F=qvB=(1.6\times10^{-19})(3.0\times10^6)(0.25)=1.20\times10^{-13}$ N.</div></details>
+        </li>
+        <li>An electron enters a uniform 0.02 T field with speed $1.5\times10^7$ m/s perpendicular to B. Find radius of circular path.
+          <details class="answer"><summary>Answer</summary><div class="ans">$r=\frac{mv}{qB}=\frac{(9.11\times10^{-31})(1.5\times10^7)}{(1.6\times10^{-19})(0.02)}=4.27\times10^{-3}$ m.</div></details>
+        </li>
+        <li>A wire of length 0.40 m carries 6 A in a 0.30 T field at $30^\circ$. Find force on wire.
+          <details class="answer"><summary>Answer</summary><div class="ans">$F=BIL\sin\theta=0.30\times6\times0.40\times\sin30^\circ=0.36$ N.</div></details>
+        </li>
+        <li>A charge moving east in an upward magnetic field experiences force toward south. Is the charge positive or negative?
+          <details class="answer"><summary>Answer</summary><div class="ans">For positive charge, $\vec v\times\vec B$ would point north. Observed south means charge is negative.</div></details>
+        </li>
+        <li>Concept + math: if $B$ doubles and velocity angle changes from $90^\circ$ to $30^\circ$, how does magnetic force change?
+          <details class="answer"><summary>Answer</summary><div class="ans">$F\propto B\sin\theta$. New/old ratio $=(2\sin30^\circ)/(\sin90^\circ)=2(0.5)/1=1$. Force is unchanged.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 7 -->
+<div class="page" id="page-t7">
+  <div class="hero">
+    <div class="hero-tag">Topic 7 · From fields to waves</div>
+    <div class="hero-title">Electromagnetic Waves and the EM Spectrum</div>
+    <div class="hero-sub">Oscillating electric and magnetic fields propagate energy through space and enable modern communication.</div>
+  </div>
+  <div class="card">
+    <h3>Minimal equations, maximal insight</h3>
+    <div class="fbox"><div class="fbox-label">Wave Relation</div>
+      $$c=f\lambda,\quad c\approx 3.0\times10^8\ \text{m/s}$$
+    </div>
+    <p>As frequency increases, wavelength decreases. This one inverse relation helps classify radio, microwave, infrared, visible, UV, X-ray, and gamma regimes.</p>
+
+    <div class="sim">
+      <div class="sim-title">JavaScript Simulator · EM Spectrum Explorer</div>
+      <canvas id="emCanvas" width="760" height="220"></canvas>
+      <div class="controls">
+        <div class="ctrl">Frequency (log10 Hz) <input id="freqLog" type="range" min="3" max="22" value="14"> <span id="freqVal" class="ctrl-val">1e14 Hz</span></div>
+      </div>
+      <div class="readout" id="emReadout"></div>
+    </div>
+
+    <h3>Solved examples</h3>
+    <div class="example"><div class="ex-label">Worked Example 1</div>
+      <p>For $f=100$ MHz, wavelength $=3\times10^8/(10^8)=3$ m.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 2</div>
+      <p>Green light around 550 nm has frequency $f=c/\lambda\approx 5.45\times10^{14}$ Hz.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 3</div>
+      <p>If communication system bandwidth rises, potential data capacity rises, but noise, filtering, and spectrum allocation constraints appear.</p>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Practice set (Topic 7)</div>
+      <ol>
+        <li>Find wavelength for a 900 MHz mobile communication signal.
+          <details class="answer"><summary>Answer</summary><div class="ans">$\lambda=c/f=3\times10^8/(9\times10^8)=0.333$ m.</div></details>
+        </li>
+        <li>An EM wave has wavelength 450 nm. Find frequency and identify approximate spectrum region.
+          <details class="answer"><summary>Answer</summary><div class="ans">$f=c/\lambda=3\times10^8/(450\times10^{-9})=6.67\times10^{14}$ Hz, visible (blue region).</div></details>
+        </li>
+        <li>A radar pulse travels to a target and returns in 40 µs. Estimate target distance.
+          <details class="answer"><summary>Answer</summary><div class="ans">Round trip distance $=ct=3\times10^8(40\times10^{-6})=12000$ m. One-way distance $=6000$ m.</div></details>
+        </li>
+        <li>Find frequency for 3.0 mm wavelength and classify region.
+          <details class="answer"><summary>Answer</summary><div class="ans">$f=3\times10^8/(3\times10^{-3})=1.0\times10^{11}$ Hz, microwave band.</div></details>
+        </li>
+        <li>Concept + math: compare wavelengths of 100 MHz and 1 GHz signals and infer which diffracts more around buildings.
+          <details class="answer"><summary>Answer</summary><div class="ans">$100$ MHz: $\lambda=3$ m. $1$ GHz: $\lambda=0.3$ m. Longer wavelength (100 MHz) diffracts more effectively around obstacles.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 8 -->
+<div class="page" id="page-t8">
+  <div class="hero">
+    <div class="hero-tag">Topic 8 · Communication bridge</div>
+    <div class="hero-title">Carrier Waves, Modulation and Bandwidth</div>
+    <div class="hero-sub">Raw information is low-frequency; long-distance transmission needs high-frequency carriers.</div>
+  </div>
+  <div class="card">
+    <h3>Concept build-up</h3>
+    <p>Modulation lets a message signal ride on a carrier wave. In amplitude modulation (AM), carrier amplitude follows message shape. Bandwidth is the frequency span occupied by a signal and drives channel requirements.</p>
+    <div class="fbox"><div class="fbox-label">AM signal model</div>
+      $$s(t)=A_c\left[1+m\cos(2\pi f_m t)\right]\cos(2\pi f_c t)$$
+    </div>
+    <div class="sim">
+      <div class="sim-title">JavaScript Simulator · AM Modulation Visualizer</div>
+      <canvas id="modCanvas" width="760" height="250"></canvas>
+      <div class="controls">
+        <div class="ctrl">Carrier freq <input id="fc" type="range" min="5" max="30" value="16"> <span id="fcv" class="ctrl-val">16</span></div>
+        <div class="ctrl">Message freq <input id="fm" type="range" min="1" max="8" value="3"> <span id="fmv" class="ctrl-val">3</span></div>
+        <div class="ctrl">Mod index m <input id="mi" type="range" min="0" max="100" value="60"> <span id="miv" class="ctrl-val">0.60</span></div>
+      </div>
+    </div>
+
+    <h3>Solved examples</h3>
+    <div class="example"><div class="ex-label">Worked Example 1</div>
+      <p>AM with message max frequency 5 kHz has bandwidth $B=2f_m=10$ kHz.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 2</div>
+      <p>If modulation index exceeds 1 in AM, overmodulation causes envelope distortion and receiver errors.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 3</div>
+      <p>Carrier at 1 MHz with message 2 kHz creates sidebands at 998 kHz and 1002 kHz.</p>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Practice set (Topic 8)</div>
+      <ol>
+        <li>For AM transmission with maximum message frequency 8 kHz, calculate required transmission bandwidth.
+          <details class="answer"><summary>Answer</summary><div class="ans">$B_{AM}=2f_m=16$ kHz.</div></details>
+        </li>
+        <li>Carrier frequency is 1.2 MHz and message frequency is 4 kHz. Find upper and lower sideband frequencies.
+          <details class="answer"><summary>Answer</summary><div class="ans">$f_{USB}=1.204$ MHz, $f_{LSB}=1.196$ MHz.</div></details>
+        </li>
+        <li>Given AM envelope peaks $E_{max}=9$ V and $E_{min}=3$ V, find modulation index.
+          <details class="answer"><summary>Answer</summary><div class="ans">$m=\frac{E_{max}-E_{min}}{E_{max}+E_{min}}=\frac{9-3}{9+3}=0.5$.</div></details>
+        </li>
+        <li>An AM signal has modulation index $m=1.2$. Is this acceptable? State the likely waveform issue.
+          <details class="answer"><summary>Answer</summary><div class="ans">Not acceptable for standard AM; $m>1$ means overmodulation and envelope distortion at receiver.</div></details>
+        </li>
+        <li>A communication channel width is 120 kHz. If each AM station needs 10 kHz plus 2 kHz guard on each side (total 14 kHz), how many stations fit?
+          <details class="answer"><summary>Answer</summary><div class="ans">Maximum stations $=\lfloor120/14\rfloor=8$ stations.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 9 -->
+<div class="page" id="page-t9">
+  <div class="hero">
+    <div class="hero-tag">Topic 9 · Wave optics toolkit</div>
+    <div class="hero-title">Reflection, Refraction, Interference, Diffraction, Polarization</div>
+    <div class="hero-sub">Optics is where geometry and wave behavior meet engineering devices: lenses, cameras, fiber links, and sensors.</div>
+  </div>
+  <div class="card">
+    <h3>Core formulas</h3>
+    <div class="fbox"><div class="fbox-label">Key optics equations</div>
+      $$\theta_i=\theta_r,\qquad n_1\sin\theta_1=n_2\sin\theta_2,\qquad d\sin\theta=m\lambda$$
+    </div>
+    <h4>Build intuition</h4>
+    <ul>
+      <li>Reflection keeps angle symmetry around surface normal.</li>
+      <li>Refraction changes direction because speed changes by medium.</li>
+      <li>Interference creates bright/dark patterns via phase differences.</li>
+      <li>Diffraction spreads waves around apertures/edges.</li>
+      <li>Polarization selects oscillation orientation.</li>
+    </ul>
+
+    <h3>Solved examples</h3>
+    <div class="example"><div class="ex-label">Worked Example 1</div>
+      <p>Light from air ($n=1$) to glass ($n=1.5$), incidence $30^\circ$.</p>
+      <p>$\sin\theta_2=\sin30^\circ/1.5=0.333\Rightarrow\theta_2=19.47^\circ$.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 2</div>
+      <p>Double slit spacing 0.4 mm, wavelength 600 nm, first-order bright fringe angle:</p>
+      <p>$\theta\approx \sin^{-1}(\lambda/d)=\sin^{-1}(0.0015)\approx0.086^\circ$.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 3</div>
+      <p>Two ideal polarizers at 60°: transmitted intensity $I=I_0\cos^2 60^\circ=0.25I_0$.</p>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Practice set (Topic 9)</div>
+      <ol>
+        <li>Light travels from air to water ($n=1.33$) at incidence $50^\circ$. Find refracted angle.
+          <details class="answer"><summary>Answer</summary><div class="ans">$n_1\sin\theta_1=n_2\sin\theta_2 \Rightarrow \sin\theta_2=\sin50^\circ/1.33=0.576$. So $\theta_2=35.2^\circ$.</div></details>
+        </li>
+        <li>Find critical angle for glass-air interface ($n_{glass}=1.50$).
+          <details class="answer"><summary>Answer</summary><div class="ans">$\sin\theta_c=n_2/n_1=1/1.5=0.667$. $\theta_c=41.8^\circ$.</div></details>
+        </li>
+        <li>Double slit: $d=0.25$ mm, screen distance $L=1.8$ m, wavelength $650$ nm. Find spacing between adjacent bright fringes.
+          <details class="answer"><summary>Answer</summary><div class="ans">Fringe spacing $\Delta y=\lambda L/d=(650\times10^{-9}\times1.8)/(2.5\times10^{-4})=4.68\times10^{-3}$ m = 4.68 mm.</div></details>
+        </li>
+        <li>Unpolarized light of intensity 80 W/m² passes through two polarizers at $30^\circ$ relative angle. Find transmitted intensity.
+          <details class="answer"><summary>Answer</summary><div class="ans">After first polarizer: $I_1=I_0/2=40$. After second: $I_2=I_1\cos^2 30^\circ=40(0.75)=30$ W/m².</div></details>
+        </li>
+        <li>Concept + math: a lens forms an image at 30 cm when object is 60 cm away. Find focal length and lens type.
+          <details class="answer"><summary>Answer</summary><div class="ans">Using $1/f=1/u+1/v=1/60+1/30=1/20$, so $f=20$ cm. Positive focal length indicates converging lens.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 10 -->
+<div class="page" id="page-t10">
+  <div class="hero">
+    <div class="hero-tag">Topic 10 · Modern model mindset</div>
+    <div class="hero-title">Quantum Ideas, Wave-Particle Duality, Atomic Physics, Bohr Model</div>
+    <div class="hero-sub">Classical models are powerful, but incomplete. DPEN143 ends by showing when quantization becomes necessary.</div>
+  </div>
+  <div class="card">
+    <h3>Big transition</h3>
+    <p>In modern physics, energy and matter show quantized behavior. Light can act as photons, particles can show wave-like behavior, and atomic spectra require discrete energy levels.</p>
+    <div class="fbox"><div class="fbox-label">Foundational quantum relations</div>
+      $$E=hf,\qquad \lambda=\frac{h}{p},\qquad E_n=-\frac{13.6}{n^2}\ \text{eV (Bohr hydrogen)}$$
+    </div>
+    <div class="good"><strong>Learning goal:</strong> You do not need to master full quantum mechanics here. You need to know why classical physics alone fails at atomic scale.</div>
+
+    <h3>Solved examples</h3>
+    <div class="example"><div class="ex-label">Worked Example 1</div>
+      <p>Photon with $f=6\times10^{14}$ Hz has energy $E=hf=(6.626\times10^{-34})(6\times10^{14})=3.98\times10^{-19}$ J.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 2</div>
+      <p>Hydrogen transition $n=3\to2$: $\Delta E=E_2-E_3=-3.4-(-1.51)=-1.89$ eV. Emitted photon energy magnitude is 1.89 eV.</p>
+    </div>
+    <div class="example"><div class="ex-label">Worked Example 3</div>
+      <p>de Broglie wavelength of electron with momentum $2\times10^{-24}$ kg m/s: $\lambda=h/p=3.31\times10^{-10}$ m (atomic scale).</p>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Practice set (Topic 10)</div>
+      <ol>
+        <li>Find photon energy for wavelength 500 nm (in J and eV).
+          <details class="answer"><summary>Answer</summary><div class="ans">$E=hc/\lambda=(6.626\times10^{-34})(3\times10^8)/(500\times10^{-9})=3.98\times10^{-19}$ J $\approx 2.48$ eV.</div></details>
+        </li>
+        <li>Electron momentum is $4.0\times10^{-24}$ kg m/s. Find de Broglie wavelength.
+          <details class="answer"><summary>Answer</summary><div class="ans">$\lambda=h/p=6.626\times10^{-34}/(4.0\times10^{-24})=1.66\times10^{-10}$ m.</div></details>
+        </li>
+        <li>In hydrogen, compute emitted photon energy for transition $n=4\to n=2$.
+          <details class="answer"><summary>Answer</summary><div class="ans">$E_n=-13.6/n^2$ eV. $E_4=-0.85$ eV, $E_2=-3.40$ eV. Emitted energy $=|E_2-E_4|=2.55$ eV.</div></details>
+        </li>
+        <li>Find ionization energy from hydrogen level $n=3$.
+          <details class="answer"><summary>Answer</summary><div class="ans">Ionization from level $n$ requires $|E_n|=13.6/n^2$. For $n=3$: $13.6/9=1.51$ eV.</div></details>
+        </li>
+        <li>Concept + math: can a 1.9 eV photon excite hydrogen from $n=2$ to $n=3$? (Use Bohr levels.)
+          <details class="answer"><summary>Answer</summary><div class="ans">Needed energy $E_3-E_2=(-1.51)-(-3.40)=1.89$ eV. A 1.9 eV photon is sufficient (approximately resonant).</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Final Exam Readiness Checklist</h3>
+    <ul>
+      <li>I can resolve and combine vectors confidently.</li>
+      <li>I can compute electric/magnetic forces with correct direction logic.</li>
+      <li>I can solve DC loop/node problems using Kirchhoff laws.</li>
+      <li>I can relate wave speed, frequency, wavelength and spectrum use.</li>
+      <li>I can explain modulation, bandwidth, and basic optics effects.</li>
+      <li>I can apply core quantum formulas and interpret Bohr transitions.</li>
+    </ul>
+    <div class="info"><strong>Study strategy:</strong> for DPEN143, move repeatedly between concept words, formula symbols, and numerical examples until each topic feels like one connected story.</div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+<script>
+function goTo(page){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelector(`button[onclick="goTo('${page}')"]`).classList.add('active');
+  document.getElementById('crumbPage').textContent = 'Topic ' + page.substring(1);
+}
+function expandAll(){ document.querySelectorAll('details').forEach(d => d.open = true); }
+
+// Topic 1 vector simulator
+const vCan = document.getElementById('vectorCanvas');
+if(vCan){
+  const vCtx = vCan.getContext('2d');
+  const vInputs = ['f1','a1','f2','a2'].map(id => document.getElementById(id));
+  function drawArrow(ctx,x,y,dx,dy,color,label){
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+dx,y-dy); ctx.strokeStyle=color; ctx.lineWidth=3; ctx.stroke();
+    const ang = Math.atan2(-dy,dx), len = 10;
+    ctx.beginPath();
+    ctx.moveTo(x+dx, y-dy);
+    ctx.lineTo(x+dx-len*Math.cos(ang-Math.PI/6), y-dy+len*Math.sin(ang-Math.PI/6));
+    ctx.lineTo(x+dx-len*Math.cos(ang+Math.PI/6), y-dy+len*Math.sin(ang+Math.PI/6));
+    ctx.closePath(); ctx.fillStyle=color; ctx.fill();
+    ctx.fillStyle=color; ctx.font='12px DM Sans'; ctx.fillText(label, x+dx+6, y-dy-4);
+  }
+  function updateVector(){
+    const f1=+f1El.value, a1=+a1El.value*Math.PI/180, f2=+f2El.value, a2=+a2El.value*Math.PI/180;
+    document.getElementById('f1v').textContent = f1 + ' N';
+    document.getElementById('a1v').textContent = (+a1El.value) + '°';
+    document.getElementById('f2v').textContent = f2 + ' N';
+    document.getElementById('a2v').textContent = (+a2El.value) + '°';
+
+    const sx = 80, sy = 170, scale = 8;
+    const x1 = f1*Math.cos(a1), y1 = f1*Math.sin(a1);
+    const x2 = f2*Math.cos(a2), y2 = f2*Math.sin(a2);
+    const rx = x1+x2, ry = y1+y2;
+    const rmag = Math.sqrt(rx*rx + ry*ry);
+    const rang = Math.atan2(ry,rx)*180/Math.PI;
+
+    vCtx.clearRect(0,0,vCan.width,vCan.height);
+    vCtx.strokeStyle='#d8d5ce'; vCtx.lineWidth=1;
+    vCtx.beginPath(); vCtx.moveTo(20,sy); vCtx.lineTo(740,sy); vCtx.stroke();
+    vCtx.beginPath(); vCtx.moveTo(sx,240); vCtx.lineTo(sx,20); vCtx.stroke();
+    drawArrow(vCtx,sx,sy,x1*scale,y1*scale,'#1B3A5C','F1');
+    drawArrow(vCtx,sx,sy,x2*scale,y2*scale,'#FF3621','F2');
+    drawArrow(vCtx,sx,sy,rx*scale,ry*scale,'#1A7A5A','R');
+    document.getElementById('vectorReadout').innerHTML = `<strong>Resultant:</strong> ${rmag.toFixed(2)} N at ${rang.toFixed(1)}° · <strong>Components:</strong> Rx=${rx.toFixed(2)} N, Ry=${ry.toFixed(2)} N`;
+  }
+  const [f1El,a1El,f2El,a2El] = vInputs;
+  vInputs.forEach(el => el.addEventListener('input', updateVector));
+  updateVector();
+}
+
+// Topic 5 circuit simulator
+const cCan = document.getElementById('circuitCanvas');
+if(cCan){
+  const cCtx = cCan.getContext('2d');
+  const controls = ['vs','r1','r2','r3'].map(id => document.getElementById(id));
+  function drawRes(x,label,val){
+    cCtx.fillStyle='#f4f1ea'; cCtx.fillRect(x,90,120,40);
+    cCtx.strokeStyle='#6b6762'; cCtx.strokeRect(x,90,120,40);
+    cCtx.fillStyle='#1B3A5C'; cCtx.font='12px DM Sans'; cCtx.fillText(label, x+8, 107);
+    cCtx.fillStyle='#6b6762'; cCtx.fillText(`${val} Ω`, x+8, 122);
+  }
+  function updateCircuit(){
+    const vs=+vsEl.value, r1=+r1El.value, r2=+r2El.value, r3=+r3El.value;
+    document.getElementById('vsv').textContent=vs+' V';
+    document.getElementById('r1v').textContent=r1+' Ω';
+    document.getElementById('r2v').textContent=r2+' Ω';
+    document.getElementById('r3v').textContent=r3+' Ω';
+    const req = r1+r2+r3, I = vs/req;
+    const v1=I*r1, v2=I*r2, v3=I*r3;
+    cCtx.clearRect(0,0,cCan.width,cCan.height);
+    cCtx.strokeStyle='#3a3734'; cCtx.lineWidth=2;
+    cCtx.beginPath();
+    cCtx.moveTo(40,40); cCtx.lineTo(720,40); cCtx.lineTo(720,180); cCtx.lineTo(40,180); cCtx.lineTo(40,40); cCtx.stroke();
+    cCtx.fillStyle='#1B3A5C'; cCtx.font='12px DM Sans'; cCtx.fillText(`Source ${vs}V`,52,72);
+    drawRes(170,'R1',r1); drawRes(330,'R2',r2); drawRes(490,'R3',r3);
+    document.getElementById('circuitReadout').innerHTML = `<strong>Req:</strong> ${req.toFixed(2)} Ω · <strong>I:</strong> ${I.toFixed(3)} A · <strong>Voltage drops:</strong> V1=${v1.toFixed(2)} V, V2=${v2.toFixed(2)} V, V3=${v3.toFixed(2)} V`;
+  }
+  const [vsEl,r1El,r2El,r3El] = controls;
+  controls.forEach(el => el.addEventListener('input', updateCircuit));
+  updateCircuit();
+}
+
+// Topic 7 EM simulator
+const eCan = document.getElementById('emCanvas');
+if(eCan){
+  const eCtx = eCan.getContext('2d');
+  const freqSlider = document.getElementById('freqLog');
+  function bandFromFreq(f){
+    if(f<3e9) return 'Radio';
+    if(f<3e11) return 'Microwave';
+    if(f<4e14) return 'Infrared';
+    if(f<7.5e14) return 'Visible';
+    if(f<3e16) return 'Ultraviolet';
+    if(f<3e19) return 'X-ray';
+    return 'Gamma';
+  }
+  function updateEM(){
+    const logf = +freqSlider.value;
+    const f = Math.pow(10,logf);
+    const lambda = 3e8 / f;
+    document.getElementById('freqVal').textContent = `1e${logf} Hz`;
+    eCtx.clearRect(0,0,eCan.width,eCan.height);
+    eCtx.strokeStyle='#d8d5ce'; eCtx.beginPath(); eCtx.moveTo(20,110); eCtx.lineTo(740,110); eCtx.stroke();
+    const cycles = Math.max(1, Math.min(40, Math.round(logf)));
+    eCtx.strokeStyle='#1B3A5C'; eCtx.lineWidth=2; eCtx.beginPath();
+    for(let x=20;x<=740;x++){
+      const t=(x-20)/720*cycles*2*Math.PI;
+      const y=110 - 35*Math.sin(t);
+      if(x===20) eCtx.moveTo(x,y); else eCtx.lineTo(x,y);
+    }
+    eCtx.stroke();
+    const band = bandFromFreq(f);
+    document.getElementById('emReadout').innerHTML = `<strong>Band:</strong> ${band} · <strong>f:</strong> ${f.toExponential(2)} Hz · <strong>λ:</strong> ${lambda.toExponential(2)} m`;
+  }
+  freqSlider.addEventListener('input', updateEM);
+  updateEM();
+}
+
+// Topic 8 AM simulator
+const mCan = document.getElementById('modCanvas');
+if(mCan){
+  const mCtx = mCan.getContext('2d');
+  const fcEl=document.getElementById('fc'), fmEl=document.getElementById('fm'), miEl=document.getElementById('mi');
+  function updateMod(){
+    const fc=+fcEl.value, fm=+fmEl.value, m=+miEl.value/100;
+    document.getElementById('fcv').textContent=fc;
+    document.getElementById('fmv').textContent=fm;
+    document.getElementById('miv').textContent=m.toFixed(2);
+    mCtx.clearRect(0,0,mCan.width,mCan.height);
+    mCtx.strokeStyle='#d8d5ce'; mCtx.beginPath(); mCtx.moveTo(20,125); mCtx.lineTo(740,125); mCtx.stroke();
+    mCtx.strokeStyle='#FF3621'; mCtx.lineWidth=2; mCtx.beginPath();
+    for(let x=20;x<=740;x++){
+      const t=(x-20)/720*2*Math.PI;
+      const env=(1+m*Math.sin(fm*t));
+      const y=125 - env*35*Math.sin(fc*t);
+      if(x===20) mCtx.moveTo(x,y); else mCtx.lineTo(x,y);
+    }
+    mCtx.stroke();
+    mCtx.strokeStyle='#1B3A5C'; mCtx.lineWidth=1.2; mCtx.beginPath();
+    for(let x=20;x<=740;x++){ const t=(x-20)/720*2*Math.PI; const y=125 - (1+m*Math.sin(fm*t))*35; if(x===20)mCtx.moveTo(x,y); else mCtx.lineTo(x,y); }
+    mCtx.stroke();
+    mCtx.beginPath();
+    for(let x=20;x<=740;x++){ const t=(x-20)/720*2*Math.PI; const y=125 + (1+m*Math.sin(fm*t))*35; if(x===20)mCtx.moveTo(x,y); else mCtx.lineTo(x,y); }
+    mCtx.stroke();
+  }
+  [fcEl,fmEl,miEl].forEach(el => el.addEventListener('input', updateMod));
+  updateMod();
+}
+</script>
+
+</body>
+</html>
