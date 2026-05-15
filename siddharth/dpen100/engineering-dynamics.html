@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN100 — Engineering Dynamics</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<style>
+:root{
+  --navy:#1B3A5C;--navy-lt:#1e4570;--orange:#FF3621;
+  --blue-lt:#E6F1FB;--blue-mid:#185FA5;
+  --amber-lt:#FAEEDA;--amber-dk:#7A4800;
+  --green-lt:#E1F5EE;--green-dk:#0a5c3f;
+  --purple-lt:#F3ECFF;--purple-dk:#6b5aa0;
+  --grey-lt:#F6F5F2;--grey-md:#e8e6e0;
+  --text:#2c2a28;--text-muted:#6b6762;
+  --sidebar-w:260px;--content-max:820px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Crimson Pro',Georgia,serif;background:#fafaf8;color:var(--text);display:flex;min-height:100vh;line-height:1.7}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sidebar-w);background:var(--navy);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.sidebar-brand{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-brand-title{font-family:'Crimson Pro',Georgia,serif;font-size:17px;font-weight:600;color:white;line-height:1.3}
+.sidebar-brand-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:.04em;font-family:'DM Sans',sans-serif}
+.nav-section{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-section-label{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.3);padding:6px 20px 4px;text-transform:uppercase;font-family:'DM Sans',sans-serif}
+.nav-link{display:flex;align-items:center;gap:10px;padding:8px 20px;color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;transition:all .15s;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
+.nav-link:hover{color:white;background:rgba(255,255,255,.06)}
+.nav-link.active{color:white;background:rgba(255,255,255,.1);border-left:2px solid var(--orange);padding-left:18px}
+.nav-num{font-size:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.5);border-radius:3px;padding:1px 5px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.nav-link.active .nav-num{background:var(--orange);color:white}
+
+/* ══ MAIN ══ */
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
+.topbar{background:white;border-bottom:1px solid var(--grey-md);padding:12px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-breadcrumb{font-size:12px;color:var(--text-muted);font-family:'DM Sans',sans-serif}
+.topbar-breadcrumb span{color:var(--navy);font-weight:500}
+.topbar-btns{display:flex;gap:8px}
+.tb-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--grey-md);background:white;font-size:12px;color:var(--text-muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.tb-btn:hover{border-color:var(--navy);color:var(--navy)}
+
+/* ══ CONTENT ══ */
+.content{max-width:var(--content-max);margin:0 auto;padding:48px 40px 80px}
+.page{display:none}
+.page.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.page-hero{margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid var(--grey-md)}
+.page-hero-label{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--orange);text-transform:uppercase;margin-bottom:6px;font-family:'DM Sans',sans-serif}
+.page-hero-title{font-family:'Crimson Pro',Georgia,serif;font-size:38px;font-weight:600;color:var(--navy);line-height:1.15;margin-bottom:8px}
+.page-hero-sub{font-size:15px;color:var(--text-muted);line-height:1.6;font-family:'DM Sans',sans-serif}
+
+/* ══ TOPIC SECTIONS ══ */
+.topic-section{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:28px 32px;margin-bottom:24px}
+.topic-section h3{font-family:'Crimson Pro',Georgia,serif;font-size:20px;font-weight:600;color:var(--navy);margin:24px 0 12px}
+.topic-section h3:first-child{margin-top:0}
+.topic-section h4{font-family:'DM Sans',sans-serif;font-weight:500;font-size:15px;color:var(--navy);margin:16px 0 8px}
+.topic-section p{font-size:14.5px;line-height:1.7;margin-bottom:10px}
+.topic-section ul,.topic-section ol{padding-left:24px;margin-bottom:12px;font-size:14.5px;line-height:1.7}
+.topic-section li{margin-bottom:6px}
+.topic-section strong{color:var(--navy);font-weight:600}
+.topic-section em{font-style:italic}
+
+/* ══ FORMULA BOX ══ */
+.fbox{background:linear-gradient(135deg,rgba(255,54,33,0.04),rgba(255,54,33,0.01));border:1px solid rgba(255,54,33,0.2);border-radius:8px;padding:16px 20px;margin:12px 0;overflow-x:auto;text-align:center}
+.fbox-label{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);margin-bottom:8px;font-weight:500}
+
+/* ══ EXAMPLE BOX ══ */
+.example-box{background:#fdfcfa;border:1px solid #d4e9d4;border-radius:8px;padding:18px 20px;margin:16px 0}
+.example-label{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.08em;color:#0a7a4a;font-weight:600;text-transform:uppercase;margin-bottom:8px}
+.ex-step{margin:12px 0 6px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;color:var(--green-dk)}
+
+/* ══ PRACTICE PROBLEMS ══ */
+.practice-box{background:#faf8fd;border:1px solid #d4d4e9;border-radius:8px;padding:18px 20px;margin:16px 0}
+.practice-label{font-size:11px;letter-spacing:.08em;color:#6b5aa0;font-weight:600;text-transform:uppercase;margin-bottom:8px;font-family:'DM Sans',sans-serif}
+.practice-box ol{padding-left:20px;font-size:14.5px;line-height:1.7}
+.practice-box li{margin-bottom:10px}
+
+details.answer{margin-top:12px;background:rgba(107,90,160,.05);border-radius:6px;border:1px solid rgba(107,90,160,.2)}
+details.answer summary{font-family:'DM Sans',sans-serif;font-size:12px;padding:8px 14px;cursor:pointer;color:#6b5aa0;letter-spacing:.04em;font-weight:500}
+details.answer .ans-body{padding:12px 16px;border-top:1px solid rgba(107,90,160,.2);font-size:13.5px}
+
+/* ══ CALLOUTS ══ */
+.callout-info{background:var(--blue-lt);border-left:3px solid var(--blue-mid);padding:12px 16px;font-size:13.5px;line-height:1.6;margin:12px 0;border-radius:0 6px 6px 0}
+.callout-info strong{color:var(--blue-mid)}
+
+.callout-warn{background:var(--amber-lt);border-left:3px solid #c07a00;padding:12px 16px;font-size:13.5px;line-height:1.6;margin:12px 0;border-radius:0 6px 6px 0;color:var(--amber-dk)}
+.callout-warn strong{color:#c07a00}
+
+.callout-success{background:var(--green-lt);border-left:3px solid #1a7a5a;padding:12px 16px;font-size:13.5px;line-height:1.6;margin:12px 0;border-radius:0 6px 6px 0;color:var(--green-dk)}
+.callout-success strong{color:#1a7a5a}
+
+/* ══ TABLES ══ */
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+th{font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:.05em;color:white;background:var(--navy);padding:8px 12px;text-align:left;font-weight:500}
+td{padding:8px 12px;border-bottom:1px solid var(--grey-md);line-height:1.6;vertical-align:top}
+tr:nth-child(even) td{background:var(--grey-lt)}
+tr:last-child td{border-bottom:none}
+
+/* ══ EQUATION SET ══ */
+.eq-set{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:12px 0}
+.eq-card{background:rgba(255,54,33,0.04);border:1px solid rgba(255,54,33,0.2);border-radius:8px;padding:12px 14px;text-align:center}
+.eq-name{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--orange);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;font-weight:500}
+
+/* ══ TWO COLS ══ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+@media(max-width:640px){.two-col{grid-template-columns:1fr}}
+
+/* ══ SVG/GRAPH ══ */
+.graph-wrap{background:#f9f9f7;border:1px solid var(--grey-md);border-radius:8px;padding:12px;margin:12px 0;text-align:center;overflow-x:auto}
+
+/* ══ FBD DIAGRAM ══ */
+.fbd-wrap{display:flex;align-items:flex-start;gap:20px;margin:12px 0;flex-wrap:wrap}
+.fbd-wrap svg{flex-shrink:0}
+.fbd-notes{flex:1;min-width:200px;font-size:14px}
+
+/* ══ KaTeX ══ */
+.katex-display{margin:8px 0;overflow-x:auto}
+.katex{font-size:1.05em}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:700px){
+  .sidebar{display:none}.main{margin-left:0}.content{padding:24px 18px 60px}
+  .topbar{padding:10px 18px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">DPEN100 — Engineering Dynamics</div>
+    <div class="sidebar-brand-sub">Kinematics & Newton's Laws — Theory & Examples</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Topics</div>
+    <button class="nav-link active" onclick="goTo('t1')"><span class="nav-num">1</span>Kinematics Fundamentals</button>
+    <button class="nav-link" onclick="goTo('t2')"><span class="nav-num">2</span>s-t v-t a-t Graphs</button>
+    <button class="nav-link" onclick="goTo('t3')"><span class="nav-num">3</span>Constant Acceleration</button>
+    <button class="nav-link" onclick="goTo('t4')"><span class="nav-num">4</span>Variable Acceleration</button>
+    <button class="nav-link" onclick="goTo('t5')"><span class="nav-num">5</span>Curvilinear Motion</button>
+    <button class="nav-link" onclick="goTo('t6')"><span class="nav-num">6</span>Projectile Motion</button>
+    <button class="nav-link" onclick="goTo('t7')"><span class="nav-num">7</span>Normal & Tangential</button>
+    <button class="nav-link" onclick="goTo('t8')"><span class="nav-num">8</span>Newton's Laws & FBD</button>
+    <button class="nav-link" onclick="goTo('t9')"><span class="nav-num">9</span>Friction & Inclines</button>
+    <button class="nav-link" onclick="goTo('t10')"><span class="nav-num">10</span>Connected Bodies</button>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">DPEN100 / Dynamics / <span id="breadcrumbPage">Topic 1</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand All</button>
+    </div>
+  </div>
+  <div class="content">
+
+<!-- ═══════════════════════════════════════
+     TOPIC 1 — KINEMATICS FUNDAMENTALS
+════════════════════════════════════════ -->
+<div class="page active" id="page-t1">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 1</div>
+    <div class="page-hero-title">Kinematics Fundamentals</div>
+    <div class="page-hero-sub">position · velocity · acceleration · the three core relations</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>What is Kinematics?</h3>
+    <p>Kinematics describes <em>how</em> objects move — position, velocity, acceleration — <strong>without asking why</strong> (forces come later in dynamics). For DPEN100, we focus on a particle: an object whose size and shape don't matter, only its position.</p>
+
+    <h3>Position and Displacement</h3>
+    <p>Choose a fixed reference point (origin) and a positive direction. Position $s$ locates the particle along the axis.</p>
+    <div class="fbox">
+      $$\Delta s = s_2 - s_1 \qquad \text{(displacement, can be negative)}$$
+    </div>
+    <p><strong>Displacement ≠ Distance.</strong> Distance is the total path length (always positive). Displacement is the net change in position (signed).</p>
+    <div class="example-box">
+      <div class="example-label">Concept Example</div>
+      <p>A particle moves from $s = 2$ m to $s = 8$ m then back to $s = 5$ m.</p>
+      <ul>
+        <li>Distance travelled: $6 + 3 = 9$ m</li>
+        <li>Displacement: $5 - 2 = +3$ m</li>
+      </ul>
+    </div>
+
+    <h3>Velocity</h3>
+    <p>Velocity is the rate of change of position with respect to time.</p>
+    <div class="fbox">
+      $$v_{\text{avg}} = \frac{\Delta s}{\Delta t} \qquad v = \frac{ds}{dt} \quad \text{(instantaneous)}$$
+    </div>
+    <ul>
+      <li>$v > 0$: moving in the positive direction</li>
+      <li>$v < 0$: moving in the negative direction</li>
+      <li>$v = 0$: momentarily at rest (may reverse direction)</li>
+      <li>Speed $= |v|$ — always non-negative</li>
+    </ul>
+
+    <h3>Acceleration</h3>
+    <p>Acceleration is the rate of change of velocity.</p>
+    <div class="fbox">
+      $$a_{\text{avg}} = \frac{\Delta v}{\Delta t} \qquad a = \frac{dv}{dt} = \frac{d^2s}{dt^2}$$
+    </div>
+
+    <div class="callout-success">
+      <strong>Key sign rule:</strong> When $a$ and $v$ have the <em>same sign</em> → particle is speeding up. When they have <em>opposite signs</em> → particle is slowing down. This is true regardless of which direction is positive.
+    </div>
+
+    <h3>The Three Fundamental Relations</h3>
+    <p>These three equations are the backbone of all kinematics. Everything else is derived from them.</p>
+    <div class="fbox">
+      $$\boxed{v = \frac{ds}{dt}} \qquad \boxed{a = \frac{dv}{dt}} \qquad \boxed{a\,ds = v\,dv}$$
+    </div>
+    <p>The third relation is found by eliminating $dt$:</p>
+    <p>$$a = \frac{dv}{dt} \implies a\,dt = dv \quad \text{and} \quad v = \frac{ds}{dt} \implies dt = \frac{ds}{v}$$</p>
+    <p>Substituting: $a\,\dfrac{ds}{v} = dv \implies a\,ds = v\,dv$</p>
+    <p>Use this third form <strong>whenever time is not involved</strong> in the problem.</p>
+
+    <h3>Integration Summary</h3>
+    <table>
+      <tr><th>Known</th><th>Want</th><th>Use</th></tr>
+      <tr><td>$a(t)$</td><td>$v(t)$</td><td>$v = v_0 + \int_{t_0}^{t} a\,dt$</td></tr>
+      <tr><td>$v(t)$</td><td>$s(t)$</td><td>$s = s_0 + \int_{t_0}^{t} v\,dt$</td></tr>
+      <tr><td>$a(s)$</td><td>$v(s)$</td><td>$\int_{v_0}^{v} v\,dv = \int_{s_0}^{s} a\,ds$</td></tr>
+      <tr><td>$a(v)$</td><td>$v(t)$ or $s(v)$</td><td>$\int_{v_0}^{v} \frac{dv}{a(v)} = t - t_0$ or $\int_{v_0}^{v} \frac{v\,dv}{a(v)} = s - s_0$</td></tr>
+    </table>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 1.1 — Find v and a from s(t)</div>
+    <p>A particle has position $s(t) = 2t^3 - 9t^2 + 12t - 4$ metres, $t \geq 0$.</p>
+    <p><strong>Find: velocity and acceleration at $t = 2$ s. When does the particle momentarily stop?</strong></p>
+    <div class="ex-step">Step 1 — Differentiate</div>
+    <p>$$v(t) = \frac{ds}{dt} = 6t^2 - 18t + 12$$</p>
+    <p>$$a(t) = \frac{dv}{dt} = 12t - 18$$</p>
+    <div class="ex-step">Step 2 — Evaluate at t = 2</div>
+    <p>$$v(2) = 6(4) - 18(2) + 12 = 24 - 36 + 12 = 0 \text{ m/s}$$</p>
+    <p>$$a(2) = 12(2) - 18 = 6 \text{ m/s}^2$$</p>
+    <div class="ex-step">Step 3 — When does it stop? (v = 0)</div>
+    <p>$$6t^2 - 18t + 12 = 0 \implies t^2 - 3t + 2 = 0 \implies (t-1)(t-2) = 0$$</p>
+    <p>Stops at $t = 1$ s and $t = 2$ s. At $t = 1$: $a(1) = 12 - 18 = -6$ m/s² (reverses). At $t = 2$: $a(2) = +6$ m/s² (reverses again).</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 1.2 — Use a·ds = v·dv</div>
+    <p>A particle starts at $s = 0$ with $v_0 = 2$ m/s. Its acceleration is $a = 3s$ m/s² where $s$ is in metres. Find the velocity when $s = 3$ m.</p>
+    <div class="ex-step">Use the third relation (no time involved)</div>
+    <p>$$a\,ds = v\,dv \implies 3s\,ds = v\,dv$$</p>
+    <p>$$\int_0^3 3s\,ds = \int_2^v v\,dv$$</p>
+    <p>$$\left[\frac{3s^2}{2}\right]_0^3 = \left[\frac{v^2}{2}\right]_2^v$$</p>
+    <p>$$\frac{3(9)}{2} = \frac{v^2 - 4}{2} \implies 13.5 = \frac{v^2-4}{2} \implies v^2 = 31 \implies v = 5.57 \text{ m/s}$$</p>
+  </div>
+
+  <div class="practice-box">
+    <div class="practice-label">Practice Problems</div>
+    <ol>
+      <li>A particle moves with $s(t) = t^4 - 4t^3$ m. Find: (a) velocity at $t = 3$ s; (b) acceleration at $t = 3$ s; (c) the time(s) when the particle is at rest.</li>
+      <li>A particle has $v_0 = 5$ m/s and acceleration $a = 4s$ m/s² (s in metres, starting from $s=0$). Find $v$ when $s = 2$ m using the $a\,ds = v\,dv$ relation.</li>
+    </ol>
+    <details class="answer">
+      <summary>▶ Show Answers</summary>
+      <div class="ans-body">
+        <p><strong>1:</strong> $v = 4t^3 - 12t^2$. At $t=3$: $v = 108 - 108 = 0$ m/s. $a = 12t^2 - 24t$. At $t=3$: $a = 108 - 72 = 36$ m/s². At rest: $4t^2(t-3) = 0 \implies t = 0$ or $t = 3$ s.</p>
+        <p><strong>2:</strong> $\int_0^2 4s\,ds = \int_5^v v\,dv \implies [2s^2]_0^2 = [\frac{v^2}{2}]_5^v \implies 8 = \frac{v^2 - 25}{2} \implies v^2 = 41 \implies v = 6.40$ m/s.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 2 — s-t, v-t, a-t GRAPHS
+════════════════════════════════════════ -->
+<div class="page" id="page-t2">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 2</div>
+    <div class="page-hero-title">Graphical Kinematics — s-t, v-t, a-t Graphs</div>
+    <div class="page-hero-sub">slopes · areas · erratic motion</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>The Three Graphs and Their Relationships</h3>
+    <p>Since $v = ds/dt$ and $a = dv/dt$, the graphs are linked by slopes and areas:</p>
+
+    <table>
+      <tr><th>From graph</th><th>Slope gives</th><th>Area under curve gives</th></tr>
+      <tr><td>$s$-$t$ graph</td><td>velocity $v$</td><td>—</td></tr>
+      <tr><td>$v$-$t$ graph</td><td>acceleration $a$</td><td>displacement $\Delta s$</td></tr>
+      <tr><td>$a$-$t$ graph</td><td>—</td><td>change in velocity $\Delta v$</td></tr>
+    </table>
+
+    <div class="callout-info">
+      <strong>Area under v-t curve = displacement</strong> (not distance). Areas below the time axis are negative — they represent motion in the negative direction.
+    </div>
+
+    <h3>Reading the s-t Graph</h3>
+    <ul>
+      <li><strong>Steep positive slope</strong> → high positive velocity (moving fast in + direction)</li>
+      <li><strong>Horizontal</strong> → at rest ($v = 0$)</li>
+      <li><strong>Negative slope</strong> → moving in negative direction</li>
+      <li><strong>Curve curving upward</strong> → acceleration (slope is increasing)</li>
+      <li><strong>Curve curving downward</strong> → deceleration (slope is decreasing)</li>
+    </ul>
+
+    <h3>Reading the v-t Graph</h3>
+    <ul>
+      <li><strong>Positive slope</strong> → positive acceleration</li>
+      <li><strong>Horizontal</strong> → constant velocity ($a = 0$)</li>
+      <li><strong>Crosses zero axis</strong> → particle reverses direction</li>
+      <li><strong>Constant slope (straight line)</strong> → constant acceleration → use SUVAT</li>
+    </ul>
+
+    <h3>Erratic Motion — Piecewise Graphs</h3>
+    <p>When a-t is given as a piecewise graph, integrate each segment separately to build the v-t graph, then integrate v-t to get s-t. Always carry over values from the end of one segment to the start of the next.</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 2.1 — Build v-t from a-t</div>
+    <p>A particle starts at rest. The a-t graph is:</p>
+    <ul>
+      <li>$0 \leq t \leq 4$ s: $a = 3$ m/s² (constant)</li>
+      <li>$4 \leq t \leq 8$ s: $a = -1.5$ m/s² (constant)</li>
+    </ul>
+    <div class="ex-step">Phase 1 (0–4 s): Area under a-t = Δv</div>
+    <p>$\Delta v = 3 \times 4 = 12$ m/s. Since $v_0 = 0$: $v(4) = 12$ m/s</p>
+    <div class="ex-step">Phase 2 (4–8 s):</div>
+    <p>$\Delta v = -1.5 \times 4 = -6$ m/s. So $v(8) = 12 - 6 = 6$ m/s</p>
+    <div class="ex-step">Displacement: area under v-t (two trapezoids)</div>
+    <p>Phase 1: triangle → $\frac{1}{2}(4)(12) = 24$ m</p>
+    <p>Phase 2: trapezoid → $\frac{1}{2}(12 + 6)(4) = 36$ m</p>
+    <p><strong>Total displacement $= 60$ m</strong></p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 2.2 — Particle reverses direction</div>
+    <p>v-t graph: straight line from $v = 6$ m/s at $t=0$ to $v = -4$ m/s at $t = 5$ s.</p>
+    <div class="ex-step">Find total distance (not displacement)</div>
+    <p>Line crosses zero at: $t^* = \frac{6}{6+4} \times 5 = 3$ s (by similar triangles)</p>
+    <p>Area $0 \to 3$: $\frac{1}{2}(3)(6) = +9$ m (positive displacement)</p>
+    <p>Area $3 \to 5$: $\frac{1}{2}(2)(4) = -4$ m (negative displacement)</p>
+    <p><strong>Displacement</strong> $= 9 - 4 = +5$ m &nbsp;|&nbsp; <strong>Distance</strong> $= 9 + 4 = 13$ m</p>
+  </div>
+
+  <div class="practice-box">
+    <div class="practice-label">Practice Problems</div>
+    <ol>
+      <li>A v-t graph shows: $v = 0$ at $t=0$, rises linearly to $v = 20$ m/s at $t=4$ s, stays constant to $t=7$ s, then drops linearly to $v=0$ at $t=10$ s. Find: (a) acceleration in each phase; (b) total displacement; (c) total distance.</li>
+      <li>An a-t graph shows $a = 2t$ for $0 \leq t \leq 3$ s. If $v_0 = 1$ m/s, find $v$ at $t = 3$ s using the area method.</li>
+    </ol>
+    <details class="answer">
+      <summary>▶ Show Answers</summary>
+      <div class="ans-body">
+        <p><strong>1a:</strong> Phase 1: $a = 20/4 = 5$ m/s². Phase 2: $a = 0$. Phase 3: $a = (0-20)/3 = -6.67$ m/s².</p>
+        <p><strong>1b:</strong> $\frac{1}{2}(4)(20) + (3)(20) + \frac{1}{2}(3)(20) = 40 + 60 + 30 = 130$ m. No sign change, so distance = displacement = 130 m.</p>
+        <p><strong>2:</strong> Area under $a = 2t$ from 0 to 3: $\int_0^3 2t\,dt = [t^2]_0^3 = 9$. So $v(3) = v_0 + 9 = 10$ m/s.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 3 — CONSTANT ACCELERATION (SUVAT)
+════════════════════════════════════════ -->
+<div class="page" id="page-t3">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 3</div>
+    <div class="page-hero-title">Constant Acceleration — SUVAT Equations</div>
+    <div class="page-hero-sub">derivation · strategy · free fall · multi-body problems</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Derivation from First Principles</h3>
+    <p>If $a = \text{constant}$, integrate directly:</p>
+    <p>$$\int_{v_0}^{v} dv = a\int_0^t dt \implies \boxed{v = v_0 + at} \quad \cdots (1)$$</p>
+    <p>Substitute (1) into $ds/dt = v$ and integrate:</p>
+    <p>$$\int_{s_0}^{s} ds = \int_0^t (v_0 + at)\,dt \implies \boxed{s = s_0 + v_0 t + \tfrac{1}{2}at^2} \quad \cdots (2)$$</p>
+    <p>Eliminate $t$ by solving (1) for $t = \frac{v - v_0}{a}$ and substituting into (2):</p>
+    <p>$$\boxed{v^2 = v_0^2 + 2a(s - s_0)} \quad \cdots (3)$$</p>
+    <p>Average velocity (only valid for constant $a$):</p>
+    <p>$$\boxed{s - s_0 = \tfrac{1}{2}(v_0 + v)\,t} \quad \cdots (4)$$</p>
+
+    <h3>The Five SUVAT Variables</h3>
+    <div class="eq-set">
+      <div class="eq-card"><div class="eq-name">$s$</div>displacement (m)</div>
+      <div class="eq-card"><div class="eq-name">$u = v_0$</div>initial velocity (m/s)</div>
+      <div class="eq-card"><div class="eq-name">$v$</div>final velocity (m/s)</div>
+      <div class="eq-card"><div class="eq-name">$a$</div>acceleration (m/s²)</div>
+      <div class="eq-card"><div class="eq-name">$t$</div>time (s)</div>
+    </div>
+    <p>Each equation uses 4 of the 5. Know 3 → find the other 2.</p>
+
+    <h3>Equation Selection Guide</h3>
+    <table>
+      <tr><th>Missing variable</th><th>Use equation</th></tr>
+      <tr><td>$s$ (displacement unknown)</td><td>$v = v_0 + at$</td></tr>
+      <tr><td>$v$ (final vel unknown)</td><td>$s = s_0 + v_0t + \frac{1}{2}at^2$</td></tr>
+      <tr><td>$t$ (time unknown)</td><td>$v^2 = v_0^2 + 2a(s-s_0)$</td></tr>
+      <tr><td>$a$ (acceleration unknown)</td><td>$s = s_0 + \frac{1}{2}(v_0+v)t$</td></tr>
+      <tr><td>$v_0$ (initial vel unknown)</td><td>any equation with known others</td></tr>
+    </table>
+
+    <div class="callout-warn">
+      <strong>Only use SUVAT when $a$ is constant throughout the problem.</strong> If $a$ changes, split into phases or use integration.
+    </div>
+
+    <h3>Free Fall</h3>
+    <p>Special case: only gravity acts. $|a| = g = 9.81$ m/s².</p>
+    <ul>
+      <li>If upward is positive: $a = -9.81$ m/s²</li>
+      <li>If downward is positive: $a = +9.81$ m/s²</li>
+      <li>At maximum height: $v = 0$ (only momentarily, particle still has acceleration $g$ downward)</li>
+      <li>For symmetric launch/landing: time up = time down</li>
+    </ul>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 3.1 — Braking Vehicle</div>
+    <p>A truck travelling at 90 km/h applies brakes and stops in 75 m. Find: (a) deceleration; (b) time to stop; (c) speed after 40 m.</p>
+    <div class="ex-step">Convert: 90 km/h = 25 m/s</div>
+    <div class="ex-step">(a) Use eq. (3) — no time involved</div>
+    <p>$$v^2 = v_0^2 + 2a(s-s_0) \implies 0 = 625 + 2a(75) \implies a = -4.17 \text{ m/s}^2$$</p>
+    <div class="ex-step">(b) Use eq. (1)</div>
+    <p>$$0 = 25 + (-4.17)t \implies t = 6.0 \text{ s}$$</p>
+    <div class="ex-step">(c) Speed after 40 m</div>
+    <p>$$v^2 = 625 + 2(-4.17)(40) = 625 - 333.6 = 291.4 \implies v = 17.1 \text{ m/s}$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 3.2 — Vertical throw</div>
+    <p>A ball is thrown vertically upward at 18 m/s from a roof 30 m high. Taking upward as positive and origin at ground. Find: (a) max height above ground; (b) time to hit the ground; (c) speed at impact.</p>
+    <div class="ex-step">Set up: $s_0 = 30$ m, $v_0 = +18$ m/s, $a = -9.81$ m/s²</div>
+    <div class="ex-step">(a) At max height, $v = 0$</div>
+    <p>$$v^2 = v_0^2 + 2a(s - s_0) \implies 0 = 324 + 2(-9.81)(s - 30)$$</p>
+    <p>$$s - 30 = \frac{324}{19.62} = 16.51 \text{ m} \implies s = 46.5 \text{ m above ground}$$</p>
+    <div class="ex-step">(b) When $s = 0$ (ground level)</div>
+    <p>$$0 = 30 + 18t - 4.905t^2 \implies 4.905t^2 - 18t - 30 = 0$$</p>
+    <p>$$t = \frac{18 \pm \sqrt{324 + 4(4.905)(30)}}{2(4.905)} = \frac{18 \pm \sqrt{912.6}}{9.81}$$</p>
+    <p>$$t = \frac{18 + 30.21}{9.81} = 4.91 \text{ s} \quad (\text{take positive root})$$</p>
+    <div class="ex-step">(c) Speed at impact</div>
+    <p>$$v = 18 + (-9.81)(4.91) = 18 - 48.2 = -30.2 \text{ m/s} \implies \text{speed} = 30.2 \text{ m/s}$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 3.3 — Two vehicles, when do they meet?</div>
+    <p>Car A starts from rest at $x = 0$ with $a = 2$ m/s². At the same instant, car B passes $x = 0$ at $v = 10$ m/s with $a = -0.5$ m/s² (braking). Find: (a) when A overtakes B; (b) the position.</p>
+    <div class="ex-step">Write position equations for each</div>
+    <p>$$s_A = \tfrac{1}{2}(2)t^2 = t^2$$</p>
+    <p>$$s_B = 10t + \tfrac{1}{2}(-0.5)t^2 = 10t - 0.25t^2$$</p>
+    <div class="ex-step">Set equal (they meet when $s_A = s_B$)</div>
+    <p>$$t^2 = 10t - 0.25t^2 \implies 1.25t^2 - 10t = 0 \implies t(1.25t - 10) = 0$$</p>
+    <p>$t = 0$ (start) and $t = 8$ s. A overtakes B at $t = \mathbf{8}$ <strong>s</strong>.</p>
+    <div class="ex-step">Position: $s_A(8) = 64$ m</div>
+    <p>Check B stops before $t = 8$: $v_B = 0$ at $t = 10/0.5 = 20$ s. B hasn't stopped yet. ✓</p>
+  </div>
+
+  <div class="practice-box">
+    <div class="practice-label">Practice Problems</div>
+    <ol>
+      <li>A motorcycle accelerates from 60 km/h to 100 km/h in 8 s. Find: (a) acceleration; (b) distance covered during this period.</li>
+      <li>A stone is dropped from 80 m height. Find: (a) velocity just before impact; (b) time to fall.</li>
+      <li>A car decelerates uniformly from 28 m/s and stops. If it travels 180 m in the last 6 s before stopping, find the deceleration.</li>
+      <li>Two trains 500 m apart approach each other on parallel tracks. Train A: 30 m/s, decelerating at 1 m/s². Train B: 20 m/s, decelerating at 0.5 m/s². Do they collide?</li>
+    </ol>
+    <details class="answer">
+      <summary>▶ Show Answers</summary>
+      <div class="ans-body">
+        <p><strong>1:</strong> $\Delta v = 40/3.6 = 11.11$ m/s. $a = 11.11/8 = 1.39$ m/s². $s = \frac{1}{2}(60/3.6 + 100/3.6)(8) = \frac{1}{2}(16.67+27.78)(8) = 177.8$ m.</p>
+        <p><strong>2:</strong> $v^2 = 0 + 2(9.81)(80) = 1569.6 \implies v = 39.6$ m/s. $t = v/g = 39.6/9.81 = 4.04$ s.</p>
+        <p><strong>3:</strong> In last 6 s: $v = 0$, $s = 180$ m. Using $s = \frac{1}{2}(v_0+v)t$: $180 = \frac{1}{2}v_0(6) \implies v_0 = 60$ m/s at start of last 6 s phase. But car's initial speed was 28 m/s, so this scenario is impossible as stated. Assuming the problem means the car decelerates uniformly to rest and covers 180 m total: use $0 = 28^2 + 2a(180) \implies a = -2.18$ m/s².</p>
+        <p><strong>4:</strong> When both stop: $v_A = 0$ at $t = 30$ s (dist = 450 m). $v_B = 0$ at $t = 40$ s (dist = 400 m). Total stopping distance = 850 m > 500 m → <strong>they collide</strong>.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 4 — VARIABLE ACCELERATION
+════════════════════════════════════════ -->
+<div class="page" id="page-t4">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 4</div>
+    <div class="page-hero-title">Variable Acceleration — Integration</div>
+    <div class="page-hero-sub">a(t) · a(s) · a(v) · choosing the right integral</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>When SUVAT Fails</h3>
+    <p>If acceleration changes with time, position, or velocity, you must integrate. The three fundamental relations guide which integral to use.</p>
+
+    <h3>Case 1: a = a(t)</h3>
+    <p>Acceleration is given as a function of time. Integrate directly:</p>
+    <div class="fbox">
+      $$v(t) = v_0 + \int_{t_0}^{t} a(\tau)\,d\tau \qquad s(t) = s_0 + \int_{t_0}^{t} v(\tau)\,d\tau$$
+    </div>
+
+    <h3>Case 2: a = a(s)</h3>
+    <p>Acceleration depends on position. Use $a\,ds = v\,dv$:</p>
+    <div class="fbox">
+      $$\int_{v_0}^{v} v\,dv = \int_{s_0}^{s} a(s)\,ds \implies \frac{v^2 - v_0^2}{2} = \int_{s_0}^{s} a(s)\,ds$$
+    </div>
+
+    <h3>Case 3: a = a(v)</h3>
+    <p>Acceleration depends on velocity. Separate variables from $a = dv/dt$:</p>
+    <div class="fbox">
+      $$\int_{v_0}^{v} \frac{dv}{a(v)} = \int_0^t dt = t - t_0$$
+    </div>
+    <p>To find position as a function of velocity, use $v\,dt = ds \implies dt = ds/v$:</p>
+    <div class="fbox">
+      $$\int_{v_0}^{v} \frac{v\,dv}{a(v)} = \int_{s_0}^{s} ds = s - s_0$$
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 4.1 — a(t)</div>
+    <p>A particle starts at rest at $s = 0$. Its acceleration is $a = 6t$ m/s² for $t \geq 0$. Find $v$ and $s$ at $t = 4$ s.</p>
+    <div class="ex-step">Integrate a(t) to get v(t)</div>
+    <p>$$v = 0 + \int_0^t 6\tau\,d\tau = [3\tau^2]_0^t = 3t^2$$</p>
+    <div class="ex-step">Integrate v(t) to get s(t)</div>
+    <p>$$s = 0 + \int_0^t 3\tau^2\,d\tau = [\tau^3]_0^t = t^3$$</p>
+    <div class="ex-step">At t = 4 s</div>
+    <p>$$v(4) = 3(16) = 48 \text{ m/s}, \quad s(4) = 64 \text{ m}$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 4.2 — a(s)</div>
+    <p>A particle has $a = -2s$ m/s² where $s$ is in metres. At $s = 0$, $v = 8$ m/s. Find $v$ when $s = 3$ m.</p>
+    <div class="ex-step">Use a·ds = v·dv</div>
+    <p>$$\int_0^3 (-2s)\,ds = \int_8^v v\,dv$$</p>
+    <p>$$[-s^2]_0^3 = \left[\frac{v^2}{2}\right]_8^v$$</p>
+    <p>$$-9 = \frac{v^2 - 64}{2} \implies v^2 = 64 - 18 = 46 \implies v = 6.78 \text{ m/s}$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 4.3 — a(v)</div>
+    <p>A particle has $a = -0.2v$ m/s² (air drag proportional to velocity). At $t = 0$, $v = 20$ m/s. Find $v(t)$.</p>
+    <div class="ex-step">Separate variables: a = dv/dt</div>
+    <p>$$-0.2v = \frac{dv}{dt} \implies \frac{dv}{v} = -0.2\,dt$$</p>
+    <p>$$\int_{20}^{v} \frac{d\nu}{\nu} = -0.2\int_0^t d\tau$$</p>
+    <p>$$[\ln \nu]_{20}^{v} = -0.2t \implies \ln v - \ln 20 = -0.2t$$</p>
+    <p>$$\ln\left(\frac{v}{20}\right) = -0.2t \implies v = 20e^{-0.2t} \text{ m/s}$$</p>
+  </div>
+
+  <div class="practice-box">
+    <div class="practice-label">Practice Problems</div>
+    <ol>
+      <li>A particle starts from rest at $s = 0$ with $a = 4t^2$ m/s². Find $v$ and $s$ at $t = 2$ s.</li>
+      <li>A particle has $a = -4\sqrt{s}$ m/s² (s in metres). At $s = 0$, $v = 12$ m/s. Find $v$ when $s = 4$ m.</li>
+      <li>A particle has $a = -kv^2$ (quadratic drag). If $v_0 = 30$ m/s and $k = 0.01$, find $v$ at $t = 5$ s.</li>
+    </ol>
+    <details class="answer">
+      <summary>▶ Show Answers</summary>
+      <div class="ans-body">
+        <p><strong>1:</strong> $v = \int_0^2 4t^2\,dt = [\frac{4t^3}{3}]_0^2 = \frac{32}{3} = 10.67$ m/s. $s = \int_0^2 \frac{4t^3}{3}\,dt = [\frac{t^4}{3}]_0^2 = \frac{16}{3} = 5.33$ m.</p>
+        <p><strong>2:</strong> $\int_0^4 (-4\sqrt{s})\,ds = \int_{12}^v v\,dv \implies [-\frac{8s^{3/2}}{3}]_0^4 = \frac{v^2-144}{2} \implies -\frac{64}{3} = \frac{v^2-144}{2} \implies v^2 = 144 - \frac{128}{3} = \frac{304}{3} \implies v = 10.07$ m/s.</p>
+        <p><strong>3:</strong> $\int_{30}^v \frac{dv}{-0.01v^2} = 5 \implies [\frac{1}{0.01v}]_{30}^v = 5 \implies \frac{100}{v} - \frac{100}{30} = 5 \implies \frac{100}{v} = 5 + 3.33 = 8.33 \implies v = 12$ m/s.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 5 — CURVILINEAR MOTION
+════════════════════════════════════════ -->
+<div class="page" id="page-t5">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 5</div>
+    <div class="page-hero-title">Curvilinear Motion — 2D Kinematics</div>
+    <div class="page-hero-sub">position vectors · velocity · acceleration · Cartesian coordinates</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Position Vector</h3>
+    <p>A particle moving in 2D or 3D has position vector $\vec{r}(t)$ from origin O to the particle.</p>
+    <div class="fbox">
+      $$\vec{r} = x\,\hat{i} + y\,\hat{j} \quad \text{(2D)} \qquad \vec{r} = x\,\hat{i} + y\,\hat{j} + z\,\hat{k} \quad \text{(3D)}$$
+    </div>
+
+    <h3>Velocity and Acceleration Vectors</h3>
+    <div class="fbox">
+      $$\vec{v} = \frac{d\vec{r}}{dt} = \dot{x}\,\hat{i} + \dot{y}\,\hat{j}$$
+      $$\vec{a} = \frac{d\vec{v}}{dt} = \ddot{x}\,\hat{i} + \ddot{y}\,\hat{j}$$
+    </div>
+    <p>Magnitude (speed): $|\vec{v}| = \sqrt{v_x^2 + v_y^2}$</p>
+    <p>Direction: $\theta = \tan^{-1}(v_y / v_x)$</p>
+
+    <h3>Key Principle</h3>
+    <div class="callout-info">
+      <strong>x and y motions are independent.</strong> Solve each component separately using 1D kinematics, then recombine. This is the foundation of projectile motion.
+    </div>
+
+    <h3>Path Curvature</h3>
+    <p>The particle follows a curved path if the velocity vector changes direction (even if its magnitude stays constant). Acceleration has two roles:</p>
+    <ul>
+      <li><strong>Change speed</strong> — component along velocity (tangential)</li>
+      <li><strong>Change direction</strong> — component perpendicular to velocity (normal)</li>
+    </ul>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 5.1 — Velocity and acceleration from position</div>
+    <p>A particle moves with $\vec{r}(t) = (2t^2)\,\hat{i} + (3t - t^2)\,\hat{j}$ metres. Find velocity and acceleration at $t = 1$ s.</p>
+    <div class="ex-step">Differentiate once for velocity</div>
+    <p>$$\vec{v} = \frac{d\vec{r}}{dt} = (4t)\,\hat{i} + (3 - 2t)\,\hat{j}$$</p>
+    <p>At $t = 1$: $\vec{v}(1) = 4\,\hat{i} + 1\,\hat{j}$ m/s</p>
+    <div class="ex-step">Differentiate again for acceleration</div>
+    <p>$$\vec{a} = \frac{d\vec{v}}{dt} = 4\,\hat{i} - 2\,\hat{j} \text{ m/s}^2 \quad (\text{constant})$$</p>
+    <div class="ex-step">Speed and direction at t = 1</div>
+    <p>$$|\vec{v}| = \sqrt{16 + 1} = 4.12 \text{ m/s}, \quad \theta = \tan^{-1}(1/4) = 14°$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 5.2 — Independent x-y motion</div>
+    <p>A particle has constant $a_x = 2$ m/s², $a_y = -3$ m/s². At $t = 0$: $x = 0$, $y = 0$, $v_x = 5$ m/s, $v_y = 0$. Find position at $t = 4$ s.</p>
+    <div class="ex-step">x-direction (SUVAT)</div>
+    <p>$$x = 0 + 5(4) + \frac{1}{2}(2)(16) = 20 + 16 = 36 \text{ m}$$</p>
+    <div class="ex-step">y-direction (SUVAT)</div>
+    <p>$$y = 0 + 0 + \frac{1}{2}(-3)(16) = -24 \text{ m}$$</p>
+    <div class="ex-step">Position vector</div>
+    <p>$$\vec{r}(4) = 36\,\hat{i} - 24\,\hat{j} \text{ m}$$</p>
+  </div>
+
+  <div class="practice-box">
+    <div class="practice-label">Practice Problems</div>
+    <ol>
+      <li>A particle moves with $\vec{r} = (t^3 - 2t)\,\hat{i} + (4t^2)\,\hat{j}$ m. Find: (a) velocity at $t = 2$ s; (b) acceleration at $t = 2$ s; (c) when the particle crosses the y-axis.</li>
+      <li>A particle has constant acceleration $\vec{a} = 3\,\hat{i} - 4\,\hat{j}$ m/s². At $t = 0$: $\vec{r} = \vec{0}$, $\vec{v} = 10\,\hat{i} + 5\,\hat{j}$ m/s. Find position at $t = 3$ s.</li>
+    </ol>
+    <details class="answer">
+      <summary>▶ Show Answers</summary>
+      <div class="ans-body">
+        <p><strong>1a:</strong> $\vec{v} = (3t^2 - 2)\,\hat{i} + 8t\,\hat{j} \implies \vec{v}(2) = 10\,\hat{i} + 16\,\hat{j}$ m/s.</p>
+        <p><strong>1b:</strong> $\vec{a} = 6t\,\hat{i} + 8\,\hat{j} \implies \vec{a}(2) = 12\,\hat{i} + 8\,\hat{j}$ m/s².</p>
+        <p><strong>1c:</strong> On y-axis: $x = 0 \implies t^3 - 2t = 0 \implies t(t^2 - 2) = 0 \implies t = 0, \pm\sqrt{2}$ s. For $t \geq 0$: $t = 1.41$ s.</p>
+        <p><strong>2:</strong> $x = 0 + 10(3) + \frac{1}{2}(3)(9) = 30 + 13.5 = 43.5$ m. $y = 0 + 5(3) + \frac{1}{2}(-4)(9) = 15 - 18 = -3$ m. $\vec{r}(3) = 43.5\,\hat{i} - 3\,\hat{j}$ m.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 6 — PROJECTILE MOTION
+════════════════════════════════════════ -->
+<div class="page" id="page-t6">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 6</div>
+    <div class="page-hero-title">Projectile Motion</div>
+    <div class="page-hero-sub">horizontal · vertical · range · max height · time of flight</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>The Setup</h3>
+    <p>A projectile is launched with initial speed $v_0$ at angle $\theta$ to the horizontal. Gravity acts downward. Air resistance is neglected.</p>
+    <div class="fbox">
+      <div class="fbox-label">Initial conditions</div>
+      $$v_{0x} = v_0 \cos\theta, \quad v_{0y} = v_0 \sin\theta$$
+      $$a_x = 0, \quad a_y = -g = -9.81 \text{ m/s}^2 \quad (\text{taking upward as positive})$$
+    </div>
+
+    <h3>The Equations (x and y are independent)</h3>
+    <table>
+      <tr><th>Horizontal (x)</th><th>Vertical (y)</th></tr>
+      <tr><td>$v_x = v_{0x}$ (constant)</td><td>$v_y = v_{0y} - gt$</td></tr>
+      <tr><td>$x = v_{0x}\,t$</td><td>$y = v_{0y}\,t - \frac{1}{2}gt^2$</td></tr>
+      <tr><td>—</td><td>$v_y^2 = v_{0y}^2 - 2gy$</td></tr>
+    </table>
+
+    <h3>Key Results for Level Launch (same height landing)</h3>
+    <div class="eq-set">
+      <div class="eq-card"><div class="eq-name">Time of flight</div>$T = \frac{2v_0\sin\theta}{g}$</div>
+      <div class="eq-card"><div class="eq-name">Max height</div>$H = \frac{v_0^2\sin^2\theta}{2g}$</div>
+      <div class="eq-card"><div class="eq-name">Range</div>$R = \frac{v_0^2\sin 2\theta}{g}$</div>
+    </div>
+
+    <div class="callout-success">
+      <strong>Maximum range:</strong> occurs at $\theta = 45°$ (for level ground). Complementary angles $\theta$ and $90° - \theta$ give the same range but different trajectories.
+    </div>
+
+    <h3>At Maximum Height</h3>
+    <ul>
+      <li>$v_y = 0$ (instantaneous stop in vertical motion)</li>
+      <li>$v_x$ unchanged → particle still has horizontal velocity</li>
+      <li>Time to max height: $t = \frac{v_{0y}}{g} = \frac{v_0\sin\theta}{g}$ (half the flight time)</li>
+    </ul>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 6.1 — Projectile on level ground</div>
+    <p>A ball is kicked at 20 m/s at 35° to the horizontal. Find: (a) time of flight; (b) horizontal range; (c) max height.</p>
+    <div class="ex-step">Resolve initial velocity</div>
+    <p>$$v_{0x} = 20\cos 35° = 16.38 \text{ m/s}, \quad v_{0y} = 20\sin 35° = 11.47 \text{ m/s}$$</p>
+    <div class="ex-step">(a) Time of flight: when y = 0</div>
+    <p>$$0 = 11.47t - 4.905t^2 \implies t(11.47 - 4.905t) = 0 \implies t = 2.34 \text{ s}$$</p>
+    <div class="ex-step">(b) Horizontal range</div>
+    <p>$$R = v_{0x} \times T = 16.38 \times 2.34 = 38.3 \text{ m}$$</p>
+    <div class="ex-step">(c) Max height: when $v_y = 0$</div>
+    <p>$$v_y^2 = v_{0y}^2 - 2gH \implies 0 = 131.6 - 19.62H \implies H = 6.71 \text{ m}$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 6.2 — Projectile from a cliff</div>
+    <p>A stone is thrown horizontally at 15 m/s from the top of a 40 m cliff. Find: (a) time to hit the ground; (b) horizontal distance from cliff base; (c) speed at impact.</p>
+    <div class="ex-step">Set up: $v_{0x} = 15$ m/s, $v_{0y} = 0$, $y_0 = 40$ m</div>
+    <div class="ex-step">(a) When y = 0 (ground level)</div>
+    <p>$$0 = 40 + 0 - 4.905t^2 \implies t = \sqrt{\frac{40}{4.905}} = 2.86 \text{ s}$$</p>
+    <div class="ex-step">(b) Horizontal distance</div>
+    <p>$$x = 15 \times 2.86 = 42.9 \text{ m}$$</p>
+    <div class="ex-step">(c) Velocity components at impact</div>
+    <p>$$v_x = 15 \text{ m/s} \quad (\text{unchanged})$$</p>
+    <p>$$v_y = 0 - 9.81(2.86) = -28.1 \text{ m/s}$$</p>
+    <p>$$|\vec{v}| = \sqrt{15^2 + 28.1^2} = 31.9 \text{ m/s}$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 6.3 — Hitting a target at different height</div>
+    <p>A projectile is launched at 25 m/s at 40° from ground level. A wall 30 m away has height 12 m. Does the projectile clear the wall?</p>
+    <div class="ex-step">When x = 30 m, find y</div>
+    <p>$$v_{0x} = 25\cos 40° = 19.15 \text{ m/s}, \quad v_{0y} = 25\sin 40° = 16.07 \text{ m/s}$$</p>
+    <p>$$30 = 19.15t \implies t = 1.57 \text{ s}$$</p>
+    <div class="ex-step">Height at x = 30 m</div>
+    <p>$$y = 16.07(1.57) - 4.905(1.57)^2 = 25.2 - 12.1 = 13.1 \text{ m}$$</p>
+    <p><strong>Yes, clears the wall by 1.1 m.</strong></p>
+  </div>
+
+  <div class="practice-box">
+    <div class="practice-label">Practice Problems</div>
+    <ol>
+      <li>A ball is thrown at 18 m/s at 50° on level ground. Find: (a) max height; (b) range; (c) velocity (magnitude and direction) at max height.</li>
+      <li>A projectile launched at 30° hits the ground 50 m away. Find the initial speed.</li>
+      <li>A ball is kicked from ground level and reaches max height of 8 m. It lands 40 m away. Find: (a) initial speed; (b) launch angle.</li>
+    </ol>
+    <details class="answer">
+      <summary>▶ Show Answers</summary>
+      <div class="ans-body">
+        <p><strong>1a:</strong> $H = \frac{18^2\sin^2 50°}{2(9.81)} = \frac{324(0.587)}{19.62} = 9.70$ m.</p>
+        <p><strong>1b:</strong> $R = \frac{18^2\sin 100°}{9.81} = \frac{324(0.985)}{9.81} = 32.5$ m.</p>
+        <p><strong>1c:</strong> At max height: $v_y = 0$, $v_x = 18\cos 50° = 11.57$ m/s. Speed = 11.57 m/s, direction = horizontal.</p>
+        <p><strong>2:</strong> $R = \frac{v_0^2\sin 60°}{9.81} = 50 \implies v_0 = \sqrt{\frac{50(9.81)}{0.866}} = 23.8$ m/s.</p>
+        <p><strong>3a:</strong> $H = \frac{v_0^2\sin^2\theta}{2g} = 8$ and $R = \frac{v_0^2\sin 2\theta}{g} = 40$. Divide: $\frac{\sin^2\theta}{2\sin 2\theta} = \frac{8}{40} \implies \frac{\sin\theta}{4\cos\theta} = 0.2 \implies \tan\theta = 0.8 \implies \theta = 38.7°$. Then $v_0 = \sqrt{\frac{8(2)(9.81)}{\sin^2 38.7°}} = 20.2$ m/s.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 7 — NORMAL & TANGENTIAL COMPONENTS
+════════════════════════════════════════ -->
+<div class="page" id="page-t7">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 7</div>
+    <div class="page-hero-title">Normal and Tangential Components</div>
+    <div class="page-hero-sub">path coordinates · tangent · normal · radius of curvature</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Why n-t Coordinates?</h3>
+    <p>Sometimes it's easier to describe motion along a curved path using coordinates aligned with the path itself:</p>
+    <ul>
+      <li><strong>Tangential (t):</strong> along the direction of motion (velocity)</li>
+      <li><strong>Normal (n):</strong> perpendicular to the path, pointing toward the centre of curvature</li>
+    </ul>
+
+    <h3>Velocity in n-t Coordinates</h3>
+    <div class="fbox">
+      $$\vec{v} = v\,\hat{e}_t \qquad (\text{velocity is always tangent to the path})$$
+    </div>
+    <p>where $v = |\vec{v}|$ is the speed (scalar) and $\hat{e}_t$ is the unit tangent vector.</p>
+
+    <h3>Acceleration Components</h3>
+    <div class="fbox">
+      $$\vec{a} = a_t\,\hat{e}_t + a_n\,\hat{e}_n$$
+      $$a_t = \frac{dv}{dt} \quad (\text{rate of change of speed})$$
+      $$a_n = \frac{v^2}{\rho} \quad (\text{centripetal acceleration, } \rho = \text{radius of curvature})$$
+    </div>
+
+    <div class="callout-info">
+      <strong>Tangential acceleration</strong> changes the <em>magnitude</em> of velocity (speed). <strong>Normal acceleration</strong> changes the <em>direction</em> of velocity. Even at constant speed, $a_n \neq 0$ if the path is curved.
+    </div>
+
+    <h3>Radius of Curvature</h3>
+    <p>For a path $y = f(x)$:</p>
+    <div class="fbox">
+      $$\rho = \frac{\left[1 + \left(\frac{dy}{dx}\right)^2\right]^{3/2}}{\left|\frac{d^2y}{dx^2}\right|}$$
+    </div>
+    <p>For circular motion, $\rho = R$ (constant).</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 7.1 — Car on circular track</div>
+    <p>A car travels at constant speed $v = 20$ m/s around a circular track of radius 50 m. Find the magnitude of its acceleration.</p>
+    <div class="ex-step">Constant speed → $a_t = 0$</div>
+    <div class="ex-step">Normal acceleration</div>
+    <p>$$a_n = \frac{v^2}{\rho} = \frac{400}{50} = 8 \text{ m/s}^2$$</p>
+    <p>Total acceleration: $|\vec{a}| = a_n = 8$ m/s² (directed toward the centre).</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 7.2 — Speed changing on curved path</div>
+    <p>A particle moves along a curve with radius of curvature $\rho = 100$ m at a certain point. At this point, $v = 15$ m/s and the speed is increasing at $2$ m/s². Find the magnitude of total acceleration.</p>
+    <div class="ex-step">Given: $a_t = 2$ m/s², compute $a_n$</div>
+    <p>$$a_n = \frac{v^2}{\rho} = \frac{225}{100} = 2.25 \text{ m/s}^2$$</p>
+    <div class="ex-step">Total acceleration (perpendicular components)</div>
+    <p>$$|\vec{a}| = \sqrt{a_t^2 + a_n^2} = \sqrt{4 + 5.06} = 3.01 \text{ m/s}^2$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 7.3 — Find radius of curvature</div>
+    <p>A particle follows the path $y = \frac{x^2}{20}$ (parabola, $x$ and $y$ in metres). At the point $(10, 5)$, find the radius of curvature.</p>
+    <div class="ex-step">Compute derivatives</div>
+    <p>$$\frac{dy}{dx} = \frac{x}{10} \implies \text{at } x=10: \frac{dy}{dx} = 1$$</p>
+    <p>$$\frac{d^2y}{dx^2} = \frac{1}{10}$$</p>
+    <div class="ex-step">Apply formula</div>
+    <p>$$\rho = \frac{[1 + 1^2]^{3/2}}{|1/10|} = \frac{2^{3/2}}{0.1} = \frac{2.828}{0.1} = 28.3 \text{ m}$$</p>
+  </div>
+
+  <div class="practice-box">
+    <div class="practice-label">Practice Problems</div>
+    <ol>
+      <li>A car enters a curve at 25 m/s and exits at 30 m/s. The curve has radius 80 m and takes 4 s to traverse. Find: (a) tangential acceleration; (b) normal acceleration at entry; (c) total acceleration at entry.</li>
+      <li>A particle moves on the path $y = \sin x$ (x in radians, y in metres). At $x = \pi/4$, the speed is 5 m/s and constant. Find the normal acceleration.</li>
+    </ol>
+    <details class="answer">
+      <summary>▶ Show Answers</summary>
+      <div class="ans-body">
+        <p><strong>1a:</strong> $a_t = \frac{\Delta v}{\Delta t} = \frac{30-25}{4} = 1.25$ m/s².</p>
+        <p><strong>1b:</strong> At entry: $a_n = \frac{25^2}{80} = 7.81$ m/s².</p>
+        <p><strong>1c:</strong> $|\vec{a}| = \sqrt{1.25^2 + 7.81^2} = 7.91$ m/s².</p>
+        <p><strong>2:</strong> $\frac{dy}{dx} = \cos x$, $\frac{d^2y}{dx^2} = -\sin x$. At $x = \pi/4$: $\frac{dy}{dx} = \frac{1}{\sqrt{2}}$, $\frac{d^2y}{dx^2} = \frac{1}{\sqrt{2}}$. $\rho = \frac{[1 + 1/2]^{3/2}}{1/\sqrt{2}} = \frac{1.837}{0.707} = 2.60$ m. $a_n = \frac{25}{2.60} = 9.62$ m/s².</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 8 — NEWTON'S LAWS & FBD
+════════════════════════════════════════ -->
+<div class="page" id="page-t8">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 8</div>
+    <div class="page-hero-title">Newton's Laws & Free-Body Diagrams</div>
+    <div class="page-hero-sub">forces · mass · F = ma · equilibrium · dynamics</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Newton's Three Laws</h3>
+    <div class="two-col">
+      <div>
+        <h4>First Law (Inertia)</h4>
+        <p>A body at rest stays at rest, and a body in motion continues at constant velocity, unless acted upon by a net external force.</p>
+      </div>
+      <div>
+        <h4>Second Law (F = ma)</h4>
+        <p>The net force on a body equals its mass times its acceleration.</p>
+        <div class="fbox">$$\sum \vec{F} = m\vec{a}$$</div>
+      </div>
+    </div>
+    <h4>Third Law (Action-Reaction)</h4>
+    <p>For every action, there is an equal and opposite reaction. If body A exerts force $\vec{F}$ on body B, then B exerts $-\vec{F}$ on A.</p>
+
+    <h3>Free-Body Diagram (FBD)</h3>
+    <p>A sketch showing:</p>
+    <ul>
+      <li>The body of interest (isolated from its surroundings)</li>
+      <li>All external forces acting on it (drawn as arrows)</li>
+      <li>Coordinate axes (choose wisely to simplify algebra)</li>
+    </ul>
+    <div class="callout-warn">
+      <strong>Common mistakes:</strong> Including forces the body exerts on other objects (action-reaction confusion). Forgetting friction, normal force, or weight. Drawing internal forces.
+    </div>
+
+    <h3>Steps to Solve Dynamics Problems</h3>
+    <ol>
+      <li><strong>Draw the FBD</strong> — isolate the body, show all forces</li>
+      <li><strong>Choose coordinate system</strong> — align one axis with acceleration if possible</li>
+      <li><strong>Write $\sum F_x = ma_x$ and $\sum F_y = ma_y$</strong></li>
+      <li><strong>Solve</strong> for unknowns (forces, acceleration, or mass)</li>
+      <li><strong>Kinematics</strong> (if needed) to find velocity, position, time</li>
+    </ol>
+
+    <h3>Common Forces</h3>
+    <table>
+      <tr><th>Force</th><th>Symbol</th><th>Direction</th><th>Magnitude</th></tr>
+      <tr><td>Weight</td><td>$W$ or $mg$</td><td>Downward (toward Earth)</td><td>$mg$</td></tr>
+      <tr><td>Normal</td><td>$N$</td><td>Perpendicular to surface</td><td>Variable (from $\sum F = ma$)</td></tr>
+      <tr><td>Tension</td><td>$T$</td><td>Along rope/cable (pulls)</td><td>Variable</td></tr>
+      <tr><td>Friction</td><td>$f$ or $F_f$</td><td>Opposes motion</td><td>$\leq \mu N$ (see Topic 9)</td></tr>
+      <tr><td>Applied</td><td>$F$</td><td>Given in problem</td><td>Given</td></tr>
+    </table>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 8.1 — Block on frictionless surface</div>
+    <p>A 10 kg block on a frictionless horizontal surface is pushed by a 40 N horizontal force. Find the acceleration.</p>
+    <div class="ex-step">FBD: N upward, mg downward, F = 40 N horizontal</div>
+    <div class="ex-step">Vertical: ΣF_y = 0 (no vertical motion)</div>
+    <p>$$N - mg = 0 \implies N = 10(9.81) = 98.1 \text{ N}$$</p>
+    <div class="ex-step">Horizontal: ΣF_x = ma_x</div>
+    <p>$$40 = 10a \implies a = 4 \text{ m/s}^2$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 8.2 — Tension in a vertical rope (elevator)</div>
+    <p>A 5 kg object hangs from a rope. The rope accelerates upward at 2 m/s². Find the tension.</p>
+    <div class="ex-step">FBD: T upward, mg = 49.05 N downward</div>
+    <div class="ex-step">ΣF_y = ma_y (taking upward as positive)</div>
+    <p>$$T - mg = ma$$</p>
+    <p>$$T = m(g + a) = 5(9.81 + 2) = 5(11.81) = 59.05 \text{ N}$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 8.3 — Two blocks connected by rope</div>
+    <p>Two blocks, $m_1 = 3$ kg and $m_2 = 5$ kg, are connected by a massless rope on a frictionless horizontal surface. A 32 N force pulls $m_2$. Find: (a) acceleration of the system; (b) tension in the rope.</p>
+    <div class="ex-step">(a) System approach: total mass = 8 kg</div>
+    <p>$$\sum F = (m_1 + m_2)a \implies 32 = 8a \implies a = 4 \text{ m/s}^2$$</p>
+    <div class="ex-step">(b) FBD of m_1 alone</div>
+    <p>Only T acts horizontally on $m_1$:</p>
+    <p>$$T = m_1 a = 3(4) = 12 \text{ N}$$</p>
+  </div>
+
+  <div class="practice-box">
+    <div class="practice-label">Practice Problems</div>
+    <ol>
+      <li>A 20 kg crate on a frictionless surface is pulled by a 50 N force at 30° above the horizontal. Find: (a) normal force; (b) horizontal acceleration.</li>
+      <li>A 2 kg object hangs from a rope attached to the ceiling of an elevator. The elevator accelerates downward at 1.5 m/s². Find the tension.</li>
+      <li>Three blocks (2 kg, 3 kg, 5 kg) are pushed by a 40 N horizontal force on a frictionless surface. Find: (a) system acceleration; (b) force between 2 kg and 3 kg blocks; (c) force between 3 kg and 5 kg blocks.</li>
+    </ol>
+    <details class="answer">
+      <summary>▶ Show Answers</summary>
+      <div class="ans-body">
+        <p><strong>1a:</strong> Vertical: $N + 50\sin 30° = mg \implies N = 20(9.81) - 25 = 171.2$ N.</p>
+        <p><strong>1b:</strong> Horizontal: $50\cos 30° = 20a \implies a = 43.3/20 = 2.17$ m/s².</p>
+        <p><strong>2:</strong> $T - mg = m(-a) \implies T = m(g-a) = 2(9.81-1.5) = 16.62$ N.</p>
+        <p><strong>3a:</strong> $a = 40/10 = 4$ m/s².</p>
+        <p><strong>3b:</strong> Force on 2 kg from 3 kg: $F = 2(4) = 8$ N.</p>
+        <p><strong>3c:</strong> Force on 3+2=5 kg total from 5 kg block: $F = 5(4) = 20$ N.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 9 — FRICTION & INCLINES
+════════════════════════════════════════ -->
+<div class="page" id="page-t9">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 9</div>
+    <div class="page-hero-title">Friction & Inclined Planes</div>
+    <div class="page-hero-sub">static · kinetic · coefficient · incline decomposition</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Friction Force</h3>
+    <p>Friction opposes relative motion (or attempted motion) between surfaces in contact.</p>
+
+    <h4>Static Friction (object not moving)</h4>
+    <div class="fbox">
+      $$f_s \leq \mu_s N$$
+    </div>
+    <p>$f_s$ adjusts to prevent motion, up to the maximum $\mu_s N$. If applied force exceeds $\mu_s N$, the object starts to move.</p>
+
+    <h4>Kinetic Friction (object sliding)</h4>
+    <div class="fbox">
+      $$f_k = \mu_k N$$
+    </div>
+    <p>Constant magnitude, always opposes the direction of motion. Typically $\mu_k < \mu_s$ (easier to keep sliding than to start).</p>
+
+    <div class="callout-info">
+      <strong>Direction:</strong> Friction always opposes motion (or impending motion). Draw it opposing the velocity (kinetic) or opposing the applied force (static).
+    </div>
+
+    <h3>Inclined Plane Decomposition</h3>
+    <p>For a block on an incline at angle $\theta$:</p>
+    <ul>
+      <li><strong>Parallel to incline:</strong> $mg\sin\theta$ (down the slope)</li>
+      <li><strong>Perpendicular to incline:</strong> $mg\cos\theta$ (into the surface)</li>
+      <li><strong>Normal force:</strong> $N = mg\cos\theta$ (if no other vertical forces)</li>
+      <li><strong>Friction:</strong> $f \leq \mu N = \mu mg\cos\theta$ (up the slope if moving/sliding down)</li>
+    </ul>
+
+    <h3>Critical Angle (just begins to slide)</h3>
+    <p>At the verge of sliding (static friction at maximum):</p>
+    <div class="fbox">
+      $$\tan\theta_{\text{crit}} = \mu_s$$
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 9.1 — Static friction limit</div>
+    <p>A 15 kg box rests on a horizontal surface with $\mu_s = 0.4$, $\mu_k = 0.3$. A horizontal force F is applied. Find: (a) max F before it starts moving; (b) acceleration if F = 70 N.</p>
+    <div class="ex-step">(a) Max static friction</div>
+    <p>$$N = mg = 15(9.81) = 147.15 \text{ N}$$</p>
+    <p>$$f_{s,\text{max}} = \mu_s N = 0.4(147.15) = 58.86 \text{ N}$$</p>
+    <p>Box starts moving when $F > 58.86$ N.</p>
+    <div class="ex-step">(b) If F = 70 N (sliding, so kinetic friction applies)</div>
+    <p>$$f_k = \mu_k N = 0.3(147.15) = 44.15 \text{ N}$$</p>
+    <p>$$\sum F_x = ma \implies 70 - 44.15 = 15a \implies a = 1.72 \text{ m/s}^2$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 9.2 — Block on incline (no friction)</div>
+    <p>A 5 kg block rests on a frictionless incline at 25°. Find the acceleration down the slope.</p>
+    <div class="ex-step">FBD: N perpendicular, mg sin 25° down the slope</div>
+    <p>$$\sum F_{\parallel} = ma \implies mg\sin 25° = ma$$</p>
+    <p>$$a = g\sin 25° = 9.81(0.423) = 4.15 \text{ m/s}^2$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 9.3 — Block on incline with friction</div>
+    <p>A 10 kg block on a 30° incline has $\mu_k = 0.2$. Find the acceleration.</p>
+    <div class="ex-step">Perpendicular: N = mg cos 30°</div>
+    <p>$$N = 10(9.81)(0.866) = 84.95 \text{ N}$$</p>
+    <div class="ex-step">Parallel (taking down as positive)</div>
+    <p>$$mg\sin 30° - f_k = ma$$</p>
+    <p>$$10(9.81)(0.5) - 0.2(84.95) = 10a$$</p>
+    <p>$$49.05 - 16.99 = 10a \implies a = 3.21 \text{ m/s}^2$$</p>
+  </div>
+
+  <div class="practice-box">
+    <div class="practice-label">Practice Problems</div>
+    <ol>
+      <li>A 8 kg block on a horizontal surface has $\mu_s = 0.5$, $\mu_k = 0.35$. A horizontal force of 50 N is applied. Find: (a) Does it move? (b) If yes, what is the acceleration?</li>
+      <li>A 12 kg block is on a 20° incline with $\mu_k = 0.15$. Find: (a) the friction force; (b) acceleration down the slope.</li>
+      <li>Find the minimum coefficient of static friction needed to prevent a block from sliding down a 35° incline.</li>
+    </ol>
+    <details class="answer">
+      <summary>▶ Show Answers</summary>
+      <div class="ans-body">
+        <p><strong>1a:</strong> $N = 8(9.81) = 78.48$ N. $f_{s,\text{max}} = 0.5(78.48) = 39.24$ N. Since $50 > 39.24$, it moves.</p>
+        <p><strong>1b:</strong> $f_k = 0.35(78.48) = 27.47$ N. $50 - 27.47 = 8a \implies a = 2.82$ m/s².</p>
+        <p><strong>2a:</strong> $N = 12(9.81)\cos 20° = 110.6$ N. $f_k = 0.15(110.6) = 16.59$ N.</p>
+        <p><strong>2b:</strong> $12(9.81)\sin 20° - 16.59 = 12a \implies 40.22 - 16.59 = 12a \implies a = 1.97$ m/s².</p>
+        <p><strong>3:</strong> At verge of sliding: $\mu_s = \tan 35° = 0.70$.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 10 — CONNECTED BODIES
+════════════════════════════════════════ -->
+<div class="page" id="page-t10">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 10</div>
+    <div class="page-hero-title">Connected Bodies & Pulleys</div>
+    <div class="page-hero-sub">constraint equations · Atwood machines · systems with multiple forces</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Strategy for Connected Bodies</h3>
+    <ol>
+      <li><strong>Draw separate FBDs</strong> for each object</li>
+      <li><strong>Identify constraint</strong> — how are the motions related? (e.g., rope connects them → same |a|)</li>
+      <li><strong>Choose direction</strong> for each body (usually align with their motion)</li>
+      <li><strong>Write $\sum F = ma$</strong> for each body</li>
+      <li><strong>Solve the system</strong> of equations</li>
+    </ol>
+
+    <div class="callout-success">
+      <strong>Tension is the same</strong> throughout a massless, inextensible rope. Tension pulls equally on both ends. If a rope passes over a massless, frictionless pulley, tension is the same on both sides.
+    </div>
+
+    <h3>Atwood Machine</h3>
+    <p>Two masses connected by a rope over a pulley. Let $m_1 > m_2$. $m_1$ accelerates down, $m_2$ accelerates up.</p>
+    <div class="fbox">
+      $$a = \frac{(m_1 - m_2)g}{m_1 + m_2} \qquad T = \frac{2m_1 m_2 g}{m_1 + m_2}$$
+    </div>
+
+    <h3>Common Constraint: Rope Length</h3>
+    <p>If two blocks are connected by a rope of fixed length, the sum of their displacements along the rope is constant. This often means $a_1 = a_2$ (same magnitude, possibly opposite directions).</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 10.1 — Atwood machine</div>
+    <p>Masses $m_1 = 7$ kg and $m_2 = 3$ kg hang from a massless rope over a frictionless pulley. Find: (a) acceleration; (b) tension.</p>
+    <div class="ex-step">FBD for m_1 (taking down as positive)</div>
+    <p>$$m_1 g - T = m_1 a$$</p>
+    <div class="ex-step">FBD for m_2 (taking up as positive)</div>
+    <p>$$T - m_2 g = m_2 a$$</p>
+    <div class="ex-step">Add equations to eliminate T</div>
+    <p>$$m_1 g - m_2 g = (m_1 + m_2)a$$</p>
+    <p>$$a = \frac{(7-3)(9.81)}{10} = 3.92 \text{ m/s}^2$$</p>
+    <div class="ex-step">Find T from either equation</div>
+    <p>$$T = m_2(g + a) = 3(9.81 + 3.92) = 41.19 \text{ N}$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 10.2 — Two blocks, one on table</div>
+    <p>Block A (5 kg) on a frictionless table is connected by a rope over a pulley to hanging block B (3 kg). Find: (a) acceleration; (b) tension.</p>
+    <div class="ex-step">FBD for A (horizontal)</div>
+    <p>$$T = m_A a$$</p>
+    <div class="ex-step">FBD for B (vertical, down positive)</div>
+    <p>$$m_B g - T = m_B a$$</p>
+    <div class="ex-step">Substitute T from first into second</div>
+    <p>$$m_B g - m_A a = m_B a$$</p>
+    <p>$$m_B g = (m_A + m_B)a \implies a = \frac{3(9.81)}{8} = 3.68 \text{ m/s}^2$$</p>
+    <div class="ex-step">Tension</div>
+    <p>$$T = 5(3.68) = 18.4 \text{ N}$$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">Worked Example 10.3 — Incline + hanging mass</div>
+    <p>Block A (4 kg) on a frictionless 30° incline is connected by a rope to hanging block B (6 kg). Find the acceleration and tension.</p>
+    <div class="ex-step">FBD for A (parallel to incline, up positive)</div>
+    <p>$$T - m_A g\sin 30° = m_A a$$</p>
+    <div class="ex-step">FBD for B (down positive)</div>
+    <p>$$m_B g - T = m_B a$$</p>
+    <div class="ex-step">Add equations</div>
+    <p>$$m_B g - m_A g\sin 30° = (m_A + m_B)a$$</p>
+    <p>$$6(9.81) - 4(9.81)(0.5) = 10a$$</p>
+    <p>$$58.86 - 19.62 = 10a \implies a = 3.92 \text{ m/s}^2$$</p>
+    <div class="ex-step">Tension</div>
+    <p>$$T = m_A(a + g\sin 30°) = 4(3.92 + 4.905) = 35.3 \text{ N}$$</p>
+  </div>
+
+  <div class="practice-box">
+    <div class="practice-label">Practice Problems</div>
+    <ol>
+      <li>Atwood machine with $m_1 = 10$ kg, $m_2 = 6$ kg. Find: (a) acceleration; (b) tension; (c) time for $m_1$ to descend 2 m from rest.</li>
+      <li>Block A (8 kg) on a table connected to hanging block B (4 kg). Table has friction $\mu_k = 0.25$. Find: (a) acceleration; (b) tension.</li>
+      <li>Two blocks on a frictionless incline (20°) connected by a rope: $m_1 = 5$ kg higher up, $m_2 = 3$ kg lower. Find the acceleration (which way does the system move?).</li>
+    </ol>
+    <details class="answer">
+      <summary>▶ Show Answers</summary>
+      <div class="ans-body">
+        <p><strong>1a:</strong> $a = \frac{(10-6)(9.81)}{16} = 2.45$ m/s².</p>
+        <p><strong>1b:</strong> $T = 6(9.81 + 2.45) = 73.56$ N.</p>
+        <p><strong>1c:</strong> $s = \frac{1}{2}at^2 \implies 2 = 0.5(2.45)t^2 \implies t = 1.28$ s.</p>
+        <p><strong>2a:</strong> $N = 8(9.81) = 78.48$ N, $f_k = 0.25(78.48) = 19.62$ N. $m_B g - T = m_B a$, $T - f_k = m_A a$. Add: $4(9.81) - 19.62 = 12a \implies a = 1.63$ m/s².</p>
+        <p><strong>2b:</strong> $T = 8(1.63) + 19.62 = 32.66$ N.</p>
+        <p><strong>3:</strong> Both experience $mg\sin 20°$ down the slope. Since $m_1 > m_2$, $m_1$ slides down. Net force = $(m_1 - m_2)g\sin 20° = 2(9.81)(0.342) = 6.71$ N. $a = 6.71/8 = 0.84$ m/s² down the slope.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+</div>
+</div>
+
+<script>
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+  event.target.closest('.nav-link').classList.add('active');
+  const topicMap = {
+    't1': 'Kinematics Fundamentals',
+    't2': 's-t v-t a-t Graphs',
+    't3': 'Constant Acceleration',
+    't4': 'Variable Acceleration',
+    't5': 'Curvilinear Motion',
+    't6': 'Projectile Motion',
+    't7': 'Normal & Tangential',
+    't8': 'Newton\'s Laws & FBD',
+    't9': 'Friction & Inclines',
+    't10': 'Connected Bodies'
+  };
+  document.getElementById('breadcrumbPage').textContent = topicMap[page] || 'Topic';
+}
+
+function expandAll() {
+  document.querySelectorAll('details').forEach(d => d.open = true);
+}
+</script>
+</body>
+</html>
