@@ -146,6 +146,39 @@ summary{font-size:12px;color:#6b5aa0;padding:7px 10px;cursor:pointer}
       <div class="sub">Converting term patterns to compact summation formulas.</div>
       <div class="eq">$$S_n=\frac{n}{2}\bigl(2a_1+(n-1)d\bigr),\qquad S_n=a_1\frac{1-r^n}{1-r}\ (r\neq1)$$</div>
       <div class="call">Engineers use finite series for total cost, sampled energy, algorithm step counts, and cumulative error estimates.</div>
+      <div class="lesson">
+        <h3>Derivation 1: Arithmetic series formula (why it works)</h3>
+        <p>Start with the same sum written forward and backward:</p>
+        <div class="eq">$$
+S_n=a_1+a_2+\cdots+a_{n-1}+a_n
+$$</div>
+        <div class="eq">$$
+S_n=a_n+a_{n-1}+\cdots+a_2+a_1
+$$</div>
+        <p>Add line-by-line. Every pair is \(a_1+a_n\), and there are \(n\) pairs:</p>
+        <div class="eq">$$
+2S_n=n(a_1+a_n)\quad\Rightarrow\quad S_n=\frac{n}{2}(a_1+a_n)
+$$</div>
+        <p>Use \(a_n=a_1+(n-1)d\):</p>
+        <div class="eq">$$
+S_n=\frac{n}{2}\bigl(2a_1+(n-1)d\bigr)
+$$</div>
+      </div>
+      <div class="lesson">
+        <h3>Derivation 2: Geometric series formula (why subtraction is used)</h3>
+        <p>Let \(S_n=a+ar+ar^2+\cdots+ar^{n-1}\). Multiply by \(r\):</p>
+        <div class="eq">$$
+rS_n=ar+ar^2+\cdots+ar^{n-1}+ar^n
+$$</div>
+        <p>Now subtract \(rS_n\) from \(S_n\). Middle terms cancel (this is the key trick):</p>
+        <div class="eq">$$
+S_n-rS_n=a-ar^n
+$$</div>
+        <div class="eq">$$
+S_n(1-r)=a(1-r^n)\quad\Rightarrow\quad S_n=a\frac{1-r^n}{1-r},\ \ r\neq1
+$$</div>
+        <p>So the formula comes from deliberate cancellation, not memorization.</p>
+      </div>
       <div class="viz">
         <div class="viz-title">Interactive: partial sum growth</div>
         <canvas id="sumCanvas" width="780" height="260"></canvas>
@@ -159,6 +192,15 @@ summary{font-size:12px;color:#6b5aa0;padding:7px 10px;cursor:pointer}
       <div class="ex">
         <div class="ex-lbl">Worked Example</div>
         <p>Find \(1+3+5+\dots+19\). This is arithmetic: \(a_1=1,d=2,a_n=19\Rightarrow n=10\). Then \(S_{10}=10(1+19)/2=100\).</p>
+      </div>
+      <div class="ex">
+        <div class="ex-lbl">Worked Derivation Example</div>
+        <p>Derive \(1+2+3+\cdots+n=\frac{n(n+1)}{2}\).</p>
+        <p>Use arithmetic result with \(a_1=1,\ a_n=n\):</p>
+        <div class="eq">$$
+S_n=\frac{n}{2}(1+n)=\frac{n(n+1)}{2}
+$$</div>
+        <p>This is exactly why triangular-number growth is quadratic.</p>
       </div>
       <div class="pr">
         <h4>Subtopic Practice (8) — Finite Series</h4>
@@ -226,9 +268,50 @@ summary{font-size:12px;color:#6b5aa0;padding:7px 10px;cursor:pointer}
         </ul>
       </div>
       <div class="call">In engineering, infinite series give tractable approximations for signals, response functions, and numerical solutions.</div>
+      <div class="lesson">
+        <h3>Derivation 3: Why geometric infinite sum needs \(|r|&lt;1\)</h3>
+        <p>Start from finite geometric sum:</p>
+        <div class="eq">$$
+S_n=a\frac{1-r^n}{1-r}
+$$</div>
+        <p>For an infinite sum, we need the limit of partial sums \(S=\lim_{n\to\infty}S_n\):</p>
+        <div class="eq">$$
+S=\lim_{n\to\infty}a\frac{1-r^n}{1-r}
+$$</div>
+        <p>This works only if \(r^n\to0\), which happens exactly when \(|r|&lt;1\). Then:</p>
+        <div class="eq">$$
+S=a\frac{1-0}{1-r}=\frac{a}{1-r}
+$$</div>
+        <p>If \(|r|&gt;1\), terms grow; if \(r=-1\), partial sums oscillate. So no single sum value exists.</p>
+      </div>
+      <div class="lesson">
+        <h3>Derivation 4: Why \(\lim\frac{an+b}{cn+d}=\frac{a}{c}\)</h3>
+        <p>Divide numerator and denominator by \(n\):</p>
+        <div class="eq">$$
+\frac{an+b}{cn+d}=\frac{a+\frac{b}{n}}{c+\frac{d}{n}}
+$$</div>
+        <p>As \(n\to\infty\), \(\frac{b}{n}\to0,\ \frac{d}{n}\to0\). Therefore:</p>
+        <div class="eq">$$
+\lim_{n\to\infty}\frac{an+b}{cn+d}=\frac{a}{c}
+$$</div>
+        <p>This is a direct consequence of scaling by the highest power of \(n\).</p>
+      </div>
+      <div class="lesson">
+        <h3>Derivation 5: Power series radius (quick ratio-test logic)</h3>
+        <p>For \(\sum c_n x^n\), compare consecutive term magnitudes:</p>
+        <div class="eq">$$
+\left|\frac{c_{n+1}x^{n+1}}{c_nx^n}\right|=\left|\frac{c_{n+1}}{c_n}\right||x|
+$$</div>
+        <p>If this limit is &lt; 1, terms shrink fast enough and series converges. This creates a boundary \(|x|&lt;R\), called radius of convergence.</p>
+        <p>Example: \(\sum (2x)^n\) gives ratio \(|2x|\), so convergence requires \(|2x|&lt;1\Rightarrow R=\frac12\).</p>
+      </div>
       <div class="ex">
         <div class="ex-lbl">Worked Example</div>
         <p>\(\sum_{n=0}^{\infty}3(0.4)^n\) converges since \(|r|<1\). Sum is \(3/(1-0.4)=5\).</p>
+      </div>
+      <div class="ex">
+        <div class="ex-lbl">Worked Derivation Example</div>
+        <p>Show divergence of \(\sum_{n=1}^{\infty}1\). Partial sums are \(1,2,3,\dots,n\), so \(S_n=n\to\infty\). Since partial sums do not approach a finite number, the series diverges.</p>
       </div>
       <div class="pr">
         <h4>Subtopic Practice (8) — Limits and Infinite Series</h4>
