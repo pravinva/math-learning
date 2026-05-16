@@ -117,6 +117,21 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--t
 /* SVG graph container */
 .graph-wrap{background:white;border:1px solid var(--grey-md);border-radius:8px;padding:14px;margin:12px 0;text-align:center}
 .graph-wrap svg{max-width:100%;height:auto}
+.chart-shell{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:12px;margin:12px 0}
+.chart-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.ctrl{background:var(--grey-lt);border:1px solid var(--grey-md);border-radius:8px;padding:8px 10px}
+.ctrl label{display:block;font-size:11px;color:var(--text-muted);margin-bottom:5px}
+.ctrl .v{font-size:12px;color:var(--navy);font-weight:500}
+.ctrl input,.ctrl select{width:100%}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text-muted);margin-top:8px}
+.legend-item{display:flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:18px;height:3px;border-radius:2px}
+.sw-exp{background:#185FA5}.sw-log{background:#FF3621}.sw-asym{background:#6b6762}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.mini-card{background:var(--grey-lt);border:1px solid var(--grey-md);border-radius:8px;padding:10px}
+.mini-card h4{font-size:12px;color:var(--navy);margin-bottom:6px}
+.mini-card ul{padding-left:16px}
+.mini-card li{font-size:12px;line-height:1.55;color:var(--text);margin:2px 0}
 /* two col layout for some content */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
 @media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.content{padding:22px 18px 56px}.home-grid,.two-col,.transform-grid{grid-template-columns:1fr}}
@@ -854,6 +869,86 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--t
           <div class="callout c-warn" style="margin-top:8px"><strong>The h must cancel.</strong> If you cannot cancel h from the denominator before taking the limit, you have made an algebraic error somewhere. Step 3 (divide by h) only works after h has been factored out of the numerator.</div>
         </div>
       </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Chapter 6 extension: Exponential vs logarithmic graphs (interactive)</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>This comparison helps with graph literacy in exam questions. Use shifted forms:</p>
+          <div class="mb">\[
+            y_{\text{exp}} = a^{(x-h)} + k,\qquad
+            y_{\text{log}} = \log_a(x-h) + k,\qquad a>0,\ a\neq 1
+          \]</div>
+          <div class="callout c-note"><strong>Translation rule reminder:</strong> \((x-h)\) means shift <strong>right</strong> by \(h\); \(+k\) means shift <strong>up</strong> by \(k\).</div>
+
+          <div class="chart-shell">
+            <div class="chart-controls">
+              <div class="ctrl">
+                <label for="expLogBase">Base \(a\)</label>
+                <select id="expLogBase">
+                  <option value="2">2</option>
+                  <option value="2.718281828">e</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+              <div class="ctrl">
+                <label for="expLogH">Horizontal shift \(h\) (right if positive): <span class="v" id="expLogHVal">0</span></label>
+                <input id="expLogH" type="range" min="-4" max="4" step="0.5" value="0">
+              </div>
+              <div class="ctrl">
+                <label for="expLogK">Vertical shift \(k\): <span class="v" id="expLogKVal">0</span></label>
+                <input id="expLogK" type="range" min="-4" max="4" step="0.5" value="0">
+              </div>
+            </div>
+
+            <canvas id="expLogCanvas" width="700" height="360" style="width:100%;max-width:700px;border:1px solid var(--grey-md);border-radius:8px;background:white"></canvas>
+            <div class="legend">
+              <div class="legend-item"><span class="sw sw-exp"></span>Exponential \(a^{(x-h)}+k\)</div>
+              <div class="legend-item"><span class="sw sw-log"></span>Logarithm \(\log_a(x-h)+k\)</div>
+              <div class="legend-item"><span class="sw sw-asym"></span>Asymptotes</div>
+            </div>
+
+            <div class="compare-grid">
+              <div class="mini-card">
+                <h4>Exponential summary</h4>
+                <ul id="expSummary"></ul>
+              </div>
+              <div class="mini-card">
+                <h4>Logarithm summary</h4>
+                <ul id="logSummary"></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="worked">
+            <div class="worked-lbl">Worked Example 1 — Exponential graph features</div>
+            <p>For \(y = 2^{(x-1)} - 3\), find domain, range, intercepts, and asymptote.</p>
+            <div class="steps">
+              <div class="step-item"><div class="sn">1</div><div class="st"><strong>Domain:</strong> exponential is defined for all real x \(\Rightarrow (-\infty,\infty)\).</div></div>
+              <div class="step-item"><div class="sn">2</div><div class="st"><strong>Range:</strong> base exponential has \(y&gt;0\). Shifting down by 3 gives \(y&gt;-3\).</div></div>
+              <div class="step-item"><div class="sn">3</div><div class="st"><strong>Horizontal asymptote:</strong> original \(y=0\), shifted down \(\Rightarrow y=-3\).</div></div>
+              <div class="step-item"><div class="sn">4</div><div class="st"><strong>y-intercept:</strong> \(x=0\Rightarrow y=2^{-1}-3=\frac12-3=-\frac52\).</div></div>
+              <div class="step-item"><div class="sn">5</div><div class="st"><strong>x-intercept:</strong> set \(y=0\): \(2^{x-1}-3=0\Rightarrow 2^{x-1}=3\Rightarrow x=1+\log_2 3\).</div></div>
+            </div>
+            <div class="ans-box"><span class="ans-lbl">ANSWER</span> Domain \((-\infty,\infty)\), Range \((-3,\infty)\), asymptote \(y=-3\), y-int \((0,-\frac52)\), x-int \((1+\log_2 3,0)\).</div>
+          </div>
+
+          <div class="worked">
+            <div class="worked-lbl">Worked Example 2 — Log graph features + translation impact</div>
+            <p>For \(y = \log_3(x+2) + 1\), find domain, range, intercepts, and asymptote, then state translation from \(y=\log_3 x\).</p>
+            <div class="steps">
+              <div class="step-item"><div class="sn">1</div><div class="st"><strong>Domain:</strong> log argument must be positive: \(x+2&gt;0\Rightarrow x&gt;-2\).</div></div>
+              <div class="step-item"><div class="sn">2</div><div class="st"><strong>Range:</strong> logarithm can output any real number \(\Rightarrow (-\infty,\infty)\). Vertical shifts do not change this.</div></div>
+              <div class="step-item"><div class="sn">3</div><div class="st"><strong>Vertical asymptote:</strong> argument zero at \(x=-2\), so asymptote is \(x=-2\).</div></div>
+              <div class="step-item"><div class="sn">4</div><div class="st"><strong>y-intercept:</strong> \(x=0\Rightarrow y=\log_3(2)+1\).</div></div>
+              <div class="step-item"><div class="sn">5</div><div class="st"><strong>x-intercept:</strong> set \(y=0\): \(\log_3(x+2)+1=0\Rightarrow \log_3(x+2)=-1\Rightarrow x+2=3^{-1}=\frac13\Rightarrow x=-\frac53\).</div></div>
+              <div class="step-item"><div class="sn">6</div><div class="st"><strong>Translations:</strong> \(x+2=x-(-2)\) means shift left 2; \(+1\) means shift up 1.</div></div>
+            </div>
+            <div class="ans-box"><span class="ans-lbl">ANSWER</span> Domain \((-2,\infty)\), Range \((-\infty,\infty)\), asymptote \(x=-2\), y-int \((0,\log_3 2+1)\), x-int \((-\frac53,0)\), shift left 2 and up 1.</div>
+          </div>
+
+          <div class="callout c-info"><strong>Fast exam checklist:</strong> for exponentials, look for horizontal asymptote and full-domain behavior; for logs, start with argument \(>0\) and vertical asymptote where argument \(=0\). Then compute intercepts by setting \(x=0\) and \(y=0\).</div>
+        </div>
+      </div>
       <div class="page-nav"><button class="pnav-btn" onclick="goTo('limits')">← Topic 5: Limits</button><button class="pnav-btn next" onclick="goTo('practice')">Practice Questions →</button></div>
     </div>
 
@@ -1074,7 +1169,94 @@ function goTo(id){
 function td(h){const b=h.nextElementSibling,c=h.querySelector('.dpen-ch'),o=b.classList.contains('open');b.classList.toggle('open',!o);c.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(b,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
 function tq(h){const b=h.nextElementSibling,a=h.querySelector('.q-arr'),o=b.classList.contains('open');b.classList.toggle('open',!o);a.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(b,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
 function expandAll(){const ap=document.querySelector('.page.active');ap.querySelectorAll('.dpen-bd:not(.open)').forEach(b=>{b.classList.add('open');b.previousElementSibling.querySelector('.dpen-ch').classList.add('open');});ap.querySelectorAll('.q-bd:not(.open)').forEach(b=>{b.classList.add('open');b.previousElementSibling.querySelector('.q-arr').classList.add('open');});setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.querySelector('.page.active'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
-document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},300);});
+function logBase(x,a){return Math.log(x)/Math.log(a);}
+function fmt(v){
+  if(!Number.isFinite(v)) return 'undefined';
+  const rounded=Math.round(v*1000)/1000;
+  return Math.abs(rounded)===0 ? '0' : String(rounded);
+}
+function drawExpLogCompare(){
+  const c=document.getElementById('expLogCanvas');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  const a=Number(document.getElementById('expLogBase').value);
+  const h=Number(document.getElementById('expLogH').value);
+  const k=Number(document.getElementById('expLogK').value);
+  document.getElementById('expLogHVal').textContent=fmt(h);
+  document.getElementById('expLogKVal').textContent=fmt(k);
+
+  const W=c.width,H=c.height,xmin=-8,xmax=8,ymin=-8,ymax=8;
+  const sx=x=>((x-xmin)/(xmax-xmin))*W;
+  const sy=y=>H-((y-ymin)/(ymax-ymin))*H;
+  const X=px=>xmin+(px/W)*(xmax-xmin);
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+
+  ctx.strokeStyle='#e8e6e0';ctx.lineWidth=1;
+  for(let gx=-8;gx<=8;gx++){ctx.beginPath();ctx.moveTo(sx(gx),0);ctx.lineTo(sx(gx),H);ctx.stroke();}
+  for(let gy=-8;gy<=8;gy++){ctx.beginPath();ctx.moveTo(0,sy(gy));ctx.lineTo(W,sy(gy));ctx.stroke();}
+
+  ctx.strokeStyle='#3a3835';ctx.lineWidth=1.3;
+  ctx.beginPath();ctx.moveTo(sx(0),0);ctx.lineTo(sx(0),H);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,sy(0));ctx.lineTo(W,sy(0));ctx.stroke();
+
+  ctx.setLineDash([6,4]);ctx.lineWidth=1.2;ctx.strokeStyle='#6b6762';
+  ctx.beginPath();ctx.moveTo(0,sy(k));ctx.lineTo(W,sy(k));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(sx(h),0);ctx.lineTo(sx(h),H);ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.lineWidth=2.2;ctx.strokeStyle='#185FA5';ctx.beginPath();
+  let started=false;
+  for(let px=0;px<=W;px++){
+    const x=X(px), y=Math.pow(a,x-h)+k;
+    if(y<ymin-4||y>ymax+4){started=false;continue;}
+    if(!started){ctx.moveTo(px,sy(y));started=true;} else ctx.lineTo(px,sy(y));
+  }
+  ctx.stroke();
+
+  ctx.lineWidth=2.2;ctx.strokeStyle='#FF3621';ctx.beginPath();
+  started=false;
+  for(let px=0;px<=W;px++){
+    const x=X(px);
+    if(x<=h){started=false;continue;}
+    const y=logBase(x-h,a)+k;
+    if(!Number.isFinite(y)||y<ymin-4||y>ymax+4){started=false;continue;}
+    if(!started){ctx.moveTo(px,sy(y));started=true;} else ctx.lineTo(px,sy(y));
+  }
+  ctx.stroke();
+
+  const expXInt = (-k>0) ? (h + logBase(-k,a)) : null;
+  const expYInt = Math.pow(a,-h)+k;
+  const logXInt = h + Math.pow(a,-k);
+  const logYInt = (0>h) ? (logBase(-h,a)+k) : null;
+
+  document.getElementById('expSummary').innerHTML=
+    '<li><strong>Domain:</strong> all real x</li>'+
+    '<li><strong>Range:</strong> y &gt; '+fmt(k)+'</li>'+
+    '<li><strong>y-intercept:</strong> (0, '+fmt(expYInt)+')</li>'+
+    '<li><strong>x-intercept:</strong> '+(expXInt===null?'none for this shift':'('+fmt(expXInt)+', 0)')+'</li>'+
+    '<li><strong>Horizontal asymptote:</strong> y = '+fmt(k)+'</li>';
+
+  document.getElementById('logSummary').innerHTML=
+    '<li><strong>Domain:</strong> x &gt; '+fmt(h)+'</li>'+
+    '<li><strong>Range:</strong> all real y</li>'+
+    '<li><strong>x-intercept:</strong> ('+fmt(logXInt)+', 0)</li>'+
+    '<li><strong>y-intercept:</strong> '+(logYInt===null?'none (x=0 outside domain)':'(0, '+fmt(logYInt)+')')+'</li>'+
+    '<li><strong>Vertical asymptote:</strong> x = '+fmt(h)+'</li>';
+}
+function initExpLogCompare(){
+  const ids=['expLogBase','expLogH','expLogK'];
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.addEventListener('input',drawExpLogCompare);
+  });
+  drawExpLogCompare();
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},300);
+  setTimeout(initExpLogCompare,80);
+});
 </script>
 </body>
 </html>
