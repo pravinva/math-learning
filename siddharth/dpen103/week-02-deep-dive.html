@@ -3,42 +3,79 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DPEN103 Week 2 Deep Dive</title>
-<style>body{font-family:Arial,sans-serif;max-width:900px;margin:0 auto;padding:24px 14px;background:#fafaf8;color:#2c2a28;line-height:1.65}h1,h2{color:#1B3A5C}.box{background:#fff;border:1px solid #e7e4dd;border-radius:8px;padding:12px;margin:10px 0}.quiz{background:#fffdf8;border:1px dashed #c9c3b8;border-radius:8px;padding:12px}.link{color:#185FA5;text-decoration:none}</style>
+<style>
+body{font-family:Arial,sans-serif;max-width:980px;margin:0 auto;padding:24px 14px;background:#fafaf8;color:#2c2a28;line-height:1.65}
+h1,h2,h3{color:#1B3A5C}
+.box{background:#fff;border:1px solid #e7e4dd;border-radius:8px;padding:12px;margin:10px 0}
+.quiz{background:#fffdf8;border:1px dashed #c9c3b8;border-radius:8px;padding:12px}
+.eq{background:#fff;border:1px solid #e7e4dd;border-radius:7px;padding:8px 10px;margin:8px 0}
+.call{background:#fff4e9;border-left:3px solid #FF3621;padding:10px 12px;border-radius:0 8px 8px 0;margin:10px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border:1px solid #e7e4dd;padding:8px;vertical-align:top}
+th{background:#e9f2fb;text-align:left}
+.link{color:#185FA5;text-decoration:none}
+</style>
 </head>
 <body>
 <h1>Week 2 Deep Dive: Mechanical Properties of Metals</h1>
 <p><strong>Outline mapping:</strong> Ch6 §6.1-6.12.</p>
-<div class="box">
-  <h2>Scaffolded solution flow</h2>
-  <ol>
-    <li>Plot/inspect stress-strain curve and identify elastic region.</li>
-    <li>Extract modulus from slope.</li>
-    <li>Identify yield criterion and plastic zone.</li>
-    <li>Compute resilience/toughness from area-under-curve concepts.</li>
-    <li>Use true stress/strain when large plastic deformation matters.</li>
-  </ol>
+<div class="box"><h2>Full worked scaffold (what to do for any stress-strain question)</h2>
+<ol>
+<li>Define test context: tensile/compressive, monotonic/cyclic, room temperature/elevated temperature.</li>
+<li>Read curve landmarks: linear region, yield point (or 0.2% offset), ultimate strength, necking, fracture strain.</li>
+<li>Extract equations: engineering stress/strain first; convert to true values if large plastic strain is relevant.</li>
+<li>Compute energy metrics: resilience (elastic) and toughness (full area).</li>
+<li>Close with design implication: safety factor and likely failure mode (yield, fracture, fatigue, buckling).</li>
+</ol></div>
+
+<div class="box"><h2>Step 1 - Convert words to measurable targets</h2>
+<table>
+<thead><tr><th>Design statement</th><th>Property target</th><th>Reasoning</th></tr></thead>
+<tbody>
+<tr><td>No permanent set under service load</td><td>Working stress less than yield / safety factor</td><td>Plastic deformation starts near yield threshold</td></tr>
+<tr><td>Low elastic deflection</td><td>Higher modulus E</td><td>Elastic strain = stress/E</td></tr>
+<tr><td>Absorb occasional impact</td><td>Higher toughness</td><td>Larger area under full stress-strain curve</td></tr>
+<tr><td>Spring-like recovery</td><td>Higher resilience in elastic range</td><td>Recoverable strain energy before yield</td></tr>
+</tbody>
+</table></div>
+
+<div class="box"><h2>Step 2 - Core equations with interpretation</h2>
+<div class="eq">Engineering stress: sigma = F / A0</div>
+<div class="eq">Engineering strain: epsilon = (L - L0) / L0</div>
+<div class="eq">True stress: sigma_t = sigma * (1 + epsilon)</div>
+<div class="eq">True strain: epsilon_t = ln(1 + epsilon)</div>
+<div class="eq">Resilience (linear elastic): Ur = sigma_y^2 / (2E)</div>
+<p>True values become important when area reduction and large plastic strain occur (for example beyond uniform elongation).</p>
 </div>
-<div class="box">
-  <h2>Core explanation</h2>
-  <p>Engineering stress uses original area. True stress tracks actual area reduction during deformation, so it is better for large plastic strains. Resilience is recoverable elastic energy density; toughness is total energy to fracture.</p>
-  <p>Design/safety factors are used because material properties vary with processing, defects, and statistical scatter.</p>
+
+<div class="box"><h2>Step 3 - Full numerical example</h2>
+<p><strong>Given:</strong> A0=120 mm^2, load F=43.2 kN, elongation from 50 mm to 58 mm, E=210 GPa, yield stress sigma_y=450 MPa.</p>
+<ol>
+<li>Engineering stress: sigma = 43.2e3 / 120e-6 = 360 MPa.</li>
+<li>Engineering strain: epsilon = (58-50)/50 = 0.16.</li>
+<li>True stress: sigma_t = 360*(1+0.16)=417.6 MPa.</li>
+<li>True strain: epsilon_t = ln(1.16)=0.148.</li>
+<li>Resilience: Ur = (450e6)^2 / (2*210e9) = 4.82e5 J/m^3.</li>
+</ol>
+<p><strong>Conclusion:</strong> for the same test point, true stress is higher due to area reduction; resilience quantifies recoverable energy if loading remains elastic.</p>
 </div>
-<div class="box">
-  <h2>Worked example</h2>
-  <p>Given engineering stress = 360 MPa, engineering strain = 0.16:</p>
-  <p>True stress = 360*(1+0.16)=417.6 MPa. True strain = ln(1.16)=0.148.</p>
-  <p>Interpretation: true stress > engineering stress because area has contracted.</p>
+
+<div class="box"><h2>Step 4 - Decision logic with safety factor</h2>
+<p>If maximum service stress is 180 MPa and yield is 450 MPa, yield safety factor is:</p>
+<div class="eq">N_y = sigma_y / sigma_work = 450/180 = 2.5</div>
+<p>Now check if 2.5 is adequate for variability, temperature, and consequence of failure. If high risk, increase margin or redesign cross-section.</p>
+<div class="call"><strong>Common mistake:</strong> picking a material only by ultimate tensile strength and ignoring yield, toughness, and expected loading mode.</div>
 </div>
 <div class="quiz">
   <h2>Quiz (with full worked solutions)</h2>
   <ol>
-    <li>Why is modulus mostly insensitive to small porosity compared with strength?</li>
-    <li>A sample has yield stress 450 MPa and E=210 GPa. Compute modulus of resilience.</li>
-    <li>Why is using only ultimate tensile strength risky for fatigue design?</li>
+    <li>A steel sample has A0=100 mm^2 and F=32 kN. Compute engineering stress and explain if yield is likely when sigma_y=280 MPa.</li>
+    <li>Given epsilon=0.22 at a point where engineering stress is 410 MPa, compute true stress and true strain.</li>
+    <li>Two candidate alloys have same yield but one has much higher toughness. Which is preferred for impact-prone service and why?</li>
   </ol>
-  <details><summary>Solution 1</summary><p>Elastic modulus is governed by bond stiffness and atomic spacing. Small defect populations can strongly affect crack initiation/strength but often have weaker first-order effect on linear elastic slope.</p></details>
-  <details><summary>Solution 2</summary><p>Resilience Ur = sigma_y^2/(2E) = (450e6)^2 /(2*210e9) ≈ 4.82e5 J/m^3.</p></details>
-  <details><summary>Solution 3</summary><p>Fatigue failure can occur below yield/UTS due to cyclic crack initiation and propagation. Need S-N or crack-growth methods, not static strength alone.</p></details>
+  <details><summary>Solution 1</summary><p>sigma = 32e3 / 100e-6 = 320 MPa. Since 320 MPa > 280 MPa, yielding is likely (assuming uniaxial tension and no unusual constraint effects).</p></details>
+  <details><summary>Solution 2</summary><p>sigma_t = 410*(1+0.22)=500.2 MPa. epsilon_t = ln(1.22)=0.199. Both converted values indicate stronger effective stress state under large strain.</p></details>
+  <details><summary>Solution 3</summary><p>Choose higher-toughness alloy. In impact-prone loading, energy absorption before fracture is critical; equal yield alone does not guarantee resistance to sudden fracture.</p></details>
 </div>
 <p><a class="link" href="week-by-week-deep-dive.html">← Back to weekly hub</a></p>
 </body>
