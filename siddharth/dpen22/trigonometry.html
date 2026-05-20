@@ -447,6 +447,21 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--t
               <text x="125" y="155" font-size="9" fill="#6b6762">O</text>
             </svg>
           </div>
+          <div class="viz-card">
+            <div class="viz-title">Common angles quick map (degrees and radians)</div>
+            <div class="viz-sub">Move anticlockwise from \(0\): \(0,\ \frac{\pi}{6},\ \frac{\pi}{4},\ \frac{\pi}{3},\ \frac{\pi}{2},\ldots\). For example, \(\frac{5\pi}{6}=150°\): start at \(\pi\) (180°), then go back by \(\pi/6\) into Q2.</div>
+            <div class="canvas-wrap"><canvas id="common-unit-circle-canvas" width="700" height="360" aria-label="Unit circle common angles map"></canvas></div>
+            <table class="dtbl" style="margin-top:10px">
+              <thead><tr><th>Quadrant / Axis</th><th>Degrees</th><th>Radians</th><th>Reference-angle form</th></tr></thead>
+              <tbody>
+                <tr><td>Q1</td><td>30°, 45°, 60°</td><td>\(\pi/6,\ \pi/4,\ \pi/3\)</td><td>\(\theta\)</td></tr>
+                <tr><td>Q2</td><td>120°, 135°, 150°</td><td>\(2\pi/3,\ 3\pi/4,\ 5\pi/6\)</td><td>\(\pi-\theta\)</td></tr>
+                <tr><td>Q3</td><td>210°, 225°, 240°</td><td>\(7\pi/6,\ 5\pi/4,\ 4\pi/3\)</td><td>\(\pi+\theta\)</td></tr>
+                <tr><td>Q4</td><td>300°, 315°, 330°</td><td>\(5\pi/3,\ 7\pi/4,\ 11\pi/6\)</td><td>\(2\pi-\theta\)</td></tr>
+                <tr><td>Axes</td><td>0°, 90°, 180°, 270°, 360°</td><td>\(0,\ \pi/2,\ \pi,\ 3\pi/2,\ 2\pi\)</td><td>Key anchors</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -1680,40 +1695,126 @@ function td(h){const b=h.nextElementSibling,c=h.querySelector('.dpen-ch'),o=b.cl
 function tq(h){const b=h.nextElementSibling,a=h.querySelector('.q-arr'),o=b.classList.contains('open');b.classList.toggle('open',!o);a.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(b,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
 function tqp(h){const a=h.nextElementSibling,arr=h.querySelector('.qp-arrow'),o=a.classList.contains('open');a.classList.toggle('open',!o);arr.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(a,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
 function expandAll(){const ap=document.querySelector('.page.active');ap.querySelectorAll('.dpen-bd:not(.open)').forEach(b=>{b.classList.add('open');b.previousElementSibling.querySelector('.dpen-ch').classList.add('open');});ap.querySelectorAll('.q-bd:not(.open)').forEach(b=>{b.classList.add('open');b.previousElementSibling.querySelector('.q-arr').classList.add('open');});ap.querySelectorAll('.qp-ans:not(.open)').forEach(b=>{b.classList.add('open');b.previousElementSibling.querySelector('.qp-arrow').classList.add('open');});setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.querySelector('.page.active'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
-function drawLabeledTriangle(canvasId, points, labels){
-  const canvas=document.getElementById(canvasId);
-  if(!canvas) return;
-  const ctx=canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.lineWidth=2;
-  ctx.strokeStyle='#1B3A5C';
-  ctx.beginPath();
-  ctx.moveTo(points[0][0],points[0][1]);
-  ctx.lineTo(points[1][0],points[1][1]);
-  ctx.lineTo(points[2][0],points[2][1]);
-  ctx.closePath();
-  ctx.stroke();
-  ctx.fillStyle='#1B3A5C';
-  ctx.font='14px DM Sans, sans-serif';
-  labels.forEach(lbl=>ctx.fillText(lbl.text,lbl.x,lbl.y));
+function drawRightAngle(ctx,x,y,size){
   ctx.strokeStyle='#FF3621';
-  ctx.strokeRect(points[1][0]-16,points[1][1],16,16);
+  ctx.lineWidth=1.8;
+  ctx.beginPath();
+  ctx.moveTo(x+size,y);
+  ctx.lineTo(x+size,y-size);
+  ctx.lineTo(x,y-size);
+  ctx.stroke();
 }
 function drawCanonicalTriangles(){
-  drawLabeledTriangle('tri-45-canvas',[[65,180],[65,70],[175,180]],[
-    {text:'1',x:50,y:130},
-    {text:'1',x:115,y:198},
-    {text:'sqrt(2)',x:110,y:120},
-    {text:'45deg',x:72,y:172},
-    {text:'45deg',x:142,y:172}
-  ]);
-  drawLabeledTriangle('tri-30-60-canvas',[[55,180],[55,70],[245,180]],[
-    {text:'1',x:35,y:130},
-    {text:'sqrt(3)',x:140,y:198},
-    {text:'2',x:140,y:122},
-    {text:'30deg',x:63,y:172},
-    {text:'60deg',x:210,y:172}
-  ]);
+  const c45=document.getElementById('tri-45-canvas');
+  if(c45){
+    const ctx=c45.getContext('2d');
+    const A={x:62,y:186},B={x:62,y:78},C={x:170,y:186};
+    ctx.clearRect(0,0,c45.width,c45.height);
+    ctx.strokeStyle='#1B3A5C';
+    ctx.lineWidth=2.2;
+    ctx.beginPath();
+    ctx.moveTo(A.x,A.y);
+    ctx.lineTo(B.x,B.y);
+    ctx.lineTo(C.x,C.y);
+    ctx.closePath();
+    ctx.stroke();
+    drawRightAngle(ctx,A.x,A.y,14);
+    ctx.strokeStyle='#185FA5';
+    ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.arc(B.x,B.y,16,Math.PI/2,Math.PI/4,true); ctx.stroke();
+    ctx.beginPath(); ctx.arc(C.x,C.y,16,Math.PI,-3*Math.PI/4,true); ctx.stroke();
+    ctx.fillStyle='#1B3A5C';
+    ctx.font='14px DM Sans, sans-serif';
+    ctx.fillText('1',46,136);
+    ctx.fillText('1',112,205);
+    ctx.fillText('√2',113,125);
+    ctx.fillText('45°',73,103);
+    ctx.fillText('45°',142,176);
+  }
+
+  const c3060=document.getElementById('tri-30-60-canvas');
+  if(c3060){
+    const ctx=c3060.getContext('2d');
+    const A={x:56,y:186},B={x:56,y:96},C={x:212,y:186};
+    ctx.clearRect(0,0,c3060.width,c3060.height);
+    ctx.strokeStyle='#1B3A5C';
+    ctx.lineWidth=2.2;
+    ctx.beginPath();
+    ctx.moveTo(A.x,A.y);
+    ctx.lineTo(B.x,B.y);
+    ctx.lineTo(C.x,C.y);
+    ctx.closePath();
+    ctx.stroke();
+    drawRightAngle(ctx,A.x,A.y,14);
+    ctx.strokeStyle='#185FA5';
+    ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.arc(B.x,B.y,16,Math.PI/2,Math.atan2(90,156),true); ctx.stroke();
+    ctx.beginPath(); ctx.arc(C.x,C.y,16,Math.PI,Math.atan2(-90,-156),true); ctx.stroke();
+    ctx.fillStyle='#1B3A5C';
+    ctx.font='14px DM Sans, sans-serif';
+    ctx.fillText('1',40,145);
+    ctx.fillText('√3',129,205);
+    ctx.fillText('2',132,132);
+    ctx.fillText('60°',68,114);
+    ctx.fillText('30°',184,176);
+  }
+}
+function drawUnitCircleCommonAngles(){
+  const canvas=document.getElementById('common-unit-circle-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const w=canvas.width,h=canvas.height;
+  const cx=220,cy=180,r=120;
+  const labels=[
+    {deg:'0°',rad:'0',a:0},
+    {deg:'30°',rad:'π/6',a:30},
+    {deg:'45°',rad:'π/4',a:45},
+    {deg:'60°',rad:'π/3',a:60},
+    {deg:'90°',rad:'π/2',a:90},
+    {deg:'120°',rad:'2π/3',a:120},
+    {deg:'135°',rad:'3π/4',a:135},
+    {deg:'150°',rad:'5π/6',a:150},
+    {deg:'180°',rad:'π',a:180},
+    {deg:'210°',rad:'7π/6',a:210},
+    {deg:'225°',rad:'5π/4',a:225},
+    {deg:'240°',rad:'4π/3',a:240},
+    {deg:'270°',rad:'3π/2',a:270},
+    {deg:'300°',rad:'5π/3',a:300},
+    {deg:'315°',rad:'7π/4',a:315},
+    {deg:'330°',rad:'11π/6',a:330}
+  ];
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle='#1B3A5C';
+  ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-r-20,cy); ctx.lineTo(cx+r+20,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,cy-r-20); ctx.lineTo(cx,cy+r+20); ctx.stroke();
+
+  ctx.fillStyle='#6b6762';
+  ctx.font='12px DM Sans, sans-serif';
+  ctx.fillText('Q2',cx-90,cy-85); ctx.fillText('Q1',cx+75,cy-85);
+  ctx.fillText('Q3',cx-90,cy+95); ctx.fillText('Q4',cx+75,cy+95);
+
+  labels.forEach((p,idx)=>{
+    const t=(Math.PI/180)*p.a;
+    const x=cx+r*Math.cos(t), y=cy-r*Math.sin(t);
+    const lx=cx+(r+27)*Math.cos(t), ly=cy-(r+27)*Math.sin(t);
+    ctx.strokeStyle='#185FA5'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y); ctx.stroke();
+    ctx.fillStyle='#FF3621';
+    ctx.beginPath(); ctx.arc(x,y,3.2,0,2*Math.PI); ctx.fill();
+    ctx.fillStyle='#1B3A5C';
+    ctx.font='11px DM Sans, sans-serif';
+    ctx.fillText(`${p.deg}`,lx-12,ly-2);
+    ctx.fillStyle='#6b6762';
+    ctx.fillText(`${p.rad}`,lx-14,ly+10);
+    if(idx===7){
+      ctx.fillStyle='#1D9E75';
+      ctx.font='12px DM Sans, sans-serif';
+      ctx.fillText('5π/6 = 150°',460,130);
+      ctx.fillText('Q2, ref angle π/6',460,148);
+    }
+  });
 }
 function drawAxes(ctx,w,h,xMin,xMax,yMin,yMax){
   const toX=x=>(x-xMin)/(xMax-xMin)*w;
@@ -1836,6 +1937,7 @@ function setTrigPreset(name){
 }
 function initTrigVisuals(){
   drawCanonicalTriangles();
+  drawUnitCircleCommonAngles();
   drawBaseTrig();
   drawTransformTrig();
   drawReciprocalTrig();
