@@ -526,6 +526,76 @@ body {
   color: var(--text-muted);
   line-height: 1.6;
 }
+
+/* ── CHART COMPARE (6A.4) ── */
+.chart-shell {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+}
+.chart-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.ctrl {
+  background: var(--grey-lt);
+  border: 1px solid var(--grey-md);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.ctrl label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+.ctrl .v {
+  font-size: 12px;
+  color: var(--navy);
+  font-weight: 600;
+}
+.ctrl input, .ctrl select { width: 100%; }
+.legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.sw { display: inline-block; width: 18px; height: 3px; border-radius: 2px; }
+.sw-exp { background: #185FA5; }
+.sw-log { background: #FF3621; }
+.sw-asym { background: #6b6762; }
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.mini-card {
+  background: var(--grey-lt);
+  border: 1px solid var(--grey-md);
+  border-radius: 8px;
+  padding: 10px;
+}
+.mini-card h4 {
+  font-size: 12px;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.mini-card ul { padding-left: 16px; }
+.mini-card li {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text);
+  margin: 2px 0;
+}
 </style>
 </head>
 <body>
@@ -548,6 +618,8 @@ body {
     <button class="nav-link" onclick="goTo('exponential-equations')"><span class="nav-num">6A.1</span> Solving Exponential Equations</button>
     <button class="nav-link" onclick="goTo('exponential-graphs')"><span class="nav-num">6A.2</span> Graphing Exponential Functions</button>
     <button class="nav-link" onclick="goTo('logarithmic-graphs')"><span class="nav-num">6A.3</span> Graphing Logarithmic Functions</button>
+    <button class="nav-link" onclick="goTo('exp-log-comparison')"><span class="nav-num">6A.4</span> Exp vs Log Comparison</button>
+    <button class="nav-link" onclick="goTo('mini-test-6a')"><span class="nav-num">6A.5</span> Mini Test (6 Qs)</button>
   </div>
   <div class="sidebar-footer">
     <button class="reset-btn" onclick="resetProgress()">
@@ -595,6 +667,12 @@ body {
       <div class="overview-card-label">TOPIC 6A.3</div>
       <div class="overview-card-title">Logarithmic Graphs</div>
       <div class="overview-card-desc">Explore \( y = \log_e(x) \) and its transformations. Understand the inverse relationship between exponential and logarithmic functions.</div>
+    </div>
+
+    <div class="overview-card">
+      <div class="overview-card-label">TOPIC 6A.4</div>
+      <div class="overview-card-title">Exponential vs Logarithmic Comparison</div>
+      <div class="overview-card-desc">Compare domain, range, intercepts, asymptotes, and the effect of horizontal and vertical translations with an interactive chart.</div>
     </div>
   </div>
 </div>
@@ -3617,6 +3695,190 @@ body {
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════════════
+     6A.4: EXPONENTIAL VS LOGARITHMIC COMPARISON
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-exp-log-comparison">
+  <div class="page-hero">
+    <div class="page-hero-label">Week 6A · Topic 4</div>
+    <div class="page-hero-title">Exponential vs Logarithmic Graph Comparison</div>
+    <div class="page-hero-sub">One section to compare all key graph features: domain, range, intercepts, asymptotes, and translation effects.</div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-label pattern">PATTERN</span>
+      <span class="dpen-title">General translated forms</span>
+      <div class="dpen-chevron"></div>
+    </div>
+    <div class="dpen-body">
+      <div class="dpen-content">
+        <div class="formula">\[
+          y_{\text{exp}} = a^{(x-h)} + k,\qquad
+          y_{\text{log}} = \log_a(x-h) + k,\qquad a>0,\ a\neq 1
+        \]</div>
+        <p><strong>Translation rule:</strong> \((x-h)\) shifts right by \(h\), and \(+k\) shifts up by \(k\).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dpen-block">
+    <div class="dpen-header" onclick="toggleDPEN(this)">
+      <span class="dpen-label example">EXAMPLE</span>
+      <span class="dpen-title">Interactive comparison chart</span>
+      <div class="dpen-chevron"></div>
+    </div>
+    <div class="dpen-body">
+      <div class="dpen-content">
+        <div class="chart-shell">
+          <div class="chart-controls">
+            <div class="ctrl">
+              <label for="expLogBase">Base \(a\)</label>
+              <select id="expLogBase">
+                <option value="2">2</option>
+                <option value="2.718281828">e</option>
+                <option value="10">10</option>
+              </select>
+            </div>
+            <div class="ctrl">
+              <label for="expLogH">Horizontal shift \(h\): <span class="v" id="expLogHVal">0</span></label>
+              <input id="expLogH" type="range" min="-4" max="4" step="0.5" value="0">
+            </div>
+            <div class="ctrl">
+              <label for="expLogK">Vertical shift \(k\): <span class="v" id="expLogKVal">0</span></label>
+              <input id="expLogK" type="range" min="-4" max="4" step="0.5" value="0">
+            </div>
+          </div>
+
+          <canvas id="expLogCanvas" width="700" height="360" style="width:100%;max-width:700px;border:1px solid var(--grey-md);border-radius:8px;background:white"></canvas>
+
+          <div class="legend">
+            <div class="legend-item"><span class="sw sw-exp"></span>Exponential \(a^{(x-h)}+k\)</div>
+            <div class="legend-item"><span class="sw sw-log"></span>Logarithm \(\log_a(x-h)+k\)</div>
+            <div class="legend-item"><span class="sw sw-asym"></span>Asymptotes</div>
+          </div>
+
+          <div class="compare-grid">
+            <div class="mini-card">
+              <h4>Exponential summary</h4>
+              <ul id="expSummary"></ul>
+            </div>
+            <div class="mini-card">
+              <h4>Logarithm summary</h4>
+              <ul id="logSummary"></ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="worked">
+          <div class="worked-label">Worked Example 1 — Exponential</div>
+          <p>For \(y = 2^{(x-1)} - 3\), identify domain, range, intercepts, and asymptote.</p>
+          <div class="problem-solution-steps">
+            <p><strong>Domain:</strong> all real numbers.</p>
+            <p><strong>Range:</strong> \(y>-3\).</p>
+            <p><strong>Horizontal asymptote:</strong> \(y=-3\).</p>
+            <p><strong>y-intercept:</strong> \(x=0\Rightarrow y=2^{-1}-3=-\frac52\).</p>
+            <p><strong>x-intercept:</strong> \(0=2^{x-1}-3\Rightarrow x=1+\log_2 3\).</p>
+          </div>
+        </div>
+
+        <div class="worked">
+          <div class="worked-label">Worked Example 2 — Logarithmic</div>
+          <p>For \(y=\log_3(x+2)+1\), identify domain, range, intercepts, asymptote, and translations.</p>
+          <div class="problem-solution-steps">
+            <p><strong>Domain:</strong> \(x+2&gt;0\Rightarrow x&gt;-2\).</p>
+            <p><strong>Range:</strong> all real numbers.</p>
+            <p><strong>Vertical asymptote:</strong> \(x=-2\).</p>
+            <p><strong>y-intercept:</strong> \(x=0\Rightarrow y=\log_3 2 + 1\).</p>
+            <p><strong>x-intercept:</strong> \(0=\log_3(x+2)+1\Rightarrow x=-\frac53\).</p>
+            <p><strong>Shift:</strong> left 2, up 1.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="pnav-btn" onclick="goTo('logarithmic-graphs')">← Topic 6A.3</button>
+    <button class="pnav-btn next" onclick="goTo('mini-test-6a')">Next: Mini Test (6 Qs) →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     6A.5: MINI TEST
+══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-mini-test-6a">
+  <div class="page-hero">
+    <div class="page-hero-label">Week 6A · Topic 5</div>
+    <div class="page-hero-title">Mini Test (6 Questions)</div>
+    <div class="page-hero-sub">2 on logarithmic graphing, 2 on exponential graphing, and 2 on logarithmic/exponential equation solving.</div>
+  </div>
+
+  <div class="practice-section">
+    <div class="practice-section-title">Mini Test Set</div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">1</div>
+        <div class="problem-text"><strong>Log graphing:</strong> For \(y=\log_e(x-2)+1\), state the vertical asymptote, domain, range, and x-intercept.</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body"><div class="problem-content"><div class="problem-solution"><div class="problem-solution-title">SOLUTION</div><div class="problem-solution-steps"><p>Asymptote \(x=2\). Domain \(x>2\). Range \(y\in\mathbb{R}\). For x-intercept: \(0=\ln(x-2)+1\Rightarrow \ln(x-2)=-1\Rightarrow x=2+e^{-1}\).</p></div></div><input type="text" class="answer-box" placeholder="Type your answer here..."></div></div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">2</div>
+        <div class="problem-text"><strong>Log graphing:</strong> Sketch features of \(y=-\log_e(x+3)\): asymptote, domain, range, and whether it increases or decreases.</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body"><div class="problem-content"><div class="problem-solution"><div class="problem-solution-title">SOLUTION</div><div class="problem-solution-steps"><p>Asymptote \(x=-3\). Domain \(x>-3\). Range \(y\in\mathbb{R}\). Since it is reflected in x-axis, it is decreasing.</p></div></div><input type="text" class="answer-box" placeholder="Type your answer here..."></div></div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">3</div>
+        <div class="problem-text"><strong>Exponential graphing:</strong> For \(y=2^{x-1}-4\), state horizontal asymptote, domain, range, and y-intercept.</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body"><div class="problem-content"><div class="problem-solution"><div class="problem-solution-title">SOLUTION</div><div class="problem-solution-steps"><p>Asymptote \(y=-4\). Domain \(x\in\mathbb{R}\). Range \(y>-4\). y-intercept: \(x=0\Rightarrow y=2^{-1}-4=-\frac{7}{2}\).</p></div></div><input type="text" class="answer-box" placeholder="Type your answer here..."></div></div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">4</div>
+        <div class="problem-text"><strong>Exponential graphing:</strong> Compare \(y=e^x\) and \(y=e^{-x}+2\): identify reflection/translation and asymptote of the second graph.</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body"><div class="problem-content"><div class="problem-solution"><div class="problem-solution-title">SOLUTION</div><div class="problem-solution-steps"><p>\(e^{-x}\) is reflection of \(e^x\) in y-axis. Then +2 shifts it up 2. New asymptote is \(y=2\).</p></div></div><input type="text" class="answer-box" placeholder="Type your answer here..."></div></div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">5</div>
+        <div class="problem-text"><strong>Equation solving (exponential):</strong> Solve \(5e^{2x}=20\) exactly.</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body"><div class="problem-content"><div class="problem-solution"><div class="problem-solution-title">SOLUTION</div><div class="problem-solution-steps"><p>\(e^{2x}=4\Rightarrow 2x=\ln4\Rightarrow x=\frac{\ln4}{2}=\ln2\).</p></div></div><input type="text" class="answer-box" placeholder="Type your answer here..."></div></div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header" onclick="toggleProblem(this)">
+        <div class="problem-num">6</div>
+        <div class="problem-text"><strong>Equation solving (logarithmic):</strong> Solve \(\log_e(x-1)+\log_e(x-3)=\log_e(8)\).</div>
+        <div class="problem-chevron"></div>
+      </div>
+      <div class="problem-body"><div class="problem-content"><div class="problem-solution"><div class="problem-solution-title">SOLUTION</div><div class="problem-solution-steps"><p>Domain requires \(x>3\). Combine logs: \(\ln[(x-1)(x-3)]=\ln8\Rightarrow (x-1)(x-3)=8\). So \(x^2-4x-5=0\Rightarrow x=5,-1\). Valid solution: \(x=5\).</p></div></div><input type="text" class="answer-box" placeholder="Type your answer here..."></div></div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="pnav-btn" onclick="goTo('exp-log-comparison')">← Topic 6A.4</button>
+    <button class="pnav-btn next" onclick="goTo('home')">Back to Overview →</button>
+  </div>
+</div>
+
 </div>
 </div>
 
@@ -3743,7 +4005,9 @@ function goTo(pageId) {
     'home': 'Overview',
     'exponential-equations': 'Solving Exponential Equations',
     'exponential-graphs': 'Graphing Exponential Functions',
-    'logarithmic-graphs': 'Graphing Logarithmic Functions'
+    'logarithmic-graphs': 'Graphing Logarithmic Functions',
+    'exp-log-comparison': 'Exponential vs Logarithmic Comparison',
+    'mini-test-6a': 'Mini Test (6 Questions)'
   };
 
   document.getElementById('breadcrumbPage').textContent = pageTitles[pageId] || 'Overview';
@@ -3786,6 +4050,105 @@ function collapseAll() {
   });
 }
 
+function logBase(x, a) {
+  return Math.log(x) / Math.log(a);
+}
+
+function fmt(v) {
+  if (!Number.isFinite(v)) return 'undefined';
+  const rounded = Math.round(v * 1000) / 1000;
+  return Math.abs(rounded) === 0 ? '0' : String(rounded);
+}
+
+function drawExpLogCompare() {
+  const c = document.getElementById('expLogCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const a = Number(document.getElementById('expLogBase').value);
+  const h = Number(document.getElementById('expLogH').value);
+  const k = Number(document.getElementById('expLogK').value);
+
+  document.getElementById('expLogHVal').textContent = fmt(h);
+  document.getElementById('expLogKVal').textContent = fmt(k);
+
+  const W = c.width, H = c.height, xmin = -8, xmax = 8, ymin = -8, ymax = 8;
+  const sx = x => ((x - xmin) / (xmax - xmin)) * W;
+  const sy = y => H - ((y - ymin) / (ymax - ymin)) * H;
+  const X = px => xmin + (px / W) * (xmax - xmin);
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = '#e8e6e0';
+  ctx.lineWidth = 1;
+  for (let gx = -8; gx <= 8; gx++) { ctx.beginPath(); ctx.moveTo(sx(gx), 0); ctx.lineTo(sx(gx), H); ctx.stroke(); }
+  for (let gy = -8; gy <= 8; gy++) { ctx.beginPath(); ctx.moveTo(0, sy(gy)); ctx.lineTo(W, sy(gy)); ctx.stroke(); }
+
+  ctx.strokeStyle = '#3a3835';
+  ctx.lineWidth = 1.3;
+  ctx.beginPath(); ctx.moveTo(sx(0), 0); ctx.lineTo(sx(0), H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, sy(0)); ctx.lineTo(W, sy(0)); ctx.stroke();
+
+  ctx.setLineDash([6, 4]);
+  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = '#6b6762';
+  ctx.beginPath(); ctx.moveTo(0, sy(k)); ctx.lineTo(W, sy(k)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(sx(h), 0); ctx.lineTo(sx(h), H); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.lineWidth = 2.2;
+  ctx.strokeStyle = '#185FA5';
+  ctx.beginPath();
+  let started = false;
+  for (let px = 0; px <= W; px++) {
+    const x = X(px), y = Math.pow(a, x - h) + k;
+    if (y < ymin - 4 || y > ymax + 4) { started = false; continue; }
+    if (!started) { ctx.moveTo(px, sy(y)); started = true; } else { ctx.lineTo(px, sy(y)); }
+  }
+  ctx.stroke();
+
+  ctx.lineWidth = 2.2;
+  ctx.strokeStyle = '#FF3621';
+  ctx.beginPath();
+  started = false;
+  for (let px = 0; px <= W; px++) {
+    const x = X(px);
+    if (x <= h) { started = false; continue; }
+    const y = logBase(x - h, a) + k;
+    if (!Number.isFinite(y) || y < ymin - 4 || y > ymax + 4) { started = false; continue; }
+    if (!started) { ctx.moveTo(px, sy(y)); started = true; } else { ctx.lineTo(px, sy(y)); }
+  }
+  ctx.stroke();
+
+  const expXInt = (-k > 0) ? (h + logBase(-k, a)) : null;
+  const expYInt = Math.pow(a, -h) + k;
+  const logXInt = h + Math.pow(a, -k);
+  const logYInt = (0 > h) ? (logBase(-h, a) + k) : null;
+
+  document.getElementById('expSummary').innerHTML =
+    '<li><strong>Domain:</strong> all real x</li>' +
+    '<li><strong>Range:</strong> y &gt; ' + fmt(k) + '</li>' +
+    '<li><strong>y-intercept:</strong> (0, ' + fmt(expYInt) + ')</li>' +
+    '<li><strong>x-intercept:</strong> ' + (expXInt === null ? 'none for this shift' : '(' + fmt(expXInt) + ', 0)') + '</li>' +
+    '<li><strong>Horizontal asymptote:</strong> y = ' + fmt(k) + '</li>';
+
+  document.getElementById('logSummary').innerHTML =
+    '<li><strong>Domain:</strong> x &gt; ' + fmt(h) + '</li>' +
+    '<li><strong>Range:</strong> all real y</li>' +
+    '<li><strong>x-intercept:</strong> (' + fmt(logXInt) + ', 0)</li>' +
+    '<li><strong>y-intercept:</strong> ' + (logYInt === null ? 'none (x=0 outside domain)' : '(0, ' + fmt(logYInt) + ')') + '</li>' +
+    '<li><strong>Vertical asymptote:</strong> x = ' + fmt(h) + '</li>';
+}
+
+function initExpLogCompare() {
+  ['expLogBase', 'expLogH', 'expLogK'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', drawExpLogCompare);
+  });
+  drawExpLogCompare();
+}
+
 // ─────────────────────────────────────────────────────────────────
 // INITIALIZATION
 // ─────────────────────────────────────────────────────────────────
@@ -3816,6 +4179,7 @@ document.addEventListener('DOMContentLoaded', function() {
   updateProgressBar();
   updateProblemCheckboxes();
   restoreAnswers();
+  initExpLogCompare();
 
   if (progressData.lastVisited && document.getElementById('page-' + progressData.lastVisited)) {
     goTo(progressData.lastVisited);
