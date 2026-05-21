@@ -574,25 +574,25 @@ body {
     <button class="nav-link" onclick="goTo('discriminant')"><span class="nav-num">5A.3</span> Discriminant</button>
     <button class="nav-link" onclick="goTo('quadratic-inequalities')"><span class="nav-num">5A.4</span> Quadratic Inequalities</button>
     <button class="nav-link" onclick="goTo('inverse-odd-even')"><span class="nav-num">5A.5</span> Inverse, Composition, Odd/Even</button>
-    <button class="nav-link" onclick="goTo('practice-5a')"><span class="nav-num">★</span> Practice: Week 5A</button>
+    <button class="nav-link" onclick="goTo('practice-5a', this)"><span class="nav-num">★</span> Practice: Week 5A</button>
   </div>
   <div class="nav-section">
     <div class="nav-section-label">Week 5B</div>
     <button class="nav-link" onclick="goTo('parabola-graph')"><span class="nav-num">5B.1</span> Graphing Parabolas</button>
-    <button class="nav-link" onclick="goTo('parabola-sketch')"><span class="nav-num">5B.2</span> Sketching Parabolas</button>
+    <button class="nav-link" onclick="goTo('parabola-graph')"><span class="nav-num">5B.2</span> Sketching Parabolas</button>
     <button class="nav-link" onclick="goTo('domain-range')"><span class="nav-num">5B.3</span> Domain &amp; Range</button>
     <button class="nav-link" onclick="goTo('absolute-value')"><span class="nav-num">5B.4</span> Absolute Value Functions</button>
-    <button class="nav-link" onclick="goTo('practice-5b')"><span class="nav-num">★</span> Practice: Week 5B</button>
+    <button class="nav-link" onclick="goTo('practice-5b', this)"><span class="nav-num">★</span> Practice: Week 5B</button>
   </div>
   <div class="nav-section">
     <div class="nav-section-label">Week 5C</div>
     <button class="nav-link" onclick="goTo('circles')"><span class="nav-num">5C.1</span> Circles</button>
     <button class="nav-link" onclick="goTo('hyperbolas')"><span class="nav-num">5C.2</span> Rectangular Hyperbolas</button>
-    <button class="nav-link" onclick="goTo('practice-5c')"><span class="nav-num">★</span> Practice: Week 5C</button>
+    <button class="nav-link" onclick="goTo('practice-5c', this)"><span class="nav-num">★</span> Practice: Week 5C</button>
   </div>
   <div class="nav-section">
     <div class="nav-section-label">Challenge</div>
-    <button class="nav-link" onclick="goTo('mixed-practice')"><span class="nav-num">💪</span> Mixed Practice Test</button>
+    <button class="nav-link" onclick="goTo('mixed-practice', this)"><span class="nav-num">💪</span> Mixed Practice Test</button>
   </div>
   <div class="sidebar-footer">
     <button class="reset-btn" onclick="resetProgress()">
@@ -5316,7 +5316,10 @@ function resetProgress() {
 // ─────────────────────────────────────────────────────────────────
 
 function goTo(pageId, clickedEl = null) {
-  let resolvedPageId = pageId;
+  const aliases = {
+    'parabola-sketch': 'parabola-graph'
+  };
+  let resolvedPageId = aliases[pageId] || pageId;
   let targetPage = document.getElementById('page-' + resolvedPageId);
   if (!targetPage) {
     resolvedPageId = 'home';
@@ -5352,11 +5355,22 @@ function goTo(pageId, clickedEl = null) {
     'mixed-practice': 'Mixed Practice Test'
   };
 
-  document.getElementById('breadcrumbPage').textContent = pageTitles[resolvedPageId] || 'Overview';
+  const breadcrumb = document.getElementById('breadcrumbPage');
+  if (breadcrumb) {
+    breadcrumb.textContent = pageTitles[resolvedPageId] || 'Overview';
+  }
 
   // Save last visited page
   progressData.lastVisited = resolvedPageId;
   saveProgress();
+
+  // Keep URL in sync for direct/openable routes like #practice-5c
+  if (typeof window !== 'undefined' && window.location) {
+    const nextHash = '#' + resolvedPageId;
+    if (window.location.hash !== nextHash) {
+      history.replaceState(null, '', nextHash);
+    }
+  }
 
   window.scrollTo(0, 0);
 }
@@ -5435,8 +5449,11 @@ document.addEventListener('DOMContentLoaded', function() {
   updateProblemCheckboxes();
   restoreAnswers();
 
-  // Restore last visited page if available
-  if (progressData.lastVisited && document.getElementById('page-' + progressData.lastVisited)) {
+  // Restore from URL hash first, then fall back to last visited page
+  const hashPageId = (window.location.hash || '').replace(/^#/, '');
+  if (hashPageId && document.getElementById('page-' + hashPageId)) {
+    goTo(hashPageId);
+  } else if (progressData.lastVisited && document.getElementById('page-' + progressData.lastVisited)) {
     goTo(progressData.lastVisited);
   }
 });
