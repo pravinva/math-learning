@@ -116,6 +116,9 @@ canvas{width:100%;height:260px;display:block}
     <p>\[
     x=\frac{\pi}{12},\ \frac{5\pi}{12},\ \frac{13\pi}{12},\ \frac{17\pi}{12}
     \]</p>
+    <div class="callout good"><strong>Graph view (clear points):</strong> The purple curve is \(y=\sin(2x)\), the orange line is \(y=\frac12\), and the black dots are intersection solutions in the required domain.</div>
+    <div class="canvas-wrap"><canvas id="wx1" width="980" height="280"></canvas></div>
+    <p class="tiny">Marked points: \(\left(\frac{\pi}{12},\frac12\right),\left(\frac{5\pi}{12},\frac12\right),\left(\frac{13\pi}{12},\frac12\right),\left(\frac{17\pi}{12},\frac12\right)\).</p>
   </div>
 
   <div class="sec">
@@ -146,6 +149,9 @@ canvas{width:100%;height:260px;display:block}
       </li>
     </ul>
     <div class="callout good"><strong>Final:</strong> \(x=\frac{\pi}{4},\ \frac{7\pi}{12}\).</div>
+    <div class="callout good"><strong>Graph view (clear points):</strong> The purple curve is \(y=2\sin\left(2x-\frac{\pi}{3}\right)+1\), the orange line is \(y=2\), and black dots are the exact in-domain intersections.</div>
+    <div class="canvas-wrap"><canvas id="wx2" width="980" height="280"></canvas></div>
+    <p class="tiny">Marked points: \(\left(\frac{\pi}{4},2\right),\left(\frac{7\pi}{12},2\right)\).</p>
   </div>
 
   <div class="sec">
@@ -563,6 +569,14 @@ function drawGraph(canvasId,cfg){
     cfg.solutions.forEach(s=>{
       const y=cfg.hLine!==undefined?cfg.hLine:cfg.fn(s);
       ctx.beginPath();ctx.arc(toX(s),toY(y),4,0,Math.PI*2);ctx.fill();
+      if(cfg.pointLabels){
+        const label=cfg.pointLabels[s];
+        if(label){
+          ctx.fillStyle='#111827';
+          ctx.font='12px sans-serif';
+          ctx.fillText(label,toX(s)+6,toY(y)-8);
+        }
+      }
     });
   }
 }
@@ -585,6 +599,32 @@ window.addEventListener('load',()=>{
   drawGraph('g8',{xMin:-2*PI,xMax:2*PI,yMin:-1.8,yMax:1.8,fn:x=>Math.cos(x/2+PI/4),hLine:Math.SQRT1_2,solutions:[-2*PI,-PI/2,0,3*PI/2,2*PI],xTicks:ticks});
   drawGraph('g9',{xMin:-2*PI,xMax:2*PI,yMin:-6,yMax:6,fn:x=>2*Math.tan(x/2)-2,hLine:0,solutions:[-3*PI/2,PI/2],xTicks:ticks});
   drawGraph('g10',{xMin:0,xMax:2*PI,yMin:-4.4,yMax:2.4,fn:x=>3*Math.cos(2*(x-PI/5))-1,hLine:-2,solutions:[1.1943,1.9476,4.3359,5.0892],xTicks:ticks.filter(t=>t.value>=0&&t.value<=2*PI)});
+
+  const wx1Labels={};
+  wx1Labels[PI/12]='(pi/12, 1/2)';
+  wx1Labels[5*PI/12]='(5pi/12, 1/2)';
+  wx1Labels[13*PI/12]='(13pi/12, 1/2)';
+  wx1Labels[17*PI/12]='(17pi/12, 1/2)';
+  drawGraph('wx1',{
+    xMin:0,xMax:2*PI,yMin:-1.6,yMax:1.6,
+    fn:x=>Math.sin(2*x),
+    hLine:0.5,
+    solutions:[PI/12,5*PI/12,13*PI/12,17*PI/12],
+    pointLabels:wx1Labels,
+    xTicks:[{value:0,label:'0'},{value:PI/2,label:'pi/2'},{value:PI,label:'pi'},{value:3*PI/2,label:'3pi/2'},{value:2*PI,label:'2pi'}]
+  });
+
+  const wx2Labels={};
+  wx2Labels[PI/4]='(pi/4, 2)';
+  wx2Labels[7*PI/12]='(7pi/12, 2)';
+  drawGraph('wx2',{
+    xMin:0,xMax:PI,yMin:-1.8,yMax:3.2,
+    fn:x=>2*Math.sin(2*x-PI/3)+1,
+    hLine:2,
+    solutions:[PI/4,7*PI/12],
+    pointLabels:wx2Labels,
+    xTicks:[{value:0,label:'0'},{value:PI/4,label:'pi/4'},{value:PI/2,label:'pi/2'},{value:3*PI/4,label:'3pi/4'},{value:PI,label:'pi'}]
+  });
 
   drawGraph('t1',{xMin:0,xMax:2*PI,yMin:-1.8,yMax:3.8,fn:x=>2*Math.sin(x)+1,hLine:0,solutions:[7*PI/6,11*PI/6],xTicks:ticks.filter(t=>t.value>=0&&t.value<=2*PI)});
   const a=Math.acos(1/3);
