@@ -960,17 +960,25 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--t
         <div style="font-weight:600;margin-bottom:8px;">&#127909; Watch first: a 5-minute narrated walkthrough of everything on this page</div>
         <video id="vieta-video" src="assets/vietas_formulas_narrated.mp4" controls playsinline preload="metadata"
                style="width:100%;display:block;border-radius:10px;background:#000;box-shadow:0 10px 36px rgba(0,0,0,.35);cursor:pointer;"></video>
-        <div style="font-size:.85em;opacity:.65;margin-top:6px;font-style:italic;">Click the video to pause and show controls &middot; controls vanish while playing &middot; spacebar also works</div>
+        <div style="font-size:.85em;opacity:.65;margin-top:6px;font-style:italic;">Click to play/pause &middot; move the mouse over the video to show controls and seek &middot; controls vanish when idle &middot; spacebar also works</div>
       </div>
       <script>
       (function(){
         var v = document.getElementById('vieta-video');
         if (!v) return;
+        var hideTimer;
         function hide(){ v.removeAttribute('controls'); v.style.cursor='none'; }
         function show(){ v.setAttribute('controls',''); v.style.cursor='pointer'; }
-        v.addEventListener('play', hide);
-        v.addEventListener('pause', show);
-        v.addEventListener('ended', show);
+        function scheduleHide(){
+          clearTimeout(hideTimer);
+          hideTimer = setTimeout(function(){ if (!v.paused) hide(); }, 2500);
+        }
+        v.addEventListener('play', function(){ show(); scheduleHide(); });
+        v.addEventListener('pause', function(){ clearTimeout(hideTimer); show(); });
+        v.addEventListener('ended', function(){ clearTimeout(hideTimer); show(); });
+        // moving the mouse while playing brings controls back so you can pause/seek at any point
+        v.addEventListener('mousemove', function(){ if (!v.paused){ show(); scheduleHide(); } });
+        v.addEventListener('mouseleave', function(){ if (!v.paused) hide(); });
         v.addEventListener('click', function(){ v.paused ? v.play() : v.pause(); });
         document.addEventListener('keydown', function(e){
           if (e.code === 'Space' && document.getElementById('page-vieta').classList.contains('active')) {
