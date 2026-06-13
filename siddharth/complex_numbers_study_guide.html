@@ -871,6 +871,23 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--t
           <div class="mb">\[ e^i=e^{i\cdot1}=\cos(1)+i\sin(1)\approx 0.5403+0.8415i \]</div>
           <p>That is the unit-circle point at angle 1 radian (about \(57.3^\circ\)).</p>
           <div class="callout c-info"><strong>Memory line:</strong> \(e^{i\theta}\) means "go to angle \(\theta\) on the unit circle".</div>
+          <div class="callout c-warn" style="margin-top:10px"><strong>About proof:</strong> a fully rigorous proof of \(e^{i\theta}=\cos\theta+i\sin\theta\) is usually done with power series (or an equivalent differential-equation argument). The geometric picture explains <em>why it makes sense</em>: \(e^{i\theta}\) behaves like a pure rotation by angle \(\theta\) with radius unchanged.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-e">Interactive</span><span class="dpen-ht">See \(e^{i\theta}\) move on the unit circle</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>Use the slider to change \(\theta\). The red point is \(e^{i\theta}\). Its coordinates are \((\cos\theta,\sin\theta)\), so the complex number is \(\cos\theta+i\sin\theta\).</p>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 12px">
+            <label for="eiThetaSlider" style="font-size:13px;color:var(--text-muted)">Choose \(\theta\):</label>
+            <input id="eiThetaSlider" type="range" min="-3.1416" max="3.1416" step="0.01" value="1.0000" style="width:260px" oninput="drawEiThetaDemo()">
+            <button type="button" onclick="document.getElementById('eiThetaSlider').value='1.0000';drawEiThetaDemo()" style="padding:6px 10px;border:1px solid var(--grey-md);border-radius:8px;background:#fff;font-size:12px;color:var(--text-main);cursor:pointer">Set \(\theta=1\)</button>
+          </div>
+          <div class="argand-wrap">
+            <div id="eiThetaSvg"></div>
+          </div>
+          <div class="callout c-info" id="eiThetaInfo">Move the slider to update the point and values.</div>
         </div>
       </div>
 
@@ -900,6 +917,63 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--t
               <tr><td>\(-1+i\)</td><td>\(3\pi/4\)</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-e">Derivation</span><span class="dpen-ht">Why quadrant adjustment works (not memorisation)</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>This is the reason behind the rule table. We are not adding \(\pi\) randomly.</p>
+          <div class="steps">
+            <div class="step-item"><div class="sn">1</div><div class="st">For \(z=a+bi\), the slope of the line from origin to \((a,b)\) is
+              \[
+              \frac{b}{a}.
+              \]
+              So \(\tan\theta=\frac{b}{a}\).
+            </div></div>
+            <div class="step-item"><div class="sn">2</div><div class="st">\(\arctan(\cdot)\) returns only its <strong>principal output</strong> in
+              \[
+              \left(-\frac{\pi}{2},\frac{\pi}{2}\right),
+              \]
+              which means it only gives a quadrant IV or quadrant I style angle.
+            </div></div>
+            <div class="step-item"><div class="sn">3</div><div class="st">But \(\tan\theta\) repeats every \(\pi\):
+              \[
+              \tan(\theta)=\tan(\theta+\pi).
+              \]
+              So the same ratio \(b/a\) corresponds to two opposite-direction rays. We choose the one matching the signs of \(a\) and \(b\).
+            </div></div>
+            <div class="step-item"><div class="sn">4</div><div class="st">Sign check determines the quadrant:
+              <ul style="margin:8px 0 0 18px">
+                <li>\(a>0,b>0\): QI, keep \(\arctan(b/a)\).</li>
+                <li>\(a<0,b>0\): QII, add \(\pi\) to move from QIV-looking angle to QII.</li>
+                <li>\(a<0,b<0\): QIII, subtract \(\pi\) (or add \(\pi\), then convert to principal range).</li>
+                <li>\(a>0,b<0\): QIV, keep negative \(\arctan(b/a)\).</li>
+              </ul>
+            </div></div>
+          </div>
+
+          <div class="callout c-info"><strong>One-line meaning:</strong> \(\arctan(b/a)\) gives a reference direction from slope; quadrant signs tell you which opposite ray is the true complex-number direction.</div>
+
+          <div class="worked" style="margin-top:12px">
+            <div class="worked-lbl">Mini-example A (why add \(\pi\) in QII)</div>
+            <div class="steps">
+              <div class="step-item"><div class="sn">1</div><div class="st">Take \(z=-1+i\), so \(a=-1,\ b=1\) (QII).</div></div>
+              <div class="step-item"><div class="sn">2</div><div class="st">\(\arctan(b/a)=\arctan(-1)=-\pi/4\), which points to QIV, not QII.</div></div>
+              <div class="step-item"><div class="sn">3</div><div class="st">Add \(\pi\): \(-\pi/4+\pi=3\pi/4\), now the angle points to QII with correct signs \((-,+)\).</div></div>
+            </div>
+          </div>
+
+          <div class="worked">
+            <div class="worked-lbl">Mini-example B (why subtract \(\pi\) in QIII for principal argument)</div>
+            <div class="steps">
+              <div class="step-item"><div class="sn">1</div><div class="st">Take \(z=-1-i\), so \(a=-1,\ b=-1\) (QIII).</div></div>
+              <div class="step-item"><div class="sn">2</div><div class="st">\(\arctan(b/a)=\arctan(1)=\pi/4\), which points to QI, not QIII.</div></div>
+              <div class="step-item"><div class="sn">3</div><div class="st">Shift by \(\pi\): \(\pi/4+\pi=5\pi/4\). In principal range \((-\pi,\pi]\), this is \(-3\pi/4\), same direction, correct QIII ray.</div></div>
+            </div>
+          </div>
+
+          <div class="callout c-warn" style="margin-top:10px"><strong>Axis cases:</strong> if \(a=0\), do not use \(b/a\). Use geometry directly: \(b>0\Rightarrow \arg(z)=\pi/2\), \(b<0\Rightarrow \arg(z)=-\pi/2\). If \(b=0\), then angle is \(0\) (positive real axis) or \(\pi\) (negative real axis).</div>
         </div>
       </div>
 
@@ -1367,7 +1441,49 @@ function drawRootsWheel(){
   selectRoot(0);
 }
 
-document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});drawRootsWheel();},300);});
+function drawEiThetaDemo(){
+  const slider=document.getElementById('eiThetaSlider');
+  const wrap=document.getElementById('eiThetaSvg');
+  const info=document.getElementById('eiThetaInfo');
+  if(!slider||!wrap||!info) return;
+  const theta=parseFloat(slider.value);
+  const cx=180,cy=150,r=96;
+  const px=cx+r*Math.cos(theta);
+  const py=cy-r*Math.sin(theta);
+  const axisColor='#1B3A5C';
+  const circleColor='#185FA5';
+  const pointColor='#FF3621';
+  const xVal=Math.cos(theta);
+  const yVal=Math.sin(theta);
+  const thetaDeg=theta*180/Math.PI;
+
+  wrap.innerHTML=
+    '<svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" width="360">'+
+      '<defs><marker id="eia" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="'+axisColor+'"/></marker></defs>'+
+      '<line x1="20" y1="150" x2="340" y2="150" stroke="'+axisColor+'" stroke-width="1.5" marker-end="url(#eia)"/>'+
+      '<line x1="180" y1="280" x2="180" y2="20" stroke="'+axisColor+'" stroke-width="1.5" marker-end="url(#eia)"/>'+
+      '<text x="334" y="165" font-size="12" fill="'+axisColor+'" font-style="italic" font-family="serif">Re</text>'+
+      '<text x="184" y="26" font-size="12" fill="'+axisColor+'" font-style="italic" font-family="serif">Im</text>'+
+      '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+circleColor+'" stroke-width="2"/>'+
+      '<line x1="'+cx+'" y1="'+cy+'" x2="'+px.toFixed(2)+'" y2="'+py.toFixed(2)+'" stroke="'+pointColor+'" stroke-width="2"/>'+
+      '<line x1="'+px.toFixed(2)+'" y1="'+py.toFixed(2)+'" x2="'+px.toFixed(2)+'" y2="'+cy+'" stroke="#98A2B3" stroke-dasharray="4 3" stroke-width="1.2"/>'+
+      '<line x1="'+px.toFixed(2)+'" y1="'+py.toFixed(2)+'" x2="'+cx+'" y2="'+py.toFixed(2)+'" stroke="#98A2B3" stroke-dasharray="4 3" stroke-width="1.2"/>'+
+      '<circle cx="'+px.toFixed(2)+'" cy="'+py.toFixed(2)+'" r="5.8" fill="'+pointColor+'" stroke="#fff" stroke-width="1.2"/>'+
+      '<text x="'+(px+8).toFixed(2)+'" y="'+(py-8).toFixed(2)+'" font-size="11" fill="'+pointColor+'" font-family="serif">e^{iθ}</text>'+
+      '<path d="M '+(cx+28)+' '+cy+' A 28 28 0 0 '+(theta>=0?0:1)+' '+(cx+28*Math.cos(theta)).toFixed(2)+' '+(cy-28*Math.sin(theta)).toFixed(2)+'" fill="none" stroke="#1D9E75" stroke-width="2"/>'+
+      '<text x="'+(cx+30).toFixed(2)+'" y="'+(cy-12).toFixed(2)+'" font-size="11" fill="#1D9E75" font-family="serif">θ</text>'+
+      '<text x="'+(cx+r+6)+'" y="'+(cy-r+14)+'" font-size="11" fill="'+circleColor+'" font-family="serif">|e^{iθ}|=1</text>'+
+    '</svg>';
+
+  info.innerHTML=
+    '<strong>Current angle:</strong> \\(\\theta\\approx '+theta.toFixed(3)+'\\,\\text{rad}\\approx '+thetaDeg.toFixed(1)+'^\\circ\\)<br>'+
+    '\\[e^{i\\theta}=\\cos\\theta+i\\sin\\theta\\approx '+xVal.toFixed(4)+(yVal>=0?'+':'')+yVal.toFixed(4)+'i\\]'+
+    'Real part \\(=\\cos\\theta\\approx '+xVal.toFixed(4)+'\\), imaginary part \\(=\\sin\\theta\\approx '+yVal.toFixed(4)+'\\).';
+
+  if(window.renderMathInElement)renderMathInElement(info,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+}
+
+document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});drawRootsWheel();drawEiThetaDemo();},300);});
 </script>
 </body>
 </html>
