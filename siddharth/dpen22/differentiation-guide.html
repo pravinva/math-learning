@@ -2137,6 +2137,43 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--t
       </div>
     </div>
 
+    <div class="theory-block">
+      <div class="theory-title">Curve Concepts Visual Lab (Critical / Stationary / Inflection / Transition)</div>
+      <div class="theory-body">
+        <p>Use this interactive to see each term on actual curves. In this lesson, we use <strong>transition point</strong> as a general classroom phrase for a point where behavior changes (for example increasing to decreasing, or concave up to concave down).</p>
+      </div>
+      <div class="formula-row">
+        <div class="formula-pill"><strong>Critical point:</strong> \(f'(x)=0\) or \(f'(x)\) undefined</div>
+        <div class="formula-pill"><strong>Stationary point:</strong> \(f'(x)=0\)</div>
+        <div class="formula-pill"><strong>Inflection point:</strong> concavity changes sign</div>
+      </div>
+      <div class="diagram-wrap" style="margin-top:14px">
+        <div class="diagram-title">JavaScript visualizer — pick a curve type</div>
+        <canvas class="diagram-canvas" id="canvasCurveConcepts" width="520" height="280"></canvas>
+        <div class="diagram-controls">
+          <div class="ctrl-group">Curve
+            <select id="ccPreset" onchange="drawCurveConcepts()" style="margin-left:8px;padding:5px 8px;border:1px solid var(--grey-md);border-radius:6px;background:#fff;font-size:12px">
+              <option value="cubic_turning">f(x)=x^3-3x</option>
+              <option value="stationary_inflect">f(x)=x^3</option>
+              <option value="corner_abs">f(x)=|x|</option>
+              <option value="flat_min">f(x)=x^4</option>
+              <option value="nonstation_inflect">f(x)=x^3+x</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="key-facts" style="margin-top:10px">
+        <div class="key-facts-title">What the markers mean</div>
+        <ul>
+          <li><strong>Orange dot:</strong> stationary point (\(f'(x)=0\)).</li>
+          <li><strong>Green dot:</strong> inflection point (concavity switch).</li>
+          <li><strong>Navy ring:</strong> critical but non-stationary (e.g. corner / cusp).</li>
+          <li><strong>Blue label:</strong> transition behavior explanation for that point.</li>
+        </ul>
+      </div>
+      <div class="callout callout-info" id="curveConceptSummary">Choose a curve to see detailed point-by-point classification.</div>
+    </div>
+
     <div class="q-section-title">Worked Problems — Stationary Points &amp; Concavity</div>
 
     <div class="level-divider"><div class="level-badge">LEVEL 1</div><div class="level-info"><div class="level-title">Finding and identifying basic stationary points</div></div></div>
@@ -3033,6 +3070,98 @@ function drawStat(){
   ctx.font='10px DM Sans';ctx.textAlign='left';
   ctx.fillStyle='#FF3621';ctx.fillText('f(x)',6,16);
   ctx.fillStyle='#185FA5';ctx.fillText("f'(x) dashed",6,30);
+  drawCurveConcepts();
+}
+
+function drawCurveConcepts(){
+  const presetEl=document.getElementById('ccPreset');
+  const summaryEl=document.getElementById('curveConceptSummary');
+  if(!presetEl||!summaryEl) return;
+  const r=setupCanvas('canvasCurveConcepts');if(!r) return;
+  const {ctx,W,H}=r;
+
+  const presets={
+    cubic_turning:{
+      label:'f(x)=x^3-3x',
+      xMin:-3.2,xMax:3.2,yMin:-4.5,yMax:4.5,
+      fn:x=>x*x*x-3*x,
+      points:[
+        {x:-1,type:'stationary',note:'critical + stationary + turning point (local maximum)'},
+        {x:1,type:'stationary',note:'critical + stationary + turning point (local minimum)'},
+        {x:0,type:'inflection',note:'inflection + transition of concavity (not stationary)'}
+      ]
+    },
+    stationary_inflect:{
+      label:'f(x)=x^3',
+      xMin:-2.8,xMax:2.8,yMin:-4.5,yMax:4.5,
+      fn:x=>x*x*x,
+      points:[
+        {x:0,type:'stationary_inflection',note:'critical + stationary + inflection (stationary transition point)'}
+      ]
+    },
+    corner_abs:{
+      label:'f(x)=|x|',
+      xMin:-3,xMax:3,yMin:-0.8,yMax:3.5,
+      fn:x=>Math.abs(x),
+      points:[
+        {x:0,type:'critical_nonstationary',note:'critical point (derivative undefined), not stationary; transition from decreasing to increasing'}
+      ]
+    },
+    flat_min:{
+      label:'f(x)=x^4',
+      xMin:-2.4,xMax:2.4,yMin:-0.6,yMax:5.2,
+      fn:x=>x*x*x*x,
+      points:[
+        {x:0,type:'stationary',note:'critical + stationary local minimum; here f\'\'(0)=0 so second-derivative test is inconclusive'}
+      ]
+    },
+    nonstation_inflect:{
+      label:'f(x)=x^3+x',
+      xMin:-2.6,xMax:2.6,yMin:-5,yMax:5,
+      fn:x=>x*x*x+x,
+      points:[
+        {x:0,type:'inflection',note:'inflection + transition of concavity; not critical (since f\'(0)=1)'}
+      ]
+    }
+  };
+
+  const p=presets[presetEl.value]||presets.cubic_turning;
+  const {px,py}=drawAxes(ctx,W,H,p.xMin,p.xMax,p.yMin,p.yMax);
+  plotFn(ctx,px,py,p.xMin,p.xMax,p.fn,'#FF3621',W,false,2.4);
+
+  const markerColor=t=>{
+    if(t==='stationary_inflection') return '#7A2B9D';
+    if(t==='stationary') return '#FF3621';
+    if(t==='inflection') return '#1A7A5A';
+    return '#1B3A5C';
+  };
+
+  p.points.forEach((pt,i)=>{
+    const y=p.fn(pt.x),cx=px(pt.x),cy=py(y),color=markerColor(pt.type);
+    if(pt.type==='critical_nonstationary'){
+      ctx.strokeStyle=color;ctx.lineWidth=2.2;ctx.beginPath();ctx.arc(cx,cy,6,0,Math.PI*2);ctx.stroke();
+      ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fill();
+    }else{
+      ctx.fillStyle=color;ctx.beginPath();ctx.arc(cx,cy,5.5,0,Math.PI*2);ctx.fill();
+    }
+    ctx.fillStyle='#185FA5';
+    ctx.font='10px DM Sans';
+    ctx.textAlign='left';
+    ctx.fillText('P'+(i+1),cx+7,cy-8);
+  });
+
+  ctx.font='11px DM Sans';
+  ctx.textAlign='left';
+  ctx.fillStyle='#FF3621';
+  ctx.fillText(p.label,8,18);
+  ctx.fillStyle='#185FA5';
+  ctx.fillText('P labels correspond to classified points below',8,34);
+
+  summaryEl.innerHTML='<strong>Curve:</strong> '+p.label+'<br>'+p.points.map((pt,i)=>{
+    const y=p.fn(pt.x);
+    return '<strong>P'+(i+1)+'</strong> at \\(x='+pt.x.toFixed(2)+'\\), \\(y='+y.toFixed(2)+'\\): '+pt.note;
+  }).join('<br>');
+  renderMath(summaryEl);
 }
 
 // ── OPTIMISATION ─────────────────────────────────
