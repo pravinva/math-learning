@@ -980,6 +980,27 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--t
         </div>
       </div>
 
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-e">Interactive</span><span class="dpen-ht">Roots of unity wheel (n = 3, 4, 6, 8)</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>This wheel shows the \(n\)th roots of unity on the unit circle. Click any point/label to inspect its angle and complex form.</p>
+          <div class="callout c-info"><strong>Formula:</strong> \(z_k = e^{i\frac{2k\pi}{n}} = \cos\!\left(\frac{2k\pi}{n}\right)+i\sin\!\left(\frac{2k\pi}{n}\right),\quad k=0,1,\dots,n-1\)</div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 12px">
+            <label for="ruN" style="font-size:13px;color:var(--text-muted)">Choose \(n\):</label>
+            <select id="ruN" onchange="drawRootsWheel()" style="padding:6px 10px;border:1px solid var(--grey-md);border-radius:6px;background:white;font-size:13px">
+              <option value="3">3 roots</option>
+              <option value="4">4 roots</option>
+              <option value="6">6 roots</option>
+              <option value="8">8 roots</option>
+            </select>
+          </div>
+          <div class="argand-wrap">
+            <div id="rootsWheelSvg"></div>
+          </div>
+          <div class="callout c-info" id="rootsWheelInfo">Select a root on the wheel to see angle and value.</div>
+        </div>
+      </div>
+
       <div class="page-nav"><button class="pnav-btn" onclick="goTo('argand')">← Topic 5: Argand Diagram</button><button class="pnav-btn next" onclick="goTo('practice')">Practice Questions →</button></div>
     </div>
 
@@ -1187,7 +1208,64 @@ function expandAll(){
   setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(ap,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);
 }
 
-document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},300);});
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=b;b=a%b;a=t;}return a||1;}
+function thetaLatex(k,n){
+  if(k===0) return '0';
+  let num=2*k,den=n;
+  const g=gcd(num,den);num/=g;den/=g;
+  if(den===1) return (num===1?'\\pi':num+'\\pi');
+  if(num===1) return '\\frac{\\pi}{'+den+'}';
+  return '\\frac{'+num+'\\pi}{'+den+'}';
+}
+function drawRootsWheel(){
+  const sel=document.getElementById('ruN');
+  const wrap=document.getElementById('rootsWheelSvg');
+  const info=document.getElementById('rootsWheelInfo');
+  if(!sel||!wrap||!info) return;
+  const n=parseInt(sel.value,10);
+  const cx=180,cy=150,r=96;
+  let points='';
+  for(let k=0;k<n;k++){
+    const t=2*Math.PI*k/n;
+    const x=cx+r*Math.cos(t),y=cy-r*Math.sin(t);
+    const lx=cx+(r+18)*Math.cos(t),ly=cy-(r+18)*Math.sin(t);
+    points+=
+      '<circle class="ru-point" data-k="'+k+'" cx="'+x.toFixed(2)+'" cy="'+y.toFixed(2)+'" r="5.5" fill="#FF3621" stroke="#fff" stroke-width="1.2" style="cursor:pointer"/>'+
+      '<text class="ru-label" data-k="'+k+'" x="'+lx.toFixed(2)+'" y="'+ly.toFixed(2)+'" text-anchor="middle" font-size="11" fill="#185FA5" style="cursor:pointer">k='+k+'</text>';
+  }
+  wrap.innerHTML=
+    '<svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" width="360">'+
+      '<defs><marker id="rua" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#1B3A5C"/></marker></defs>'+
+      '<line x1="20" y1="150" x2="340" y2="150" stroke="#1B3A5C" stroke-width="1.5" marker-end="url(#rua)"/>'+
+      '<line x1="180" y1="280" x2="180" y2="20" stroke="#1B3A5C" stroke-width="1.5" marker-end="url(#rua)"/>'+
+      '<text x="334" y="165" font-size="12" fill="#1B3A5C" font-style="italic" font-family="serif">Re</text>'+
+      '<text x="184" y="26" font-size="12" fill="#1B3A5C" font-style="italic" font-family="serif">Im</text>'+
+      '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#185FA5" stroke-width="2"/>'+
+      '<text x="'+(cx+56)+'" y="'+(cy-r+14)+'" font-size="11" fill="#185FA5" font-family="serif">|z|=1</text>'+
+      points+
+    '</svg>';
+
+  function selectRoot(k){
+    wrap.querySelectorAll('.ru-point').forEach(p=>p.setAttribute('fill','#FF3621'));
+    const chosen=wrap.querySelector('.ru-point[data-k="'+k+'"]');
+    if(chosen) chosen.setAttribute('fill','#1D9E75');
+    const theta=thetaLatex(k,n);
+    const ang=2*Math.PI*k/n;
+    const a=Math.cos(ang),b=Math.sin(ang);
+    const af=a.toFixed(4),bf=b.toFixed(4);
+    info.innerHTML='<strong>Selected root:</strong> \\(k='+k+'\\)<br>'+
+      '\\[\\theta_k='+theta+',\\quad z_k=e^{i\\theta_k}=\\cos('+theta+')+i\\sin('+theta+')\\]'+
+      'Decimal form: \\(z_k\\approx '+af+(b>=0?'+':'')+bf+'i\\)';
+    if(window.renderMathInElement)renderMathInElement(info,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  }
+
+  wrap.querySelectorAll('.ru-point,.ru-label').forEach(el=>{
+    el.addEventListener('click',()=>selectRoot(parseInt(el.getAttribute('data-k'),10)));
+  });
+  selectRoot(0);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});drawRootsWheel();},300);});
 </script>
 </body>
 </html>
