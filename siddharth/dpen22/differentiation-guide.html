@@ -2161,6 +2161,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--t
             </select>
           </div>
         </div>
+        <div class="callout callout-success" id="curveConceptFormula" style="margin-top:10px">\[f(x)=x^3-3x\]</div>
       </div>
       <div class="key-facts" style="margin-top:10px">
         <div class="key-facts-title">What the markers mean</div>
@@ -3076,13 +3077,15 @@ function drawStat(){
 function drawCurveConcepts(){
   const presetEl=document.getElementById('ccPreset');
   const summaryEl=document.getElementById('curveConceptSummary');
-  if(!presetEl||!summaryEl) return;
+  const formulaEl=document.getElementById('curveConceptFormula');
+  if(!presetEl||!summaryEl||!formulaEl) return;
   const r=setupCanvas('canvasCurveConcepts');if(!r) return;
   const {ctx,W,H}=r;
 
   const presets={
     cubic_turning:{
       label:'f(x)=x^3-3x',
+      latexLabel:'f(x)=x^3-3x',
       xMin:-3.2,xMax:3.2,yMin:-4.5,yMax:4.5,
       fn:x=>x*x*x-3*x,
       points:[
@@ -3093,6 +3096,7 @@ function drawCurveConcepts(){
     },
     stationary_inflect:{
       label:'f(x)=x^3',
+      latexLabel:'f(x)=x^3',
       xMin:-2.8,xMax:2.8,yMin:-4.5,yMax:4.5,
       fn:x=>x*x*x,
       points:[
@@ -3101,26 +3105,29 @@ function drawCurveConcepts(){
     },
     corner_abs:{
       label:'f(x)=|x|',
+      latexLabel:'f(x)=|x|',
       xMin:-3,xMax:3,yMin:-0.8,yMax:3.5,
       fn:x=>Math.abs(x),
       points:[
-        {x:0,type:'critical_nonstationary',note:'critical point (derivative undefined), not stationary; transition from decreasing to increasing'}
+        {x:0,type:'critical_nonstationary',note:'critical point \\((f\\\'(0)\\text{ undefined})\\), not stationary; transition from decreasing to increasing'}
       ]
     },
     flat_min:{
       label:'f(x)=x^4',
+      latexLabel:'f(x)=x^4',
       xMin:-2.4,xMax:2.4,yMin:-0.6,yMax:5.2,
       fn:x=>x*x*x*x,
       points:[
-        {x:0,type:'stationary',note:'critical + stationary local minimum; here f\'\'(0)=0 so second-derivative test is inconclusive'}
+        {x:0,type:'stationary',note:'critical + stationary local minimum; here \\(f\\\'\\\'(0)=0\\), so second-derivative test is inconclusive'}
       ]
     },
     nonstation_inflect:{
       label:'f(x)=x^3+x',
+      latexLabel:'f(x)=x^3+x',
       xMin:-2.6,xMax:2.6,yMin:-5,yMax:5,
       fn:x=>x*x*x+x,
       points:[
-        {x:0,type:'inflection',note:'inflection + transition of concavity; not critical (since f\'(0)=1)'}
+        {x:0,type:'inflection',note:'inflection + transition of concavity; not critical since \\(f\\\'(0)=1\\)'}
       ]
     }
   };
@@ -3157,10 +3164,12 @@ function drawCurveConcepts(){
   ctx.fillStyle='#185FA5';
   ctx.fillText('P labels correspond to classified points below',8,34);
 
-  summaryEl.innerHTML='<strong>Curve:</strong> '+p.label+'<br>'+p.points.map((pt,i)=>{
+  formulaEl.innerHTML='\\['+p.latexLabel+'\\]';
+  summaryEl.innerHTML='<strong>Curve:</strong><br>\\['+p.latexLabel+'\\]<br>'+p.points.map((pt,i)=>{
     const y=p.fn(pt.x);
     return '<strong>P'+(i+1)+'</strong> at \\(x='+pt.x.toFixed(2)+'\\), \\(y='+y.toFixed(2)+'\\): '+pt.note;
   }).join('<br>');
+  renderMath(formulaEl);
   renderMath(summaryEl);
 }
 
