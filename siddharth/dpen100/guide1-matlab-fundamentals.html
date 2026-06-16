@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN100 — Guide 1: MATLAB Fundamentals</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1B3A5C;--navy-lt:#1e4570;--orange:#FF3621;--blue-lt:#E6F1FB;--blue-mid:#185FA5;--amber-lt:#FAEEDA;--amber-dk:#7A4800;--green-lt:#E1F5EE;--green-dk:#0a5c3f;--coral-lt:#FAECE7;--coral-dk:#8a2f1a;--purple-lt:#EEEDFE;--purple-dk:#3C3489;--grey-lt:#F6F5F2;--grey-md:#e8e6e0;--grey-dk:#3a3835;--text:#2c2a28;--text-muted:#6b6762;--sidebar-w:272px;--content-max:790px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px}
+.sb-brand{padding:18px 20px 13px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sb-series{font-size:10px;font-weight:500;letter-spacing:0.1em;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:4px}
+.sb-title{font-family:'Crimson Pro',Georgia,serif;font-size:15px;font-weight:600;color:white;line-height:1.3}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px}
+.sb-guides{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;gap:6px;flex-wrap:wrap}
+.sb-guide-link{font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;background:none;transition:all 0.15s;text-decoration:none}
+.sb-guide-link:hover{color:white;border-color:rgba(255,255,255,0.5)}
+.sb-guide-link.current{background:var(--orange);border-color:var(--orange);color:white}
+.prog-wrap{padding:9px 20px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.prog-lbl{font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:0.06em;margin-bottom:5px}
+.prog-bar{height:3px;background:rgba(255,255,255,0.12);border-radius:2px}
+.prog-fill{height:100%;background:var(--orange);border-radius:2px;width:0%;transition:width 0.4s}
+.nav-sec{padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.08)}
+.nav-sec-lbl{font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.28);padding:4px 20px 3px;text-transform:uppercase}
+.nav-link{display:flex;align-items:center;gap:9px;padding:6px 20px;color:rgba(255,255,255,0.55);font-size:12px;transition:all 0.15s;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;line-height:1.35}
+.nav-link:hover{color:white;background:rgba(255,255,255,0.06)}
+.nav-link.active{color:white;background:rgba(255,255,255,0.1);border-left:2px solid var(--orange);padding-left:18px}
+.nav-num{font-size:10px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.45);border-radius:3px;padding:1px 5px;flex-shrink:0}
+.nav-link.active .nav-num{background:var(--orange);color:white}
+.main{margin-left:var(--sidebar-w);flex:1}
+.topbar{background:white;border-bottom:1px solid var(--grey-md);padding:10px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-bc{font-size:12px;color:var(--text-muted)}.topbar-bc span{color:var(--navy);font-weight:500}
+.topbar-btns{display:flex;gap:7px}
+.tb-btn{padding:5px 11px;border-radius:6px;border:1px solid var(--grey-md);background:white;font-size:12px;color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all 0.15s}
+.tb-btn:hover{border-color:var(--navy);color:var(--navy)}
+.tb-btn.primary{background:var(--navy);color:white;border-color:var(--navy)}
+.content{max-width:var(--content-max);margin:0 auto;padding:42px 40px 80px}
+.page{display:none!important}.page.active{display:block!important;opacity:1!important;visibility:visible!important;animation:fadeIn 0.22s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.page-hero{margin-bottom:26px;padding-bottom:20px;border-bottom:2px solid var(--grey-md)}
+.hero-label{font-size:11px;font-weight:500;letter-spacing:0.08em;color:var(--orange);text-transform:uppercase;margin-bottom:5px}
+.hero-title{font-family:'Crimson Pro',Georgia,serif;font-size:34px;font-weight:600;color:var(--navy);line-height:1.15;margin-bottom:6px}
+.hero-sub{font-size:14px;color:var(--text-muted);line-height:1.6}
+.motiv{background:var(--blue-lt);border-left:3px solid var(--blue-mid);border-radius:0 8px 8px 0;padding:12px 16px;font-size:14px;color:#0d3d73;line-height:1.7;margin-bottom:22px}
+.motiv strong{font-weight:500}
+.dpen-block{margin-bottom:10px;border:1px solid var(--grey-md);border-radius:10px;overflow:hidden}
+.dpen-hd{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none;background:white;transition:background 0.15s}
+.dpen-hd:hover{background:var(--grey-lt)}
+.dpen-pill{font-size:10px;font-weight:500;padding:2px 9px;border-radius:20px;letter-spacing:0.05em;flex-shrink:0}
+.pill-d{background:var(--blue-lt);color:var(--blue-mid)}.pill-p{background:var(--amber-lt);color:var(--amber-dk)}.pill-e{background:var(--green-lt);color:var(--green-dk)}.pill-n{background:var(--coral-lt);color:var(--coral-dk)}
+.dpen-ht{font-size:14px;font-weight:500;color:var(--text);flex:1}
+.dpen-ch{color:var(--text-muted);font-size:11px;transition:transform 0.2s;flex-shrink:0}
+.dpen-ch.open{transform:rotate(90deg)}
+.dpen-bd{display:none;padding:15px 18px 18px;border-top:1px solid var(--grey-md);background:var(--grey-lt);font-size:14px;line-height:1.75;color:var(--text)}
+.dpen-bd.open{display:block}
+.dpen-bd p{margin-bottom:9px}.dpen-bd p:last-child{margin-bottom:0}
+.mb{text-align:center;margin:12px 0;padding:8px 10px;background:white;border-radius:6px;border:1px solid var(--grey-md);overflow-x:auto}
+.steps{margin:9px 0}
+.step-item{display:flex;gap:10px;margin:6px 0;align-items:flex-start}
+.sn{min-width:20px;height:20px;border-radius:50%;background:var(--blue-lt);color:var(--blue-mid);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.st{flex:1;font-size:14px;line-height:1.7}
+.callout{border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0;font-size:13px;line-height:1.65}
+.c-warn{background:var(--amber-lt);border-left:3px solid #EF9F27;color:var(--amber-dk)}
+.c-info{background:var(--green-lt);border-left:3px solid #1D9E75;color:var(--green-dk)}
+.c-note{background:var(--purple-lt);border-left:3px solid #7F77DD;color:var(--purple-dk)}
+.callout strong{font-weight:500}
+.worked{background:white;border:1px solid var(--grey-md);border-radius:8px;padding:12px 14px;margin:10px 0}
+.worked-lbl{font-size:10px;font-weight:500;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase}
+.ans-box{background:var(--navy);color:white;border-radius:6px;padding:7px 12px;margin-top:10px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.ans-lbl{font-size:10px;opacity:0.6;letter-spacing:0.05em;flex-shrink:0}
+.dtbl{width:100%;border-collapse:collapse;font-size:13px;margin:9px 0}
+.dtbl th{background:var(--navy);color:white;padding:6px 10px;text-align:left;font-weight:500;font-size:11px}
+.dtbl td{padding:6px 10px;border-bottom:1px solid var(--grey-md);color:var(--text)}
+.dtbl tr:nth-child(even) td{background:white}.dtbl tr:nth-child(odd) td{background:var(--grey-lt)}
+.dtbl th:first-child{border-radius:6px 0 0 0}.dtbl th:last-child{border-radius:0 6px 0 0}
+.dtbl code{font-family:'JetBrains Mono',monospace;font-size:12px;background:#eef0f3;padding:1px 5px;border-radius:3px;color:var(--navy)}
+.code{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.65;background:#1e2a38;color:#e6edf3;border-radius:8px;padding:12px 15px;margin:10px 0;overflow-x:auto;white-space:pre}
+.code .cm{color:#7d8da3}.code .kw{color:#ff9d7a}.code .st{color:#9ece6a;display:inline;flex:none}.code .fn{color:#7aa2f7}.code .nm{color:#e0af68}
+.code-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:#9aa7b8;background:#141d28;border-radius:8px 8px 0 0;padding:5px 12px;margin:10px 0 -10px;display:inline-block}
+p code,li code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:#eef0f3;padding:1px 5px;border-radius:3px;color:var(--navy)}
+.qp-section{margin-top:18px;border:1.5px solid var(--orange);border-radius:10px;overflow:hidden}
+.qp-header{background:var(--orange);padding:9px 15px;display:flex;align-items:center;justify-content:space-between}
+.qp-title{font-size:12px;font-weight:500;color:white}
+.qp-sub{font-size:11px;color:rgba(255,255,255,0.7)}
+.qp-items{padding:12px 14px;background:#fffbf8;display:flex;flex-direction:column;gap:7px}
+.qp-item{border:1px solid var(--grey-md);border-radius:8px;overflow:hidden;background:white}
+.qp-q{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;cursor:pointer;transition:background 0.15s}
+.qp-q:hover{background:var(--grey-lt)}
+.qp-qnum{min-width:19px;height:19px;border-radius:50%;background:var(--orange);color:white;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.qp-qtext{flex:1;font-size:13px;color:var(--text);line-height:1.5}
+.qp-arrow{color:var(--text-muted);font-size:10px;transition:transform 0.2s;flex-shrink:0;margin-top:2px}
+.qp-arrow.open{transform:rotate(90deg)}
+.qp-ans{display:none;padding:9px 12px 11px;border-top:1px solid var(--grey-md);background:var(--green-lt);font-size:13px;color:var(--green-dk);line-height:1.6}
+.qp-ans.open{display:block}
+.qp-ans strong{color:var(--green-dk);font-weight:500}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.home-card{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.15s}
+.home-card:hover{border-color:var(--navy);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.06)}
+.hc-num{font-size:11px;color:var(--orange);font-weight:500;margin-bottom:3px}
+.hc-title{font-family:'Crimson Pro',serif;font-size:16px;color:var(--navy);margin-bottom:3px}
+.hc-sub{font-size:12px;color:var(--text-muted);line-height:1.5}
+.series-banner{background:var(--navy);border-radius:10px;padding:14px 18px;margin:16px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.sb-left{flex:1;min-width:200px}
+.sb-series-lbl{font-size:10px;letter-spacing:0.08em;color:rgba(255,255,255,0.5);margin-bottom:4px}
+.sb-series-title{font-size:14px;font-weight:500;color:white}
+.sb-series-desc{font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px}
+.sb-guides-row{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+.sb-guide-pill{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);text-decoration:none}
+.sb-guide-pill.here{background:var(--orange);border-color:var(--orange);color:white}
+.page-nav{display:flex;justify-content:space-between;margin-top:32px;padding-top:20px;border-top:1px solid var(--grey-md)}
+.pnav-btn{display:flex;align-items:center;gap:7px;padding:8px 15px;border-radius:8px;border:1px solid var(--grey-md);background:white;font-size:13px;color:var(--text);cursor:pointer;font-family:inherit;transition:all 0.15s;text-decoration:none}
+.pnav-btn:hover{border-color:var(--navy);color:var(--navy)}
+.pnav-btn.next{background:var(--navy);color:white;border-color:var(--navy)}
+.pnav-btn.ghost{visibility:hidden}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.content{padding:20px 16px 56px}.home-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-series">DPEN100 Series · Guide 1 of 4</div>
+    <div class="sb-title">MATLAB Fundamentals</div>
+    <div class="sb-sub">Environment, data types, variables &amp; operators</div>
+  </div>
+  <div style="padding:10px 20px;border-bottom:1px solid rgba(255,255,255,0.08)">
+    <a href="index.html" style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.5);font-size:11px;text-decoration:none;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">
+      <span>←</span><span>Back to DPEN100 Hub</span>
+    </a>
+  </div>
+  <div class="sb-guides">
+    <a class="sb-guide-link current">1. MATLAB</a>
+    <a class="sb-guide-link" href="guide2-control-functions.html">2. Control</a>
+    <a class="sb-guide-link" href="guide3-plotting-io-python.html">3. Viz/IO</a>
+    <a class="sb-guide-link" href="guide4-kinematics.html">4. Dynamics</a>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-lbl">PROGRESS</div>
+    <div class="prog-bar"><div class="prog-fill" id="pf"></div></div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-lbl">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">↑</span> Start here</button>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-lbl">Topics — Weeks 1-2</div>
+    <button class="nav-link" onclick="goTo('env')"><span class="nav-num">1</span> The MATLAB Environment</button>
+    <button class="nav-link" onclick="goTo('datatypes')"><span class="nav-num">2</span> Data Types &amp; Numbers</button>
+    <button class="nav-link" onclick="goTo('vars')"><span class="nav-num">3</span> Variables &amp; Assignment</button>
+    <button class="nav-link" onclick="goTo('operators')"><span class="nav-num">4</span> Operators &amp; Expressions</button>
+    <button class="nav-link" onclick="goTo('logical')"><span class="nav-num">5</span> Logical &amp; Relational Values</button>
+    <button class="nav-link" onclick="goTo('strings')"><span class="nav-num">6</span> Strings &amp; Characters</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-bc">DPEN100 Engineering Computing &nbsp;›&nbsp; Guide 1 &nbsp;›&nbsp; <span id="bc">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand all</button>
+      <button class="tb-btn primary" onclick="goTo('env')">Start →</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="page-hero">
+        <div class="hero-label">DPEN100 · Guide 1 of 4</div>
+        <div class="hero-title">MATLAB Fundamentals</div>
+        <div class="hero-sub">Before you can solve an engineering problem with code, you need the raw materials: a place to type commands, the kinds of <em>data</em> a computer can hold (whole numbers, real numbers, complex numbers, text, true/false), and the <em>operators</em> that combine them. This guide builds those foundations so the loops, functions and plots in Guides 2–3 have something solid to stand on.</div>
+      </div>
+      <div class="series-banner">
+        <div class="sb-left">
+          <div class="sb-series-lbl">DPEN100 ENGINEERING COMPUTING &amp; ANALYSIS</div>
+          <div class="sb-series-title">Four guides, one complete subject</div>
+          <div class="sb-series-desc">Aligned to ENGG100 weeks 1-13 and Hahn &amp; Valentine, <em>Essential MATLAB for Engineers &amp; Scientists</em>. Work in order.</div>
+        </div>
+        <div class="sb-guides-row">
+          <span class="sb-guide-pill here">1. MATLAB</span>
+          <a class="sb-guide-pill" href="guide2-control-functions.html">2. Control</a>
+          <a class="sb-guide-pill" href="guide3-plotting-io-python.html">3. Viz/IO</a>
+          <a class="sb-guide-pill" href="guide4-kinematics.html">4. Dynamics</a>
+        </div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Numeric Data Types — Quick Reference</div>
+        <p style="margin-bottom:8px;">Keep this open while you work. These are the building blocks of every MATLAB program.</p>
+        <table class="dtbl">
+          <thead><tr><th>Type</th><th>What it stores</th><th>Approx range / size</th></tr></thead>
+          <tbody>
+            <tr><td><code>int8 / int16 / int32 / int64</code></td><td>Signed whole numbers</td><td>8 to 64 bits</td></tr>
+            <tr><td><code>uint8 … uint64</code></td><td>Unsigned whole numbers</td><td>0 upward only</td></tr>
+            <tr><td><code>single</code></td><td>Real number (4 bytes)</td><td>up to \(\approx 3.40\times10^{38}\)</td></tr>
+            <tr><td><code>double</code> (default)</td><td>Real number (8 bytes)</td><td>up to \(\approx 1.80\times10^{308}\)</td></tr>
+            <tr><td><code>char / string</code></td><td>Text</td><td>characters</td></tr>
+            <tr><td><code>logical</code></td><td>true (1) / false (0)</td><td>1 bit of meaning</td></tr>
+            <tr><td><code>complex</code></td><td>Real + imaginary (<code>i</code>/<code>j</code>)</td><td>e.g. <code>3 + 4i</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="home-grid">
+        <div class="home-card" onclick="goTo('env')"><div class="hc-num">TOPIC 1</div><div class="hc-title">The MATLAB Environment</div><div class="hc-sub">Command Window, Workspace, scripts, the <code>%</code> comment, <code>;</code> and <code>ans</code>.</div></div>
+        <div class="home-card" onclick="goTo('datatypes')"><div class="hc-num">TOPIC 2</div><div class="hc-title">Data Types &amp; Numbers</div><div class="hc-sub">Integers, single/double floats, complex numbers and their functions.</div></div>
+        <div class="home-card" onclick="goTo('vars')"><div class="hc-num">TOPIC 3</div><div class="hc-title">Variables &amp; Assignment</div><div class="hc-sub">Naming rules, the <code>=</code> operator, <code>class</code>, type casting.</div></div>
+        <div class="home-card" onclick="goTo('operators')"><div class="hc-num">TOPIC 4</div><div class="hc-title">Operators &amp; Expressions</div><div class="hc-sub">Scalar arithmetic, precedence, the element-wise dot operators.</div></div>
+        <div class="home-card" onclick="goTo('logical')"><div class="hc-num">TOPIC 5</div><div class="hc-title">Logical &amp; Relational Values</div><div class="hc-sub">true/false, <code>==</code> <code>~=</code> <code>&lt; &gt;</code>, <code>&amp;&amp;</code> <code>||</code>, short-circuit logic.</div></div>
+        <div class="home-card" onclick="goTo('strings')"><div class="hc-num">TOPIC 6</div><div class="hc-title">Strings &amp; Characters</div><div class="hc-sub"><code>char</code> vs <code>string</code>, concatenation, num↔text conversion.</div></div>
+      </div>
+      <div class="page-nav"><button class="pnav-btn ghost">←</button><button class="pnav-btn next" onclick="goTo('env')">Topic 1: The MATLAB Environment →</button></div>
+    </div>
+
+    <!-- TOPIC 1 -->
+    <div class="page" id="page-env">
+      <div class="page-hero">
+        <div class="hero-label">Topic 1 · Week 1</div>
+        <div class="hero-title">The MATLAB Environment</div>
+        <div class="hero-sub">Where you type, where your data lives, and how to save your work</div>
+      </div>
+      <div class="motiv">MATLAB means <strong>MAT</strong>rix <strong>LAB</strong>oratory — an environment built for engineering calculation. Before learning any syntax you need to know <strong>where</strong> things happen: the Command Window for quick experiments, the Workspace that remembers your variables, and script files (<code>.m</code>) that store reusable programs. Getting comfortable here removes 90% of beginner confusion.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">The four main panels</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="steps">
+            <div class="step-item"><div class="sn">1</div><div class="st"><strong>Command Window</strong> — type a command after the <code>&gt;&gt;</code> prompt and press Enter for an instant result. Best for quick tests.</div></div>
+            <div class="step-item"><div class="sn">2</div><div class="st"><strong>Workspace</strong> — lists every variable currently in memory, with its name, value, size and class.</div></div>
+            <div class="step-item"><div class="sn">3</div><div class="st"><strong>Editor</strong> — where you write <code>.m</code> script and function files so a whole program can be re-run with one click.</div></div>
+            <div class="step-item"><div class="sn">4</div><div class="st"><strong>Current Folder</strong> — the directory MATLAB looks in for your files. Your script must be on this path to run.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Semicolons, <code>ans</code> and comments</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>Three habits every MATLAB user needs from day one:</p>
+          <div class="code-lbl">Command Window</div>
+<div class="code"><span class="nm">5 + 3</span>          <span class="cm">% no semicolon → result is shown</span>
+ans = 8        <span class="cm">% MATLAB stores unnamed results in 'ans'</span>
+
+x = 5 + 3<span class="nm">;</span>     <span class="cm">% semicolon SUPPRESSES the output</span>
+<span class="cm">% nothing is printed, but x now holds 8</span>
+
+<span class="cm">% Anything after a % is a comment — ignored by MATLAB</span></div>
+          <div class="callout c-info"><strong>Rule of thumb:</strong> end every line with <code>;</code> in scripts so you are not flooded with output, and remove it only when you deliberately want to see a value.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Script vs Command Window</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>A <strong>script</strong> is just a list of commands saved in a <code>.m</code> file. Running it is the same as typing those commands one by one — but you can edit, save and re-run instantly.</p>
+          <div class="code-lbl">area_of_circle.m</div>
+<div class="code"><span class="cm">% Script: compute area of a circle</span>
+r = 5<span class="nm">;</span>
+area = pi * r^2<span class="nm">;</span>
+<span class="fn">disp</span>(area)     <span class="cm">% prints 78.5398</span></div>
+          <div class="callout c-warn"><strong>Watch out:</strong> a script file's name must be a valid variable name — start with a letter, no spaces, e.g. <code>lab1.m</code> not <code>1lab.m</code> or <code>my lab.m</code>.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-e">Example</span><span class="dpen-ht">Useful housekeeping commands</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <table class="dtbl">
+            <thead><tr><th>Command</th><th>Effect</th></tr></thead>
+            <tbody>
+              <tr><td><code>clc</code></td><td>Clears the Command Window screen</td></tr>
+              <tr><td><code>clear</code></td><td>Removes all variables from the Workspace</td></tr>
+              <tr><td><code>clear x</code></td><td>Removes just variable <code>x</code></td></tr>
+              <tr><td><code>who / whos</code></td><td>List variables (whos = with details)</td></tr>
+              <tr><td><code>help sin</code></td><td>Shows documentation for a function</td></tr>
+              <tr><td><code>format long</code></td><td>Show more decimal places</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice — Topic 1</span><span class="qp-sub">Click to reveal answers</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">A</div><div class="qp-qtext">What does adding a semicolon to the end of a command do?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>It suppresses the output</strong> — the command still runs and the variable is updated, but the result is not printed to the Command Window.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">B</div><div class="qp-qtext">You type <code>10/4</code> with no variable on the left. Where is the result stored?</div><div class="qp-arrow">▶</div></div><div class="qp-ans">In the special variable <strong><code>ans</code></strong>, which holds the most recent unnamed result (here 2.5).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">C</div><div class="qp-qtext">Which symbol starts a comment in MATLAB?</div><div class="qp-arrow">▶</div></div><div class="qp-ans">The percent sign <strong><code>%</code></strong>. Everything after it on that line is ignored.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">D</div><div class="qp-qtext">Is <code>2plot.m</code> a valid script filename?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>No</strong> — filenames (like variable names) must start with a letter. Use <code>plot2.m</code> instead.</div></div>
+        </div>
+      </div>
+
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('home')">← Overview</button><button class="pnav-btn next" onclick="goTo('datatypes')">Topic 2: Data Types &amp; Numbers →</button></div>
+    </div>
+
+    <!-- TOPIC 2 -->
+    <div class="page" id="page-datatypes">
+      <div class="page-hero">
+        <div class="hero-label">Topic 2 · Week 2</div>
+        <div class="hero-title">Data Types &amp; Numbers</div>
+        <div class="hero-sub">Integers, floating-point reals, and complex numbers</div>
+      </div>
+      <div class="motiv">A computer must know <strong>what kind of number</strong> it is storing to choose how many bytes to use and how to do arithmetic. Choosing the right type matters: integers are exact but limited in range; <code>double</code> reals cover a huge range but carry tiny rounding errors; complex numbers let you solve problems (like AC circuits and roots of negatives) that real numbers cannot.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">Integer types</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>Integers store <strong>whole numbers only</strong>. The number after the name is how many <em>bits</em> of storage — more bits means a wider range.</p>
+          <table class="dtbl">
+            <thead><tr><th>Type</th><th>Bits</th><th>Signed range</th></tr></thead>
+            <tbody>
+              <tr><td><code>int8</code></td><td>8</td><td>\(-128\) to \(127\)</td></tr>
+              <tr><td><code>int16</code></td><td>16</td><td>\(\pm 3.27\times10^{4}\)</td></tr>
+              <tr><td><code>int32</code></td><td>32</td><td>\(\pm 2.15\times10^{9}\)</td></tr>
+              <tr><td><code>int64</code></td><td>64</td><td>\(\pm 9.22\times10^{18}\)</td></tr>
+            </tbody>
+          </table>
+          <p>Each has an unsigned twin (<code>uint8</code>…<code>uint64</code>) that drops negatives to double the positive range.</p>
+          <div class="code"><span class="nm">a = </span><span class="fn">int8</span>(100)<span class="nm">;</span>   <span class="cm">% fits</span>
+<span class="nm">b = </span><span class="fn">int8</span>(200)<span class="nm">;</span>   <span class="cm">% TOO BIG → saturates to 127</span></div>
+          <div class="callout c-warn"><strong>Saturation:</strong> if a value exceeds an integer type's range, MATLAB clamps it to the maximum (not "wrap-around"). <code>int8(200)</code> becomes 127.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">Floating-point: single vs double</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>Real (decimal) numbers are stored in <strong>floating-point</strong> form. MATLAB's default for every number you type is <code>double</code>.</p>
+          <table class="dtbl">
+            <thead><tr><th>Type</th><th>Bytes</th><th>Largest magnitude</th></tr></thead>
+            <tbody>
+              <tr><td><code>single</code></td><td>4</td><td>\(\approx 3.4028\times10^{38}\)</td></tr>
+              <tr><td><code>double</code></td><td>8</td><td>\(\approx 1.7977\times10^{308}\)</td></tr>
+            </tbody>
+          </table>
+          <p><code>double</code> has about 15–16 significant digits; <code>single</code> only ~7 but uses half the memory.</p>
+          <div class="callout c-note"><strong>Why it matters:</strong> floating-point cannot store every decimal exactly. <code>0.1 + 0.2</code> is <em>not</em> exactly 0.3 — it is 0.30000000000000004. Never test floats with <code>==</code>; check <code>abs(a-b) &lt; 1e-9</code> instead.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">Complex numbers</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>A complex number has a real and an imaginary part. MATLAB uses <code>i</code> or <code>j</code> for \(\sqrt{-1}\):</p>
+          <div class="mb">\[ z = a + bj \qquad |z| = \sqrt{a^2+b^2} \qquad \theta = \tan^{-1}\!\left(\tfrac{b}{a}\right) \]</div>
+          <table class="dtbl">
+            <thead><tr><th>Function</th><th>Returns</th></tr></thead>
+            <tbody>
+              <tr><td><code>real(z)</code></td><td>Real part \(a\)</td></tr>
+              <tr><td><code>imag(z)</code></td><td>Imaginary part \(b\)</td></tr>
+              <tr><td><code>abs(z)</code></td><td>Magnitude \(|z|\)</td></tr>
+              <tr><td><code>angle(z)</code></td><td>Phase angle (radians)</td></tr>
+              <tr><td><code>conj(z)</code></td><td>Conjugate \(a-bj\)</td></tr>
+            </tbody>
+          </table>
+          <div class="code"><span class="nm">z = 3 + 4j</span><span class="nm">;</span>
+<span class="fn">abs</span>(z)     <span class="cm">% 5  (since √(9+16)=5)</span>
+<span class="fn">real</span>(z)    <span class="cm">% 3</span>
+<span class="fn">conj</span>(z)    <span class="cm">% 3 - 4j</span></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-e">Example</span><span class="dpen-ht">Two worked examples</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="worked">
+            <div class="worked-lbl">Example 1 — Magnitude of a complex number</div>
+            <p>Find the magnitude of \(z = 6 + 8i\).</p>
+            <div class="mb">\[ |z| = \sqrt{6^2+8^2} = \sqrt{36+64} = \sqrt{100} = 10 \]</div>
+            <div class="ans-box"><span class="ans-lbl">ANSWER</span> <code>abs(6+8i)</code> = 10</div>
+          </div>
+          <div class="worked">
+            <div class="worked-lbl">Example 2 — Will it fit in int8?</div>
+            <p>Does the value 130 fit in an <code>int8</code>?</p>
+            <div class="steps">
+              <div class="step-item"><div class="sn">1</div><div class="st"><code>int8</code> range is \(-128\) to \(127\).</div></div>
+              <div class="step-item"><div class="sn">2</div><div class="st">130 &gt; 127, so it does <em>not</em> fit and saturates to 127.</div></div>
+            </div>
+            <div class="ans-box"><span class="ans-lbl">ANSWER</span> No — <code>int8(130)</code> = 127</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice — Topic 2</span><span class="qp-sub">Click to reveal</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">A</div><div class="qp-qtext">What is the default numeric type for a number you type in MATLAB?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>double</strong> — 8-byte floating point.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">B</div><div class="qp-qtext">Compute <code>abs(5 + 12i)</code>.</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>√(5²+12²) = √169 = 13.</strong></div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">C</div><div class="qp-qtext">Which holds a wider range of values: <code>single</code> or <code>double</code>?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>double</strong> (up to ~1.8×10³⁰⁸ vs ~3.4×10³⁸ for single), with more precision too.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">D</div><div class="qp-qtext">Why should you avoid <code>if x == 0.3</code> when <code>x = 0.1 + 0.2</code>?</div><div class="qp-arrow">▶</div></div><div class="qp-ans">Floating-point rounding means <code>0.1+0.2</code> is 0.30000…004, not exactly 0.3, so the test fails. Compare with a tolerance: <code>abs(x-0.3) &lt; 1e-9</code>.</div></div>
+        </div>
+      </div>
+
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('env')">← Topic 1</button><button class="pnav-btn next" onclick="goTo('vars')">Topic 3: Variables &amp; Assignment →</button></div>
+    </div>
+
+    <!-- TOPIC 3 -->
+    <div class="page" id="page-vars">
+      <div class="page-hero">
+        <div class="hero-label">Topic 3 · Week 2</div>
+        <div class="hero-title">Variables &amp; Assignment</div>
+        <div class="hero-sub">Naming, storing and converting values</div>
+      </div>
+      <div class="motiv">A <strong>variable</strong> is a named box that holds a value. The <code>=</code> sign is <em>not</em> "equals" — it is <strong>assignment</strong>: "take the value on the right and store it in the name on the left." Good variable names make a program readable; understanding type and casting prevents silent errors.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">Assignment and naming rules</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="code"><span class="nm">speed = 60</span><span class="nm">;</span>      <span class="cm">% store 60 in 'speed'</span>
+<span class="nm">speed = speed + 5</span><span class="nm">;</span>  <span class="cm">% read 60, add 5, store 65 back</span></div>
+          <p><strong>Naming rules:</strong></p>
+          <div class="steps">
+            <div class="step-item"><div class="sn">1</div><div class="st">Must start with a <strong>letter</strong>.</div></div>
+            <div class="step-item"><div class="sn">2</div><div class="st">May contain letters, digits and underscores — <strong>no spaces or symbols</strong>.</div></div>
+            <div class="step-item"><div class="sn">3</div><div class="st"><strong>Case-sensitive</strong>: <code>Speed</code>, <code>speed</code> and <code>SPEED</code> are three different variables.</div></div>
+            <div class="step-item"><div class="sn">4</div><div class="st">Avoid overwriting built-ins like <code>pi</code>, <code>sin</code>, <code>i</code>.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Checking and changing type</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>Use <code>class()</code> to ask "what type is this?" and a cast function to convert.</p>
+          <div class="code"><span class="nm">x = 7.9</span><span class="nm">;</span>
+<span class="fn">class</span>(x)        <span class="cm">% 'double'</span>
+y = <span class="fn">int32</span>(x)<span class="nm">;</span>   <span class="cm">% cast → rounds to 8 (NOT 7!)</span>
+<span class="fn">class</span>(y)        <span class="cm">% 'int32'</span></div>
+          <div class="callout c-warn"><strong>Watch out:</strong> casting a float to an integer <em>rounds to nearest</em>, it does not truncate. <code>int32(7.9)</code> is 8. Use <code>floor</code>, <code>ceil</code> or <code>fix</code> if you want a specific rounding direction.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-e">Example</span><span class="dpen-ht">Worked example — swapping two values</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="worked">
+            <div class="worked-lbl">Example — Swap a and b</div>
+            <p>Given <code>a = 3</code>, <code>b = 8</code>, swap their values using a temporary variable.</p>
+            <div class="code"><span class="nm">temp = a</span><span class="nm">;</span>   <span class="cm">% temp = 3</span>
+<span class="nm">a = b</span><span class="nm">;</span>      <span class="cm">% a = 8</span>
+<span class="nm">b = temp</span><span class="nm">;</span>   <span class="cm">% b = 3</span></div>
+            <div class="ans-box"><span class="ans-lbl">ANSWER</span> a = 8, b = 3</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice — Topic 3</span><span class="qp-sub">Click to reveal</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">A</div><div class="qp-qtext">In <code>n = n + 1</code>, what does <code>=</code> mean?</div><div class="qp-arrow">▶</div></div><div class="qp-ans">It is <strong>assignment</strong>: evaluate the right side (<code>n+1</code>) and store it back into <code>n</code>. Not a mathematical equation.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">B</div><div class="qp-qtext">Are <code>Total</code> and <code>total</code> the same variable?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>No</strong> — MATLAB is case-sensitive, so they are two separate variables.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">C</div><div class="qp-qtext">What does <code>int32(4.6)</code> give?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>5</strong> — casting to integer rounds to nearest, not truncate.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">D</div><div class="qp-qtext">Which function tells you the type of a variable?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>class(x)</code> — e.g. returns <code>'double'</code> or <code>'int8'</code>.</div></div>
+        </div>
+      </div>
+
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('datatypes')">← Topic 2</button><button class="pnav-btn next" onclick="goTo('operators')">Topic 4: Operators &amp; Expressions →</button></div>
+    </div>
+
+    <!-- TOPIC 4 -->
+    <div class="page" id="page-operators">
+      <div class="page-hero">
+        <div class="hero-label">Topic 4 · Week 2</div>
+        <div class="hero-title">Operators &amp; Expressions</div>
+        <div class="hero-sub">Arithmetic, precedence, and the all-important element-wise dot operators</div>
+      </div>
+      <div class="motiv">Operators are the verbs of MATLAB. The big idea — and the #1 source of beginner bugs — is the difference between <strong>matrix</strong> operations (<code>*</code> <code>/</code> <code>^</code>) and <strong>element-wise</strong> operations (<code>.*</code> <code>./</code> <code>.^</code>). When working with whole arrays, you almost always want the dotted versions.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">Scalar arithmetic operators</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <table class="dtbl">
+            <thead><tr><th>Operator</th><th>Operation</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><code>+</code></td><td>Addition</td><td><code>5 + 2</code> → 7</td></tr>
+              <tr><td><code>-</code></td><td>Subtraction</td><td><code>5 - 2</code> → 3</td></tr>
+              <tr><td><code>*</code></td><td>Multiplication</td><td><code>5 * 2</code> → 10</td></tr>
+              <tr><td><code>/</code></td><td>Division</td><td><code>5 / 2</code> → 2.5</td></tr>
+              <tr><td><code>^</code></td><td>Power</td><td><code>5 ^ 2</code> → 25</td></tr>
+              <tr><td><code>\</code></td><td>Left division</td><td><code>5 \ 10</code> → 2</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Operator precedence (order of operations)</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>MATLAB follows standard maths precedence:</p>
+          <div class="mb">\[ \text{( )} \;\to\; \text{power} \;\to\; \times,\, / \;\to\; +,\, - \]</div>
+          <div class="code"><span class="nm">2 + 3 * 4</span>      <span class="cm">% = 14  (× before +)</span>
+(2 + 3) * 4    <span class="cm">% = 20  (brackets first)</span>
+2 ^ 3 ^ 2      <span class="cm">% = 64 ... power is left-to-right here</span></div>
+          <div class="callout c-info"><strong>Tip:</strong> when in doubt, add brackets. They cost nothing and make intent obvious.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Element-wise (dot) operators — the key idea</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>When you operate on whole arrays, the dot tells MATLAB to act <strong>element-by-element</strong> rather than as matrix algebra.</p>
+          <table class="dtbl">
+            <thead><tr><th>Element-wise</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>.*</code></td><td>Multiply matching elements</td></tr>
+              <tr><td><code>./</code></td><td>Divide matching elements</td></tr>
+              <tr><td><code>.\</code></td><td>Left divide element-wise</td></tr>
+              <tr><td><code>.^</code></td><td>Raise each element to a power</td></tr>
+            </tbody>
+          </table>
+          <div class="code"><span class="nm">a = [1 2 3]</span><span class="nm">;</span>
+<span class="nm">b = [4 5 6]</span><span class="nm">;</span>
+a .* b        <span class="cm">% [4 10 18]  element-by-element</span>
+a .^ 2        <span class="cm">% [1 4 9]    square each element</span>
+a * b         <span class="cm">% ERROR — inner dimensions must match</span></div>
+          <div class="callout c-warn"><strong>The classic exam trap:</strong> to square every element of a vector, you need <code>a.^2</code>. Writing <code>a^2</code> attempts matrix power and errors on a non-square array.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-e">Example</span><span class="dpen-ht">Worked example — evaluating an expression</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="worked">
+            <div class="worked-lbl">Example — Evaluate by precedence</div>
+            <p>What is <code>10 - 2 ^ 2 * 3</code>?</p>
+            <div class="steps">
+              <div class="step-item"><div class="sn">1</div><div class="st">Power first: <code>2^2 = 4</code> → <code>10 - 4 * 3</code>.</div></div>
+              <div class="step-item"><div class="sn">2</div><div class="st">Multiply: <code>4 * 3 = 12</code> → <code>10 - 12</code>.</div></div>
+              <div class="step-item"><div class="sn">3</div><div class="st">Subtract: <code>10 - 12 = -2</code>.</div></div>
+            </div>
+            <div class="ans-box"><span class="ans-lbl">ANSWER</span> −2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice — Topic 4</span><span class="qp-sub">Click to reveal</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">A</div><div class="qp-qtext">Evaluate <code>6 + 4 / 2</code>.</div><div class="qp-arrow">▶</div></div><div class="qp-ans">Division first: <code>4/2 = 2</code>, then <code>6 + 2 = </code><strong>8</strong>.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">B</div><div class="qp-qtext">For <code>v = [2 4 6]</code>, what gives <code>[4 16 36]</code>?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong><code>v.^2</code></strong> — the element-wise power operator squares each element.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">C</div><div class="qp-qtext">Why does <code>[1 2 3] * [4 5 6]</code> error?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>*</code> is matrix multiplication; two row vectors have mismatched inner dimensions. Use <code>.*</code> for element-wise.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">D</div><div class="qp-qtext">Evaluate <code>(8 - 3) * 2 ^ 2</code>.</div><div class="qp-arrow">▶</div></div><div class="qp-ans">Brackets: <code>5</code>; power: <code>2^2=4</code>; then <code>5*4 = </code><strong>20</strong>.</div></div>
+        </div>
+      </div>
+
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('vars')">← Topic 3</button><button class="pnav-btn next" onclick="goTo('logical')">Topic 5: Logical &amp; Relational Values →</button></div>
+    </div>
+
+    <!-- TOPIC 5 -->
+    <div class="page" id="page-logical">
+      <div class="page-hero">
+        <div class="hero-label">Topic 5 · Week 2</div>
+        <div class="hero-title">Logical &amp; Relational Values</div>
+        <div class="hero-sub">true, false, and the operators that produce them</div>
+      </div>
+      <div class="motiv">Every decision a program makes — every <code>if</code> and every <code>while</code> in Guide 2 — boils down to a single <strong>logical</strong> value: <strong>true (1)</strong> or <strong>false (0)</strong>. Relational operators compare values to produce logicals; logical operators combine them. Master this and control flow becomes easy.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">Logical values</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>A <code>logical</code> is the simplest type: it is either <strong>true</strong> (displayed as 1) or <strong>false</strong> (displayed as 0). In arithmetic, true behaves as 1 and false as 0.</p>
+          <div class="code"><span class="kw">true</span> + <span class="kw">true</span>     <span class="cm">% = 2  (1 + 1)</span>
+<span class="fn">sum</span>([1 0 1 1 0])  <span class="cm">% = 3  (counts the trues)</span></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">Relational operators</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <table class="dtbl">
+            <thead><tr><th>Operator</th><th>Meaning</th><th>Example → result</th></tr></thead>
+            <tbody>
+              <tr><td><code>==</code></td><td>Equal to</td><td><code>3 == 3</code> → 1</td></tr>
+              <tr><td><code>~=</code></td><td>Not equal to</td><td><code>3 ~= 4</code> → 1</td></tr>
+              <tr><td><code>&lt;</code></td><td>Less than</td><td><code>2 &lt; 5</code> → 1</td></tr>
+              <tr><td><code>&gt;</code></td><td>Greater than</td><td><code>2 &gt; 5</code> → 0</td></tr>
+              <tr><td><code>&lt;=</code></td><td>Less than or equal</td><td><code>5 &lt;= 5</code> → 1</td></tr>
+              <tr><td><code>&gt;=</code></td><td>Greater than or equal</td><td><code>4 &gt;= 5</code> → 0</td></tr>
+            </tbody>
+          </table>
+          <div class="callout c-warn"><strong>Watch out:</strong> <code>=</code> is assignment, <code>==</code> is comparison. Writing <code>if x = 5</code> is an error; you mean <code>if x == 5</code>.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Logical operators &amp; short-circuiting</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <table class="dtbl">
+            <thead><tr><th>Operator</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>&amp;&amp;</code></td><td>AND (scalar, short-circuit)</td></tr>
+              <tr><td><code>||</code></td><td>OR (scalar, short-circuit)</td></tr>
+              <tr><td><code>~</code></td><td>NOT</td></tr>
+              <tr><td><code>&amp; / |</code></td><td>Element-wise AND / OR (for arrays)</td></tr>
+            </tbody>
+          </table>
+          <p><strong>Short-circuit</strong> means MATLAB stops as soon as the answer is known:</p>
+          <div class="code"><span class="cm">% If x is 0, never evaluate 1/x → avoids divide error</span>
+<span class="kw">if</span> x ~= 0 &amp;&amp; 1/x &gt; 2
+    ...
+<span class="kw">end</span></div>
+          <div class="callout c-info"><strong>Truth tables:</strong> AND is true only if both are true; OR is true if at least one is true; NOT flips the value.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-e">Example</span><span class="dpen-ht">Worked example — combining conditions</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="worked">
+            <div class="worked-lbl">Example — Evaluate a logical expression</div>
+            <p>Given <code>age = 20</code>, evaluate <code>(age &gt;= 18) &amp;&amp; (age &lt; 65)</code>.</p>
+            <div class="steps">
+              <div class="step-item"><div class="sn">1</div><div class="st"><code>age &gt;= 18</code> → <code>20 &gt;= 18</code> → true (1).</div></div>
+              <div class="step-item"><div class="sn">2</div><div class="st"><code>age &lt; 65</code> → <code>20 &lt; 65</code> → true (1).</div></div>
+              <div class="step-item"><div class="sn">3</div><div class="st"><code>true &amp;&amp; true</code> → true (1).</div></div>
+            </div>
+            <div class="ans-box"><span class="ans-lbl">ANSWER</span> 1 (true)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice — Topic 5</span><span class="qp-sub">Click to reveal</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">A</div><div class="qp-qtext">What does <code>5 ~= 5</code> return?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>0 (false)</strong> — 5 <em>is</em> equal to 5, so "not equal" is false.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">B</div><div class="qp-qtext">Evaluate <code>(3 &gt; 2) || (10 &lt; 1)</code>.</div><div class="qp-arrow">▶</div></div><div class="qp-ans">true OR false → <strong>1 (true)</strong>. OR needs only one true.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">C</div><div class="qp-qtext">Why use <code>&amp;&amp;</code> rather than <code>&amp;</code> in an <code>if</code>?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>&amp;&amp;</code> short-circuits: if the first part is false it skips the second, which is faster and prevents errors (e.g. avoiding a divide-by-zero).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">D</div><div class="qp-qtext">What is <code>sum([1 0 0 1 1])</code> and why is it useful?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>3</strong> — since true=1, summing a logical array <em>counts</em> how many elements are true.</div></div>
+        </div>
+      </div>
+
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('operators')">← Topic 4</button><button class="pnav-btn next" onclick="goTo('strings')">Topic 6: Strings &amp; Characters →</button></div>
+    </div>
+
+    <!-- TOPIC 6 -->
+    <div class="page" id="page-strings">
+      <div class="page-hero">
+        <div class="hero-label">Topic 6 · Week 2</div>
+        <div class="hero-title">Strings &amp; Characters</div>
+        <div class="hero-sub">Storing and manipulating text</div>
+      </div>
+      <div class="motiv">Programs do not only crunch numbers — they label outputs, read filenames and build messages. MATLAB has two text types: the older <strong>char array</strong> (single quotes) and the modern <strong>string</strong> (double quotes). Knowing how to join text and convert between numbers and text is essential for readable output.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">char vs string</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="code"><span class="nm">c = </span><span class="st">'hello'</span><span class="nm">;</span>   <span class="cm">% char array (single quotes)</span>
+<span class="nm">s = </span><span class="st">"hello"</span><span class="nm">;</span>   <span class="cm">% string (double quotes, newer)</span>
+<span class="fn">class</span>(c)        <span class="cm">% 'char'</span>
+<span class="fn">class</span>(s)        <span class="cm">% 'string'</span></div>
+          <p>A char array is really a row of characters — <code>c(1)</code> is <code>'h'</code>. Strings are more convenient for whole-text operations.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Joining and converting text</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <table class="dtbl">
+            <thead><tr><th>Task</th><th>Function</th></tr></thead>
+            <tbody>
+              <tr><td>Join char arrays</td><td><code>strcat('a','b')</code> or <code>['a' 'b']</code></td></tr>
+              <tr><td>Number → text</td><td><code>num2str(42)</code> → '42'</td></tr>
+              <tr><td>Text → number</td><td><code>str2num('42')</code> → 42</td></tr>
+              <tr><td>Length of text</td><td><code>length(c)</code> or <code>strlength(s)</code></td></tr>
+              <tr><td>Formatted print</td><td><code>fprintf('x = %d\n', x)</code></td></tr>
+            </tbody>
+          </table>
+          <div class="code"><span class="nm">name = </span><span class="st">'Sid'</span><span class="nm">;</span>
+<span class="nm">msg = [</span><span class="st">'Hello '</span><span class="nm">, name]</span><span class="nm">;</span>   <span class="cm">% 'Hello Sid'</span>
+<span class="fn">fprintf</span>(<span class="st">'Area = %.2f m^2\n'</span>, 78.539)<span class="nm">;</span>  <span class="cm">% Area = 78.54 m^2</span></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-e">Example</span><span class="dpen-ht">Worked example — building output</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="worked">
+            <div class="worked-lbl">Example — Report a result as a sentence</div>
+            <p>You have <code>r = 5</code> and <code>area = 78.54</code>. Print "Circle radius 5 has area 78.54".</p>
+            <div class="code"><span class="fn">fprintf</span>(<span class="st">'Circle radius %d has area %.2f\n'</span>, r, area)<span class="nm">;</span></div>
+            <div class="ans-box"><span class="ans-lbl">OUTPUT</span> Circle radius 5 has area 78.54</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice — Topic 6</span><span class="qp-sub">Click to reveal</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">A</div><div class="qp-qtext">What is the class of <code>'cat'</code> (single quotes)?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>char</strong> — single quotes create a char array. Double quotes create a <code>string</code>.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">B</div><div class="qp-qtext">How do you turn the number 7 into the text '7'?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>num2str(7)</code>. The reverse is <code>str2num('7')</code>.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">C</div><div class="qp-qtext">What does <code>['Eng' 'g100']</code> produce?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>'Engg100'</strong> — square brackets concatenate char arrays.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">D</div><div class="qp-qtext">In <code>fprintf</code>, what do <code>%d</code> and <code>%.2f</code> mean?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>%d</code> inserts an integer; <code>%.2f</code> inserts a floating-point number with 2 decimal places.</div></div>
+        </div>
+      </div>
+
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('logical')">← Topic 5</button><a class="pnav-btn next" href="guide2-control-functions.html">Guide 2: Control Flow &amp; Functions →</a></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PAGES=['home','env','datatypes','vars','operators','logical','strings'];
+const NAMES={home:'Overview',env:'1. MATLAB Environment',datatypes:'2. Data Types & Numbers',vars:'3. Variables & Assignment',operators:'4. Operators & Expressions',logical:'5. Logical & Relational',strings:'6. Strings & Characters'};
+let visited=new Set(['home']);
+function goTo(id){
+  try{
+    const targetPage=document.getElementById('page-'+id);
+    if(!targetPage){alert('Page not found: '+id);return;}
+    PAGES.forEach(p=>{const pg=document.getElementById('page-'+p);if(pg)pg.classList.remove('active');});
+    targetPage.classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l=>{if(l.getAttribute('onclick')&&l.getAttribute('onclick').includes("'"+id+"'"))l.classList.add('active');});
+    const bc=document.getElementById('bc');if(bc)bc.textContent=NAMES[id]||id;
+    visited.add(id);
+    const pf=document.getElementById('pf');if(pf)pf.style.width=Math.round(visited.size/PAGES.length*100)+'%';
+    window.scrollTo(0,0);
+    setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(targetPage,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},50);
+  }catch(e){alert('Error navigating to '+id+': '+e.message);}
+}
+function td(h){const b=h.nextElementSibling,c=h.querySelector('.dpen-ch'),o=b.classList.contains('open');b.classList.toggle('open',!o);c.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(b,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
+function tqp(h){const a=h.nextElementSibling,arr=h.querySelector('.qp-arrow'),o=a.classList.contains('open');a.classList.toggle('open',!o);arr.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(a,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
+function expandAll(){const ap=document.querySelector('.page.active');ap.querySelectorAll('.dpen-bd:not(.open)').forEach(b=>{b.classList.add('open');b.previousElementSibling.querySelector('.dpen-ch').classList.add('open');});ap.querySelectorAll('.qp-ans:not(.open)').forEach(b=>{b.classList.add('open');b.previousElementSibling.querySelector('.qp-arrow').classList.add('open');});setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.querySelector('.page.active'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
+document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},300);});
+</script>
+</body>
+</html>
