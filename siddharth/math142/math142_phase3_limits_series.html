@@ -1,0 +1,2461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATH142 Phase 3 — Limits &amp; Series</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B3A5C;
+  --navy-lt: #1e4570;
+  --orange: #FF3621;
+  --blue-lt: #E6F1FB;
+  --blue-mid: #185FA5;
+  --amber-lt: #FAEEDA;
+  --amber-dk: #7A4800;
+  --green-lt: #E1F5EE;
+  --green-dk: #0a5c3f;
+  --coral-lt: #FAECE7;
+  --coral-dk: #8a2f1a;
+  --grey-lt: #F6F5F2;
+  --grey-md: #e8e6e0;
+  --grey-dk: #3a3835;
+  --text: #2c2a28;
+  --text-muted: #6b6762;
+  --sidebar-w: 260px;
+  --content-max: 760px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #fafaf8;
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.3;
+}
+.sidebar-brand-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+.progress-wrap {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.progress-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.nav-section {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  padding: 6px 20px 4px;
+  text-transform: uppercase;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-link:hover { color: white; background: rgba(255,255,255,0.06); }
+.nav-link.active { color: white; background: rgba(255,255,255,0.1); border-left: 2px solid var(--orange); padding-left: 18px; }
+.nav-num {
+  font-size: 10px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.nav-link.active .nav-num { background: var(--orange); color: white; }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--grey-md);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-breadcrumb {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.topbar-breadcrumb span {
+  color: var(--navy);
+  font-weight: 500;
+}
+.topbar-btns {
+  display: flex;
+  gap: 8px;
+}
+.tb-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.tb-btn:hover { border-color: var(--navy); color: var(--navy); }
+.tb-btn.primary { background: var(--navy); color: white; border-color: var(--navy); }
+.tb-btn.primary:hover { background: var(--navy-lt); }
+
+.content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+/* ── HERO ── */
+.page-hero {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--grey-md);
+}
+.page-hero-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--orange);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.page-hero-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.page-hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── MOTIVATION BOX ── */
+.motiv {
+  background: var(--blue-lt);
+  border-left: 3px solid var(--blue-mid);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #0d3d73;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.motiv strong { font-weight: 500; }
+
+/* ── DPEN SECTIONS ── */
+.dpen-block {
+  margin-bottom: 12px;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dpen-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+  transition: background 0.15s;
+}
+.dpen-header:hover { background: var(--grey-lt); }
+.dpen-pill {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.pill-d { background: var(--blue-lt); color: var(--blue-mid); }
+.pill-p { background: var(--amber-lt); color: var(--amber-dk); }
+.pill-e { background: var(--green-lt); color: var(--green-dk); }
+.pill-n { background: var(--coral-lt); color: var(--coral-dk); }
+.dpen-header-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+}
+.dpen-chevron {
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.dpen-chevron.open { transform: rotate(90deg); }
+.dpen-body {
+  display: none;
+  padding: 18px 20px 20px;
+  border-top: 1px solid var(--grey-md);
+  background: var(--grey-lt);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+}
+.dpen-body.open { display: block; }
+.dpen-body p { margin-bottom: 10px; }
+.dpen-body p:last-child { margin-bottom: 0; }
+
+/* ── MATH ── */
+.math-block {
+  text-align: center;
+  margin: 14px 0;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  overflow-x: auto;
+}
+.math-inline { font-style: italic; }
+
+/* ── STEPS ── */
+.step-list { margin: 10px 0; }
+.step-item {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+  align-items: flex-start;
+}
+.step-num-badge {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--blue-lt);
+  color: var(--blue-mid);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-text { flex: 1; font-size: 14px; line-height: 1.7; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.callout-warn { background: var(--amber-lt); border-left: 3px solid #EF9F27; color: var(--amber-dk); }
+.callout-info { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout-success { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout strong { font-weight: 500; }
+
+/* ── WORKED EXAMPLES ── */
+.worked {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+.worked-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.answer-box {
+  background: var(--navy);
+  color: white;
+  border-radius: 6px;
+  padding: 9px 14px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.answer-label {
+  font-size: 10px;
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 10px 0;
+}
+.data-table th {
+  background: var(--navy);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+}
+.data-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-md);
+  color: var(--text);
+}
+.data-table tr:nth-child(even) td { background: white; }
+.data-table tr:nth-child(odd) td { background: var(--grey-lt); }
+.data-table th:first-child { border-radius: 6px 0 0 0; }
+.data-table th:last-child { border-radius: 0 6px 0 0; }
+
+/* ── PRACTICE QUESTIONS ── */
+.level-divider {
+  margin: 36px 0 16px;
+  padding: 14px 18px;
+  background: var(--navy);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.level-badge {
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--orange);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.level-info { flex: 1; }
+.level-title { font-size: 15px; font-weight: 500; color: white; }
+.level-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+.q-card {
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.q-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: white;
+  transition: background 0.15s;
+}
+.q-head:hover { background: var(--grey-lt); }
+.q-num {
+  background: var(--navy);
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.q-text { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.5; }
+.q-hint { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 400; }
+.q-arrow { color: var(--text-muted); font-size: 11px; transition: transform 0.2s; margin-top: 4px; flex-shrink: 0; }
+.q-arrow.open { transform: rotate(90deg); }
+.q-body {
+  display: none;
+  background: var(--grey-lt);
+  border-top: 1px solid var(--grey-md);
+  padding: 18px 20px;
+}
+.q-body.open { display: block; }
+.q-attempt {
+  background: white;
+  border: 1px dashed var(--grey-md);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+.sol-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+/* ── HOME PAGE ── */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 24px 0;
+}
+.home-card {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.home-card:hover { border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.home-card-num { font-size: 11px; color: var(--orange); font-weight: 500; margin-bottom: 4px; }
+.home-card-title { font-family: 'Crimson Pro', serif; font-size: 18px; color: var(--navy); margin-bottom: 4px; }
+.home-card-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.home-chain {
+  background: var(--navy);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 24px 0;
+  color: white;
+}
+.home-chain-title { font-size: 12px; letter-spacing: 0.06em; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+.chain-items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chain-item {
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: white;
+}
+.chain-arrow { color: var(--orange); font-size: 14px; }
+.home-tip {
+  background: var(--amber-lt);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--amber-dk);
+  line-height: 1.65;
+  margin-top: 16px;
+}
+
+/* ── UNI BRIDGE (extra block type for this guide) ── */
+.bridge {
+  background: #FFF6E9;
+  border: 1px dashed #E0A23A;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #6b4a10;
+}
+.bridge-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: #b5791a;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* ── PAGE NAV ── */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--grey-md);
+}
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.page-nav-btn:hover { border-color: var(--navy); color: var(--navy); }
+.page-nav-btn.next { background: var(--navy); color: white; border-color: var(--navy); }
+.page-nav-btn.next:hover { background: var(--navy-lt); }
+.page-nav-btn.ghost { visibility: hidden; }
+
+/* ── SCROLLBAR ── */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .content { padding: 24px 20px 60px; }
+  .home-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">MATH142 — Phase 3</div>
+    <div class="sidebar-brand-sub">Limits &amp; Series · Weeks 10&ndash;12</div>
+  </div>
+  <div class="progress-wrap"><div class="progress-label">YOUR PROGRESS</div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+  <div class="nav-section"><div class="nav-section-label">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">&uarr;</span> Start here</button></div>
+  <div class="nav-section"><div class="nav-section-label">Week 10 &ndash; Limits Revisited</div>
+    <button class="nav-link" onclick="goTo('limreview')"><span class="nav-num">W10</span> Limits Review &amp; Indeterminate Forms</button>
+    <button class="nav-link" onclick="goTo('lhopital')"><span class="nav-num">W10</span> L'Hopital's Rule</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 11 &ndash; Sequences &amp; Series</div>
+    <button class="nav-link" onclick="goTo('sequences')"><span class="nav-num">W11</span> Sequences — Convergence &amp; Limit Laws</button>
+    <button class="nav-link" onclick="goTo('seriesbasic')"><span class="nav-num">W11</span> Series — Definition, Geometric Series &amp; the Divergence/Integral Tests</button>
+    <button class="nav-link" onclick="goTo('seriescomp')"><span class="nav-num">W11</span> Series — Comparison &amp; Limit Comparison Tests</button>
+    <button class="nav-link" onclick="goTo('seriesratio')"><span class="nav-num">W11</span> Series — Ratio &amp; Root Tests</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 12 &ndash; Taylor &amp; Maclaurin Series</div>
+    <button class="nav-link" onclick="goTo('powerseries')"><span class="nav-num">W12</span> Power Series &amp; Taylor Polynomials</button>
+    <button class="nav-link" onclick="goTo('taylorseries')"><span class="nav-num">W12</span> Taylor &amp; Maclaurin Series — Common Expansions &amp; Applications</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 13</div>
+    <button class="nav-link" onclick="goTo('exam2')"><span class="nav-num">&#9998;</span> In-Session Exam 2</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Practice</div>
+    <button class="nav-link" onclick="goTo('practice')"><span class="nav-num">&#9998;</span> Practice Questions (80)</button></div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">MATH142 Phase 3 &nbsp;&rsaquo;&nbsp; <span id="breadcrumbPage">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand all</button>
+      <button class="tb-btn primary" onclick="goTo('practice')">Practice &rarr;</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <div class="page active" id="page-home">
+      <div class="page-hero">
+        <div class="page-hero-label">MATH142 &middot; Phase 3 of 4</div>
+        <div class="page-hero-title">Limits &amp; Series,<br>Weeks 10&ndash;12</div>
+        <div class="page-hero-sub">Covers the MATH142 tracker's Weeks 10&ndash;12 and Strand 2 of the subject outline: revision of limits and indeterminate forms, L'Hôpital's Rule, sequences, series convergence tests (divergence, integral, comparison, limit comparison, ratio, root), and Taylor/Maclaurin series. This is exactly the material covered by In-Session Exam 2 (alongside Phase 2's differential equations).</div>
+      </div>
+
+      <div class="home-chain">
+        <div class="home-chain-title">THE CHAIN OF IDEAS</div>
+        <div class="chain-items">
+          <div class="chain-item">Limits Review &amp; Indeterminate Forms</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">L'Hopital's Rule</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Sequences — Convergence &amp; Limit Laws</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Series — Definition, Geometric Series &amp; the Divergence/Integral Tests</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Series — Comparison &amp; Limit Comparison Tests</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Series — Ratio &amp; Root Tests</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Power Series &amp; Taylor Polynomials</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Taylor &amp; Maclaurin Series — Common Expansions &amp; Applications</div>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <div class="home-card" onclick="goTo('limreview')">
+          <div class="home-card-num">W10</div>
+          <div class="home-card-title">Limits Review &amp; Indeterminate Forms</div>
+          <div class="home-card-sub">Recognising when direct substitution genuinely fails</div>
+        </div>
+        <div class="home-card" onclick="goTo('lhopital')">
+          <div class="home-card-num">W10</div>
+          <div class="home-card-title">L'Hopital's Rule</div>
+          <div class="home-card-sub">A calculus shortcut for resolving 0/0 and ∞/∞ limits directly</div>
+        </div>
+        <div class="home-card" onclick="goTo('sequences')">
+          <div class="home-card-num">W11</div>
+          <div class="home-card-title">Sequences — Convergence &amp; Limit Laws</div>
+          <div class="home-card-sub">A function with only whole-number inputs, and what "approaching a value" means for one</div>
+        </div>
+        <div class="home-card" onclick="goTo('seriesbasic')">
+          <div class="home-card-num">W11</div>
+          <div class="home-card-title">Series — Definition, Geometric Series &amp; the Divergence/Integral Tests</div>
+          <div class="home-card-sub">Summing infinitely many terms, and the first two tools for deciding if that sum makes sense</div>
+        </div>
+        <div class="home-card" onclick="goTo('seriescomp')">
+          <div class="home-card-num">W11</div>
+          <div class="home-card-title">Series — Comparison &amp; Limit Comparison Tests</div>
+          <div class="home-card-sub">Deciding convergence by comparing an unfamiliar series to a known one</div>
+        </div>
+        <div class="home-card" onclick="goTo('seriesratio')">
+          <div class="home-card-num">W11</div>
+          <div class="home-card-title">Series — Ratio &amp; Root Tests</div>
+          <div class="home-card-sub">Tools built specifically for series with factorials, powers, or exponentials</div>
+        </div>
+        <div class="home-card" onclick="goTo('powerseries')">
+          <div class="home-card-num">W12</div>
+          <div class="home-card-title">Power Series &amp; Taylor Polynomials</div>
+          <div class="home-card-sub">A series with x in it — and the polynomial that best approximates a function near a point</div>
+        </div>
+        <div class="home-card" onclick="goTo('taylorseries')">
+          <div class="home-card-num">W12</div>
+          <div class="home-card-title">Taylor &amp; Maclaurin Series — Common Expansions &amp; Applications</div>
+          <div class="home-card-sub">Letting the Taylor polynomial run to infinity, and using it for approximation</div>
+        </div>
+        <div class="home-card" onclick="goTo('practice')">
+          <div class="home-card-num">PRACTICE</div>
+          <div class="home-card-title">Practice Questions</div>
+          <div class="home-card-sub">80 questions, 10 per topic, fully worked.</div>
+        </div>
+      </div>
+
+      <div class="home-tip">
+        <strong>How to use this guide:</strong> Sequences are the foundation everything else in this phase sits on &mdash; a series is literally defined as the limit of a sequence of partial sums, and Taylor polynomials build directly on derivative rules from Phase 1. The convergence tests (comparison, ratio, root) should be learned as a toolkit: try the Divergence Test first, then match the series' shape to the most natural remaining test.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn ghost">&larr;</button>
+        <button class="page-nav-btn next" onclick="goTo('limreview')">W10: Limits Review &amp; Indeterminate Forms &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-limreview">
+      <div class="page-hero">
+        <div class="page-hero-label">W10</div>
+        <div class="page-hero-title">Limits Review &amp; Indeterminate Forms</div>
+        <div class="page-hero-sub">Recognising when direct substitution genuinely fails</div>
+      </div>
+      <div class="motiv">Direct substitution answers most limits instantly. The interesting cases are the ones where substitution produces a meaningless expression like $\dfrac{0}{0}$ — not because the limit doesn't exist, but because the algebra needs more work before an answer appears.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>What "indeterminate" actually means.</strong> Forms like $\dfrac00$ or $\dfrac{\infty}{\infty}$ don't have a single, fixed value — depending on the specific functions involved, a limit that substitutes to $\dfrac00$ could equal literally any number, or not exist at all. (Contrast this with $\dfrac{5}{0}$, which unambiguously signals a vertical asymptote or divergence — that form isn't indeterminate.)</p>
+  <p><strong>The seven indeterminate forms.</strong> $\dfrac00$, $\dfrac{\infty}{\infty}$, $0\cdot\infty$, $\infty-\infty$, $0^0$, $1^\infty$, $\infty^0$ — all of these require extra work (algebraic manipulation or, as in the next topic, L'Hôpital's Rule) before a limit's value can be determined.</p>
+  <p><strong>Techniques already available.</strong> Factor-and-cancel and rationalising (both from MATH141) resolve many $\dfrac00$ limits without needing anything new — always try these first, since they're often faster than L'Hôpital's Rule.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \text{Indeterminate: } \frac00,\ \frac{\infty}{\infty},\ 0\cdot\infty,\ \infty-\infty,\ 0^0,\ 1^\infty,\ \infty^0 \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — resolve via factoring (no new technique needed)</div><p>Evaluate $\displaystyle\lim_{x\to2}\dfrac{x^2-4}{x-2}$.</p>
+  <p>Direct substitution gives $\dfrac{0}{0}$ — indeterminate, but factoring resolves it immediately.</p>
+  <div class="math-block">\[ \lim_{x\to2}\frac{(x-2)(x+2)}{x-2}=\lim_{x\to2}(x+2)=4 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $4$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — recognising $\infty-\infty$</div><p>Identify the indeterminate form in $\displaystyle\lim_{x\to\infty}\left(\sqrt{x^2+x}-x\right)$, without evaluating yet.</p>
+  <p>As $x\to\infty$, both $\sqrt{x^2+x}\to\infty$ and $x\to\infty$, so direct substitution gives $\infty-\infty$ — indeterminate, since neither term "wins" without more information about their relative growth rates.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\infty-\infty$ (would resolve via rationalising: multiply by the conjugate)</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Before reaching for L'Hôpital's Rule (next topic), always check whether an old MATH141 technique — factoring, rationalising, or a known standard limit — resolves the problem faster. L'Hôpital's Rule is powerful but not always the fastest route.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('home')">&larr; Overview</button>
+        <button class="page-nav-btn next" onclick="goTo('lhopital')">W10: L'Hopital's Rule &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-lhopital">
+      <div class="page-hero">
+        <div class="page-hero-label">W10</div>
+        <div class="page-hero-title">L'Hopital's Rule</div>
+        <div class="page-hero-sub">A calculus shortcut for resolving 0/0 and ∞/∞ limits directly</div>
+      </div>
+      <div class="motiv">Factoring and rationalising work for simple algebraic indeterminate forms, but they fail for limits mixing transcendental functions, like $\lim_{x\to0}\dfrac{\sin x}{x}$ or $\lim_{x\to\infty}\dfrac{\ln x}{x}$. L'Hôpital's Rule handles these — and everything else in $\frac00$ or $\frac{\infty}{\infty}$ form — with a single, remarkably simple trick: differentiate the top and bottom separately.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The rule.</strong> If $\lim_{x\to a}\dfrac{f(x)}{g(x)}$ produces the indeterminate form $\dfrac00$ or $\dfrac{\infty}{\infty}$, and $f,g$ are differentiable near $a$ with $g'(x)\ne0$, then:</p>
+  <div class="math-block">\[ \lim_{x\to a}\frac{f(x)}{g(x)} = \lim_{x\to a}\frac{f'(x)}{g'(x)} \]</div>
+  <p><em>provided this new limit exists</em> (or is $\pm\infty$). Crucially, this is <strong>not</strong> the quotient rule — you differentiate the numerator and denominator completely separately, not as a single fraction.</p>
+  <p><strong>Repeated application.</strong> If, after one application, the new limit is still indeterminate, apply the rule again (differentiate top and bottom once more) — repeat as many times as needed until the indeterminate form clears.</p>
+  <p><strong>Handling the other five indeterminate forms.</strong> $0\cdot\infty$ and $\infty-\infty$ can usually be algebraically rewritten into $\dfrac00$ or $\dfrac{\infty}{\infty}$ form first (e.g. rewrite $fg$ as $\dfrac{f}{1/g}$). The exponential forms ($0^0$, $1^\infty$, $\infty^0$) are handled by taking a logarithm first — since $\lim y = \lim e^{\ln y}$, and $\ln y$ often converts the exponent into a product, itself reducible to $\dfrac00$ or $\dfrac{\infty}{\infty}$.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \lim_{x\to a}\frac{f(x)}{g(x)} = \lim_{x\to a}\frac{f'(x)}{g'(x)} \qquad \text{(for } \tfrac00 \text{ or } \tfrac{\infty}{\infty} \text{ forms only)} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — basic application</div><p>Evaluate $\displaystyle\lim_{x\to0}\dfrac{\sin x}{x}$ using L'Hôpital's Rule.</p>
+  <p>Direct substitution gives $\dfrac00$.</p>
+  <div class="math-block">\[ \lim_{x\to0}\frac{\sin x}{x} = \lim_{x\to0}\frac{\cos x}{1} = \cos0 = 1 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $1$ (confirms the standard trig limit from MATH141)</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — the $0\cdot\infty$ form, converted first</div><p>Evaluate $\displaystyle\lim_{x\to0^+}x\ln x$.</p>
+  <p>This is $0\cdot(-\infty)$. Rewrite as a quotient: $x\ln x = \dfrac{\ln x}{1/x}$, now $\dfrac{-\infty}{\infty}$ form.</p>
+  <div class="math-block">\[ \lim_{x\to0^+}\frac{\ln x}{1/x} = \lim_{x\to0^+}\frac{1/x}{-1/x^2} = \lim_{x\to0^+}(-x) = 0 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $0$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>L'Hôpital's Rule only applies to genuinely indeterminate forms — applying it to a limit that already has a determinate value (like $\dfrac{5}{0}$, or a limit that doesn't produce $\dfrac00$/$\dfrac{\infty}{\infty}$ at all) gives a wrong answer. Always verify the indeterminate form exists <em>before</em> differentiating, and re-check after every application in case it's resolved.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('limreview')">&larr; W10: Limits Review &amp; Indeterminate Forms</button>
+        <button class="page-nav-btn next" onclick="goTo('sequences')">W11: Sequences — Convergence &amp; Limit Laws &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-sequences">
+      <div class="page-hero">
+        <div class="page-hero-label">W11</div>
+        <div class="page-hero-title">Sequences — Convergence &amp; Limit Laws</div>
+        <div class="page-hero-sub">A function with only whole-number inputs, and what "approaching a value" means for one</div>
+      </div>
+      <div class="motiv">A sequence is really just a function whose domain is restricted to the positive integers — $a_n$ instead of $f(x)$. Every idea about limits already built (algebra of limits, indeterminate forms, L'Hôpital's Rule) transfers almost unchanged, just with $n\to\infty$ replacing $x\to\infty$.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Definition.</strong> A sequence $\{a_n\}$ is an ordered list $a_1,a_2,a_3,\dots$ It <strong>converges</strong> to $L$ if $\lim_{n\to\infty}a_n=L$ — the terms get arbitrarily close to $L$ as $n$ grows. If no such $L$ exists, the sequence <strong>diverges</strong>.</p>
+  <p><strong>Reusing limit laws.</strong> Since a sequence is a special case of a function, the algebra of limits from Week 2 (MATH141) transfers directly: $\lim(a_n+b_n)=\lim a_n+\lim b_n$, and so on. If a sequence's formula matches a continuous function's formula evaluated at integers, its limit can even be found by first solving the corresponding function limit (using L'Hôpital's Rule if needed) and then restricting to integer inputs.</p>
+  <p><strong>Monotonic and bounded sequences.</strong> A sequence is monotonic if it's always increasing or always decreasing; it's bounded if it never exceeds some fixed value (above) or falls below one (below). A key theorem: <em>every bounded, monotonic sequence converges</em> — this gives a way to prove convergence even without finding the exact limit.</p>
+  <p><strong>Squeeze Theorem for sequences.</strong> If $b_n\le a_n\le c_n$ for all $n$, and $\lim b_n=\lim c_n=L$, then $\lim a_n=L$ too — identical in spirit to the Squeeze Theorem for ordinary function limits.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \lim_{n\to\infty}a_n=L \quad\text{(convergence)}, \qquad \text{bounded + monotonic} \implies \text{convergent} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — find a sequence limit</div><p>Determine whether $a_n=\dfrac{2n+1}{n+3}$ converges, and if so, to what.</p>
+  <div class="math-block">\[ \lim_{n\to\infty}\frac{2n+1}{n+3} = \lim_{n\to\infty}\frac{2+1/n}{1+3/n} = 2 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Converges to $2$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — Squeeze Theorem</div><p>Show that $a_n=\dfrac{\sin n}{n}$ converges to $0$.</p>
+  <p>Since $-1\le\sin n\le1$ for every $n$, dividing by $n>0$ gives $-\dfrac1n\le\dfrac{\sin n}{n}\le\dfrac1n$.</p>
+  <div class="math-block">\[ \lim_{n\to\infty}\left(-\frac1n\right)=0=\lim_{n\to\infty}\frac1n \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> By the Squeeze Theorem, $\lim_{n\to\infty}\dfrac{\sin n}{n}=0$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>Sequences are the foundation the next two topics (series and Taylor polynomials) are built entirely on top of — a series is literally defined as the limit of a sequence of partial sums, so every convergence idea here reappears immediately.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('lhopital')">&larr; W10: L'Hopital's Rule</button>
+        <button class="page-nav-btn next" onclick="goTo('seriesbasic')">W11: Series — Definition, Geometric Series &amp; the Divergence/Integral Tests &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-seriesbasic">
+      <div class="page-hero">
+        <div class="page-hero-label">W11</div>
+        <div class="page-hero-title">Series — Definition, Geometric Series &amp; the Divergence/Integral Tests</div>
+        <div class="page-hero-sub">Summing infinitely many terms, and the first two tools for deciding if that sum makes sense</div>
+      </div>
+      <div class="motiv">Adding infinitely many numbers sounds like it should always give infinity — but $\dfrac12+\dfrac14+\dfrac18+\cdots$ visibly approaches $1$, not infinity. A series is defined precisely to capture this: not as "infinite addition" directly, but as the limit of a sequence of ever-longer finite sums.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Defining a series via partial sums.</strong> Given a sequence $\{a_n\}$, the $n$-th <strong>partial sum</strong> is $S_n=a_1+a_2+\cdots+a_n$ — an ordinary finite sum. The infinite series $\sum_{n=1}^\infty a_n$ is <em>defined</em> to equal $\lim_{n\to\infty}S_n$, reusing the sequence-convergence machinery from the previous topic. If that limit exists (is finite), the series <strong>converges</strong>; otherwise it <strong>diverges</strong>.</p>
+  <p><strong>Geometric series — solvable exactly.</strong> $\sum_{n=0}^\infty ar^n$ has a known closed-form partial sum $S_n=a\dfrac{1-r^n}{1-r}$ (provable by the standard "multiply by $r$ and subtract" trick). Taking $n\to\infty$: if $|r|<1$, $r^n\to0$, giving:</p>
+  <div class="math-block">\[ \sum_{n=0}^\infty ar^n = \frac{a}{1-r} \qquad (|r|<1) \]</div>
+  <p>If $|r|\ge1$, the series diverges.</p>
+  <p><strong>The Divergence Test.</strong> If $\lim_{n\to\infty}a_n\ne0$, the series $\sum a_n$ must diverge — this follows because convergent partial sums would require the terms being added to shrink toward zero eventually, or the sum could never settle. <strong>Warning:</strong> the converse is false — $\lim a_n=0$ does NOT guarantee convergence (the harmonic series below is the classic counterexample).</p>
+  <p><strong>The Integral Test.</strong> If $f(x)$ is positive, decreasing, and continuous for $x\ge1$ with $f(n)=a_n$, then $\sum a_n$ converges exactly when $\int_1^\infty f(x)\,dx$ converges — directly reusing the improper integral machinery from Phase 1.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \sum_{n=0}^\infty ar^n=\frac{a}{1-r}\ (|r|<1), \qquad \lim a_n\ne0 \implies \text{diverges}, \qquad \sum a_n \text{ converges} \iff \int_1^\infty f(x)dx \text{ converges} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — geometric series</div><p>Evaluate $\displaystyle\sum_{n=0}^\infty \left(\frac13\right)^n$.</p>
+  <p>$a=1$, $r=\tfrac13$, $|r|<1$.</p>
+  <div class="math-block">\[ \sum_{n=0}^\infty \left(\frac13\right)^n = \frac{1}{1-1/3}=\frac{3}{2} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac32$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — the harmonic series diverges (Integral Test)</div><p>Show $\displaystyle\sum_{n=1}^\infty \frac1n$ diverges, even though $\lim_{n\to\infty}\frac1n=0$.</p>
+  <p>$f(x)=\dfrac1x$ is positive, decreasing, continuous for $x\ge1$.</p>
+  <div class="math-block">\[ \int_1^\infty \frac1x\,dx = \lim_{t\to\infty}[\ln x]_1^t = \infty \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> The integral diverges, so by the Integral Test, the harmonic series diverges too — despite its terms shrinking to zero, confirming the Divergence Test's converse is false</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Always check the Divergence Test first — it's the fastest possible check (just take a limit), and if it shows divergence, you're done immediately without needing any heavier test.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('sequences')">&larr; W11: Sequences — Convergence &amp; Limit Laws</button>
+        <button class="page-nav-btn next" onclick="goTo('seriescomp')">W11: Series — Comparison &amp; Limit Comparison Tests &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-seriescomp">
+      <div class="page-hero">
+        <div class="page-hero-label">W11</div>
+        <div class="page-hero-title">Series — Comparison &amp; Limit Comparison Tests</div>
+        <div class="page-hero-sub">Deciding convergence by comparing an unfamiliar series to a known one</div>
+      </div>
+      <div class="motiv">Not every series matches a geometric or $p$-series pattern exactly, and not every series has an easy antiderivative for the Integral Test. When a series closely resembles a known convergent or divergent series, comparing term-by-term (or via a ratio) often settles the question without any new integration at all.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Direct Comparison Test.</strong> If $0\le a_n\le b_n$ for all $n$ (past some point), then: if $\sum b_n$ converges, so does $\sum a_n$ (it's "squeezed" below a convergent series); if $\sum a_n$ diverges, so does $\sum b_n$ (it "drags up" an already-divergent series). Intuitively: a series bounded above by something finite can't itself blow up, and a series bounded below by something infinite can't stay finite.</p>
+  <p><strong>Limit Comparison Test.</strong> Sometimes finding a clean term-by-term inequality is awkward. Instead, compute:</p>
+  <div class="math-block">\[ L = \lim_{n\to\infty}\frac{a_n}{b_n} \]</div>
+  <p>If $L$ is a finite positive number, $\sum a_n$ and $\sum b_n$ either both converge or both diverge — they behave identically for convergence purposes, since their terms are eventually proportional. This is often easier than the direct test because it avoids needing an exact inequality, just an asymptotic (large-$n$) comparison.</p>
+  <p><strong>Choosing a comparison series.</strong> For a series with rational-function-like terms, compare to the $p$-series matching the dominant powers of $n$ (top and bottom) — exactly the same "look at the highest power" instinct from limits at infinity.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ 0\le a_n\le b_n:\ \sum b_n \text{ conv.} \implies \sum a_n \text{ conv.} \qquad L=\lim\frac{a_n}{b_n}\in(0,\infty) \implies \text{same behaviour} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — Direct Comparison Test</div><p>Determine whether $\displaystyle\sum_{n=1}^\infty \dfrac{1}{n^2+1}$ converges.</p>
+  <p>For all $n\ge1$: $\dfrac{1}{n^2+1}\le\dfrac{1}{n^2}$. We know $\sum\dfrac{1}{n^2}$ converges (a $p$-series with $p=2>1$).</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> By the Direct Comparison Test, $\sum\dfrac{1}{n^2+1}$ converges too</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — Limit Comparison Test</div><p>Determine whether $\displaystyle\sum_{n=1}^\infty \dfrac{n}{n^3+2}$ converges, comparing to $\sum\dfrac{1}{n^2}$.</p>
+  <div class="math-block">\[ L = \lim_{n\to\infty}\frac{n/(n^3+2)}{1/n^2} = \lim_{n\to\infty}\frac{n^3}{n^3+2} = 1 \]</div>
+  <p>$L=1$ is finite and positive.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Since $\sum\dfrac{1}{n^2}$ converges ($p=2>1$) and $L$ is finite and positive, $\sum\dfrac{n}{n^3+2}$ converges too</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>The Limit Comparison Test is usually easier than the Direct Comparison Test in practice, because finding a clean term-by-term inequality (needed for direct comparison) can be fiddly, while identifying the dominant behaviour for large $n$ (needed for limit comparison) is often immediate from inspection.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('seriesbasic')">&larr; W11: Series — Definition, Geometric Series &amp; the Divergence/Integral Tests</button>
+        <button class="page-nav-btn next" onclick="goTo('seriesratio')">W11: Series — Ratio &amp; Root Tests &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-seriesratio">
+      <div class="page-hero">
+        <div class="page-hero-label">W11</div>
+        <div class="page-hero-title">Series — Ratio &amp; Root Tests</div>
+        <div class="page-hero-sub">Tools built specifically for series with factorials, powers, or exponentials</div>
+      </div>
+      <div class="motiv">Comparison tests need you to already suspect what a series behaves like. For series built from factorials or $n$-th powers — where no obvious comparison series jumps out — the Ratio and Root Tests instead look directly at how fast consecutive terms shrink, which is exactly the information needed to judge convergence for these shapes.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The Ratio Test.</strong> Compute $L=\lim_{n\to\infty}\left|\dfrac{a_{n+1}}{a_n}\right|$. If $L<1$, the series converges absolutely (terms shrink geometrically fast in the long run); if $L>1$ (or $L=\infty$), it diverges (terms grow, or don't shrink fast enough); if $L=1$, the test is inconclusive — try a different test.</p>
+  <p><strong>Why factorials and exponentials suit this test.</strong> The ratio $\dfrac{a_{n+1}}{a_n}$ causes enormous cancellation for factorial terms — e.g. $\dfrac{(n+1)!}{n!}=n+1$ collapses instantly — which is exactly why the Ratio Test is the natural first choice whenever factorials appear.</p>
+  <p><strong>The Root Test.</strong> Compute $L=\lim_{n\to\infty}\sqrt[n]{|a_n|}$. Same conclusion structure as the Ratio Test ($L<1$ converges, $L>1$ diverges, $L=1$ inconclusive) — this test is the natural choice when the entire term is already raised to the $n$-th power, since the $n$-th root then cancels that power directly.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \text{Ratio: } L=\lim\left|\frac{a_{n+1}}{a_n}\right|, \qquad \text{Root: } L=\lim\sqrt[n]{|a_n|}, \qquad L<1:\text{conv.},\ L>1:\text{div.},\ L=1:\text{inconclusive} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — Ratio Test on a factorial series</div><p>Determine whether $\displaystyle\sum_{n=1}^\infty \dfrac{n!}{2^n}$ converges.</p>
+  <div class="math-block">\[ L = \lim_{n\to\infty}\left|\frac{(n+1)!/2^{n+1}}{n!/2^n}\right| = \lim_{n\to\infty}\frac{(n+1)}{2} = \infty \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $L=\infty>1$ — diverges</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — Root Test on a power series</div><p>Determine whether $\displaystyle\sum_{n=1}^\infty \left(\dfrac{n}{2n+1}\right)^n$ converges.</p>
+  <div class="math-block">\[ L = \lim_{n\to\infty}\sqrt[n]{\left(\frac{n}{2n+1}\right)^n} = \lim_{n\to\infty}\frac{n}{2n+1} = \frac12 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $L=\tfrac12<1$ — converges</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>If $L=1$ from either test, that's not "converges by a hair" — it genuinely tells you nothing, and you must switch to a completely different test (comparison, integral, or divergence) to settle the question.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('seriescomp')">&larr; W11: Series — Comparison &amp; Limit Comparison Tests</button>
+        <button class="page-nav-btn next" onclick="goTo('powerseries')">W12: Power Series &amp; Taylor Polynomials &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-powerseries">
+      <div class="page-hero">
+        <div class="page-hero-label">W12</div>
+        <div class="page-hero-title">Power Series &amp; Taylor Polynomials</div>
+        <div class="page-hero-sub">A series with x in it — and the polynomial that best approximates a function near a point</div>
+      </div>
+      <div class="motiv">Every series so far has had fixed numerical terms. A power series lets the terms depend on $x$ — turning the series itself into a function, one built entirely from powers of $x$, which is exactly the raw material needed to approximate other, more complicated functions.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Power series and radius of convergence.</strong> A power series centred at $a$ has the form $\sum_{n=0}^\infty c_n(x-a)^n$. For each fixed value of $x$, this becomes an ordinary numerical series — so the Ratio Test (previous topic) can be applied directly, treating $x$ as a parameter, to find the values of $x$ for which the series converges. This produces an interval (typically) centred at $a$, with a <strong>radius of convergence</strong> $R$ found from $L=\lim\left|\dfrac{c_{n+1}(x-a)^{n+1}}{c_n(x-a)^n}\right|<1$.</p>
+  <p><strong>Building a Taylor polynomial.</strong> The motivating question: what polynomial best matches a function $f$ near $x=a$, not just in value but in every derivative too? Demanding $P(a)=f(a)$, $P'(a)=f'(a)$, $P''(a)=f''(a)$, and so on up to degree $n$, and solving for each coefficient (using the fact that the $k$-th derivative of $(x-a)^k$ at $x=a$ is $k!$, and every lower-degree term vanishes) gives:</p>
+  <div class="math-block">\[ P_n(x) = \sum_{k=0}^n \frac{f^{(k)}(a)}{k!}(x-a)^k \]</div>
+  <p>This is the <strong>$n$-th degree Taylor polynomial</strong> of $f$ centred at $a$ — matching $f$'s value and its first $n$ derivatives exactly at $x=a$, and (usually) approximating $f$ increasingly well nearby as $n$ grows.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ P_n(x) = \sum_{k=0}^n \frac{f^{(k)}(a)}{k!}(x-a)^k \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — find a radius of convergence</div><p>Find the radius of convergence of $\displaystyle\sum_{n=0}^\infty \dfrac{x^n}{n!}$.</p>
+  <div class="math-block">\[ L = \lim_{n\to\infty}\left|\frac{x^{n+1}/(n+1)!}{x^n/n!}\right| = \lim_{n\to\infty}\frac{|x|}{n+1} = 0 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $L=0<1$ for every $x$ — the series converges for all real $x$, i.e. $R=\infty$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — build a 3rd-degree Taylor polynomial</div><p>Find $P_3(x)$ for $f(x)=\cos x$ centred at $a=0$.</p>
+  <p>$f(0)=1$, $f'(x)=-\sin x\implies f'(0)=0$, $f''(x)=-\cos x\implies f''(0)=-1$, $f^{(3)}(x)=\sin x\implies f^{(3)}(0)=0$.</p>
+  <div class="math-block">\[ P_3(x) = 1+0\cdot x+\frac{-1}{2!}x^2+\frac{0}{3!}x^3 = 1-\frac{x^2}{2} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $P_3(x)=1-\dfrac{x^2}{2}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>Every derivative rule and Taylor polynomial idea here generalises directly in MATH142's successor subjects to multivariable Taylor expansions — the exact same "match value and derivatives at a point" logic, just with partial derivatives instead of ordinary ones.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('seriesratio')">&larr; W11: Series — Ratio &amp; Root Tests</button>
+        <button class="page-nav-btn next" onclick="goTo('taylorseries')">W12: Taylor &amp; Maclaurin Series — Common Expansions &amp; Applications &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-taylorseries">
+      <div class="page-hero">
+        <div class="page-hero-label">W12</div>
+        <div class="page-hero-title">Taylor &amp; Maclaurin Series — Common Expansions &amp; Applications</div>
+        <div class="page-hero-sub">Letting the Taylor polynomial run to infinity, and using it for approximation</div>
+      </div>
+      <div class="motiv">A Taylor polynomial of higher and higher degree approximates a function better and better near the centre point. Taking the degree to infinity — summing the entire pattern as a genuine infinite series — often reproduces the function exactly, giving a completely different (but equivalent) way to define and compute with functions like $e^x$, $\sin x$, and $\cos x$.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Taylor series.</strong> Letting $n\to\infty$ in the Taylor polynomial formula gives the (infinite) <strong>Taylor series</strong> of $f$ centred at $a$:</p>
+  <div class="math-block">\[ f(x) = \sum_{k=0}^\infty \frac{f^{(k)}(a)}{k!}(x-a)^k \]</div>
+  <p><strong>Maclaurin series — the special case $a=0$.</strong> When centred at the origin, the Taylor series is specifically called a Maclaurin series — same formula, simpler because every $(x-a)$ becomes just $x$.</p>
+  <p><strong>The essential expansions</strong> (all derivable exactly as in the previous topic, just continued to infinitely many terms):</p>
+  <div class="math-block">\[ e^x = \sum_{n=0}^\infty \frac{x^n}{n!}, \qquad \sin x = \sum_{n=0}^\infty \frac{(-1)^nx^{2n+1}}{(2n+1)!}, \qquad \cos x = \sum_{n=0}^\infty \frac{(-1)^nx^{2n}}{(2n)!} \]</div>
+  <div class="math-block">\[ \ln(1+x) = \sum_{n=1}^\infty \frac{(-1)^{n+1}x^n}{n} \ (-1<x\le1), \qquad \frac{1}{1-x}=\sum_{n=0}^\infty x^n \ (|x|<1) \]</div>
+  <p><strong>Error/approximation.</strong> Truncating a Taylor series at degree $n$ (i.e. using $P_n(x)$ instead of the full infinite sum) leaves a remainder — for alternating series (like $\sin x$'s expansion), the error is bounded by the size of the first omitted term, giving a practical way to control approximation accuracy without summing infinitely many terms.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ f(x) = \sum_{k=0}^\infty \frac{f^{(k)}(a)}{k!}(x-a)^k \quad \text{(Taylor, general }a\text{)}, \qquad a=0 \to \text{Maclaurin} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — use a known series to approximate</div><p>Estimate $\sin(0.1)$ using the first two nonzero terms of its Maclaurin series.</p>
+  <div class="math-block">\[ \sin x \approx x-\frac{x^3}{6} \implies \sin(0.1) \approx 0.1-\frac{(0.1)^3}{6} = 0.1-0.0001\overline{6} \approx 0.099833 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\approx0.099833$ (the true value is $\approx0.0998334$ — extremely close)</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — build a new series from a known one</div><p>Find the Maclaurin series for $e^{-x^2}$ using the known series for $e^x$.</p>
+  <p>Substitute $-x^2$ for $x$ in $e^x=\sum_{n=0}^\infty \dfrac{x^n}{n!}$ — this substitution trick avoids computing any new derivatives at all.</p>
+  <div class="math-block">\[ e^{-x^2} = \sum_{n=0}^\infty \frac{(-x^2)^n}{n!} = \sum_{n=0}^\infty \frac{(-1)^nx^{2n}}{n!} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\sum_{n=0}^\infty \dfrac{(-1)^nx^{2n}}{n!}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Substituting into a known series (as in Example 2) is almost always faster and less error-prone than computing derivatives from scratch — memorise the handful of essential expansions well, and build new ones from them via substitution, multiplication, or term-by-term differentiation/integration wherever possible.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('powerseries')">&larr; W12: Power Series &amp; Taylor Polynomials</button>
+        <button class="page-nav-btn next" onclick="goTo('exam2')">In-Session Exam 2 &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-exam2">
+      <div class="page-hero">
+        <div class="page-hero-label">Week 13</div>
+        <div class="page-hero-title">In-Session Examination 2</div>
+        <div class="page-hero-sub">Covers Weeks 7&ndash;12 — Phase 2's differential equations plus this phase's limits &amp; series.</div>
+      </div>
+      <div class="motiv">You've now finished every topic from Weeks 7&ndash;12: first- and second-order differential equations (Phase 2), plus limits, L'H&ocirc;pital's Rule, sequences, series, and Taylor/Maclaurin series (this phase). In-Session Exam 2 sits in Week 13 and draws on all of it.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Exam details, straight from the subject outline</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <table class="data-table">
+            <tr><th>Detail</th><th>Value</th></tr>
+            <tr><td>Timing</td><td>Week 13 (Monday)</td></tr>
+            <tr><td>Duration</td><td>100 minutes</td></tr>
+            <tr><td>Coverage</td><td>All material from Weeks 7&ndash;12 &mdash; Phase 2 (Differential Equations) + Phase 3 (this guide, Limits &amp; Series)</td></tr>
+            <tr><td>Weighting</td><td>35% of the final MATH142 mark</td></tr>
+            <tr><td>Summary sheet</td><td>One A4 page, single-sided, permitted</td></tr>
+            <tr><td>Calculator</td><td>Single-line-display only &mdash; no graphics, no alphanumeric keyboard, not programmable</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">How to prepare using both guides</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="callout callout-info">This exam spans two guides &mdash; revisit the <strong>MATH142 Phase 2: Differential Equations</strong> practice page (60 questions) alongside this phase's own 80 practice questions below. Together that's 140 questions covering the full Exam 2 syllabus.</div>
+          <p style="margin-top:10px">Remember: your mark for this half of the course is the <em>best</em> of this In-Session Exam score and Final Exam Part B &mdash; and this is also the same weekend the Group Assignment is presented, so plan your Week 13 study time around both.</p>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('taylorseries')">&larr; W12: Taylor &amp; Maclaurin Series</button>
+        <button class="page-nav-btn next" onclick="goTo('practice')">Practice Questions &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-practice">
+      <div class="page-hero">
+        <div class="page-hero-label">Mixed Practice</div>
+        <div class="page-hero-title">Practice Questions</div>
+        <div class="page-hero-sub">80 questions — 10 per topic — across all of Phase 3. Attempt each before revealing the answer.</div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W10</div>
+        <div class="level-info">
+          <div class="level-title">Limits Review &amp; Indeterminate Forms</div>
+          <div class="level-sub">Recognising when direct substitution genuinely fails</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div class="q-text">Identify the indeterminate form in $\displaystyle\lim_{x\to0}\dfrac{\sin x}{x}$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac00$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div class="q-text">Identify the indeterminate form in $\displaystyle\lim_{x\to\infty}\dfrac{3x^2+1}{x^2-5}$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{\infty}{\infty}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to3}\dfrac{x^2-9}{x-3}$ using factoring.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{x\to3}(x+3)=6$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">4</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to4}\dfrac{\sqrt{x}-2}{x-4}$ using rationalising.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Multiply by $\dfrac{\sqrt x+2}{\sqrt x+2}$: $\lim_{x\to4}\dfrac{1}{\sqrt x+2}=\dfrac14$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">5</div>
+          <div class="q-text">Identify the indeterminate form in $\displaystyle\lim_{x\to0^+}x\ln x$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$0\cdot(-\infty)$, a variant of $0\cdot\infty$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">6</div>
+          <div class="q-text">Identify the indeterminate form in $\displaystyle\lim_{x\to0^+}x^x$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$0^0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">7</div>
+          <div class="q-text">Identify the indeterminate form in $\displaystyle\lim_{x\to\infty}\left(1+\dfrac1x\right)^x$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$1^\infty$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">8</div>
+          <div class="q-text">Explain why $\dfrac{5}{0}$ is NOT considered an indeterminate form, contrasting it with $\dfrac00$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{5}{0}$ always signals the same behaviour — the expression blows up toward $+\infty$ or $-\infty$ depending on the sign of the approach, unambiguously; $\dfrac00$, by contrast, could resolve to literally any finite value, or diverge, depending entirely on the specific functions involved — there's no single universal answer, which is what makes it 'indeterminate'</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">9</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to0}\dfrac{(3+x)^2-9}{x}$ using algebraic expansion (no L'Hôpital needed).<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{9+6x+x^2-9}{x}=6+x \to 6$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">10</div>
+          <div class="q-text">Identify the indeterminate form in $\displaystyle\lim_{x\to\infty}\big(x-\ln x\big)$, and explain in one sentence why it isn't obviously $\infty$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\infty-\infty$ — even though $x$ grows unboundedly and $\ln x$ grows much more slowly, the form is still technically indeterminate until the relative growth rates are compared explicitly (in this specific case $x$ dominates $\ln x$, so the limit is $\infty$, but that conclusion requires justification, not just substitution)</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W10</div>
+        <div class="level-info">
+          <div class="level-title">L'Hopital's Rule</div>
+          <div class="level-sub">A calculus shortcut for resolving 0/0 and ∞/∞ limits directly</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">11</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to0}\dfrac{e^x-1}{x}$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac00$; L'Hôpital: $\lim_{x\to0}\dfrac{e^x}{1}=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">12</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{\ln x}{x}$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{\infty}{\infty}$; L'Hôpital: $\lim_{x\to\infty}\dfrac{1/x}{1}=0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">13</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to0}\dfrac{1-\cos x}{x^2}$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac00$; L'Hôpital once: $\lim\dfrac{\sin x}{2x}$ (still $\dfrac00$); again: $\lim\dfrac{\cos x}{2}=\dfrac12$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">14</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{x^2}{e^x}$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{\infty}{\infty}$; L'Hôpital twice: $\lim\dfrac{2x}{e^x}\to\lim\dfrac{2}{e^x}=0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">15</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to1}\dfrac{x^3-1}{x-1}$ using L'Hôpital's Rule, and check the answer matches factoring.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>L'Hôpital: $\lim_{x\to1}\dfrac{3x^2}{1}=3$. Factoring check: $\dfrac{(x-1)(x^2+x+1)}{x-1}\to1+1+1=3$ — matches</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">16</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to\infty}x e^{-x}$ (convert to a quotient first).<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x/e^x$, form $\infty/\infty$; L'Hôpital: $\lim\dfrac{1}{e^x}=0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">17</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to0}\dfrac{\tan x-x}{x^3}$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac00$; L'Hôpital: $\lim\dfrac{\sec^2x-1}{3x^2}$ (still $\dfrac00$); again: $\lim\dfrac{2\sec^2x\tan x}{6x}$ (still $\dfrac00$); again: $\lim\dfrac{2\sec^4x+4\sec^2x\tan^2x}{6}=\dfrac{2}{6}=\dfrac13$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">18</div>
+          <div class="q-text">Explain why applying L'Hôpital's Rule to $\displaystyle\lim_{x\to0}\dfrac{x+1}{x}$ would be a mistake.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Direct substitution gives $\dfrac{1}{0}$, which is not an indeterminate form (it signals an infinite limit / vertical asymptote directly) — applying L'Hôpital's Rule here would give $\lim\dfrac{1}{1}=1$, an incorrect answer, since the rule's precondition (a genuine $\dfrac00$ or $\dfrac{\infty}{\infty}$ form) was never satisfied</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">19</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to\infty}\left(1+\dfrac1x\right)^x$ (the $1^\infty$ case) using the logarithm trick.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Let $y=(1+1/x)^x$; $\ln y = x\ln(1+1/x)$, form $\infty\cdot0$, rewrite as $\dfrac{\ln(1+1/x)}{1/x}$, form $\dfrac00$; L'Hôpital gives $\lim\dfrac{-1/x^2\cdot\frac{1}{1+1/x}}{-1/x^2}=\lim\dfrac{1}{1+1/x}=1$; so $\ln y\to1 \implies y\to e$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">20</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to0^+}x^x$ (the $0^0$ case) using the logarithm trick.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Let $y=x^x$; $\ln y=x\ln x$, which was shown to $\to0$ in Example 2 of this topic; so $y\to e^0=1$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W11</div>
+        <div class="level-info">
+          <div class="level-title">Sequences — Convergence &amp; Limit Laws</div>
+          <div class="level-sub">A function with only whole-number inputs, and what "approaching a value" means for one</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">21</div>
+          <div class="q-text">Determine whether $a_n=\dfrac{1}{n}$ converges, and to what.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Converges to $0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">22</div>
+          <div class="q-text">Determine whether $a_n=(-1)^n$ converges.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Diverges — the terms oscillate between $-1$ and $1$ forever, never settling</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">23</div>
+          <div class="q-text">Find $\lim_{n\to\infty}\dfrac{3n^2+1}{n^2-2}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\to3$ (divide by $n^2$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">24</div>
+          <div class="q-text">Find $\lim_{n\to\infty}\dfrac{\ln n}{n}$ (use L'Hôpital's Rule on the corresponding function limit).<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{\infty}{\infty}$; L'Hôpital: $\lim\dfrac{1/n}{1}=0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">25</div>
+          <div class="q-text">Show $a_n=\dfrac{n}{n+1}$ is increasing (monotonic) by comparing $a_{n+1}-a_n$ or via the corresponding derivative test.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f(x)=\dfrac{x}{x+1}$ has $f'(x)=\dfrac{1}{(x+1)^2}>0$, so $f$ is increasing on $x\ge1$, meaning $a_n$ is increasing too</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">26</div>
+          <div class="q-text">Show $a_n=\dfrac{n}{n+1}$ is bounded above by $1$, and conclude it converges using the bounded-monotonic theorem.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{n}{n+1}<1$ for all $n\ge1$ since the numerator is always less than the denominator; combined with being increasing, the bounded-monotonic theorem guarantees convergence (to $\lim=1$, though the theorem alone doesn't require computing the exact value)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">27</div>
+          <div class="q-text">Find $\lim_{n\to\infty}\dfrac{\cos n}{n^2}$ using the Squeeze Theorem.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$-\dfrac{1}{n^2}\le\dfrac{\cos n}{n^2}\le\dfrac{1}{n^2}$; both bounds $\to0$, so $\lim=0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">28</div>
+          <div class="q-text">Determine whether $a_n=n^2$ converges or diverges.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Diverges — grows without bound as $n\to\infty$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">29</div>
+          <div class="q-text">Find $\lim_{n\to\infty}\left(1+\dfrac1n\right)^n$ (recognise this as the sequence version of a known limit).<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>This is the sequence version of the standard limit defining $e$: converges to $e$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">30</div>
+          <div class="q-text">Explain why not every bounded sequence converges, giving an example, and reconcile this with the bounded-monotonic theorem.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$a_n=(-1)^n$ is bounded (always between $-1$ and $1$) but does not converge, since it oscillates forever without settling on a single value; this doesn't contradict the theorem, because the theorem requires BOTH boundedness AND monotonicity — $(-1)^n$ is bounded but not monotonic, so the theorem simply doesn't apply to it</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W11</div>
+        <div class="level-info">
+          <div class="level-title">Series — Definition, Geometric Series &amp; the Divergence/Integral Tests</div>
+          <div class="level-sub">Summing infinitely many terms, and the first two tools for deciding if that sum makes sense</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">31</div>
+          <div class="q-text">Evaluate $\displaystyle\sum_{n=0}^\infty \left(\dfrac12\right)^n$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$a=1,r=\tfrac12$: $\dfrac{1}{1-1/2}=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">32</div>
+          <div class="q-text">Evaluate $\displaystyle\sum_{n=1}^\infty 3\left(\dfrac14\right)^n$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>First term (at $n=1$) is $3/4$, ratio $1/4$: $\dfrac{3/4}{1-1/4}=\dfrac{3/4}{3/4}=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">33</div>
+          <div class="q-text">Use the Divergence Test on $\displaystyle\sum_{n=1}^\infty \dfrac{n}{n+1}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{n\to\infty}\dfrac{n}{n+1}=1\ne0$ — diverges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">34</div>
+          <div class="q-text">Determine whether $\displaystyle\sum_{n=1}^\infty (-1)^n$ converges, using the Divergence Test.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{n\to\infty}(-1)^n$ doesn't exist (oscillates) — diverges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">35</div>
+          <div class="q-text">Use the Integral Test to determine whether $\displaystyle\sum_{n=1}^\infty \dfrac{1}{n^2}$ converges.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\int_1^\infty x^{-2}dx=1$ (converges), so by the Integral Test, the series converges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">36</div>
+          <div class="q-text">Use the Integral Test to determine whether $\displaystyle\sum_{n=1}^\infty \dfrac{1}{\sqrt n}$ converges.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\int_1^\infty x^{-1/2}dx$ diverges (a $p$-integral with $p=1/2<1$), so the series diverges too</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">37</div>
+          <div class="q-text">Evaluate $\displaystyle\sum_{n=2}^\infty \left(\dfrac23\right)^n$ (note the series starts at $n=2$).<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>First term at $n=2$ is $4/9$, ratio $2/3$: $\dfrac{4/9}{1-2/3}=\dfrac{4/9}{1/3}=\dfrac43$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">38</div>
+          <div class="q-text">Explain why $|r|\ge1$ causes a geometric series to diverge, referencing the partial sum formula.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>For $|r|\ge1$, $r^n$ does not shrink to $0$ as $n\to\infty$ (it either stays constant at $|r|=1$ or grows without bound for $|r|>1$), so the partial sum formula $S_n=a\dfrac{1-r^n}{1-r}$ has no finite limit — the series can't settle on a single value</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">39</div>
+          <div class="q-text">Use the Integral Test to show $\displaystyle\sum_{n=1}^\infty \dfrac{1}{n^p}$ (a $p$-series) converges for $p>1$ and diverges for $p\le1$, referencing the improper integral result from Phase 1.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>This exactly matches the improper integral $\int_1^\infty x^{-p}dx$ from Phase 1, which was shown to converge iff $p>1$ — the Integral Test transfers that same convergence boundary directly onto the corresponding series</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">40</div>
+          <div class="q-text">A ball is dropped from 10m and bounces to 60% of its previous height each time. Find the total vertical distance travelled, using a geometric series (the ball travels down then up each bounce after the first drop).<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Total distance $=10+2(6+3.6+2.16+\cdots)=10+2\cdot\dfrac{6}{1-0.6}=10+2(15)=40$m</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W11</div>
+        <div class="level-info">
+          <div class="level-title">Series — Comparison &amp; Limit Comparison Tests</div>
+          <div class="level-sub">Deciding convergence by comparing an unfamiliar series to a known one</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">41</div>
+          <div class="q-text">Compare $\dfrac{1}{n^2+3}$ to $\dfrac{1}{n^2}$ term-by-term, and state which is larger for $n\ge1$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{1}{n^2+3}\le\dfrac{1}{n^2}$, since the denominator on the left is larger</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">42</div>
+          <div class="q-text">Determine whether $\displaystyle\sum_{n=1}^\infty \dfrac{1}{n^2+3}$ converges, using the previous comparison.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Converges, by Direct Comparison with the convergent $p$-series $\sum\dfrac{1}{n^2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">43</div>
+          <div class="q-text">Determine whether $\displaystyle\sum_{n=1}^\infty \dfrac{1}{\sqrt{n}-1}$ (for $n\ge2$) converges, using Direct Comparison with $\dfrac{1}{\sqrt n}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>For large $n$, $\dfrac{1}{\sqrt n-1}\ge\dfrac{1}{\sqrt n}$, and $\sum\dfrac{1}{\sqrt n}$ diverges ($p=1/2<1$) — by Direct Comparison, the given series diverges too</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">44</div>
+          <div class="q-text">Determine whether $\displaystyle\sum_{n=1}^\infty \dfrac{n+1}{n^3+2}$ converges, using Limit Comparison with $\dfrac{1}{n^2}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\dfrac{(n+1)/(n^3+2)}{1/n^2}=\lim\dfrac{n^2(n+1)}{n^3+2}=1$, finite and positive; since $\sum1/n^2$ converges, this series converges too</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">45</div>
+          <div class="q-text">Determine whether $\displaystyle\sum_{n=1}^\infty \dfrac{3n^2+1}{n^3+n}$ converges, using Limit Comparison with $\dfrac{1}{n}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\dfrac{(3n^2+1)/(n^3+n)}{1/n}=\lim\dfrac{n(3n^2+1)}{n^3+n}=3$, finite and positive; since $\sum1/n$ (harmonic) diverges, this series diverges too</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">46</div>
+          <div class="q-text">Choose an appropriate comparison series for $\displaystyle\sum_{n=1}^\infty \dfrac{2n^2-1}{5n^4+3}$, using the dominant-power instinct.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Dominant powers: $n^2$ over $n^4$, so compare to $\dfrac{1}{n^2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">47</div>
+          <div class="q-text">Using the comparison series identified in the previous question, determine convergence.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\dfrac{(2n^2-1)/(5n^4+3)}{1/n^2}=\lim\dfrac{n^2(2n^2-1)}{5n^4+3}=\dfrac25$, finite and positive; since $\sum1/n^2$ converges, this series converges too</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">48</div>
+          <div class="q-text">Explain why the Direct Comparison Test requires knowing which series is 'larger' in advance, while the Limit Comparison Test avoids this requirement.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Direct comparison needs a proven term-by-term inequality ($a_n\le b_n$ or vice versa) for every $n$, which requires knowing the direction of the inequality beforehand and often some algebraic manipulation to establish it rigorously; limit comparison only needs the ratio $a_n/b_n$ to settle to a finite positive limit — no inequality direction needs to be assumed or proven, since a finite positive limit automatically implies the two series behave the same way regardless of which is technically larger for small $n$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">49</div>
+          <div class="q-text">Determine whether $\displaystyle\sum_{n=1}^\infty \dfrac{1}{2^n+n}$ converges, using Direct Comparison with $\dfrac{1}{2^n}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>For $n\ge1$: $\dfrac{1}{2^n+n}\le\dfrac{1}{2^n}$; $\sum\dfrac{1}{2^n}$ is a convergent geometric series ($r=1/2$); by Direct Comparison, the given series converges too</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">50</div>
+          <div class="q-text">Determine whether $\displaystyle\sum_{n=2}^\infty \dfrac{1}{n\ln n}$ converges (hint: this needs the Integral Test rather than comparison — explain why comparison alone doesn't easily settle it).<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>This series sits right at the boundary between convergence and divergence, and doesn't cleanly match a simple $p$-series or geometric comparison; the Integral Test is needed: $\int_2^\infty\dfrac{1}{x\ln x}dx$, substituting $u=\ln x$, gives $\int\dfrac{1}{u}du=\ln|u|\to\infty$, so it diverges — a case where comparison tests don't offer an obvious match, but the Integral Test still applies directly</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W11</div>
+        <div class="level-info">
+          <div class="level-title">Series — Ratio &amp; Root Tests</div>
+          <div class="level-sub">Tools built specifically for series with factorials, powers, or exponentials</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">51</div>
+          <div class="q-text">Apply the Ratio Test to $\displaystyle\sum_{n=1}^\infty \dfrac{2^n}{n!}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\left|\dfrac{2^{n+1}/(n+1)!}{2^n/n!}\right|=\lim\dfrac{2}{n+1}=0<1$ — converges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">52</div>
+          <div class="q-text">Apply the Ratio Test to $\displaystyle\sum_{n=1}^\infty \dfrac{n^n}{n!}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\left|\dfrac{(n+1)^{n+1}/(n+1)!}{n^n/n!}\right|=\lim\dfrac{(n+1)^n}{n^n}=\lim\left(1+\dfrac1n\right)^n=e>1$ — diverges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">53</div>
+          <div class="q-text">Apply the Ratio Test to $\displaystyle\sum_{n=1}^\infty \dfrac{3^n}{n^2}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\left|\dfrac{3^{n+1}/(n+1)^2}{3^n/n^2}\right|=\lim\dfrac{3n^2}{(n+1)^2}=3>1$ — diverges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">54</div>
+          <div class="q-text">Apply the Root Test to $\displaystyle\sum_{n=1}^\infty \left(\dfrac{3n+1}{5n}\right)^n$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\dfrac{3n+1}{5n}=\dfrac35<1$ — converges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">55</div>
+          <div class="q-text">Apply the Ratio Test to $\displaystyle\sum_{n=1}^\infty \dfrac{1}{n^2}$, and explain why it's inconclusive here (even though we know from the Integral Test this series converges).<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\left|\dfrac{1/(n+1)^2}{1/n^2}\right|=\lim\dfrac{n^2}{(n+1)^2}=1$ — inconclusive, since the terms don't shrink at a geometric-like rate; polynomial-rate series like $p$-series always give $L=1$ under the Ratio Test, which is precisely why the Integral Test (not the Ratio Test) is the natural tool for them</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">56</div>
+          <div class="q-text">Apply the Root Test to $\displaystyle\sum_{n=1}^\infty \dfrac{1}{2^n}$, and check it agrees with treating this as a geometric series.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\sqrt[n]{1/2^n}=\lim\dfrac12=\dfrac12<1$ — converges, matching the direct geometric series result ($r=1/2$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">57</div>
+          <div class="q-text">Apply the Ratio Test to $\displaystyle\sum_{n=1}^\infty \dfrac{(-1)^nn!}{2^n}$, noting the alternating sign doesn't affect the test (since it uses absolute value).<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\left|\dfrac{(n+1)!/2^{n+1}}{n!/2^n}\right|=\lim\dfrac{n+1}{2}=\infty>1$ — diverges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">58</div>
+          <div class="q-text">Apply the Root Test to $\displaystyle\sum_{n=1}^\infty \dfrac{1}{n^n}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\sqrt[n]{1/n^n}=\lim\dfrac1n=0<1$ — converges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">59</div>
+          <div class="q-text">Explain why factorial-containing series are typically better suited to the Ratio Test than the Root Test.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The Ratio Test's ratio $a_{n+1}/a_n$ causes massive cancellation for factorials — e.g. $(n+1)!/n!$ simplifies instantly to $n+1$ — while taking an $n$-th root of a factorial (needed for the Root Test) has no such clean simplification and typically requires more advanced tools (like Stirling's approximation) to even evaluate the limit</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">60</div>
+          <div class="q-text">Apply the Ratio Test to $\displaystyle\sum_{n=1}^\infty \dfrac{n^2}{3^n}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\left|\dfrac{(n+1)^2/3^{n+1}}{n^2/3^n}\right|=\lim\dfrac{(n+1)^2}{3n^2}=\dfrac13<1$ — converges</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W12</div>
+        <div class="level-info">
+          <div class="level-title">Power Series &amp; Taylor Polynomials</div>
+          <div class="level-sub">A series with x in it — and the polynomial that best approximates a function near a point</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">61</div>
+          <div class="q-text">Find the radius of convergence of $\displaystyle\sum_{n=0}^\infty n!\,x^n$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\left|\dfrac{(n+1)!x^{n+1}}{n!x^n}\right|=\lim(n+1)|x|=\infty$ for any $x\ne0$ — converges only at $x=0$, so $R=0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">62</div>
+          <div class="q-text">Find the radius of convergence of $\displaystyle\sum_{n=0}^\infty \dfrac{x^n}{2^n}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\left|\dfrac{x^{n+1}/2^{n+1}}{x^n/2^n}\right|=\dfrac{|x|}{2}<1\implies|x|<2$: $R=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">63</div>
+          <div class="q-text">Find $f(0),f'(0),f''(0)$ for $f(x)=e^x$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>All equal $1$, since every derivative of $e^x$ is $e^x$, and $e^0=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">64</div>
+          <div class="q-text">Using the previous question, build $P_2(x)$ for $f(x)=e^x$ centred at $0$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$P_2(x)=1+x+\dfrac{x^2}{2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">65</div>
+          <div class="q-text">Find $P_1(x)$ (the linear/tangent-line approximation) for $f(x)=\sqrt{x}$ at $a=4$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f(4)=2$, $f'(x)=\dfrac{1}{2\sqrt x}\implies f'(4)=\dfrac14$: $P_1(x)=2+\dfrac14(x-4)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">66</div>
+          <div class="q-text">Find $P_2(x)$ for $f(x)=\ln x$ centred at $a=1$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f(1)=0$, $f'(x)=1/x\implies f'(1)=1$, $f''(x)=-1/x^2\implies f''(1)=-1$: $P_2(x)=(x-1)-\dfrac{(x-1)^2}{2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">67</div>
+          <div class="q-text">Find the radius of convergence of $\displaystyle\sum_{n=1}^\infty \dfrac{(x-3)^n}{n}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\left|\dfrac{(x-3)^{n+1}/(n+1)}{(x-3)^n/n}\right|=|x-3|<1$: $R=1$ (centred at $a=3$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">68</div>
+          <div class="q-text">Find $P_2(x)$ for $f(x)=\sin x$ centred at $a=0$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f(0)=0$, $f'(0)=1$, $f''(0)=0$: $P_2(x)=x$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">69</div>
+          <div class="q-text">Explain why demanding $P(a)=f(a),P'(a)=f'(a),\dots$ up to degree $n$ uniquely determines all $n+1$ coefficients of an $n$-th degree polynomial.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>An $n$-th degree polynomial has exactly $n+1$ unknown coefficients; demanding the function and its first $n$ derivatives all match at the single point $x=a$ gives exactly $n+1$ independent equations (since the $k$-th derivative condition isolates the $k$-th coefficient, thanks to lower-degree terms vanishing and higher-degree terms not yet existing) — matching the number of unknowns exactly, which is what guarantees a unique solution</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">70</div>
+          <div class="q-text">Find the radius of convergence of $\displaystyle\sum_{n=0}^\infty \dfrac{(2x)^n}{n!}$, and relate it to Example 1 of the Pattern section.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\lim\left|\dfrac{(2x)^{n+1}/(n+1)!}{(2x)^n/n!}\right|=\lim\dfrac{2|x|}{n+1}=0$ for every $x$ — converges for all real $x$, $R=\infty$, matching the same 'factorial in the denominator always dominates' behaviour seen with $e^x$'s series</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W12</div>
+        <div class="level-info">
+          <div class="level-title">Taylor &amp; Maclaurin Series — Common Expansions &amp; Applications</div>
+          <div class="level-sub">Letting the Taylor polynomial run to infinity, and using it for approximation</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">71</div>
+          <div class="q-text">Write the first four terms of the Maclaurin series for $e^x$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$1+x+\dfrac{x^2}{2}+\dfrac{x^3}{6}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">72</div>
+          <div class="q-text">Write the first three nonzero terms of the Maclaurin series for $\cos x$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$1-\dfrac{x^2}{2}+\dfrac{x^4}{24}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">73</div>
+          <div class="q-text">Use the known series for $e^x$ to find the Maclaurin series for $e^{2x}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Substitute $2x$ for $x$: $\sum_{n=0}^\infty\dfrac{(2x)^n}{n!}=\sum_{n=0}^\infty\dfrac{2^nx^n}{n!}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">74</div>
+          <div class="q-text">Estimate $\cos(0.2)$ using the first two nonzero terms of its Maclaurin series.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$1-\dfrac{(0.2)^2}{2}=1-0.02=0.98$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">75</div>
+          <div class="q-text">Use the known series for $\sin x$ to find the Maclaurin series for $x\sin x$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Multiply every term by $x$: $\sum_{n=0}^\infty\dfrac{(-1)^nx^{2n+2}}{(2n+1)!}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">76</div>
+          <div class="q-text">Find the Maclaurin series for $\dfrac{1}{1+x}$ using the known series for $\dfrac{1}{1-x}$ (substitute $-x$ for $x$).<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\sum_{n=0}^\infty(-x)^n=\sum_{n=0}^\infty(-1)^nx^n$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">77</div>
+          <div class="q-text">Estimate $e^{0.1}$ using the first three terms of its Maclaurin series.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$1+0.1+\dfrac{(0.1)^2}{2}=1+0.1+0.005=1.105$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">78</div>
+          <div class="q-text">Find the Taylor series for $f(x)=\dfrac1x$ centred at $a=1$ (first three terms), using $f^{(k)}(1)$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f(1)=1$, $f'(x)=-1/x^2\implies f'(1)=-1$, $f''(x)=2/x^3\implies f''(1)=2$: $1-(x-1)+\dfrac{2}{2}(x-1)^2=1-(x-1)+(x-1)^2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">79</div>
+          <div class="q-text">Explain why substituting into a known Maclaurin series (rather than differentiating from scratch) is guaranteed to give the correct series for the new function.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A Maclaurin series is uniquely determined by matching a function's value and all derivatives at $x=0$; if $g(x)=f(h(x))$ for some known series $f$ and a simple substitution $h(x)$, then substituting $h(x)$ into $f$'s series term-by-term produces a power series in $x$ that, by construction, reproduces $g(x)$'s correct values wherever the original series for $f$ was valid — the algebra of composing a convergent power series with a polynomial or simple function preserves the correctness of the expansion</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">80</div>
+          <div class="q-text">Using the alternating-series error idea, explain why truncating $\sin x\approx x-\dfrac{x^3}{6}$ gives an error no larger than $\dfrac{x^5}{120}$ in size.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Since the Maclaurin series for $\sin x$ alternates in sign, the error from truncating after any term is bounded by the absolute value of the very next (first omitted) term — here that next term is $\dfrac{x^5}{120}$, so the true value differs from the truncated approximation by at most that amount</p>
+        </div>
+      </div>
+
+      <div class="callout callout-success" style="margin-top:32px">
+        <strong>Phase 3 practice complete!</strong> 80 questions across 8 topics. Combined with Phase 2's 60 questions, that's the full In-Session Exam 2 syllabus covered.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('taylorseries')">&larr; W12: Taylor &amp; Maclaurin Series</button>
+        <button class="page-nav-btn next" onclick="goTo('home')">Back to Overview &rarr;</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PAGES = ['home','limreview','lhopital','sequences','seriesbasic','seriescomp','seriesratio','powerseries','taylorseries','exam2','practice'];
+const PAGE_NAMES = {
+  home:'Overview',
+  limreview:'W10. Limits Review &amp; Indeterminate Forms',
+  lhopital:'W10. L\'Hopital\'s Rule',
+  sequences:'W11. Sequences — Convergence &amp; Limit Laws',
+  seriesbasic:'W11. Series — Definition, Geometric Series &amp; the Divergence/Integral Tests',
+  seriescomp:'W11. Series — Comparison &amp; Limit Comparison Tests',
+  seriesratio:'W11. Series — Ratio &amp; Root Tests',
+  powerseries:'W12. Power Series &amp; Taylor Polynomials',
+  taylorseries:'W12. Taylor &amp; Maclaurin Series — Common Expansions &amp; Applications',
+  exam2:'In-Session Exam 2',
+  practice:'Practice Questions'
+};
+let visited = new Set(['home']);
+
+function goTo(id) {
+  PAGES.forEach(p => {
+    document.getElementById('page-'+p).classList.remove('active');
+  });
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => {
+    const fn = l.getAttribute('onclick');
+    if (fn && fn.includes("'"+id+"'")) l.classList.add('active');
+  });
+  document.getElementById('breadcrumbPage').textContent = PAGE_NAMES[id] || id;
+  visited.add(id);
+  const pct = Math.round((visited.size / PAGES.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  window.scrollTo(0, 0);
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.getElementById('page-'+id), {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 50);
+}
+
+function toggleDPEN(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.dpen-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function toggleQ(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.q-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function expandAll() {
+  const activePage = document.querySelector('.page.active');
+  activePage.querySelectorAll('.dpen-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.dpen-chevron').classList.add('open');
+  });
+  activePage.querySelectorAll('.q-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.q-arrow').classList.add('open');
+  });
+  setTimeout(() => {
+    if (window.renderMathInElement) renderMathInElement(activePage, {
+      delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+      throwOnError: false
+    });
+  }, 30);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 300);
+});
+</script>
+</body>
+</html>

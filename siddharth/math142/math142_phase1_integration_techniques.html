@@ -1,0 +1,3507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATH142 Phase 1 — Integration Techniques &amp; Applications</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B3A5C;
+  --navy-lt: #1e4570;
+  --orange: #FF3621;
+  --blue-lt: #E6F1FB;
+  --blue-mid: #185FA5;
+  --amber-lt: #FAEEDA;
+  --amber-dk: #7A4800;
+  --green-lt: #E1F5EE;
+  --green-dk: #0a5c3f;
+  --coral-lt: #FAECE7;
+  --coral-dk: #8a2f1a;
+  --grey-lt: #F6F5F2;
+  --grey-md: #e8e6e0;
+  --grey-dk: #3a3835;
+  --text: #2c2a28;
+  --text-muted: #6b6762;
+  --sidebar-w: 260px;
+  --content-max: 760px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #fafaf8;
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.3;
+}
+.sidebar-brand-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+.progress-wrap {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.progress-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.nav-section {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  padding: 6px 20px 4px;
+  text-transform: uppercase;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-link:hover { color: white; background: rgba(255,255,255,0.06); }
+.nav-link.active { color: white; background: rgba(255,255,255,0.1); border-left: 2px solid var(--orange); padding-left: 18px; }
+.nav-num {
+  font-size: 10px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.nav-link.active .nav-num { background: var(--orange); color: white; }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--grey-md);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-breadcrumb {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.topbar-breadcrumb span {
+  color: var(--navy);
+  font-weight: 500;
+}
+.topbar-btns {
+  display: flex;
+  gap: 8px;
+}
+.tb-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.tb-btn:hover { border-color: var(--navy); color: var(--navy); }
+.tb-btn.primary { background: var(--navy); color: white; border-color: var(--navy); }
+.tb-btn.primary:hover { background: var(--navy-lt); }
+
+.content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+/* ── HERO ── */
+.page-hero {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--grey-md);
+}
+.page-hero-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--orange);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.page-hero-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.page-hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── MOTIVATION BOX ── */
+.motiv {
+  background: var(--blue-lt);
+  border-left: 3px solid var(--blue-mid);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #0d3d73;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.motiv strong { font-weight: 500; }
+
+/* ── DPEN SECTIONS ── */
+.dpen-block {
+  margin-bottom: 12px;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dpen-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+  transition: background 0.15s;
+}
+.dpen-header:hover { background: var(--grey-lt); }
+.dpen-pill {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.pill-d { background: var(--blue-lt); color: var(--blue-mid); }
+.pill-p { background: var(--amber-lt); color: var(--amber-dk); }
+.pill-e { background: var(--green-lt); color: var(--green-dk); }
+.pill-n { background: var(--coral-lt); color: var(--coral-dk); }
+.dpen-header-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+}
+.dpen-chevron {
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.dpen-chevron.open { transform: rotate(90deg); }
+.dpen-body {
+  display: none;
+  padding: 18px 20px 20px;
+  border-top: 1px solid var(--grey-md);
+  background: var(--grey-lt);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+}
+.dpen-body.open { display: block; }
+.dpen-body p { margin-bottom: 10px; }
+.dpen-body p:last-child { margin-bottom: 0; }
+
+/* ── MATH ── */
+.math-block {
+  text-align: center;
+  margin: 14px 0;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  overflow-x: auto;
+}
+.math-inline { font-style: italic; }
+
+/* ── STEPS ── */
+.step-list { margin: 10px 0; }
+.step-item {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+  align-items: flex-start;
+}
+.step-num-badge {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--blue-lt);
+  color: var(--blue-mid);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-text { flex: 1; font-size: 14px; line-height: 1.7; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.callout-warn { background: var(--amber-lt); border-left: 3px solid #EF9F27; color: var(--amber-dk); }
+.callout-info { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout-success { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout strong { font-weight: 500; }
+
+/* ── WORKED EXAMPLES ── */
+.worked {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+.worked-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.answer-box {
+  background: var(--navy);
+  color: white;
+  border-radius: 6px;
+  padding: 9px 14px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.answer-label {
+  font-size: 10px;
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 10px 0;
+}
+.data-table th {
+  background: var(--navy);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+}
+.data-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-md);
+  color: var(--text);
+}
+.data-table tr:nth-child(even) td { background: white; }
+.data-table tr:nth-child(odd) td { background: var(--grey-lt); }
+.data-table th:first-child { border-radius: 6px 0 0 0; }
+.data-table th:last-child { border-radius: 0 6px 0 0; }
+
+/* ── PRACTICE QUESTIONS ── */
+.level-divider {
+  margin: 36px 0 16px;
+  padding: 14px 18px;
+  background: var(--navy);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.level-badge {
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--orange);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.level-info { flex: 1; }
+.level-title { font-size: 15px; font-weight: 500; color: white; }
+.level-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+.q-card {
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.q-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: white;
+  transition: background 0.15s;
+}
+.q-head:hover { background: var(--grey-lt); }
+.q-num {
+  background: var(--navy);
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.q-text { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.5; }
+.q-hint { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 400; }
+.q-arrow { color: var(--text-muted); font-size: 11px; transition: transform 0.2s; margin-top: 4px; flex-shrink: 0; }
+.q-arrow.open { transform: rotate(90deg); }
+.q-body {
+  display: none;
+  background: var(--grey-lt);
+  border-top: 1px solid var(--grey-md);
+  padding: 18px 20px;
+}
+.q-body.open { display: block; }
+.q-attempt {
+  background: white;
+  border: 1px dashed var(--grey-md);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+.sol-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+/* ── HOME PAGE ── */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 24px 0;
+}
+.home-card {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.home-card:hover { border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.home-card-num { font-size: 11px; color: var(--orange); font-weight: 500; margin-bottom: 4px; }
+.home-card-title { font-family: 'Crimson Pro', serif; font-size: 18px; color: var(--navy); margin-bottom: 4px; }
+.home-card-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.home-chain {
+  background: var(--navy);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 24px 0;
+  color: white;
+}
+.home-chain-title { font-size: 12px; letter-spacing: 0.06em; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+.chain-items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chain-item {
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: white;
+}
+.chain-arrow { color: var(--orange); font-size: 14px; }
+.home-tip {
+  background: var(--amber-lt);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--amber-dk);
+  line-height: 1.65;
+  margin-top: 16px;
+}
+
+/* ── UNI BRIDGE (extra block type for this guide) ── */
+.bridge {
+  background: #FFF6E9;
+  border: 1px dashed #E0A23A;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #6b4a10;
+}
+.bridge-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: #b5791a;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* ── PAGE NAV ── */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--grey-md);
+}
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.page-nav-btn:hover { border-color: var(--navy); color: var(--navy); }
+.page-nav-btn.next { background: var(--navy); color: white; border-color: var(--navy); }
+.page-nav-btn.next:hover { background: var(--navy-lt); }
+.page-nav-btn.ghost { visibility: hidden; }
+
+/* ── SCROLLBAR ── */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .content { padding: 24px 20px 60px; }
+  .home-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">MATH142 — Phase 1</div>
+    <div class="sidebar-brand-sub">Integration: Techniques &amp; Applications · Weeks 1&ndash;6</div>
+  </div>
+  <div class="progress-wrap"><div class="progress-label">YOUR PROGRESS</div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+  <div class="nav-section"><div class="nav-section-label">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">&uarr;</span> Start here</button></div>
+  <div class="nav-section"><div class="nav-section-label">Week 1 &ndash; Integration Techniques</div>
+    <button class="nav-link" onclick="goTo('ibp')"><span class="nav-num">W1</span> Integration by Parts</button>
+    <button class="nav-link" onclick="goTo('trigint')"><span class="nav-num">W1</span> Trigonometric Integrals</button>
+    <button class="nav-link" onclick="goTo('trigsub')"><span class="nav-num">W1</span> Trigonometric Substitution</button>
+    <button class="nav-link" onclick="goTo('pflinear')"><span class="nav-num">W1-2</span> Partial Fractions — Linear Factors</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 2 &ndash; More Techniques</div>
+    <button class="nav-link" onclick="goTo('pfadvanced')"><span class="nav-num">W2</span> Partial Fractions — Repeated & Irreducible Quadratic Factors</button>
+    <button class="nav-link" onclick="goTo('improper')"><span class="nav-num">W2</span> Improper Integrals</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 3 &ndash; Numerical Integration</div>
+    <button class="nav-link" onclick="goTo('trapezoidal')"><span class="nav-num">W3</span> Numerical Integration — Trapezoidal Rule & Error Estimation</button>
+    <button class="nav-link" onclick="goTo('simpsons')"><span class="nav-num">W3</span> Numerical Integration — Simpson's Rule & Error Estimation</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 4 &ndash; Polar Coordinates</div>
+    <button class="nav-link" onclick="goTo('polarplot')"><span class="nav-num">W4</span> Polar Coordinates — Plotting & Conversion</button>
+    <button class="nav-link" onclick="goTo('polargraph')"><span class="nav-num">W4</span> Polar Coordinates — Graphing Curves & Symmetry</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 5 &ndash; Areas &amp; Volumes</div>
+    <button class="nav-link" onclick="goTo('areas142')"><span class="nav-num">W5</span> Areas — Cartesian Extension &amp; Polar Regions</button>
+    <button class="nav-link" onclick="goTo('volumes142')"><span class="nav-num">W5</span> Volumes of Revolution — Disk/Washer &amp; Shell Methods</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 6 &ndash; Arc Length</div>
+    <button class="nav-link" onclick="goTo('arclength142')"><span class="nav-num">W6</span> Arc Length</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">End of Week 8</div>
+    <button class="nav-link" onclick="goTo('exam1')"><span class="nav-num">&#9998;</span> In-Session Exam 1</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Practice</div>
+    <button class="nav-link" onclick="goTo('practice')"><span class="nav-num">&#9998;</span> Practice Questions (130)</button></div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">MATH142 Phase 1 &nbsp;&rsaquo;&nbsp; <span id="breadcrumbPage">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand all</button>
+      <button class="tb-btn primary" onclick="goTo('practice')">Practice &rarr;</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <div class="page active" id="page-home">
+      <div class="page-hero">
+        <div class="page-hero-label">MATH142 &middot; Phase 1 of 4</div>
+        <div class="page-hero-title">Integration &mdash; Techniques<br>&amp; Applications, Weeks 1&ndash;6</div>
+        <div class="page-hero-sub">Covers the MATH142 tracker's Weeks 1&ndash;6: advanced integration techniques (parts, trig integrals, trig substitution, partial fractions), numerical integration with error estimation, polar coordinates, and applications (areas, volumes of revolution, arc length). This is exactly the material covered by In-Session Exam 1. Same build-up approach as the MATH141 guides &mdash; motivation, worked pattern, formal definition, examples, study notes &mdash; before the practice page tests all of it.</div>
+      </div>
+
+      <div class="home-chain">
+        <div class="home-chain-title">THE CHAIN OF IDEAS</div>
+        <div class="chain-items">
+          <div class="chain-item">Integration by Parts</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Trigonometric Integrals</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Trigonometric Substitution</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Partial Fractions — Linear Factors</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Partial Fractions — Repeated & Irreducible Quadratic Factors</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Improper Integrals</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Numerical Integration — Trapezoidal Rule & Error Estimation</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Numerical Integration — Simpson's Rule & Error Estimation</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Polar Coordinates — Plotting & Conversion</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Polar Coordinates — Graphing Curves & Symmetry</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Areas — Cartesian Extension &amp; Polar Regions</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Volumes of Revolution — Disk/Washer &amp; Shell Methods</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Arc Length</div>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <div class="home-card" onclick="goTo('ibp')">
+          <div class="home-card-num">W1</div>
+          <div class="home-card-title">Integration by Parts</div>
+          <div class="home-card-sub">The product rule, run in reverse</div>
+        </div>
+        <div class="home-card" onclick="goTo('trigint')">
+          <div class="home-card-num">W1</div>
+          <div class="home-card-title">Trigonometric Integrals</div>
+          <div class="home-card-sub">Products and powers of sine and cosine</div>
+        </div>
+        <div class="home-card" onclick="goTo('trigsub')">
+          <div class="home-card-num">W1</div>
+          <div class="home-card-title">Trigonometric Substitution</div>
+          <div class="home-card-sub">Using trig identities to simplify square roots</div>
+        </div>
+        <div class="home-card" onclick="goTo('pflinear')">
+          <div class="home-card-num">W1-2</div>
+          <div class="home-card-title">Partial Fractions — Linear Factors</div>
+          <div class="home-card-sub">Splitting rational functions with distinct linear denominators</div>
+        </div>
+        <div class="home-card" onclick="goTo('pfadvanced')">
+          <div class="home-card-num">W2</div>
+          <div class="home-card-title">Partial Fractions — Repeated & Irreducible Quadratic Factors</div>
+          <div class="home-card-sub">Extending the decomposition to harder denominator types</div>
+        </div>
+        <div class="home-card" onclick="goTo('improper')">
+          <div class="home-card-num">W2</div>
+          <div class="home-card-title">Improper Integrals</div>
+          <div class="home-card-sub">Infinite limits and discontinuous integrands, via limits</div>
+        </div>
+        <div class="home-card" onclick="goTo('trapezoidal')">
+          <div class="home-card-num">W3</div>
+          <div class="home-card-title">Numerical Integration — Trapezoidal Rule & Error Estimation</div>
+          <div class="home-card-sub">Approximating a definite integral when antiderivatives are hard (or impossible) to find</div>
+        </div>
+        <div class="home-card" onclick="goTo('simpsons')">
+          <div class="home-card-num">W3</div>
+          <div class="home-card-title">Numerical Integration — Simpson's Rule & Error Estimation</div>
+          <div class="home-card-sub">Fitting parabolas instead of straight lines, for a dramatically better approximation</div>
+        </div>
+        <div class="home-card" onclick="goTo('polarplot')">
+          <div class="home-card-num">W4</div>
+          <div class="home-card-title">Polar Coordinates — Plotting & Conversion</div>
+          <div class="home-card-sub">A second coordinate system, built from distance and angle instead of horizontal/vertical position</div>
+        </div>
+        <div class="home-card" onclick="goTo('polargraph')">
+          <div class="home-card-num">W4</div>
+          <div class="home-card-title">Polar Coordinates — Graphing Curves & Symmetry</div>
+          <div class="home-card-sub">Cardioids, roses, limaçons, and how to sketch them efficiently</div>
+        </div>
+        <div class="home-card" onclick="goTo('areas142')">
+          <div class="home-card-num">W5</div>
+          <div class="home-card-title">Areas — Cartesian Extension &amp; Polar Regions</div>
+          <div class="home-card-sub">Area between curves revisited, then a genuinely new formula for polar regions</div>
+        </div>
+        <div class="home-card" onclick="goTo('volumes142')">
+          <div class="home-card-num">W5</div>
+          <div class="home-card-title">Volumes of Revolution — Disk/Washer &amp; Shell Methods</div>
+          <div class="home-card-sub">Two different ways to slice a solid of revolution</div>
+        </div>
+        <div class="home-card" onclick="goTo('arclength142')">
+          <div class="home-card-num">W6</div>
+          <div class="home-card-title">Arc Length</div>
+          <div class="home-card-sub">Measuring the true length of a curve, not just the width of its interval</div>
+        </div>
+        <div class="home-card" onclick="goTo('practice')">
+          <div class="home-card-num">PRACTICE</div>
+          <div class="home-card-title">Practice Questions</div>
+          <div class="home-card-sub">130 questions, 10 per topic, fully worked.</div>
+        </div>
+      </div>
+
+      <div class="home-tip">
+        <strong>How to use this guide:</strong> Work through topics in order &mdash; trig substitution leans on the trig integrals topic, partial fractions builds from linear to repeated/quadratic factors, and both numerical integration and arc length reuse ideas from earlier in the phase. This phase assumes MATH141's integration fundamentals (antiderivatives, FTC, basic substitution) are already solid.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn ghost">&larr;</button>
+        <button class="page-nav-btn next" onclick="goTo('ibp')">W1: Integration by Parts &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-ibp">
+      <div class="page-hero">
+        <div class="page-hero-label">W1</div>
+        <div class="page-hero-title">Integration by Parts</div>
+        <div class="page-hero-sub">The product rule, run in reverse</div>
+      </div>
+      <div class="motiv">The product rule for derivatives tells you how to differentiate a product of two functions. Running that rule backwards gives a technique for integrating products that substitution alone can't handle — like $\int x\cos x\,dx$, where nothing is "the derivative of something else" in the substitution sense.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Deriving the formula.</strong> Start from the product rule: $(uv)'=u'v+uv'$. Integrate both sides with respect to $x$:</p>
+  <div class="math-block">\[ uv = \int u'v\,dx + \int uv'\,dx \]</div>
+  <p>Rearranging gives the integration by parts formula. In practice it's written using $du=u'\,dx$ and $dv=v'\,dx$:</p>
+  <div class="math-block">\[ \int u\,dv = uv - \int v\,du \]</div>
+  <p><strong>Choosing $u$ and $dv$.</strong> The goal is for $\int v\,du$ to be <em>easier</em> than the original integral. A common mnemonic for what to pick as $u$ (differentiate) is LIATE — Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential, roughly in order of preference, since each category tends to simplify (or at least not worsen) when differentiated.</p>
+  <p><strong>Repeated application — the tabular method.</strong> When $u$ needs several rounds of differentiation before it vanishes (e.g. $u=x^2$), doing integration by parts three separate times is repetitive. The tabular method organises this into two columns — derivatives of $u$ down one side, integrals of $dv$ down the other — with alternating signs, collapsing several rounds of the formula into one table.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \int u\,dv = uv - \int v\,du \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — basic integration by parts</div><p>Find $\int x\cos x\,dx$.</p>
+  <p>Let $u=x$ (differentiates to something simpler), $dv=\cos x\,dx$. Then $du=dx$, $v=\sin x$.</p>
+  <div class="math-block">\[ \int x\cos x\,dx = x\sin x - \int \sin x\,dx = x\sin x + \cos x + C \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $x\sin x+\cos x+C$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — repeated application via the tabular method</div><p>Find $\int x^2e^x\,dx$.</p>
+  <p>Tabular method: differentiate $x^2\to2x\to2\to0$; integrate $e^x\to e^x\to e^x\to e^x$; alternate signs $+,-,+$.</p>
+  <div class="math-block">\[ \int x^2e^x\,dx = x^2e^x - 2xe^x + 2e^x + C \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $e^x(x^2-2x+2)+C$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>If, after applying the formula once, $\int v\,du$ looks exactly as hard as the original integral (not simpler), you likely picked $u$ and $dv$ the wrong way around — swap them and try again.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('home')">&larr; Overview</button>
+        <button class="page-nav-btn next" onclick="goTo('trigint')">W1: Trigonometric Integrals &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-trigint">
+      <div class="page-hero">
+        <div class="page-hero-label">W1</div>
+        <div class="page-hero-title">Trigonometric Integrals</div>
+        <div class="page-hero-sub">Products and powers of sine and cosine</div>
+      </div>
+      <div class="motiv">Integrals like $\int \sin^3x\cos^2x\,dx$ look intimidating, but a small set of Pythagorean-identity tricks converts almost any power/product of sine and cosine into a form substitution can finish.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Odd power present.</strong> If either $\sin x$ or $\cos x$ appears to an odd power, peel off one factor to pair with $dx$, then convert the remaining even power using $\sin^2x+\cos^2x=1$ — this sets up a clean substitution.</p>
+  <p><strong>Both powers even.</strong> Use the half-angle identities $\sin^2x=\dfrac{1-\cos2x}{2}$, $\cos^2x=\dfrac{1+\cos2x}{2}$ to reduce the powers, at the cost of a doubled angle — repeat as needed until an odd power appears or the integral becomes elementary.</p>
+  <p><strong>Products of sines/cosines of different angles.</strong> Product-to-sum identities (e.g. $\sin A\cos B=\tfrac12[\sin(A+B)+\sin(A-B)]$) convert a product into a sum, which integrates term by term.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \sin^2x+\cos^2x=1, \qquad \sin^2x=\frac{1-\cos2x}{2}, \qquad \cos^2x=\frac{1+\cos2x}{2} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — odd power</div><p>Find $\int \sin^3x\,dx$.</p>
+  <div class="math-block">\[ \int \sin^3x\,dx = \int \sin x(1-\cos^2x)\,dx \]</div>
+  <p>Let $u=\cos x$, $du=-\sin x\,dx$.</p>
+  <div class="math-block">\[ = -\int(1-u^2)\,du = -u+\frac{u^3}{3}+C = -\cos x+\frac{\cos^3x}{3}+C \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $-\cos x+\dfrac{\cos^3x}{3}+C$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — both powers even</div><p>Find $\int \sin^2x\,dx$.</p>
+  <div class="math-block">\[ \int \frac{1-\cos2x}{2}\,dx = \frac{x}{2}-\frac{\sin2x}{4}+C \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{x}{2}-\dfrac{\sin2x}{4}+C$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Always check for an odd power first — that route is almost always shorter than the half-angle route, since it avoids introducing a doubled angle.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('ibp')">&larr; W1: Integration by Parts</button>
+        <button class="page-nav-btn next" onclick="goTo('trigsub')">W1: Trigonometric Substitution &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-trigsub">
+      <div class="page-hero">
+        <div class="page-hero-label">W1</div>
+        <div class="page-hero-title">Trigonometric Substitution</div>
+        <div class="page-hero-sub">Using trig identities to simplify square roots</div>
+      </div>
+      <div class="motiv">Expressions like $\sqrt{a^2-x^2}$ resist ordinary substitution because there's no clean "derivative of the inside" sitting in the integral. Trig substitution sidesteps this by replacing $x$ itself with a trig function, chosen specifically so the square root simplifies via a Pythagorean identity.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The three standard forms.</strong> Each pattern in the integrand suggests a specific substitution, chosen so that the corresponding Pythagorean identity collapses the square root:</p>
+  <table class="data-table">
+    <tr><th>Expression contains</th><th>Substitute</th><th>Identity used</th></tr>
+    <tr><td>$\sqrt{a^2-x^2}$</td><td>$x=a\sin\theta$</td><td>$1-\sin^2\theta=\cos^2\theta$</td></tr>
+    <tr><td>$\sqrt{a^2+x^2}$</td><td>$x=a\tan\theta$</td><td>$1+\tan^2\theta=\sec^2\theta$</td></tr>
+    <tr><td>$\sqrt{x^2-a^2}$</td><td>$x=a\sec\theta$</td><td>$\sec^2\theta-1=\tan^2\theta$</td></tr>
+  </table>
+  <p><strong>After integrating.</strong> The result is in terms of $\theta$ — convert back to $x$ using the original substitution (often with a right-triangle diagram labelled from $x=a\sin\theta$ etc., reading off the other trig ratios in terms of $x$).</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \sqrt{a^2-x^2}: x=a\sin\theta \qquad \sqrt{a^2+x^2}: x=a\tan\theta \qquad \sqrt{x^2-a^2}: x=a\sec\theta \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — the $\sqrt{a^2-x^2}$ case</div><p>Find $\int \dfrac{1}{\sqrt{4-x^2}}\,dx$.</p>
+  <p>Let $x=2\sin\theta$, $dx=2\cos\theta\,d\theta$. Then $\sqrt{4-x^2}=\sqrt{4-4\sin^2\theta}=2\cos\theta$.</p>
+  <div class="math-block">\[ \int \frac{2\cos\theta}{2\cos\theta}\,d\theta = \int d\theta = \theta+C = \arcsin\left(\frac{x}{2}\right)+C \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\arcsin\left(\dfrac{x}{2}\right)+C$ (matches the standard inverse-trig integral form)</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — the $\sqrt{a^2+x^2}$ case</div><p>Find $\int \dfrac{1}{\sqrt{9+x^2}}\,dx$.</p>
+  <p>Let $x=3\tan\theta$, $dx=3\sec^2\theta\,d\theta$. Then $\sqrt{9+x^2}=3\sec\theta$.</p>
+  <div class="math-block">\[ \int \frac{3\sec^2\theta}{3\sec\theta}\,d\theta = \int \sec\theta\,d\theta = \ln|\sec\theta+\tan\theta|+C \]</div>
+  <p>From $x=3\tan\theta$: $\tan\theta=x/3$, $\sec\theta=\sqrt{9+x^2}/3$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\ln\left|\dfrac{\sqrt{9+x^2}+x}{3}\right|+C$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>These three substitutions each turn a square root into a single trig function via one specific Pythagorean identity — memorising which identity matches which square root pattern is faster than re-deriving the choice each time.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('trigint')">&larr; W1: Trigonometric Integrals</button>
+        <button class="page-nav-btn next" onclick="goTo('pflinear')">W1-2: Partial Fractions — Linear Factors &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-pflinear">
+      <div class="page-hero">
+        <div class="page-hero-label">W1-2</div>
+        <div class="page-hero-title">Partial Fractions — Linear Factors</div>
+        <div class="page-hero-sub">Splitting rational functions with distinct linear denominators</div>
+      </div>
+      <div class="motiv">A rational function like $\dfrac{1}{x^2-1}$ can't be integrated directly, but it can be rewritten as a sum of simpler fractions, each with a single linear factor in the denominator — and each of those integrates immediately to a logarithm.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The setup.</strong> For a rational function with a denominator that factors into distinct linear factors, e.g. $\dfrac{P(x)}{(x-a)(x-b)}$, propose a decomposition:</p>
+  <div class="math-block">\[ \frac{P(x)}{(x-a)(x-b)} = \frac{A}{x-a} + \frac{B}{x-b} \]</div>
+  <p><strong>Finding $A$ and $B$.</strong> Multiply both sides by the original denominator to clear fractions, then either (a) substitute convenient values of $x$ (like $x=a$, which makes the $B$-term vanish, isolating $A$ directly), or (b) expand and match coefficients of like powers of $x$.</p>
+  <p><strong>Why it's always possible.</strong> This is guaranteed by a theorem from algebra: any proper rational function (numerator degree less than denominator degree) can be written this way, uniquely, once the denominator is fully factored — you're not guessing that a decomposition exists, only solving for its specific coefficients.</p>
+  <p><strong>Improper fractions first.</strong> If the numerator's degree is $\ge$ the denominator's, do polynomial long division first, decomposing only the proper remainder.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \frac{P(x)}{(x-a)(x-b)} = \frac{A}{x-a}+\frac{B}{x-b}, \qquad \int \frac{A}{x-a}\,dx = A\ln|x-a|+C \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — cover-up method</div><p>Find $\int \dfrac{1}{x^2-1}\,dx$.</p>
+  <div class="math-block">\[ \frac{1}{(x-1)(x+1)} = \frac{A}{x-1}+\frac{B}{x+1} \]</div>
+  <p>Multiply by $(x-1)(x+1)$: $1=A(x+1)+B(x-1)$. Let $x=1$: $1=2A\implies A=\tfrac12$. Let $x=-1$: $1=-2B\implies B=-\tfrac12$.</p>
+  <div class="math-block">\[ \int\left(\frac{1/2}{x-1}-\frac{1/2}{x+1}\right)dx = \frac12\ln|x-1|-\frac12\ln|x+1|+C \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac12\ln\left|\dfrac{x-1}{x+1}\right|+C$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — three distinct linear factors</div><p>Decompose $\dfrac{2x+1}{x(x-1)(x+2)}$.</p>
+  <p>$2x+1=A(x-1)(x+2)+Bx(x+2)+Cx(x-1)$. At $x=0$: $1=-2A\implies A=-\tfrac12$. At $x=1$: $3=3B\implies B=1$. At $x=-2$: $-3=6C\implies C=-\tfrac12$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $-\dfrac{1/2}{x}+\dfrac{1}{x-1}-\dfrac{1/2}{x+2}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>The "cover-up" trick (substituting the root of one factor to instantly isolate its coefficient) only works cleanly for distinct linear factors — repeated or irreducible-quadratic factors (next topic) need the full coefficient-matching approach instead.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('trigsub')">&larr; W1: Trigonometric Substitution</button>
+        <button class="page-nav-btn next" onclick="goTo('pfadvanced')">W2: Partial Fractions — Repeated & Irreducible Quadratic Factors &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-pfadvanced">
+      <div class="page-hero">
+        <div class="page-hero-label">W2</div>
+        <div class="page-hero-title">Partial Fractions — Repeated & Irreducible Quadratic Factors</div>
+        <div class="page-hero-sub">Extending the decomposition to harder denominator types</div>
+      </div>
+      <div class="motiv">Distinct linear factors were the simplest case. When a factor repeats, or when the denominator contains a quadratic that can't be factored over the reals, the decomposition needs extra terms — built by the same coefficient-matching idea, just with a richer set of unknowns.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Repeated linear factors.</strong> For $(x-a)^n$ in the denominator, include a term for <em>every</em> power from $1$ to $n$:</p>
+  <div class="math-block">\[ \frac{P(x)}{(x-a)^n} \to \frac{A_1}{x-a}+\frac{A_2}{(x-a)^2}+\cdots+\frac{A_n}{(x-a)^n} \]</div>
+  <p>This is needed because the cover-up trick only pins down $A_n$ directly (substituting $x=a$ after multiplying through) — the other coefficients require comparing further terms, since a single fraction $\frac{A}{x-a}$ alone can't reproduce all the necessary behaviour near $x=a$.</p>
+  <p><strong>Irreducible quadratic factors.</strong> A quadratic $ax^2+bx+c$ that doesn't factor over the reals (negative discriminant) gets a linear numerator, not just a constant:</p>
+  <div class="math-block">\[ \frac{P(x)}{(x^2+bx+c)} \to \frac{Bx+C}{x^2+bx+c} \]</div>
+  <p>A constant numerator alone can't produce the $x$-term needed when you multiply through and match coefficients — the linear numerator provides that missing flexibility.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ (x-a)^n \to \sum_{k=1}^n \frac{A_k}{(x-a)^k}, \qquad \text{irreducible } x^2+bx+c \to \frac{Bx+C}{x^2+bx+c} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — repeated linear factor</div><p>Decompose $\dfrac{3x-1}{(x-1)^2}$.</p>
+  <div class="math-block">\[ \frac{3x-1}{(x-1)^2} = \frac{A}{x-1}+\frac{B}{(x-1)^2} \]</div>
+  <p>$3x-1=A(x-1)+B$. At $x=1$: $2=B$. Match $x$-coefficients: $3=A$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{3}{x-1}+\dfrac{2}{(x-1)^2}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — irreducible quadratic factor</div><p>Decompose $\dfrac{x+1}{x(x^2+1)}$.</p>
+  <div class="math-block">\[ \frac{x+1}{x(x^2+1)} = \frac{A}{x}+\frac{Bx+C}{x^2+1} \]</div>
+  <p>$x+1=A(x^2+1)+(Bx+C)x$. At $x=0$: $1=A$. Match $x^2$: $0=A+B\implies B=-1$. Match $x$: $1=C$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{1}{x}+\dfrac{-x+1}{x^2+1}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>The $\dfrac{Bx+C}{x^2+bx+c}$ term typically needs splitting into two integrals once you integrate — one part matching $\int\dfrac{2x+b}{x^2+bx+c}dx$ (a logarithm, via substitution), the other needing the arctan form from the inverse trig integrals topic.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('pflinear')">&larr; W1-2: Partial Fractions — Linear Factors</button>
+        <button class="page-nav-btn next" onclick="goTo('improper')">W2: Improper Integrals &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-improper">
+      <div class="page-hero">
+        <div class="page-hero-label">W2</div>
+        <div class="page-hero-title">Improper Integrals</div>
+        <div class="page-hero-sub">Infinite limits and discontinuous integrands, via limits</div>
+      </div>
+      <div class="motiv">Ordinary definite integrals assume a finite interval and a well-behaved (bounded, continuous) integrand. When either assumption fails — an infinite limit of integration, or a vertical asymptote inside the interval — the Fundamental Theorem of Calculus can't be applied directly. Improper integrals patch this by wrapping the troublesome point in a limit.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Infinite limits of integration.</strong> Replace the infinite bound with a finite variable, integrate normally, then take the limit as that variable heads to infinity:</p>
+  <div class="math-block">\[ \int_a^\infty f(x)\,dx = \lim_{t\to\infty}\int_a^t f(x)\,dx \]</div>
+  <p>If the limit exists (is a finite number), the improper integral <strong>converges</strong> to that value; if the limit is infinite or doesn't exist, it <strong>diverges</strong>.</p>
+  <p><strong>Discontinuous integrands.</strong> If $f$ has an infinite discontinuity at some point $c$ within $[a,b]$, split the integral at $c$ and wrap each piece in a one-sided limit approaching $c$:</p>
+  <div class="math-block">\[ \int_a^b f(x)\,dx = \lim_{t\to c^-}\int_a^t f(x)\,dx + \lim_{t\to c^+}\int_t^b f(x)\,dx \]</div>
+  <p>Both pieces must converge individually for the whole integral to converge.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \int_a^\infty f(x)\,dx = \lim_{t\to\infty}\int_a^t f(x)\,dx, \qquad \text{converges if this limit is finite} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — infinite limit, converges</div><p>Evaluate $\displaystyle\int_1^\infty \dfrac{1}{x^2}\,dx$.</p>
+  <div class="math-block">\[ \lim_{t\to\infty}\int_1^t x^{-2}\,dx = \lim_{t\to\infty}\left[-\frac1x\right]_1^t = \lim_{t\to\infty}\left(-\frac1t+1\right)=1 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Converges to $1$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — discontinuous integrand</div><p>Evaluate $\displaystyle\int_0^1 \dfrac{1}{\sqrt{x}}\,dx$ (discontinuous at $x=0$).</p>
+  <div class="math-block">\[ \lim_{t\to0^+}\int_t^1 x^{-1/2}\,dx = \lim_{t\to0^+}\left[2\sqrt{x}\right]_t^1 = \lim_{t\to0^+}(2-2\sqrt t)=2 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Converges to $2$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>Convergence/divergence of improper integrals is the direct analogue of convergence/divergence of series (Week 11), and several series convergence tests (the integral test in particular) work by comparing a series directly to an improper integral.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('pfadvanced')">&larr; W2: Partial Fractions — Repeated & Irreducible Quadratic Factors</button>
+        <button class="page-nav-btn next" onclick="goTo('trapezoidal')">W3: Numerical Integration — Trapezoidal Rule & Error Estimation &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-trapezoidal">
+      <div class="page-hero">
+        <div class="page-hero-label">W3</div>
+        <div class="page-hero-title">Numerical Integration — Trapezoidal Rule & Error Estimation</div>
+        <div class="page-hero-sub">Approximating a definite integral when antiderivatives are hard (or impossible) to find</div>
+      </div>
+      <div class="motiv">Not every integrand has an elementary antiderivative (e.g. $e^{-x^2}$). Numerical integration sidesteps this entirely by approximating the area under the curve directly — the trapezoidal rule does this by replacing each thin vertical strip's top edge with a straight line instead of the true curve.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Building the rule.</strong> Split $[a,b]$ into $n$ equal subintervals of width $h=\dfrac{b-a}{n}$, with endpoints $x_0,x_1,\dots,x_n$. On each subinterval, approximate the area under the curve by the area of a trapezoid (rather than a rectangle, as in a basic Riemann sum) — using the straight line connecting $(x_{i-1},f(x_{i-1}))$ and $(x_i,f(x_i))$ as the top edge. A single trapezoid's area is $\dfrac{h}{2}\big(f(x_{i-1})+f(x_i)\big)$.</p>
+  <p>Summing over all $n$ trapezoids, each interior function value gets counted twice (once as the right edge of one trapezoid, once as the left edge of the next), while the two endpoints are counted once each:</p>
+  <div class="math-block">\[ \int_a^b f(x)\,dx \approx \frac{h}{2}\Big[f(x_0)+2f(x_1)+2f(x_2)+\cdots+2f(x_{n-1})+f(x_n)\Big] \]</div>
+  <p><strong>Error bound.</strong> Since each trapezoid replaces a curved top with a straight line, the error depends on how much the function curves — measured by its second derivative:</p>
+  <div class="math-block">\[ |E_T| \le \frac{(b-a)h^2}{12}\max|f''(x)| \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ T_n = \frac{h}{2}\big[f(x_0)+2f(x_1)+\cdots+2f(x_{n-1})+f(x_n)\big], \qquad h=\frac{b-a}{n} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — apply the trapezoidal rule</div><p>Estimate $\displaystyle\int_0^2 x^2\,dx$ using $n=4$ trapezoids.</p>
+  <p>$h=0.5$; $x_0,\dots,x_4=0,0.5,1,1.5,2$; $f(x)=x^2$ gives $0,0.25,1,2.25,4$.</p>
+  <div class="math-block">\[ T_4 = \frac{0.5}{2}\big[0+2(0.25)+2(1)+2(2.25)+4\big] = 0.25(11)=2.75 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $T_4=2.75$ (true value $\int_0^2x^2dx=\tfrac83\approx2.667$)</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — error bound</div><p>Bound the error for Example 1, given $f''(x)=2$ throughout $[0,2]$.</p>
+  <div class="math-block">\[ |E_T| \le \frac{(2-0)(0.5)^2}{12}(2) = \frac{2(0.25)(2)}{12}=\frac{1}{12}\approx0.083 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $|E_T|\le\tfrac{1}{12}\approx0.083$ (actual error was $2.75-2.667=0.083$ — matches the bound almost exactly)</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>The coefficient pattern $1,2,2,\dots,2,1$ comes directly from each interior point being shared by two adjacent trapezoids — it's worth deriving this once by hand rather than memorising it as an arbitrary rule.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('improper')">&larr; W2: Improper Integrals</button>
+        <button class="page-nav-btn next" onclick="goTo('simpsons')">W3: Numerical Integration — Simpson's Rule & Error Estimation &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-simpsons">
+      <div class="page-hero">
+        <div class="page-hero-label">W3</div>
+        <div class="page-hero-title">Numerical Integration — Simpson's Rule & Error Estimation</div>
+        <div class="page-hero-sub">Fitting parabolas instead of straight lines, for a dramatically better approximation</div>
+      </div>
+      <div class="motiv">The trapezoidal rule fits a straight line across each pair of points — but a parabola can match the curve's bending too, using barely more information. Simpson's Rule exploits this by fitting a parabola through each set of three consecutive points, and the resulting formula is often far more accurate for the same number of subintervals.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Building the rule.</strong> Take subintervals in pairs. Over each pair (three consecutive points $x_{i-1},x_i,x_{i+1}$), fit the unique parabola through those three points, and use its area as the approximation instead of two trapezoids. This requires $n$ to be even (so the points pair up completely).</p>
+  <p><strong>The resulting formula.</strong> The parabola-fitting calculation (carried out once, in general) produces a specific weighting pattern — $1,4,2,4,2,\dots,4,1$ — where odd-indexed points get weight $4$ and even-indexed interior points get weight $2$:</p>
+  <div class="math-block">\[ S_n = \frac{h}{3}\Big[f(x_0)+4f(x_1)+2f(x_2)+4f(x_3)+\cdots+4f(x_{n-1})+f(x_n)\Big] \]</div>
+  <p><strong>Error bound.</strong> Since Simpson's Rule matches any parabola <em>exactly</em> (zero error), the error now depends on the <em>fourth</em> derivative — how much the function deviates from parabolic behaviour, not just linear behaviour:</p>
+  <div class="math-block">\[ |E_S| \le \frac{(b-a)h^4}{180}\max|f^{(4)}(x)| \]</div>
+  <p>Since the error bound uses $h^4$ rather than $h^2$, halving $h$ shrinks the error by a factor of $16$, not just $4$ — this is why Simpson's Rule usually converges far faster than the trapezoidal rule.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ S_n = \frac{h}{3}\big[f(x_0)+4f(x_1)+2f(x_2)+\cdots+4f(x_{n-1})+f(x_n)\big], \qquad n \text{ even} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — apply Simpson's Rule</div><p>Estimate $\displaystyle\int_0^2 x^2\,dx$ using Simpson's Rule with $n=4$ (same data as the trapezoidal example).</p>
+  <p>$h=0.5$; $f$-values: $0,0.25,1,2.25,4$; weights: $1,4,2,4,1$.</p>
+  <div class="math-block">\[ S_4 = \frac{0.5}{3}\big[0+4(0.25)+2(1)+4(2.25)+4\big] = \frac{0.5}{3}(16)=\frac{8}{3} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $S_4=\dfrac83$ — exactly matches the true value, since $x^2$ is itself a parabola</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — why Simpson's Rule was exact here</div><p>Explain why $S_4$ gave the exact answer in Example 1, while $T_4$ (trapezoidal) did not.</p>
+  <p>Simpson's Rule fits a parabola through each set of three points. Since $f(x)=x^2$ <em>is</em> a parabola, the fitted parabola coincides exactly with the true curve on every subinterval — there's no approximation error to speak of, by construction.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Simpson's Rule is exact for any polynomial of degree $\le3$, which includes all parabolas</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Always double-check that $n$ is even before applying Simpson's Rule — an odd $n$ leaves one interval unpaired, and the standard formula simply doesn't apply.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('trapezoidal')">&larr; W3: Numerical Integration — Trapezoidal Rule & Error Estimation</button>
+        <button class="page-nav-btn next" onclick="goTo('polarplot')">W4: Polar Coordinates — Plotting & Conversion &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-polarplot">
+      <div class="page-hero">
+        <div class="page-hero-label">W4</div>
+        <div class="page-hero-title">Polar Coordinates — Plotting & Conversion</div>
+        <div class="page-hero-sub">A second coordinate system, built from distance and angle instead of horizontal/vertical position</div>
+      </div>
+      <div class="motiv">Cartesian coordinates locate a point by how far across and up. Polar coordinates locate the same point a completely different way — by how far from the origin, and in what direction — and some curves (spirals, roses, cardioids) become far simpler to describe this way.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The idea.</strong> A point's polar coordinates $(r,\theta)$ record: $r$, the distance from the origin (the "pole"), and $\theta$, the angle measured counterclockwise from the positive $x$-axis (the "polar axis"). Plotting $(r,\theta)$ means: face along angle $\theta$, then walk $r$ units in that direction.</p>
+  <p><strong>Deriving the conversion formulas.</strong> Drop a perpendicular from the point down to the $x$-axis, forming a right triangle with hypotenuse $r$ and angle $\theta$ at the origin — ordinary right-triangle trig gives:</p>
+  <div class="math-block">\[ x=r\cos\theta, \qquad y=r\sin\theta \]</div>
+  <p>Going the other way (Cartesian to polar), Pythagoras gives $r$, and the angle comes from $\tan\theta=y/x$ (with quadrant care, exactly as with the argument of a complex number):</p>
+  <div class="math-block">\[ r=\sqrt{x^2+y^2}, \qquad \tan\theta=\frac{y}{x} \]</div>
+  <p><strong>Non-uniqueness.</strong> Unlike Cartesian coordinates, a single point has infinitely many valid polar representations — adding $2\pi$ to $\theta$ returns to the same direction, and allowing $r<0$ points in the <em>opposite</em> direction to $\theta$, landing on the same point as a positive $r$ with angle $\theta+\pi$.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ x=r\cos\theta, \quad y=r\sin\theta, \qquad r^2=x^2+y^2, \quad \tan\theta=\frac{y}{x} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — polar to Cartesian</div><p>Convert $\left(4,\dfrac{\pi}{3}\right)$ to Cartesian coordinates.</p>
+  <div class="math-block">\[ x=4\cos\frac{\pi}{3}=4\left(\frac12\right)=2, \qquad y=4\sin\frac{\pi}{3}=4\left(\frac{\sqrt3}{2}\right)=2\sqrt3 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $(2,2\sqrt3)$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — Cartesian to polar</div><p>Convert $(-1,1)$ to polar coordinates (with $0\le\theta<2\pi$).</p>
+  <div class="math-block">\[ r=\sqrt{1+1}=\sqrt2, \qquad \tan\theta=\frac{1}{-1}=-1 \]</div>
+  <p>Reference angle $\pi/4$; since $x<0,y>0$, we're in the second quadrant: $\theta=\pi-\pi/4=3\pi/4$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\left(\sqrt2,\dfrac{3\pi}{4}\right)$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>These conversion formulas are identical in spirit to converting a complex number between Cartesian form $a+bi$ and polar form $r(\cos\theta+i\sin\theta)$ — same right-triangle trig, same quadrant-checking process for the angle.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('simpsons')">&larr; W3: Numerical Integration — Simpson's Rule & Error Estimation</button>
+        <button class="page-nav-btn next" onclick="goTo('polargraph')">W4: Polar Coordinates — Graphing Curves & Symmetry &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-polargraph">
+      <div class="page-hero">
+        <div class="page-hero-label">W4</div>
+        <div class="page-hero-title">Polar Coordinates — Graphing Curves & Symmetry</div>
+        <div class="page-hero-sub">Cardioids, roses, limaçons, and how to sketch them efficiently</div>
+      </div>
+      <div class="motiv">A polar equation $r=f(\theta)$ describes a curve by giving the distance from the origin as a function of angle — plotting a table of $(\theta,r)$ values and connecting them reveals shapes (hearts, flowers, spirals) that would be far messier to describe with a single Cartesian equation $y=f(x)$.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Building a sketch from a table.</strong> Choose several values of $\theta$ (typically multiples of $\pi/6$ or $\pi/4$), compute $r$ at each, then plot and connect. This always works but is slow — recognising standard families speeds things up dramatically.</p>
+  <table class="data-table">
+    <tr><th>Equation</th><th>Shape</th></tr>
+    <tr><td>$r=a$</td><td>Circle, radius $a$, centred at the origin</td></tr>
+    <tr><td>$r=a\cos\theta$ or $r=a\sin\theta$</td><td>Circle of diameter $a$, passing through the origin</td></tr>
+    <tr><td>$r=a+b\cos\theta$ (or $\sin\theta$), $a=b$</td><td>Cardioid (heart shape)</td></tr>
+    <tr><td>$r=a+b\cos\theta$, $a\ne b$</td><td>Lima\c{c}on (with or without an inner loop, depending on $a/b$)</td></tr>
+    <tr><td>$r=a\cos(n\theta)$ or $a\sin(n\theta)$</td><td>Rose with $n$ petals ($n$ odd) or $2n$ petals ($n$ even)</td></tr>
+  </table>
+  <p><strong>Symmetry shortcuts.</strong> Test algebraically before plotting anything: symmetric about the $x$-axis if replacing $\theta$ with $-\theta$ leaves the equation unchanged; symmetric about the $y$-axis if replacing $\theta$ with $\pi-\theta$ leaves it unchanged; symmetric about the origin if replacing $r$ with $-r$ (or $\theta$ with $\theta+\pi$) leaves it unchanged. Confirming symmetry first means only sketching half (or a quarter) of the curve by hand, then reflecting.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ r=a\cos(n\theta):\ n \text{ odd} \to n \text{ petals}, \quad n \text{ even} \to 2n \text{ petals} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — identify and sketch a cardioid</div><p>Identify the curve $r=2+2\cos\theta$, and find where it crosses the origin.</p>
+  <p>Since the coefficients match ($a=b=2$), this is a cardioid. It passes through the origin where $r=0$: $2+2\cos\theta=0\implies\cos\theta=-1\implies\theta=\pi$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> A cardioid, touching the origin at $\theta=\pi$, with maximum $r=4$ at $\theta=0$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — symmetry test</div><p>Test $r=3\sin(2\theta)$ for symmetry about the origin.</p>
+  <p>Replace $\theta$ with $\theta+\pi$: $r=3\sin(2\theta+2\pi)=3\sin(2\theta)$ — unchanged.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Symmetric about the origin (consistent with it being a 4-petaled rose, since $n=2$ is even)</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Rather than memorising the petal-count rule as a fact, build a small table for $r=\cos(2\theta)$ by hand once (every $\pi/8$) — seeing the curve genuinely trace out 4 petals will make the "$n$ even $\to 2n$ petals" rule feel derived, not arbitrary.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('polarplot')">&larr; W4: Polar Coordinates — Plotting & Conversion</button>
+        <button class="page-nav-btn next" onclick="goTo('areas142')">W5: Areas — Cartesian Extension &amp; Polar Regions &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-areas142">
+      <div class="page-hero">
+        <div class="page-hero-label">W5</div>
+        <div class="page-hero-title">Areas — Cartesian Extension &amp; Polar Regions</div>
+        <div class="page-hero-sub">Area between curves revisited, then a genuinely new formula for polar regions</div>
+      </div>
+      <div class="motiv">Cartesian area-between-curves used thin vertical rectangles. A polar region isn't naturally swept out by rectangles at all — it's swept out by thin circular sectors, radiating from the origin as $\theta$ varies, which leads to a completely different-looking (but equally derivable) area formula.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Cartesian area, extended.</strong> The area-between-curves formula from MATH141 ($A=\int_a^b(f-g)dx$) extends naturally to regions bounded by more than two curves, or requiring integration with respect to $y$ instead of $x$ when curves are more naturally expressed as $x=g(y)$ — same idea, rotated $90°$.</p>
+  <p><strong>Building the polar area formula.</strong> A thin sector of a circle with radius $r$ and angle $d\theta$ has area $\dfrac12r^2\,d\theta$ (this is just the "area of a circle" formula $\pi r^2$, scaled down: a full circle is angle $2\pi$, so a slice of angle $d\theta$ is the fraction $\dfrac{d\theta}{2\pi}$ of the full area $\pi r^2$, giving $\dfrac{d\theta}{2\pi}\cdot\pi r^2=\dfrac12r^2d\theta$). Summing (integrating) these thin sectors from $\theta=\alpha$ to $\theta=\beta$ gives the total area swept out by the polar curve:</p>
+  <div class="math-block">\[ A = \frac12\int_\alpha^\beta r^2\,d\theta \]</div>
+  <p><strong>Area between two polar curves.</strong> Exactly the same "outer minus inner" idea as Cartesian area-between-curves, just with $r^2$ playing the role of height: $A=\dfrac12\int_\alpha^\beta(r_{\text{outer}}^2-r_{\text{inner}}^2)\,d\theta$.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ A = \frac12\int_\alpha^\beta r^2\,d\theta \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — area enclosed by a cardioid</div><p>Find the area enclosed by $r=1+\cos\theta$.</p>
+  <p>The full cardioid is traced as $\theta$ goes from $0$ to $2\pi$.</p>
+  <div class="math-block">\[ A = \frac12\int_0^{2\pi}(1+\cos\theta)^2\,d\theta = \frac12\int_0^{2\pi}\left(1+2\cos\theta+\cos^2\theta\right)d\theta \]</div>
+  <p>Using $\cos^2\theta=\tfrac{1+\cos2\theta}{2}$ from the trig integrals topic:</p>
+  <div class="math-block">\[ = \frac12\left[\theta+2\sin\theta+\frac{\theta}{2}+\frac{\sin2\theta}{4}\right]_0^{2\pi} = \frac12(2\pi+\pi) = \frac{3\pi}{2} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{3\pi}{2}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — area of one petal of a rose</div><p>Find the area of one petal of $r=\cos(2\theta)$.</p>
+  <p>One petal is traced as $\theta$ ranges over an interval where $r\ge0$ starts and ends at $0$: $-\pi/4\le\theta\le\pi/4$.</p>
+  <div class="math-block">\[ A = \frac12\int_{-\pi/4}^{\pi/4}\cos^2(2\theta)\,d\theta = \frac12\left[\frac{\theta}{2}+\frac{\sin4\theta}{8}\right]_{-\pi/4}^{\pi/4} = \frac{\pi}{8} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{\pi}{8}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>Always identify the correct $\theta$-interval that traces the region exactly once before integrating — tracing the same petal or loop twice (or including an extra loop) silently doubles or corrupts the area, and the formula itself won't warn you.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('polargraph')">&larr; W4: Polar Coordinates — Graphing Curves & Symmetry</button>
+        <button class="page-nav-btn next" onclick="goTo('volumes142')">W5: Volumes of Revolution — Disk/Washer &amp; Shell Methods &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-volumes142">
+      <div class="page-hero">
+        <div class="page-hero-label">W5</div>
+        <div class="page-hero-title">Volumes of Revolution — Disk/Washer &amp; Shell Methods</div>
+        <div class="page-hero-sub">Two different ways to slice a solid of revolution</div>
+      </div>
+      <div class="motiv">Rotating a 2D region around an axis sweeps out a 3D solid. There are two natural ways to slice that solid into simple pieces to sum up its volume — thin disks/washers perpendicular to the axis, or thin cylindrical shells parallel to it — and the right choice depends entirely on which slicing direction gives simpler cross-sections for the specific region.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Disk/washer method — slicing perpendicular to the axis.</strong> Rotating the region under $y=f(x)$ (from $x=a$ to $b$) about the $x$-axis sweeps out disks of radius $f(x)$ and thickness $dx$. Each disk's volume is $\pi[f(x)]^2\,dx$ (a cylinder's volume, $\pi r^2 h$, with $h=dx$); summing (integrating) gives:</p>
+  <div class="math-block">\[ V = \pi\int_a^b [f(x)]^2\,dx \]</div>
+  <p>If the region is between two curves (an inner and outer radius), each slice is a washer (a disk with a hole) rather than a solid disk: $V=\pi\int_a^b\big([R(x)]^2-[r(x)]^2\big)dx$.</p>
+  <p><strong>Shell method — slicing parallel to the axis.</strong> Sometimes solving for $x$ in terms of $y$ (needed for the disk method around a vertical axis) is awkward. The shell method instead sums up thin cylindrical shells at each $x$, each with radius $x$, height $f(x)$, and thickness $dx$ — "unrolled," a thin shell is approximately a rectangular slab of area (circumference $\times$ height) $=2\pi x\cdot f(x)$, times thickness $dx$:</p>
+  <div class="math-block">\[ V = 2\pi\int_a^b x\,f(x)\,dx \]</div>
+  <p><strong>Choosing a method.</strong> Pick whichever method avoids having to solve the boundary curve for the "wrong" variable — if the region is naturally $y=f(x)$ and you're rotating about the $y$-axis, shells (which keep everything in terms of $x$) are usually easier than washers (which would need $x=g(y)$).</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \text{Disk/washer: } V=\pi\int_a^b\big([R(x)]^2-[r(x)]^2\big)dx \qquad \text{Shell: } V=2\pi\int_a^b x\,f(x)\,dx \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — disk method</div><p>Find the volume when the region under $y=\sqrt{x}$, $0\le x\le4$, is rotated about the $x$-axis.</p>
+  <div class="math-block">\[ V = \pi\int_0^4 (\sqrt{x})^2\,dx = \pi\int_0^4 x\,dx = \pi\left[\frac{x^2}{2}\right]_0^4 = 8\pi \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $8\pi$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — shell method</div><p>Find the volume when the region under $y=x^2$, $0\le x\le2$, is rotated about the $y$-axis.</p>
+  <div class="math-block">\[ V = 2\pi\int_0^2 x\cdot x^2\,dx = 2\pi\int_0^2 x^3\,dx = 2\pi\left[\frac{x^4}{4}\right]_0^2 = 8\pi \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $8\pi$ (shells were far more direct here than solving $y=x^2$ for $x$ and using washers)</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Sketch the region and the axis of rotation before choosing a method — the fastest way to decide between disk/washer and shells is visualising which slicing direction (perpendicular or parallel to the axis) gives cross-sections you can already describe in terms of the variable you have.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('areas142')">&larr; W5: Areas — Cartesian Extension &amp; Polar Regions</button>
+        <button class="page-nav-btn next" onclick="goTo('arclength142')">W6: Arc Length &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-arclength142">
+      <div class="page-hero">
+        <div class="page-hero-label">W6</div>
+        <div class="page-hero-title">Arc Length</div>
+        <div class="page-hero-sub">Measuring the true length of a curve, not just the width of its interval</div>
+      </div>
+      <div class="motiv">The straight-line distance formula from MATH141 measures the distance between two points — but a curved path between them is longer than that straight line. Arc length adapts the same Pythagoras idea to an infinite sum of infinitesimally short straight segments that hug the curve.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Building the formula.</strong> Approximate the curve $y=f(x)$ between $x$ and $x+dx$ by the straight segment connecting $(x,f(x))$ to $(x+dx,f(x+dx))$. By Pythagoras, that tiny segment's length is $\sqrt{dx^2+dy^2}$. Factor out $dx$:</p>
+  <div class="math-block">\[ \sqrt{dx^2+dy^2} = \sqrt{1+\left(\frac{dy}{dx}\right)^2}\,dx \]</div>
+  <p>Summing (integrating) these tiny segments over the whole curve gives the total arc length:</p>
+  <div class="math-block">\[ L = \int_a^b \sqrt{1+[f'(x)]^2}\,dx \]</div>
+  <p><strong>Connection to earlier topics.</strong> These integrals frequently contain a square root of a sum of squares — precisely the pattern that trig substitution (this phase, earlier) was built to handle. Arc length problems are a natural place that technique gets used in practice, not just as an abstract exercise.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ L = \int_a^b \sqrt{1+[f'(x)]^2}\,dx \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — arc length of a simple curve</div><p>Find the arc length of $y=\dfrac{2}{3}x^{3/2}$ from $x=0$ to $x=3$.</p>
+  <div class="math-block">\[ f'(x)=x^{1/2}, \qquad 1+[f'(x)]^2=1+x \]</div>
+  <div class="math-block">\[ L = \int_0^3 \sqrt{1+x}\,dx = \left[\frac{2}{3}(1+x)^{3/2}\right]_0^3 = \frac23\big(8-1\big) = \frac{14}{3} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{14}{3}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — set up an arc length integral needing trig substitution</div><p>Set up (do not evaluate) the arc length of $y=x^2$ from $x=0$ to $x=1$, and identify the substitution needed.</p>
+  <div class="math-block">\[ f'(x)=2x, \qquad L = \int_0^1 \sqrt{1+4x^2}\,dx \]</div>
+  <p>This matches the $\sqrt{a^2+x^2}$ pattern (with $a=\tfrac12$ after factoring) from the trig substitution topic — it would be solved with $2x=\tan\theta$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\int_0^1\sqrt{1+4x^2}\,dx$, solvable via $2x=\tan\theta$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Arc length integrals are notorious for being simple to set up but hard to evaluate by hand — recognising when a problem is deliberately constructed to simplify nicely (as in Example 1) versus when it genuinely needs trig substitution (Example 2) will save you time figuring out which tool to reach for.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('volumes142')">&larr; W5: Volumes of Revolution — Disk/Washer &amp; Shell Methods</button>
+        <button class="page-nav-btn next" onclick="goTo('exam1')">In-Session Exam 1 &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-exam1">
+      <div class="page-hero">
+        <div class="page-hero-label">End of Week 8</div>
+        <div class="page-hero-title">In-Session Examination 1</div>
+        <div class="page-hero-sub">This is exactly the material this exam tests — you've just finished all of it.</div>
+      </div>
+      <div class="motiv">You've now covered every topic in Phase 1: integration techniques, numerical integration, polar coordinates, and applications. In-Session Exam 1 sits at the end of Week 8 (partway through Phase 2's differential equations content), but its entire syllabus is this phase.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Exam details, straight from the subject outline</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <table class="data-table">
+            <tr><th>Detail</th><th>Value</th></tr>
+            <tr><td>Timing</td><td>End of Week 8 (Saturday)</td></tr>
+            <tr><td>Duration</td><td>100 minutes</td></tr>
+            <tr><td>Coverage</td><td>All material from Weeks 1&ndash;6 &mdash; every topic in this Phase 1 guide</td></tr>
+            <tr><td>Weighting</td><td>35% of the final MATH142 mark</td></tr>
+            <tr><td>Summary sheet</td><td>One A4 page, single-sided, permitted</td></tr>
+            <tr><td>Calculator</td><td>Single-line-display only &mdash; no graphics, no alphanumeric keyboard, not programmable</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">How to prepare using this guide</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="callout callout-info">Work through the 130 practice questions on the next page &mdash; they're organised by topic, exactly matching the 13 sections above, so you can target any area that still feels shaky before sitting this exam.</div>
+          <p style="margin-top:10px">Remember: your mark for this half of the course is the <em>best</em> of this In-Session Exam score and Final Exam Part A &mdash; a strong result here reduces pressure on the Final, but doesn't remove the option to improve it later if you want to.</p>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('arclength142')">&larr; W6: Arc Length</button>
+        <button class="page-nav-btn next" onclick="goTo('practice')">Practice Questions &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-practice">
+      <div class="page-hero">
+        <div class="page-hero-label">Mixed Practice</div>
+        <div class="page-hero-title">Practice Questions</div>
+        <div class="page-hero-sub">130 questions — 10 per topic — across all of Phase 1. Attempt each before revealing the answer.</div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W1</div>
+        <div class="level-info">
+          <div class="level-title">Integration by Parts</div>
+          <div class="level-sub">The product rule, run in reverse</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div class="q-text">Find $\int xe^x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=x,dv=e^xdx$: $xe^x-e^x+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div class="q-text">Find $\int x\sin x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=x,dv=\sin x\,dx$: $-x\cos x+\sin x+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div class="q-text">Find $\int \ln x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=\ln x,dv=dx$: $x\ln x-x+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">4</div>
+          <div class="q-text">Find $\int x\ln x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=\ln x,dv=x\,dx$: $\dfrac{x^2}{2}\ln x-\dfrac{x^2}{4}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">5</div>
+          <div class="q-text">Find $\int x^2\cos x\,dx$ using the tabular method.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x^2\sin x+2x\cos x-2\sin x+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">6</div>
+          <div class="q-text">Find $\int \arctan x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=\arctan x,dv=dx$; $du=\dfrac{1}{1+x^2}dx$: $x\arctan x-\tfrac12\ln(1+x^2)+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">7</div>
+          <div class="q-text">Find $\int e^x\sin x\,dx$ (hint: apply integration by parts twice, then solve algebraically for the integral).<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$I=e^x\sin x-e^x\cos x-I \implies 2I=e^x(\sin x-\cos x) \implies I=\tfrac12e^x(\sin x-\cos x)+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">8</div>
+          <div class="q-text">Find $\int x^3\ln x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=\ln x,dv=x^3dx$: $\dfrac{x^4}{4}\ln x-\dfrac{x^4}{16}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">9</div>
+          <div class="q-text">Evaluate $\displaystyle\int_0^1 xe^{-x}\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$[-xe^{-x}-e^{-x}]_0^1=(-e^{-1}-e^{-1})-(0-1)=1-2e^{-1}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">10</div>
+          <div class="q-text">Explain why choosing $u=e^x$ and $dv=x\,dx$ for $\int xe^x\,dx$ makes the problem harder rather than easier.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Differentiating $u=e^x$ gives back $e^x$ (no simplification), while integrating $dv=x\,dx$ gives $v=x^2/2$ — the resulting $\int v\,du$ term becomes $\int \tfrac{x^2}{2}e^x\,dx$, which is more complicated than the original, not less</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W1</div>
+        <div class="level-info">
+          <div class="level-title">Trigonometric Integrals</div>
+          <div class="level-sub">Products and powers of sine and cosine</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">11</div>
+          <div class="q-text">Find $\int \cos^3x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\int\cos x(1-\sin^2x)dx$, $u=\sin x$: $\sin x-\dfrac{\sin^3x}{3}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">12</div>
+          <div class="q-text">Find $\int \cos^2x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{x}{2}+\dfrac{\sin2x}{4}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">13</div>
+          <div class="q-text">Find $\int \sin^2x\cos^3x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Odd power on cosine: $u=\sin x$: $\dfrac{\sin^3x}{3}-\dfrac{\sin^5x}{5}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">14</div>
+          <div class="q-text">Find $\int \sin^5x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=\cos x$: $-\cos x+\dfrac{2\cos^3x}{3}-\dfrac{\cos^5x}{5}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">15</div>
+          <div class="q-text">Find $\int \sin^4x\,dx$ (both powers even — apply the half-angle identity twice).<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{3x}{8}-\dfrac{\sin2x}{4}+\dfrac{\sin4x}{32}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">16</div>
+          <div class="q-text">Find $\int \sin x\cos x\,dx$ two ways: (a) direct substitution, (b) product-to-sum. Confirm they agree up to a constant.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>(a) $u=\sin x$: $\tfrac12\sin^2x+C$. (b) $\sin x\cos x=\tfrac12\sin2x$: $-\tfrac14\cos2x+C$. These agree since $-\tfrac14\cos2x=-\tfrac14(1-2\sin^2x)=\tfrac12\sin^2x-\tfrac14$, matching up to the constant</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">17</div>
+          <div class="q-text">Find $\int \cos^2x\sin^3x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Odd power on sine: $u=\cos x$: $-\dfrac{\cos^3x}{3}+\dfrac{\cos^5x}{5}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">18</div>
+          <div class="q-text">Find $\int \sin(3x)\cos(3x)\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$=\tfrac12\sin(6x)$ integrated: $-\dfrac{1}{12}\cos(6x)+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">19</div>
+          <div class="q-text">Evaluate $\displaystyle\int_0^{\pi} \sin^2x\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\left[\dfrac{x}{2}-\dfrac{\sin2x}{4}\right]_0^\pi=\dfrac{\pi}{2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">20</div>
+          <div class="q-text">Explain why the identity $\sin^2x+\cos^2x=1$ is the key tool for odd powers but half-angle identities are needed for even powers.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>For an odd power, peeling off one factor leaves an even power that converts directly via $\sin^2x+\cos^2x=1$ into a polynomial in the other function, ready for substitution; but if every power present is already even, there's no odd factor to peel off first, so a different identity (half-angle) is needed to reduce the power instead</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W1</div>
+        <div class="level-info">
+          <div class="level-title">Trigonometric Substitution</div>
+          <div class="level-sub">Using trig identities to simplify square roots</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">21</div>
+          <div class="q-text">Which substitution suits $\int \dfrac{1}{\sqrt{9-x^2}}dx$?<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=3\sin\theta$ (matches $\sqrt{a^2-x^2}$ with $a=3$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">22</div>
+          <div class="q-text">Which substitution suits $\int \dfrac{1}{\sqrt{x^2-16}}dx$?<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=4\sec\theta$ (matches $\sqrt{x^2-a^2}$ with $a=4$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">23</div>
+          <div class="q-text">Find $\int \dfrac{1}{\sqrt{25-x^2}}dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\arcsin\left(\dfrac{x}{5}\right)+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">24</div>
+          <div class="q-text">Find $\int \dfrac{1}{16+x^2}dx$ (note: no square root here — reuse from Phase 1, MATH141 §5).<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac14\arctan\left(\dfrac{x}{4}\right)+C$ — recognising it doesn't need trig substitution at all, since this pattern was already solved via the arctan integral form</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">25</div>
+          <div class="q-text">Set up (do not fully evaluate) $\int x^2\sqrt{1-x^2}\,dx$ using trig substitution.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=\sin\theta$, $dx=\cos\theta\,d\theta$: $\int \sin^2\theta\cos^2\theta\,d\theta$ — a trig integral solvable with half-angle identities</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">26</div>
+          <div class="q-text">Find $\int \dfrac{x}{\sqrt{4-x^2}}dx$, and explain why trig substitution is unnecessary here.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Ordinary substitution $u=4-x^2$ works directly since $du=-2x\,dx$ matches the $x$ in the numerator: $-\sqrt{4-x^2}+C$ — no trig substitution needed because the numerator already supplies the right derivative factor</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">27</div>
+          <div class="q-text">Using $x=a\sin\theta$, express $\cos\theta$ in terms of $x$ and $a$ (for use converting back after integrating).<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\cos\theta=\dfrac{\sqrt{a^2-x^2}}{a}$, from a right triangle with opposite $x$, hypotenuse $a$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">28</div>
+          <div class="q-text">Find $\int \sqrt{4-x^2}\,dx$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=2\sin\theta$: $\int 4\cos^2\theta\,d\theta=2\theta+\sin2\theta+C = 2\arcsin\left(\tfrac{x}{2}\right)+\tfrac{x\sqrt{4-x^2}}{2}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">29</div>
+          <div class="q-text">Which substitution suits $\int \sqrt{x^2+1}\,dx$?<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=\tan\theta$ (matches $\sqrt{a^2+x^2}$ with $a=1$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">30</div>
+          <div class="q-text">Explain why $x=a\sec\theta$ is the natural choice for $\sqrt{x^2-a^2}$, referencing the identity $\sec^2\theta-1=\tan^2\theta$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Substituting gives $x^2-a^2=a^2\sec^2\theta-a^2=a^2(\sec^2\theta-1)=a^2\tan^2\theta$, so the square root becomes $a\tan\theta$ (up to sign) — a single clean trig function, exactly the simplification trig substitution is chosen to produce</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W1-2</div>
+        <div class="level-info">
+          <div class="level-title">Partial Fractions — Linear Factors</div>
+          <div class="level-sub">Splitting rational functions with distinct linear denominators</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">31</div>
+          <div class="q-text">Decompose $\dfrac{1}{(x-2)(x+3)}$.<div class="q-hint">W1-2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{1/5}{x-2}-\dfrac{1/5}{x+3}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">32</div>
+          <div class="q-text">Find $\int \dfrac{1}{(x-2)(x+3)}dx$.<div class="q-hint">W1-2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\tfrac15\ln|x-2|-\tfrac15\ln|x+3|+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">33</div>
+          <div class="q-text">Decompose $\dfrac{3x-1}{x(x-1)}$.<div class="q-hint">W1-2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>At $x=0$: $-1=A(-1)\implies A=1$; at $x=1$: $2=B\implies B=2$; $\dfrac{1}{x}+\dfrac{2}{x-1}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">34</div>
+          <div class="q-text">Find $\int \dfrac{3x-1}{x(x-1)}dx$.<div class="q-hint">W1-2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\ln|x|+2\ln|x-1|+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">35</div>
+          <div class="q-text">Decompose $\dfrac{5}{(x-1)(x-4)}$.<div class="q-hint">W1-2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>At $x=1$: $5=-3A\implies A=-\tfrac53$; at $x=4$: $5=3B\implies B=\tfrac53$; $-\dfrac{5/3}{x-1}+\dfrac{5/3}{x-4}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">36</div>
+          <div class="q-text">Find $\int \dfrac{x+4}{x^2-4}dx$.<div class="q-hint">W1-2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x^2-4=(x-2)(x+2)$; at $x=2$: $6=4A\implies A=\tfrac32$; at $x=-2$: $2=-4B\implies B=-\tfrac12$: $\tfrac32\ln|x-2|-\tfrac12\ln|x+2|+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">37</div>
+          <div class="q-text">Decompose $\dfrac{x^2}{(x-1)(x+1)}$, first performing polynomial division (improper fraction).<div class="q-hint">W1-2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{x^2}{x^2-1}=1+\dfrac{1}{x^2-1}$; decompose the remainder: $1+\dfrac{1/2}{x-1}-\dfrac{1/2}{x+1}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">38</div>
+          <div class="q-text">Find $\int \dfrac{1}{x^2+x-6}dx$.<div class="q-hint">W1-2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Factor: $(x+3)(x-2)$; at $x=2$: $1=5A\implies A=\tfrac15$; at $x=-3$: $1=-5B\implies B=-\tfrac15$: $\tfrac15\ln|x-2|-\tfrac15\ln|x+3|+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">39</div>
+          <div class="q-text">Decompose $\dfrac{4x-5}{(x-1)(x-2)(x+1)}$ using the cover-up method at each root.<div class="q-hint">W1-2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>At $x=1$: $-1=A(-1)(2)\implies A=\tfrac12$; at $x=2$: $3=B(1)(3)\implies B=1$; at $x=-1$: $-9=C(-2)(-3)\implies C=-\tfrac32$: $\dfrac{1/2}{x-1}+\dfrac{1}{x-2}-\dfrac{3/2}{x+1}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">40</div>
+          <div class="q-text">Explain why partial fraction decomposition requires the denominator's degree to exceed the numerator's degree (a 'proper' fraction), and what to do if it doesn't.<div class="q-hint">W1-2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The theorem guaranteeing a clean sum-of-simple-fractions decomposition only applies to proper rational functions; if the numerator's degree is greater than or equal to the denominator's, first perform polynomial long division to split off a polynomial part plus a genuinely proper remainder, then decompose only that remainder</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W2</div>
+        <div class="level-info">
+          <div class="level-title">Partial Fractions — Repeated & Irreducible Quadratic Factors</div>
+          <div class="level-sub">Extending the decomposition to harder denominator types</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">41</div>
+          <div class="q-text">Decompose $\dfrac{1}{(x-2)^2}$ (already fully decomposed — confirm no further work is needed).<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>It's already in simplest form: $\dfrac{1}{(x-2)^2}$ — a single repeated-factor term, nothing to split further</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">42</div>
+          <div class="q-text">Decompose $\dfrac{2x+3}{(x+1)^2}$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$2x+3=A(x+1)+B$; at $x=-1$: $1=B$; match $x$: $2=A$: $\dfrac{2}{x+1}+\dfrac{1}{(x+1)^2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">43</div>
+          <div class="q-text">Find $\int \dfrac{2x+3}{(x+1)^2}dx$ using the previous decomposition.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$2\ln|x+1|-\dfrac{1}{x+1}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">44</div>
+          <div class="q-text">Decompose $\dfrac{x^2}{(x-1)^3}$ (three repeated-factor terms needed).<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Set $x^2=A(x-1)^2+B(x-1)+C$; at $x=1$: $1=C$; expand and match: $A=1$, then match $x$: comparing gives $B=2$: $\dfrac{1}{x-1}+\dfrac{2}{(x-1)^2}+\dfrac{1}{(x-1)^3}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">45</div>
+          <div class="q-text">Decompose $\dfrac{1}{x(x^2+4)}$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$1=A(x^2+4)+(Bx+C)x$; at $x=0$: $A=\tfrac14$; match $x^2$: $0=A+B\implies B=-\tfrac14$; match $x$: $0=C$: $\dfrac{1/4}{x}+\dfrac{-x/4}{x^2+4}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">46</div>
+          <div class="q-text">Find $\int \dfrac{1}{x(x^2+4)}dx$ using the previous decomposition (leave the arctan piece unevaluated in form).<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\tfrac14\ln|x|-\tfrac18\ln(x^2+4)+C$ (the $-x/4$ over $x^2+4$ term integrates to a logarithm since the numerator is proportional to the derivative of the denominator)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">47</div>
+          <div class="q-text">Decompose $\dfrac{3x^2+1}{x^2(x+1)}$ (mixing a repeated linear factor with a distinct one).<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$3x^2+1=A x(x+1)+B(x+1)+Cx^2$; at $x=0$: $1=B$; at $x=-1$: $4=C$; match $x^2$: $3=A+C\implies A=-1$: $\dfrac{-1}{x}+\dfrac{1}{x^2}+\dfrac{4}{x+1}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">48</div>
+          <div class="q-text">Explain why $\dfrac{A}{x-a}$ alone is insufficient for a repeated factor $(x-a)^2$, using degree-counting.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A single term $\dfrac{A}{x-a}$ can only ever reproduce a numerator of degree $0$ when the common denominator is $(x-a)^2$ — matching a general proper numerator (which could have an $x$-dependent piece even after clearing $(x-a)^2$) requires the extra degree of freedom that the $\dfrac{B}{(x-a)^2}$ term provides</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">49</div>
+          <div class="q-text">Decompose $\dfrac{x}{(x^2+1)(x-1)}$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=A(x^2+1)+(Bx+C)(x-1)$; at $x=1$: $1=2A\implies A=\tfrac12$; match $x^2$: $0=A+B\implies B=-\tfrac12$; match constant: $0=A-C\implies C=\tfrac12$: $\dfrac{1/2}{x-1}+\dfrac{-x/2+1/2}{x^2+1}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">50</div>
+          <div class="q-text">Explain, in one sentence, why an irreducible quadratic needs a linear (not constant) numerator in its partial fraction term.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>After multiplying through by the full denominator, matching every power of $x$ that could appear in a general proper numerator requires two independent constants ($B$ and $C$) rather than one, and a linear numerator $Bx+C$ is exactly the minimal expression that supplies both</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W2</div>
+        <div class="level-info">
+          <div class="level-title">Improper Integrals</div>
+          <div class="level-sub">Infinite limits and discontinuous integrands, via limits</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">51</div>
+          <div class="q-text">Evaluate $\displaystyle\int_1^\infty \dfrac{1}{x^3}\,dx$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{t\to\infty}\left[-\dfrac{1}{2x^2}\right]_1^t = 0+\dfrac12=\dfrac12$ — converges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">52</div>
+          <div class="q-text">Evaluate $\displaystyle\int_1^\infty \dfrac{1}{x}\,dx$, and state whether it converges or diverges.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{t\to\infty}[\ln x]_1^t=\lim_{t\to\infty}\ln t=\infty$ — diverges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">53</div>
+          <div class="q-text">Evaluate $\displaystyle\int_0^\infty e^{-x}\,dx$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{t\to\infty}[-e^{-x}]_0^t=\lim_{t\to\infty}(1-e^{-t})=1$ — converges to $1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">54</div>
+          <div class="q-text">Evaluate $\displaystyle\int_{-\infty}^0 e^{x}\,dx$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{t\to-\infty}[e^x]_t^0=1-0=1$ — converges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">55</div>
+          <div class="q-text">Evaluate $\displaystyle\int_0^1 \dfrac{1}{x}\,dx$, and state whether it converges.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{t\to0^+}[\ln x]_t^1 = 0-\lim_{t\to0^+}\ln t=\infty$ — diverges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">56</div>
+          <div class="q-text">Evaluate $\displaystyle\int_0^2 \dfrac{1}{(x-2)^2}\,dx$, checking the discontinuity location first.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Discontinuity at $x=2$ (the upper limit): $\lim_{t\to2^-}\left[-\dfrac{1}{x-2}\right]_0^t$; as $t\to2^-$, $-\dfrac{1}{t-2}\to+\infty$ — diverges</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">57</div>
+          <div class="q-text">Evaluate $\displaystyle\int_1^\infty \dfrac{1}{x^p}\,dx$ for general $p>1$, and state the general rule.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{t\to\infty}\left[\dfrac{x^{1-p}}{1-p}\right]_1^t = 0-\dfrac{1}{1-p}=\dfrac{1}{p-1}$ — converges for $p>1$; more generally, $\int_1^\infty x^{-p}dx$ converges iff $p>1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">58</div>
+          <div class="q-text">Evaluate $\displaystyle\int_{-\infty}^{\infty} \dfrac{1}{1+x^2}\,dx$ (split into two pieces at $x=0$).<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{t\to\infty}[\arctan x]_0^t + \lim_{t\to-\infty}[\arctan x]_t^0 = \tfrac{\pi}{2}+\tfrac{\pi}{2}=\pi$ — converges to $\pi$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">59</div>
+          <div class="q-text">Explain why $\displaystyle\int_0^1 \dfrac{1}{x^2}\,dx$ diverges even though the interval $[0,1]$ is finite.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The interval being finite doesn't matter — the integrand itself blows up at $x=0$ (an infinite discontinuity inside the interval), and wrapping that point in a one-sided limit gives $\lim_{t\to0^+}\left(\dfrac1t-1\right)=\infty$, so it diverges regardless of the interval's finite length</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">60</div>
+          <div class="q-text">Determine whether $\displaystyle\int_2^\infty \dfrac{1}{x\ln x}\,dx$ converges (hint: substitute $u=\ln x$).<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=\ln x$, $du=dx/x$: $\int_{\ln2}^\infty \dfrac{1}{u}du = \lim_{t\to\infty}[\ln u]_{\ln2}^t=\infty$ — diverges</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W3</div>
+        <div class="level-info">
+          <div class="level-title">Numerical Integration — Trapezoidal Rule & Error Estimation</div>
+          <div class="level-sub">Approximating a definite integral when antiderivatives are hard (or impossible) to find</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">61</div>
+          <div class="q-text">Estimate $\int_0^2 x\,dx$ using the trapezoidal rule with $n=2$.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$h=1$; $f(0),f(1),f(2)=0,1,2$; $T_2=\tfrac12[0+2(1)+2]=2$ (exact, since $f$ is linear)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">62</div>
+          <div class="q-text">Estimate $\int_1^3 \dfrac{1}{x}\,dx$ using $n=4$.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$h=0.5$; $x=1,1.5,2,2.5,3$; $f=1,0.667,0.5,0.4,0.333$; $T_4=0.25[1+1.333+1+0.8+0.333]=0.25(4.467)\approx1.117$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">63</div>
+          <div class="q-text">Explain why the trapezoidal rule is exact for any linear function.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A trapezoid's straight top edge exactly matches a linear function's graph, so there's no approximation error at all — the trapezoid IS the exact shape under the curve</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">64</div>
+          <div class="q-text">Estimate $\int_0^4 \sqrt{x}\,dx$ using $n=4$ (round to 3 decimal places).<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$h=1$; $f=0,1,1.414,1.732,2$; $T_4=0.5[0+2+2.828+3.464+2]=0.5(10.292)=5.146$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">65</div>
+          <div class="q-text">Find $h$ if $\int_2^{10} f(x)\,dx$ is approximated with $n=8$ trapezoids.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$h=\dfrac{10-2}{8}=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">66</div>
+          <div class="q-text">Given $\max|f''(x)|=6$ on $[0,3]$ and $n=6$ (so $h=0.5$), bound the trapezoidal rule error.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$|E_T|\le\dfrac{3(0.5)^2(6)}{12}=\dfrac{4.5}{12}=0.375$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">67</div>
+          <div class="q-text">How would doubling $n$ (halving $h$) affect the error bound, given the bound is proportional to $h^2$?<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Halving $h$ divides $h^2$ by $4$, so the error bound shrinks to a quarter of its previous value</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">68</div>
+          <div class="q-text">Estimate $\int_0^1 e^{x}\,dx$ using $n=2$ (round to 3 decimal places).<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$h=0.5$; $f=1,1.649,2.718$; $T_2=0.25[1+3.297+2.718]=0.25(7.015)=1.754$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">69</div>
+          <div class="q-text">Find the minimum $n$ needed to guarantee $|E_T|<0.01$ for $\int_0^2 f(x)dx$ if $\max|f''(x)|=4$ (set up the inequality; solving for $n$ is optional).<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{2h^2(4)}{12}<0.01 \implies h^2<\dfrac{0.03}{4}=0.0075 \implies h<0.0866$; since $h=2/n$, need $n>2/0.0866\approx23.1$, so $n=24$ (rounding up to an even number often preferred, but any $n\ge24$ works)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">70</div>
+          <div class="q-text">Explain why the trapezoidal rule tends to overestimate the integral of a concave-up function (like $x^2$), referencing the shape of the true curve versus a straight line.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>For a concave-up function, the actual curve dips below the straight line connecting two points on it (the chord lies above the curve) — so approximating the area with the trapezoid (using that chord as the top edge) includes extra area between the chord and the curve, causing a systematic overestimate</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W3</div>
+        <div class="level-info">
+          <div class="level-title">Numerical Integration — Simpson's Rule & Error Estimation</div>
+          <div class="level-sub">Fitting parabolas instead of straight lines, for a dramatically better approximation</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">71</div>
+          <div class="q-text">Estimate $\int_0^2 x^3\,dx$ using Simpson's Rule with $n=4$, and compare to the exact value.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$h=0.5$; $f=0,0.125,1,3.375,8$; $S_4=\tfrac{0.5}{3}[0+0.5+2+13.5+8]=\tfrac{0.5}{3}(24)=4$; exact value is $\int_0^2x^3dx=4$ — matches exactly, since Simpson's Rule is exact up to degree 3</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">72</div>
+          <div class="q-text">Estimate $\int_1^3 \dfrac{1}{x}dx$ using $n=4$ (round to 4 decimal places).<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$h=0.5$; $f=1,0.667,0.5,0.4,0.333$; $S_4=\tfrac{0.5}{3}[1+2.667+1+1.6+0.333]=\tfrac{0.5}{3}(6.6)=1.1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">73</div>
+          <div class="q-text">Explain why Simpson's Rule requires $n$ to be even, but the trapezoidal rule does not.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Simpson's Rule pairs up subintervals into groups of two (fitting one parabola across each pair), so the total number of subintervals must divide evenly into pairs; the trapezoidal rule treats each subinterval independently with no pairing requirement, so any $n\ge1$ works</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">74</div>
+          <div class="q-text">Estimate $\int_0^4 \sqrt{x}\,dx$ using $n=4$ (round to 3 decimal places), and compare to the trapezoidal estimate from the previous topic ($5.146$).<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$h=1$; $f=0,1,1.414,1.732,2$; $S_4=\tfrac13[0+4+2.828+6.928+2]=\tfrac13(15.756)=5.252$ — different from, and generally more accurate than, the trapezoidal estimate</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">75</div>
+          <div class="q-text">Given $\max|f^{(4)}(x)|=24$ on $[0,2]$ and $n=4$ (so $h=0.5$), bound the Simpson's Rule error.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$|E_S|\le\dfrac{2(0.5)^4(24)}{180}=\dfrac{2(0.0625)(24)}{180}=\dfrac{3}{180}=\dfrac{1}{60}\approx0.0167$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">76</div>
+          <div class="q-text">If doubling $n$ shrinks the trapezoidal error bound by a factor of 4, by what factor does it shrink the Simpson's Rule error bound?<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>16, since the Simpson error bound is proportional to $h^4$, and halving $h$ divides $h^4$ by $2^4=16$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">77</div>
+          <div class="q-text">Estimate $\int_0^1 e^x\,dx$ using $n=2$ (round to 4 decimal places), and compare to the exact value $e-1\approx1.7183$.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$h=0.5$; $f=1,1.6487,2.7183$; $S_2=\tfrac{0.5}{3}[1+6.5949+2.7183]=\tfrac{0.5}{3}(10.3132)=1.7189$ — very close to the exact value</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">78</div>
+          <div class="q-text">Explain, using the error bound formula, why Simpson's Rule is exact for cubic polynomials even though the bound involves the fourth derivative.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A cubic polynomial has $f^{(4)}(x)=0$ everywhere (the fourth derivative of any degree-3 polynomial is identically zero), so $\max|f^{(4)}(x)|=0$, making the entire error bound exactly $0$ regardless of $h$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">79</div>
+          <div class="q-text">Estimate $\int_1^5 \ln x\,dx$ using $n=4$ (round to 3 decimal places).<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$h=1$; $f(1),f(2),f(3),f(4),f(5)=0,0.693,1.099,1.386,1.609$; $S_4=\tfrac13[0+2.773+2.197+5.545+1.609]=\tfrac13(12.124)=4.041$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">80</div>
+          <div class="q-text">A student uses $n=3$ intervals and tries to apply Simpson's Rule directly. Explain what's wrong and how to fix it.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$n=3$ is odd, so the intervals can't be fully paired into groups of two as Simpson's Rule requires — the fix is to use an even $n$ (e.g. round up to $n=4$), or use a hybrid approach (Simpson's Rule on the first even number of intervals, trapezoidal on the single remaining one), though the standard course approach is simply to always choose an even $n$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W4</div>
+        <div class="level-info">
+          <div class="level-title">Polar Coordinates — Plotting & Conversion</div>
+          <div class="level-sub">A second coordinate system, built from distance and angle instead of horizontal/vertical position</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">81</div>
+          <div class="q-text">Convert $(3,\pi/2)$ to Cartesian coordinates.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=3\cos(\pi/2)=0$, $y=3\sin(\pi/2)=3$: $(0,3)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">82</div>
+          <div class="q-text">Convert $(2,\pi)$ to Cartesian coordinates.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=2\cos\pi=-2$, $y=2\sin\pi=0$: $(-2,0)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">83</div>
+          <div class="q-text">Convert $(1,1)$ to polar coordinates.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r=\sqrt2$; first quadrant, $\theta=\pi/4$: $(\sqrt2,\pi/4)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">84</div>
+          <div class="q-text">Convert $(0,-5)$ to polar coordinates.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r=5$; on the negative $y$-axis: $\theta=3\pi/2$ (or $-\pi/2$): $(5,3\pi/2)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">85</div>
+          <div class="q-text">Convert $(-3,-3)$ to polar coordinates.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r=3\sqrt2$; third quadrant, reference angle $\pi/4$: $\theta=\pi+\pi/4=5\pi/4$: $(3\sqrt2,5\pi/4)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">86</div>
+          <div class="q-text">Find two different polar representations of the Cartesian point $(2,0)$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$(2,0)$ and $(2,2\pi)$ — or using negative $r$: $(-2,\pi)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">87</div>
+          <div class="q-text">Convert $\left(2,\dfrac{5\pi}{6}\right)$ to Cartesian coordinates.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=2\cos(5\pi/6)=-\sqrt3$, $y=2\sin(5\pi/6)=1$: $(-\sqrt3,1)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">88</div>
+          <div class="q-text">Explain why $\tan\theta=y/x$ alone is not enough to determine $\theta$ uniquely, and what extra information is needed.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The tangent function has period $\pi$, so both $\theta$ and $\theta+\pi$ give the same ratio $y/x$ — the signs of $x$ and $y$ individually (i.e. which quadrant the point is in) are needed to pick the correct one of the two candidate angles</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">89</div>
+          <div class="q-text">Convert $(-2,3)$ to polar coordinates (leave $\theta$ expressed via arctan with a quadrant note, no need to simplify numerically).<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r=\sqrt{4+9}=\sqrt{13}$; second quadrant ($x<0,y>0$): $\theta=\pi-\arctan\left(\dfrac{3}{2}\right)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">90</div>
+          <div class="q-text">Explain what it means geometrically to plot the point $(-3,\pi/4)$ (negative $r$).<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Face along the direction $\pi/4$, then walk $3$ units in the <em>opposite</em> direction (since $r$ is negative) — this lands on the same point as $(3,\pi/4+\pi)$, i.e. $(3,5\pi/4)$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W4</div>
+        <div class="level-info">
+          <div class="level-title">Polar Coordinates — Graphing Curves & Symmetry</div>
+          <div class="level-sub">Cardioids, roses, limaçons, and how to sketch them efficiently</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">91</div>
+          <div class="q-text">Identify the curve $r=5$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A circle of radius 5, centred at the origin</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">92</div>
+          <div class="q-text">Identify the curve $r=4\cos\theta$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A circle of diameter 4, passing through the origin, centred on the positive $x$-axis</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">93</div>
+          <div class="q-text">Identify the curve $r=3+3\sin\theta$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A cardioid (coefficients match: $a=b=3$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">94</div>
+          <div class="q-text">Identify the curve $r=2\cos(3\theta)$, and state the number of petals.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A rose; $n=3$ is odd, so it has 3 petals</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">95</div>
+          <div class="q-text">Identify the curve $r=\sin(4\theta)$, and state the number of petals.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A rose; $n=4$ is even, so it has $2(4)=8$ petals</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">96</div>
+          <div class="q-text">Test $r=2+3\cos\theta$ for symmetry about the $x$-axis.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Replace $\theta$ with $-\theta$: $r=2+3\cos(-\theta)=2+3\cos\theta$ — unchanged, so symmetric about the $x$-axis</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">97</div>
+          <div class="q-text">Test $r=\theta$ (a spiral) for any of the three standard symmetries.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>None of the three standard tests leave the equation unchanged in general — a simple spiral typically has no such symmetry</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">98</div>
+          <div class="q-text">Find where $r=1+2\cos\theta$ (a lima\c{c}on with an inner loop) crosses the origin.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$1+2\cos\theta=0\implies\cos\theta=-\tfrac12\implies\theta=\dfrac{2\pi}{3},\dfrac{4\pi}{3}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">99</div>
+          <div class="q-text">Explain why $r=a\sin\theta$ (with no constant term) produces a circle passing through the origin, rather than a circle centred at the origin.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>At $\theta=0$, $r=a\sin0=0$ — the curve passes directly through the pole at that angle, and as $\theta$ sweeps from $0$ to $\pi$, $r$ traces out one full loop that starts and ends at the origin, which is exactly the shape of a circle tangent to (passing through) the origin rather than centred there</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">100</div>
+          <div class="q-text">A rose has 6 petals. What are the two possible values of $n$ in $r=a\cos(n\theta)$ (or $\sin(n\theta)$) that could produce this?<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Since even $n$ gives $2n$ petals, $n=3$ would need to be even to give 6 via that rule — but $n=3$ is odd, giving 3 petals instead. So the only way to get exactly 6 petals is $n=3$ combined with the even-$n$ rule not applying; in fact for $r=a\cos(n\theta)$, 6 petals requires $n=3$ traced over $[0,2\pi)$ if using $|r|$ conventions, or more precisely $n=6$ if odd behaviour is expected — the key takeaway for this course is: check $n$'s parity carefully against the specific curve rather than assuming</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W5</div>
+        <div class="level-info">
+          <div class="level-title">Areas — Cartesian Extension &amp; Polar Regions</div>
+          <div class="level-sub">Area between curves revisited, then a genuinely new formula for polar regions</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">101</div>
+          <div class="q-text">Find the area enclosed by $r=3$ (a full circle), using the polar area formula, and check against $\pi r^2$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=\tfrac12\int_0^{2\pi}9\,d\theta=\tfrac12(9)(2\pi)=9\pi$ — matches $\pi(3)^2=9\pi$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">102</div>
+          <div class="q-text">Find the area enclosed by $r=2\sin\theta$ (a circle through the origin), for $0\le\theta\le\pi$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=\tfrac12\int_0^\pi 4\sin^2\theta\,d\theta=2\int_0^\pi\sin^2\theta\,d\theta=2\left[\tfrac{\theta}{2}-\tfrac{\sin2\theta}{4}\right]_0^\pi=\pi$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">103</div>
+          <div class="q-text">Set up (do not evaluate) the area enclosed by one petal of $r=\sin(3\theta)$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=\tfrac12\int_0^{\pi/3}\sin^2(3\theta)\,d\theta$ (one petal spans $\theta\in[0,\pi/3]$ for this rose)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">104</div>
+          <div class="q-text">Find the area between $r=2$ and $r=1$ (an annulus, full circle).<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=\tfrac12\int_0^{2\pi}(4-1)d\theta=\tfrac12(3)(2\pi)=3\pi$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">105</div>
+          <div class="q-text">Find the area enclosed by $r=1-\sin\theta$ (a cardioid) over the full $[0,2\pi]$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=\tfrac12\int_0^{2\pi}(1-\sin\theta)^2d\theta = \tfrac12\int_0^{2\pi}(1-2\sin\theta+\sin^2\theta)d\theta = \tfrac12\left(2\pi-0+\pi\right)=\tfrac{3\pi}{2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">106</div>
+          <div class="q-text">Find the area of one petal of $r=2\cos(3\theta)$ (three petals total, each spanning an interval of length $\pi/3$).<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=\tfrac12\int_{-\pi/6}^{\pi/6}4\cos^2(3\theta)d\theta = 2\left[\tfrac{\theta}{2}+\tfrac{\sin6\theta}{12}\right]_{-\pi/6}^{\pi/6}=\tfrac{\pi}{3}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">107</div>
+          <div class="q-text">Explain why the area formula uses $r^2$ rather than $r$, connecting it to the sector-area derivation.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A circular sector's area is $\tfrac12r^2\theta$ (proportional to $r^2$, not $r$, just as a full circle's area $\pi r^2$ scales with the square of the radius) — the polar area formula is built directly from summing infinitely many such sectors, so the $r^2$ dependence is inherited straight from ordinary circle geometry</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">108</div>
+          <div class="q-text">Set up the area between the curves $r=3$ and $r=2+2\cos\theta$ where the cardioid lies inside the circle (do not evaluate).<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>First find intersection angles by solving $3=2+2\cos\theta\implies\cos\theta=\tfrac12\implies\theta=\pm\pi/3$; then $A=\tfrac12\int_{-\pi/3}^{\pi/3}\big(9-(2+2\cos\theta)^2\big)d\theta$ for the region between them in that range</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">109</div>
+          <div class="q-text">Find the area enclosed by $r=4\cos\theta$ (a circle through the origin), tracing only $-\pi/2\le\theta\le\pi/2$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=\tfrac12\int_{-\pi/2}^{\pi/2}16\cos^2\theta\,d\theta=8\left[\tfrac{\theta}{2}+\tfrac{\sin2\theta}{4}\right]_{-\pi/2}^{\pi/2}=4\pi$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">110</div>
+          <div class="q-text">Explain the risk of integrating $r=\cos(2\theta)$ over the full $[0,2\pi]$ if you actually only want the area of the entire 4-petal rose (not double-counted).<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>As $\theta$ sweeps through $[0,2\pi]$, $r=\cos(2\theta)$ becomes negative on some intervals, which retraces petals on the opposite side rather than tracing new ones — integrating $r^2$ blindly over the full range would count some petals more than once (since $r^2$ is always positive regardless of the sign of $r$), so the correct approach is to identify exactly one petal's angular range and multiply by the number of petals, not integrate over the full circle naively</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W5</div>
+        <div class="level-info">
+          <div class="level-title">Volumes of Revolution — Disk/Washer &amp; Shell Methods</div>
+          <div class="level-sub">Two different ways to slice a solid of revolution</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">111</div>
+          <div class="q-text">Find the volume when $y=x$, $0\le x\le3$, is rotated about the $x$-axis using disks.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=\pi\int_0^3x^2dx=\pi\left[\tfrac{x^3}{3}\right]_0^3=9\pi$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">112</div>
+          <div class="q-text">Find the volume when the region between $y=x^2$ and $y=4$ is rotated about the $x$-axis using washers.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=\pi\int_{-2}^2(16-x^4)dx=\pi\left[16x-\tfrac{x^5}{5}\right]_{-2}^2=\pi\left(2\cdot16\cdot2-2\cdot\tfrac{32}{5}\right)=\dfrac{256\pi}{5}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">113</div>
+          <div class="q-text">Find the volume when $y=\sqrt{x}$, $0\le x\le1$, is rotated about the $y$-axis using shells.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=2\pi\int_0^1 x\sqrt{x}\,dx=2\pi\int_0^1x^{3/2}dx=2\pi\left[\tfrac{2}{5}x^{5/2}\right]_0^1=\tfrac{4\pi}{5}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">114</div>
+          <div class="q-text">Find the volume when $y=x^3$, $0\le x\le1$, is rotated about the $x$-axis.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=\pi\int_0^1x^6dx=\pi\left[\tfrac{x^7}{7}\right]_0^1=\dfrac{\pi}{7}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">115</div>
+          <div class="q-text">Explain why the shell method would naturally be chosen over washers for rotating $y=e^{-x^2}$ about the $y$-axis.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y=e^{-x^2}$ cannot be algebraically solved for $x$ in terms of $y$ using elementary functions, so the washer method (which needs $x=g(y)$) is essentially impossible here; the shell method keeps everything in terms of $x$, which is directly available</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">116</div>
+          <div class="q-text">Find the volume when the region between $y=x$ and $y=x^2$ (for $0\le x\le1$) is rotated about the $x$-axis using washers.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=\pi\int_0^1(x^2-x^4)dx=\pi\left[\tfrac{x^3}{3}-\tfrac{x^5}{5}\right]_0^1=\dfrac{2\pi}{15}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">117</div>
+          <div class="q-text">Find the volume when the region between $y=x$ and $y=x^2$ (for $0\le x\le1$) is rotated about the $y$-axis using shells.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=2\pi\int_0^1x(x-x^2)dx=2\pi\int_0^1(x^2-x^3)dx=2\pi\left[\tfrac{x^3}{3}-\tfrac{x^4}{4}\right]_0^1=\dfrac{\pi}{6}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">118</div>
+          <div class="q-text">Find the volume when $y=\sin x$, $0\le x\le\pi$, is rotated about the $x$-axis (using the half-angle identity from trig integrals).<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=\pi\int_0^\pi\sin^2x\,dx=\pi\left[\tfrac{x}{2}-\tfrac{\sin2x}{4}\right]_0^\pi=\dfrac{\pi^2}{2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">119</div>
+          <div class="q-text">Set up (do not evaluate) the shell-method integral for rotating the region under $y=4-x^2$, $0\le x\le2$, about the $y$-axis.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=2\pi\int_0^2 x(4-x^2)\,dx$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">120</div>
+          <div class="q-text">A region is bounded by $y=x^2$ and the $x$-axis, $0\le x\le2$, rotated about the line $x=3$ (not the $y$-axis). Explain how the shell method's radius term would need to change.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Instead of radius $x$ (distance from the $y$-axis), the radius becomes the distance from each shell to the new axis of rotation, $x=3$ — so the shell radius term becomes $(3-x)$, giving $V=2\pi\int_0^2(3-x)x^2\,dx$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W6</div>
+        <div class="level-info">
+          <div class="level-title">Arc Length</div>
+          <div class="level-sub">Measuring the true length of a curve, not just the width of its interval</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">121</div>
+          <div class="q-text">Set up the arc length integral for $y=x^2$ from $x=0$ to $x=2$ (do not evaluate).<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=\int_0^2\sqrt{1+4x^2}\,dx$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">122</div>
+          <div class="q-text">Find the arc length of $y=2x+1$ from $x=0$ to $x=3$ using the formula, and verify against the plain distance formula.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=2$; $L=\int_0^3\sqrt{1+4}\,dx=3\sqrt5$. Distance check: endpoints $(0,1)$ and $(3,7)$; $\sqrt{9+36}=\sqrt{45}=3\sqrt5$ — matches, since a straight line's 'arc length' is just its ordinary length</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">123</div>
+          <div class="q-text">Find the arc length of $y=\dfrac{x^3}{3}+\dfrac{1}{4x}$ from $x=1$ to $x=2$ (this curve is specifically designed so $1+[f'(x)]^2$ is a perfect square).<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=x^2-\dfrac{1}{4x^2}$; $1+[f'(x)]^2=\left(x^2+\dfrac{1}{4x^2}\right)^2$; $L=\int_1^2\left(x^2+\dfrac{1}{4x^2}\right)dx=\left[\dfrac{x^3}{3}-\dfrac{1}{4x}\right]_1^2=\left(\dfrac{8}{3}-\dfrac18\right)-\left(\dfrac13-\dfrac14\right)=\dfrac{59}{24}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">124</div>
+          <div class="q-text">Set up the arc length integral for $y=\ln(\cos x)$ from $x=0$ to $x=\pi/4$ (do not evaluate).<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=-\tan x$; $L=\int_0^{\pi/4}\sqrt{1+\tan^2x}\,dx=\int_0^{\pi/4}\sec x\,dx$ (using the identity $1+\tan^2x=\sec^2x$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">125</div>
+          <div class="q-text">Evaluate the arc length integral from the previous question.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\int_0^{\pi/4}\sec x\,dx = [\ln|\sec x+\tan x|]_0^{\pi/4}=\ln(\sqrt2+1)-\ln1=\ln(\sqrt2+1)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">126</div>
+          <div class="q-text">Find the arc length of $y=x^{3/2}$ from $x=0$ to $x=4$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=\tfrac32x^{1/2}$; $1+[f'(x)]^2=1+\tfrac94x$; $L=\int_0^4\sqrt{1+\tfrac94x}\,dx = \left[\tfrac{8}{27}\left(1+\tfrac94x\right)^{3/2}\right]_0^4 = \tfrac{8}{27}(10^{3/2}-1)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">127</div>
+          <div class="q-text">Explain why the arc length formula reduces to the ordinary Cartesian distance formula when $f$ is linear.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>For a linear function, $f'(x)$ is a constant $m$, so $\sqrt{1+[f'(x)]^2}$ is also constant, and the integral $\int_a^b\sqrt{1+m^2}\,dx$ becomes simply $(b-a)\sqrt{1+m^2}$ — exactly the straight-line distance formula, since $\sqrt{(b-a)^2+(m(b-a))^2}=(b-a)\sqrt{1+m^2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">128</div>
+          <div class="q-text">Set up the arc length integral for the upper semicircle $y=\sqrt{r^2-x^2}$ from $x=-r$ to $x=r$, and identify why it requires care (an improper integral).<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=\dfrac{-x}{\sqrt{r^2-x^2}}$; $1+[f'(x)]^2=\dfrac{r^2}{r^2-x^2}$; $L=\int_{-r}^r\dfrac{r}{\sqrt{r^2-x^2}}dx$ — the integrand is undefined at both endpoints $x=\pm r$, making this an improper integral requiring the limit techniques from that topic</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">129</div>
+          <div class="q-text">Evaluate the semicircle arc length integral from the previous question, and check it matches half the circumference $\pi r$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$L=r\lim_{t\to r^-}\left[\arcsin\left(\dfrac{x}{r}\right)\right]_{-t}^{t}$ (handling both endpoints via limits) $=r\left(\dfrac{\pi}{2}-\left(-\dfrac{\pi}{2}\right)\right)=\pi r$ — matches half the circle's circumference $2\pi r$, as expected</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">130</div>
+          <div class="q-text">Explain why arc length integrals so often require trig substitution, referencing the structure of $1+[f'(x)]^2$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Since $[f'(x)]^2$ is squared, $1+[f'(x)]^2$ frequently has the form $a^2+u^2$ (a sum of squares) once simplified — exactly the pattern that trig substitution ($u=a\tan\theta$) was built specifically to simplify via the identity $1+\tan^2\theta=\sec^2\theta$</p>
+        </div>
+      </div>
+
+      <div class="callout callout-success" style="margin-top:32px">
+        <strong>Phase 1 practice complete!</strong> 130 questions across 13 topics. Revisit any DPEN sections tied to questions you found tricky.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('arclength142')">&larr; W6: Arc Length</button>
+        <button class="page-nav-btn next" onclick="goTo('home')">Back to Overview &rarr;</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PAGES = ['home','ibp','trigint','trigsub','pflinear','pfadvanced','improper','trapezoidal','simpsons','polarplot','polargraph','areas142','volumes142','arclength142','exam1','practice'];
+const PAGE_NAMES = {
+  home:'Overview',
+  ibp:'W1. Integration by Parts',
+  trigint:'W1. Trigonometric Integrals',
+  trigsub:'W1. Trigonometric Substitution',
+  pflinear:'W1-2. Partial Fractions — Linear Factors',
+  pfadvanced:'W2. Partial Fractions — Repeated & Irreducible Quadratic Factors',
+  improper:'W2. Improper Integrals',
+  trapezoidal:'W3. Numerical Integration — Trapezoidal Rule & Error Estimation',
+  simpsons:'W3. Numerical Integration — Simpson\'s Rule & Error Estimation',
+  polarplot:'W4. Polar Coordinates — Plotting & Conversion',
+  polargraph:'W4. Polar Coordinates — Graphing Curves & Symmetry',
+  areas142:'W5. Areas — Cartesian Extension &amp; Polar Regions',
+  volumes142:'W5. Volumes of Revolution — Disk/Washer &amp; Shell Methods',
+  arclength142:'W6. Arc Length',
+  exam1:'In-Session Exam 1',
+  practice:'Practice Questions'
+};
+let visited = new Set(['home']);
+
+function goTo(id) {
+  PAGES.forEach(p => {
+    document.getElementById('page-'+p).classList.remove('active');
+  });
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => {
+    const fn = l.getAttribute('onclick');
+    if (fn && fn.includes("'"+id+"'")) l.classList.add('active');
+  });
+  document.getElementById('breadcrumbPage').textContent = PAGE_NAMES[id] || id;
+  visited.add(id);
+  const pct = Math.round((visited.size / PAGES.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  window.scrollTo(0, 0);
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.getElementById('page-'+id), {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 50);
+}
+
+function toggleDPEN(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.dpen-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function toggleQ(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.q-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function expandAll() {
+  const activePage = document.querySelector('.page.active');
+  activePage.querySelectorAll('.dpen-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.dpen-chevron').classList.add('open');
+  });
+  activePage.querySelectorAll('.q-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.q-arrow').classList.add('open');
+  });
+  setTimeout(() => {
+    if (window.renderMathInElement) renderMathInElement(activePage, {
+      delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+      throwOnError: false
+    });
+  }, 30);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 300);
+});
+</script>
+</body>
+</html>
