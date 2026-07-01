@@ -1,0 +1,3412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATH141 Phase 1 — Calculus Fundamentals</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B3A5C;
+  --navy-lt: #1e4570;
+  --orange: #FF3621;
+  --blue-lt: #E6F1FB;
+  --blue-mid: #185FA5;
+  --amber-lt: #FAEEDA;
+  --amber-dk: #7A4800;
+  --green-lt: #E1F5EE;
+  --green-dk: #0a5c3f;
+  --coral-lt: #FAECE7;
+  --coral-dk: #8a2f1a;
+  --grey-lt: #F6F5F2;
+  --grey-md: #e8e6e0;
+  --grey-dk: #3a3835;
+  --text: #2c2a28;
+  --text-muted: #6b6762;
+  --sidebar-w: 260px;
+  --content-max: 760px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #fafaf8;
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.3;
+}
+.sidebar-brand-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+.progress-wrap {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.progress-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.nav-section {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  padding: 6px 20px 4px;
+  text-transform: uppercase;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-link:hover { color: white; background: rgba(255,255,255,0.06); }
+.nav-link.active { color: white; background: rgba(255,255,255,0.1); border-left: 2px solid var(--orange); padding-left: 18px; }
+.nav-num {
+  font-size: 10px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.nav-link.active .nav-num { background: var(--orange); color: white; }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--grey-md);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-breadcrumb {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.topbar-breadcrumb span {
+  color: var(--navy);
+  font-weight: 500;
+}
+.topbar-btns {
+  display: flex;
+  gap: 8px;
+}
+.tb-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.tb-btn:hover { border-color: var(--navy); color: var(--navy); }
+.tb-btn.primary { background: var(--navy); color: white; border-color: var(--navy); }
+.tb-btn.primary:hover { background: var(--navy-lt); }
+
+.content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+/* ── HERO ── */
+.page-hero {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--grey-md);
+}
+.page-hero-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--orange);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.page-hero-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.page-hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── MOTIVATION BOX ── */
+.motiv {
+  background: var(--blue-lt);
+  border-left: 3px solid var(--blue-mid);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #0d3d73;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.motiv strong { font-weight: 500; }
+
+/* ── DPEN SECTIONS ── */
+.dpen-block {
+  margin-bottom: 12px;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dpen-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+  transition: background 0.15s;
+}
+.dpen-header:hover { background: var(--grey-lt); }
+.dpen-pill {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.pill-d { background: var(--blue-lt); color: var(--blue-mid); }
+.pill-p { background: var(--amber-lt); color: var(--amber-dk); }
+.pill-e { background: var(--green-lt); color: var(--green-dk); }
+.pill-n { background: var(--coral-lt); color: var(--coral-dk); }
+.dpen-header-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+}
+.dpen-chevron {
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.dpen-chevron.open { transform: rotate(90deg); }
+.dpen-body {
+  display: none;
+  padding: 18px 20px 20px;
+  border-top: 1px solid var(--grey-md);
+  background: var(--grey-lt);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+}
+.dpen-body.open { display: block; }
+.dpen-body p { margin-bottom: 10px; }
+.dpen-body p:last-child { margin-bottom: 0; }
+
+/* ── MATH ── */
+.math-block {
+  text-align: center;
+  margin: 14px 0;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  overflow-x: auto;
+}
+.math-inline { font-style: italic; }
+
+/* ── STEPS ── */
+.step-list { margin: 10px 0; }
+.step-item {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+  align-items: flex-start;
+}
+.step-num-badge {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--blue-lt);
+  color: var(--blue-mid);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-text { flex: 1; font-size: 14px; line-height: 1.7; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.callout-warn { background: var(--amber-lt); border-left: 3px solid #EF9F27; color: var(--amber-dk); }
+.callout-info { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout-success { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout strong { font-weight: 500; }
+
+/* ── WORKED EXAMPLES ── */
+.worked {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+.worked-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.answer-box {
+  background: var(--navy);
+  color: white;
+  border-radius: 6px;
+  padding: 9px 14px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.answer-label {
+  font-size: 10px;
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 10px 0;
+}
+.data-table th {
+  background: var(--navy);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+}
+.data-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-md);
+  color: var(--text);
+}
+.data-table tr:nth-child(even) td { background: white; }
+.data-table tr:nth-child(odd) td { background: var(--grey-lt); }
+.data-table th:first-child { border-radius: 6px 0 0 0; }
+.data-table th:last-child { border-radius: 0 6px 0 0; }
+
+/* ── PRACTICE QUESTIONS ── */
+.level-divider {
+  margin: 36px 0 16px;
+  padding: 14px 18px;
+  background: var(--navy);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.level-badge {
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--orange);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.level-info { flex: 1; }
+.level-title { font-size: 15px; font-weight: 500; color: white; }
+.level-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+.q-card {
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.q-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: white;
+  transition: background 0.15s;
+}
+.q-head:hover { background: var(--grey-lt); }
+.q-num {
+  background: var(--navy);
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.q-text { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.5; }
+.q-hint { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 400; }
+.q-arrow { color: var(--text-muted); font-size: 11px; transition: transform 0.2s; margin-top: 4px; flex-shrink: 0; }
+.q-arrow.open { transform: rotate(90deg); }
+.q-body {
+  display: none;
+  background: var(--grey-lt);
+  border-top: 1px solid var(--grey-md);
+  padding: 18px 20px;
+}
+.q-body.open { display: block; }
+.q-attempt {
+  background: white;
+  border: 1px dashed var(--grey-md);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+.sol-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+/* ── HOME PAGE ── */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 24px 0;
+}
+.home-card {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.home-card:hover { border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.home-card-num { font-size: 11px; color: var(--orange); font-weight: 500; margin-bottom: 4px; }
+.home-card-title { font-family: 'Crimson Pro', serif; font-size: 18px; color: var(--navy); margin-bottom: 4px; }
+.home-card-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.home-chain {
+  background: var(--navy);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 24px 0;
+  color: white;
+}
+.home-chain-title { font-size: 12px; letter-spacing: 0.06em; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+.chain-items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chain-item {
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: white;
+}
+.chain-arrow { color: var(--orange); font-size: 14px; }
+.home-tip {
+  background: var(--amber-lt);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--amber-dk);
+  line-height: 1.65;
+  margin-top: 16px;
+}
+
+/* ── UNI BRIDGE (extra block type for this guide) ── */
+.bridge {
+  background: #FFF6E9;
+  border: 1px dashed #E0A23A;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #6b4a10;
+}
+.bridge-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: #b5791a;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* ── PAGE NAV ── */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--grey-md);
+}
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.page-nav-btn:hover { border-color: var(--navy); color: var(--navy); }
+.page-nav-btn.next { background: var(--navy); color: white; border-color: var(--navy); }
+.page-nav-btn.next:hover { background: var(--navy-lt); }
+.page-nav-btn.ghost { visibility: hidden; }
+
+/* ── SCROLLBAR ── */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .content { padding: 24px 20px 60px; }
+  .home-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">MATH141 — Phase 1</div>
+    <div class="sidebar-brand-sub">Calculus Fundamentals · Weeks 1&ndash;5 · Jul 10 &ndash; Aug 10</div>
+  </div>
+  <div class="progress-wrap"><div class="progress-label">YOUR PROGRESS</div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+  <div class="nav-section"><div class="nav-section-label">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">&uarr;</span> Start here</button></div>
+  <div class="nav-section"><div class="nav-section-label">Week 1 &ndash; Functions</div>
+    <button class="nav-link" onclick="goTo('algfound')"><span class="nav-num">W1</span> Algebraic Foundations</button>
+    <button class="nav-link" onclick="goTo('coordgeom')"><span class="nav-num">W1</span> Coordinate Geometry</button>
+    <button class="nav-link" onclick="goTo('functions')"><span class="nav-num">W1</span> Functions</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 2 &ndash; Limits &amp; Derivatives</div>
+    <button class="nav-link" onclick="goTo('limits')"><span class="nav-num">W2</span> Limits</button>
+    <button class="nav-link" onclick="goTo('continuity')"><span class="nav-num">W2</span> Continuity</button>
+    <button class="nav-link" onclick="goTo('derivrules')"><span class="nav-num">W2-3</span> Derivatives — Definition & Rules</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 3&ndash;4 &ndash; Applications &amp; Integration</div>
+    <button class="nav-link" onclick="goTo('maxmin')"><span class="nav-num">W3</span> Applications of Derivatives — Max/Min</button>
+    <button class="nav-link" onclick="goTo('intfund')"><span class="nav-num">W3-4</span> Integration — Antiderivatives, Definite Integral & FTC</button>
+    <button class="nav-link" onclick="goTo('intsub')"><span class="nav-num">W4</span> Integration by Substitution</button>
+    <button class="nav-link" onclick="goTo('areas')"><span class="nav-num">W4</span> Applications of Integration — Areas Between Curves</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 5 &ndash; Special Functions</div>
+    <button class="nav-link" onclick="goTo('explog')"><span class="nav-num">W5</span> Exponential & Logarithmic Functions</button>
+    <button class="nav-link" onclick="goTo('hyperbolic')"><span class="nav-num">W5</span> Hyperbolic Functions</button>
+    <button class="nav-link" onclick="goTo('invtrig')"><span class="nav-num">W5</span> Inverse Trigonometric Functions</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Practice</div>
+    <button class="nav-link" onclick="goTo('practice')"><span class="nav-num">&#9998;</span> Practice Questions (130)</button></div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">MATH141 Phase 1 &nbsp;&rsaquo;&nbsp; <span id="breadcrumbPage">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand all</button>
+      <button class="tb-btn primary" onclick="goTo('practice')">Practice &rarr;</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <div class="page active" id="page-home">
+      <div class="page-hero">
+        <div class="page-hero-label">MATH141 &middot; Phase 1 of 4</div>
+        <div class="page-hero-title">Calculus Fundamentals,<br>Weeks 1&ndash;5</div>
+        <div class="page-hero-sub">Covers the full DPEN141 tracker from Jul 10 to Aug 10: algebraic foundations through to inverse trig functions. Each topic follows the same build-up approach as the vectors guide &mdash; motivation, worked pattern, formal definition, examples, and study notes &mdash; before the practice page tests all of it.</div>
+      </div>
+
+      <div class="home-chain">
+        <div class="home-chain-title">THE CHAIN OF IDEAS</div>
+        <div class="chain-items">
+          <div class="chain-item">Algebraic Foundations</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Coordinate Geometry</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Functions</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Limits</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Continuity</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Derivatives — Definition & Rules</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Applications of Derivatives — Max/Min</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Integration — Antiderivatives, Definite Integral & FTC</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Integration by Substitution</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Applications of Integration — Areas Between Curves</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Exponential & Logarithmic Functions</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Hyperbolic Functions</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Inverse Trigonometric Functions</div>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <div class="home-card" onclick="goTo('algfound')">
+          <div class="home-card-num">W1</div>
+          <div class="home-card-title">Algebraic Foundations</div>
+          <div class="home-card-sub">Indices, surds, quadratics, binomial expansion, absolute value</div>
+        </div>
+        <div class="home-card" onclick="goTo('coordgeom')">
+          <div class="home-card-num">W1</div>
+          <div class="home-card-title">Coordinate Geometry</div>
+          <div class="home-card-sub">Lines, circles, intersection of curves</div>
+        </div>
+        <div class="home-card" onclick="goTo('functions')">
+          <div class="home-card-num">W1</div>
+          <div class="home-card-title">Functions</div>
+          <div class="home-card-sub">Domain, range, composition, one-to-one, inverse functions, trig review</div>
+        </div>
+        <div class="home-card" onclick="goTo('limits')">
+          <div class="home-card-num">W2</div>
+          <div class="home-card-title">Limits</div>
+          <div class="home-card-sub">Intuitive definition, algebra of limits, one-sided limits, limits at infinity</div>
+        </div>
+        <div class="home-card" onclick="goTo('continuity')">
+          <div class="home-card-num">W2</div>
+          <div class="home-card-title">Continuity</div>
+          <div class="home-card-sub">Definition, examples and non-examples, algebra of continuous functions</div>
+        </div>
+        <div class="home-card" onclick="goTo('derivrules')">
+          <div class="home-card-num">W2-3</div>
+          <div class="home-card-title">Derivatives — Definition & Rules</div>
+          <div class="home-card-sub">Definition of derivative, algebra of derivatives, chain rule, implicit differentiation, higher order derivatives</div>
+        </div>
+        <div class="home-card" onclick="goTo('maxmin')">
+          <div class="home-card-num">W3</div>
+          <div class="home-card-title">Applications of Derivatives — Max/Min</div>
+          <div class="home-card-sub">Maximum and minimum problems, First Derivative Test</div>
+        </div>
+        <div class="home-card" onclick="goTo('intfund')">
+          <div class="home-card-num">W3-4</div>
+          <div class="home-card-title">Integration — Antiderivatives, Definite Integral & FTC</div>
+          <div class="home-card-sub">Antiderivatives, basic rules, summation notation, definite integral, Fundamental Theorem of Calculus</div>
+        </div>
+        <div class="home-card" onclick="goTo('intsub')">
+          <div class="home-card-num">W4</div>
+          <div class="home-card-title">Integration by Substitution</div>
+          <div class="home-card-sub">Recognising composite structure, u-substitution technique</div>
+        </div>
+        <div class="home-card" onclick="goTo('areas')">
+          <div class="home-card-num">W4</div>
+          <div class="home-card-title">Applications of Integration — Areas Between Curves</div>
+          <div class="home-card-sub">Setting up and evaluating area-between-curves integrals</div>
+        </div>
+        <div class="home-card" onclick="goTo('explog')">
+          <div class="home-card-num">W5</div>
+          <div class="home-card-title">Exponential & Logarithmic Functions</div>
+          <div class="home-card-sub">Graphs, properties, derivatives, integrals</div>
+        </div>
+        <div class="home-card" onclick="goTo('hyperbolic')">
+          <div class="home-card-num">W5</div>
+          <div class="home-card-title">Hyperbolic Functions</div>
+          <div class="home-card-sub">Definitions, graphs, derivatives, integrals</div>
+        </div>
+        <div class="home-card" onclick="goTo('invtrig')">
+          <div class="home-card-num">W5</div>
+          <div class="home-card-title">Inverse Trigonometric Functions</div>
+          <div class="home-card-sub">Definitions, domains, derivatives, integrals</div>
+        </div>
+        <div class="home-card" onclick="goTo('practice')">
+          <div class="home-card-num">PRACTICE</div>
+          <div class="home-card-title">Practice Questions</div>
+          <div class="home-card-sub">130 questions, 10 per topic, fully worked.</div>
+        </div>
+      </div>
+
+      <div class="home-tip">
+        <strong>How to use this guide:</strong> Work through topics in order &mdash; later ones lean on earlier ones (derivative rules need the limit definition, substitution needs the chain rule, area-between-curves needs the Fundamental Theorem). Click any DPEN header to expand it, attempt worked examples on paper first, then check the Practice page (130 questions, 10 per topic) once you've been through the lessons.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn ghost">&larr;</button>
+        <button class="page-nav-btn next" onclick="goTo('algfound')">W1: Algebraic Foundations &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-algfound">
+      <div class="page-hero">
+        <div class="page-hero-label">W1</div>
+        <div class="page-hero-title">Algebraic Foundations</div>
+        <div class="page-hero-sub">Indices, surds, quadratics, binomial expansion, absolute value</div>
+      </div>
+      <div class="motiv">Before any calculus can happen, you need total fluency manipulating expressions — every derivative and integral problem hides an algebra problem inside it.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Indices.</strong> $a^m\cdot a^n=a^{m+n}$, $(a^m)^n=a^{mn}$, $a^{-n}=\dfrac{1}{a^n}$, $a^{1/n}=\sqrt[n]{a}$ — all of these follow from "multiplying is repeated counting of factors," so $a^m\cdot a^n$ just concatenates $m$ copies of $a$ with $n$ copies of $a$, giving $m+n$ copies total.</p>
+  <p><strong>Surds.</strong> Simplify by pulling out perfect-square factors: $\sqrt{50}=\sqrt{25\cdot2}=5\sqrt2$. Rationalise denominators by multiplying by a conjugate: $\dfrac{1}{\sqrt2}=\dfrac{\sqrt2}{2}$, and $\dfrac{1}{1+\sqrt2}=\dfrac{1-\sqrt2}{(1+\sqrt2)(1-\sqrt2)}=\dfrac{1-\sqrt2}{-1}=\sqrt2-1$.</p>
+  <p><strong>Quadratics.</strong> Three tools: factorising, completing the square, and the formula $x=\dfrac{-b\pm\sqrt{b^2-4ac}}{2a}$ — all three are really the same statement, just extracted at different points of the same derivation (complete the square first, and the formula falls out).</p>
+  <p><strong>Binomial expansion.</strong> $(a+b)^n=\sum_{k=0}^n \binom{n}{k}a^{n-k}b^k$ — coefficients come from Pascal's triangle, or directly from $\binom{n}{k}=\dfrac{n!}{k!(n-k)!}$.</p>
+  <p><strong>Absolute value.</strong> $|x|$ is the distance from $x$ to $0$ — never negative. Solving $|x-3|=5$ means "distance from $3$ is $5$," giving $x=8$ or $x=-2$.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ a^m a^n=a^{m+n},\quad (ab)^n=a^nb^n,\quad \sqrt[n]{a}=a^{1/n} \]\[ (a+b)^2=a^2+2ab+b^2,\quad x=\frac{-b\pm\sqrt{b^2-4ac}}{2a} \]\[ |x|=\begin{cases}x & x\ge0\\-x& x<0\end{cases} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — rationalise and simplify</div><p>Simplify $\dfrac{3}{\sqrt5-1}$.</p>
+  <div class="math-block">\[ \frac{3}{\sqrt5-1}\cdot\frac{\sqrt5+1}{\sqrt5+1} = \frac{3(\sqrt5+1)}{5-1}=\frac{3(\sqrt5+1)}{4} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\frac{3(\sqrt5+1)}{4}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — solve an absolute value equation</div><p>Solve $|2x+1|=7$.</p>
+  <div class="math-block">\[ 2x+1=7 \text{ or } 2x+1=-7 \implies x=3 \text{ or } x=-4 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $x=3$ or $x=-4$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Every mistake in a calculus problem that "shouldn't have happened" is almost always an algebra slip from this topic, not a calculus misunderstanding — index laws and surd manipulation need to be automatic before Week 2.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('home')">&larr; Overview</button>
+        <button class="page-nav-btn next" onclick="goTo('coordgeom')">W1: Coordinate Geometry &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-coordgeom">
+      <div class="page-hero">
+        <div class="page-hero-label">W1</div>
+        <div class="page-hero-title">Coordinate Geometry</div>
+        <div class="page-hero-sub">Lines, circles, intersection of curves</div>
+      </div>
+      <div class="motiv">Calculus lives on the coordinate plane, so fluency describing lines and circles algebraically is the visual vocabulary everything else builds on.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Lines.</strong> Gradient $m=\dfrac{y_2-y_1}{x_2-x_1}$ measures steepness. Point-gradient form: $y-y_1=m(x-x_1)$. Parallel lines share gradients; perpendicular lines have gradients multiplying to $-1$.</p>
+  <p><strong>Circles.</strong> A circle is "every point a fixed distance $r$ from a centre $(h,k)$" — translate directly using the distance formula: $(x-h)^2+(y-k)^2=r^2$.</p>
+  <p><strong>Intersections.</strong> To find where two curves meet, set their equations equal (or substitute one into the other) and solve simultaneously — the solutions are the shared $(x,y)$ points.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ y-y_1=m(x-x_1), \qquad (x-h)^2+(y-k)^2=r^2 \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — equation of a line</div><p>Find the equation of the line through $(1,2)$ and $(4,8)$.</p>
+  <div class="math-block">\[ m=\frac{8-2}{4-1}=2, \qquad y-2=2(x-1) \implies y=2x \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $y=2x$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — circle-line intersection</div><p>Find where $x^2+y^2=25$ meets $y=x+1$.</p>
+  <div class="math-block">\[ x^2+(x+1)^2=25 \implies 2x^2+2x-24=0 \implies x^2+x-12=0 \implies (x+4)(x-3)=0 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $(-4,-3)$ and $(3,4)$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>Circles reappear as level curves in multivariable calculus (e.g. $x^2+y^2=c$ for a function $f(x,y)$), and the perpendicular-gradient condition here is the 2D shadow of the orthogonality ideas from vectors.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('algfound')">&larr; W1: Algebraic Foundations</button>
+        <button class="page-nav-btn next" onclick="goTo('functions')">W1: Functions &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-functions">
+      <div class="page-hero">
+        <div class="page-hero-label">W1</div>
+        <div class="page-hero-title">Functions</div>
+        <div class="page-hero-sub">Domain, range, composition, one-to-one, inverse functions, trig review</div>
+      </div>
+      <div class="motiv">A function is a precise promise — one output per input. Everything calculus does (limits, derivatives, integrals) is a statement about how that promise behaves.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Domain and range.</strong> Domain = every input the rule can accept without breaking (no division by zero, no square root of a negative). Range = every output that actually gets produced.</p>
+  <p><strong>Composition.</strong> $(f\circ g)(x)=f(g(x))$ — apply $g$ first, then feed the result into $f$. The domain of the composite is restricted to $x$ where $g(x)$ itself lands in $f$'s domain.</p>
+  <p><strong>One-to-one and inverses.</strong> A function is one-to-one if no two different inputs give the same output (passes the horizontal line test). Only one-to-one functions have genuine inverses — swap $x$ and $y$ and solve for $y$ to build $f^{-1}$.</p>
+  <p><strong>Trig review.</strong> $\sin,\cos,\tan$ and their reciprocals, the unit circle, and identities like $\sin^2\theta+\cos^2\theta=1$ are assumed fluent from here on.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ (f\circ g)(x)=f(g(x)), \qquad f^{-1}(f(x))=x \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — domain</div><p>Find the domain of $f(x)=\dfrac{1}{\sqrt{x-3}}$.</p>
+  <p>Need $x-3>0$ (strictly, since it's also a denominator).</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $x>3$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — find an inverse</div><p>Find $f^{-1}(x)$ for $f(x)=2x+3$.</p>
+  <div class="math-block">\[ y=2x+3 \implies x=\frac{y-3}{2} \implies f^{-1}(x)=\frac{x-3}{2} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $f^{-1}(x)=\dfrac{x-3}{2}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>The chain rule (Week 3) is literally the derivative rule for composite functions — get comfortable identifying "outer function" and "inner function" now, since that skill is 80% of applying the chain rule correctly.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('coordgeom')">&larr; W1: Coordinate Geometry</button>
+        <button class="page-nav-btn next" onclick="goTo('limits')">W2: Limits &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-limits">
+      <div class="page-hero">
+        <div class="page-hero-label">W2</div>
+        <div class="page-hero-title">Limits</div>
+        <div class="page-hero-sub">Intuitive definition, algebra of limits, one-sided limits, limits at infinity</div>
+      </div>
+      <div class="motiv">A derivative is defined as a limit. Before differentiating anything, you need a solid working sense of what a limit is actually asking.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Intuitive idea.</strong> $\lim_{x\to a}f(x)=L$ means: as $x$ gets arbitrarily close to $a$ (from either side), $f(x)$ gets arbitrarily close to $L$ — regardless of what $f(a)$ itself is, or even whether $f(a)$ exists.</p>
+  <p><strong>Algebra of limits.</strong> Limits of sums, products, and quotients behave exactly as you'd hope: $\lim(f+g)=\lim f+\lim g$, provided both limits exist (and for quotients, the denominator's limit isn't zero).</p>
+  <p><strong>One-sided limits.</strong> $\lim_{x\to a^-}$ approaches from below, $\lim_{x\to a^+}$ from above. The two-sided limit exists only if both one-sided limits exist and agree.</p>
+  <p><strong>Limits at infinity.</strong> $\lim_{x\to\infty}f(x)$ asks what $f(x)$ approaches as $x$ grows without bound — for rational functions, divide every term by the highest power of $x$ in the denominator.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \lim_{x\to a}f(x)=L \iff \lim_{x\to a^-}f(x)=\lim_{x\to a^+}f(x)=L \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — factor and cancel</div><p>Evaluate $\displaystyle\lim_{x\to2}\dfrac{x^2-4}{x-2}$.</p>
+  <div class="math-block">\[ \frac{x^2-4}{x-2}=\frac{(x-2)(x+2)}{x-2}=x+2 \ \ (x\ne2) \implies \lim_{x\to2}(x+2)=4 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> 4</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — limit at infinity</div><p>Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{3x^2+1}{x^2-5}$.</p>
+  <div class="math-block">\[ \frac{3x^2+1}{x^2-5} = \frac{3+1/x^2}{1-5/x^2} \to \frac{3+0}{1-0}=3 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> 3</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>A limit existing at $a$ says nothing about $f(a)$ — the function can be undefined right at that point (as in Example 1, where $f(2)$ is undefined) and the limit still exists perfectly well.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('functions')">&larr; W1: Functions</button>
+        <button class="page-nav-btn next" onclick="goTo('continuity')">W2: Continuity &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-continuity">
+      <div class="page-hero">
+        <div class="page-hero-label">W2</div>
+        <div class="page-hero-title">Continuity</div>
+        <div class="page-hero-sub">Definition, examples and non-examples, algebra of continuous functions</div>
+      </div>
+      <div class="motiv">Continuity is the formal way of saying "you could draw this graph without lifting your pen" — and it turns out to be exactly the condition that makes limits and function values agree.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Definition.</strong> $f$ is continuous at $x=a$ if three things all hold: $f(a)$ exists, $\lim_{x\to a}f(x)$ exists, and they're equal. Fail any one of the three and $f$ is discontinuous at $a$.</p>
+  <p><strong>Types of discontinuity.</strong> Removable (a hole — the limit exists but doesn't match $f(a)$, or $f(a)$ is undefined), jump (the one-sided limits disagree), and infinite (the function blows up).</p>
+  <p><strong>Algebra of continuous functions.</strong> Sums, products, quotients (where the denominator isn't zero), and compositions of continuous functions are continuous — this is inherited directly from the algebra of limits.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ f \text{ continuous at } a \iff \lim_{x\to a}f(x) = f(a) \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — check continuity at a point</div><p>Is $f(x)=\dfrac{x^2-1}{x-1}$ (with $f(1)=2$ defined separately) continuous at $x=1$?</p>
+  <div class="math-block">\[ \lim_{x\to1}\frac{x^2-1}{x-1}=\lim_{x\to1}(x+1)=2=f(1) \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Yes — continuous, since the limit equals $f(1)$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — find a value making a piecewise function continuous</div><p>Find $k$ so $f(x)=\begin{cases}x+k & x<2\\x^2 & x\ge2\end{cases}$ is continuous at $x=2$.</p>
+  <div class="math-block">\[ \lim_{x\to2^-}(x+k)=2+k, \qquad \lim_{x\to2^+}x^2=4 \implies 2+k=4 \implies k=2 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $k=2$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>Continuity is the minimum requirement for the Fundamental Theorem of Calculus and for Rolle's/Mean Value Theorem later — always check it before applying either.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('limits')">&larr; W2: Limits</button>
+        <button class="page-nav-btn next" onclick="goTo('derivrules')">W2-3: Derivatives — Definition & Rules &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-derivrules">
+      <div class="page-hero">
+        <div class="page-hero-label">W2-3</div>
+        <div class="page-hero-title">Derivatives — Definition & Rules</div>
+        <div class="page-hero-sub">Definition of derivative, algebra of derivatives, chain rule, implicit differentiation, higher order derivatives</div>
+      </div>
+      <div class="motiv">The derivative starts as a limit describing the slope of a tangent line — but computing every derivative from that limit directly would be exhausting, so we build a toolkit of shortcut rules derived from it once and reused forever.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Definition.</strong> $f'(x)=\lim_{h\to0}\dfrac{f(x+h)-f(x)}{h}$ — the slope of the secant line through $(x,f(x))$ and $(x+h,f(x+h))$, as $h\to0$.</p>
+  <p><strong>Algebra of derivatives.</strong> Power rule $\frac{d}{dx}x^n=nx^{n-1}$, sum rule, product rule $\frac{d}{dx}(uv)=u'v+uv'$, quotient rule $\frac{d}{dx}\left(\frac{u}{v}\right)=\frac{u'v-uv'}{v^2}$ — all provable from the limit definition, but used as shortcuts from here on.</p>
+  <p><strong>Chain rule.</strong> For a composite $f(g(x))$: $\frac{d}{dx}f(g(x))=f'(g(x))\cdot g'(x)$ — differentiate the outer function (leaving the inner alone), then multiply by the derivative of the inner function.</p>
+  <p><strong>Implicit differentiation.</strong> When $y$ isn't isolated, differentiate both sides with respect to $x$, treating $y$ as a function of $x$ (so every $y$-term picks up a $\frac{dy}{dx}$ via the chain rule), then solve for $\frac{dy}{dx}$.</p>
+  <p><strong>Higher order derivatives.</strong> $f''(x)$ is just the derivative of $f'(x)$ — repeat the process as many times as needed.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}{h}, \qquad \frac{d}{dx}x^n=nx^{n-1} \]\[ (uv)'=u'v+uv', \qquad \left(\frac{u}{v}\right)'=\frac{u'v-uv'}{v^2}, \qquad \frac{d}{dx}f(g(x))=f'(g(x))g'(x) \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — chain rule</div><p>Differentiate $y=(3x^2-1)^5$.</p>
+  <div class="math-block">\[ \frac{dy}{dx}=5(3x^2-1)^4\cdot 6x = 30x(3x^2-1)^4 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $30x(3x^2-1)^4$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — implicit differentiation</div><p>Find $\dfrac{dy}{dx}$ for $x^2+y^2=25$.</p>
+  <div class="math-block">\[ 2x+2y\frac{dy}{dx}=0 \implies \frac{dy}{dx}=-\frac{x}{y} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{dy}{dx}=-\dfrac{x}{y}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Misidentifying "outer" and "inner" functions is the single most common chain rule error — always ask "what's the very last operation applied, reading the expression left to right?" That's your outer function.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('continuity')">&larr; W2: Continuity</button>
+        <button class="page-nav-btn next" onclick="goTo('maxmin')">W3: Applications of Derivatives — Max/Min &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-maxmin">
+      <div class="page-hero">
+        <div class="page-hero-label">W3</div>
+        <div class="page-hero-title">Applications of Derivatives — Max/Min</div>
+        <div class="page-hero-sub">Maximum and minimum problems, First Derivative Test</div>
+      </div>
+      <div class="motiv">A derivative being zero flags a flat tangent — the natural place to look for a peak or valley. Turning that observation into a reliable procedure is what this topic builds.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Critical points.</strong> Where $f'(x)=0$ or $f'(x)$ is undefined — candidates for local maxima or minima.</p>
+  <p><strong>First Derivative Test.</strong> Check the sign of $f'$ just before and after a critical point: $+$ to $-$ means local max, $-$ to $+$ means local min, no sign change means neither.</p>
+  <p><strong>Optimisation problems.</strong> Translate a word problem into a function of one variable (using constraints to eliminate extra variables), then find critical points and test them — remembering to check the domain's endpoints too if it's a closed interval.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ f'(c)=0 \text{ or undefined} \implies c \text{ is a critical point} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — find and classify critical points</div><p>Find and classify the critical points of $f(x)=x^3-3x$.</p>
+  <div class="math-block">\[ f'(x)=3x^2-3=0 \implies x=\pm1 \]</div>
+  <p>Sign of $f'$: positive for $x<-1$, negative for $-1<x<1$, positive for $x>1$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Local max at $x=-1$, local min at $x=1$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — optimisation</div><p>A farmer has 40m of fencing to enclose a rectangular field against a wall (one side needs no fence). Maximise the area.</p>
+  <p>Let width $x$ (perpendicular to wall), length $40-2x$. Area $A=x(40-2x)=40x-2x^2$.</p>
+  <div class="math-block">\[ A'(x)=40-4x=0 \implies x=10 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Width $10$m, length $20$m, max area $200\text{m}^2$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>A critical point is only a <em>candidate</em> — always test it (sign change, or the Second Derivative Test from Week 7) before declaring it a max or min. Not every flat point is a turning point (e.g. $y=x^3$ at $x=0$).</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('derivrules')">&larr; W2-3: Derivatives — Definition & Rules</button>
+        <button class="page-nav-btn next" onclick="goTo('intfund')">W3-4: Integration — Antiderivatives, Definite Integral & FTC &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-intfund">
+      <div class="page-hero">
+        <div class="page-hero-label">W3-4</div>
+        <div class="page-hero-title">Integration — Antiderivatives, Definite Integral & FTC</div>
+        <div class="page-hero-sub">Antiderivatives, basic rules, summation notation, definite integral, Fundamental Theorem of Calculus</div>
+      </div>
+      <div class="motiv">Differentiation answers "what's the instantaneous rate of change?" Integration asks the reverse question — and, remarkably, also answers "what's the total area under a curve?" The Fundamental Theorem of Calculus is the proof that these two questions have the same answer.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Antiderivatives.</strong> $F$ is an antiderivative of $f$ if $F'=f$. Since constants vanish under differentiation, antiderivatives come in families: $\int f(x)\,dx=F(x)+C$.</p>
+  <p><strong>Basic rules.</strong> $\int x^n\,dx=\dfrac{x^{n+1}}{n+1}+C$ ($n\ne-1$) — the power rule for derivatives, run in reverse.</p>
+  <p><strong>Summation and the definite integral.</strong> Approximate the area under a curve with $n$ thin rectangles, sum their areas ($\sum_{i=1}^n f(x_i)\Delta x$), then let $n\to\infty$ (rectangles get infinitely thin) — that limit is defined as $\int_a^b f(x)\,dx$.</p>
+  <p><strong>Fundamental Theorem of Calculus.</strong> If $F'=f$, then $\int_a^b f(x)\,dx = F(b)-F(a)$ — meaning you never actually have to take that limit of a sum; just find any antiderivative and evaluate it at the endpoints.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \int x^n\,dx=\frac{x^{n+1}}{n+1}+C \ (n\ne-1), \qquad \int_a^b f(x)\,dx = F(b)-F(a) \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — indefinite integral</div><p>Find $\int (3x^2-4x+1)\,dx$.</p>
+  <div class="math-block">\[ \int (3x^2-4x+1)\,dx = x^3-2x^2+x+C \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $x^3-2x^2+x+C$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — definite integral via FTC</div><p>Evaluate $\displaystyle\int_0^2 (x^2+1)\,dx$.</p>
+  <div class="math-block">\[ \left[\frac{x^3}{3}+x\right]_0^2 = \left(\frac{8}{3}+2\right)-0 = \frac{14}{3} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{14}{3}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>The Riemann-sum construction here (rectangles, limit as $n\to\infty$) is the exact template used to define more general integrals later, including line and surface integrals — the "chop it up, sum it, take the limit" pattern never really changes.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('maxmin')">&larr; W3: Applications of Derivatives — Max/Min</button>
+        <button class="page-nav-btn next" onclick="goTo('intsub')">W4: Integration by Substitution &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-intsub">
+      <div class="page-hero">
+        <div class="page-hero-label">W4</div>
+        <div class="page-hero-title">Integration by Substitution</div>
+        <div class="page-hero-sub">Recognising composite structure, u-substitution technique</div>
+      </div>
+      <div class="motiv">Substitution is the integral counterpart of the chain rule — since differentiation "unwraps" a composite function by multiplying by the inner derivative, integration has to "rewrap" it by dividing that same inner derivative back out.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The pattern to look for.</strong> If the integrand contains a function $g(x)$ and (up to a constant) its derivative $g'(x)$ multiplied in, that's the signal to substitute $u=g(x)$.</p>
+  <p><strong>The mechanics.</strong> Let $u=g(x)$, so $du=g'(x)\,dx$. Rewrite the whole integral in terms of $u$ only, integrate normally, then substitute back $u=g(x)$ at the end.</p>
+  <p><strong>Definite integrals.</strong> Either substitute back to $x$ before evaluating at the original limits, or convert the limits themselves to $u$-values and skip the substitute-back step entirely.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \int f(g(x))g'(x)\,dx = \int f(u)\,du, \qquad u=g(x) \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — basic substitution</div><p>Find $\int 2x(x^2+1)^4\,dx$.</p>
+  <p>Let $u=x^2+1$, $du=2x\,dx$.</p>
+  <div class="math-block">\[ \int u^4\,du = \frac{u^5}{5}+C = \frac{(x^2+1)^5}{5}+C \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{(x^2+1)^5}{5}+C$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — definite integral, convert limits</div><p>Evaluate $\displaystyle\int_0^1 x\sqrt{x^2+1}\,dx$.</p>
+  <p>Let $u=x^2+1$, $du=2x\,dx$. When $x=0,u=1$; when $x=1,u=2$.</p>
+  <div class="math-block">\[ \frac12\int_1^2 \sqrt{u}\,du = \frac12\left[\frac{2}{3}u^{3/2}\right]_1^2 = \frac13\left(2\sqrt2-1\right) \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{2\sqrt2-1}{3}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>If, after substituting, leftover $x$'s remain that <em>won't</em> cancel or convert cleanly into $u$'s, that's a strong signal you've picked the wrong $u$ — try a different piece of the integrand.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('intfund')">&larr; W3-4: Integration — Antiderivatives, Definite Integral & FTC</button>
+        <button class="page-nav-btn next" onclick="goTo('areas')">W4: Applications of Integration — Areas Between Curves &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-areas">
+      <div class="page-hero">
+        <div class="page-hero-label">W4</div>
+        <div class="page-hero-title">Applications of Integration — Areas Between Curves</div>
+        <div class="page-hero-sub">Setting up and evaluating area-between-curves integrals</div>
+      </div>
+      <div class="motiv">A single integral gives area under one curve, measured from the x-axis. Subtracting two such integrals — top curve minus bottom curve — gives the area trapped between two curves instead.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Setup.</strong> If $f(x)\ge g(x)$ on $[a,b]$, the area between them is $\int_a^b\big(f(x)-g(x)\big)\,dx$ — think of it as an infinite stack of vertical strips, each of height "top minus bottom" and width $dx$.</p>
+  <p><strong>Finding the limits.</strong> The bounds $a,b$ are usually the $x$-coordinates where the two curves intersect — solve $f(x)=g(x)$ first.</p>
+  <p><strong>When curves cross inside the interval.</strong> If which curve is "on top" switches partway through, split the integral at the crossing point and swap the order of subtraction in each piece.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ A = \int_a^b \big(f(x)-g(x)\big)\,dx, \qquad f(x)\ge g(x) \text{ on } [a,b] \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — standard setup</div><p>Find the area between $y=x^2$ and $y=2x$ for $x\ge0$.</p>
+  <p>Intersections: $x^2=2x \implies x=0,2$. On $(0,2)$, $2x\ge x^2$.</p>
+  <div class="math-block">\[ A=\int_0^2(2x-x^2)\,dx = \left[x^2-\frac{x^3}{3}\right]_0^2 = 4-\frac83 = \frac43 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac43$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — curves that swap which is on top</div><p>Find the area between $y=x$ and $y=x^3$ for $-1\le x\le1$.</p>
+  <p>They cross at $x=-1,0,1$. On $(-1,0)$, $x^3\ge x$; on $(0,1)$, $x\ge x^3$.</p>
+  <div class="math-block">\[ A=\int_{-1}^0(x^3-x)dx+\int_0^1(x-x^3)dx = \tfrac14+\tfrac14=\tfrac12 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac12$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>Always sketch (even roughly) which curve is on top before setting up the integral — the sign of the answer will be wrong if you subtract in the wrong order, even though the algebra all looks correct.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('intsub')">&larr; W4: Integration by Substitution</button>
+        <button class="page-nav-btn next" onclick="goTo('explog')">W5: Exponential & Logarithmic Functions &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-explog">
+      <div class="page-hero">
+        <div class="page-hero-label">W5</div>
+        <div class="page-hero-title">Exponential & Logarithmic Functions</div>
+        <div class="page-hero-sub">Graphs, properties, derivatives, integrals</div>
+      </div>
+      <div class="motiv">Exponential functions are the unique functions whose rate of change is proportional to their own size — that single defining property drives every derivative and integral rule in this topic.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Graphs and properties.</strong> $e^x$ is always positive, always increasing, passes through $(0,1)$, and $\lim_{x\to-\infty}e^x=0$. $\ln x$ is its inverse: defined only for $x>0$, passes through $(1,0)$, increasing but ever more slowly.</p>
+  <p><strong>Derivatives.</strong> $\dfrac{d}{dx}e^x=e^x$ — the defining property, stated as a derivative. By the chain rule, $\dfrac{d}{dx}e^{g(x)}=g'(x)e^{g(x)}$. And $\dfrac{d}{dx}\ln x=\dfrac1x$ — provable from the inverse function relationship with $e^x$.</p>
+  <p><strong>Integrals.</strong> Running the derivative rules backwards: $\int e^x\,dx=e^x+C$, and $\int \dfrac1x\,dx=\ln|x|+C$.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \frac{d}{dx}e^x=e^x, \qquad \frac{d}{dx}\ln x=\frac1x, \qquad \int e^x dx=e^x+C, \qquad \int \frac1x dx=\ln|x|+C \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — chain rule with exponentials</div><p>Differentiate $y=e^{3x^2-1}$.</p>
+  <div class="math-block">\[ y'=6x\,e^{3x^2-1} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $6xe^{3x^2-1}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — log derivative via chain rule</div><p>Differentiate $y=\ln(x^2+1)$.</p>
+  <div class="math-block">\[ y'=\frac{2x}{x^2+1} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{2x}{x^2+1}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>The differential equation $y'=ky$ (rate of change proportional to size) that defines $e^x$ reappears constantly in engineering: population growth, radioactive decay, RC circuits — all solved by an exponential, for exactly this reason.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('areas')">&larr; W4: Applications of Integration — Areas Between Curves</button>
+        <button class="page-nav-btn next" onclick="goTo('hyperbolic')">W5: Hyperbolic Functions &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-hyperbolic">
+      <div class="page-hero">
+        <div class="page-hero-label">W5</div>
+        <div class="page-hero-title">Hyperbolic Functions</div>
+        <div class="page-hero-sub">Definitions, graphs, derivatives, integrals</div>
+      </div>
+      <div class="motiv">Hyperbolic functions are built directly from $e^x$ and $e^{-x}$ — designed so their derivative and identity structure mirrors ordinary trig functions almost exactly, just with a persistent sign difference.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Definitions.</strong> $\sinh x=\dfrac{e^x-e^{-x}}{2}$, $\cosh x=\dfrac{e^x+e^{-x}}{2}$, $\tanh x=\dfrac{\sinh x}{\cosh x}$. Both are built purely from exponentials, so every hyperbolic derivative traces back to $\frac{d}{dx}e^x=e^x$.</p>
+  <p><strong>Key identity.</strong> $\cosh^2x-\sinh^2x=1$ (compare to $\cos^2\theta+\sin^2\theta=1$ — same shape, opposite sign in the middle, which is <em>why</em> they're called "hyperbolic": this identity describes a hyperbola the way the trig one describes a circle).</p>
+  <p><strong>Derivatives.</strong> $\dfrac{d}{dx}\sinh x=\cosh x$, $\dfrac{d}{dx}\cosh x=\sinh x$ — no minus sign anywhere, unlike ordinary trig derivatives, because differentiating $e^x$ never introduces one.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \sinh x=\frac{e^x-e^{-x}}{2}, \quad \cosh x=\frac{e^x+e^{-x}}{2}, \quad \cosh^2x-\sinh^2x=1 \]\[ \frac{d}{dx}\sinh x=\cosh x, \qquad \frac{d}{dx}\cosh x=\sinh x \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — derivative via definition</div><p>Show $\dfrac{d}{dx}\sinh x=\cosh x$ directly from the definition.</p>
+  <div class="math-block">\[ \frac{d}{dx}\left(\frac{e^x-e^{-x}}{2}\right) = \frac{e^x+e^{-x}}{2} = \cosh x \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Confirmed directly from the exponential definitions</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — integral</div><p>Find $\int \cosh(2x)\,dx$.</p>
+  <div class="math-block">\[ \int \cosh(2x)\,dx = \frac12\sinh(2x)+C \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac12\sinh(2x)+C$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Whenever you're unsure of a hyperbolic identity or derivative sign, you can always fall back to the exponential definitions and re-derive it in seconds — there's nothing to memorise that isn't already implied by $\frac{d}{dx}e^x=e^x$.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('explog')">&larr; W5: Exponential & Logarithmic Functions</button>
+        <button class="page-nav-btn next" onclick="goTo('invtrig')">W5: Inverse Trigonometric Functions &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-invtrig">
+      <div class="page-hero">
+        <div class="page-hero-label">W5</div>
+        <div class="page-hero-title">Inverse Trigonometric Functions</div>
+        <div class="page-hero-sub">Definitions, domains, derivatives, integrals</div>
+      </div>
+      <div class="motiv">Ordinary trig functions aren't one-to-one over all of $\mathbb{R}$ — so before an inverse can exist, the domain has to be restricted to a piece where the function is one-to-one, and only then does the inverse make sense.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Restricted domains.</strong> $\sin x$ is restricted to $[-\pi/2,\pi/2]$ to define $\arcsin x$ (range matches this restricted domain); $\cos x$ to $[0,\pi]$ for $\arccos x$; $\tan x$ to $(-\pi/2,\pi/2)$ for $\arctan x$.</p>
+  <p><strong>Derivatives.</strong> Derived via implicit differentiation on the defining equation (e.g. $y=\arcsin x \iff \sin y=x$, differentiate both sides, solve for $y'$, then convert back using the Pythagorean identity):</p>
+  <div class="math-block">\[ \frac{d}{dx}\arcsin x=\frac{1}{\sqrt{1-x^2}}, \qquad \frac{d}{dx}\arctan x=\frac{1}{1+x^2} \]</div>
+  <p><strong>Integrals.</strong> Running those derivatives backwards gives two extremely useful standard integral forms.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \int \frac{1}{\sqrt{1-x^2}}dx=\arcsin x+C, \qquad \int \frac{1}{1+x^2}dx=\arctan x+C \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — derive the arcsin derivative</div><p>Show $\dfrac{d}{dx}\arcsin x=\dfrac{1}{\sqrt{1-x^2}}$.</p>
+  <p>Let $y=\arcsin x$, so $\sin y=x$. Differentiate implicitly: $\cos y\cdot y'=1 \implies y'=\dfrac{1}{\cos y}$.</p>
+  <div class="math-block">\[ \cos y=\sqrt{1-\sin^2y}=\sqrt{1-x^2} \implies y'=\frac{1}{\sqrt{1-x^2}} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Derived directly from implicit differentiation</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — a substitution-flavoured integral</div><p>Find $\int \dfrac{1}{4+x^2}\,dx$.</p>
+  <div class="math-block">\[ \int \frac{1}{4+x^2}dx = \frac14\int\frac{1}{1+(x/2)^2}dx = \frac12\arctan\left(\frac{x}{2}\right)+C \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac12\arctan\left(\dfrac{x}{2}\right)+C$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Any integral with $\sqrt{a^2-x^2}$ or $a^2+x^2$ in the denominator is a strong visual cue to reach for arcsin or arctan — recognising the pattern instantly saves a lot of time under exam conditions.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('hyperbolic')">&larr; W5: Hyperbolic Functions</button>
+        <button class="page-nav-btn next" onclick="goTo('practice')">Practice Questions &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-practice">
+      <div class="page-hero">
+        <div class="page-hero-label">Mixed Practice</div>
+        <div class="page-hero-title">Practice Questions</div>
+        <div class="page-hero-sub">130 questions — 10 per topic — across all of Phase 1. Attempt each before revealing the answer.</div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W1</div>
+        <div class="level-info">
+          <div class="level-title">Algebraic Foundations</div>
+          <div class="level-sub">Indices, surds, quadratics, binomial expansion, absolute value</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div class="q-text">Simplify $\sqrt{72}$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\sqrt{72}=\sqrt{36\cdot2}=6\sqrt2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div class="q-text">Simplify $\dfrac{2}{\sqrt3}$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{2}{\sqrt3}\cdot\dfrac{\sqrt3}{\sqrt3}=\dfrac{2\sqrt3}{3}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div class="q-text">Solve $x^2-5x+6=0$ by factorising.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$(x-2)(x-3)=0 \implies x=2,3$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">4</div>
+          <div class="q-text">Solve $2x^2+3x-2=0$ using the quadratic formula.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=\dfrac{-3\pm\sqrt{9+16}}{4}=\dfrac{-3\pm5}{4} \implies x=\tfrac12,-2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">5</div>
+          <div class="q-text">Expand $(2x-1)^4$ using the binomial theorem.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$16x^4-32x^3+24x^2-8x+1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">6</div>
+          <div class="q-text">Solve $|3x-2|=8$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$3x-2=8\implies x=\tfrac{10}{3}$; or $3x-2=-8\implies x=-2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">7</div>
+          <div class="q-text">Simplify $\left(\dfrac{x^3y^{-2}}{x^{-1}y}\right)^2$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\left(x^4y^{-3}\right)^2=x^8y^{-6}=\dfrac{x^8}{y^6}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">8</div>
+          <div class="q-text">Rationalise $\dfrac{1}{2-\sqrt3}$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{1}{2-\sqrt3}\cdot\dfrac{2+\sqrt3}{2+\sqrt3}=\dfrac{2+\sqrt3}{4-3}=2+\sqrt3$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">9</div>
+          <div class="q-text">Find the coefficient of $x^3$ in $(x+2)^5$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\binom{5}{3}x^3(2)^2=10\cdot4\cdot x^3=40x^3$, coefficient $40$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">10</div>
+          <div class="q-text">Solve $|x+1|<4$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$-4<x+1<4 \implies -5<x<3$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W1</div>
+        <div class="level-info">
+          <div class="level-title">Coordinate Geometry</div>
+          <div class="level-sub">Lines, circles, intersection of curves</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">11</div>
+          <div class="q-text">Find the gradient of the line through $(2,-1)$ and $(5,5)$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$m=\dfrac{5-(-1)}{5-2}=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">12</div>
+          <div class="q-text">Find the equation of the line with gradient $-3$ through $(1,4)$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y-4=-3(x-1)\implies y=-3x+7$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">13</div>
+          <div class="q-text">Find the equation of the line parallel to $y=2x-1$ through $(0,5)$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y=2x+5$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">14</div>
+          <div class="q-text">Find the equation of the line perpendicular to $y=\tfrac12x+2$ through $(2,3)$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Perpendicular gradient $=-2$; $y-3=-2(x-2)\implies y=-2x+7$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">15</div>
+          <div class="q-text">Find the centre and radius of $x^2+y^2-4x+6y-3=0$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Complete the square: $(x-2)^2+(y+3)^2=16$; centre $(2,-3)$, radius $4$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">16</div>
+          <div class="q-text">Find the equation of the circle with centre $(1,-2)$ passing through $(4,2)$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r=\sqrt{9+16}=5$; $(x-1)^2+(y+2)^2=25$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">17</div>
+          <div class="q-text">Find the intersection of $y=x^2$ and $y=2x+3$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x^2-2x-3=0\implies (x-3)(x+1)=0$; points $(3,9)$ and $(-1,1)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">18</div>
+          <div class="q-text">Determine whether the line $y=x+1$ is tangent to $x^2+y^2=2$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Sub: $2x^2+2x-1=0$, discriminant $=4+8=12>0$ — two solutions, so the line is a secant, not tangent</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">19</div>
+          <div class="q-text">Find the distance between $(1,2)$ and $(4,-2)$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\sqrt{9+16}=5$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">20</div>
+          <div class="q-text">Find $k$ so that $(k,3)$ lies on the circle $x^2+y^2=25$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$k^2+9=25\implies k=\pm4$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W1</div>
+        <div class="level-info">
+          <div class="level-title">Functions</div>
+          <div class="level-sub">Domain, range, composition, one-to-one, inverse functions, trig review</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">21</div>
+          <div class="q-text">Find the domain of $f(x)=\sqrt{4-x^2}$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Need $4-x^2\ge0 \implies -2\le x\le2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">22</div>
+          <div class="q-text">Find the range of $f(x)=x^2+1$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y\ge1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">23</div>
+          <div class="q-text">If $f(x)=x^2$ and $g(x)=x+1$, find $(f\circ g)(x)$ and $(g\circ f)(x)$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$(f\circ g)(x)=(x+1)^2$; $(g\circ f)(x)=x^2+1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">24</div>
+          <div class="q-text">Show $f(x)=x^3$ is one-to-one.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f$ is strictly increasing (derivative $3x^2\ge0$, equal only at $x=0$), so distinct inputs give distinct outputs</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">25</div>
+          <div class="q-text">Find $f^{-1}(x)$ for $f(x)=\dfrac{x+1}{2}$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y=\dfrac{x+1}{2}\implies x=2y-1\implies f^{-1}(x)=2x-1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">26</div>
+          <div class="q-text">Find the domain of $g(x)=\dfrac{1}{x^2-4}$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x\ne\pm2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">27</div>
+          <div class="q-text">Evaluate $\sin(\pi/3)$ and $\cos(\pi/3)$ exactly.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\sin(\pi/3)=\dfrac{\sqrt3}{2}$, $\cos(\pi/3)=\dfrac12$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">28</div>
+          <div class="q-text">Solve $2\sin\theta=1$ for $0\le\theta<2\pi$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\theta=\pi/6, 5\pi/6$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">29</div>
+          <div class="q-text">If $f(x)=\sqrt{x}$ and $g(x)=x-1$, find the domain of $(f\circ g)(x)$.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Need $g(x)\ge0 \implies x\ge1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">30</div>
+          <div class="q-text">Is $f(x)=x^2$ one-to-one on all of $\mathbb{R}$? Explain.<div class="q-hint">W1</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>No — $f(-1)=f(1)=1$, so it fails the horizontal line test; it is one-to-one only if the domain is restricted, e.g. $x\ge0$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W2</div>
+        <div class="level-info">
+          <div class="level-title">Limits</div>
+          <div class="level-sub">Intuitive definition, algebra of limits, one-sided limits, limits at infinity</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">31</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to3}(2x^2-x)$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$2(9)-3=15$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">32</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to1}\dfrac{x^2-1}{x-1}$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{(x-1)(x+1)}{x-1}=x+1 \to 2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">33</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to0}\dfrac{\sin x}{x}$ (state the standard result).<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$1$ — standard trig limit</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">34</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{5x+2}{2x-1}$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Divide by $x$: $\dfrac{5+2/x}{2-1/x}\to \dfrac52$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">35</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{1}{x^2}$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">36</div>
+          <div class="q-text">Find $\displaystyle\lim_{x\to0^+}\dfrac{1}{x}$ and $\displaystyle\lim_{x\to0^-}\dfrac{1}{x}$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$+\infty$ and $-\infty$ respectively — the two-sided limit does not exist</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">37</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to4}\dfrac{\sqrt{x}-2}{x-4}$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Rationalise: $\dfrac{1}{\sqrt x+2} \to \dfrac14$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">38</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{x\to-\infty}\dfrac{3x^3-x}{x^3+2}$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\to 3$ (same-degree ratio of leading coefficients)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">39</div>
+          <div class="q-text">Determine whether $f(x)=\begin{cases}x+1 & x<2\\3 & x\ge2\end{cases}$ has a limit at $x=2$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Left limit $=3$, right limit $=3$ — they agree, so $\lim_{x\to2}f(x)=3$ (even though it matches $f(2)$ here)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">40</div>
+          <div class="q-text">Evaluate $\displaystyle\lim_{h\to0}\dfrac{(2+h)^2-4}{h}$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{4+4h+h^2-4}{h}=4+h \to 4$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W2</div>
+        <div class="level-info">
+          <div class="level-title">Continuity</div>
+          <div class="level-sub">Definition, examples and non-examples, algebra of continuous functions</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">41</div>
+          <div class="q-text">Is $f(x)=x^2-3x+2$ continuous everywhere? Explain.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Yes — it's a polynomial, and polynomials are continuous everywhere by the algebra of continuous functions</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">42</div>
+          <div class="q-text">Where is $f(x)=\dfrac{1}{x-3}$ discontinuous?<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=3$ (infinite discontinuity — undefined there)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">43</div>
+          <div class="q-text">Classify the discontinuity of $f(x)=\dfrac{x^2-9}{x-3}$ at $x=3$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Removable — the limit exists ($=6$) but $f(3)$ is undefined</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">44</div>
+          <div class="q-text">Is $f(x)=|x|$ continuous at $x=0$?<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Yes — $\lim_{x\to0^-}|x|=0=\lim_{x\to0^+}|x|=f(0)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">45</div>
+          <div class="q-text">Find $k$ so $f(x)=\begin{cases}kx & x\le1\\3x-1 & x>1\end{cases}$ is continuous at $x=1$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$k(1)=3(1)-1=2 \implies k=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">46</div>
+          <div class="q-text">Classify the discontinuity in $f(x)=\begin{cases}x & x<1\\x+2 & x\ge1\end{cases}$ at $x=1$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Jump discontinuity — left limit $1$, right limit $3$, they disagree</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">47</div>
+          <div class="q-text">Is $\tan x$ continuous at $x=\pi/2$?<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>No — $\tan x=\sin x/\cos x$ and $\cos(\pi/2)=0$, so it's undefined there (infinite discontinuity)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">48</div>
+          <div class="q-text">Show $f(x)=\sqrt{x}$ is continuous at $x=4$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{x\to4}\sqrt x=2=f(4)$, so continuous</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">49</div>
+          <div class="q-text">Where is $g(x)=\dfrac{x+1}{x^2-x-2}$ discontinuous?<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Factor denominator: $(x-2)(x+1)$, so $x=2$ and $x=-1$ (note $x=-1$ is removable since it also cancels the numerator)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">50</div>
+          <div class="q-text">If $f$ and $g$ are both continuous at $x=a$, explain why $f(x)g(x)$ is continuous at $a$.<div class="q-hint">W2</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>By the algebra of limits, $\lim_{x\to a}f(x)g(x)=\left(\lim_{x\to a}f(x)\right)\left(\lim_{x\to a}g(x)\right)=f(a)g(a)$, so the product satisfies the continuity definition</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W2-3</div>
+        <div class="level-info">
+          <div class="level-title">Derivatives — Definition & Rules</div>
+          <div class="level-sub">Definition of derivative, algebra of derivatives, chain rule, implicit differentiation, higher order derivatives</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">51</div>
+          <div class="q-text">Differentiate $f(x)=x^4-3x^2+2x$.<div class="q-hint">W2-3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=4x^3-6x+2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">52</div>
+          <div class="q-text">Differentiate $y=(x^2+1)(x-3)$ using the product rule.<div class="q-hint">W2-3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=2x(x-3)+(x^2+1)(1)=3x^2-6x+1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">53</div>
+          <div class="q-text">Differentiate $y=\dfrac{x}{x+1}$ using the quotient rule.<div class="q-hint">W2-3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=\dfrac{(1)(x+1)-x(1)}{(x+1)^2}=\dfrac{1}{(x+1)^2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">54</div>
+          <div class="q-text">Differentiate $y=\sin(3x)$.<div class="q-hint">W2-3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=3\cos(3x)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">55</div>
+          <div class="q-text">Differentiate $y=\sqrt{4x+1}$.<div class="q-hint">W2-3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y=(4x+1)^{1/2} \implies y'=\dfrac{4}{2\sqrt{4x+1}}=\dfrac{2}{\sqrt{4x+1}}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">56</div>
+          <div class="q-text">Find $\dfrac{dy}{dx}$ implicitly for $x^3+y^3=6xy$.<div class="q-hint">W2-3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$3x^2+3y^2y'=6y+6xy' \implies y'(3y^2-6x)=6y-3x^2 \implies y'=\dfrac{6y-3x^2}{3y^2-6x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">57</div>
+          <div class="q-text">Find $f''(x)$ for $f(x)=x^5-2x^3$.<div class="q-hint">W2-3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=5x^4-6x^2$, $f''(x)=20x^3-12x$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">58</div>
+          <div class="q-text">Differentiate $y=\tan(x^2)$.<div class="q-hint">W2-3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=2x\sec^2(x^2)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">59</div>
+          <div class="q-text">Differentiate $y=x^2\cos x$.<div class="q-hint">W2-3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=2x\cos x-x^2\sin x$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">60</div>
+          <div class="q-text">Find the equation of the tangent line to $y=x^2$ at $x=3$.<div class="q-hint">W2-3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=2x\implies$ slope $=6$ at $(3,9)$; $y-9=6(x-3) \implies y=6x-9$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W3</div>
+        <div class="level-info">
+          <div class="level-title">Applications of Derivatives — Max/Min</div>
+          <div class="level-sub">Maximum and minimum problems, First Derivative Test</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">61</div>
+          <div class="q-text">Find the critical points of $f(x)=x^2-4x+3$.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=2x-4=0 \implies x=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">62</div>
+          <div class="q-text">Classify the critical point of $f(x)=x^2-4x+3$ found above.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'$ goes $-$ to $+$ at $x=2$ — local (and global) minimum</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">63</div>
+          <div class="q-text">Find the critical points of $f(x)=2x^3-3x^2-12x$.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=6x^2-6x-12=6(x-2)(x+1)=0 \implies x=2,-1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">64</div>
+          <div class="q-text">Classify both critical points from the previous question.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'$ is $+,-,+$ around them: local max at $x=-1$, local min at $x=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">65</div>
+          <div class="q-text">Find the critical points of $f(x)=x^4-2x^2$.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=4x^3-4x=4x(x-1)(x+1)=0 \implies x=0,1,-1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">66</div>
+          <div class="q-text">A rectangle has perimeter 20. Find the dimensions maximising area.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$2x+2y=20\implies y=10-x$; $A=x(10-x)$, $A'=10-2x=0\implies x=5$; square $5\times5$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">67</div>
+          <div class="q-text">Find two numbers whose sum is 20 and whose product is maximum.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Let numbers be $x,20-x$; $P=x(20-x)$, $P'=20-2x=0\implies x=10$; both numbers are $10$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">68</div>
+          <div class="q-text">An open box is made from a 12cm square by cutting corners of side $x$ and folding up. Find $x$ to maximise volume.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=x(12-2x)^2$; $V'=(12-2x)^2+x\cdot2(12-2x)(-2)=(12-2x)(12-6x)=0 \implies x=2$ (rejecting $x=6$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">69</div>
+          <div class="q-text">Find the critical points of $f(x)=\dfrac{x^2+1}{x}$ for $x>0$.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=1-\dfrac{1}{x^2}=0\implies x=1$ (taking $x>0$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">70</div>
+          <div class="q-text">A cylinder has volume $500\pi$. Express surface area $S$ as a function of radius $r$ only, and state (without solving) what you'd do next to minimise it.<div class="q-hint">W3</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$h=\dfrac{500}{r^2}$; $S=2\pi r^2+2\pi rh=2\pi r^2+\dfrac{1000\pi}{r}$. Next: differentiate $S$ with respect to $r$, set $S'(r)=0$, and classify the critical point</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W3-4</div>
+        <div class="level-info">
+          <div class="level-title">Integration — Antiderivatives, Definite Integral & FTC</div>
+          <div class="level-sub">Antiderivatives, basic rules, summation notation, definite integral, Fundamental Theorem of Calculus</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">71</div>
+          <div class="q-text">Find $\int (4x^3-2x)\,dx$.<div class="q-hint">W3-4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x^4-x^2+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">72</div>
+          <div class="q-text">Find $\int \sqrt{x}\,dx$.<div class="q-hint">W3-4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\int x^{1/2}\,dx = \dfrac{2}{3}x^{3/2}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">73</div>
+          <div class="q-text">Find $\int \left(\dfrac{1}{x^2}\right)dx$ (for $x\ne0$).<div class="q-hint">W3-4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\int x^{-2}\,dx = -x^{-1}+C=-\dfrac1x+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">74</div>
+          <div class="q-text">Evaluate $\displaystyle\int_1^3 (2x)\,dx$.<div class="q-hint">W3-4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$[x^2]_1^3=9-1=8$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">75</div>
+          <div class="q-text">Evaluate $\displaystyle\int_0^\pi \sin x\,dx$.<div class="q-hint">W3-4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$[-\cos x]_0^\pi = 1-(-1)=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">76</div>
+          <div class="q-text">Find $F(x)$ such that $F'(x)=6x^2-4$ and $F(0)=5$.<div class="q-hint">W3-4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$F(x)=2x^3-4x+C$; $F(0)=C=5 \implies F(x)=2x^3-4x+5$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">77</div>
+          <div class="q-text">Evaluate $\displaystyle\int_{-2}^{2} x^3\,dx$ without full computation — explain your reasoning.<div class="q-hint">W3-4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x^3$ is odd, and the interval is symmetric about 0, so positive and negative areas cancel exactly: the integral is $0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">78</div>
+          <div class="q-text">Evaluate $\displaystyle\int_1^4 \dfrac{1}{\sqrt x}\,dx$.<div class="q-hint">W3-4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\int x^{-1/2}dx = 2\sqrt x$; $[2\sqrt x]_1^4 = 4-2=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">79</div>
+          <div class="q-text">Find the area under $y=4-x^2$ between $x=-2$ and $x=2$.<div class="q-hint">W3-4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\int_{-2}^2(4-x^2)dx = \left[4x-\dfrac{x^3}{3}\right]_{-2}^2 = \left(8-\dfrac83\right)-\left(-8+\dfrac83\right)=\dfrac{32}{3}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">80</div>
+          <div class="q-text">Explain in one sentence why the Fundamental Theorem of Calculus is useful, referencing the summation definition.<div class="q-hint">W3-4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>It replaces the need to compute a limit of an ever-finer sum of rectangle areas with simply evaluating any antiderivative at the two endpoints and subtracting</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W4</div>
+        <div class="level-info">
+          <div class="level-title">Integration by Substitution</div>
+          <div class="level-sub">Recognising composite structure, u-substitution technique</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">81</div>
+          <div class="q-text">Find $\int 3x^2(x^3+1)^4\,dx$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=x^3+1$: $\dfrac{(x^3+1)^5}{5}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">82</div>
+          <div class="q-text">Find $\int \cos(2x)\,dx$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=2x$: $\dfrac{1}{2}\sin(2x)+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">83</div>
+          <div class="q-text">Find $\int x e^{x^2}\,dx$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=x^2$: $\dfrac{1}{2}e^{x^2}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">84</div>
+          <div class="q-text">Find $\int \dfrac{2x}{x^2+1}\,dx$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=x^2+1$: $\ln|x^2+1|+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">85</div>
+          <div class="q-text">Evaluate $\displaystyle\int_0^{\pi/2} \sin x\cos x\,dx$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=\sin x$, limits $0\to1$: $\left[\dfrac{u^2}{2}\right]_0^1=\dfrac12$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">86</div>
+          <div class="q-text">Find $\int (2x+1)^5\,dx$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=2x+1$: $\dfrac{(2x+1)^6}{12}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">87</div>
+          <div class="q-text">Find $\int \sin^3x\cos x\,dx$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=\sin x$: $\dfrac{\sin^4x}{4}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">88</div>
+          <div class="q-text">Evaluate $\displaystyle\int_1^2 \dfrac{x}{\sqrt{x^2+3}}\,dx$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=x^2+3$, limits $4\to7$: $\left[\sqrt u\right]_4^7=\sqrt7-2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">89</div>
+          <div class="q-text">Find $\int 4x^3\sqrt{x^4+5}\,dx$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=x^4+5$: $\dfrac23(x^4+5)^{3/2}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">90</div>
+          <div class="q-text">Explain why $u=x$ would be a poor substitution choice for $\int x\cos(x^2)\,dx$, and state the correct choice.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=x$ just relabels the variable and doesn't simplify anything — the derivative $du=dx$ doesn't match the $2x$ factor implicitly needed. The correct choice is $u=x^2$, since $du=2x\,dx$ matches the $x\,dx$ present (up to the constant $\tfrac12$)</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W4</div>
+        <div class="level-info">
+          <div class="level-title">Applications of Integration — Areas Between Curves</div>
+          <div class="level-sub">Setting up and evaluating area-between-curves integrals</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">91</div>
+          <div class="q-text">Find the area between $y=x^2$ and $y=4$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Intersect at $x=\pm2$; $A=\int_{-2}^2(4-x^2)dx=\dfrac{32}{3}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">92</div>
+          <div class="q-text">Find the area between $y=x$ and $y=x^2$ for $0\le x\le1$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x\ge x^2$ here: $A=\int_0^1(x-x^2)dx=\dfrac16$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">93</div>
+          <div class="q-text">Find the intersection points of $y=6-x^2$ and $y=x$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$6-x^2=x\implies x^2+x-6=0\implies(x+3)(x-2)=0\implies x=-3,2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">94</div>
+          <div class="q-text">Find the area between $y=6-x^2$ and $y=x$ (using the previous question).<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=\int_{-3}^2\big((6-x^2)-x\big)dx = \dfrac{125}{6}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">95</div>
+          <div class="q-text">Find the area between $y=\sin x$ and $y=0$ on $[0,\pi]$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=\int_0^\pi\sin x\,dx=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">96</div>
+          <div class="q-text">Find the area enclosed between $y=x^2-4$ and $y=0$ for $-2\le x\le2$ — explain why you need $|{\cdot}|$ or a sign flip.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Here $y=x^2-4\le0$ on this interval, so area $=\int_{-2}^2\big(0-(x^2-4)\big)dx=\dfrac{32}{3}$ — subtracting the lower curve from the (higher) $x$-axis, not the other way round</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">97</div>
+          <div class="q-text">Find the area between $y=x^3$ and $y=x$ for $x\ge0$ (one enclosed region only).<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Cross at $x=0,1$; on $(0,1)$, $x\ge x^3$: $A=\int_0^1(x-x^3)dx=\dfrac14$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">98</div>
+          <div class="q-text">Set up (do not evaluate) the integral for the area between $y=e^x$ and $y=x+1$ from $x=0$ to $x=1$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=\int_0^1\big(e^x-(x+1)\big)dx$, since $e^x\ge x+1$ on this interval</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">99</div>
+          <div class="q-text">Find the area between the curves $y=x^2$ and $y=-x^2+8$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Intersect: $x^2=-x^2+8\implies x^2=4\implies x=\pm2$. $A=\int_{-2}^2\big((-x^2+8)-x^2\big)dx=\dfrac{128}{3}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">100</div>
+          <div class="q-text">Find the area between $y=\sqrt x$ and $y=x^2$ for $0\le x\le1$.<div class="q-hint">W4</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\sqrt x\ge x^2$ here: $A=\int_0^1(\sqrt x-x^2)dx=\dfrac23-\dfrac13=\dfrac13$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W5</div>
+        <div class="level-info">
+          <div class="level-title">Exponential & Logarithmic Functions</div>
+          <div class="level-sub">Graphs, properties, derivatives, integrals</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">101</div>
+          <div class="q-text">Differentiate $y=e^{5x}$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=5e^{5x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">102</div>
+          <div class="q-text">Differentiate $y=x^2e^x$ (product rule).<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=2xe^x+x^2e^x=e^x(2x+x^2)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">103</div>
+          <div class="q-text">Differentiate $y=\ln(5x)$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=\dfrac{5}{5x}=\dfrac1x$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">104</div>
+          <div class="q-text">Find $\int e^{2x}\,dx$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac12 e^{2x}+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">105</div>
+          <div class="q-text">Find $\int \dfrac{1}{3x}\,dx$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac13\ln|x|+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">106</div>
+          <div class="q-text">Differentiate $y=\ln(\cos x)$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=\dfrac{-\sin x}{\cos x}=-\tan x$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">107</div>
+          <div class="q-text">Find $\int \dfrac{2x}{x^2+3}\,dx$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=x^2+3$: $\ln|x^2+3|+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">108</div>
+          <div class="q-text">Solve $e^{2x}=5$ for $x$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$2x=\ln5 \implies x=\dfrac{\ln5}{2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">109</div>
+          <div class="q-text">Find the equation of the tangent to $y=e^x$ at $x=0$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=e^x$, slope $=1$ at $(0,1)$: $y=x+1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">110</div>
+          <div class="q-text">Evaluate $\displaystyle\int_1^e \dfrac{1}{x}\,dx$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$[\ln x]_1^e = 1-0=1$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W5</div>
+        <div class="level-info">
+          <div class="level-title">Hyperbolic Functions</div>
+          <div class="level-sub">Definitions, graphs, derivatives, integrals</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">111</div>
+          <div class="q-text">Evaluate $\cosh(0)$ and $\sinh(0)$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\cosh 0=1$, $\sinh 0=0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">112</div>
+          <div class="q-text">Differentiate $y=\sinh(3x)$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=3\cosh(3x)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">113</div>
+          <div class="q-text">Differentiate $y=\cosh(x^2)$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=2x\sinh(x^2)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">114</div>
+          <div class="q-text">Find $\int \sinh(4x)\,dx$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac14\cosh(4x)+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">115</div>
+          <div class="q-text">Prove the identity $\cosh^2x-\sinh^2x=1$ from the exponential definitions.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\left(\dfrac{e^x+e^{-x}}{2}\right)^2-\left(\dfrac{e^x-e^{-x}}{2}\right)^2 = \dfrac{(e^x+e^{-x})^2-(e^x-e^{-x})^2}{4}=\dfrac{4e^xe^{-x}}{4}=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">116</div>
+          <div class="q-text">Differentiate $y=\tanh x$ (using the quotient rule and the identity above).<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=\dfrac{\cosh x\cosh x-\sinh x\sinh x}{\cosh^2x}=\dfrac{\cosh^2x-\sinh^2x}{\cosh^2x}=\dfrac{1}{\cosh^2x}=\text{sech}^2x$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">117</div>
+          <div class="q-text">Find $\int x\cosh(x^2)\,dx$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$u=x^2$: $\dfrac12\sinh(x^2)+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">118</div>
+          <div class="q-text">Show that $\sinh x$ is an odd function.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\sinh(-x)=\dfrac{e^{-x}-e^x}{2}=-\dfrac{e^x-e^{-x}}{2}=-\sinh x$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">119</div>
+          <div class="q-text">Show that $\cosh x$ is an even function.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\cosh(-x)=\dfrac{e^{-x}+e^x}{2}=\cosh x$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">120</div>
+          <div class="q-text">Evaluate $\displaystyle\int_0^1 \sinh x\,dx$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$[\cosh x]_0^1=\cosh1-1$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W5</div>
+        <div class="level-info">
+          <div class="level-title">Inverse Trigonometric Functions</div>
+          <div class="level-sub">Definitions, domains, derivatives, integrals</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">121</div>
+          <div class="q-text">Evaluate $\arcsin(1/2)$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\pi/6$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">122</div>
+          <div class="q-text">Evaluate $\arctan(1)$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\pi/4$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">123</div>
+          <div class="q-text">Differentiate $y=\arcsin(2x)$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=\dfrac{2}{\sqrt{1-4x^2}}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">124</div>
+          <div class="q-text">Differentiate $y=\arctan(x^2)$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=\dfrac{2x}{1+x^4}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">125</div>
+          <div class="q-text">Find $\int \dfrac{1}{\sqrt{1-9x^2}}\,dx$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac13\arcsin(3x)+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">126</div>
+          <div class="q-text">Find $\int \dfrac{1}{9+x^2}\,dx$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac13\arctan\left(\dfrac{x}{3}\right)+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">127</div>
+          <div class="q-text">State the domain and range of $\arccos x$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Domain $[-1,1]$, range $[0,\pi]$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">128</div>
+          <div class="q-text">Evaluate $\displaystyle\int_0^{1/2} \dfrac{1}{\sqrt{1-x^2}}\,dx$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$[\arcsin x]_0^{1/2}=\pi/6-0=\pi/6$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">129</div>
+          <div class="q-text">Differentiate $y=x\arctan x$ (product rule).<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=\arctan x+\dfrac{x}{1+x^2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">130</div>
+          <div class="q-text">Explain why $\arcsin x$ isn't defined for $|x|>1$, referencing the range of $\sin$.<div class="q-hint">W5</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\sin y=x$ requires $x$ to be an actual output of $\sin$, and $\sin y\in[-1,1]$ for all $y$ — so no $y$ exists with $\sin y=x$ if $|x|>1$</p>
+        </div>
+      </div>
+
+      <div class="callout callout-success" style="margin-top:32px">
+        <strong>Phase 1 practice complete!</strong> 130 questions across 13 topics. Revisit any DPEN sections tied to questions you found tricky.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('invtrig')">&larr; W5: Inverse Trig Functions</button>
+        <button class="page-nav-btn next" onclick="goTo('home')">Back to Overview &rarr;</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PAGES = ['home','algfound','coordgeom','functions','limits','continuity','derivrules','maxmin','intfund','intsub','areas','explog','hyperbolic','invtrig','practice'];
+const PAGE_NAMES = {
+  home:'Overview',
+  algfound:'W1. Algebraic Foundations',
+  coordgeom:'W1. Coordinate Geometry',
+  functions:'W1. Functions',
+  limits:'W2. Limits',
+  continuity:'W2. Continuity',
+  derivrules:'W2-3. Derivatives — Definition & Rules',
+  maxmin:'W3. Applications of Derivatives — Max/Min',
+  intfund:'W3-4. Integration — Antiderivatives, Definite Integral & FTC',
+  intsub:'W4. Integration by Substitution',
+  areas:'W4. Applications of Integration — Areas Between Curves',
+  explog:'W5. Exponential & Logarithmic Functions',
+  hyperbolic:'W5. Hyperbolic Functions',
+  invtrig:'W5. Inverse Trigonometric Functions',
+  practice:'Practice Questions'
+};
+let visited = new Set(['home']);
+
+function goTo(id) {
+  PAGES.forEach(p => {
+    document.getElementById('page-'+p).classList.remove('active');
+  });
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => {
+    const fn = l.getAttribute('onclick');
+    if (fn && fn.includes("'"+id+"'")) l.classList.add('active');
+  });
+  document.getElementById('breadcrumbPage').textContent = PAGE_NAMES[id] || id;
+  visited.add(id);
+  const pct = Math.round((visited.size / PAGES.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  window.scrollTo(0, 0);
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.getElementById('page-'+id), {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 50);
+}
+
+function toggleDPEN(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.dpen-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function toggleQ(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.q-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function expandAll() {
+  const activePage = document.querySelector('.page.active');
+  activePage.querySelectorAll('.dpen-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.dpen-chevron').classList.add('open');
+  });
+  activePage.querySelectorAll('.q-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.q-arrow').classList.add('open');
+  });
+  setTimeout(() => {
+    if (window.renderMathInElement) renderMathInElement(activePage, {
+      delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+      throwOnError: false
+    });
+  }, 30);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 300);
+});
+</script>
+</body>
+</html>

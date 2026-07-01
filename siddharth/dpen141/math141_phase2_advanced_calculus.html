@@ -1,0 +1,2464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATH141 Phase 2 — Advanced Calculus</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B3A5C;
+  --navy-lt: #1e4570;
+  --orange: #FF3621;
+  --blue-lt: #E6F1FB;
+  --blue-mid: #185FA5;
+  --amber-lt: #FAEEDA;
+  --amber-dk: #7A4800;
+  --green-lt: #E1F5EE;
+  --green-dk: #0a5c3f;
+  --coral-lt: #FAECE7;
+  --coral-dk: #8a2f1a;
+  --grey-lt: #F6F5F2;
+  --grey-md: #e8e6e0;
+  --grey-dk: #3a3835;
+  --text: #2c2a28;
+  --text-muted: #6b6762;
+  --sidebar-w: 260px;
+  --content-max: 760px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #fafaf8;
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.3;
+}
+.sidebar-brand-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+.progress-wrap {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.progress-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.nav-section {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  padding: 6px 20px 4px;
+  text-transform: uppercase;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-link:hover { color: white; background: rgba(255,255,255,0.06); }
+.nav-link.active { color: white; background: rgba(255,255,255,0.1); border-left: 2px solid var(--orange); padding-left: 18px; }
+.nav-num {
+  font-size: 10px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.nav-link.active .nav-num { background: var(--orange); color: white; }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--grey-md);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-breadcrumb {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.topbar-breadcrumb span {
+  color: var(--navy);
+  font-weight: 500;
+}
+.topbar-btns {
+  display: flex;
+  gap: 8px;
+}
+.tb-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.tb-btn:hover { border-color: var(--navy); color: var(--navy); }
+.tb-btn.primary { background: var(--navy); color: white; border-color: var(--navy); }
+.tb-btn.primary:hover { background: var(--navy-lt); }
+
+.content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+/* ── HERO ── */
+.page-hero {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--grey-md);
+}
+.page-hero-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--orange);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.page-hero-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.page-hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── MOTIVATION BOX ── */
+.motiv {
+  background: var(--blue-lt);
+  border-left: 3px solid var(--blue-mid);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #0d3d73;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.motiv strong { font-weight: 500; }
+
+/* ── DPEN SECTIONS ── */
+.dpen-block {
+  margin-bottom: 12px;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dpen-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+  transition: background 0.15s;
+}
+.dpen-header:hover { background: var(--grey-lt); }
+.dpen-pill {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.pill-d { background: var(--blue-lt); color: var(--blue-mid); }
+.pill-p { background: var(--amber-lt); color: var(--amber-dk); }
+.pill-e { background: var(--green-lt); color: var(--green-dk); }
+.pill-n { background: var(--coral-lt); color: var(--coral-dk); }
+.dpen-header-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+}
+.dpen-chevron {
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.dpen-chevron.open { transform: rotate(90deg); }
+.dpen-body {
+  display: none;
+  padding: 18px 20px 20px;
+  border-top: 1px solid var(--grey-md);
+  background: var(--grey-lt);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+}
+.dpen-body.open { display: block; }
+.dpen-body p { margin-bottom: 10px; }
+.dpen-body p:last-child { margin-bottom: 0; }
+
+/* ── MATH ── */
+.math-block {
+  text-align: center;
+  margin: 14px 0;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  overflow-x: auto;
+}
+.math-inline { font-style: italic; }
+
+/* ── STEPS ── */
+.step-list { margin: 10px 0; }
+.step-item {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+  align-items: flex-start;
+}
+.step-num-badge {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--blue-lt);
+  color: var(--blue-mid);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-text { flex: 1; font-size: 14px; line-height: 1.7; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.callout-warn { background: var(--amber-lt); border-left: 3px solid #EF9F27; color: var(--amber-dk); }
+.callout-info { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout-success { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout strong { font-weight: 500; }
+
+/* ── WORKED EXAMPLES ── */
+.worked {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+.worked-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.answer-box {
+  background: var(--navy);
+  color: white;
+  border-radius: 6px;
+  padding: 9px 14px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.answer-label {
+  font-size: 10px;
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 10px 0;
+}
+.data-table th {
+  background: var(--navy);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+}
+.data-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-md);
+  color: var(--text);
+}
+.data-table tr:nth-child(even) td { background: white; }
+.data-table tr:nth-child(odd) td { background: var(--grey-lt); }
+.data-table th:first-child { border-radius: 6px 0 0 0; }
+.data-table th:last-child { border-radius: 0 6px 0 0; }
+
+/* ── PRACTICE QUESTIONS ── */
+.level-divider {
+  margin: 36px 0 16px;
+  padding: 14px 18px;
+  background: var(--navy);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.level-badge {
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--orange);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.level-info { flex: 1; }
+.level-title { font-size: 15px; font-weight: 500; color: white; }
+.level-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+.q-card {
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.q-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: white;
+  transition: background 0.15s;
+}
+.q-head:hover { background: var(--grey-lt); }
+.q-num {
+  background: var(--navy);
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.q-text { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.5; }
+.q-hint { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 400; }
+.q-arrow { color: var(--text-muted); font-size: 11px; transition: transform 0.2s; margin-top: 4px; flex-shrink: 0; }
+.q-arrow.open { transform: rotate(90deg); }
+.q-body {
+  display: none;
+  background: var(--grey-lt);
+  border-top: 1px solid var(--grey-md);
+  padding: 18px 20px;
+}
+.q-body.open { display: block; }
+.q-attempt {
+  background: white;
+  border: 1px dashed var(--grey-md);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+.sol-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+/* ── HOME PAGE ── */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 24px 0;
+}
+.home-card {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.home-card:hover { border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.home-card-num { font-size: 11px; color: var(--orange); font-weight: 500; margin-bottom: 4px; }
+.home-card-title { font-family: 'Crimson Pro', serif; font-size: 18px; color: var(--navy); margin-bottom: 4px; }
+.home-card-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.home-chain {
+  background: var(--navy);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 24px 0;
+  color: white;
+}
+.home-chain-title { font-size: 12px; letter-spacing: 0.06em; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+.chain-items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chain-item {
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: white;
+}
+.chain-arrow { color: var(--orange); font-size: 14px; }
+.home-tip {
+  background: var(--amber-lt);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--amber-dk);
+  line-height: 1.65;
+  margin-top: 16px;
+}
+
+/* ── UNI BRIDGE (extra block type for this guide) ── */
+.bridge {
+  background: #FFF6E9;
+  border: 1px dashed #E0A23A;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #6b4a10;
+}
+.bridge-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: #b5791a;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* ── PAGE NAV ── */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--grey-md);
+}
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.page-nav-btn:hover { border-color: var(--navy); color: var(--navy); }
+.page-nav-btn.next { background: var(--navy); color: white; border-color: var(--navy); }
+.page-nav-btn.next:hover { background: var(--navy-lt); }
+.page-nav-btn.ghost { visibility: hidden; }
+
+/* ── SCROLLBAR ── */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .content { padding: 24px 20px 60px; }
+  .home-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">MATH141 — Phase 2</div>
+    <div class="sidebar-brand-sub">Advanced Calculus · Weeks 6&ndash;9 · Aug 18 &ndash; Sep 22</div>
+  </div>
+  <div class="progress-wrap"><div class="progress-label">YOUR PROGRESS</div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+  <div class="nav-section"><div class="nav-section-label">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">&uarr;</span> Start here</button></div>
+  <div class="nav-section"><div class="nav-section-label">Week 6 &ndash; Parametric &amp; Related Rates</div>
+    <button class="nav-link" onclick="goTo('paramdef')"><span class="nav-num">W6</span> Parametric Curves — Definition & First Derivatives</button>
+    <button class="nav-link" onclick="goTo('paramsecond')"><span class="nav-num">W6</span> Parametric Curves — Second Derivatives</button>
+    <button class="nav-link" onclick="goTo('relatedrates')"><span class="nav-num">W6</span> Related Rates</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 7 &ndash; Curve Sketching</div>
+    <button class="nav-link" onclick="goTo('secondtest')"><span class="nav-num">W7</span> Second Derivative Test & Concavity</button>
+    <button class="nav-link" onclick="goTo('curvefeatures')"><span class="nav-num">W7</span> Curve Sketching — Asymptotes, Discontinuities & Inflection</button>
+    <button class="nav-link" onclick="goTo('curveworkflow')"><span class="nav-num">W7</span> Curve Sketching — Full Workflow</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 7 &ndash; Complex Numbers</div>
+    <button class="nav-link" onclick="goTo('complexdef')"><span class="nav-num">W7</span> Complex Numbers — Definition & Operations</button>
+    <button class="nav-link" onclick="goTo('complexpolar')"><span class="nav-num">W7</span> Complex Numbers — Polar Form & De Moivre's Theorem</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Weeks 8&ndash;9</div>
+    <button class="nav-link" onclick="goTo('examweek')"><span class="nav-num">i</span> Mid-Session Exam &amp; Consolidation</button></div>
+  <div class="nav-section"><div class="nav-section-label">Practice</div>
+    <button class="nav-link" onclick="goTo('practice')"><span class="nav-num">&#9998;</span> Practice Questions (80)</button></div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">MATH141 Phase 2 &nbsp;&rsaquo;&nbsp; <span id="breadcrumbPage">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand all</button>
+      <button class="tb-btn primary" onclick="goTo('practice')">Practice &rarr;</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <div class="page active" id="page-home">
+      <div class="page-hero">
+        <div class="page-hero-label">MATH141 &middot; Phase 2 of 4</div>
+        <div class="page-hero-title">Advanced Calculus,<br>Weeks 6&ndash;9</div>
+        <div class="page-hero-sub">Covers the DPEN141 tracker from Aug 18 to Sep 22: parametric curves, related rates, curve sketching (Second Derivative Test through to the full workflow), and complex numbers. Weeks 8&ndash;9 are mostly mid-session exam prep and consolidation of Weeks 1&ndash;6 content &mdash; see the dedicated page for what that involves.</div>
+      </div>
+
+      <div class="home-chain">
+        <div class="home-chain-title">THE CHAIN OF IDEAS</div>
+        <div class="chain-items">
+          <div class="chain-item">Parametric Curves — Definition & First Derivatives</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Parametric Curves — Second Derivatives</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Related Rates</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Second Derivative Test & Concavity</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Curve Sketching — Asymptotes, Discontinuities & Inflection</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Curve Sketching — Full Workflow</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Complex Numbers — Definition & Operations</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Complex Numbers — Polar Form & De Moivre's Theorem</div>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <div class="home-card" onclick="goTo('paramdef')">
+          <div class="home-card-num">W6</div>
+          <div class="home-card-title">Parametric Curves — Definition & First Derivatives</div>
+          <div class="home-card-sub">Parametric representation, dy/dx for parametric curves</div>
+        </div>
+        <div class="home-card" onclick="goTo('paramsecond')">
+          <div class="home-card-num">W6</div>
+          <div class="home-card-title">Parametric Curves — Second Derivatives</div>
+          <div class="home-card-sub">d²y/dx² for parametric curves, concavity from parametric form</div>
+        </div>
+        <div class="home-card" onclick="goTo('relatedrates')">
+          <div class="home-card-num">W6</div>
+          <div class="home-card-title">Related Rates</div>
+          <div class="home-card-sub">Setting up and solving related rates problems</div>
+        </div>
+        <div class="home-card" onclick="goTo('secondtest')">
+          <div class="home-card-num">W7</div>
+          <div class="home-card-title">Second Derivative Test & Concavity</div>
+          <div class="home-card-sub">Concavity, inflection points, the Second Derivative Test</div>
+        </div>
+        <div class="home-card" onclick="goTo('curvefeatures')">
+          <div class="home-card-num">W7</div>
+          <div class="home-card-title">Curve Sketching — Asymptotes, Discontinuities & Inflection</div>
+          <div class="home-card-sub">Vertical/horizontal asymptotes, discontinuities, inflection points as sketching features</div>
+        </div>
+        <div class="home-card" onclick="goTo('curveworkflow')">
+          <div class="home-card-num">W7</div>
+          <div class="home-card-title">Curve Sketching — Full Workflow</div>
+          <div class="home-card-sub">Combining every technique into a complete sketch</div>
+        </div>
+        <div class="home-card" onclick="goTo('complexdef')">
+          <div class="home-card-num">W7</div>
+          <div class="home-card-title">Complex Numbers — Definition & Operations</div>
+          <div class="home-card-sub">Definition, arithmetic operations, the complex plane</div>
+        </div>
+        <div class="home-card" onclick="goTo('complexpolar')">
+          <div class="home-card-num">W7</div>
+          <div class="home-card-title">Complex Numbers — Polar Form & De Moivre's Theorem</div>
+          <div class="home-card-sub">Modulus, argument, polar form, De Moivre's theorem</div>
+        </div>
+        <div class="home-card" onclick="goTo('examweek')">
+          <div class="home-card-num">W8&ndash;9</div>
+          <div class="home-card-title">Mid-Session Exam &amp; Consolidation</div>
+          <div class="home-card-sub">What the tracker allocates for exam prep and post-exam review.</div>
+        </div>
+        <div class="home-card" onclick="goTo('practice')">
+          <div class="home-card-num">PRACTICE</div>
+          <div class="home-card-title">Practice Questions</div>
+          <div class="home-card-sub">80 questions, 10 per topic, fully worked.</div>
+        </div>
+      </div>
+
+      <div class="home-tip">
+        <strong>How to use this guide:</strong> Parametric curves and related rates both lean on the chain rule from Phase 1 &mdash; make sure that's solid first. Curve sketching pulls together nearly everything from Phase 1 (limits, derivatives, the Second Derivative Test) into one workflow. Complex numbers is largely self-contained algebra, but its polar form leans on trig identities from Week 1.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn ghost">&larr;</button>
+        <button class="page-nav-btn next" onclick="goTo('paramdef')">W6: Parametric Curves — Definition & First Derivatives &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-paramdef">
+      <div class="page-hero">
+        <div class="page-hero-label">W6</div>
+        <div class="page-hero-title">Parametric Curves — Definition & First Derivatives</div>
+        <div class="page-hero-sub">Parametric representation, dy/dx for parametric curves</div>
+      </div>
+      <div class="motiv">Not every curve is the graph of a function $y=f(x)$ — a circle fails the vertical line test entirely. Parametric equations sidestep the problem by describing both $x$ and $y$ separately in terms of a third variable.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The idea.</strong> Instead of $y=f(x)$, write $x=x(t)$ and $y=y(t)$, where $t$ is a parameter (often time). As $t$ varies, the point $(x(t),y(t))$ traces out the curve — this can loop, cross itself, or fail the vertical line test, none of which a single $y=f(x)$ could do.</p>
+  <p><strong>Deriving $dy/dx$.</strong> By the chain rule, $\dfrac{dy}{dt}=\dfrac{dy}{dx}\cdot\dfrac{dx}{dt}$. Rearranging (dividing both sides by $dx/dt$, provided it's nonzero) gives a way to find the slope of the parametric curve without ever solving for $y$ in terms of $x$ directly.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \frac{dy}{dx} = \frac{dy/dt}{dx/dt}, \qquad \frac{dx}{dt}\ne0 \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — find dy/dx for a parametric circle</div><p>For $x=\cos t$, $y=\sin t$, find $\dfrac{dy}{dx}$.</p>
+  <div class="math-block">\[ \frac{dx}{dt}=-\sin t, \qquad \frac{dy}{dt}=\cos t \implies \frac{dy}{dx}=\frac{\cos t}{-\sin t}=-\cot t \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $-\cot t$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — tangent line at a specific parameter value</div><p>For $x=t^2$, $y=t^3$, find the tangent line at $t=2$.</p>
+  <div class="math-block">\[ \frac{dy}{dx}=\frac{3t^2}{2t}=\frac{3t}{2} \bigg|_{t=2}=3, \qquad (x,y)=(4,8) \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $y-8=3(x-4) \implies y=3x-4$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>The vector line equation from Vectors ($\mathbf{r}=\mathbf{a}+\lambda\mathbf{b}$) is a special (straight) case of parametric curves; $\mathbf{r}(t)=(x(t),y(t))$ generalises the idea to curved paths, which is exactly what MATH142 does with curves in space.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('home')">&larr; Overview</button>
+        <button class="page-nav-btn next" onclick="goTo('paramsecond')">W6: Parametric Curves — Second Derivatives &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-paramsecond">
+      <div class="page-hero">
+        <div class="page-hero-label">W6</div>
+        <div class="page-hero-title">Parametric Curves — Second Derivatives</div>
+        <div class="page-hero-sub">d²y/dx² for parametric curves, concavity from parametric form</div>
+      </div>
+      <div class="motiv">$\dfrac{dy}{dx}$ for a parametric curve is itself a function of $t$ — so finding its rate of change (the second derivative) means differentiating that new function with respect to $t$, then dividing by $dx/dt$ again, exactly the same trick as before.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The key realisation.</strong> $\dfrac{d^2y}{dx^2}$ is <em>not</em> found by simply differentiating $\dfrac{dy}{dx}$ with respect to $t$ — that would give $\dfrac{d}{dt}\left(\dfrac{dy}{dx}\right)$, a rate with respect to the wrong variable. Since everything is parametrised by $t$, you need the chain rule again to convert back to a rate with respect to $x$.</p>
+  <div class="step-list">
+    <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Find $\dfrac{dy}{dx}$ as a function of $t$, exactly as before.</div></div>
+    <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Differentiate that expression with respect to $t$, giving $\dfrac{d}{dt}\left(\dfrac{dy}{dx}\right)$.</div></div>
+    <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Divide by $dx/dt$ once more, to convert the rate back from "per unit $t$" to "per unit $x$".</div></div>
+  </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \frac{d^2y}{dx^2} = \frac{\dfrac{d}{dt}\left(\dfrac{dy}{dx}\right)}{dx/dt} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — full second derivative</div><p>For $x=t^2$, $y=t^3$, find $\dfrac{d^2y}{dx^2}$.</p>
+  <div class="math-block">\[ \frac{dy}{dx}=\frac{3t}{2} \ (\text{from before}), \qquad \frac{d}{dt}\left(\frac{3t}{2}\right)=\frac32 \]</div>
+  <div class="math-block">\[ \frac{d^2y}{dx^2}=\frac{3/2}{2t}=\frac{3}{4t} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{3}{4t}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — concavity at a point</div><p>Is the curve from Example 1 concave up or down at $t=1$?</p>
+  <div class="math-block">\[ \frac{d^2y}{dx^2}\bigg|_{t=1}=\frac34>0 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Concave up (positive second derivative)</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>The most common error is dividing $\dfrac{d}{dt}(dy/dx)$ by $dt$ instead of by $dx/dt$ — remember you're converting a $t$-rate back into an $x$-rate, so you always divide by $dx/dt$ again, never just "cancel a $dt$."</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('paramdef')">&larr; W6: Parametric Curves — Definition & First Derivatives</button>
+        <button class="page-nav-btn next" onclick="goTo('relatedrates')">W6: Related Rates &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-relatedrates">
+      <div class="page-hero">
+        <div class="page-hero-label">W6</div>
+        <div class="page-hero-title">Related Rates</div>
+        <div class="page-hero-sub">Setting up and solving related rates problems</div>
+      </div>
+      <div class="motiv">Two quantities can be linked by a fixed geometric or physical equation while both change with time — related rates is the technique for finding how fast one changes given how fast the other does, without ever solving for either quantity explicitly as a function of time.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The strategy, as a fixed procedure:</strong></p>
+  <div class="step-list">
+    <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Draw a diagram and label all changing quantities with variables (not numbers yet).</div></div>
+    <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Write down an equation relating the variables — usually geometry (Pythagoras, similar triangles, volume/area formulas).</div></div>
+    <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Differentiate both sides with respect to time $t$, using the chain rule on every variable (each picks up a $\dfrac{d(\cdot)}{dt}$ term).</div></div>
+    <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Only <em>now</em> substitute the specific numerical values given in the problem, and solve for the unknown rate.</div></div>
+  </div>
+  <div class="callout callout-warn"><strong>Critical order:</strong> never substitute specific numbers before differentiating — differentiating a number gives zero, destroying the relationship you need.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \text{Relate variables} \implies \frac{d}{dt}(\text{equation}) \implies \text{substitute numbers last} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — expanding circle</div><p>A circular ripple expands so its radius grows at 3 cm/s. How fast is the area growing when $r=5$cm?</p>
+  <div class="math-block">\[ A=\pi r^2 \implies \frac{dA}{dt}=2\pi r\frac{dr}{dt} = 2\pi(5)(3)=30\pi \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $30\pi\ \text{cm}^2\text{/s}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — ladder sliding down a wall</div><p>A 10m ladder leans against a wall; the base slides away at 2 m/s. How fast is the top sliding down when the base is 6m from the wall?</p>
+  <p>Let $x$=base distance, $y$=height. $x^2+y^2=100$.</p>
+  <div class="math-block">\[ 2x\frac{dx}{dt}+2y\frac{dy}{dt}=0 \]</div>
+  <p>At $x=6$: $y=\sqrt{100-36}=8$.</p>
+  <div class="math-block">\[ 2(6)(2)+2(8)\frac{dy}{dt}=0 \implies \frac{dy}{dt}=-\frac{24}{16}=-1.5 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Top slides down at 1.5 m/s (negative sign = decreasing height)</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>The sign of your answer always carries meaning — negative means the quantity is decreasing. If a "distance" or "height" rate comes out negative, that's not necessarily wrong; check what it means physically before assuming an error.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('paramsecond')">&larr; W6: Parametric Curves — Second Derivatives</button>
+        <button class="page-nav-btn next" onclick="goTo('secondtest')">W7: Second Derivative Test & Concavity &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-secondtest">
+      <div class="page-hero">
+        <div class="page-hero-label">W7</div>
+        <div class="page-hero-title">Second Derivative Test & Concavity</div>
+        <div class="page-hero-sub">Concavity, inflection points, the Second Derivative Test</div>
+      </div>
+      <div class="motiv">The First Derivative Test classifies critical points by checking a sign change either side — useful, but it means checking two extra points. The second derivative offers a shortcut: it directly measures whether the curve bends upward or downward right at the critical point itself.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Concavity.</strong> $f''(x)>0$ means the curve bends upward (like a smile, "concave up"); $f''(x)<0$ means it bends downward ("concave down"). This comes directly from $f''$ being the rate of change of the slope $f'$: a positive rate of change means the slope is increasing, which is exactly what "curving upward" looks like.</p>
+  <p><strong>The Second Derivative Test.</strong> At a critical point where $f'(c)=0$: if $f''(c)>0$, the curve is concave up there, so it's a local minimum; if $f''(c)<0$, concave down, so a local maximum. If $f''(c)=0$, the test is inconclusive — fall back to the First Derivative Test.</p>
+  <p><strong>Inflection points.</strong> Where concavity switches sign — candidates are where $f''(x)=0$ or is undefined, but (just like critical points) you must confirm an actual sign change either side, not just that $f''=0$.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ f'(c)=0,\ f''(c)>0 \implies \text{local min} \qquad f'(c)=0,\ f''(c)<0 \implies \text{local max} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — Second Derivative Test</div><p>Classify the critical points of $f(x)=x^3-3x$ using the Second Derivative Test.</p>
+  <div class="math-block">\[ f'(x)=3x^2-3=0 \implies x=\pm1, \qquad f''(x)=6x \]</div>
+  <div class="math-block">\[ f''(1)=6>0 \ (\text{local min}), \qquad f''(-1)=-6<0 \ (\text{local max}) \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Local max at $x=-1$, local min at $x=1$ (matches the earlier First Derivative Test result)</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — find an inflection point</div><p>Find the inflection point of $f(x)=x^3-3x^2+2$.</p>
+  <div class="math-block">\[ f''(x)=6x-6=0 \implies x=1 \]</div>
+  <p>Check sign change: $f''(0)=-6<0$, $f''(2)=6>0$ — genuine sign change.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Inflection point at $x=1$ (i.e. $(1,0)$)</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>$f''(c)=0$ does not automatically mean an inflection point — check $f(x)=x^4$ at $x=0$: $f''(0)=0$, but the curve is concave up on both sides, so there's no sign change and no inflection.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('relatedrates')">&larr; W6: Related Rates</button>
+        <button class="page-nav-btn next" onclick="goTo('curvefeatures')">W7: Curve Sketching — Asymptotes, Discontinuities & Inflection &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-curvefeatures">
+      <div class="page-hero">
+        <div class="page-hero-label">W7</div>
+        <div class="page-hero-title">Curve Sketching — Asymptotes, Discontinuities & Inflection</div>
+        <div class="page-hero-sub">Vertical/horizontal asymptotes, discontinuities, inflection points as sketching features</div>
+      </div>
+      <div class="motiv">Before attempting a full sketch, it helps to catalogue every "special" feature of a curve individually — the places it breaks, flattens, bends, or heads off toward infinity — since a sketch is really just these features stitched together.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Vertical asymptotes.</strong> Occur where the function is undefined but the limit blows up — typically where a denominator hits zero while the numerator doesn't. Check $\lim_{x\to a^\pm}f(x)=\pm\infty$.</p>
+  <p><strong>Horizontal asymptotes.</strong> Given by $\lim_{x\to\pm\infty}f(x)$, using the limit-at-infinity techniques from Week 2.</p>
+  <p><strong>Discontinuities.</strong> Reuse the classification from Week 2 (removable, jump, infinite) — infinite discontinuities are exactly the vertical asymptotes above.</p>
+  <p><strong>Inflection points.</strong> Reuse the Second Derivative Test machinery just built: solve $f''(x)=0$, then confirm an actual sign change.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \text{Vertical asymptote: } \lim_{x\to a^\pm}f(x)=\pm\infty \qquad \text{Horizontal asymptote: } \lim_{x\to\pm\infty}f(x)=L \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — find all asymptotes</div><p>Find the asymptotes of $f(x)=\dfrac{2x^2}{x^2-4}$.</p>
+  <p>Vertical: denominator zero at $x=\pm2$ (numerator nonzero there) $\implies$ vertical asymptotes $x=2,x=-2$.</p>
+  <div class="math-block">\[ \lim_{x\to\infty}\frac{2x^2}{x^2-4} = \lim_{x\to\infty}\frac{2}{1-4/x^2}=2 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Vertical: $x=\pm2$; Horizontal: $y=2$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — inflection points of a rational-free function</div><p>Find the inflection points of $f(x)=xe^{-x}$ (given $f''(x)=(x-2)e^{-x}$).</p>
+  <div class="math-block">\[ f''(x)=0 \implies x=2 \ \ (\text{since } e^{-x}\ne0) \]</div>
+  <p>Sign check: $f''(0)=-2<0$, $f''(3)=e^{-3}>0$ — genuine sign change.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Inflection point at $x=2$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Always simplify a rational function (cancel common factors) before hunting for vertical asymptotes — a factor that cancels indicates a removable discontinuity (a hole), not an asymptote, even though the original denominator was zero there.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('secondtest')">&larr; W7: Second Derivative Test & Concavity</button>
+        <button class="page-nav-btn next" onclick="goTo('curveworkflow')">W7: Curve Sketching — Full Workflow &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-curveworkflow">
+      <div class="page-hero">
+        <div class="page-hero-label">W7</div>
+        <div class="page-hero-title">Curve Sketching — Full Workflow</div>
+        <div class="page-hero-sub">Combining every technique into a complete sketch</div>
+      </div>
+      <div class="motiv">A full curve sketch is not a new technique — it's a checklist that runs every earlier tool (domain, intercepts, asymptotes, first/second derivative tests) in a fixed order, so nothing gets missed.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="step-list">
+    <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Domain: where is the function even defined?</div></div>
+    <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Intercepts: set $x=0$ for the $y$-intercept, $f(x)=0$ for $x$-intercepts.</div></div>
+    <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Symmetry: is $f$ even ($f(-x)=f(x)$), odd ($f(-x)=-f(x)$), or neither?</div></div>
+    <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Asymptotes: vertical and horizontal, from the previous topic.</div></div>
+    <div class="step-item"><div class="step-num-badge">5</div><div class="step-text">First derivative: find critical points, determine increasing/decreasing intervals.</div></div>
+    <div class="step-item"><div class="step-num-badge">6</div><div class="step-text">Second derivative: find concavity intervals and inflection points.</div></div>
+    <div class="step-item"><div class="step-num-badge">7</div><div class="step-text">Assemble: plot the key points and features found, then connect consistently with the increasing/decreasing and concavity information.</div></div>
+  </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \text{Domain} \to \text{Intercepts} \to \text{Symmetry} \to \text{Asymptotes} \to f' \to f'' \to \text{Sketch} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — full sketch checklist, executed</div><p>Sketch $f(x)=x^3-3x$ using the full workflow.</p>
+  <ul style="margin:8px 0 8px 20px; font-size:14px; line-height:1.8">
+    <li>Domain: all reals</li>
+    <li>Intercepts: $f(0)=0$; $x^3-3x=x(x^2-3)=0 \implies x=0,\pm\sqrt3$</li>
+    <li>Symmetry: $f(-x)=-x^3+3x=-f(x)$ — odd function</li>
+    <li>Asymptotes: none (polynomial)</li>
+    <li>$f'(x)=3x^2-3=0\implies x=\pm1$; increasing outside $(-1,1)$, decreasing inside</li>
+    <li>$f''(x)=6x=0\implies x=0$; concave down for $x<0$, up for $x>0$</li>
+  </ul>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Local max $(-1,2)$, local min $(1,-2)$, inflection at $(0,0)$, odd symmetry about origin</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Do the steps in order every single time, even for "easy-looking" functions — skipping symmetry or asymptote checks is exactly where marks get lost in exams, since an otherwise-correct sketch missing an asymptote is still wrong.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('curvefeatures')">&larr; W7: Curve Sketching — Asymptotes, Discontinuities & Inflection</button>
+        <button class="page-nav-btn next" onclick="goTo('complexdef')">W7: Complex Numbers — Definition & Operations &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-complexdef">
+      <div class="page-hero">
+        <div class="page-hero-label">W7</div>
+        <div class="page-hero-title">Complex Numbers — Definition & Operations</div>
+        <div class="page-hero-sub">Definition, arithmetic operations, the complex plane</div>
+      </div>
+      <div class="motiv">$x^2=-1$ has no solution among real numbers — rather than declaring the equation unsolvable, mathematicians extended the number system with a new number, $i$, defined precisely so that $i^2=-1$, and built a whole consistent arithmetic around it.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Definition.</strong> $i=\sqrt{-1}$, so $i^2=-1$. A complex number is $z=a+bi$, where $a$ (the real part, $\text{Re}(z)$) and $b$ (the imaginary part, $\text{Im}(z)$) are ordinary real numbers.</p>
+  <p><strong>Arithmetic.</strong> Add/subtract by combining real and imaginary parts separately. Multiply using ordinary expansion, replacing $i^2$ with $-1$ wherever it appears. Divide by multiplying top and bottom by the complex conjugate $\bar z=a-bi$, which clears the imaginary part from the denominator (since $z\bar z=a^2+b^2$ is always real).</p>
+  <p><strong>The complex plane.</strong> Plot $a+bi$ as the point $(a,b)$ — real part along the horizontal axis, imaginary part along the vertical. This turns complex arithmetic into a geometric picture: addition is vector addition, and (as you'll see next topic) multiplication is a rotation-and-scale.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ i^2=-1, \qquad z=a+bi, \qquad \bar z=a-bi, \qquad z\bar z=a^2+b^2 \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — multiply two complex numbers</div><p>Compute $(2+3i)(1-i)$.</p>
+  <div class="math-block">\[ (2+3i)(1-i)=2-2i+3i-3i^2=2+i-3(-1)=5+i \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $5+i$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — divide using the conjugate</div><p>Simplify $\dfrac{3+i}{1-2i}$.</p>
+  <div class="math-block">\[ \frac{3+i}{1-2i}\cdot\frac{1+2i}{1+2i} = \frac{3+6i+i+2i^2}{1+4} = \frac{1+7i}{5} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac15+\dfrac75i$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>The conjugate trick ($z\bar z$ is always real) is the complex-number cousin of the "rationalise the denominator" trick from Week 1's surds, and reappears constantly in MATH141/142 whenever a complex expression needs to be simplified to a real quantity.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('curveworkflow')">&larr; W7: Curve Sketching — Full Workflow</button>
+        <button class="page-nav-btn next" onclick="goTo('complexpolar')">W7: Complex Numbers — Polar Form & De Moivre's Theorem &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-complexpolar">
+      <div class="page-hero">
+        <div class="page-hero-label">W7</div>
+        <div class="page-hero-title">Complex Numbers — Polar Form & De Moivre's Theorem</div>
+        <div class="page-hero-sub">Modulus, argument, polar form, De Moivre's theorem</div>
+      </div>
+      <div class="motiv">Cartesian form $a+bi$ is great for addition, but multiplication gets algebraically messy. Polar form describes the same point using a distance and an angle instead — and multiplication becomes almost embarrassingly simple.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Modulus and argument.</strong> $|z|=\sqrt{a^2+b^2}$ is the distance from the origin (reusing the Pythagoras idea yet again). $\arg(z)=\theta$ is the angle from the positive real axis, found via $\tan\theta=b/a$ (with quadrant care).</p>
+  <p><strong>Polar form.</strong> Since $a=|z|\cos\theta$ and $b=|z|\sin\theta$ (basic right-triangle trig), $z=|z|(\cos\theta+i\sin\theta)$, often abbreviated $z=r\,\text{cis}\,\theta$.</p>
+  <p><strong>Why multiplication simplifies.</strong> Multiplying two polar-form numbers and using the compound angle formulas for $\sin$ and $\cos$ reveals: <em>multiply the moduli, add the arguments</em>. Applying that rule $n$ times to $z^n$ gives De Moivre's Theorem directly.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ z=r(\cos\theta+i\sin\theta), \qquad z_1z_2=r_1r_2\big(\cos(\theta_1+\theta_2)+i\sin(\theta_1+\theta_2)\big) \]\[ z^n = r^n(\cos n\theta+i\sin n\theta) \quad \text{(De Moivre's Theorem)} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — convert to polar form</div><p>Write $z=1+i\sqrt3$ in polar form.</p>
+  <div class="math-block">\[ r=\sqrt{1+3}=2, \qquad \tan\theta=\sqrt3 \implies \theta=\frac{\pi}{3} \ (\text{first quadrant}) \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $z=2\left(\cos\dfrac{\pi}{3}+i\sin\dfrac{\pi}{3}\right)$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — De Moivre's Theorem</div><p>Find $(1+i)^8$ using De Moivre's Theorem.</p>
+  <div class="math-block">\[ 1+i = \sqrt2\left(\cos\frac{\pi}{4}+i\sin\frac{\pi}{4}\right) \]</div>
+  <div class="math-block">\[ (1+i)^8 = (\sqrt2)^8\left(\cos 2\pi+i\sin 2\pi\right) = 16(1+0i)=16 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $16$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>De Moivre's Theorem is the gateway to finding $n$-th roots of complex numbers, which then reappear when solving polynomial equations in engineering (e.g. characteristic equations of differential equations) — a topic MATH141/142 builds toward directly.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('complexdef')">&larr; W7: Complex Numbers — Definition & Operations</button>
+        <button class="page-nav-btn next" onclick="goTo('examweek')">Mid-Session Exam & Consolidation &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-examweek">
+      <div class="page-hero">
+        <div class="page-hero-label">Weeks 8&ndash;9</div>
+        <div class="page-hero-title">Mid-Session Exam &amp; Consolidation</div>
+        <div class="page-hero-sub">No new theory &mdash; this is deliberate, structured review.</div>
+      </div>
+      <div class="motiv">The tracker allocates all of Week 8 and the first half of Week 9 to exam preparation and review rather than new content &mdash; the Mid-Session Exam (Sat Sep 8, worth 35%) covers Weeks 1&ndash;6 only.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">What the tracker actually schedules here</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Week 8 (Sep 1&ndash;7):</strong> mid-session exam preparation begins, full mock exam (2 hours), mock exam review and error analysis, targeted practice on weak topics, tutorial problems from Weeks 1&ndash;6, timed speed drills on derivatives and integrals, and a final review day before the exam.</p>
+          <p><strong>Sep 8:</strong> Mid-Session Exam, 9:30&ndash;11:30am, 2 hours, covering Weeks 1&ndash;6 (calculus fundamentals from Phase 1).</p>
+          <p><strong>Week 9 (Sep 9&ndash;14), post-exam:</strong> comprehensive review of integration by substitution, areas between curves, exp/log integrals, hyperbolic functions, and inverse trig &mdash; all consolidating Phase 1 topics rather than introducing anything new &mdash; followed by a mixed practice week (Sep 15&ndash;22) of comprehensive problem sets, real-world applications, advanced optimisation, complex related rates, and advanced curve sketching, transitioning toward Phase 3 (vectors and linear algebra).</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">How to use this week</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="callout callout-info">This is the moment to go back to the <strong>Phase 1: Calculus Fundamentals</strong> guide and work through its 130 practice questions again &mdash; particularly any topics flagged as tricky the first time. The mid-session exam only covers that material, not Phase 2's parametric curves, related rates, curve sketching, or complex numbers.</div>
+          <p style="margin-top:10px">Once the exam is done, the remainder of Week 9 mixes Phase 1 review with harder versions of the same problem types (advanced optimisation, complex related rates scenarios) — the Phase 2 practice page below covers these at the level the tracker expects.</p>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('complexpolar')">&larr; W7: Complex Numbers — Polar Form & De Moivre's Theorem</button>
+        <button class="page-nav-btn next" onclick="goTo('practice')">Practice Questions &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-practice">
+      <div class="page-hero">
+        <div class="page-hero-label">Mixed Practice</div>
+        <div class="page-hero-title">Practice Questions</div>
+        <div class="page-hero-sub">80 questions — 10 per topic — across all of Phase 2. Attempt each before revealing the answer.</div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W6</div>
+        <div class="level-info">
+          <div class="level-title">Parametric Curves — Definition & First Derivatives</div>
+          <div class="level-sub">Parametric representation, dy/dx for parametric curves</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div class="q-text">Find $dy/dx$ for $x=t^3$, $y=t^2$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dx/dt=3t^2$, $dy/dt=2t$; $dy/dx=\dfrac{2t}{3t^2}=\dfrac{2}{3t}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div class="q-text">Find $dy/dx$ for $x=2t+1$, $y=t^2-3$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dx/dt=2$, $dy/dt=2t$; $dy/dx=t$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div class="q-text">Find $dy/dx$ for $x=\cos(2t)$, $y=\sin(2t)$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dx/dt=-2\sin(2t)$, $dy/dt=2\cos(2t)$; $dy/dx=-\cot(2t)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">4</div>
+          <div class="q-text">Find the point on the curve $x=t^2, y=t^3$ at $t=1$, and the slope there.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Point $(1,1)$; $dy/dx=\dfrac{3t^2}{2t}=\dfrac{3t}{2}=1.5$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">5</div>
+          <div class="q-text">Find $dy/dx$ for $x=e^t$, $y=e^{-t}$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dx/dt=e^t$, $dy/dt=-e^{-t}$; $dy/dx=-e^{-2t}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">6</div>
+          <div class="q-text">Find the tangent line to $x=t, y=t^2$ at $t=3$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dy/dx=2t=6$ at $(3,9)$; $y-9=6(x-3)\implies y=6x-9$ (matches the Cartesian parabola $y=x^2$, as expected)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">7</div>
+          <div class="q-text">Find $dy/dx$ for $x=3\cos\theta$, $y=2\sin\theta$ (an ellipse).<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dx/d\theta=-3\sin\theta$, $dy/d\theta=2\cos\theta$; $dy/dx=-\dfrac{2\cos\theta}{3\sin\theta}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">8</div>
+          <div class="q-text">Where is the tangent to $x=t^2-1, y=t^3-t$ horizontal?<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dy/dt=3t^2-1=0\implies t=\pm1/\sqrt3$ (need $dx/dt=2t\ne0$, true here)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">9</div>
+          <div class="q-text">Find $dy/dx$ for $x=\ln t$, $y=t^2$ ($t>0$).<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dx/dt=1/t$, $dy/dt=2t$; $dy/dx=2t^2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">10</div>
+          <div class="q-text">Explain why the formula $dy/dx=(dy/dt)/(dx/dt)$ fails when $dx/dt=0$, referencing the shape of the curve there.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>When $dx/dt=0$, the curve is moving purely vertically at that instant (no horizontal component of motion), so the tangent line is vertical — an undefined (infinite) slope, matching why division by $dx/dt=0$ breaks down</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W6</div>
+        <div class="level-info">
+          <div class="level-title">Parametric Curves — Second Derivatives</div>
+          <div class="level-sub">d²y/dx² for parametric curves, concavity from parametric form</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">11</div>
+          <div class="q-text">Find $d^2y/dx^2$ for $x=t, y=t^2$ (should match ordinary $y=x^2$).<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dy/dx=2t$, $\frac{d}{dt}(2t)=2$, $dx/dt=1$; $d^2y/dx^2=2$ — matches $y=x^2$'s constant concavity</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">12</div>
+          <div class="q-text">Find $d^2y/dx^2$ for $x=2t, y=t^2-1$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dy/dx=t$, $\frac{d}{dt}(t)=1$, $dx/dt=2$; $d^2y/dx^2=1/2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">13</div>
+          <div class="q-text">Find $d^2y/dx^2$ for $x=\cos t, y=\sin t$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dy/dx=-\cot t$; $\frac{d}{dt}(-\cot t)=\csc^2t$; $dx/dt=-\sin t$; $d^2y/dx^2=-\dfrac{\csc^2t}{\sin t}=-\dfrac{1}{\sin^3t}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">14</div>
+          <div class="q-text">For $x=t^3, y=t^2$, find $d^2y/dx^2$ at $t=1$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dy/dx=2/(3t)$; $\frac{d}{dt}=-2/(3t^2)$; $dx/dt=3t^2$; $d^2y/dx^2=\dfrac{-2/(3t^2)}{3t^2}=\dfrac{-2}{9t^4}$; at $t=1$: $-2/9$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">15</div>
+          <div class="q-text">Is the curve $x=t, y=t^3$ concave up or down at $t=1$?<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dy/dx=3t^2$; $\frac{d}{dt}=6t$; $dx/dt=1$; $d^2y/dx^2=6t$; at $t=1$: $6>0$, concave up</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">16</div>
+          <div class="q-text">Is the same curve ($x=t,y=t^3$) concave up or down at $t=-1$?<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$d^2y/dx^2=6t=-6<0$ at $t=-1$ — concave down</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">17</div>
+          <div class="q-text">Find where $x=t,y=t^3$ has an inflection point, using the previous two answers.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Since concavity switches sign between $t=-1$ and $t=1$ and $d^2y/dx^2=6t$, the switch is at $t=0$, i.e. the point $(0,0)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">18</div>
+          <div class="q-text">Find $d^2y/dx^2$ for $x=e^t, y=e^{2t}$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dy/dx=2e^{2t}/e^t=2e^t$; $\frac{d}{dt}=2e^t$; $dx/dt=e^t$; $d^2y/dx^2=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">19</div>
+          <div class="q-text">For $x=t^2-1, y=t^3-t$, find $d^2y/dx^2$ in terms of $t$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dy/dx=\dfrac{3t^2-1}{2t}$; differentiate w.r.t. $t$ using quotient rule, then divide by $dx/dt=2t$ — gives $d^2y/dx^2=\dfrac{3t^2+1}{4t^3}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">20</div>
+          <div class="q-text">Explain why a parametric curve can have a well-defined $d^2y/dx^2$ even at a point where the curve isn't the graph of a single-valued function nearby.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The second derivative is computed purely from $t$-derivatives and the chain rule at each instant — it never requires solving for $y$ as an explicit function of $x$ globally, only locally where $dx/dt\ne0$, which is exactly where the curve behaves like a function momentarily</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W6</div>
+        <div class="level-info">
+          <div class="level-title">Related Rates</div>
+          <div class="level-sub">Setting up and solving related rates problems</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">21</div>
+          <div class="q-text">A cube's side grows at 2cm/s. Find the rate of volume growth when the side is 5cm.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=s^3$; $dV/dt=3s^2\,ds/dt=3(25)(2)=150\text{ cm}^3\text{/s}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">22</div>
+          <div class="q-text">A spherical balloon is inflated so its radius grows at 0.5cm/s. Find $dV/dt$ when $r=4$cm.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=\tfrac43\pi r^3$; $dV/dt=4\pi r^2\,dr/dt=4\pi(16)(0.5)=32\pi\text{ cm}^3\text{/s}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">23</div>
+          <div class="q-text">A point moves along $y=x^2$ so that $dx/dt=3$. Find $dy/dt$ when $x=2$.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dy/dt=2x\,dx/dt=2(2)(3)=12$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">24</div>
+          <div class="q-text">Water drains from a conical tank (radius=height) at 2 m³/min. Find the rate the water level drops when the level is 3m.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$V=\tfrac13\pi r^2h=\tfrac13\pi h^3$ (since $r=h$); $dV/dt=\pi h^2\,dh/dt$; $-2=\pi(9)\,dh/dt \implies dh/dt=-\dfrac{2}{9\pi}$ m/min</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">25</div>
+          <div class="q-text">Two cars leave an intersection, one heading north at 40km/h, one east at 30km/h. Find the rate the distance between them grows after 1 hour.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$D^2=x^2+y^2$; at $t=1$, $x=30,y=40,D=50$; $D\,dD/dt=x\,dx/dt+y\,dy/dt \implies 50\,dD/dt=30(30)+40(40)=2500 \implies dD/dt=50$ km/h</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">26</div>
+          <div class="q-text">A shadow's length $s$ and a person's distance $x$ from a lamppost satisfy $s=\tfrac25x$ (similar triangles). If the person walks at 1.5 m/s, find how fast the shadow tip moves (rate of $s+x$).<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$ds/dt=\tfrac25(1.5)=0.6$; shadow tip speed $=ds/dt+dx/dt=0.6+1.5=2.1$ m/s</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">27</div>
+          <div class="q-text">The area of a square is increasing at 4 cm²/s. Find the rate the side length changes when the side is 6cm.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=s^2$; $dA/dt=2s\,ds/dt \implies 4=12\,ds/dt \implies ds/dt=\tfrac13$ cm/s</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">28</div>
+          <div class="q-text">A rectangle's length grows at 3cm/s and width shrinks at 2cm/s. Find $dA/dt$ when length=10, width=5.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=lw$; $dA/dt=\dfrac{dl}{dt}w+l\dfrac{dw}{dt}=3(5)+10(-2)=15-20=-5\text{ cm}^2\text{/s}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">29</div>
+          <div class="q-text">Air is pumped into a spherical balloon at 10 cm³/s. Find $dr/dt$ when $r=5$cm.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$dV/dt=4\pi r^2\,dr/dt \implies 10=4\pi(25)\,dr/dt \implies dr/dt=\dfrac{10}{100\pi}=\dfrac{1}{10\pi}$ cm/s</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">30</div>
+          <div class="q-text">Explain, in terms of the four-step procedure, why substituting numbers too early in a related rates problem gives a wrong (usually zero) answer.<div class="q-hint">W6</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The equation relating the variables (step 2) must still be a genuine relationship between changing quantities when you differentiate (step 3) — if you plug in specific numeric values first, every 'variable' becomes a constant, and the derivative of a constant is zero, so the differentiation step produces no useful relationship between the rates at all</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W7</div>
+        <div class="level-info">
+          <div class="level-title">Second Derivative Test & Concavity</div>
+          <div class="level-sub">Concavity, inflection points, the Second Derivative Test</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">31</div>
+          <div class="q-text">Find $f''(x)$ for $f(x)=x^4-2x^2$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=4x^3-4x$; $f''(x)=12x^2-4$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">32</div>
+          <div class="q-text">Use the Second Derivative Test to classify the critical points of $f(x)=x^2-6x+5$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=2x-6=0\implies x=3$; $f''(x)=2>0$ — local min at $x=3$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">33</div>
+          <div class="q-text">Classify the critical points of $f(x)=-x^3+3x$ using the Second Derivative Test.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=-3x^2+3=0\implies x=\pm1$; $f''(x)=-6x$; $f''(1)=-6<0$ (max), $f''(-1)=6>0$ (min)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">34</div>
+          <div class="q-text">Find the inflection points of $f(x)=x^3$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f''(x)=6x=0\implies x=0$; sign changes from $-$ to $+$, genuine inflection at $x=0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">35</div>
+          <div class="q-text">Show $f(x)=x^4$ has NO inflection point at $x=0$, despite $f''(0)=0$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f''(x)=12x^2\ge0$ everywhere — no sign change around $x=0$, so concavity never switches; not an inflection point</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">36</div>
+          <div class="q-text">Find the intervals of concavity for $f(x)=x^3-6x^2$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f''(x)=6x-12$; negative for $x<2$ (concave down), positive for $x>2$ (concave up); inflection at $x=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">37</div>
+          <div class="q-text">Use the Second Derivative Test on $f(x)=x^2e^{-x}$ at its critical points $x=0,2$ (given $f'(x)=x(2-x)e^{-x}$).<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Compute $f''$ or reason via sign change of $f'$: at $x=0$, $f'$ goes $-$ to $+$ (min); at $x=2$, $f'$ goes $+$ to $-$ (max) — matches Second Derivative Test conclusions if computed</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">38</div>
+          <div class="q-text">Explain why the Second Derivative Test gives no information when $f''(c)=0$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f''(c)=0$ only tells you the curve is momentarily neither bending up nor down at that instant — it's consistent with a min, a max, an inflection point, or a flat saddle-like point, so you must fall back to checking the sign of $f'$ either side</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">39</div>
+          <div class="q-text">Find the inflection points of $f(x)=x^4-4x^3$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f''(x)=12x^2-24x=12x(x-2)$; zero at $x=0,2$; sign changes at both, so both are inflection points</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">40</div>
+          <div class="q-text">A function has $f'(2)=0$ and $f''(2)=0$. What is the most you can conclude, and what would you do next?<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>You can conclude $x=2$ is a critical point, but nothing about whether it's a max, min, or inflection point — next, use the First Derivative Test (check the sign of $f'$ just either side of $x=2$)</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W7</div>
+        <div class="level-info">
+          <div class="level-title">Curve Sketching — Asymptotes, Discontinuities & Inflection</div>
+          <div class="level-sub">Vertical/horizontal asymptotes, discontinuities, inflection points as sketching features</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">41</div>
+          <div class="q-text">Find the vertical asymptote(s) of $f(x)=\dfrac{1}{x-3}$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=3$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">42</div>
+          <div class="q-text">Find the horizontal asymptote of $f(x)=\dfrac{3x+1}{x-2}$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\lim_{x\to\infty}=3$, so $y=3$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">43</div>
+          <div class="q-text">Find the vertical asymptotes of $f(x)=\dfrac{x}{x^2-1}$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Denominator zero at $x=\pm1$, numerator nonzero there: $x=1,x=-1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">44</div>
+          <div class="q-text">Show $f(x)=\dfrac{x^2-1}{x-1}$ has a removable discontinuity, not a vertical asymptote, at $x=1$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f(x)=\dfrac{(x-1)(x+1)}{x-1}=x+1$ for $x\ne1$ — the factor cancels, so the limit exists ($=2$) and it's just a hole</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">45</div>
+          <div class="q-text">Find the horizontal asymptote of $f(x)=\dfrac{5x^2+1}{2x^2-3}$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\to \dfrac52$, so $y=\dfrac52$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">46</div>
+          <div class="q-text">Does $f(x)=\dfrac{x^2+1}{x}$ have a horizontal asymptote? Explain.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>No — as $x\to\infty$, $f(x)\to\infty$ (numerator degree exceeds denominator degree), so there's no finite horizontal asymptote (there is a slant asymptote $y=x$ instead)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">47</div>
+          <div class="q-text">Find the inflection points of $f(x)=x^3-3x^2+2x$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f''(x)=6x-6=0\implies x=1$; sign changes, so inflection at $x=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">48</div>
+          <div class="q-text">Classify the discontinuity of $f(x)=\dfrac{1}{(x-2)^2}$ at $x=2$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Infinite discontinuity / vertical asymptote at $x=2$, since the denominator is squared so the function blows up to $+\infty$ from both sides</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">49</div>
+          <div class="q-text">Find all vertical and horizontal asymptotes of $f(x)=\dfrac{2x}{x^2+1}$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>No vertical asymptotes (denominator never zero); horizontal: $\lim_{x\to\pm\infty}f(x)=0$, so $y=0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">50</div>
+          <div class="q-text">Explain why a function can cross its own horizontal asymptote, but (typically) can never cross a vertical asymptote.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A horizontal asymptote only describes end behaviour as $x\to\pm\infty$ — nothing stops the function from equalling that value at some finite $x$ along the way. A vertical asymptote marks an $x$-value where the function is undefined (or blows up) entirely, so there's no point on the curve at that $x$ to 'cross' through</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W7</div>
+        <div class="level-info">
+          <div class="level-title">Curve Sketching — Full Workflow</div>
+          <div class="level-sub">Combining every technique into a complete sketch</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">51</div>
+          <div class="q-text">State the domain of $f(x)=\dfrac{1}{x^2-4}$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>All reals except $x=\pm2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">52</div>
+          <div class="q-text">Find the $y$-intercept and $x$-intercepts of $f(x)=x^2-4$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y$-intercept: $f(0)=-4$; $x$-intercepts: $x=\pm2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">53</div>
+          <div class="q-text">Is $f(x)=x^4-2x^2$ even, odd, or neither?<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f(-x)=x^4-2x^2=f(x)$ — even</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">54</div>
+          <div class="q-text">Is $f(x)=x^3+x$ even, odd, or neither?<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f(-x)=-x^3-x=-f(x)$ — odd</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">55</div>
+          <div class="q-text">Find the intervals of increase/decrease for $f(x)=x^3-12x$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f'(x)=3x^2-12=0\implies x=\pm2$; increasing for $x<-2$ and $x>2$, decreasing for $-2<x<2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">56</div>
+          <div class="q-text">For $f(x)=x^3-12x$ (previous question), classify the critical points using the Second Derivative Test.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f''(x)=6x$; $f''(-2)=-12<0$ (max), $f''(2)=12>0$ (min)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">57</div>
+          <div class="q-text">List all asymptotes (if any) of $f(x)=x^3-12x$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>None — it's a polynomial</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">58</div>
+          <div class="q-text">Find the concavity intervals and inflection point of $f(x)=x^3-12x$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$f''(x)=6x=0\implies x=0$; concave down for $x<0$, up for $x>0$; inflection at $(0,0)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">59</div>
+          <div class="q-text">Using all previous answers for $f(x)=x^3-12x$, describe the full shape of the curve in one sentence.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>An odd function through the origin, rising to a local max at $(-2,16)$, falling through an inflection at $(0,0)$ to a local min at $(2,-16)$, then rising again — with concavity switching from down to up exactly at the inflection point</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">60</div>
+          <div class="q-text">Explain why checking symmetry early in the workflow can save time later.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>If a function is even or odd, you only need to fully analyse half the domain (e.g. $x\ge0$) — the other half is a mirror image (even) or a point-reflection (odd), roughly halving the work for intercepts, derivatives, and concavity checks</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W7</div>
+        <div class="level-info">
+          <div class="level-title">Complex Numbers — Definition & Operations</div>
+          <div class="level-sub">Definition, arithmetic operations, the complex plane</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">61</div>
+          <div class="q-text">Simplify $i^3$ and $i^4$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$i^3=i^2\cdot i=-i$; $i^4=(i^2)^2=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">62</div>
+          <div class="q-text">Compute $(3+2i)+(1-4i)$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$4-2i$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">63</div>
+          <div class="q-text">Compute $(3+2i)-(1-4i)$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$2+6i$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">64</div>
+          <div class="q-text">Compute $(1+i)(2-3i)$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$2-3i+2i-3i^2=2-i+3=5-i$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">65</div>
+          <div class="q-text">Find the conjugate of $z=4-5i$, and compute $z\bar z$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\bar z=4+5i$; $z\bar z=16+25=41$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">66</div>
+          <div class="q-text">Simplify $\dfrac{1}{2+i}$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{1}{2+i}\cdot\dfrac{2-i}{2-i}=\dfrac{2-i}{5}=\dfrac25-\dfrac15i$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">67</div>
+          <div class="q-text">Solve $x^2+9=0$ for $x$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x^2=-9 \implies x=\pm3i$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">68</div>
+          <div class="q-text">Simplify $\dfrac{5-i}{3+2i}$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{(5-i)(3-2i)}{(3+2i)(3-2i)}=\dfrac{15-10i-3i+2i^2}{13}=\dfrac{13-13i}{13}=1-i$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">69</div>
+          <div class="q-text">Plot (describe the coordinates of) $z=-2+3i$ on the complex plane.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Point $(-2,3)$ — real part $-2$ on the horizontal axis, imaginary part $3$ on the vertical axis</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">70</div>
+          <div class="q-text">Solve $2x^2-4x+5=0$ for $x$ using the quadratic formula, expressing the answer in $a+bi$ form.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=\dfrac{4\pm\sqrt{16-40}}{4}=\dfrac{4\pm\sqrt{-24}}{4}=1\pm\dfrac{\sqrt6}{2}i$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W7</div>
+        <div class="level-info">
+          <div class="level-title">Complex Numbers — Polar Form & De Moivre's Theorem</div>
+          <div class="level-sub">Modulus, argument, polar form, De Moivre's theorem</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">71</div>
+          <div class="q-text">Find $|z|$ for $z=3-4i$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\sqrt{9+16}=5$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">72</div>
+          <div class="q-text">Find $\arg(z)$ for $z=1+i$ (in radians).<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\tan\theta=1 \implies \theta=\pi/4$ (first quadrant)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">73</div>
+          <div class="q-text">Write $z=-1+i$ in polar form.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r=\sqrt2$; reference angle $\pi/4$, second quadrant $\implies \theta=3\pi/4$; $z=\sqrt2(\cos\tfrac{3\pi}{4}+i\sin\tfrac{3\pi}{4})$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">74</div>
+          <div class="q-text">Write $z=-2$ in polar form.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r=2$, $\theta=\pi$; $z=2(\cos\pi+i\sin\pi)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">75</div>
+          <div class="q-text">Multiply $z_1=2\,\text{cis}(\pi/6)$ and $z_2=3\,\text{cis}(\pi/3)$ using the polar multiplication rule.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r_1r_2=6$, $\theta_1+\theta_2=\pi/2$; $z_1z_2=6\,\text{cis}(\pi/2)=6i$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">76</div>
+          <div class="q-text">Use De Moivre's Theorem to find $\left(\cos\dfrac{\pi}{6}+i\sin\dfrac{\pi}{6}\right)^6$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\cos(6\cdot\pi/6)+i\sin(6\cdot\pi/6)=\cos\pi+i\sin\pi=-1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">77</div>
+          <div class="q-text">Find $(1-i)^4$ using De Moivre's Theorem.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$1-i=\sqrt2\,\text{cis}(-\pi/4)$; $(1-i)^4=4\,\text{cis}(-\pi)=4(-1+0i)=-4$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">78</div>
+          <div class="q-text">Find $|z_1z_2|$ given $|z_1|=3$ and $|z_2|=5$, without knowing the arguments.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$|z_1z_2|=|z_1||z_2|=15$ — moduli always multiply, regardless of the arguments</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">79</div>
+          <div class="q-text">Find $(\sqrt3+i)^3$ using De Moivre's Theorem.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\sqrt3+i=2\,\text{cis}(\pi/6)$; cubed: $8\,\text{cis}(\pi/2)=8i$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">80</div>
+          <div class="q-text">Explain why converting to polar form makes computing $z^{10}$ far easier than expanding $(a+bi)^{10}$ directly in Cartesian form.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>In polar form, raising to a power only requires raising the modulus to that power (ordinary real exponentiation) and multiplying the argument by that power (ordinary real multiplication) — both are simple one-step operations, whereas expanding $(a+bi)^{10}$ directly via the binomial theorem requires tracking ten terms with repeated powers of $i$ that must each be simplified</p>
+        </div>
+      </div>
+
+      <div class="callout callout-success" style="margin-top:32px">
+        <strong>Phase 2 practice complete!</strong> 80 questions across 8 topics. Revisit any DPEN sections tied to questions you found tricky, and remember: the mid-session exam covers Phase 1 only.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('examweek')">&larr; Mid-Session Exam &amp; Consolidation</button>
+        <button class="page-nav-btn next" onclick="goTo('home')">Back to Overview &rarr;</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PAGES = ['home','paramdef','paramsecond','relatedrates','secondtest','curvefeatures','curveworkflow','complexdef','complexpolar','examweek','practice'];
+const PAGE_NAMES = {
+  home:'Overview',
+  paramdef:'W6. Parametric Curves — Definition & First Derivatives',
+  paramsecond:'W6. Parametric Curves — Second Derivatives',
+  relatedrates:'W6. Related Rates',
+  secondtest:'W7. Second Derivative Test & Concavity',
+  curvefeatures:'W7. Curve Sketching — Asymptotes, Discontinuities & Inflection',
+  curveworkflow:'W7. Curve Sketching — Full Workflow',
+  complexdef:'W7. Complex Numbers — Definition & Operations',
+  complexpolar:'W7. Complex Numbers — Polar Form & De Moivre\'s Theorem',
+  examweek:'Mid-Session Exam & Consolidation',
+  practice:'Practice Questions'
+};
+let visited = new Set(['home']);
+
+function goTo(id) {
+  PAGES.forEach(p => {
+    document.getElementById('page-'+p).classList.remove('active');
+  });
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => {
+    const fn = l.getAttribute('onclick');
+    if (fn && fn.includes("'"+id+"'")) l.classList.add('active');
+  });
+  document.getElementById('breadcrumbPage').textContent = PAGE_NAMES[id] || id;
+  visited.add(id);
+  const pct = Math.round((visited.size / PAGES.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  window.scrollTo(0, 0);
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.getElementById('page-'+id), {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 50);
+}
+
+function toggleDPEN(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.dpen-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function toggleQ(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.q-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function expandAll() {
+  const activePage = document.querySelector('.page.active');
+  activePage.querySelectorAll('.dpen-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.dpen-chevron').classList.add('open');
+  });
+  activePage.querySelectorAll('.q-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.q-arrow').classList.add('open');
+  });
+  setTimeout(() => {
+    if (window.renderMathInElement) renderMathInElement(activePage, {
+      delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+      throwOnError: false
+    });
+  }, 30);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 300);
+});
+</script>
+</body>
+</html>
