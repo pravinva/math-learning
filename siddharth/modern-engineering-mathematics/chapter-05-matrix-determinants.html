@@ -81,11 +81,13 @@ summary{font-size:12px;color:#6b5aa0;padding:7px 10px;cursor:pointer}
     <div class="sb-lbl">Lessons</div>
     <a class="sb-link" href="#m1"><span class="sb-num">5.2</span>Matrix Basics</a>
     <a class="sb-link" href="#m2"><span class="sb-num">5.3</span>Determinants</a>
-    <a class="sb-link" href="#m3"><span class="sb-num">5.4-5.5</span>Inverse & Linear Equations</a>
-    <a class="sb-link" href="#m4"><span class="sb-num">5.6-5.7</span>Rank & Eigenvalues</a>
+    <a class="sb-link" href="#m3"><span class="sb-num">5.4-5.5</span>Inverse &amp; Linear Equations</a>
+    <a class="sb-link" href="#m4"><span class="sb-num">5.6</span>Rank</a>
+    <a class="sb-link" href="#m5"><span class="sb-num">5.7</span>Eigenvalues</a>
   </div>
   <div class="sb-sec">
     <div class="sb-lbl">Study Tools</div>
+    <a class="sb-link" href="#solved"><span class="sb-num">✎</span>Solved Examples Bank</a>
     <a class="sb-link" href="#practice"><span class="sb-num">★</span>Mixed Practice</a>
   </div>
 </nav>
@@ -122,54 +124,195 @@ summary{font-size:12px;color:#6b5aa0;padding:7px 10px;cursor:pointer}
         </div>
         <div class="read" id="matRead"></div>
       </div>
-      <div class="ex">
-        <div class="ex-lbl">Worked Example</div>
-        <p>\(A=\begin{bmatrix}2&1\\-1&3\end{bmatrix},\ \mathbf x=\begin{bmatrix}4\\2\end{bmatrix}\Rightarrow A\mathbf x=\begin{bmatrix}10\\2\end{bmatrix}\).</p>
-        <p>Read it row-by-row: first row gives first output equation, second row gives second output equation.</p>
+
+      <div class="lesson">
+        <h3>The vocabulary — let's name the parts</h3>
+        <p>Before we compute anything, let's agree on words. A <strong>matrix</strong> is just a rectangular grid of numbers arranged in rows and columns. We write its <em>order</em> (or size) as <strong>rows × columns</strong>. So a matrix with 2 rows and 3 columns is a "2 by 3" matrix.</p>
+        <ul>
+          <li><strong>Element</strong> \(a_{ij}\): the number in row \(i\), column \(j\). Row first, column second — always.</li>
+          <li><strong>Square matrix:</strong> same number of rows and columns (\(n\times n\)).</li>
+          <li><strong>Leading (main) diagonal:</strong> the elements \(a_{11},a_{22},\dots,a_{nn}\) running top-left to bottom-right.</li>
+          <li><strong>Trace:</strong> the sum of the diagonal elements, \(\operatorname{tr}(A)=a_{11}+a_{22}+\dots+a_{nn}\).</li>
+          <li><strong>Column vector:</strong> a matrix with a single column, like \(\begin{bmatrix}x\\y\\z\end{bmatrix}\) (order \(3\times1\)).</li>
+          <li><strong>Zero matrix \(0\):</strong> every element is 0. <strong>Identity \(I\):</strong> 1's on the diagonal, 0's elsewhere.</li>
+        </ul>
+        <div class="call">Memory hook for \(a_{ij}\): "<strong>R</strong>ow before <strong>C</strong>olumn" — same order as reading "RC cola". The row index always comes first.</div>
       </div>
+
+      <div class="lesson">
+        <h3>Equality, addition and scalar multiplication — the easy operations</h3>
+        <p>These three behave exactly like you'd hope, so let's get them out of the way with confidence.</p>
+        <ul>
+          <li><strong>Equality:</strong> \(A=B\) only when they are the <em>same size</em> and every matching element is equal, \(a_{ij}=b_{ij}\).</li>
+          <li><strong>Addition:</strong> add matrices of the same size element by element. You cannot add a \(2\times3\) to a \(3\times2\) — the shapes must match.</li>
+          <li><strong>Scalar multiplication:</strong> to multiply a matrix by a number \(k\), multiply <em>every</em> element by \(k\).</li>
+        </ul>
+      </div>
+      <div class="eq">$$A+B=\begin{bmatrix}a_{11}+b_{11}&a_{12}+b_{12}\\a_{21}+b_{21}&a_{22}+b_{22}\end{bmatrix},\qquad kA=\begin{bmatrix}ka_{11}&ka_{12}\\ka_{21}&ka_{22}\end{bmatrix}$$</div>
+
+      <div class="ex">
+        <div class="ex-lbl">Discussion Example — building intuition</div>
+        <p>Suppose a small café sells three "combo meals". A matrix can store how many of each item (burger, eggs, chips) go into each combo:</p>
+        <div class="eq">$$M=\begin{bmatrix}1&2&3\\2&1&2\\0&2&4\end{bmatrix}\begin{smallmatrix}\leftarrow\text{Combo A}\\\leftarrow\text{Combo B}\\\leftarrow\text{Combo C}\end{smallmatrix}$$</div>
+        <p>Each <em>row</em> is one recipe; each <em>column</em> is one ingredient. The whole point of matrices is that they let us store and manipulate structured information like this, then do arithmetic on it all at once. Keep this "rows are recipes, columns are ingredients" picture in mind — it is exactly why matrix multiplication is defined the way it is.</p>
+      </div>
+
+      <div class="lesson">
+        <h3>Matrix multiplication — the one that trips everyone up (at first)</h3>
+        <p>This is the operation worth slowing down for. The rule is <strong>"row · column"</strong>: to get the entry in row \(i\), column \(j\) of the product \(AB\), you take row \(i\) of \(A\), pair it up with column \(j\) of \(B\), multiply matching numbers, and add them.</p>
+        <div class="eq">$$(AB)_{ij}=\sum_{k}a_{ik}b_{kj}=a_{i1}b_{1j}+a_{i2}b_{2j}+\dots$$</div>
+        <p><strong>The size rule:</strong> for \(AB\) to exist, the number of columns of \(A\) must equal the number of rows of \(B\). Line up the sizes:</p>
+        <div class="eq">$$\underbrace{A}_{m\times \color{#FF3621}{n}}\;\underbrace{B}_{\color{#FF3621}{n}\times p}=\underbrace{AB}_{m\times p}$$</div>
+        <p>The two inner numbers (in red) must match; the two outer numbers give the size of the answer.</p>
+        <div class="warn"><strong>Order matters!</strong> In general \(AB\neq BA\). Sometimes \(BA\) doesn't even exist while \(AB\) does. Never silently swap the order.</div>
+      </div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 1 — a matrix times a vector, slowly</div>
+        <p>Let \(A=\begin{bmatrix}2&1\\-1&3\end{bmatrix}\) and \(\mathbf x=\begin{bmatrix}4\\2\end{bmatrix}\).</p>
+        <p><strong>Row 1 · column:</strong> \((2)(4)+(1)(2)=8+2=10\).<br>
+        <strong>Row 2 · column:</strong> \((-1)(4)+(3)(2)=-4+6=2\).</p>
+        <p>So \(A\mathbf x=\begin{bmatrix}10\\2\end{bmatrix}\). Notice each row of \(A\) produced one number — that number is exactly the left-hand side of one equation in the system.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 2 — a full 2×2 product</div>
+        <p>Compute \(AB\) where \(A=\begin{bmatrix}2&1\\1&0\end{bmatrix}\), \(B=\begin{bmatrix}1&3\\4&2\end{bmatrix}\).</p>
+        <p>Top-left \(=(2)(1)+(1)(4)=6\). Top-right \(=(2)(3)+(1)(2)=8\).<br>
+        Bottom-left \(=(1)(1)+(0)(4)=1\). Bottom-right \(=(1)(3)+(0)(2)=3\).</p>
+        <div class="eq">$$AB=\begin{bmatrix}6&8\\1&3\end{bmatrix}$$</div>
+        <p>Now try \(BA\) yourself — you'll get \(\begin{bmatrix}5&1\\10&4\end{bmatrix}\), which is different. That's the "order matters" lesson made concrete.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 3 — writing a system as \(A\mathbf x=\mathbf b\)</div>
+        <p>The equations \(\begin{cases}x+2y=3\\x+y=4\\2x+y+z=5\end{cases}\) become</p>
+        <div class="eq">$$\begin{bmatrix}1&2&0\\1&1&0\\2&1&1\end{bmatrix}\begin{bmatrix}x\\y\\z\end{bmatrix}=\begin{bmatrix}3\\4\\5\end{bmatrix}$$</div>
+        <p>The coefficient matrix stores the numbers, the vector stores the unknowns, and multiplication rebuilds the equations exactly. This packaging is the whole reason matrices are so powerful in engineering.</p>
+      </div>
+
+      <div class="lesson">
+        <h3>The transpose and a few key properties</h3>
+        <p>The <strong>transpose</strong> \(A^{T}\) flips a matrix over its diagonal: rows become columns. If \(A\) is \(m\times n\), then \(A^{T}\) is \(n\times m\). Handy facts you'll use again and again:</p>
+        <ul>
+          <li>\((A^{T})^{T}=A\) — flipping twice gets you back.</li>
+          <li>\((A+B)^{T}=A^{T}+B^{T}\).</li>
+          <li>\((AB)^{T}=B^{T}A^{T}\) — the order reverses! (A very common exam catch.)</li>
+          <li>\(AI=IA=A\): the identity behaves like the number 1.</li>
+          <li>\(A0=0\): multiplying by the zero matrix gives zero.</li>
+        </ul>
+        <div class="warn"><strong>Surprise to remember:</strong> \(AB=0\) does <em>not</em> mean \(A=0\) or \(B=0\). Two non-zero matrices can multiply to the zero matrix. Matrices don't obey all the "obvious" rules of ordinary numbers.</div>
+      </div>
+
       <div class="pr">
-        <h4>Subtopic Practice (8) — Matrix Basics</h4>
+        <h4>Practice Set 5.2 (12) — Basics, transpose &amp; multiplication</h4>
         <ol>
-          <li>Add \( \begin{bmatrix}1&2\\3&4\end{bmatrix}+\begin{bmatrix}2&0\\-1&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}3&2\\2&9\end{bmatrix}\).</div></details></li>
-          <li>Compute \(3\begin{bmatrix}2&-1\\0&4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}6&-3\\0&12\end{bmatrix}\).</div></details></li>
-          <li>Find transpose of \(\begin{bmatrix}1&0&2\\3&4&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}1&3\\0&4\\2&5\end{bmatrix}\).</div></details></li>
-          <li>Compute \( \begin{bmatrix}1&2\\0&1\end{bmatrix}\begin{bmatrix}3\\4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}11\\4\end{bmatrix}\).</div></details></li>
-          <li>Dimensions of \(A_{2\times3}B_{3\times2}\)?<details><summary>Show solution</summary><div class="ans">\(2\times2\).</div></details></li>
-          <li>Is \(AB=BA\) always true?<details><summary>Show solution</summary><div class="ans">No.</div></details></li>
-          <li>Identity matrix of order 2?<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}1&0\\0&1\end{bmatrix}\).</div></details></li>
-          <li>Multiply \( \begin{bmatrix}2&1\\1&0\end{bmatrix}\begin{bmatrix}1&3\\4&2\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}6&8\\1&3\end{bmatrix}\).</div></details></li>
+          <li>Add \( \begin{bmatrix}1&2\\3&4\end{bmatrix}+\begin{bmatrix}2&0\\-1&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">Element by element: \(\begin{bmatrix}3&2\\2&9\end{bmatrix}\).</div></details></li>
+          <li>Compute \(3\begin{bmatrix}2&-1\\0&4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">Multiply every entry by 3: \(\begin{bmatrix}6&-3\\0&12\end{bmatrix}\).</div></details></li>
+          <li>Find the transpose of \(\begin{bmatrix}1&0&2\\3&4&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">Rows become columns: \(\begin{bmatrix}1&3\\0&4\\2&5\end{bmatrix}\).</div></details></li>
+          <li>Compute \( \begin{bmatrix}1&2\\0&1\end{bmatrix}\begin{bmatrix}3\\4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">Row·column: \((1)(3)+(2)(4)=11\); \((0)(3)+(1)(4)=4\). Answer \(\begin{bmatrix}11\\4\end{bmatrix}\).</div></details></li>
+          <li>What is the order of the product \(A_{2\times3}B_{3\times2}\)?<details><summary>Show solution</summary><div class="ans">Inner numbers (3,3) match; outer numbers give \(2\times2\).</div></details></li>
+          <li>Is \(AB=BA\) always true?<details><summary>Show solution</summary><div class="ans">No — matrix multiplication is generally not commutative.</div></details></li>
+          <li>Write the identity matrix of order 2.<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}1&0\\0&1\end{bmatrix}\).</div></details></li>
+          <li>Multiply \( \begin{bmatrix}2&1\\1&0\end{bmatrix}\begin{bmatrix}1&3\\4&2\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}6&8\\1&3\end{bmatrix}\) (see Worked Example 2).</div></details></li>
+          <li>Compute \( \begin{bmatrix}2&0\\1&3\end{bmatrix}\begin{bmatrix}1&4\\2&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\begin{bmatrix}2&8\\7&19\end{bmatrix}\).</div></details></li>
+          <li>Find the trace of \(\begin{bmatrix}3&1&0\\2&5&4\\1&0&-2\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">Sum of diagonal: \(3+5+(-2)=6\).</div></details></li>
+          <li>If \(A\) is \(2\times3\), what size must \(B\) be for \(AB\) to be defined, and what size is \(AB\)?<details><summary>Show solution</summary><div class="ans">\(B\) must have 3 rows, say \(3\times p\); then \(AB\) is \(2\times p\).</div></details></li>
+          <li>Verify \((AB)^{T}=B^{T}A^{T}\) for \(A=\begin{bmatrix}1&2\\0&1\end{bmatrix}\), \(B=\begin{bmatrix}1&0\\3&1\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(AB=\begin{bmatrix}7&2\\3&1\end{bmatrix}\Rightarrow(AB)^{T}=\begin{bmatrix}7&3\\2&1\end{bmatrix}\). Also \(B^{T}A^{T}=\begin{bmatrix}1&3\\0&1\end{bmatrix}\begin{bmatrix}1&0\\2&1\end{bmatrix}=\begin{bmatrix}7&3\\2&1\end{bmatrix}\). They match.</div></details></li>
         </ol>
       </div>
     </section>
 
     <section class="sec" id="m2">
       <h2>5.3 Determinants</h2>
-      <div class="sub">Determinant as scale factor and invertibility test.</div>
+      <div class="sub">A single number that tells you whether a matrix is invertible, how it scales area/volume, and whether a linear system has a unique solution.</div>
+
+      <div class="lesson">
+        <h3>What is a determinant, really?</h3>
+        <p>The determinant is one number squeezed out of a square matrix. That number answers a surprising amount of questions at once:</p>
+        <ul>
+          <li><strong>Is the matrix invertible?</strong> Yes exactly when \(\det(A)\neq0\).</li>
+          <li><strong>Does \(A\mathbf x=\mathbf b\) have a unique solution?</strong> Yes exactly when \(\det(A)\neq0\).</li>
+          <li><strong>How much does the transformation stretch space?</strong> \(|\det(A)|\) is the area (2D) or volume (3D) scale factor.</li>
+        </ul>
+        <p>So the determinant is like a health check for a matrix. If it's zero, the matrix is "singular" — it has collapsed space into a lower dimension and can't be undone.</p>
+      </div>
+
       <div class="eq">$$\det\begin{bmatrix}a&b\\c&d\end{bmatrix}=ad-bc$$</div>
-      <div class="call">Geometric meaning: for 2×2 matrices, \(|\det(A)|\) is area scale of transformed shapes. If \(\det(A)=0\), area collapses to a line, so inverse does not exist.</div>
+      <div class="call"><strong>Geometric meaning.</strong> For a 2×2 matrix, \(|\det(A)|\) is the factor by which areas are scaled. If \(\det(A)=0\), the transformed unit square collapses onto a line — area zero — which is why no inverse can exist. Play with the interactive square above and watch the determinant hit zero as the shape flattens.</div>
       <table class="tbl">
-        <thead><tr><th>Determinant sign</th><th>Meaning</th></tr></thead>
+        <thead><tr><th>Determinant</th><th>What it means</th></tr></thead>
         <tbody>
-          <tr><td>\(\det(A)>0\)</td><td>Orientation preserved</td></tr>
-          <tr><td>\(\det(A)&lt;0\)</td><td>Orientation flipped (reflection included)</td></tr>
-          <tr><td>\(\det(A)=0\)</td><td>Singular, no unique inverse</td></tr>
+          <tr><td>\(\det(A)>0\)</td><td>Orientation preserved, area scaled by \(\det(A)\)</td></tr>
+          <tr><td>\(\det(A)&lt;0\)</td><td>Orientation flipped (a reflection is involved)</td></tr>
+          <tr><td>\(\det(A)=0\)</td><td>Singular — no inverse, no unique solution</td></tr>
         </tbody>
       </table>
-      <div class="ex">
-        <div class="ex-lbl">Worked Example</div>
-        <p>\(A=\begin{bmatrix}3&2\\5&4\end{bmatrix}\Rightarrow \det(A)=12-10=2\). Area doubles (up to orientation), and inverse exists.</p>
+
+      <div class="lesson">
+        <h3>Minors, cofactors and the sign pattern</h3>
+        <p>To handle 3×3 and bigger, we build up from 2×2 using <strong>cofactor expansion</strong>. Two words to learn:</p>
+        <ul>
+          <li><strong>Minor \(M_{ij}\):</strong> the determinant of the smaller matrix you get by deleting row \(i\) and column \(j\).</li>
+          <li><strong>Cofactor \(A_{ij}\):</strong> the minor with a sign attached, \(A_{ij}=(-1)^{i+j}M_{ij}\).</li>
+        </ul>
+        <p>The signs follow a checkerboard pattern — just remember the top-left is +:</p>
+        <div class="eq">$$\begin{bmatrix}+&-&+\\-&+&-\\+&-&+\end{bmatrix}$$</div>
+        <p>To expand a determinant, pick any row or column, and add up (element × its cofactor) along it. <strong>Pro tip:</strong> choose the row or column with the most zeros — every zero kills a whole term and saves you work.</p>
       </div>
+      <div class="eq">$$\det(A)=a_{11}A_{11}+a_{12}A_{12}+a_{13}A_{13}\quad\text{(expansion along row 1)}$$</div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 1 — the 2×2 warm-up</div>
+        <p>\(A=\begin{bmatrix}3&2\\5&4\end{bmatrix}\Rightarrow \det(A)=(3)(4)-(2)(5)=12-10=2\).</p>
+        <p>Positive and non-zero: areas double, orientation is preserved, and an inverse exists. Everything is healthy.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 2 — a 3×3 by cofactor expansion (row 1)</div>
+        <p>Evaluate \(\det\begin{bmatrix}1&2&1\\3&0&2\\1&1&4\end{bmatrix}\) by expanding along the top row.</p>
+        <p><strong>Step 1 — write each element times its signed minor.</strong> Remember the row-1 signs are \(+,-,+\):</p>
+        <div class="eq">$$+1\begin{vmatrix}0&2\\1&4\end{vmatrix}-2\begin{vmatrix}3&2\\1&4\end{vmatrix}+1\begin{vmatrix}3&0\\1&1\end{vmatrix}$$</div>
+        <p><strong>Step 2 — evaluate each 2×2 minor.</strong></p>
+        <p>\(\begin{vmatrix}0&2\\1&4\end{vmatrix}=0\cdot4-2\cdot1=-2\), &nbsp; \(\begin{vmatrix}3&2\\1&4\end{vmatrix}=12-2=10\), &nbsp; \(\begin{vmatrix}3&0\\1&1\end{vmatrix}=3-0=3\).</p>
+        <p><strong>Step 3 — combine.</strong> \(1(-2)-2(10)+1(3)=-2-20+3=\mathbf{-19}\).</p>
+        <p>That's the whole method: each element multiplied by its signed minor, summed across a row. Nothing more mysterious than careful bookkeeping.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 3 — choosing a smart row</div>
+        <p>Evaluate \(\det\begin{bmatrix}3&0&1\\2&1&4\\0&2&5\end{bmatrix}\). Column 1 has a zero, so expand along it:</p>
+        <div class="eq">$$3\begin{vmatrix}1&4\\2&5\end{vmatrix}-2\begin{vmatrix}0&1\\2&5\end{vmatrix}+0=3(5-8)-2(0-2)=3(-3)-2(-2)=-9+4=-5$$</div>
+        <p>The zero in the bottom-left meant we never had to compute its cofactor. Picking the right line to expand along is a genuine time-saver.</p>
+      </div>
+
+      <div class="lesson">
+        <h3>Properties that make life easier</h3>
+        <ul>
+          <li>\(\det(A^{T})=\det(A)\) — transposing doesn't change it.</li>
+          <li>\(\det(AB)=\det(A)\det(B)\) — determinants multiply.</li>
+          <li>Swapping two rows flips the sign of the determinant.</li>
+          <li>If two rows (or columns) are equal or proportional, \(\det=0\).</li>
+          <li>Adding a multiple of one row to another leaves the determinant unchanged (this is what makes elimination safe).</li>
+          <li>For a triangular matrix, \(\det\) is just the product of the diagonal entries.</li>
+        </ul>
+      </div>
+
       <div class="pr">
-        <h4>Subtopic Practice (8) — Determinants</h4>
+        <h4>Practice Set 5.3 (12) — Determinants</h4>
         <ol>
           <li>\(\det\begin{bmatrix}2&1\\4&3\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(6-4=2\).</div></details></li>
-          <li>\(\det\begin{bmatrix}1&2\\2&4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(4-4=0\).</div></details></li>
+          <li>\(\det\begin{bmatrix}1&2\\2&4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(4-4=0\) — singular (rows proportional).</div></details></li>
           <li>For what \(k\) is \(\begin{bmatrix}1&k\\2&4\end{bmatrix}\) singular?<details><summary>Show solution</summary><div class="ans">\(4-2k=0\Rightarrow k=2\).</div></details></li>
-          <li>\(\det\begin{bmatrix}3&0&1\\2&1&4\\0&2&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">Expand row1: \(3(1\cdot5-4\cdot2)+1(2\cdot2-1\cdot0)=-9+4=-5\).</div></details></li>
-          <li>If \(\det(A)\neq0\), inverse exists?<details><summary>Show solution</summary><div class="ans">Yes.</div></details></li>
-          <li>If \(\det(A)=0\), system \(Ax=b\) unique?<details><summary>Show solution</summary><div class="ans">Not guaranteed; no unique inverse.</div></details></li>
-          <li>Area scale for \(A\) with \(\det(A)=-3\)?<details><summary>Show solution</summary><div class="ans">Scale factor \(3\), orientation flips.</div></details></li>
-          <li>Compute \(\det(I_3)\).<details><summary>Show solution</summary><div class="ans">1.</div></details></li>
+          <li>\(\det\begin{bmatrix}3&0&1\\2&1&4\\0&2&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">Expand column 1: \(3(5-8)-2(0-2)=-9+4=-5\).</div></details></li>
+          <li>\(\det\begin{bmatrix}4&7\\2&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(20-14=6\).</div></details></li>
+          <li>\(\det\begin{bmatrix}1&0&1\\0&2&4\\3&3&0\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">Row 1: \(1(0-12)-0+1(0-6)=-12-6=-18\).</div></details></li>
+          <li>Find the minor \(M_{11}\) and cofactor \(A_{11}\) of \(\begin{bmatrix}2&-1\\3&4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(M_{11}=4\); \(A_{11}=(-1)^{2}\cdot4=4\).</div></details></li>
+          <li>Find cofactor \(A_{12}\) of \(\begin{bmatrix}2&-1\\3&4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(M_{12}=3\), sign \((-1)^{3}=-1\), so \(A_{12}=-3\).</div></details></li>
+          <li>Using \(\det(AB)=\det A\det B\), find \(\det(AB)\) if \(\det A=2,\det B=-3\).<details><summary>Show solution</summary><div class="ans">\((2)(-3)=-6\).</div></details></li>
+          <li>\(\det\begin{bmatrix}2&5&1\\0&3&4\\0&0&7\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">Triangular: product of diagonal \(=2\cdot3\cdot7=42\).</div></details></li>
+          <li>What is \(\det(I_3)\)?<details><summary>Show solution</summary><div class="ans">1 (triangular with 1's on the diagonal).</div></details></li>
+          <li>If two rows of a square matrix are identical, what is its determinant?<details><summary>Show solution</summary><div class="ans">Zero — equal rows always force a zero determinant.</div></details></li>
         </ol>
       </div>
     </section>
@@ -179,12 +322,14 @@ summary{font-size:12px;color:#6b5aa0;padding:7px 10px;cursor:pointer}
       <div class="sub">Use inverse matrix and elimination methods; know when each method is practical.</div>
       <div class="eq">$$A^{-1}=\frac{1}{ad-bc}\begin{bmatrix}d&-b\\-c&a\end{bmatrix}\quad(\det A\neq0)$$</div>
       <div class="lesson">
-        <h3>Method selection for weak students</h3>
+        <h3>Which method should you reach for?</h3>
+        <p>There is no single "best" method — the smart move is to match the tool to the job. Here is a friendly guide you can lean on until it becomes second nature:</p>
         <ul>
-          <li>2×2 system: inverse method is fast.</li>
-          <li>3×3 and larger: elimination is usually safer.</li>
-          <li>Computers: LU/iterative methods for large sparse systems.</li>
+          <li><strong>2×2 system:</strong> the inverse formula is quick and reliable — a great first choice.</li>
+          <li><strong>3×3 and larger:</strong> Gaussian elimination is usually cleaner and less error-prone than building a full inverse by hand.</li>
+          <li><strong>On a computer / very large systems:</strong> LU factorisation and iterative methods (Jacobi, Gauss–Seidel) are what real engineering software uses.</li>
         </ul>
+        <p>If you ever forget which to use, start with elimination — it always works and it teaches you what the system is really doing.</p>
       </div>
       <div class="viz">
         <div class="viz-title">Interactive: two-line system and unique/no solution intuition</div>
@@ -197,58 +342,215 @@ summary{font-size:12px;color:#6b5aa0;padding:7px 10px;cursor:pointer}
         </div>
         <div class="read" id="sysRead"></div>
       </div>
-      <div class="ex">
-        <div class="ex-lbl">Step-by-step Example</div>
-        <p>Solve \(\begin{cases}2x+y=7\\x-3y=-8\end{cases}\). From first, \(y=7-2x\). Substitute: \(x-3(7-2x)=-8\Rightarrow7x=13\Rightarrow x=13/7\), then \(y=23/7\).</p>
+
+      <div class="lesson">
+        <h3>The inverse matrix — "undoing" a transformation</h3>
+        <p>The inverse \(A^{-1}\) is the matrix that cancels \(A\): \(A^{-1}A=AA^{-1}=I\). Think of \(A\) as an action (stretch, rotate, shear); \(A^{-1}\) is the action that puts everything back exactly. Only square, non-singular matrices (\(\det A\neq0\)) have one.</p>
+        <p>For a 2×2 matrix there's a formula worth memorising — <strong>swap the diagonal, negate the off-diagonal, divide by the determinant</strong>:</p>
       </div>
-      <div class="warn"><strong>Common mistake:</strong> forgetting to check determinant/non-singular condition before using inverse formula.</div>
+      <div class="eq">$$A=\begin{bmatrix}a&b\\c&d\end{bmatrix}\ \Rightarrow\ A^{-1}=\frac{1}{ad-bc}\begin{bmatrix}d&-b\\-c&a\end{bmatrix}$$</div>
+      <div class="warn"><strong>Always check first:</strong> compute \(ad-bc\). If it's zero, stop — there is no inverse. Dividing by zero is the classic mistake here.</div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 1 — a 2×2 inverse</div>
+        <p>Find \(A^{-1}\) for \(A=\begin{bmatrix}1&2\\3&5\end{bmatrix}\).</p>
+        <p><strong>Step 1:</strong> \(\det A=(1)(5)-(2)(3)=5-6=-1\neq0\), so an inverse exists.</p>
+        <p><strong>Step 2:</strong> swap diagonal (\(1\leftrightarrow5\)), negate off-diagonal, divide by \(-1\):</p>
+        <div class="eq">$$A^{-1}=\frac{1}{-1}\begin{bmatrix}5&-2\\-3&1\end{bmatrix}=\begin{bmatrix}-5&2\\3&-1\end{bmatrix}$$</div>
+        <p><strong>Step 3 (always sanity-check):</strong> \(AA^{-1}=\begin{bmatrix}1&2\\3&5\end{bmatrix}\begin{bmatrix}-5&2\\3&-1\end{bmatrix}=\begin{bmatrix}1&0\\0&1\end{bmatrix}=I\). </p>
+      </div>
+
+      <div class="lesson">
+        <h3>The adjoint method for 3×3 inverses</h3>
+        <p>For bigger matrices we use \(A^{-1}=\dfrac{1}{\det A}\,\operatorname{adj}(A)\), where the <strong>adjoint</strong> is the transpose of the matrix of cofactors. The recipe:</p>
+        <ol style="padding-left:18px;font-size:14px;line-height:1.7">
+          <li>Compute \(\det A\) (and check it's non-zero).</li>
+          <li>Replace each element by its cofactor \(A_{ij}=(-1)^{i+j}M_{ij}\) — this is the cofactor matrix.</li>
+          <li>Transpose it to get \(\operatorname{adj}(A)\).</li>
+          <li>Divide every entry by \(\det A\).</li>
+        </ol>
+        <p>It's more work, which is exactly why, for solving systems, elimination is usually the friendlier route.</p>
+      </div>
+
+      <div class="lesson">
+        <h3>Gaussian elimination — the workhorse method</h3>
+        <p>This is the technique you'll use most. The idea: use <strong>row operations</strong> to turn the system into a triangular "staircase" shape, then read off the answers by back-substitution. The three legal moves (they never change the solution) are:</p>
+        <ul>
+          <li>Swap two rows.</li>
+          <li>Multiply a row by a non-zero constant.</li>
+          <li>Add a multiple of one row to another.</li>
+        </ul>
+        <p>We usually work on the <strong>augmented matrix</strong> \([A\,|\,\mathbf b]\), keeping the right-hand side attached as we go.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 2 — Gaussian elimination, step by step</div>
+        <p>Solve \(\begin{cases}x+y+z=6\\x+2y+3z=14\\x+4y+9z=36\end{cases}\).</p>
+        <p><strong>Augmented matrix:</strong> \(\left[\begin{array}{ccc|c}1&1&1&6\\1&2&3&14\\1&4&9&36\end{array}\right]\)</p>
+        <p><strong>Eliminate \(x\) from rows 2 and 3</strong> (R2→R2−R1, R3→R3−R1):</p>
+        <div class="eq">$$\left[\begin{array}{ccc|c}1&1&1&6\\0&1&2&8\\0&3&8&30\end{array}\right]$$</div>
+        <p><strong>Eliminate \(y\) from row 3</strong> (R3→R3−3·R2):</p>
+        <div class="eq">$$\left[\begin{array}{ccc|c}1&1&1&6\\0&1&2&8\\0&0&2&6\end{array}\right]$$</div>
+        <p><strong>Back-substitute.</strong> Row 3: \(2z=6\Rightarrow z=3\). Row 2: \(y+2(3)=8\Rightarrow y=2\). Row 1: \(x+2+3=6\Rightarrow x=1\).</p>
+        <p>So \((x,y,z)=(1,2,3)\). Notice how the triangular shape let us solve one unknown at a time, bottom to top.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 3 — solving with the inverse</div>
+        <p>Solve \(\begin{cases}2x+y=7\\x-3y=-8\end{cases}\) using \(\mathbf x=A^{-1}\mathbf b\), where \(A=\begin{bmatrix}2&1\\1&-3\end{bmatrix}\), \(\mathbf b=\begin{bmatrix}7\\-8\end{bmatrix}\).</p>
+        <p>\(\det A=(2)(-3)-(1)(1)=-7\). So \(A^{-1}=\dfrac{1}{-7}\begin{bmatrix}-3&-1\\-1&2\end{bmatrix}\).</p>
+        <div class="eq">$$\mathbf x=\frac{1}{-7}\begin{bmatrix}-3&-1\\-1&2\end{bmatrix}\begin{bmatrix}7\\-8\end{bmatrix}=\frac{1}{-7}\begin{bmatrix}-13\\-23\end{bmatrix}=\begin{bmatrix}13/7\\23/7\end{bmatrix}$$</div>
+      </div>
+
+      <div class="lesson">
+        <h3>How many solutions? The three possibilities</h3>
+        <p>Every linear system falls into exactly one of these cases — and the geometry of two lines is the perfect mental picture:</p>
+        <ul>
+          <li><strong>Unique solution</strong> (lines cross once) — happens when \(\det A\neq0\).</li>
+          <li><strong>No solution</strong> (parallel, never meet) — the equations contradict each other.</li>
+          <li><strong>Infinitely many</strong> (same line drawn twice) — the equations carry the same information.</li>
+        </ul>
+        <p>Drag the sliders in the interactive above to watch a system slide between these three states.</p>
+      </div>
+      <div class="warn"><strong>Most common mistake:</strong> jumping into the inverse formula without checking the determinant first. If \(\det A=0\), the inverse doesn't exist and you must instead ask whether the system has no solution or infinitely many.</div>
+
       <div class="pr">
-        <h4>Subtopic Practice (8) — Inverse and Linear Equations</h4>
+        <h4>Practice Set 5.4–5.5 (12) — Inverse &amp; Linear Equations</h4>
         <ol>
-          <li>Solve \(x+y=4,\ x-y=0\).<details><summary>Show solution</summary><div class="ans">\(x=2,\ y=2\).</div></details></li>
+          <li>Solve \(x+y=4,\ x-y=0\).<details><summary>Show solution</summary><div class="ans">Add: \(2x=4\Rightarrow x=2\), then \(y=2\).</div></details></li>
           <li>Solve \(2x+y=5,\ 3x-y=5\).<details><summary>Show solution</summary><div class="ans">Add equations: \(5x=10\Rightarrow x=2,\ y=1\).</div></details></li>
-          <li>Find inverse of \(\begin{bmatrix}1&2\\3&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\det=-1\), inverse \(=\begin{bmatrix}-5&2\\3&-1\end{bmatrix}\).</div></details></li>
-          <li>Check if \(\begin{bmatrix}2&4\\1&2\end{bmatrix}\) invertible.<details><summary>Show solution</summary><div class="ans">\(\det=4-4=0\), not invertible.</div></details></li>
-          <li>Classify system \(x+y=2,\ 2x+2y=4\).<details><summary>Show solution</summary><div class="ans">Infinitely many solutions.</div></details></li>
-          <li>Classify \(x+y=2,\ 2x+2y=5\).<details><summary>Show solution</summary><div class="ans">No solution.</div></details></li>
-          <li>If \(A^{-1}\) exists, formula for solution of \(Ax=b\)?<details><summary>Show solution</summary><div class="ans">\(\mathbf x=A^{-1}\mathbf b\).</div></details></li>
-          <li>Why elimination preferred for large systems?<details><summary>Show solution</summary><div class="ans">More stable/practical computationally than explicit inverse.</div></details></li>
+          <li>Find the inverse of \(\begin{bmatrix}1&2\\3&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\det=-1\Rightarrow A^{-1}=\begin{bmatrix}-5&2\\3&-1\end{bmatrix}\).</div></details></li>
+          <li>Find the inverse of \(\begin{bmatrix}2&1\\3&2\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\(\det=1\Rightarrow A^{-1}=\begin{bmatrix}2&-1\\-3&2\end{bmatrix}\).</div></details></li>
+          <li>Is \(\begin{bmatrix}2&4\\1&2\end{bmatrix}\) invertible?<details><summary>Show solution</summary><div class="ans">\(\det=4-4=0\) — not invertible.</div></details></li>
+          <li>Classify \(x+y=2,\ 2x+2y=4\).<details><summary>Show solution</summary><div class="ans">Same line — infinitely many solutions.</div></details></li>
+          <li>Classify \(x+y=2,\ 2x+2y=5\).<details><summary>Show solution</summary><div class="ans">Parallel, inconsistent — no solution.</div></details></li>
+          <li>If \(A^{-1}\) exists, write the solution of \(A\mathbf x=\mathbf b\).<details><summary>Show solution</summary><div class="ans">\(\mathbf x=A^{-1}\mathbf b\).</div></details></li>
+          <li>Solve by elimination: \(x+2y+3z=6,\ 2x+4y+z=7,\ x+y+z=3\) (state \(z\)).<details><summary>Show solution</summary><div class="ans">R2−2R1 gives \(-5z=-5\Rightarrow z=1\); back-substitute for \(x=1,y=1\).</div></details></li>
+          <li>Solve \(x-2y=4,\ 3x+y=5\).<details><summary>Show solution</summary><div class="ans">\(x=4+2y\Rightarrow 12+7y=5\Rightarrow y=-1,\ x=2\).</div></details></li>
+          <li>Why is elimination preferred over inverses for large systems?<details><summary>Show solution</summary><div class="ans">It is faster and numerically more stable than forming an explicit inverse.</div></details></li>
+          <li>Solve \(\begin{cases}x+y+z=6\\x+2y+3z=14\\x+4y+9z=36\end{cases}\).<details><summary>Show solution</summary><div class="ans">\((x,y,z)=(1,2,3)\) — see Worked Example 2.</div></details></li>
         </ol>
       </div>
     </section>
 
     <section class="sec" id="m4">
-      <h2>5.6–5.7 Rank and Eigenvalues</h2>
-      <div class="sub">Rank tells independent information count; eigenvalues tell natural scaling directions.</div>
-      <div class="eq">$$A\mathbf v=\lambda\mathbf v,\qquad \det(A-\lambda I)=0$$</div>
+      <h2>5.6 Rank</h2>
+      <div class="sub">How much genuinely independent information a matrix carries — the key to knowing whether a system is solvable.</div>
+
       <div class="lesson">
-        <h3>Intuition ladder</h3>
+        <h3>What rank measures</h3>
+        <p>Imagine three equations, but the third is just the sum of the first two. It looks like new information, but it isn't — it's redundant. <strong>Rank</strong> counts how many rows (equivalently, columns) are truly independent, i.e. how much real information survives after you strip out the redundancy.</p>
+        <p>The practical way to find rank: reduce the matrix to <strong>row-echelon form</strong> (the staircase from Gaussian elimination) and count the non-zero rows. That count is the rank.</p>
         <ul>
-          <li><strong>Rank:</strong> how many independent rows/columns remain after elimination.</li>
-          <li><strong>Eigenvector:</strong> direction unchanged by matrix machine.</li>
-          <li><strong>Eigenvalue:</strong> stretch/shrink factor on that special direction.</li>
+          <li>A matrix has <strong>full rank</strong> if the rank equals the number of rows.</li>
+          <li>A square \(n\times n\) matrix is invertible exactly when its rank is \(n\) (equivalently \(\det\neq0\)).</li>
         </ul>
       </div>
+
+      <div class="call"><strong>The solvability test (Rouché–Capelli idea).</strong> Compare the rank of \(A\) with the rank of the augmented matrix \([A\,|\,\mathbf b]\):<br>• Different ranks → <strong>no solution</strong>.<br>• Equal ranks = number of unknowns → <strong>unique solution</strong>.<br>• Equal ranks &lt; number of unknowns → <strong>infinitely many</strong> (with (unknowns − rank) free parameters).</div>
+
       <div class="ex">
-        <div class="ex-lbl">Worked Example</div>
-        <p>\(A=\begin{bmatrix}2&0\\0&3\end{bmatrix}\): x-axis and y-axis stay in same direction, with scaling 2 and 3. So eigenpairs are \((\lambda_1=2,\mathbf e_1)\), \((\lambda_2=3,\mathbf e_2)\).</p>
+        <div class="ex-lbl">Worked Example 1 — finding rank by elimination</div>
+        <p>Find the rank of \(A=\begin{bmatrix}1&2&3\\2&4&6\\1&1&1\end{bmatrix}\).</p>
+        <p>R2→R2−2R1 gives a zero row \((0,0,0)\) — row 2 was just twice row 1. R3→R3−R1 gives \((0,-1,-2)\), which is independent.</p>
+        <div class="eq">$$\begin{bmatrix}1&2&3\\0&0&0\\0&-1&-2\end{bmatrix}$$</div>
+        <p>Two non-zero rows remain, so \(\operatorname{rank}(A)=2\). The matrix is singular (rank &lt; 3).</p>
       </div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 2 — rank and the number of solutions</div>
+        <p>For \(\begin{bmatrix}1&1\\2&2\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}=\begin{bmatrix}2\\5\end{bmatrix}\): the coefficient matrix has rank 1 (row 2 = 2×row 1). But the augmented matrix \(\left[\begin{array}{cc|c}1&1&2\\2&2&5\end{array}\right]\) has rank 2, because \(5\neq2\times2\). Ranks differ ⇒ <strong>no solution</strong>. This is the algebra behind "parallel lines never meet."</p>
+      </div>
+
       <div class="pr">
-        <h4>Subtopic Practice (8) — Rank and Eigenvalues</h4>
+        <h4>Practice Set 5.6 (10) — Rank</h4>
         <ol>
-          <li>Rank of \(I_3\).<details><summary>Show solution</summary><div class="ans">3.</div></details></li>
-          <li>Rank of \(\begin{bmatrix}1&2\\2&4\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">1.</div></details></li>
-          <li>Characteristic equation of \(\begin{bmatrix}2&0\\0&5\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">\((2-\lambda)(5-\lambda)=0\).</div></details></li>
-          <li>Eigenvalues of previous matrix.<details><summary>Show solution</summary><div class="ans">2 and 5.</div></details></li>
-          <li>Eigenvector for \(\lambda=2\) in previous matrix.<details><summary>Show solution</summary><div class="ans">Any nonzero multiple of \((1,0)\).</div></details></li>
-          <li>Eigenvalues of \(\begin{bmatrix}1&0\\0&1\end{bmatrix}\).<details><summary>Show solution</summary><div class="ans">1, 1.</div></details></li>
-          <li>If \(\lambda=0\) is eigenvalue, \(\det(A)=?\)<details><summary>Show solution</summary><div class="ans">0.</div></details></li>
-          <li>Physical meaning of eigenvectors in systems?<details><summary>Show solution</summary><div class="ans">Natural mode directions that only scale, not rotate.</div></details></li>
+          <li>Rank of \(I_3\)?<details><summary>Show solution</summary><div class="ans">3 — every row independent.</div></details></li>
+          <li>Rank of \(\begin{bmatrix}1&2\\2&4\end{bmatrix}\)?<details><summary>Show solution</summary><div class="ans">1 (row 2 = 2×row 1).</div></details></li>
+          <li>Rank of \(\begin{bmatrix}1&0&2\\0&1&3\\0&0&0\end{bmatrix}\)?<details><summary>Show solution</summary><div class="ans">2 non-zero rows ⇒ rank 2.</div></details></li>
+          <li>Rank of \(\begin{bmatrix}1&2&3\\2&4&6\\1&1&1\end{bmatrix}\)?<details><summary>Show solution</summary><div class="ans">2 (see Worked Example 1).</div></details></li>
+          <li>What does full rank mean for a square \(n\times n\) matrix?<details><summary>Show solution</summary><div class="ans">Rank \(=n\): invertible, \(\det\neq0\), unique solution for every \(\mathbf b\).</div></details></li>
+          <li>Maximum possible rank of a \(3\times4\) matrix?<details><summary>Show solution</summary><div class="ans">At most 3 (the smaller of 3 and 4).</div></details></li>
+          <li>If \(\operatorname{rank}(A)=\operatorname{rank}([A|\mathbf b])=2\) with 3 unknowns, how many free parameters?<details><summary>Show solution</summary><div class="ans">\(3-2=1\) free parameter — infinitely many solutions.</div></details></li>
+          <li>If \(\operatorname{rank}(A)=2\) but \(\operatorname{rank}([A|\mathbf b])=3\), what can you conclude?<details><summary>Show solution</summary><div class="ans">Ranks differ ⇒ no solution.</div></details></li>
+          <li>Rank of \(\begin{bmatrix}2&4\\3&6\end{bmatrix}\)?<details><summary>Show solution</summary><div class="ans">1 (columns proportional).</div></details></li>
+          <li>How does rank relate to \(\det\) for a square matrix?<details><summary>Show solution</summary><div class="ans">Full rank ⇔ \(\det\neq0\); rank &lt; n ⇔ \(\det=0\).</div></details></li>
         </ol>
       </div>
     </section>
 
-    <section class="sec">
+    <section class="sec" id="m5">
+      <h2>5.7 The Eigenvalue Problem</h2>
+      <div class="sub">The special directions a matrix only stretches (never rotates) — central to vibrations, stability, and quantum mechanics.</div>
+      <div class="eq">$$A\mathbf v=\lambda\mathbf v,\qquad \det(A-\lambda I)=0$$</div>
+
+      <div class="lesson">
+        <h3>The big idea, in plain words</h3>
+        <p>Most vectors, when hit by a matrix \(A\), change both length <em>and</em> direction. But a few special vectors come out pointing the same way — only stretched or shrunk. Those special vectors are <strong>eigenvectors</strong>, and the stretch factor for each is its <strong>eigenvalue</strong> \(\lambda\).</p>
+        <ul>
+          <li><strong>Eigenvector \(\mathbf v\):</strong> a direction the matrix leaves unchanged (apart from scaling).</li>
+          <li><strong>Eigenvalue \(\lambda\):</strong> how much that direction is stretched (\(\lambda&gt;1\)), shrunk (\(0&lt;\lambda&lt;1\)), or flipped (\(\lambda&lt;0\)).</li>
+        </ul>
+        <p>Why care? These "natural directions" are the modes of vibration in a bridge, the growth rates in a population model, the energy levels in quantum mechanics. Find the eigenvectors and you've found the system's own natural language.</p>
+      </div>
+
+      <div class="lesson">
+        <h3>How to find them — the recipe</h3>
+        <ol style="padding-left:18px;font-size:14px;line-height:1.7">
+          <li>Form \(A-\lambda I\) (subtract \(\lambda\) from each diagonal entry).</li>
+          <li>Set \(\det(A-\lambda I)=0\). This is the <strong>characteristic equation</strong>; its roots are the eigenvalues.</li>
+          <li>For each \(\lambda\), solve \((A-\lambda I)\mathbf v=\mathbf 0\) to get the eigenvector direction.</li>
+        </ol>
+        <p>Eigenvectors are only defined up to scale — any non-zero multiple of an eigenvector is also an eigenvector, so we usually quote the simplest one.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 1 — the friendliest case (diagonal)</div>
+        <p>\(A=\begin{bmatrix}2&0\\0&3\end{bmatrix}\). The x-axis stays on the x-axis (scaled by 2); the y-axis stays put (scaled by 3). So the eigenpairs are \(\lambda_1=2\) with \(\mathbf e_1=(1,0)\), and \(\lambda_2=3\) with \(\mathbf e_2=(0,1)\). For any diagonal matrix, the eigenvalues are simply the diagonal entries.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-lbl">Worked Example 2 — a full 2×2, step by step</div>
+        <p>Find the eigenvalues and eigenvectors of \(A=\begin{bmatrix}2&1\\1&2\end{bmatrix}\).</p>
+        <p><strong>Step 1 — characteristic equation:</strong></p>
+        <div class="eq">$$\det\begin{bmatrix}2-\lambda&1\\1&2-\lambda\end{bmatrix}=(2-\lambda)^2-1=0$$</div>
+        <p><strong>Step 2 — solve:</strong> \((2-\lambda)^2=1\Rightarrow 2-\lambda=\pm1\Rightarrow\lambda=1\text{ or }\lambda=3\).</p>
+        <p><strong>Step 3 — eigenvector for \(\lambda=3\):</strong> solve \((A-3I)\mathbf v=\mathbf 0\), i.e. \(\begin{bmatrix}-1&1\\1&-1\end{bmatrix}\mathbf v=\mathbf 0\Rightarrow -v_1+v_2=0\Rightarrow v_1=v_2\). Take \(\mathbf v=(1,1)\).</p>
+        <p><strong>For \(\lambda=1\):</strong> \(\begin{bmatrix}1&1\\1&1\end{bmatrix}\mathbf v=\mathbf 0\Rightarrow v_1=-v_2\). Take \(\mathbf v=(1,-1)\). Quick check: \(A(1,1)=(3,3)=3(1,1)\) ✓.</p>
+      </div>
+
+      <div class="lesson">
+        <h3>Handy properties (great for checking your work)</h3>
+        <ul>
+          <li>Sum of eigenvalues = trace of \(A\).</li>
+          <li>Product of eigenvalues = \(\det(A)\).</li>
+          <li>If \(\lambda=0\) is an eigenvalue, then \(\det(A)=0\) — the matrix is singular.</li>
+          <li>Eigenvalues of a triangular matrix are its diagonal entries.</li>
+          <li>Eigenvalues can be complex (e.g. a rotation matrix has complex eigenvalues \(\cos\theta\pm j\sin\theta\)).</li>
+        </ul>
+        <div class="call">Check Worked Example 2: eigenvalues \(1+3=4=\operatorname{trace}\) ✓, and \(1\times3=3=\det\) ✓. These two checks catch most arithmetic slips instantly.</div>
+      </div>
+
+      <div class="pr">
+        <h4>Practice Set 5.7 (12) — Eigenvalues &amp; Eigenvectors</h4>
+        <ol>
+          <li>Characteristic equation of \(\begin{bmatrix}2&0\\0&5\end{bmatrix}\)?<details><summary>Show solution</summary><div class="ans">\((2-\lambda)(5-\lambda)=0\).</div></details></li>
+          <li>Eigenvalues of that matrix?<details><summary>Show solution</summary><div class="ans">2 and 5 (diagonal entries).</div></details></li>
+          <li>An eigenvector for \(\lambda=2\) above?<details><summary>Show solution</summary><div class="ans">Any non-zero multiple of \((1,0)\).</div></details></li>
+          <li>Eigenvalues of \(\begin{bmatrix}1&0\\0&1\end{bmatrix}\)?<details><summary>Show solution</summary><div class="ans">1 and 1 (repeated).</div></details></li>
+          <li>Eigenvalues of \(\begin{bmatrix}2&1\\1&2\end{bmatrix}\)?<details><summary>Show solution</summary><div class="ans">\((2-\lambda)^2-1=0\Rightarrow\lambda=3,1\).</div></details></li>
+          <li>An eigenvector for \(\lambda=3\) above?<details><summary>Show solution</summary><div class="ans">\((1,1)\).</div></details></li>
+          <li>Eigenvalues of \(\begin{bmatrix}4&1\\2&3\end{bmatrix}\)?<details><summary>Show solution</summary><div class="ans">\((4-\lambda)(3-\lambda)-2=\lambda^2-7\lambda+10=0\Rightarrow\lambda=5,2\).</div></details></li>
+          <li>If \(\lambda=0\) is an eigenvalue, what is \(\det(A)\)?<details><summary>Show solution</summary><div class="ans">0 — the matrix is singular.</div></details></li>
+          <li>Use trace to check: eigenvalues of \(\begin{bmatrix}3&1\\0&5\end{bmatrix}\)?<details><summary>Show solution</summary><div class="ans">Triangular ⇒ \(\lambda=3,5\); trace \(=8=3+5\) ✓.</div></details></li>
+          <li>Sum and product of eigenvalues of \(\begin{bmatrix}2&1\\1&2\end{bmatrix}\)?<details><summary>Show solution</summary><div class="ans">Sum \(=\operatorname{trace}=4\); product \(=\det=3\).</div></details></li>
+          <li>What geometric action does \(\begin{bmatrix}0&-1\\1&0\end{bmatrix}\) perform, and are its eigenvalues real?<details><summary>Show solution</summary><div class="ans">90° rotation; eigenvalues \(\pm j\) are complex (no real fixed direction).</div></details></li>
+          <li>Physical meaning of eigenvectors in a vibrating system?<details><summary>Show solution</summary><div class="ans">They are the natural modes — directions that only scale, giving natural frequencies via the eigenvalues.</div></details></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" id="solved">
       <h2>Solved Examples Bank (8)</h2>
       <div class="sub">Extra solved examples for slower revision and confidence building.</div>
       <div class="pr">
