@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Optimisation — Worked Examples &amp; Practice Set</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF8F2; --ink:#1D2233; --ink-soft:#4B5266;
+    --teal:#1B7A6B; --teal-deep:#0F5348; --amber:#C98A2B;
+    --rule:#E4DDD0; --card:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'Barlow',sans-serif; line-height:1.6; padding:0 0 80px 0;}
+  header{position:relative; padding:60px 28px 30px 28px; max-width:900px; margin:0 auto; overflow:hidden;}
+  .peak-mark{position:absolute; right:-20px; top:-20px; font-family:'Fraunces',serif; font-size:200px; font-weight:400; color:var(--teal); opacity:0.08; line-height:1; user-select:none; pointer-events:none;}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.12em; text-transform:uppercase; color:var(--teal-deep); margin-bottom:14px;}
+  h1{font-family:'Fraunces',serif; font-size:40px; font-weight:600; margin:0 0 12px 0; letter-spacing:-0.01em; max-width:620px;}
+  header p.sub{font-size:17px; color:var(--ink-soft); max-width:580px; margin:0;}
+
+  .tabs{display:flex; gap:8px; max-width:900px; margin:32px auto 0 auto; padding:0 28px; flex-wrap:wrap;}
+  .tab-btn{font-family:'JetBrains Mono',monospace; font-size:13px; padding:10px 18px; border-radius:22px; border:1px solid var(--rule); background:var(--card); color:var(--ink-soft); cursor:pointer;}
+  .tab-btn.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+
+  .panel{display:none; max-width:900px; margin:0 auto; padding:36px 28px 8px 28px;}
+  .panel.active{display:block;}
+
+  .part-label{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--amber); letter-spacing:0.08em; margin:32px 0 4px 0;}
+  .part-label:first-child{margin-top:0;}
+  h2{font-family:'Fraunces',serif; font-size:27px; font-weight:600; margin:0 0 8px 0;}
+  .intro-text{color:var(--ink-soft); max-width:660px; margin-bottom:18px;}
+
+  .concept-box{background:var(--card); border:1px solid var(--rule); border-left:4px solid var(--teal); border-radius:6px; padding:18px 22px; margin:16px 0 26px 0;}
+  .concept-box h4{margin:0 0 8px 0; font-family:'Fraunces',serif; font-size:16px; font-weight:600; color:var(--teal-deep);}
+  .concept-box p{margin:6px 0;}
+  .concept-box ol{margin:8px 0 4px 0; padding-left:22px;}
+  .concept-box li{margin:6px 0;}
+
+  .problem{background:var(--card); border:1px solid var(--rule); border-radius:8px; margin:16px 0; overflow:hidden;}
+  .problem-head{display:flex; align-items:center; justify-content:space-between; padding:14px 20px; cursor:pointer; gap:16px;}
+  .problem-head:hover{background:#F7F4EC;}
+  .problem-title{font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--ink-soft);}
+  .problem-eq{font-size:15.5px; margin-top:2px;}
+  .toggle-btn{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--teal-deep); border:1px solid var(--teal); padding:4px 11px; border-radius:16px; white-space:nowrap; background:transparent; flex-shrink:0;}
+  .problem.open .toggle-btn::after{content:"Hide";}
+  .problem:not(.open) .toggle-btn::after{content:"Show working";}
+  .problem-body{max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 20px;}
+  .problem.open .problem-body{max-height:3000px; padding:2px 20px 20px 20px; border-top:1px solid var(--rule);}
+  .step{margin:10px 0;}
+  .step .tag{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:11px; color:#fff; background:var(--teal); padding:2px 8px; border-radius:4px; margin-right:8px; vertical-align:middle;}
+  .answer{margin-top:12px; padding:10px 14px; background:#F3F9F7; border:1px solid #CFE6DF; border-radius:6px; font-weight:600;}
+  .answer .tag{background:var(--amber);}
+
+  .practice-card{background:var(--card); border:1px solid var(--rule); border-radius:8px; margin:14px 0; overflow:hidden;}
+  .practice-head{display:flex; align-items:flex-start; gap:14px; padding:16px 20px; cursor:pointer;}
+  .practice-num{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--amber); font-weight:600; flex-shrink:0; padding-top:2px;}
+  .practice-text{flex:1;}
+  .practice-cat{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;}
+  .practice-body{max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 20px;}
+  .practice-card.open .practice-body{max-height:600px; padding:0 20px 16px 56px; border-top:1px solid var(--rule);}
+  .practice-answer{margin-top:10px; padding:10px 14px; background:#FBF3E7; border:1px solid #EAD6B0; border-radius:6px; font-size:14.5px;}
+
+  footer{max-width:900px; margin:50px auto 0 auto; padding:20px 28px 0 28px; border-top:1px solid var(--rule); color:var(--ink-soft); font-size:13px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="peak-mark">&#9651;</div>
+  <div class="eyebrow">Calculus &middot; Applications of Differentiation</div>
+  <h1>Optimisation Problems</h1>
+  <p class="sub">Six fully worked examples spanning the major problem types, followed by twenty practice word problems with a hidden answer key &mdash; try each one before revealing the answer.</p>
+</header>
+
+<div style="max-width:900px; margin:0 auto; padding:0 28px;">
+  <div class="concept-box" style="margin-bottom:8px;">
+    <h4>Formulas worth knowing cold</h4>
+    <p>These are the building blocks almost every optimisation word problem is assembled from. None of them involve calculus &mdash; they're just geometry and basic relations &mdash; but you need to reach for the right one instantly to set up the objective function and constraint.</p>
+    <p><strong>Rectangles &amp; boxes</strong><br>
+    Perimeter of a rectangle: $P=2l+2w$<br>
+    Area of a rectangle: $A=lw$<br>
+    Volume of a rectangular box: $V=lwh$<br>
+    Surface area of a rectangular box: $S=2lw+2lh+2wh$</p>
+    <p><strong>Circles, semicircles &amp; cylinders</strong><br>
+    Circumference: $C=2\pi r$<br>
+    Area of a circle: $A=\pi r^2$<br>
+    Area of a semicircle: $A=\dfrac12\pi r^2$; arc length of a semicircle: $\pi r$<br>
+    Volume of a cylinder: $V=\pi r^2h$<br>
+    Total surface area of a cylinder: $S=2\pi r^2+2\pi rh$ (two circular ends $+$ the curved side)</p>
+    <p><strong>Cones &amp; spheres</strong><br>
+    Volume of a cone: $V=\dfrac13\pi r^2h$<br>
+    Volume of a sphere: $V=\dfrac43\pi r^3$<br>
+    Surface area of a sphere: $S=4\pi r^2$</p>
+    <p><strong>Triangles &amp; distances</strong><br>
+    Area of a triangle: $A=\dfrac12bh$<br>
+    Pythagorean theorem (right triangles, and any straight-line distance problem): $a^2+b^2=c^2$<br>
+    Distance between two points: $d=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$</p>
+    <p><strong>Economics quantities</strong><br>
+    Revenue: $R=pq$ (price $\times$ quantity)<br>
+    Profit: $P=R-C$ (revenue minus cost)<br>
+    Average cost: $\bar C(q)=\dfrac{C(q)}{q}$</p>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-panel="method">The Method</button>
+  <button class="tab-btn" data-panel="worked">6 Worked Examples</button>
+  <button class="tab-btn" data-panel="practice">20 Practice Problems</button>
+</div>
+
+<!-- ================= METHOD ================= -->
+<div class="panel active" id="method">
+  <h2>The general five-step method</h2>
+  <p class="intro-text">Every optimisation word problem, regardless of the setting, reduces to the same procedure. The hard part is almost always step 2 &mdash; translating words into a function &mdash; not the calculus itself.</p>
+
+  <div class="concept-box">
+    <h4>The five steps</h4>
+    <ol>
+      <li><strong>Draw a diagram and label variables.</strong> Give every changing quantity a letter. A picture makes the relationships between quantities visible.</li>
+      <li><strong>Write the objective function</strong> &mdash; the quantity you're maximising or minimising &mdash; in terms of your variables.</li>
+      <li><strong>Find a constraint equation</strong> that relates your variables (a fixed perimeter, a fixed volume, a fixed cost), and use it to eliminate all but one variable from the objective function, so you end up with a function of a single variable.</li>
+      <li><strong>Differentiate, set the derivative to zero, and solve</strong> for the critical point(s). This gives the candidate value(s) for the optimum.</li>
+      <li><strong>Verify it's actually a max or min</strong> (using the second derivative test, or by checking the sign of the first derivative either side of the critical point, or by checking endpoints of a restricted domain), then answer the original question in context &mdash; with correct units.</li>
+    </ol>
+    <p>Step 5 is easy to skip under exam pressure, but it matters: a critical point is only a candidate until you've confirmed which kind it is.</p>
+  </div>
+
+  <div class="concept-box">
+    <h4>Recognising the constraint</h4>
+    <p>Almost every optimisation problem hides its constraint in a phrase like "with 200m of fencing," "must hold 1 litre," or "costs $6/m2 to build." That phrase is the equation that lets you eliminate a variable. Find it first, before worrying about the objective function's derivative.</p>
+  </div>
+</div>
+
+<!-- ================= WORKED EXAMPLES ================= -->
+<div class="panel" id="worked">
+
+  <div class="part-label">Type 1 &middot; Fixed perimeter, maximise area</div>
+  <h2>The classic fencing problem</h2>
+  <p class="intro-text">A farmer has 200 m of fencing and wants to enclose a rectangular field. What dimensions maximise the enclosed area?</p>
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Worked Example 1</div><div class="problem-eq">maximise area given fixed perimeter</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> Let $x$ and $y$ be the side lengths of the rectangle.</div>
+      <div class="step"><span class="tag">constraint</span> Perimeter: $2x+2y=200 \Rightarrow y=100-x$</div>
+      <div class="step"><span class="tag">objective function</span> $A(x)=xy=x(100-x)=100x-x^2$, for $0 &lt; x &lt; 100$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $A'(x)=100-2x=0 \Rightarrow x=50$</div>
+      <div class="step"><span class="tag">verify</span> $A''(x)=-2&lt;0$ for all $x$, so this is a maximum (the graph of $A$ is a downward parabola).</div>
+      <div class="step"><span class="tag">answer in context</span> $y=100-50=50$. The rectangle is a $50\text{ m}\times50\text{ m}$ square.</div>
+      <div class="answer">Answer: $50\text{ m}\times50\text{ m}$ (a square), maximum area $= 2500\text{ m}^2$</div>
+    </div>
+  </div>
+
+  <div class="part-label">Type 2 &middot; One side free (river problem)</div>
+  <h2>Fencing along a straight river</h2>
+  <p class="intro-text">A rancher wants to fence a rectangular field bordering a straight river, so no fence is needed along the river side. With 300 m of fencing, what dimensions maximise the enclosed area?</p>
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Worked Example 2</div><div class="problem-eq">maximise area, one side unfenced</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> Let $x$ = the side parallel to the river, $y$ = each of the two sides perpendicular to it.</div>
+      <div class="step"><span class="tag">constraint</span> Only three sides need fencing: $x+2y=300 \Rightarrow x=300-2y$</div>
+      <div class="step"><span class="tag">objective function</span> $A(y)=xy=(300-2y)y=300y-2y^2$, for $0 &lt; y &lt; 150$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $A'(y)=300-4y=0 \Rightarrow y=75$</div>
+      <div class="step"><span class="tag">verify</span> $A''(y)=-4&lt;0$, confirming a maximum.</div>
+      <div class="step"><span class="tag">answer in context</span> $x=300-2(75)=150$.</div>
+      <div class="answer">Answer: $150\text{ m}$ (parallel to river) $\times\ 75\text{ m}$ (perpendicular), maximum area $= 11{,}250\text{ m}^2$</div>
+    </div>
+  </div>
+
+  <div class="part-label">Type 3 &middot; Minimise material (container)</div>
+  <h2>The cheapest cylindrical can</h2>
+  <p class="intro-text">A cylindrical can must hold 1000 cm&sup3; (1 litre). Find the radius and height that minimise the amount of material used (the total surface area).</p>
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Worked Example 3</div><div class="problem-eq">minimise surface area of a can</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> Let $r$ = radius, $h$ = height.</div>
+      <div class="step"><span class="tag">constraint</span> Volume: $\pi r^2 h = 1000 \Rightarrow h=\dfrac{1000}{\pi r^2}$</div>
+      <div class="step"><span class="tag">objective function</span> Surface area (top + bottom + side): $S(r)=2\pi r^2+2\pi r h = 2\pi r^2 + 2\pi r\cdot\dfrac{1000}{\pi r^2}=2\pi r^2+\dfrac{2000}{r}$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $S'(r)=4\pi r-\dfrac{2000}{r^2}=0 \Rightarrow 4\pi r^3=2000 \Rightarrow r^3=\dfrac{500}{\pi}$</div>
+      <div class="step"><span class="tag">verify</span> $S''(r)=4\pi+\dfrac{4000}{r^3}&gt;0$ always, confirming a minimum.</div>
+      <div class="step"><span class="tag">answer in context</span> $r=\left(\dfrac{500}{\pi}\right)^{1/3}\approx5.42\text{ cm}$, and $h=\dfrac{1000}{\pi r^2}\approx10.84\text{ cm}$ &mdash; notice $h\approx2r$, the classic result for a minimal-material can.</div>
+      <div class="answer">Answer: $r\approx5.42\text{ cm}$, $h\approx10.84\text{ cm}$ (height &asymp; diameter)</div>
+    </div>
+  </div>
+
+  <div class="part-label">Type 4 &middot; Maximise volume (box from a sheet)</div>
+  <h2>The open-top box</h2>
+  <p class="intro-text">A square piece of cardboard, 12 inches on each side, has equal squares of side $x$ cut from each corner. The sides are then folded up to form an open-top box. Find $x$ that maximises the box's volume.</p>
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Worked Example 4</div><div class="problem-eq">maximise volume of a folded box</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x$ = side length of the cut squares (this becomes the box's height). The base becomes $(12-2x)$ on each side.</div>
+      <div class="step"><span class="tag">constraint</span> Already built into the geometry &mdash; no separate equation needed here.</div>
+      <div class="step"><span class="tag">objective function</span> $V(x)=x(12-2x)^2 = 4x^3-48x^2+144x$, for $0&lt;x&lt;6$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $V'(x)=12x^2-96x+144=12(x^2-8x+12)=12(x-2)(x-6)=0 \Rightarrow x=2$ or $x=6$</div>
+      <div class="step"><span class="tag">verify</span> $x=6$ makes the base side zero (a degenerate box, $V=0$), so it's rejected. $V''(x)=24x-96$; at $x=2$, $V''=-48&lt;0$, confirming a maximum.</div>
+      <div class="step"><span class="tag">answer in context</span> $V(2)=2(12-4)^2=2(64)=128$</div>
+      <div class="answer">Answer: cut squares of side $x=2$ inches, maximum volume $=128\text{ in}^3$</div>
+    </div>
+  </div>
+
+  <div class="part-label">Type 5 &middot; Minimise distance</div>
+  <h2>Closest point on a curve</h2>
+  <p class="intro-text">Find the point on the parabola $y=x^2$ that is closest to the point $(0,3)$.</p>
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Worked Example 5</div><div class="problem-eq">minimise distance to a fixed point</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> Let $(x, x^2)$ be a general point on the parabola.</div>
+      <div class="step"><span class="tag">objective function</span> Minimising distance is the same as minimising distance <em>squared</em> (avoids an ugly square root): $D(x)=x^2+(x^2-3)^2 = x^4-5x^2+9$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $D'(x)=4x^3-10x=2x(2x^2-5)=0 \Rightarrow x=0$ or $x^2=\dfrac52$</div>
+      <div class="step"><span class="tag">verify</span> $D(0)=9$ (distance $=3$). $D\left(\pm\sqrt{5/2}\right)=\left(\dfrac52\right)^2-5\left(\dfrac52\right)+9=\dfrac{11}{4}=2.75$ (distance $\approx1.66$) &mdash; smaller, so $x=0$ is a local max and $x=\pm\sqrt{5/2}$ give the minimum.</div>
+      <div class="step"><span class="tag">answer in context</span> The closest points are $\left(\pm\sqrt{5/2},\ 5/2\right)$.</div>
+      <div class="answer">Answer: closest points $\left(\pm\sqrt{5/2},\dfrac52\right)\approx(\pm1.58,\ 2.5)$, minimum distance $=\dfrac{\sqrt{11}}{2}\approx1.66$</div>
+    </div>
+  </div>
+
+  <div class="part-label">Type 6 &middot; Maximise profit (economics)</div>
+  <h2>Maximising profit from a price-demand model</h2>
+  <p class="intro-text">A company's price-demand function is $p=50-0.5q$ (dollars per unit), and its cost function is $C(q)=200+10q$ (dollars). Find the production quantity $q$ that maximises profit.</p>
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Worked Example 6</div><div class="problem-eq">maximise profit $=$ revenue $-$ cost</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">objective function</span> Revenue $R(q)=pq=(50-0.5q)q=50q-0.5q^2$. Profit $P(q)=R(q)-C(q)=50q-0.5q^2-200-10q=40q-0.5q^2-200$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $P'(q)=40-q=0 \Rightarrow q=40$</div>
+      <div class="step"><span class="tag">verify</span> $P''(q)=-1&lt;0$, confirming a maximum.</div>
+      <div class="step"><span class="tag">answer in context</span> $P(40)=40(40)-0.5(1600)-200=1600-800-200=600$. Price: $p=50-0.5(40)=\$30$.</div>
+      <div class="answer">Answer: produce $q=40$ units at $\$30$ each, maximum profit $=\$600$</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ================= PRACTICE ================= -->
+<div class="panel" id="practice">
+  <h2>20 practice problems &mdash; fully worked</h2>
+  <p class="intro-text">Every problem below is worked through the same five-step rubric as the examples: variables, constraint, objective function, differentiate &amp; solve, verify. Try each one yourself first, then click to check your working.</p>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 1 &middot; Fixed perimeter</div><div class="problem-eq">Rectangular garden, perimeter 80 m &mdash; maximise area</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x,y$ = side lengths.</div>
+      <div class="step"><span class="tag">constraint</span> $2x+2y=80 \Rightarrow y=40-x$</div>
+      <div class="step"><span class="tag">objective function</span> $A(x)=x(40-x)=40x-x^2$, $0&lt;x&lt;40$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $A'(x)=40-2x=0 \Rightarrow x=20$</div>
+      <div class="step"><span class="tag">verify</span> $A''(x)=-2&lt;0$, confirming a maximum.</div>
+      <div class="answer">Answer: $20\text{ m}\times20\text{ m}$ square; maximum area $=400\text{ m}^2$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 2 &middot; Fixed area, minimise perimeter</div><div class="problem-eq">Rectangular pen, area 900 m&sup2; &mdash; minimise fencing</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x,y$ = side lengths.</div>
+      <div class="step"><span class="tag">constraint</span> $xy=900 \Rightarrow y=\dfrac{900}{x}$</div>
+      <div class="step"><span class="tag">objective function</span> $P(x)=2x+2y=2x+\dfrac{1800}{x}$, $x&gt;0$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $P'(x)=2-\dfrac{1800}{x^2}=0 \Rightarrow x^2=900 \Rightarrow x=30$</div>
+      <div class="step"><span class="tag">verify</span> $P''(x)=\dfrac{3600}{x^3}&gt;0$ for $x&gt;0$, confirming a minimum.</div>
+      <div class="answer">Answer: $30\text{ m}\times30\text{ m}$ square; minimum perimeter $=120\text{ m}$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 3 &middot; River fencing</div><div class="problem-eq">400 m fencing, one side unfenced &mdash; maximise area</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x$ = side parallel to the river, $y$ = each perpendicular side.</div>
+      <div class="step"><span class="tag">constraint</span> $x+2y=400 \Rightarrow x=400-2y$</div>
+      <div class="step"><span class="tag">objective function</span> $A(y)=(400-2y)y=400y-2y^2$, $0&lt;y&lt;200$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $A'(y)=400-4y=0 \Rightarrow y=100$</div>
+      <div class="step"><span class="tag">verify</span> $A''(y)=-4&lt;0$, confirming a maximum.</div>
+      <div class="answer">Answer: $200\text{ m}$ (parallel to river) $\times100\text{ m}$; maximum area $=20{,}000\text{ m}^2$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 4 &middot; Divided pen</div><div class="problem-eq">600 m fencing, corral split into two equal pens &mdash; maximise area</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x$ = length of each of the two outer long sides, $y$ = length of each of the three cross-pieces (two ends plus one internal divider).</div>
+      <div class="step"><span class="tag">constraint</span> $2x+3y=600 \Rightarrow x=\dfrac{600-3y}{2}$</div>
+      <div class="step"><span class="tag">objective function</span> $A(y)=xy=\dfrac{(600-3y)y}{2}=300y-1.5y^2$, $0&lt;y&lt;200$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $A'(y)=300-3y=0 \Rightarrow y=100$</div>
+      <div class="step"><span class="tag">verify</span> $A''(y)=-3&lt;0$, confirming a maximum.</div>
+      <div class="step"><span class="tag">answer in context</span> $x=\dfrac{600-300}{2}=150$</div>
+      <div class="answer">Answer: outer sides $150\text{ m}$, cross-pieces $100\text{ m}$ each; maximum area $=15{,}000\text{ m}^2$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 5 &middot; Box, open top</div><div class="problem-eq">Square base, volume 32,000 cm&sup3; &mdash; minimise surface area</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x$ = base side, $h$ = height.</div>
+      <div class="step"><span class="tag">constraint</span> $x^2h=32000 \Rightarrow h=\dfrac{32000}{x^2}$</div>
+      <div class="step"><span class="tag">objective function</span> Base $+$ four sides, no top: $S(x)=x^2+4xh=x^2+\dfrac{128000}{x}$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $S'(x)=2x-\dfrac{128000}{x^2}=0 \Rightarrow x^3=64000 \Rightarrow x=40$</div>
+      <div class="step"><span class="tag">verify</span> $S''(x)=2+\dfrac{256000}{x^3}&gt;0$, confirming a minimum.</div>
+      <div class="step"><span class="tag">answer in context</span> $h=\dfrac{32000}{1600}=20$</div>
+      <div class="answer">Answer: base $40\text{ cm}\times40\text{ cm}$, height $20\text{ cm}$; minimum surface area $=4800\text{ cm}^2$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 6 &middot; Can, mixed material cost</div><div class="problem-eq">Volume 500 cm&sup3;, top/bottom 2&cent;/cm&sup2;, side 1&cent;/cm&sup2; &mdash; minimise cost</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $r$ = radius, $h$ = height.</div>
+      <div class="step"><span class="tag">constraint</span> $\pi r^2h=500 \Rightarrow h=\dfrac{500}{\pi r^2}$</div>
+      <div class="step"><span class="tag">objective function</span> Top $+$ bottom cost $4\pi r^2$ (two circles at 2&cent; each); the side costs $2\pi rh$ (at 1&cent;): $C(r)=4\pi r^2+2\pi rh=4\pi r^2+\dfrac{1000}{r}$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $C'(r)=8\pi r-\dfrac{1000}{r^2}=0 \Rightarrow r^3=\dfrac{1000}{8\pi}=\dfrac{125}{\pi} \Rightarrow r=\left(\dfrac{125}{\pi}\right)^{1/3}$</div>
+      <div class="step"><span class="tag">verify</span> $C''(r)=8\pi+\dfrac{2000}{r^3}&gt;0$, confirming a minimum.</div>
+      <div class="step"><span class="tag">answer in context</span> $r\approx3.415\text{ cm}$, $h=\dfrac{500}{\pi r^2}\approx13.65\text{ cm}$</div>
+      <div class="answer">Answer: $r\approx3.42\text{ cm}$, $h\approx13.65\text{ cm}$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 7 &middot; Closest point, line</div><div class="problem-eq">Closest point on $y=2x+1$ to $(4,2)$</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> A general point on the line: $(x,\ 2x+1)$.</div>
+      <div class="step"><span class="tag">objective function</span> Minimise distance squared: $D(x)=(x-4)^2+(2x+1-2)^2=(x-4)^2+(2x-1)^2=5x^2-12x+17$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $D'(x)=10x-12=0 \Rightarrow x=1.2$</div>
+      <div class="step"><span class="tag">verify</span> $D''(x)=10&gt;0$, confirming a minimum.</div>
+      <div class="step"><span class="tag">answer in context</span> $y=2(1.2)+1=3.4$; minimum distance $=\sqrt{D(1.2)}=\sqrt{9.8}\approx3.13$</div>
+      <div class="answer">Answer: point $(1.2,\ 3.4)$; minimum distance $\approx3.13$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 8 &middot; Norman window</div><div class="problem-eq">Rectangle $+$ semicircle, perimeter 20 ft &mdash; maximise area</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x$ = width of the window (the semicircle's diameter), $h$ = height of the rectangular part. Radius $r=x/2$.</div>
+      <div class="step"><span class="tag">constraint</span> Perimeter $=$ two vertical sides $+$ base... but the base is covered by the semicircle's diameter, so only the straight bottom is not included &mdash; actually the perimeter here is the two vertical sides, the bottom, and the curved arc: $x+2h+\pi r = x+2h+\dfrac{\pi x}{2}=20 \Rightarrow h=10-\dfrac{x}{2}-\dfrac{\pi x}{4}$</div>
+      <div class="step"><span class="tag">objective function</span> $A(x)=xh+\dfrac12\pi r^2 = xh+\dfrac{\pi x^2}{8} = 10x-\dfrac{x^2}{2}-\dfrac{\pi x^2}{4}+\dfrac{\pi x^2}{8}=10x-\dfrac{x^2}{2}-\dfrac{\pi x^2}{8}$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $A'(x)=10-x-\dfrac{\pi x}{4}=0 \Rightarrow x\left(1+\dfrac{\pi}{4}\right)=10 \Rightarrow x=\dfrac{40}{4+\pi}$</div>
+      <div class="step"><span class="tag">verify</span> $A''(x)=-1-\dfrac{\pi}{4}&lt;0$, confirming a maximum.</div>
+      <div class="step"><span class="tag">answer in context</span> $x\approx5.60\text{ ft}$, $h\approx2.80\text{ ft}$ &mdash; note $h$ equals the radius $r\approx2.80\text{ ft}$.</div>
+      <div class="answer">Answer: width $\approx5.60\text{ ft}$, rectangle height $\approx2.80\text{ ft}$ (equal to the radius)</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 9 &middot; Cone in a sphere</div><div class="problem-eq">Cone inscribed in a sphere of radius 6 &mdash; maximise volume</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $h$ = height of the cone (measured from the sphere's lowest point), $r$ = base radius of the cone, $R=6$ = sphere radius.</div>
+      <div class="step"><span class="tag">constraint</span> Placing the sphere's centre at the origin, a cross-section at height $h$ above the bottom of the sphere gives $r^2=R^2-(h-R)^2=h(2R-h)$</div>
+      <div class="step"><span class="tag">objective function</span> $V(h)=\dfrac13\pi r^2h=\dfrac13\pi h^2(2R-h)=\dfrac13\pi(2Rh^2-h^3)$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $V'(h)=\dfrac13\pi(4Rh-3h^2)=0 \Rightarrow h(4R-3h)=0 \Rightarrow h=\dfrac{4R}{3}$ (rejecting $h=0$)</div>
+      <div class="step"><span class="tag">verify</span> $V''(h)=\dfrac13\pi(4R-6h)$; at $h=\frac{4R}{3}$, this is $\dfrac13\pi(4R-8R)=-\dfrac{4\pi R}{3}&lt;0$, confirming a maximum.</div>
+      <div class="step"><span class="tag">answer in context</span> With $R=6$: $h=8$; $r^2=8(12-8)=32 \Rightarrow r=4\sqrt2$; $V=\dfrac13\pi(32)(8)=\dfrac{256\pi}{3}$</div>
+      <div class="answer">Answer: height $=8$, radius $=4\sqrt2\approx5.66$; maximum volume $=\dfrac{256\pi}{3}\approx268.1$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 10 &middot; Cylinder in a sphere</div><div class="problem-eq">Cylinder inscribed in a sphere of radius 5 &mdash; maximise volume</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $h$ = half the cylinder's height, $r$ = cylinder's radius, $R=5$ = sphere radius.</div>
+      <div class="step"><span class="tag">constraint</span> The half-height, radius, and sphere radius form a right triangle: $r^2+h^2=R^2 \Rightarrow r^2=R^2-h^2$</div>
+      <div class="step"><span class="tag">objective function</span> Total cylinder height is $2h$: $V(h)=\pi r^2(2h)=2\pi h(R^2-h^2)=2\pi(R^2h-h^3)$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $V'(h)=2\pi(R^2-3h^2)=0 \Rightarrow h^2=\dfrac{R^2}{3} \Rightarrow h=\dfrac{R}{\sqrt3}$</div>
+      <div class="step"><span class="tag">verify</span> $V''(h)=-12\pi h&lt;0$ for $h&gt;0$, confirming a maximum.</div>
+      <div class="step"><span class="tag">answer in context</span> With $R=5$: $h=\dfrac{5}{\sqrt3}$, total height $=\dfrac{10}{\sqrt3}\approx5.77$; $r^2=25-\dfrac{25}{3}=\dfrac{50}{3} \Rightarrow r\approx4.08$; $V\approx302.3$</div>
+      <div class="answer">Answer: total height $\approx5.77$, radius $\approx4.08$; maximum volume $\approx302.3$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 11 &middot; Rectangle under a parabola</div><div class="problem-eq">Rectangle inscribed under $y=9-x^2$ &mdash; maximise area</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> Let the rectangle's top-right corner be $(x, 9-x^2)$, so the full width is $2x$ and the height is $9-x^2$.</div>
+      <div class="step"><span class="tag">objective function</span> $A(x)=2x(9-x^2)=18x-2x^3$, $0&lt;x&lt;3$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $A'(x)=18-6x^2=0 \Rightarrow x^2=3 \Rightarrow x=\sqrt3$</div>
+      <div class="step"><span class="tag">verify</span> $A''(x)=-12x&lt;0$ for $x&gt;0$, confirming a maximum.</div>
+      <div class="step"><span class="tag">answer in context</span> Width $=2\sqrt3$, height $=9-3=6$; area $=2\sqrt3\times6=12\sqrt3$</div>
+      <div class="answer">Answer: width $=2\sqrt3\approx3.46$, height $=6$; maximum area $=12\sqrt3\approx20.78$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 12 &middot; Rectangle in a semicircle</div><div class="problem-eq">Rectangle inscribed in a semicircle of radius 4 &mdash; maximise area</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> Let the rectangle's top-right corner sit on the circle: $(x,y)$ with $x^2+y^2=16$, so $y=\sqrt{16-x^2}$. Full width $=2x$, height $=y$.</div>
+      <div class="step"><span class="tag">objective function</span> $A(x)=2x\sqrt{16-x^2}$. It's easier to maximise $A^2$: $A(x)^2=4x^2(16-x^2)=64x^2-4x^4$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $\dfrac{d}{dx}(A^2)=128x-16x^3=16x(8-x^2)=0 \Rightarrow x^2=8 \Rightarrow x=2\sqrt2$ (taking the positive root)</div>
+      <div class="step"><span class="tag">verify</span> $A^2$ rises from 0 then falls back to 0 as $x$ ranges over $(0,4)$, so this interior critical point is the maximum.</div>
+      <div class="step"><span class="tag">answer in context</span> $y=\sqrt{16-8}=2\sqrt2$; width $=4\sqrt2$, height $=2\sqrt2$; area $=2(2\sqrt2)(2\sqrt2)=16$</div>
+      <div class="answer">Answer: width $=4\sqrt2\approx5.66$, height $=2\sqrt2\approx2.83$; maximum area $=16$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 13 &middot; Fixed product, minimise sum</div><div class="problem-eq">Two positive numbers, product 100 &mdash; minimise their sum</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x,y$ = the two numbers.</div>
+      <div class="step"><span class="tag">constraint</span> $xy=100 \Rightarrow y=\dfrac{100}{x}$</div>
+      <div class="step"><span class="tag">objective function</span> $S(x)=x+\dfrac{100}{x}$, $x&gt;0$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $S'(x)=1-\dfrac{100}{x^2}=0 \Rightarrow x^2=100 \Rightarrow x=10$</div>
+      <div class="step"><span class="tag">verify</span> $S''(x)=\dfrac{200}{x^3}&gt;0$ for $x&gt;0$, confirming a minimum.</div>
+      <div class="step"><span class="tag">answer in context</span> $y=\dfrac{100}{10}=10$</div>
+      <div class="answer">Answer: both numbers equal $10$; minimum sum $=20$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 14 &middot; Ladder around a corner</div><div class="problem-eq">Hallways 8 ft and 6 ft wide &mdash; longest ladder that fits around the corner</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $\theta$ = the angle the ladder makes with the narrower hallway's wall. A ladder touching the inner corner and both outer walls has length $L(\theta)=\dfrac{8}{\sin\theta}+\dfrac{6}{\cos\theta}$.</div>
+      <div class="step"><span class="tag">the twist</span> We're not minimising or maximising a single ladder's fit &mdash; we need the <em>shortest</em> ladder length $L(\theta)$ that still touches both walls at every angle, since that shortest value is the longest ladder guaranteed to clear the corner at all orientations.</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $L'(\theta)=-\dfrac{8\cos\theta}{\sin^2\theta}+\dfrac{6\sin\theta}{\cos^2\theta}=0 \Rightarrow 6\sin^3\theta=8\cos^3\theta \Rightarrow \tan^3\theta=\dfrac43 \Rightarrow \tan\theta=\left(\dfrac43\right)^{1/3}$</div>
+      <div class="step"><span class="tag">verify</span> $L(\theta)\to\infty$ as $\theta\to0^+$ or $\theta\to(\pi/2)^-$, so this interior critical point must be the minimum of $L$.</div>
+      <div class="step"><span class="tag">answer in context</span> $\theta\approx47.74^\circ$, giving $\sin\theta\approx0.741$, $\cos\theta\approx0.672$, so $L\approx\dfrac{8}{0.741}+\dfrac{6}{0.672}\approx19.73$</div>
+      <div class="answer">Answer: longest ladder $\approx19.73\text{ ft}$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 15 &middot; Underwater cable</div><div class="problem-eq">Island 3 km offshore, plant 8 km along shore &mdash; minimise cable cost</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x$ = distance along the shore from the point closest to the island, to where the cable comes ashore ($0\le x\le8$).</div>
+      <div class="step"><span class="tag">objective function</span> Underwater distance $=\sqrt{9+x^2}$ (by Pythagoras); land distance $=8-x$. $C(x)=6000\sqrt{9+x^2}+4000(8-x)$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $C'(x)=\dfrac{6000x}{\sqrt{9+x^2}}-4000=0 \Rightarrow \dfrac{x}{\sqrt{9+x^2}}=\dfrac23 \Rightarrow 9x^2=4(9+x^2) \Rightarrow x^2=7.2 \Rightarrow x=\sqrt{7.2}$</div>
+      <div class="step"><span class="tag">verify</span> $C''(x)=\dfrac{6000\cdot9}{(9+x^2)^{3/2}}&gt;0$, confirming a minimum, and $x\approx2.68$ lies inside the valid range $[0,8]$.</div>
+      <div class="answer">Answer: bring the cable ashore $x=\sqrt{7.2}\approx2.68\text{ km}$ from the closest point to the island</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 16 &middot; Revenue maximisation</div><div class="problem-eq">Demand $p=100-2q$ &mdash; maximise revenue</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">objective function</span> $R(q)=pq=(100-2q)q=100q-2q^2$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $R'(q)=100-4q=0 \Rightarrow q=25$</div>
+      <div class="step"><span class="tag">verify</span> $R''(q)=-4&lt;0$, confirming a maximum.</div>
+      <div class="step"><span class="tag">answer in context</span> $p=100-2(25)=50$; $R=25\times50=1250$</div>
+      <div class="answer">Answer: $q=25$ units, price $=\$50$; maximum revenue $=\$1250$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 17 &middot; Minimise average cost</div><div class="problem-eq">$C(q)=0.01q^2+5q+900$ &mdash; minimise average cost</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">objective function</span> $\bar C(q)=\dfrac{C(q)}{q}=0.01q+5+\dfrac{900}{q}$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $\bar C'(q)=0.01-\dfrac{900}{q^2}=0 \Rightarrow q^2=90000 \Rightarrow q=300$</div>
+      <div class="step"><span class="tag">verify</span> $\bar C''(q)=\dfrac{1800}{q^3}&gt;0$ for $q&gt;0$, confirming a minimum.</div>
+      <div class="step"><span class="tag">answer in context</span> $\bar C(300)=3+5+3=11$</div>
+      <div class="answer">Answer: $q=300$ units; minimum average cost $=\$11$ per unit</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 18 &middot; Mixed-cost fencing</div><div class="problem-eq">Area 1200 m&sup2;, two fence prices &mdash; minimise cost</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x$ = length of each of the two sides fenced at \$10/m, $y$ = length of each of the two sides fenced at \$15/m.</div>
+      <div class="step"><span class="tag">constraint</span> $xy=1200 \Rightarrow y=\dfrac{1200}{x}$</div>
+      <div class="step"><span class="tag">objective function</span> $C(x)=2(10)x+2(15)y=20x+30\left(\dfrac{1200}{x}\right)=20x+\dfrac{36000}{x}$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $C'(x)=20-\dfrac{36000}{x^2}=0 \Rightarrow x^2=1800 \Rightarrow x=30\sqrt2\approx42.43$</div>
+      <div class="step"><span class="tag">verify</span> $C''(x)=\dfrac{72000}{x^3}&gt;0$, confirming a minimum.</div>
+      <div class="step"><span class="tag">answer in context</span> $y=\dfrac{1200}{42.43}\approx28.28$; $C\approx20(42.43)+30(28.28)\approx848.6+848.5\approx1697$</div>
+      <div class="answer">Answer: sides $\approx42.43\text{ m}$ (cheaper fencing) and $\approx28.28\text{ m}$ (pricier fencing); minimum cost $\approx\$1697$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 19 &middot; Poster margins</div><div class="problem-eq">Printed area 384 cm&sup2;, fixed margins &mdash; minimise total paper</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x,y$ = printed width and height.</div>
+      <div class="step"><span class="tag">constraint</span> $xy=384 \Rightarrow y=\dfrac{384}{x}$</div>
+      <div class="step"><span class="tag">objective function</span> Total poster width $=x+4$ (2 cm each side), total height $=y+6$ (3 cm top and bottom): $A(x)=(x+4)\left(\dfrac{384}{x}+6\right)=6x+\dfrac{1536}{x}+408$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $A'(x)=6-\dfrac{1536}{x^2}=0 \Rightarrow x^2=256 \Rightarrow x=16$</div>
+      <div class="step"><span class="tag">verify</span> $A''(x)=\dfrac{3072}{x^3}&gt;0$, confirming a minimum.</div>
+      <div class="step"><span class="tag">answer in context</span> $y=\dfrac{384}{16}=24$; total poster $=(16+4)\times(24+6)=20\times30$</div>
+      <div class="answer">Answer: printed area $16\text{ cm}\times24\text{ cm}$; total poster $20\text{ cm}\times30\text{ cm}$</div>
+    </div>
+  </div>
+
+  <div class="problem" onclick="this.classList.toggle('open')">
+    <div class="problem-head"><div><div class="problem-title">Practice 20 &middot; Box, mixed material cost</div><div class="problem-eq">Square base, volume 4 m&sup3;, two material costs &mdash; minimise cost</div></div><div class="toggle-btn"></div></div>
+    <div class="problem-body">
+      <div class="step"><span class="tag">variables</span> $x$ = base side, $h$ = height.</div>
+      <div class="step"><span class="tag">constraint</span> $x^2h=4 \Rightarrow h=\dfrac{4}{x^2}$</div>
+      <div class="step"><span class="tag">objective function</span> Base costs \$5/m&sup2;, the four sides cost \$3/m&sup2;: $C(x)=5x^2+4xh(3)=5x^2+12xh=5x^2+\dfrac{48}{x}$</div>
+      <div class="step"><span class="tag">differentiate &amp; solve</span> $C'(x)=10x-\dfrac{48}{x^2}=0 \Rightarrow x^3=4.8 \Rightarrow x=(4.8)^{1/3}\approx1.687$</div>
+      <div class="step"><span class="tag">verify</span> $C''(x)=10+\dfrac{96}{x^3}&gt;0$, confirming a minimum.</div>
+      <div class="step"><span class="tag">answer in context</span> $h=\dfrac{4}{1.687^2}\approx1.405$; $C\approx5(2.847)+\dfrac{48}{1.687}\approx14.24+28.45\approx42.68$</div>
+      <div class="answer">Answer: base side $\approx1.69\text{ m}$, height $\approx1.41\text{ m}$; minimum cost $\approx\$42.68$</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>Optimisation problems &middot; five-step method applied across 26 problems &middot; click any card to expand.</footer>
+
+<script>
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left:"$$", right:"$$", display:true},
+      {left:"$", right:"$", display:false}
+    ]
+  });
+
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.panel).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
