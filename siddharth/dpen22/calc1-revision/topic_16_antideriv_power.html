@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Antiderivatives — Power Rule Reversal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Antiderivatives — Power Rule Reversal</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["BASIC", "Find \\(\\int x^6\\,dx\\).", "Reverse power rule. Answer: \\(\\dfrac{x^7}{7}+C\\)"], ["MULTI-TERM", "Find \\(\\int(5x^4-3x^2+2)\\,dx\\).", "Term by term. Answer: \\(x^5-x^3+2x+C\\)"], ["REWRITE RADICAL", "Find \\(\\int\\sqrt{x}\\,dx\\).", "Rewrite as \\(x^{1/2}\\). Answer: \\(\\dfrac23x^{3/2}+C\\)"], ["REWRITE RECIPROCAL", "Find \\(\\int\\dfrac{4}{x^3}\\,dx\\) by rewriting as a power of \\(x\\).", "Rewrite as \\(4x^{-3}\\). Answer: \\(-2x^{-2}+C=-2/x^2+C\\)"], ["ERROR ANALYSIS", "A student integrates \\(\\int x^{-1}dx\\) using the power rule, writing \\(x^0/0+C\\). Explain the error and give the correct answer.", "The power rule breaks down at \\(n=-1\\) (division by zero); the correct antiderivative is \\(\\ln|x|+C\\)."], ["CONCEPTUAL", "Explain why the reverse power rule adds 1 to the exponent then divides, rather than the reverse order.", "Since integration undoes differentiation, and differentiating subtracts 1 from the exponent, integrating must add 1 to identify the exponent that would have produced the given power, then divide by that same new exponent to compensate for the coefficient differentiation would have introduced."]], [["BASIC", "Find \\(\\int 3x^8\\,dx\\).", "Reverse power rule. Answer: \\(\\dfrac{x^9}{3}+C\\)"], ["MULTI-TERM", "Find \\(\\int(x^3-4x+7)\\,dx\\).", "Term by term. Answer: \\(\\dfrac{x^4}{4}-2x^2+7x+C\\)"], ["REWRITE RADICAL", "Find \\(\\int\\sqrt[3]{x}\\,dx\\).", "Rewrite as \\(x^{1/3}\\). Answer: \\(\\dfrac34x^{4/3}+C\\)"], ["REWRITE RECIPROCAL", "Find \\(\\int\\dfrac{1}{3x^2}\\,dx\\) by rewriting as a power of \\(x\\).", "Rewrite as \\(\\tfrac13x^{-2}\\). Answer: \\(-\\dfrac{1}{3x}+C\\)"], ["ERROR ANALYSIS", "A student integrates \\(\\int x^{1/2}dx\\) and writes \\(\\tfrac12x^{-1/2}+C\\), subtracting from the exponent instead of adding. Correct it.", "Correct answer: \\(\\dfrac23x^{3/2}+C\\)"], ["CONCEPTUAL", "Explain why you must add 1 to the exponent \\emph{before} dividing by the new exponent, rather than dividing by the old one.", "Reversing differentiation exactly requires identifying the exponent that, after differentiating, would produce the given power; adding 1 first finds that new exponent, and dividing by that same new value correctly compensates for the coefficient differentiation would have introduced there."]], [["BASIC", "Find \\(\\int(-2x^{-4})\\,dx\\).", "Reverse power rule. Answer: \\(\\dfrac23x^{-3}+C\\)"], ["MULTI-TERM", "Find \\(\\int(6x^5-10x^3+2x)\\,dx\\).", "Term by term. Answer: \\(x^6-\\dfrac52x^4+x^2+C\\)"], ["REWRITE RADICAL", "Find \\(\\int\\dfrac{1}{\\sqrt{x}}\\,dx\\).", "Rewrite as \\(x^{-1/2}\\). Answer: \\(2\\sqrt{x}+C\\)"], ["REWRITE RECIPROCAL", "Find \\(\\int\\dfrac{5}{x^4}\\,dx\\) by rewriting as a power of \\(x\\).", "Rewrite as \\(5x^{-4}\\). Answer: \\(-\\dfrac53x^{-3}+C\\)"], ["ERROR ANALYSIS", "A student wonders whether \\(\\int1\\,dx=x+C\\) really follows the same power rule (as \\(x^0\\)), or is a separate special case. Clarify.", "It follows the same rule: \\(\\int x^0dx=x^{1}/1=x+C\\) \u2014 the formula applies consistently at \\(n=0\\); it's only \\(n=-1\\) that breaks the pattern (not \\(n=0\\))."], ["CONCEPTUAL", "Explain why the power rule for integration fails specifically at \\(n=-1\\), connecting it to the derivative of \\(\\ln|x|\\).", "Dividing by \\((n+1)\\) is undefined when \\(n=-1\\) (since \\(n+1=0\\)); at exactly this exponent, a genuinely different function, \\(\\ln|x|\\), is needed instead, since \\(d/dx[\\ln|x|]=1/x=x^{-1}\\)."]], [["BASIC", "Find \\(\\int 7x^{-2}\\,dx\\).", "Reverse power rule. Answer: \\(-7x^{-1}+C=-7/x+C\\)"], ["MULTI-TERM", "Find \\(\\int(x^4+x^3-x^2+x-1)\\,dx\\).", "Term by term. Answer: \\(\\dfrac{x^5}{5}+\\dfrac{x^4}{4}-\\dfrac{x^3}{3}+\\dfrac{x^2}{2}-x+C\\)"], ["REWRITE RADICAL", "Find \\(\\int x\\sqrt{x}\\,dx\\).", "Rewrite as \\(x^{3/2}\\). Answer: \\(\\dfrac25x^{5/2}+C\\)"], ["REWRITE RECIPROCAL", "Find \\(\\int\\dfrac{2}{5x^3}\\,dx\\) by rewriting as a power of \\(x\\).", "Rewrite as \\(\\tfrac25x^{-3}\\). Answer: \\(-\\dfrac{1}{5x^2}+C\\)"], ["ERROR ANALYSIS", "A student computes \\(\\int x^{2/3}dx\\) and writes \\(\\tfrac23x^{-1/3}+C\\), subtracting instead of adding. Correct it.", "Correct answer: \\(\\dfrac35x^{5/3}+C\\)"], ["CONCEPTUAL", "How can you verify any power-rule antiderivative is correct without redoing the integration?", "Differentiate the proposed antiderivative and check that it reproduces the original integrand exactly \u2014 a quick, reliable check regardless of how the antiderivative was found."]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

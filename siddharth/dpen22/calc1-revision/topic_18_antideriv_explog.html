@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Antiderivatives — Exponential &amp; Log</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Antiderivatives — Exponential &amp; Log</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["BASIC", "Find \\(\\int e^x\\,dx\\).", "Standard antiderivative. Answer: \\(e^x+C\\)"], ["BASIC", "Find \\(\\int\\dfrac1x\\,dx\\).", "Standard antiderivative. Answer: \\(\\ln|x|+C\\)"], ["MULTI-TERM", "Find \\(\\int\\left(3e^x-\\dfrac2x\\right)dx\\).", "Term by term. Answer: \\(3e^x-2\\ln|x|+C\\)"], ["ERROR ANALYSIS", "A student integrates \\(\\int e^x dx\\) and writes \\(e^x/x+C\\), confusing it with the power rule pattern. Correct it.", "No division needed: correct answer is simply \\(e^x+C\\), since \\(e^x\\) is its own antiderivative."], ["CONCEPTUAL", "Explain why \\(e^x\\) is the unique elementary function that is its own antiderivative.", "Since \\(d/dx[e^x]=e^x\\) exactly, integrating \\(e^x\\) simply reverses that same relationship, returning \\(e^x\\) (plus a constant) \u2014 no other elementary function reproduces itself this way under both operations."], ["APPLIED", "A radioactive sample's mass loss rate is \\(D(t)=-5e^{-0.1t}\\) per year. If \\(M(0)=100\\), find \\(M(t)\\).", "\\(M(t)=50e^{-0.1t}+C\\); \\(M(0)=50+C=100\\Rightarrow C=50\\). Answer: \\(M(t)=50e^{-0.1t}+50\\)"]], [["BASIC", "Find \\(\\int2^x\\,dx\\).", "Exponential-base rule. Answer: \\(\\dfrac{2^x}{\\ln2}+C\\)"], ["BASIC", "Find \\(\\int\\dfrac{5}{x}\\,dx\\).", "Constant multiple. Answer: \\(5\\ln|x|+C\\)"], ["MULTI-TERM", "Find \\(\\int\\left(e^x+\\dfrac4x\\right)dx\\).", "Term by term. Answer: \\(e^x+4\\ln|x|+C\\)"], ["ERROR ANALYSIS", "A student integrates \\(\\int3^xdx\\) and writes \\(3^x+C\\), forgetting the \\(\\ln3\\) divisor. Correct it.", "Correct answer: \\(\\dfrac{3^x}{\\ln3}+C\\)"], ["CONCEPTUAL", "Explain why \\(\\int a^x\\,dx=a^x/\\ln(a)+C\\) requires dividing by \\(\\ln(a)\\).", "Since \\(d/dx[a^x]=a^x\\ln a\\), integrating \\(a^x\\) must reverse that multiplication by dividing by \\(\\ln a\\) to recover \\(a^x\\) alone."], ["APPLIED", "An investment grows at rate \\(V'(t)=100e^{0.05t}\\) dollars/year. If \\(V(0)=2000\\), find \\(V(t)\\).", "\\(V(t)=2000e^{0.05t}+C\\); \\(V(0)=2000+C=2000\\Rightarrow C=0\\). Answer: \\(V(t)=2000e^{0.05t}\\)"]], [["BASIC", "Find \\(\\int e^{-x}\\,dx\\) (careful with the sign).", "Reverse chain rule. Answer: \\(-e^{-x}+C\\)"], ["BASIC", "Find \\(\\int\\dfrac{1}{2x}\\,dx\\).", "Constant multiple. Answer: \\(\\tfrac12\\ln|x|+C\\)"], ["MULTI-TERM", "Find \\(\\int\\left(e^{-x}-\\dfrac1x\\right)dx\\).", "Term by term. Answer: \\(-e^{-x}-\\ln|x|+C\\)"], ["ERROR ANALYSIS", "A student integrates \\(\\int e^{-x}dx\\) and writes \\(e^{-x}+C\\), missing the sign flip from reversing the chain rule. Correct it.", "Correct answer: \\(-e^{-x}+C\\)"], ["CONCEPTUAL", "Explain why \\(\\int1/x\\,dx\\) needs an absolute value (\\(\\ln|x|\\)) while \\(\\int e^x\\,dx\\) does not.", "\\(\\ln x\\) is only defined for \\(x>0\\), but \\(1/x\\) is defined for both positive and negative \\(x\\); \\(\\ln|x|\\) extends the antiderivative to work for negative \\(x\\) too, since its derivative is \\(1/x\\) for all \\(x\\ne0\\). \\(e^x\\) has no such domain restriction."], ["APPLIED", "A cooling coffee cup loses heat at rate \\(H'(t)=-8e^{-0.2t}\\) degrees/min. If \\(H(0)=90\\), find \\(H(t)\\).", "\\(H(t)=40e^{-0.2t}+C\\); \\(H(0)=40+C=90\\Rightarrow C=50\\). Answer: \\(H(t)=40e^{-0.2t}+50\\)"]], [["BASIC", "Find \\(\\int e^5\\,dx\\) (note \\(e^5\\) is a constant, not a function of \\(x\\)).", "Integrate a constant. Answer: \\(e^5x+C\\)"], ["BASIC", "Find \\(\\int\\dfrac{7}{x}\\,dx\\).", "Constant multiple. Answer: \\(7\\ln|x|+C\\)"], ["MULTI-TERM", "Find \\(\\int\\left(2e^x-\\dfrac3x+1\\right)dx\\).", "Term by term. Answer: \\(2e^x-3\\ln|x|+x+C\\)"], ["ERROR ANALYSIS", "A student integrating \\(\\int(1/x^2)dx\\) mistakenly applies the log rule (thinking any '1 over something' needs a log), writing \\(\\ln|x^2|+C\\). Correct it.", "The log rule applies specifically when the exponent is \\(-1\\); here the exponent is \\(-2\\), so the reverse power rule applies instead: \\(\\int x^{-2}dx=-1/x+C\\)."], ["CONCEPTUAL", "Explain why checking 'is the exponent exactly \\(-1\\)?' is the key test for choosing the power rule vs. the log rule.", "The reverse power rule breaks down exactly at \\(n=-1\\) (division by zero); that specific exponent is the only case requiring the log rule instead, so checking the exponent's value first avoids applying the wrong formula."], ["APPLIED", "A bacteria colony grows at rate \\(g(t)=6e^{0.3t}\\), starting with 50 bacteria. Find \\(N(t)\\).", "\\(N(t)=20e^{0.3t}+C\\); \\(N(0)=20+C=50\\Rightarrow C=30\\). Answer: \\(N(t)=20e^{0.3t}+30\\)"]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Net Signed Area vs. Total Area</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Net Signed Area vs. Total Area</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["BASIC DISTINGUISHING", "Evaluate \\(\\int_0^{2\\pi}\\sin(x)\\,dx\\) and explain why it's zero despite the curve visually enclosing area.", "The integral gives \\(0\\), since the positive area from \\(0\\) to \\(\\pi\\) exactly cancels the negative contribution from \\(\\pi\\) to \\(2\\pi\\) in the net signed sum \u2014 even though the curve visually encloses nonzero regions on each side."], ["COMPUTE TOTAL AREA", "Find the total (unsigned) area enclosed by \\(y=\\sin(x)\\) and the x-axis over \\([0,2\\pi]\\).", "Split at \\(\\pi\\): total area \\(=\\int_0^\\pi\\sin x\\,dx+\\left|\\int_\\pi^{2\\pi}\\sin x\\,dx\\right|=2+2\\). Answer: \\(4\\)"], ["BASIC DISTINGUISHING", "Evaluate \\(\\int_{-2}^{2}x^3\\,dx\\) and explain the result using odd-function symmetry.", "The integral is \\(0\\), since \\(x^3\\) is odd and the interval is symmetric about \\(0\\), so positive and negative contributions cancel exactly."], ["ERROR ANALYSIS", "A student is asked for the area between \\(y=x^2-4\\) and the x-axis on \\([-3,3]\\), but computes \\(\\int_{-3}^3(x^2-4)dx\\) directly, undercounting the true area. Explain the fix.", "Since \\(x^2-4\\) is negative between \\(x=-2\\) and \\(2\\), that portion contributes negatively, partially cancelling the outer positive regions; the fix is to split at the roots \\(x=\\pm2\\), take the absolute value of the negative middle piece, and add all three pieces together."], ["CONCEPTUAL", "Explain the general rule for converting a net signed area calculation into a total (unsigned) area calculation.", "Identify all zeros of the function within the interval; split the integral into pieces between consecutive zeros; evaluate each piece; take the absolute value of any negative pieces; and sum all the resulting non-negative values."], ["APPLIED", "A company's daily profit rate is \\(P(t)=100-20t\\) over a 10-day period (turns negative after day 5). Find both the net signed total profit and the total magnitude of money moved.", "Net: \\(\\int_0^{10}(100-20t)dt=0\\). Split at \\(t=5\\): gain \\(=250\\), loss magnitude \\(=250\\). Total magnitude \\(=500\\)"]], [["BASIC DISTINGUISHING", "Evaluate \\(\\int_{-1}^{1}(x^3-x)\\,dx\\) and explain the zero result.", "\\(x^3-x\\) is odd, so integrating over the symmetric interval \\([-1,1]\\) gives exactly \\(0\\), regardless of how the curve bends above and below the axis."], ["COMPUTE TOTAL AREA", "Find the total (unsigned) area between \\(y=x^3-x\\) and the x-axis on \\([-1,1]\\).", "The curve crosses zero at \\(x=-1,0,1\\); by symmetry, total area \\(=2\\int_0^1(x-x^3)dx=2(1/4)\\). Answer: \\(1/2\\)"], ["BASIC DISTINGUISHING", "Evaluate \\(\\int_0^4(x-2)\\,dx\\) and explain why the result is small despite the function being negative for half the interval.", "The result is \\(0\\) \u2014 the negative triangular region on \\((0,2)\\) exactly cancels the positive triangular region on \\((2,4)\\) in the net signed sum, since the function is symmetric about the midpoint \\(x=2\\)."], ["ERROR ANALYSIS", "A student computes the 'area under \\(y=\\cos(x)\\) from \\(0\\) to \\(3\\pi/2\\)' as \\([\\sin x]_0^{3\\pi/2}=-1\\), reporting a negative area. What went wrong?", "A physical area can't be negative; the negative sign indicates the net signed integral, not the total area. To find the actual area, split at \\(x=\\pi/2\\) (where cosine changes sign) and add the absolute values of each piece."], ["CONCEPTUAL", "Explain why geometric 'area' is always non-negative, while a definite integral can be negative \u2014 and why both are useful.", "Geometric area measures physical space and can't logically be negative; a definite integral is a signed accumulation reflecting direction (above/below the axis), useful for tracking net change (like net displacement or profit) even though the underlying regions are unambiguously positive in size."], ["APPLIED", "A vehicle's velocity is \\(v(t)=t^2-4t\\) m/s over \\([0,5]\\) (negative for part of the interval). Find both the net displacement and total distance travelled.", "Net: \\(\\int_0^5(t^2-4t)dt=-25/3\\). \\(v(t)=0\\) at \\(t=0,4\\); total distance \\(=|{-}32/3|+|7/3|=32/3+7/3\\). Answer: \\(13\\)m"]], [["BASIC DISTINGUISHING", "Evaluate \\(\\int_{-3}^{3}x\\,dx\\) and explain the zero result geometrically.", "\\(x\\) is odd, so the positive triangle above the axis on \\((0,3)\\) exactly mirrors the negative triangle below the axis on \\((-3,0)\\), cancelling in the net signed sum."], ["COMPUTE TOTAL AREA", "Find the total (unsigned) area between \\(y=x\\) and the x-axis on \\([-3,3]\\).", "Two mirrored triangles, each of area \\(4.5\\). Answer: \\(9\\)"], ["BASIC DISTINGUISHING", "Evaluate \\(\\int_1^{-1}\\sin(x)\\,dx\\) (reversed limits) and interpret the sign.", "Reversing the limits flips the sign of the ordinary integral: \\(\\int_1^{-1}\\sin x\\,dx=-\\int_{-1}^1\\sin x\\,dx\\), which is \\(0\\) here since \\(\\sin x\\) is odd \u2014 but in general, reversed limits always negate the standard-order result."], ["ERROR ANALYSIS", "A student computing 'the total area enclosed by \\(y=4-x^2\\) and the x-axis' integrates from \\(-3\\) to \\(3\\) instead of finding the curve's actual roots first. What's the correct first step?", "The correct bounds are the curve's actual roots (\\(4-x^2=0\\Rightarrow x=\\pm2\\)), not an arbitrary chosen interval; integrating over the wrong bounds includes or excludes regions that don't belong to the intended enclosed area."], ["CONCEPTUAL", "Explain how 'total area' relates to combining separately-signed net integrals over sub-regions.", "On a sub-interval where the function is entirely positive, its net signed integral already equals the true area of that piece; where entirely negative, the net signed integral is the negative of the true area, so taking its absolute value recovers that piece \u2014 total area is the sum of these individually-corrected pieces."], ["APPLIED", "A satellite's altitude change rate is \\(r(t)=50\\sin(t)\\) km/hr over \\([0,2\\pi]\\). Find both the net altitude change and the total vertical distance moved.", "Net: \\(\\int_0^{2\\pi}50\\sin(t)dt=0\\). Split at \\(\\pi\\): each half contributes \\(100\\)km. Total: \\(200\\)km"]], [["BASIC DISTINGUISHING", "Evaluate \\(\\int_{-\\pi}^{\\pi}\\cos(x)\\,dx\\) and explain the result.", "\\(\\int_{-\\pi}^\\pi\\cos x\\,dx=[\\sin x]_{-\\pi}^\\pi=0-0=0\\); this happens because \\(\\sin(\\pm\\pi)=0\\), not because \\(\\cos x\\) is odd (it's actually even) \u2014 a different structural reason than the sine case."], ["COMPUTE TOTAL AREA", "Find the total (unsigned) area between \\(y=\\cos(x)\\) and the x-axis on \\([-\\pi,\\pi]\\).", "By even symmetry, total area \\(=2\\int_0^\\pi|\\cos x|\\,dx\\), splitting at \\(\\pi/2\\) where cosine changes sign. Answer: \\(4\\)"], ["BASIC DISTINGUISHING", "Evaluate \\(\\int_0^4(x-1)(x-3)\\,dx\\) after finding where the integrand changes sign.", "Roots at \\(x=1,3\\); positive on \\((0,1)\\), negative on \\((1,3)\\), positive on \\((3,4)\\) \u2014 the net signed integral reflects cancellation between these regions and generally won't equal the true enclosed area unless the pieces happen to balance."], ["ERROR ANALYSIS", "A student finds the 'area of the region bounded by \\(y=x^2-9\\) and the x-axis' and reports a negative number since the curve dips below the axis. Explain why this can't be a valid final answer.", "Area, by definition, is non-negative; a negative result signals the net signed integral (where the region below the axis contributes negatively), not the true area \u2014 the fix is to take the absolute value, since the enclosed region here is entirely below the axis."], ["CONCEPTUAL", "Summarise the key decision: when does a problem want 'net signed area' versus 'total/enclosed area'?", "Problems about net change (net displacement, net profit) want the signed integral as computed; problems asking for 'area' in the geometric sense always want a non-negative answer, requiring splitting at sign changes and taking absolute values of negative pieces."], ["APPLIED", "A company's monthly net cash flow is \\(f(t)=300-50t\\) (thousand dollars/month) over 10 months (turns negative after month 6). Find both the net cash flow and the total magnitude of money moved.", "Net: \\(\\int_0^{10}(300-50t)dt=500\\). Split at \\(t=6\\): inflow \\(=900\\), outflow magnitude \\(=400\\). Total magnitude: \\(1300\\)"]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

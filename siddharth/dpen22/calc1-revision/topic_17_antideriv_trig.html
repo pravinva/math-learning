@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Antiderivatives — Trig Functions</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Antiderivatives — Trig Functions</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["BASIC", "Find \\(\\int\\cos(x)\\,dx\\).", "Standard antiderivative. Answer: \\(\\sin x+C\\)"], ["BASIC", "Find \\(\\int\\sec^2(x)\\,dx\\).", "Standard antiderivative. Answer: \\(\\tan x+C\\)"], ["MULTI-TERM", "Find \\(\\int(3\\sin x-2\\cos x)\\,dx\\).", "Term by term. Answer: \\(-3\\cos x-2\\sin x+C\\)"], ["ERROR ANALYSIS", "A student integrates \\(\\int\\sin(x)dx\\) and writes \\(\\cos(x)+C\\), missing a sign. Correct it.", "Correct answer: \\(-\\cos x+C\\)"], ["CONCEPTUAL", "Why does integrating \\(\\cos x\\) give \\(+\\sin x\\), but integrating \\(\\sin x\\) gives \\(-\\cos x\\)?", "\\(d/dx[\\sin x]=\\cos x\\) directly (no sign change); but \\(d/dx[\\cos x]=-\\sin x\\) (a sign change), so reversing that relationship to integrate \\(\\sin x\\) must reintroduce a negative sign, giving \\(-\\cos x+C\\)."], ["APPLIED", "A wheel's angular velocity is \\(\\omega(t)=\\cos(t)\\). Find \\(\\theta(t)\\) if \\(\\theta(0)=0\\).", "\\(\\theta(t)=\\sin(t)+C\\); \\(\\theta(0)=C=0\\). Answer: \\(\\theta(t)=\\sin(t)\\)"]], [["BASIC", "Find \\(\\int\\csc^2(x)\\,dx\\).", "Standard antiderivative. Answer: \\(-\\cot x+C\\)"], ["BASIC", "Find \\(\\int\\sec(x)\\tan(x)\\,dx\\).", "Standard antiderivative. Answer: \\(\\sec x+C\\)"], ["MULTI-TERM", "Find \\(\\int(\\sec^2x-\\csc^2x)\\,dx\\).", "Term by term. Answer: \\(\\tan x+\\cot x+C\\)"], ["ERROR ANALYSIS", "A student integrates \\(\\int\\csc(x)\\cot(x)dx\\) and writes \\(\\csc(x)+C\\), missing a sign. Correct it.", "Correct answer: \\(-\\csc x+C\\)"], ["CONCEPTUAL", "List the four 'reciprocal-type' trig antiderivatives (\\(\\sec\\tan\\), \\(\\csc\\cot\\), \\(\\sec^2\\), \\(\\csc^2\\)) and explain the sign pattern.", "\\(\\int\\sec x\\tan x\\,dx=\\sec x+C\\) (positive); \\(\\int\\csc x\\cot x\\,dx=-\\csc x+C\\) (negative); \\(\\int\\sec^2x\\,dx=\\tan x+C\\) (positive); \\(\\int\\csc^2x\\,dx=-\\cot x+C\\) (negative) \u2014 the 'co-' functions consistently pick up a negative sign, mirroring their derivatives."], ["APPLIED", "A pendulum's angular acceleration is \\(\\alpha(t)=\\sec^2(t)\\) near \\(t=0\\). If \\(\\omega(0)=1\\), find \\(\\omega(t)\\).", "\\(\\omega(t)=\\tan(t)+C\\); \\(\\omega(0)=C=1\\). Answer: \\(\\omega(t)=\\tan(t)+1\\)"]], [["BASIC", "Find \\(\\int4\\cos(x)\\,dx\\).", "Constant multiple. Answer: \\(4\\sin x+C\\)"], ["BASIC", "Find \\(\\int\\tfrac12\\sec^2(x)\\,dx\\).", "Constant multiple. Answer: \\(\\tfrac12\\tan x+C\\)"], ["MULTI-TERM", "Find \\(\\int(\\sin x+\\sec x\\tan x)\\,dx\\).", "Term by term. Answer: \\(-\\cos x+\\sec x+C\\)"], ["ERROR ANALYSIS", "A student, not yet knowing substitution, assumes \\(\\int\\tan(x)dx=\\sec^2(x)+C\\) (confusing it with the derivative of \\(\\tan x\\)). Explain why this is wrong.", "\\(\\int\\tan x\\,dx\\) isn't a basic reverse-derivative case; it requires rewriting \\(\\tan x=\\sin x/\\cos x\\) and substitution, giving \\(-\\ln|\\cos x|+C\\) \u2014 a technique beyond simple reverse differentiation."], ["CONCEPTUAL", "Explain why memorising all six trig derivatives effectively hands you six antiderivative rules for free.", "Since integration is the inverse of differentiation, every known derivative rule \\(d/dx[F(x)]=f(x)\\) can be read backwards as \\(\\int f(x)dx=F(x)+C\\); the six trig derivative rules directly hand over six standard antiderivatives without further work."], ["APPLIED", "A boat's heading changes at rate \\(h'(t)=-\\sin(t)\\) rad/hr. If \\(h(0)=\\pi/2\\), find \\(h(t)\\).", "\\(h(t)=\\cos(t)+C\\); \\(h(0)=1+C=\\pi/2\\Rightarrow C=\\pi/2-1\\). Answer: \\(h(t)=\\cos(t)+\\pi/2-1\\)"]], [["BASIC", "Find \\(\\int(-3\\sec^2x)\\,dx\\).", "Constant multiple. Answer: \\(-3\\tan x+C\\)"], ["BASIC", "Find \\(\\int2\\csc(x)\\cot(x)\\,dx\\).", "Constant multiple. Answer: \\(-2\\csc x+C\\)"], ["MULTI-TERM", "Find \\(\\int(\\cos x-\\csc^2x)\\,dx\\).", "Term by term. Answer: \\(\\sin x+\\cot x+C\\)"], ["ERROR ANALYSIS", "A student integrates \\(\\int(\\sin x+\\cos x)dx\\) and writes \\(\\cos x+\\sin x+C\\), matching each term to the wrong partner function. Correct it.", "\\(\\int\\sin x\\,dx=-\\cos x\\) (not \\(+\\cos x\\)); correct combined answer: \\(-\\cos x+\\sin x+C\\)"], ["CONCEPTUAL", "Explain why \\(\\sin\\) and \\(\\cos\\) antidifferentiate into each other directly, while \\(\\sec,\\csc,\\tan,\\cot\\) come in matched reciprocal pairs.", "\\(\\sin\\) and \\(\\cos\\) are 'primary' functions whose antiderivatives are simply the other primary function (with one sign flip); \\(\\sec,\\csc,\\tan,\\cot\\) arise from products appearing in each other's derivatives, which is why their antiderivatives come in the reciprocal-pair pattern seen above."], ["APPLIED", "A speaker diaphragm's displacement rate is \\(v(t)=\\sec(t)\\tan(t)\\) mm/ms. If \\(d(0)=2\\)mm, find \\(d(t)\\).", "\\(d(t)=\\sec(t)+C\\); \\(d(0)=1+C=2\\Rightarrow C=1\\). Answer: \\(d(t)=\\sec(t)+1\\)"]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

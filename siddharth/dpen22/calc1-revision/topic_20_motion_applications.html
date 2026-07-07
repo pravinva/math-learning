@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Motion Applications (Position, Velocity, Acceleration)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Motion Applications (Position, Velocity, Acceleration)</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["BASIC", "Given \\(a(t)=6t\\) and \\(v(0)=4\\), find \\(v(t)\\).", "Integrate and apply the initial condition. Answer: \\(v(t)=3t^2+4\\)"], ["BASIC", "Given \\(v(t)=3t^2+4\\) (from above) and \\(s(0)=0\\), find \\(s(t)\\).", "Integrate and apply the initial condition. Answer: \\(s(t)=t^3+4t\\)"], ["TWO-STEP", "An object has \\(a(t)=-9.8\\) m/s\\(^2\\), \\(v(0)=20\\), \\(s(0)=0\\). Find \\(s(t)\\) and the time it reaches maximum height.", "\\(v(t)=-9.8t+20\\); \\(s(t)=-4.9t^2+20t\\). Max height when \\(v=0\\): \\(t=20/9.8\\approx2.04\\)s"], ["ERROR ANALYSIS", "A student integrates \\(a(t)\\) to get \\(v(t)\\) but never resolves the '+C' using the initial condition. Why does this matter physically?", "Without pinning down \\(C\\), the velocity function represents an entire family of possible motions rather than the one matching the problem's actual starting conditions \u2014 the constant must be solved for to get a unique, physically meaningful answer."], ["CONCEPTUAL", "Explain the chain of relationships between acceleration, velocity, and position via integration.", "Acceleration is the derivative of velocity, which is the derivative of position; integrating acceleration (with an initial velocity) gives velocity, and integrating velocity (with an initial position) gives position \u2014 integration and differentiation move in opposite directions along this chain."], ["APPLIED", "A ball is thrown upward with \\(a(t)=-10\\) m/s\\(^2\\), \\(v(0)=15\\), \\(s(0)=2\\)m. Find the ball's height at its peak.", "\\(v(t)=-10t+15=0\\Rightarrow t=1.5\\)s. \\(s(t)=-5t^2+15t+2\\); \\(s(1.5)=13.25\\)m"]], [["BASIC", "Given \\(a(t)=12t-4\\) and \\(v(0)=5\\), find \\(v(t)\\).", "Integrate and apply the initial condition. Answer: \\(v(t)=6t^2-4t+5\\)"], ["BASIC", "Given \\(v(t)=6t^2-4t+5\\) and \\(s(0)=1\\), find \\(s(t)\\).", "Integrate and apply the initial condition. Answer: \\(s(t)=2t^3-2t^2+5t+1\\)"], ["TWO-STEP", "A car decelerates at \\(a(t)=-4\\) m/s\\(^2\\) from an initial speed of 24 m/s. Find the time and distance it takes to stop.", "\\(v(t)=-4t+24=0\\Rightarrow t=6\\)s. \\(s(t)=-2t^2+24t\\); \\(s(6)=72\\)m"], ["ERROR ANALYSIS", "A student, finding \\(s(t)\\) from \\(v(t)\\), reuses the constant \\(C\\) found earlier for \\(v(t)\\) instead of solving for a new one using \\(s(0)\\). Explain the mistake.", "Each integration step introduces its own independent constant; the constant found using \\(v(0)\\) has no bearing on the new constant needed for \\(s(t)\\), which must be solved separately using the given value of \\(s(0)\\)."], ["CONCEPTUAL", "Explain why, for 'time to stop' problems, setting \\(v(t)=0\\) is the correct first step before finding position.", "The object is momentarily at rest exactly when velocity is zero; finding this time first identifies precisely when to evaluate the position function, since 'distance travelled until stopping' only makes sense up to that time."], ["APPLIED", "A rocket has \\(a(t)=20\\) m/s\\(^2\\) for the first 5 seconds, starting from rest at ground level. Find its velocity and height at \\(t=5\\)s.", "\\(v(t)=20t\\), \\(v(5)=100\\) m/s. \\(s(t)=10t^2\\), \\(s(5)=250\\)m"]], [["BASIC", "Given \\(a(t)=-2\\) and \\(v(0)=10\\), find \\(v(t)\\).", "Integrate and apply the initial condition. Answer: \\(v(t)=-2t+10\\)"], ["BASIC", "Given \\(v(t)=-2t+10\\) and \\(s(0)=3\\), find \\(s(t)\\).", "Integrate and apply the initial condition. Answer: \\(s(t)=-t^2+10t+3\\)"], ["TWO-STEP", "A particle's acceleration is \\(a(t)=6t-6\\), with \\(v(1)=0\\) (note: not \\(v(0)\\)). Find \\(v(t)\\).", "\\(v(t)=3t^2-6t+C\\); \\(v(1)=3-6+C=0\\Rightarrow C=3\\). Answer: \\(v(t)=3t^2-6t+3\\)"], ["ERROR ANALYSIS", "Given \\(v(2)=5\\) (not \\(v(0)=5\\)), a student still substitutes \\(t=0\\) into the antiderivative to solve for \\(C\\). Explain the correct approach.", "The constant must be solved for using the actual given condition \u2014 substitute \\(t=2\\) into the general antiderivative, set it equal to \\(5\\), and solve for \\(C\\) from that equation, not from \\(t=0\\)."], ["CONCEPTUAL", "Explain why an initial condition might be given at a time other than \\(t=0\\), and how this changes the process.", "The condition simply anchors the antiderivative to a known value at any specific stated time \u2014 it doesn't have to be \\(t=0\\); the process is identical, just substitute whichever \\(t\\)-value is given and solve for \\(C\\) using the corresponding known output."], ["APPLIED", "A diver's velocity while descending is \\(v(t)=-3t-2\\) m/s, with \\(s(0)=0\\). Find the diver's depth after 4 seconds.", "\\(s(t)=-1.5t^2-2t\\); \\(s(4)=-32\\)m, i.e. \\(32\\)m below the surface"]], [["BASIC", "Given \\(a(t)=e^t\\) and \\(v(0)=1\\), find \\(v(t)\\).", "Integrate and apply the initial condition. Answer: \\(v(t)=e^t\\)"], ["BASIC", "Given \\(v(t)=e^t\\) and \\(s(0)=2\\), find \\(s(t)\\).", "Integrate and apply the initial condition. Answer: \\(s(t)=e^t+1\\)"], ["TWO-STEP", "A projectile has \\(a(t)=-9.8\\), \\(v(0)=0\\), \\(s(0)=100\\)m. Find when it hits the ground.", "\\(s(t)=-4.9t^2+100=0\\Rightarrow t^2=100/4.9\\). Answer: \\(t\\approx4.52\\)s"], ["ERROR ANALYSIS", "A student finds total distance travelled by simply computing \\(s(t_2)-s(t_1)\\), even though the particle's velocity changes sign partway through. Explain the mistake.", "\\(s(t_2)-s(t_1)\\) only gives net displacement, which can understate the actual total distance if the particle reverses direction; the correct total distance requires splitting at the time(s) where \\(v(t)=0\\) and summing the absolute values of displacement over each sub-interval."], ["CONCEPTUAL", "Explain the difference between 'displacement' and 'total distance travelled' when velocity changes sign.", "Displacement is the net change in position, which can partially cancel if the particle moves backward and forward; total distance adds up all movement regardless of direction, requiring the interval to be split at sign changes in velocity."], ["APPLIED", "A yo-yo's vertical velocity is \\(v(t)=5-10t\\) cm/s (positive = upward) over \\([0,1]\\)s, with \\(s(0)=0\\). Find both the net displacement and total distance travelled.", "\\(s(t)=5t-5t^2\\); net displacement \\(s(1)-s(0)=0\\). \\(v(t)=0\\) at \\(t=0.5\\)s; total distance \\(=|s(0.5)-s(0)|+|s(1)-s(0.5)|=1.25+1.25\\). Answer: \\(2.5\\)cm"]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>
