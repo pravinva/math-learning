@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Derivative from First Principles</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Derivative from First Principles</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["DIRECT APPLICATION", "Using \\(f'(x)=\\lim_{h\\to0}\\dfrac{f(x+h)-f(x)}{h}\\), find \\(f'(x)\\) for \\(f(x)=x^2+3x\\).", "Expand \\(f(x+h)-f(x)=2xh+h^2+3h\\), divide by \\(h\\), let \\(h\\to0\\). Answer: \\(2x+3\\)"], ["DIRECT APPLICATION", "Find \\(f'(x)\\) for \\(f(x)=1/x\\) using the definition.", "\\(\\dfrac{1/(x+h)-1/x}{h}=\\dfrac{-1}{x(x+h)}\\to-1/x^2\\). Answer: \\(-1/x^2\\)"], ["CONCEPTUAL", "Explain geometrically what the difference quotient \\([f(x+h)-f(x)]/h\\) represents.", "It's the slope of the secant line through \\((x,f(x))\\) and \\((x+h,f(x+h))\\); as \\(h\\to0\\) that secant slope approaches the slope of the tangent line."], ["SPECIFIC POINT", "Use the definition to find \\(f'(2)\\) for \\(f(x)=x^3\\).", "\\(\\lim_{h\\to0}\\dfrac{(2+h)^3-8}{h}=\\lim_{h\\to0}(12+6h+h^2)\\). Answer: \\(12\\)"], ["NON-DIFFERENTIABLE CHECK", "Use the definition to investigate whether \\(f(x)=|x|\\) is differentiable at \\(x=0\\) by computing one-sided difference quotients.", "Left: \\(\\lim_{h\\to0^-}|h|/h=-1\\). Right: \\(\\lim_{h\\to0^+}|h|/h=1\\). They disagree. Answer: not differentiable at \\(0\\)"], ["DEFINITION VARIANT", "Using \\(f'(a)=\\lim_{x\\to a}\\dfrac{f(x)-f(a)}{x-a}\\), find \\(f'(4)\\) for \\(f(x)=\\sqrt{x}\\).", "\\(\\lim_{x\\to4}\\dfrac{\\sqrt x-2}{x-4}\\), rationalise. Answer: \\(1/4\\)"]], [["DIRECT APPLICATION", "Find \\(f'(x)\\) for \\(f(x)=5x-7\\) using the definition.", "Difference quotient is constantly \\(5\\). Answer: \\(5\\)"], ["DIRECT APPLICATION", "Find \\(f'(x)\\) for \\(f(x)=x^2-4x+1\\) using the definition.", "Expand and simplify the quotient to \\(2x-4+h\\), let \\(h\\to0\\). Answer: \\(2x-4\\)"], ["CONCEPTUAL", "Why must the difference quotient be simplified algebraically before letting \\(h\\to0\\), rather than substituting \\(h=0\\) directly?", "Direct substitution gives the indeterminate form \\(0/0\\); simplifying (expanding, factoring, or rationalising) cancels the common factor of \\(h\\) so the limit can actually be evaluated."], ["SPECIFIC POINT", "Use the definition to find \\(f'(1)\\) for \\(f(x)=1/(x+1)\\).", "\\(\\lim_{h\\to0}\\dfrac{1/(2+h)-1/2}{h}=\\lim_{h\\to0}\\dfrac{-1}{2(2+h)}\\). Answer: \\(-1/4\\)"], ["NON-DIFFERENTIABLE CHECK", "Use the definition to show \\(f(x)=x^{1/3}\\) is not differentiable at \\(x=0\\).", "\\(\\lim_{h\\to0}\\dfrac{h^{1/3}}{h}=\\lim_{h\\to0}h^{-2/3}\\to\\infty\\). Answer: derivative does not exist (vertical tangent)"], ["DEFINITION VARIANT", "Using \\(f'(a)=\\lim_{x\\to a}\\dfrac{f(x)-f(a)}{x-a}\\), find \\(f'(0)\\) for \\(f(x)=\\sin x\\) (recall \\(\\lim_{x\\to0}\\sin x/x=1\\)).", "\\(\\lim_{x\\to0}\\dfrac{\\sin x-0}{x-0}\\). Answer: \\(1\\)"]], [["DIRECT APPLICATION", "Find \\(f'(x)\\) for \\(f(x)=1/x^2\\) using the definition.", "Combine fractions, simplify, cancel \\(h\\). Answer: \\(-2/x^3\\)"], ["DIRECT APPLICATION", "Find \\(f'(x)\\) for \\(f(x)=\\sqrt{x+1}\\) using the definition (rationalise).", "Multiply the quotient by the conjugate to remove the square roots from the numerator. Answer: \\(\\dfrac{1}{2\\sqrt{x+1}}\\)"], ["CONCEPTUAL", "A student writes \\(f'(x)=[f(x+h)-f(x)]/h\\) without ever taking a limit. What does this expression actually represent, and what's missing?", "Without the limit, it's just the average rate of change (secant slope) over an interval of length \\(h\\) \u2014 not the instantaneous rate. The limit \\(h\\to0\\) is essential to obtain the derivative."], ["SPECIFIC POINT", "Use the definition to find \\(f'(3)\\) for \\(f(x)=x^2-2x\\).", "\\(f(3+h)-f(3)=4h+h^2\\); divide by \\(h\\), let \\(h\\to0\\). Answer: \\(4\\)"], ["NON-DIFFERENTIABLE CHECK", "Investigate differentiability at \\(x=1\\) for \\(f(x)=x^2\\) (\\(x\\le1\\)) and \\(f(x)=2x-1\\) (\\(x>1\\)), using one-sided derivatives.", "Left derivative of \\(x^2\\) at \\(1\\) is \\(2\\); right derivative of \\(2x-1\\) is \\(2\\). They agree. Answer: differentiable, \\(f'(1)=2\\)"], ["DEFINITION VARIANT", "Use \\(f'(a)=\\lim_{x\\to a}\\dfrac{f(x)-f(a)}{x-a}\\) to find \\(f'(2)\\) for \\(f(x)=1/x\\).", "\\(\\lim_{x\\to2}\\dfrac{1/x-1/2}{x-2}=\\lim_{x\\to2}\\dfrac{-1}{2x}\\). Answer: \\(-1/4\\)"]], [["DIRECT APPLICATION", "Find \\(f'(x)\\) for the general quadratic \\(f(x)=ax^2+bx+c\\) using the definition.", "Expand and simplify the difference quotient, letting \\(h\\to0\\). Answer: \\(2ax+b\\)"], ["DIRECT APPLICATION", "Find \\(f'(x)\\) for \\(f(x)=x^3-x\\) using the definition.", "Expand \\((x+h)^3-(x+h)-(x^3-x)\\), divide by \\(h\\), simplify. Answer: \\(3x^2-1\\)"], ["CONCEPTUAL", "Explain why requiring the two-sided limit in the derivative's definition guarantees a unique tangent slope (when it exists).", "The definition requires the left-hand and right-hand difference quotients to agree; if they do, that single common value is the instantaneous rate of change, independent of the direction of approach."], ["SPECIFIC POINT", "Use the definition to find \\(f'(0)\\) for \\(f(x)=\\cos x\\) (recall \\(\\lim_{h\\to0}(\\cos h-1)/h=0\\)).", "\\(\\lim_{h\\to0}\\dfrac{\\cos h-1}{h}\\). Answer: \\(0\\)"], ["NON-DIFFERENTIABLE CHECK", "Show, using the definition, that \\(f(x)=x^{2/3}\\) is not differentiable at \\(x=0\\).", "\\(\\lim_{h\\to0}\\dfrac{h^{2/3}}{h}=\\lim_{h\\to0}h^{-1/3}\\), which blows up (and has different signs from each side). Answer: derivative does not exist"], ["DEFINITION VARIANT", "Use \\(f'(a)=\\lim_{x\\to a}\\dfrac{f(x)-f(a)}{x-a}\\) to find \\(f'(\\pi/6)\\) for \\(f(x)=\\sin x\\).", "This limit is exactly the definition of \\(\\cos(\\pi/6)\\). Answer: \\(\\sqrt3/2\\)"]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

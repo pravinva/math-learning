@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Optimisation Problems</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Optimisation Problems</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["CLASSIC BOX PROBLEM", "An open-top box is formed from a 20cm\u00d720cm sheet by cutting squares of side \\(x\\) from each corner and folding up the sides. Find \\(x\\) that maximises volume.", "\\(V(x)=x(20-2x)^2\\); \\(V'(x)=(20-2x)(20-6x)=0\\). The valid solution (excluding zero volume) is Answer: \\(x=10/3\\) cm"], ["FENCING PROBLEM", "A farmer has 200m of fencing for a rectangular field with one side against a river (no fence needed there). Find the dimensions maximising area.", "Let \\(x\\) be the side parallel to the river; \\(x+2y=200\\Rightarrow x=200-2y\\). \\(A=xy=200y-2y^2\\), \\(A'=200-4y=0\\Rightarrow y=50\\), \\(x=100\\). Answer: \\(100\\text{m}\\times50\\text{m}\\)"], ["MINIMISE MATERIAL", "A cylindrical can must hold \\(500\\)cm\\(^3\\). Find the radius minimising surface area.", "\\(h=500/(\\pi r^2)\\), \\(S=2\\pi r^2+1000/r\\). \\(S'=4\\pi r-1000/r^2=0\\Rightarrow r^3=250/\\pi\\). Answer: \\(r=\\sqrt[3]{250/\\pi}\\)"], ["ERROR ANALYSIS", "A student solves an optimisation problem but never checks whether the critical point lies within the physically valid domain (e.g. a negative length). Why is this check essential?", "Physical quantities like lengths, radii, or quantities produced must be non-negative (or otherwise restricted); a mathematically valid critical point outside that range isn't a valid solution to the real-world problem, even if it solves the unconstrained equation."], ["CONCEPTUAL", "Outline the general steps for solving an applied optimisation problem.", "(1) Identify the quantity to optimise and write it as a function of one variable, using any given constraint to eliminate extra variables; (2) find critical points by differentiating and setting the derivative to zero; (3) confirm the point is a max or min (via the first or second derivative test); (4) check it lies in the valid domain, and interpret the result in context."], ["APPLIED", "A factory's hourly cost is \\(C(x)=200/x+0.5x\\) for \\(x\\) workers (\\(x>0\\)). Find the number of workers minimising cost.", "\\(C'(x)=-200/x^2+0.5=0\\Rightarrow x^2=400\\). Answer: \\(x=20\\) workers"]], [["DISTANCE MINIMISATION", "Find the point on the line \\(y=2x+1\\) closest to the origin.", "Minimise \\(D^2=x^2+(2x+1)^2\\); derivative \\(10x+4=0\\Rightarrow x=-2/5\\). Answer: \\((-2/5,\\,1/5)\\)"], ["FENCING WITH A DIVIDER", "A rectangular garden is split into two equal parts by an internal fence parallel to one side, using 300m of fencing total. Maximise the enclosed area.", "With \\(2y+3x=300\\Rightarrow y=(300-3x)/2\\), area \\(A=150x-1.5x^2\\); \\(A'=150-3x=0\\Rightarrow x=50\\), \\(y=75\\). Answer: \\(x=50\\)m, \\(y=75\\)m"], ["MINIMISE SURFACE AREA", "An open-top box with a square base must have volume 32 m\\(^3\\). Minimise its surface area.", "\\(h=32/x^2\\), \\(S=x^2+128/x\\); \\(S'=2x-128/x^2=0\\Rightarrow x^3=64\\). Answer: \\(x=4\\)m, \\(h=2\\)m"], ["ERROR ANALYSIS", "A student finds a critical point in an optimisation problem but never verifies (via the first or second derivative test) whether it's actually a minimum or maximum. What's the risk of skipping this?", "The critical point could correspond to a local maximum, a saddle-like point, or the wrong type of extremum entirely; without verification, the reported 'solution' might not actually solve the intended optimisation problem."], ["CONCEPTUAL", "Explain why, in constrained optimisation problems (fixed volume, fixed perimeter, etc.), we use the constraint to eliminate a variable before differentiating.", "Differentiation requires a function of a single variable; the constraint expresses one variable in terms of the other(s), letting us substitute and reduce the objective to one variable so ordinary single-variable calculus techniques can be applied."], ["APPLIED", "A company's profit is \\(P(x)=-0.01x^2+50x-2000\\). Find the production level maximising profit.", "\\(P'(x)=-0.02x+50=0\\). Answer: \\(x=2500\\) units"]], [["MINIMISE TRAVEL TIME", "A lifeguard must reach a swimmer, running along the shore then swimming. Set up (without fully solving) the total time as a function of the entry point, and explain what's minimised.", "Total time \\(=\\)(running distance)/(running speed) \\(+\\) (swimming distance)/(swimming speed), both expressed via the entry point \\(x\\); minimising this over \\(x\\) gives the optimal path \u2014 a calculus analogue of Snell's law relating the two speeds and the angles of the path segments."], ["MAXIMISE VOLUME", "Find the dimensions of the cylinder of maximum volume inscribed in a sphere of radius \\(R\\) (set up the volume function in one variable).", "With half-height \\(h\\) and radius \\(r\\), \\(r^2+h^2=R^2\\), so \\(V=2\\pi(R^2h-h^3)\\); \\(V'=2\\pi(R^2-3h^2)=0\\Rightarrow h=R/\\sqrt3\\). Answer: \\(r^2=2R^2/3\\)"], ["MINIMISE COST WITH DIFFERENT MATERIALS", "A rectangular plot with fixed area \\(A\\) has one pair of sides twice as expensive per metre as the other. Set up the cost function in one variable and explain what its derivative represents.", "With expensive side \\(x\\) and \\(y=A/x\\), cost \\(C(x)=4x+2A/x\\) (using relative unit costs \\(2\\) and \\(1\\)); \\(C'(x)\\) is the rate at which total cost changes as the expensive side's length changes, and setting it to zero locates the cost-minimising shape."], ["ERROR ANALYSIS", "A student sets up an optimisation function correctly but differentiates with respect to the wrong variable (e.g. a fixed parameter rather than the true independent variable). Why does this matter?", "Optimisation only makes sense with respect to the quantity that's genuinely free to vary; differentiating with respect to a fixed constant gives a meaningless (typically zero) result and fails to locate the actual optimal value of the real variable."], ["CONCEPTUAL", "Explain why some optimisation problems require checking interval endpoints in addition to critical points, using a real-world example.", "A physical constraint like 'at least 0 workers' or 'at most 24 hours' creates a closed interval for the variable; the true optimum (e.g. maximum profit) might occur at one of these boundary values rather than at an interior critical point, so both must be checked."], ["APPLIED", "A window is a rectangle topped with a semicircle, with fixed perimeter \\(P\\). Set up the area function in terms of the rectangle's width and identify what needs to be maximised.", "With width \\(2r\\) and rectangle height \\(h\\), \\(P=2h+2r+\\pi r\\Rightarrow h=(P-2r-\\pi r)/2\\); area \\(A(r)=2rh+\\tfrac12\\pi r^2\\) becomes a function of \\(r\\) alone, and maximising \\(A(r)\\) via \\(A'(r)=0\\) gives the optimal proportions."]], [["MINIMISE DISTANCE", "Find the minimum distance from the point \\((0,3)\\) to the parabola \\(y=x^2\\).", "Minimise \\(D^2=x^2+(x^2-3)^2\\); derivative \\(4x^3-10x=2x(2x^2-5)=0\\Rightarrow x=0\\) or \\(x=\\pm\\sqrt{5/2}\\). Comparing distances, the nonzero solutions give the minimum (not \\(x=0\\))."], ["MAXIMISE AREA - INSCRIBED RECTANGLE", "Find the dimensions of the largest rectangle inscribed under \\(y=4-x^2\\) with base on the x-axis, symmetric about the y-axis.", "With half-width \\(x\\), area \\(A=2x(4-x^2)=8x-2x^3\\); \\(A'=8-6x^2=0\\Rightarrow x=2/\\sqrt3\\). Answer: width \\(4/\\sqrt3\\), height \\(4-4/3=8/3\\)"], ["MINIMISE PACKAGING", "A cylindrical can's height plus circumference must equal 100cm (a postal restriction). Maximise its volume.", "With \\(h=100-2\\pi r\\), \\(V(r)=100\\pi r^2-2\\pi^2r^3\\); \\(V'(r)=200\\pi r-6\\pi^2r^2=0\\). Answer: \\(r=100/(3\\pi)\\) (excluding \\(r=0\\))"], ["ERROR ANALYSIS", "A student finds the critical point in an optimisation problem but reports only the numeric answer (e.g. 'x=20') without connecting it back to the original context. Why does this final step matter?", "The mathematical answer must be translated into the real-world meaning (e.g. '20 workers' or 'a radius of 20cm'), and often the resulting optimal value (max/min cost, area, etc.) also needs to be reported, since the original problem usually asks for both."], ["CONCEPTUAL", "Why is checking the sign of the second derivative at a critical point often faster than redoing a full first derivative sign analysis?", "The second derivative test only requires evaluating \\(f''\\) at the single critical point, whereas the first derivative test requires checking signs of \\(f'\\) on intervals to either side \u2014 a single evaluation is usually quicker when \\(f''\\) is easy to compute and doesn't equal zero there."], ["APPLIED", "A pipeline connects a point on land to an offshore point, with underwater construction costing more per metre. Set up (without solving) the total cost as a function of the shore-crossing point, and explain how calculus locates the optimum.", "Total cost \\(=\\)(land distance)\\(\\times\\)(land cost/m) \\(+\\) (underwater distance)\\(\\times\\)(underwater cost/m), both as functions of the crossing point \\(x\\); differentiating this cost function and setting it to zero locates the crossing point that minimises total cost."]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

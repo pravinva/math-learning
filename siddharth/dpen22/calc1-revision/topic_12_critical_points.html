@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Critical Points &amp; First Derivative Test</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Critical Points &amp; First Derivative Test</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["FIND CRITICAL POINTS", "Find all critical points of \\(f(x)=x^3-3x^2-9x+5\\).", "\\(f'(x)=3(x-3)(x+1)\\). Answer: \\(x=-1,3\\)"], ["CLASSIFY", "Using the first derivative test, classify the critical points found above.", "\\(f'\\) is positive for \\(x<-1\\), negative on \\((-1,3)\\), positive for \\(x>3\\). Answer: local max at \\(x=-1\\), local min at \\(x=3\\)"], ["ERROR ANALYSIS", "A student claims every point where \\(f'(x)=0\\) is a local max or min. Give a counterexample.", "\\(f(x)=x^3\\) at \\(x=0\\): \\(f'(0)=0\\), but \\(f'\\) doesn't change sign there (positive on both sides), so it's neither a max nor a min."], ["DOMAIN-RESTRICTED", "Find and classify the critical points of \\(f(x)=x^{2/3}\\) (careful \u2014 the derivative is undefined at \\(x=0\\)).", "\\(f'(x)=\\tfrac23x^{-1/3}\\), undefined at \\(x=0\\), but \\(x=0\\) is still a critical point since \\(f\\) is defined there. Sign changes negative to positive across \\(0\\). Answer: local min at \\(x=0\\)"], ["CONCEPTUAL", "Explain why we must check both where \\(f'(x)=0\\) and where \\(f'(x)\\) is undefined when locating critical points.", "A critical point is any point in the domain where the tangent is either horizontal or doesn't exist (a corner or cusp) \u2014 both situations can produce a local extremum, so restricting the search only to \\(f'(x)=0\\) would miss genuine extrema like the one at \\(x=0\\) for \\(x^{2/3}\\)."], ["APPLIED", "A company's profit is \\(P(x)=-2x^2+40x-150\\). Find the critical point and classify it.", "\\(P'(x)=-4x+40=0\\Rightarrow x=10\\); sign changes positive to negative. Answer: local (and global) max profit at \\(x=10\\) units"]], [["FIND CRITICAL POINTS", "Find all critical points of \\(f(x)=x^4-4x^3\\).", "\\(f'(x)=4x^2(x-3)\\). Answer: \\(x=0,3\\)"], ["CLASSIFY", "Classify the critical points of \\(f(x)=x^4-4x^3\\) using the first derivative test.", "\\(f'(x)=4x^2(x-3)\\) is negative for \\(x<0\\) and for \\(0<x<3\\) (since \\(x^2\\ge0\\) throughout), then positive for \\(x>3\\). Answer: no extremum at \\(x=0\\) (no sign change), local min at \\(x=3\\)"], ["ERROR ANALYSIS", "A student concludes \\(x=0\\) must be a local extremum for \\(f(x)=x^4-4x^3\\) simply because \\(f'(0)=0\\). Explain the flaw, referencing the sign analysis above.", "Since \\(f'\\) stays negative on both sides of \\(x=0\\) (no sign change), \\(x=0\\) is not a local max or min \u2014 just a stationary point where the curve momentarily flattens without turning."], ["DOMAIN-RESTRICTED", "Find the critical point(s) of \\(f(x)=|x-2|\\).", "The derivative is undefined at \\(x=2\\) (a corner in the graph). Answer: \\(x=2\\) is a critical point"], ["CONCEPTUAL", "Must every critical point be a local extremum? Explain the distinction.", "No \u2014 a critical point only guarantees the tangent is horizontal or undefined; whether it's actually a local max, min, or neither depends on whether \\(f'\\) changes sign there, which requires the first derivative test to confirm."], ["APPLIED", "A projectile's height is \\(h(t)=-5t^2+20t+2\\). Find the critical point and interpret it physically.", "\\(h'(t)=-10t+20=0\\Rightarrow t=2\\). Answer: this is the moment the projectile reaches its maximum height (velocity momentarily zero)"]], [["FIND CRITICAL POINTS", "Find the critical point(s) of \\(f(x)=xe^{-x}\\).", "\\(f'(x)=e^{-x}(1-x)=0\\). Answer: \\(x=1\\)"], ["CLASSIFY", "Classify the critical point of \\(f(x)=xe^{-x}\\) at \\(x=1\\).", "\\(f'>0\\) for \\(x<1\\), \\(f'<0\\) for \\(x>1\\). Answer: local max at \\(x=1\\)"], ["ERROR ANALYSIS", "A student correctly finds \\(f'(x)=0\\) but stops there, concluding no further work is needed. What's missing?", "Finding where \\(f'=0\\) only locates candidate points \u2014 the first derivative test (checking the sign of \\(f'\\) on either side) is what actually determines whether each candidate is a max, min, or neither."], ["DOMAIN-RESTRICTED", "Find the critical point(s) of \\(f(x)=x-2\\sqrt{x}\\) on its domain \\(x\\ge0\\).", "\\(f'(x)=1-1/\\sqrt{x}=0\\Rightarrow x=1\\). The boundary \\(x=0\\) is a domain endpoint (not a typical interior critical point, but worth noting separately)."], ["CONCEPTUAL", "Explain why critical points are candidates for absolute extrema on a closed interval, but endpoints must also be checked.", "The Extreme Value Theorem guarantees a continuous function on a closed interval attains an absolute max and min, and these can only occur either where the tangent is horizontal/undefined (a critical point) or at the boundary of the interval \u2014 nowhere else."], ["APPLIED", "Monthly sales are \\(N(p)=1000-5p^2\\) as a function of price \\(p\\). Find the critical point of revenue \\(R(p)=pN(p)\\) and classify it.", "\\(R(p)=1000p-5p^3\\), \\(R'(p)=1000-15p^2=0\\Rightarrow p\\approx8.16\\). Sign changes positive to negative. Answer: local max (revenue-maximising price)"]], [["FIND CRITICAL POINTS", "Find the critical points of \\(f(x)=\\sin x+\\cos x\\) on \\([0,2\\pi]\\).", "\\(f'(x)=\\cos x-\\sin x=0\\Rightarrow\\tan x=1\\). Answer: \\(x=\\pi/4,\\,5\\pi/4\\)"], ["CLASSIFY", "Classify the critical points found above using the first derivative test.", "\\(f'\\) is positive before \\(\\pi/4\\), negative between \\(\\pi/4\\) and \\(5\\pi/4\\), positive after. Answer: local max at \\(\\pi/4\\), local min at \\(5\\pi/4\\)"], ["ERROR ANALYSIS", "A student ignores the domain restriction and reports infinitely many solutions to \\(\\tan x=1\\). How should the answer be restricted to \\([0,2\\pi]\\)?", "The general solution is \\(x=\\pi/4+k\\pi\\) for any integer \\(k\\); restricting to \\([0,2\\pi]\\) keeps only \\(k=0\\) and \\(k=1\\), giving exactly \\(x=\\pi/4\\) and \\(x=5\\pi/4\\)."], ["DOMAIN-RESTRICTED", "Find and classify the critical point of \\(f(x)=\\sqrt{4-x^2}\\) on \\([-2,2]\\).", "\\(f'(x)=-x/\\sqrt{4-x^2}=0\\Rightarrow x=0\\); sign changes positive to negative. Answer: local (and absolute) max at \\(x=0\\)"], ["CONCEPTUAL", "Explain why a function's absolute maximum on a closed interval must occur at a critical point or an endpoint, never elsewhere.", "Anywhere else in the interior, if the function is differentiable and it's a local max, the derivative there must be \\(0\\) (a critical point); if it's not a local max, it can't be the absolute max either \u2014 so only critical points and the boundary remain as candidates."], ["APPLIED", "A fence encloses area \\(A(x)=x(100-x)\\). Find and classify the critical point.", "\\(A'(x)=100-2x=0\\Rightarrow x=50\\); sign changes positive to negative. Answer: local max at \\(x=50\\), giving maximum area \\(2500\\)"]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

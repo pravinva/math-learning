@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tangent Lines &amp; Linear Approximation</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Tangent Lines &amp; Linear Approximation</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["BASIC TANGENT", "Find the tangent line to \\(f(x)=x^2\\) at \\(x=3\\).", "\\(f(3)=9\\), \\(f'(3)=6\\). Answer: \\(y=6x-9\\)"], ["LINEAR APPROXIMATION", "Use linear approximation to estimate \\(\\sqrt{4.1}\\), based at \\(x=4\\).", "\\(f(4)=2\\), \\(f'(4)=1/4\\). Estimate: \\(2+0.25(0.1)\\). Answer: \\(2.025\\)"], ["NORMAL LINE", "Find the normal line to \\(f(x)=x^3\\) at \\(x=1\\).", "\\(f(1)=1\\), \\(f'(1)=3\\), normal slope \\(=-1/3\\). Answer: \\(y-1=-\\tfrac13(x-1)\\)"], ["ERROR ANALYSIS", "A student uses the linear approximation formula as \\(f(a)+f'(a)\\cdot x\\) instead of \\(f(a)+f'(a)(x-a)\\). Identify and correct the mistake.", "The formula must subtract \\(a\\): correct form is \\(L(x)=f(a)+f'(a)(x-a)\\)."], ["CONCEPTUAL", "Explain why linear approximation becomes less accurate the farther \\(x\\) is from the point of tangency \\(a\\).", "The tangent line only matches the function's value and slope exactly at \\(a\\); as \\(x\\) moves away, the curve's bending (concavity) causes it to pull away from the straight tangent line, so the approximation error grows."], ["APPLIED", "A cube's side is measured as 5cm with possible error \\(\\pm0.1\\)cm. Estimate the resulting error in volume using differentials.", "\\(V=s^3\\), \\(dV=3s^2\\,ds=3(25)(0.1)\\). Answer: \\(7.5\\) cm\\(^3\\)"]], [["BASIC TANGENT", "Find the tangent line to \\(f(x)=1/x\\) at \\(x=2\\).", "\\(f(2)=1/2\\), \\(f'(2)=-1/4\\). Answer: \\(y=-\\tfrac14(x-2)+\\tfrac12\\)"], ["LINEAR APPROXIMATION", "Estimate \\((1.02)^5\\) using linear approximation of \\(f(x)=x^5\\) at \\(x=1\\).", "\\(f(1)=1\\), \\(f'(1)=5\\). Estimate: \\(1+5(0.02)\\). Answer: \\(1.1\\)"], ["NORMAL LINE", "Find the normal line to \\(f(x)=\\sin x\\) at \\(x=0\\).", "\\(f(0)=0\\), \\(f'(0)=1\\), normal slope \\(=-1\\). Answer: \\(y=-x\\)"], ["ERROR ANALYSIS", "A student uses a tangent-line approximation far from \\(a\\) and gets a badly wrong estimate, then blames the formula. What actually went wrong?", "The formula itself is fine; the issue is that linear approximation is only reliable near the point of tangency \u2014 using it far away ignores the curve's actual bending, causing growing inaccuracy."], ["CONCEPTUAL", "Explain the relationship between the differential \\(dy=f'(x)\\,dx\\) and the linear approximation formula.", "The linear approximation \\(L(x)=f(a)+f'(a)(x-a)\\) is exactly \\(f(a)+dy\\), where \\(dy=f'(a)\\,dx\\) and \\(dx=x-a\\) represents the change in the input \u2014 the differential is just the correction term added to \\(f(a)\\)."], ["APPLIED", "A circle's measured radius is 10cm with possible error \\(\\pm0.2\\)cm. Estimate the resulting error in area.", "\\(A=\\pi r^2\\), \\(dA=2\\pi r\\,dr=2\\pi(10)(0.2)\\). Answer: \\(4\\pi\\approx12.57\\) cm\\(^2\\)"]], [["BASIC TANGENT", "Find the tangent line to \\(f(x)=e^x\\) at \\(x=0\\).", "\\(f(0)=1\\), \\(f'(0)=1\\). Answer: \\(y=x+1\\)"], ["LINEAR APPROXIMATION", "Estimate \\(\\ln(1.05)\\) using linear approximation of \\(f(x)=\\ln x\\) at \\(x=1\\).", "\\(f(1)=0\\), \\(f'(1)=1\\). Estimate: \\(0+1(0.05)\\). Answer: \\(0.05\\)"], ["NORMAL LINE", "Find the normal line to \\(f(x)=x^2-2x\\) at \\(x=3\\).", "\\(f(3)=3\\), \\(f'(3)=4\\), normal slope \\(=-1/4\\). Answer: \\(y-3=-\\tfrac14(x-3)\\)"], ["ERROR ANALYSIS", "A student approximates \\(\\cos(0.1)\\) using \\(f(x)=\\cos x\\) at \\(a=0\\), computing \\(L(x)=1+0\\cdot x\\) since \\(f'(0)=0\\). Does this actually give a good estimate here?", "Yes \u2014 it gives \\(L(0.1)=1\\), a very accurate approximation, precisely because \\(\\cos x\\) has a horizontal tangent at \\(0\\) (its derivative is exactly zero there), so the linear term contributes nothing and the constant term alone already tracks the curve closely for small \\(x\\)."], ["CONCEPTUAL", "Explain why linear approximation can be seen as the 'first step' toward more accurate polynomial approximations of a function.", "Linear approximation matches a function's value and first derivative at a point; adding more terms that match higher derivatives (as in Taylor polynomials) captures the curvature and further shape, improving accuracy \u2014 the tangent line is the simplest, lowest-order case of this idea."], ["APPLIED", "A company's cost is \\(C(x)=1000+50x-0.01x^2\\). Use linear approximation to estimate the cost of one more unit beyond \\(x=100\\).", "\\(C'(x)=50-0.02x\\); at \\(x=100\\): \\(50-2\\). Answer: \\(\\$48\\)"]], [["BASIC TANGENT", "Find the tangent line to \\(f(x)=\\ln x\\) at \\(x=e\\).", "\\(f(e)=1\\), \\(f'(e)=1/e\\). Answer: \\(y=x/e\\)"], ["LINEAR APPROXIMATION", "Estimate \\(\\sqrt{26}\\) using linear approximation of \\(f(x)=\\sqrt{x}\\) at \\(x=25\\).", "\\(f(25)=5\\), \\(f'(25)=1/10\\). Estimate: \\(5+0.1(1)\\). Answer: \\(5.1\\)"], ["NORMAL LINE", "Find the normal line to \\(f(x)=1/x\\) at \\(x=1\\).", "\\(f(1)=1\\), \\(f'(1)=-1\\), normal slope \\(=1\\). Answer: \\(y=x\\)"], ["ERROR ANALYSIS", "A student tries to estimate \\((8.1)^{1/3}\\) using a linear approximation based at \\(a=0\\) rather than \\(a=8\\). Explain why this choice of \\(a\\) fails.", "The derivative of \\(x^{1/3}\\) involves \\(x^{-2/3}\\), which blows up at \\(x=0\\) (vertical tangent there); a useful base point must be one where both \\(f\\) and \\(f'\\) are easy to evaluate and nearby the target \u2014 \\(a=8\\) works well, \\(a=0\\) does not."], ["CONCEPTUAL", "Explain how the sign of \\(f''(x)\\) near \\(a\\) determines whether the tangent line lies above or below the actual curve.", "If \\(f''>0\\) (concave up) near \\(a\\), the curve bends upward away from its tangent, so the tangent line lies below the curve. If \\(f''<0\\) (concave down), the curve bends away downward, so the tangent line lies above the curve."], ["APPLIED", "A pendulum's period is \\(T(L)=2\\pi\\sqrt{L/g}\\). Estimate the change in period if \\(L=1\\)m increases by \\(0.01\\)m (\\(g=9.8\\) m/s\\(^2\\)).", "\\(dT/dL=\\pi/\\sqrt{Lg}\\approx1.003\\) at \\(L=1\\). Answer: \\(dT\\approx1.003(0.01)\\approx0.010\\) s"]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Concavity &amp; Second Derivative Test</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Concavity &amp; Second Derivative Test</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["FIND INFLECTION POINTS", "Find the inflection point(s) of \\(f(x)=x^3-3x^2+2\\).", "\\(f''(x)=6x-6=0\\Rightarrow x=1\\), and \\(f''\\) changes sign there. Answer: inflection point at \\(x=1\\)"], ["SECOND DERIVATIVE TEST", "Use the second derivative test to classify the critical points of \\(f(x)=x^3-3x^2+2\\).", "\\(f'(x)=3x(x-2)=0\\Rightarrow x=0,2\\). \\(f''(0)=-6<0\\) (local max); \\(f''(2)=6>0\\) (local min)."], ["CONCAVITY INTERVALS", "Determine the intervals of concavity for \\(f(x)=x^4-6x^2\\).", "\\(f''(x)=12(x^2-1)=0\\Rightarrow x=\\pm1\\). Answer: concave up for \\(|x|>1\\), concave down for \\(|x|<1\\)"], ["ERROR ANALYSIS", "A student assumes \\(f''(x)=0\\) always gives an inflection point. Provide a counterexample.", "\\(f(x)=x^4\\): \\(f''(x)=12x^2=0\\) at \\(x=0\\), but \\(f''\\ge0\\) on both sides (no sign change), so \\(x=0\\) is not an inflection point."], ["CONCEPTUAL", "Explain what concavity tells us about the shape of a graph, in terms of whether \\(f'(x)\\) is increasing or decreasing.", "Concave up means \\(f'(x)\\) is increasing (the slope is getting steeper/less negative as \\(x\\) increases); concave down means \\(f'(x)\\) is decreasing (the slope is getting less steep/more negative)."], ["APPLIED", "A company's profit is \\(P(x)=-x^3+30x^2-50\\). Find where the rate of profit growth is changing direction, i.e. the inflection point.", "\\(P''(x)=-6x+60=0\\Rightarrow x=10\\). Answer: this is where marginal profit growth switches from increasing to diminishing returns"]], [["FIND INFLECTION POINTS", "Find the inflection point(s) of \\(f(x)=x^4-4x^3+6\\).", "\\(f''(x)=12x(x-2)=0\\Rightarrow x=0,2\\), and \\(f''\\) changes sign at both. Answer: inflection points at \\(x=0\\) and \\(x=2\\)"], ["SECOND DERIVATIVE TEST", "Use the second derivative test on \\(f(x)=x^3-6x^2+9x\\).", "\\(f'(x)=3(x-1)(x-3)=0\\Rightarrow x=1,3\\). \\(f''(1)=-6<0\\) (local max); \\(f''(3)=6>0\\) (local min)."], ["CONCAVITY INTERVALS", "Determine the concavity intervals for \\(f(x)=e^{-x^2}\\).", "\\(f''(x)=e^{-x^2}(4x^2-2)=0\\Rightarrow x=\\pm1/\\sqrt2\\). Answer: concave down between these points, concave up outside"], ["ERROR ANALYSIS", "At the critical point \\(x=0\\) of \\(f(x)=x^4\\), a student finds \\(f''(0)=0\\) and concludes 'the test fails, so there's no extremum'. Is this valid?", "No \u2014 when the second derivative test is inconclusive (\\(f''=0\\)), you must fall back on the first derivative test rather than assume no extremum exists. Here, \\(x=0\\) is actually a local (and global) minimum."], ["CONCEPTUAL", "Explain why an inflection point requires \\(f''\\) to change sign, not merely equal zero at that point.", "If \\(f''\\) touches zero but doesn't switch sign, the concavity doesn't actually flip \u2014 the curve keeps bending the same way on both sides, so there's no genuine change in curvature, which is what an inflection point requires."], ["APPLIED", "A disease spreads as \\(N(t)=1000/(1+e^{-0.5(t-10)})\\) (a logistic curve). Without solving, explain what the inflection point represents.", "It marks the moment new infections switch from accelerating to decelerating \u2014 the peak of new daily cases, after which total cases keep rising but at a slowing rate."]], [["FIND INFLECTION POINTS", "Find the inflection point(s) of \\(f(x)=x^5-5x^4\\).", "\\(f''(x)=20x^2(x-3)\\). Near \\(x=0\\), \\(f''\\) stays negative on both sides (no sign change); at \\(x=3\\), it changes from negative to positive. Answer: only \\(x=3\\) is a genuine inflection point"], ["SECOND DERIVATIVE TEST", "Use the second derivative test on \\(f(x)=2x^3-3x^2-12x\\).", "\\(f'(x)=6(x-2)(x+1)=0\\Rightarrow x=-1,2\\). \\(f''(-1)=-18<0\\) (local max); \\(f''(2)=18>0\\) (local min)."], ["CONCAVITY INTERVALS", "Determine the concavity intervals for \\(f(x)=\\ln(x^2+1)\\).", "\\(f''(x)=\\dfrac{2-2x^2}{(x^2+1)^2}=0\\Rightarrow x=\\pm1\\). Answer: concave up on \\((-1,1)\\), concave down outside"], ["ERROR ANALYSIS", "A student finds a point where \\(f''(a)\\) doesn't exist and assumes the second derivative test 'just can't be used', leaving the point unclassified. What should be done instead?", "Fall back on the first derivative test (checking sign changes of \\(f'\\) around \\(a\\)) \u2014 the second derivative test needing \\(f''(a)\\) to exist doesn't mean the point is permanently unclassifiable; the first derivative test still works whenever \\(f'\\) is defined nearby."], ["CONCEPTUAL", "Explain why concave-up regions correspond to \\(f'(x)\\) being an increasing function, using the definition of the second derivative.", "The second derivative \\(f''(x)\\) is, by definition, the derivative of \\(f'(x)\\); if \\(f''(x)>0\\), that means \\(f'(x)\\) itself is increasing, which is exactly the condition for concave-up behaviour."], ["APPLIED", "A demand curve is \\(D(p)=100-2p+0.01p^3\\). Find the inflection point of \\(D\\) and describe its meaning.", "\\(D''(p)=0.06p=0\\Rightarrow p=0\\). This is where the curvature of demand's response to price switches, indicating a change in how sensitive demand is to further price increases."]], [["FIND INFLECTION POINTS", "Find the inflection point(s) of \\(f(x)=x^3-6x^2+9x+1\\).", "\\(f''(x)=6x-12=0\\Rightarrow x=2\\), and \\(f''\\) changes sign there. Answer: inflection point at \\(x=2\\)"], ["SECOND DERIVATIVE TEST", "Use the second derivative test on \\(f(x)=x^4-8x^2\\).", "\\(f'(x)=4x(x^2-4)=0\\Rightarrow x=0,\\pm2\\). \\(f''(0)=-16<0\\) (local max); \\(f''(\\pm2)=32>0\\) (local mins)."], ["CONCAVITY INTERVALS", "Determine the concavity intervals for \\(f(x)=1/(x^2+1)\\).", "\\(f''(x)=\\dfrac{6x^2-2}{(x^2+1)^3}=0\\Rightarrow x=\\pm1/\\sqrt3\\). Answer: concave down between these points, concave up outside"], ["ERROR ANALYSIS", "A student says 'since \\(f''(x)>0\\) everywhere, the function is increasing'. Explain the conceptual mix-up.", "\\(f''(x)>0\\) tells us the function is concave up (its slope \\(f'(x)\\) is increasing) \u2014 it says nothing directly about whether \\(f(x)\\) itself is increasing, which depends on the sign of \\(f'(x)\\), not \\(f''(x)\\)."], ["CONCEPTUAL", "Explain the relationship between an inflection point of \\(f\\) and the graph of \\(f'(x)\\).", "At an inflection point of \\(f\\), the second derivative \\(f''\\) changes sign, which means \\(f'(x)\\) has a local extremum (a turning point) there \u2014 the slope of \\(f\\) stops increasing and starts decreasing, or vice versa."], ["APPLIED", "A car's velocity is \\(v(t)=t^3-6t^2+9t\\) (m/s). Find where the concavity of \\(v(t)\\) changes.", "\\(v''(t)=6t-12=0\\Rightarrow t=2\\). Answer: concave down for \\(t<2\\), concave up for \\(t>2\\) \u2014 the acceleration decreases before \\(t=2\\) and increases after"]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

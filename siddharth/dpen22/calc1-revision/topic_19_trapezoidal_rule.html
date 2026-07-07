@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trapezoidal Rule</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Trapezoidal Rule</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["BASIC APPLICATION", "Use the trapezoidal rule with \\(n=4\\) to estimate \\(\\int_0^4 x^2\\,dx\\).", "\\(\\Delta x=1\\); values \\(0,1,4,9,16\\). \\(T=\\tfrac12[0+2(1)+2(4)+2(9)+16]=\\tfrac12(44)\\). Answer: \\(22\\)"], ["COMPARE TO EXACT", "Compare the estimate above (22) to the exact value \\(64/3\\approx21.33\\). Over- or under-estimate, and why?", "Overestimate \u2014 \\(y=x^2\\) is concave up, so trapezoids connecting points on a concave-up curve lie above it."], ["SET UP WITH GIVEN DATA", "A car's speed (km/h) is recorded every 10 minutes: 40, 45, 50, 42, 38, 44. Estimate distance travelled using the trapezoidal rule.", "Convert \\(\\Delta t=1/6\\) hr. \\(T=\\tfrac{1}{12}[40+2(45)+2(50)+2(42)+2(38)+44]=\\tfrac{1}{12}(434)\\). Answer: \\(\\approx36.2\\) km"], ["ERROR ANALYSIS", "A student applies the formula but forgets to double the interior function values. Explain the correct structure and why interior points get weight 2.", "\\(T=(\\Delta x/2)[f(x_0)+2f(x_1)+\\cdots+2f(x_{n-1})+f(x_n)]\\) \u2014 interior points are shared between two adjacent trapezoids, contributing to both, hence the factor of 2; the two endpoints belong to only one trapezoid each."], ["CONCEPTUAL", "Explain geometrically what the trapezoidal rule approximates, and why more subintervals improve accuracy.", "It connects consecutive sampled points with straight line segments, forming trapezoids instead of rectangles; as subintervals increase, each trapezoid spans a smaller, straighter piece of the curve, so the approximation increasingly matches the true curve."], ["APPLIED", "Estimate \\(\\int_1^3(1/x)\\,dx\\) using the trapezoidal rule with \\(n=4\\), and briefly compare to the exact value \\(\\ln3\\approx1.099\\).", "\\(\\Delta x=0.5\\); values \\(1,0.667,0.5,0.4,0.333\\). \\(T=0.25(4.467)\\approx1.117\\) \u2014 an overestimate since \\(1/x\\) is concave up here."]], [["BASIC APPLICATION", "Use the trapezoidal rule with \\(n=4\\) to estimate \\(\\int_0^2 e^x\\,dx\\).", "\\(\\Delta x=0.5\\); values \\(1,1.649,2.718,4.482,7.389\\). \\(T=0.25(26.087)\\). Answer: \\(\\approx6.52\\)"], ["COMPARE TO EXACT", "The exact value of \\(\\int_0^2e^x dx\\) is \\(e^2-1\\approx6.389\\). Is the estimate above over- or under-, and why?", "Overestimate \u2014 \\(e^x\\) is concave up, so trapezoids lie above the curve."], ["SET UP WITH GIVEN DATA", "Rainfall (mm/hr) is measured every 2 hours over 10 hours: 3, 5, 8, 6, 4, 2. Estimate total rainfall.", "\\(\\Delta x=2\\); \\(T=1[3+2(5)+2(8)+2(6)+2(4)+2]=51\\). Answer: \\(51\\)mm"], ["ERROR ANALYSIS", "A student uses unequal subinterval widths but applies the standard formula assuming equal \\(\\Delta x\\). Why does this fail?", "The standard formula assumes a single shared width factored out; with unequal widths, each trapezoid's area must be computed individually as \\((\\text{width}_i/2)(f(x_i)+f(x_{i+1}))\\) and summed separately."], ["CONCEPTUAL", "Explain why the trapezoidal rule tends to beat left/right-endpoint rectangle approximations for the same number of subintervals.", "Rectangles use only one endpoint's height and systematically over- or under-shoot on monotonic curves; trapezoids use both endpoints via a slanted top, better tracking the curve's actual shape and generally reducing error."], ["APPLIED", "Estimate \\(\\int_0^\\pi\\sin(x)\\,dx\\) using the trapezoidal rule with \\(n=4\\), and compare to the exact value \\(2\\).", "\\(\\Delta x=\\pi/4\\); values \\(0,0.707,1,0.707,0\\). \\(T=(\\pi/8)(4.828)\\approx1.896\\) \u2014 an underestimate since \\(\\sin x\\) is concave down over most of the interval."]], [["BASIC APPLICATION", "Use the trapezoidal rule with \\(n=6\\) to estimate \\(\\int_0^3 x^3\\,dx\\).", "\\(\\Delta x=0.5\\); values \\(0,0.125,1,3.375,8,15.625,27\\). \\(T=0.25(83.25)\\). Answer: \\(20.8125\\)"], ["COMPARE TO EXACT", "The exact value of \\(\\int_0^3x^3dx\\) is \\(81/4=20.25\\). Over- or under-estimate, and why?", "Overestimate \u2014 \\(x^3\\) is concave up on \\([0,3]\\) (second derivative \\(6x>0\\) there)."], ["SET UP WITH GIVEN DATA", "A cyclist's power (watts) is recorded every 5 minutes over 25 minutes: 150, 180, 200, 170, 160, 190. Estimate total energy (watt-minutes).", "\\(\\Delta x=5\\); \\(T=2.5[150+2(180)+2(200)+2(170)+2(160)+190]=2.5(1760)\\). Answer: \\(4400\\) watt-minutes"], ["ERROR ANALYSIS", "A student assumes the trapezoidal rule can't be used on a table with an odd number of data points (confusing it with Simpson's rule). Clarify.", "The trapezoidal rule works with any number of subintervals, even or odd, since it just connects consecutive points with straight lines; the even-subinterval requirement is specific to Simpson's rule, which fits parabolas through pairs of subintervals."], ["CONCEPTUAL", "Explain how the trapezoidal rule's error behaves when concavity changes sign within the interval.", "It overestimates the concave-up portions and underestimates the concave-down portions; these errors can partly offset each other, sometimes making the overall estimate more accurate than for a purely concave-up or concave-down function."], ["APPLIED", "Estimate \\(\\int_1^5\\ln(x)\\,dx\\) using the trapezoidal rule with \\(n=4\\), and assess whether it over- or under-estimates.", "\\(\\Delta x=1\\); values \\(0,0.693,1.099,1.386,1.609\\). \\(T=0.5(7.965)\\approx3.983\\) \u2014 an underestimate, since \\(\\ln x\\) is concave down."]], [["BASIC APPLICATION", "Use the trapezoidal rule with \\(n=5\\) to estimate \\(\\int_0^5(10-x^2/5)\\,dx\\).", "\\(\\Delta x=1\\); values \\(10,9.8,9.2,8.2,6.8,5\\). \\(T=0.5(83)\\). Answer: \\(41.5\\)"], ["COMPARE TO EXACT", "Find the exact value of \\(\\int_0^5(10-x^2/5)dx\\) and compare to the estimate above.", "Antiderivative \\(10x-x^3/15\\); exact value \\(\\approx41.667\\). The trapezoidal estimate (41.5) is an underestimate, since the function is concave down (second derivative \\(-2/5<0\\))."], ["SET UP WITH GIVEN DATA", "Wind speed (km/h) is measured hourly over 6 hours: 12, 15, 20, 18, 14, 10, 8. Estimate the total 'wind exposure' (area under the curve).", "\\(\\Delta x=1\\); \\(T=0.5[12+2(15)+2(20)+2(18)+2(14)+2(10)+8]=0.5(174)\\). Answer: \\(87\\)"], ["ERROR ANALYSIS", "A student applies the trapezoidal rule to unevenly spaced time data (1, 2, then 1 hour) using a single \\(\\Delta x\\). What's the correct approach?", "Each trapezoid must use its own actual width: area\\(_i=(\\text{width}_i/2)(f(x_i)+f(x_{i+1}))\\), summed individually \u2014 a single shared \\(\\Delta x\\) can't be used when spacing varies."], ["CONCEPTUAL", "Explain why the trapezoidal rule is especially useful for real-world sensor data compared to finding an exact antiderivative.", "Real-world data is often discrete measurements with no known algebraic formula, so there's no antiderivative to find; the trapezoidal rule only needs the sampled values and their spacing, making it directly applicable to tabulated data."], ["APPLIED", "Estimate \\(\\int_0^4\\sqrt{16-x^2}\\,dx\\) (a quarter-circle of radius 4) using the trapezoidal rule with \\(n=4\\), and compare to the exact value \\(4\\pi\\approx12.566\\).", "\\(\\Delta x=1\\); values \\(4,3.873,3.464,2.646,0\\). \\(T=0.5(23.966)\\approx11.983\\) \u2014 an underestimate, since the curve drops steeply near \\(x=4\\) and the straight trapezoid segments cut inside the circular arc."]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>
