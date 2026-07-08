@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 2 Tutorial - Double Integrals and Polar Coordinates</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root { --navy:#1B3A5C; --blue:#185FA5; --bg:#fafaf8; --line:#e8e6e0; --text:#2c2a28; --muted:#6b6762; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "DM Sans", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.75; padding: 36px 20px 70px; }
+    .wrap { max-width: 900px; margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 28px; }
+    h1,h2,h3 { font-family: "Crimson Pro", Georgia, serif; color: var(--navy); }
+    h1 { font-size: 42px; line-height: 1.1; margin-bottom: 8px; }
+    h2 { font-size: 30px; margin-top: 24px; margin-bottom: 8px; }
+    h3 { font-size: 23px; margin-top: 14px; margin-bottom: 6px; }
+    p,li { font-size: 15px; }
+    ul,ol { padding-left: 22px; margin: 8px 0; }
+    .label { color: #FF3621; font-size: 12px; letter-spacing: .08em; font-weight: 700; text-transform: uppercase; }
+    .hero-sub { color: var(--muted); margin-bottom: 14px; }
+    .nav a { color: var(--blue); text-decoration: none; font-size: 14px; }
+    .card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 10px 0; background: #f9fbff; }
+    .tip { background: #eef6ff; border-left: 4px solid var(--blue); border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 10px 0; }
+    .warn { background: #fff4ef; border-left: 4px solid #FF3621; border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 10px 0; }
+    .answer { background: #f4fff8; border: 1px solid #b7ebcc; border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav"><a href="index.html">← MATH282 Index</a></div>
+    <div class="label">Lesson 2 Tutorial · Weeks 2-3</div>
+    <h1>Double Integrals, Order Switching, Polar Coordinates</h1>
+    <p class="hero-sub">Full tutorial workflow: region sketching, integration order decisions, Cartesian-to-polar conversion, Jacobian meaning, and area/volume applications.</p>
+
+    <h2>1) Why this topic exists</h2>
+    <p>Single integrals add contributions along a line. Many engineering quantities are distributed over areas (plates, membranes, pressure fields), so we need area integration:</p>
+    <p>\[
+      \iint_R f(x,y)\,dA
+    \]</p>
+    <div class="tip"><strong>Intuition:</strong> cut region \(R\) into tiny cells; evaluate \(f\) at each cell; multiply by tiny area; add all cells.</div>
+
+    <h2>2) Core build-up (no jumps)</h2>
+    <h3>2.1 Iterated integral form</h3>
+    <p>\[
+      \iint_R f(x,y)\,dA = \int_a^b\int_{g_1(x)}^{g_2(x)} f(x,y)\,dy\,dx
+    \]
+    or
+    \[
+      = \int_c^d\int_{h_1(y)}^{h_2(y)} f(x,y)\,dx\,dy.
+    \]</p>
+    <h3>2.2 Why order switching matters</h3>
+    <p>Some integrands become much easier in one order. If one order gives ugly inner bounds or impossible antiderivatives, switch.</p>
+    <h3>2.3 Polar conversion</h3>
+    <p>\[
+      x=r\cos\theta,\quad y=r\sin\theta,\quad dA=r\,dr\,d\theta
+    \]</p>
+    <p>The extra \(r\) (Jacobian) is not optional — it adjusts for stretched area elements in polar coordinates.</p>
+
+    <h2>3) Method routines (scaffold)</h2>
+    <div class="card">
+      <strong>Routine A — Cartesian setup</strong>
+      <ol>
+        <li>Draw region and label boundaries clearly.</li>
+        <li>Pick vertical or horizontal strips.</li>
+        <li>Write lower/upper inner bounds first, then outer bounds.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <strong>Routine B — switch order</strong>
+      <ol>
+        <li>Rewrite region as inequalities in opposite strip orientation.</li>
+        <li>Check new bounds cover region exactly once.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <strong>Routine C — polar setup</strong>
+      <ol>
+        <li>Convert curves to \(r,\theta\).</li>
+        <li>Convert integrand to \(r,\theta\).</li>
+        <li>Multiply by Jacobian \(r\).</li>
+      </ol>
+    </div>
+
+    <h2>4) Guided examples (fully worked)</h2>
+    <h3>Example 1: direct rectangular region</h3>
+    <p>\(\int_0^2\int_1^3 (x+2y)\,dy\,dx\)</p>
+    <ol>
+      <li>Inner integral: \([xy+y^2]_1^3=2x+8\).</li>
+      <li>Outer integral: \(\int_0^2(2x+8)\,dx=[x^2+8x]_0^2=20\).</li>
+    </ol>
+    <div class="answer">Answer: 20.</div>
+
+    <h3>Example 2: reverse order to simplify</h3>
+    <p>\(\int_0^1\int_x^1 f(x,y)\,dy\,dx\)</p>
+    <ol>
+      <li>Region: \(0\le x\le1,\ x\le y\le1\).</li>
+      <li>Equivalent description: \(0\le y\le1,\ 0\le x\le y\).</li>
+      <li>Reversed integral: \(\int_0^1\int_0^y f(x,y)\,dx\,dy\).</li>
+    </ol>
+
+    <h3>Example 3: area by double integral</h3>
+    <p>Find area between \(y=2x\) and \(y=x^2\) from \(x=0\) to \(x=2\).</p>
+    <ol>
+      <li>Area \(=\int_0^2\int_{x^2}^{2x}1\,dy\,dx\).</li>
+      <li>Inner gives \(2x-x^2\).</li>
+      <li>Area \(=\int_0^2(2x-x^2)\,dx=4/3\).</li>
+    </ol>
+
+    <h3>Example 4: polar disk integral</h3>
+    <p>\(\iint_{x^2+y^2\le4}(x^2+y^2)\,dA\)</p>
+    <ol>
+      <li>Region is disk: \(0\le r\le2,\ 0\le\theta\le2\pi\).</li>
+      <li>Integrand becomes \(r^2\), and \(dA\to r\,dr\,d\theta\).</li>
+      <li>\(\int_0^{2\pi}\int_0^2 r^3\,dr\,d\theta = \int_0^{2\pi}4\,d\theta=8\pi\).</li>
+    </ol>
+
+    <h3>Example 5: annulus in polar</h3>
+    <p>\(\iint_R 1\,dA\) where \(R:\ 1\le x^2+y^2\le9\).</p>
+    <ol>
+      <li>Polar bounds: \(1\le r\le3,\ 0\le\theta\le2\pi\).</li>
+      <li>Area \(=\int_0^{2\pi}\int_1^3 r\,dr\,d\theta = \int_0^{2\pi}4\,d\theta=8\pi\).</li>
+    </ol>
+
+    <h2>5) Common mistakes and recovery checks</h2>
+    <div class="warn">
+      <ul>
+        <li><strong>Mistake:</strong> forgetting Jacobian \(r\). <strong>Recovery:</strong> write "replace \(dA\)" explicitly every time.</li>
+        <li><strong>Mistake:</strong> wrong swapped bounds. <strong>Recovery:</strong> test with one point inside region.</li>
+        <li><strong>Mistake:</strong> integrating wrong variable first. <strong>Recovery:</strong> circle differential in inner integral.</li>
+      </ul>
+    </div>
+
+    <h2>6) Practice set</h2>
+    <ol>
+      <li>\(\int_0^1\int_0^{2x}(x+y)\,dy\,dx\)</li>
+      <li>Reverse order: \(\int_0^2\int_{x/2}^1 f(x,y)\,dy\,dx\)</li>
+      <li>Area of triangle \((0,0),(2,0),(2,3)\) using double integral</li>
+      <li>\(\iint_{x^2+y^2\le9} 1\,dA\)</li>
+      <li>\(\iint_{0\le y\le x\le1} x\,dA\)</li>
+      <li>\(\iint_{1\le x^2+y^2\le4}(x^2+y^2)\,dA\)</li>
+      <li>Set up polar integral for first-quadrant quarter disk radius 3</li>
+      <li>Mass with density \(\rho=x+y\) on unit square</li>
+      <li>Average value of \(f=x+y\) over \(0\le x\le2,0\le y\le1\)</li>
+      <li>\(\int_0^1\int_0^{1-x}(x+y)\,dy\,dx\)</li>
+    </ol>
+
+    <h2>7) Mini mastery test (30 minutes)</h2>
+    <ol>
+      <li>Evaluate \(\int_0^2\int_0^x (x+2y)\,dy\,dx\).</li>
+      <li>Reverse order: \(\int_0^1\int_y^1 f(x,y)\,dx\,dy\).</li>
+      <li>\(\iint_{x^2+y^2\le1}(x^2+y^2)\,dA\).</li>
+      <li>Polar bounds for upper-half annulus between \(r=1\) and \(r=3\).</li>
+      <li>Area enclosed by \(y=x\) and \(y=x^2\).</li>
+      <li>\(\int_0^1\int_0^{2-y}1\,dx\,dy\).</li>
+    </ol>
+    <details>
+      <summary><strong>Mini mastery answers</strong></summary>
+      <ol>
+        <li>\(20/3\)</li>
+        <li>\(\int_0^1\int_0^x f(x,y)\,dy\,dx\)</li>
+        <li>\(\pi/2\)</li>
+        <li>\(0\le\theta\le\pi,\ 1\le r\le3\)</li>
+        <li>\(1/6\)</li>
+        <li>\(3/2\)</li>
+      </ol>
+    </details>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      renderMathInElement(document.body, {
+        delimiters: [{ left: "\\(", right: "\\)", display: false }, { left: "\\[", right: "\\]", display: true }],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>

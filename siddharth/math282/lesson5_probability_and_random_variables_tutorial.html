@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 5 Tutorial - Probability and Random Variables</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root { --navy:#1B3A5C; --blue:#185FA5; --bg:#fafaf8; --line:#e8e6e0; --text:#2c2a28; --muted:#6b6762; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "DM Sans", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.75; padding: 36px 20px 70px; }
+    .wrap { max-width: 900px; margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 28px; }
+    h1,h2,h3 { font-family: "Crimson Pro", Georgia, serif; color: var(--navy); }
+    h1 { font-size: 42px; line-height: 1.1; margin-bottom: 8px; }
+    h2 { font-size: 30px; margin-top: 24px; margin-bottom: 8px; }
+    h3 { font-size: 23px; margin-top: 14px; margin-bottom: 6px; }
+    p,li { font-size: 15px; } ul,ol { padding-left: 22px; margin: 8px 0; }
+    .label { color: #FF3621; font-size: 12px; letter-spacing: .08em; font-weight: 700; text-transform: uppercase; }
+    .hero-sub { color: var(--muted); margin-bottom: 14px; }
+    .nav a { color: var(--blue); text-decoration: none; font-size: 14px; }
+    .card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 10px 0; background: #f9fbff; }
+    .tip { background: #eef6ff; border-left: 4px solid var(--blue); border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 10px 0; }
+    .warn { background: #fff4ef; border-left: 4px solid #FF3621; border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav"><a href="index.html">← MATH282 Index</a></div>
+    <div class="label">Lesson 5 Tutorial · Weeks 8-10</div>
+    <h1>Probability, Random Variables, and Core Distributions</h1>
+    <p class="hero-sub">From event rules to Binomial/Poisson/Normal modeling, with interpretation and CLT sample-mean workflow.</p>
+
+    <h2>1) Why this topic exists</h2>
+    <p>Engineering systems have randomness (noise, defects, arrivals, failures). Probability gives the language; random variables give models; statistics turns data into decisions.</p>
+    <div class="tip"><strong>Mindset:</strong> write assumptions first (independence? constant rate? finite trials?), then select model.</div>
+
+    <h2>2) Build-up concepts</h2>
+    <h3>2.1 Event probability basics</h3>
+    <p>\[
+      P(A\cup B)=P(A)+P(B)-P(A\cap B),\quad P(A|B)=\frac{P(A\cap B)}{P(B)}
+    \]</p>
+    <h3>2.2 Random variables</h3>
+    <ul>
+      <li><strong>Discrete:</strong> PMF \(P(X=x)\), e.g. Binomial/Poisson.</li>
+      <li><strong>Continuous:</strong> PDF \(f(x)\), probabilities via area/integral.</li>
+    </ul>
+    <h3>2.3 Key models</h3>
+    <ul>
+      <li>\(X\sim \text{Bin}(n,p)\): fixed number of independent yes/no trials.</li>
+      <li>\(X\sim \text{Poisson}(\lambda)\): event count per interval at constant rate.</li>
+      <li>\(X\sim N(\mu,\sigma^2)\): symmetric continuous model and CLT anchor.</li>
+    </ul>
+
+    <h2>3) Method scaffold</h2>
+    <div class="card">
+      <strong>Routine A — probability question</strong>
+      <ol>
+        <li>Define events in words and symbols.</li>
+        <li>Choose union/intersection/conditional formula.</li>
+        <li>Substitute, compute, sanity-check \(0\le P\le1\).</li>
+      </ol>
+    </div>
+    <div class="card">
+      <strong>Routine B — distribution question</strong>
+      <ol>
+        <li>Identify family and parameters.</li>
+        <li>Write exact probability expression.</li>
+        <li>Evaluate and interpret.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <strong>Routine C — sample mean via CLT</strong>
+      <ol>
+        <li>\(\bar X\approx N(\mu,\sigma^2/n)\) for large \(n\).</li>
+        <li>Standardize: \(Z=(\bar X-\mu)/(\sigma/\sqrt{n})\).</li>
+      </ol>
+    </div>
+
+    <h2>4) Guided worked examples</h2>
+    <h3>Example 1: conditional probability</h3>
+    <p>\(P(A)=0.6,\ P(B)=0.5,\ P(A\cap B)=0.3\). Find \(P(A|B)\).</p>
+    <ol><li>\(P(A|B)=0.3/0.5=0.6\).</li></ol>
+
+    <h3>Example 2: Binomial exact probability</h3>
+    <p>\(X\sim\text{Bin}(10,0.2)\). Find \(P(X=2)\).</p>
+    <ol>
+      <li>\(P(X=2)=\binom{10}{2}(0.2)^2(0.8)^8\).</li>
+      <li>Value \(\approx 0.302\).</li>
+    </ol>
+
+    <h3>Example 3: Poisson cumulative</h3>
+    <p>\(X\sim\text{Poisson}(3)\). Find \(P(X\le1)\).</p>
+    <ol>
+      <li>\(P(0)+P(1)=e^{-3}+3e^{-3}=4e^{-3}\approx0.199\).</li>
+    </ol>
+
+    <h3>Example 4: Normal probability</h3>
+    <p>\(X\sim N(100,15^2)\). Find \(P(X<115)\).</p>
+    <ol>
+      <li>\(Z=(115-100)/15=1\).</li>
+      <li>\(P(X<115)=P(Z<1)\approx0.8413\).</li>
+    </ol>
+
+    <h3>Example 5: CLT sample mean</h3>
+    <p>\(\mu=50,\sigma=12,n=36\). Find \(P(\bar X>53)\).</p>
+    <ol>
+      <li>SE \(=12/\sqrt{36}=2\).</li>
+      <li>\(Z=(53-50)/2=1.5\).</li>
+      <li>\(P(\bar X>53)=P(Z>1.5)\approx0.0668\).</li>
+    </ol>
+
+    <h2>5) Common mistakes and fixes</h2>
+    <div class="warn">
+      <ul>
+        <li><strong>Mistake:</strong> using Poisson where trials are fixed (should be Binomial). <strong>Fix:</strong> ask "fixed \(n\)?" first.</li>
+        <li><strong>Mistake:</strong> forgetting variance formulas. <strong>Fix:</strong> keep formula strip: Binomial \(np(1-p)\), Poisson \(\lambda\).</li>
+        <li><strong>Mistake:</strong> CLT with wrong standard error. <strong>Fix:</strong> always divide \(\sigma\) by \(\sqrt{n}\), not \(n\).</li>
+      </ul>
+    </div>
+
+    <h2>6) Practice set</h2>
+    <ol>
+      <li>\(P(A)=0.4,P(B)=0.7,P(A\cap B)=0.3\), find \(P(A\cup B)\).</li>
+      <li>If \(P(A)=0.92\), find \(P(A^c)\).</li>
+      <li>Fair die: probability of even number.</li>
+      <li>\(X\sim\text{Bin}(8,0.25)\): find \(E[X],\mathrm{Var}(X)\).</li>
+      <li>\(X\sim\text{Poisson}(4)\): \(P(X=0)\).</li>
+      <li>\(X\sim N(100,15^2)\): \(P(X<115)\).</li>
+      <li>z-score for \(x=72,\mu=65,\sigma=5\).</li>
+      <li>Difference between PMF and PDF.</li>
+      <li>For \(X\sim \text{Exp}(\lambda)\), give \(E[X]\).</li>
+      <li>For \(n=49,\sigma=14\), find SE of sample mean.</li>
+    </ol>
+
+    <h2>7) Mini mastery test</h2>
+    <ol>
+      <li>\(P(A)=0.5,P(B)=0.6,P(A\cap B)=0.2\): find \(P(A|B)\).</li>
+      <li>\(X\sim \text{Bin}(12,0.3)\): \(P(X=3)\).</li>
+      <li>\(X\sim\text{Poisson}(2)\): \(P(X\ge1)\).</li>
+      <li>\(X\sim N(10,2^2)\): \(P(X>12)\).</li>
+      <li>\(\mu=80,\sigma=10,n=25\): \(P(\bar X<84)\).</li>
+      <li>State one engineering use of normal approximation.</li>
+    </ol>
+    <details>
+      <summary><strong>Mini mastery answers</strong></summary>
+      <ol>
+        <li>\(1/3\)</li>
+        <li>\(\binom{12}{3}(0.3)^3(0.7)^9\)</li>
+        <li>\(1-e^{-2}\)</li>
+        <li>\(P(Z>1)\approx0.1587\)</li>
+        <li>\(P(Z<2)\approx0.9772\)</li>
+        <li>Quality control tolerance decisions, process capability, forecasting</li>
+      </ol>
+    </details>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      renderMathInElement(document.body, {
+        delimiters: [{ left: "\\(", right: "\\)", display: false }, { left: "\\[", right: "\\]", display: true }],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>

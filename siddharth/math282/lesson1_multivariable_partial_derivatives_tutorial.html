@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 1 Tutorial - Multivariable Functions and Partial Derivatives</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root { --navy:#1B3A5C; --blue:#185FA5; --bg:#fafaf8; --line:#e8e6e0; --text:#2c2a28; --muted:#6b6762; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "DM Sans", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.75; padding: 36px 20px 70px; }
+    .wrap { max-width: 900px; margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 28px; }
+    h1,h2,h3 { font-family: "Crimson Pro", Georgia, serif; color: var(--navy); }
+    h1 { font-size: 44px; line-height: 1.1; margin-bottom: 8px; }
+    h2 { font-size: 31px; margin-top: 24px; margin-bottom: 8px; }
+    h3 { font-size: 24px; margin-top: 14px; margin-bottom: 6px; }
+    p,li { font-size: 15px; }
+    ul,ol { padding-left: 22px; margin: 8px 0; }
+    .label { color: #FF3621; font-size: 12px; letter-spacing: .08em; font-weight: 700; text-transform: uppercase; }
+    .hero-sub { color: var(--muted); margin-bottom: 14px; }
+    .nav a { color: var(--blue); text-decoration: none; font-size: 14px; }
+    .card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 10px 0; background: #f9fbff; }
+    .tip { background: #eef6ff; border-left: 4px solid var(--blue); border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 10px 0; }
+    .warn { background: #fff4ef; border-left: 4px solid #FF3621; border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 10px 0; }
+    .answer { background: #f4fff8; border: 1px solid #b7ebcc; border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav"><a href="index.html">← MATH282 Index</a></div>
+    <div class="label">Lesson 1 Tutorial · Weeks 1-2</div>
+    <h1>Multivariable Functions and Partial Derivatives</h1>
+    <p class="hero-sub">Full walkthrough: from "what changes with what?" intuition to gradients, directional derivatives, tangent planes, chain rule, and optimization tests.</p>
+
+    <h2>1) Why this topic exists</h2>
+    <p>Single-variable calculus answers: "how does output change when one input changes?" In engineering, outputs usually depend on several inputs at once:</p>
+    <ul>
+      <li>temperature in a plate: \(T(x,y)\)</li>
+      <li>pressure in a flow: \(p(x,y,z)\)</li>
+      <li>cost from multiple factors: \(C(q_1,q_2)\)</li>
+    </ul>
+    <div class="tip"><strong>Key idea:</strong> partial derivatives are the controlled way to vary one variable while freezing the others. This is why they are central in optimization and modeling.</div>
+
+    <h2>2) Build-up concepts (step by step)</h2>
+    <h3>2.1 Functions of two variables</h3>
+    <p>A function \(f(x,y)\) maps a point in the \(xy\)-plane to a height \(z\). You can think of this as a surface in 3D. Level curves \(f(x,y)=k\) are contour lines on that surface.</p>
+    <h3>2.2 Partial derivatives</h3>
+    <p>\[
+      f_x=\frac{\partial f}{\partial x}, \quad f_y=\frac{\partial f}{\partial y}
+    \]</p>
+    <p>\(f_x\) is slope in the \(x\)-direction (with \(y\) fixed). \(f_y\) is slope in the \(y\)-direction (with \(x\) fixed).</p>
+    <h3>2.3 Gradient and direction</h3>
+    <p>\[
+      \nabla f=(f_x,f_y)
+    \]</p>
+    <p>The gradient points in the direction of fastest increase, and its magnitude gives steepest rate of increase.</p>
+
+    <h2>3) Method routines (scaffold)</h2>
+    <div class="card">
+      <strong>Routine A — compute partials reliably</strong>
+      <ol>
+        <li>Circle the variable you are differentiating with respect to.</li>
+        <li>Treat all other variables as constants.</li>
+        <li>Differentiate term-by-term and simplify only at the end.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <strong>Routine B — tangent plane at \((a,b)\)</strong>
+      <ol>
+        <li>Find \(f(a,b)\), \(f_x(a,b)\), \(f_y(a,b)\).</li>
+        <li>Use linearization:
+          \[
+          z=f(a,b)+f_x(a,b)(x-a)+f_y(a,b)(y-b)
+          \]
+        </li>
+      </ol>
+    </div>
+    <div class="card">
+      <strong>Routine C — chain rule with parameter \(t\)</strong>
+      <p>\[
+        z=f(x,y),\ x=x(t),\ y=y(t)\Rightarrow \frac{dz}{dt}=f_x\frac{dx}{dt}+f_y\frac{dy}{dt}
+      \]</p>
+    </div>
+
+    <h2>4) Guided examples (fully worked)</h2>
+    <h3>Example 1: partial derivatives without shortcuts</h3>
+    <p>Find \(f_x,f_y\) for \(f(x,y)=x^2y+3xy^2-4y+7\).</p>
+    <ol>
+      <li>\(f_x=2xy+3y^2\) (because \(-4y\) and \(7\) are constants in \(x\)).</li>
+      <li>\(f_y=x^2+6xy-4\).</li>
+    </ol>
+    <div class="answer">Answer: \(f_x=2xy+3y^2,\quad f_y=x^2+6xy-4\).</div>
+
+    <h3>Example 2: gradient and directional meaning</h3>
+    <p>For \(f=x^2-3xy+4y^2\), find \(\nabla f(1,-1)\).</p>
+    <ol>
+      <li>\(f_x=2x-3y,\ f_y=-3x+8y\).</li>
+      <li>At \((1,-1)\): \(f_x=5,\ f_y=-11\).</li>
+      <li>\(\nabla f(1,-1)=(5,-11)\).</li>
+    </ol>
+    <div class="answer">Interpretation: steepest increase points toward vector \((5,-11)\).</div>
+
+    <h3>Example 3: tangent plane from first principles</h3>
+    <p>Find tangent plane to \(z=x^2+xy+y^2\) at \((1,2)\).</p>
+    <ol>
+      <li>\(f(1,2)=7\).</li>
+      <li>\(f_x=2x+y\Rightarrow f_x(1,2)=4\).</li>
+      <li>\(f_y=x+2y\Rightarrow f_y(1,2)=5\).</li>
+      <li>\(z=7+4(x-1)+5(y-2)\).</li>
+    </ol>
+
+    <h3>Example 4: chain rule with moving point</h3>
+    <p>\(z=x^2y+y^3,\ x=t^2,\ y=2t-1\). Find \(dz/dt\).</p>
+    <ol>
+      <li>\(f_x=2xy,\ f_y=x^2+3y^2\).</li>
+      <li>\(x'=2t,\ y'=2\).</li>
+      <li>\(dz/dt=f_xx'+f_yy'=(2xy)(2t)+(x^2+3y^2)(2)\).</li>
+      <li>Substitute \(x=t^2,\ y=2t-1\).</li>
+    </ol>
+
+    <h3>Example 5: implicit derivative in multivariable context</h3>
+    <p>\(x^2+xy+y^2=9\). Find \(dy/dx\).</p>
+    <ol>
+      <li>Differentiate: \(2x+(x\,y'+y)+2y\,y'=0\).</li>
+      <li>\((x+2y)y'=-(2x+y)\).</li>
+      <li>\(y'=-(2x+y)/(x+2y)\).</li>
+    </ol>
+
+    <h2>5) Common mistakes and recovery checks</h2>
+    <div class="warn">
+      <ul>
+        <li><strong>Mistake:</strong> differentiating \(y\) while finding \(f_x\). <strong>Recovery:</strong> write "treat \(y\) as constant" above the line.</li>
+        <li><strong>Mistake:</strong> dropping evaluation point in tangent plane. <strong>Recovery:</strong> compute \(f(a,b), f_x(a,b), f_y(a,b)\) as a separate mini-table.</li>
+        <li><strong>Mistake:</strong> introducing \(\nabla f\) without direction meaning. <strong>Recovery:</strong> always append "steepest increase direction".</li>
+      </ul>
+    </div>
+
+    <h2>6) Practice set (with progression)</h2>
+    <h3>A. Fundamentals</h3>
+    <ol>
+      <li>Find \(f_x,f_y\) for \(f=x^3y+x\ln y\).</li>
+      <li>Find \(f_{xx},f_{yy},f_{xy}\) for \(f=x^2y+y^3\).</li>
+      <li>Find \(\nabla f(2,1)\) for \(f=x^2+2xy-y^2\).</li>
+      <li>Find tangent plane to \(z=x^2-y^2+2x\) at \((1,2)\).</li>
+    </ol>
+    <h3>B. Applied</h3>
+    <ol start="5">
+      <li>If \(T(x,y)=100-2x^2-y^2\), find rate of change in direction \(\mathbf{u}=(3,4)/5\) at \((2,1)\).</li>
+      <li>\(z=e^{xy}\), \(x=\cos t\), \(y=t^2\): find \(dz/dt\).</li>
+      <li>Find \(dy/dx\) from \(x^2+y^2=25\).</li>
+      <li>Use second derivative test to classify critical point of \(f=x^2+y^2\) at \((0,0)\).</li>
+    </ol>
+
+    <h2>7) Mini mastery test (30 minutes)</h2>
+    <ol>
+      <li>Find \(f_x,f_y\) for \(f=x^2e^y+y\cos x\).</li>
+      <li>Find \(\nabla f(1,2)\) for \(f=x^2+3y^2\).</li>
+      <li>Find tangent plane to \(z=xy+x+y\) at \((1,1)\).</li>
+      <li>\(z=x^2y,\ x=t+1,\ y=t^2\): find \(dz/dt\).</li>
+      <li>From \(x^2+xy+y^2=9\), find \(dy/dx\).</li>
+      <li>Explain in one sentence what gradient tells you physically.</li>
+    </ol>
+    <details>
+      <summary><strong>Mini mastery answers</strong></summary>
+      <ol>
+        <li>\(f_x=2xe^y-y\sin x,\ f_y=x^2e^y+\cos x\)</li>
+        <li>\((2,12)\)</li>
+        <li>\(z=3+2(x-1)+2(y-1)\)</li>
+        <li>\(dz/dt=2xyx'+x^2y' = 2(t+1)t^2+(t+1)^2(2t)\)</li>
+        <li>\(dy/dx=-(2x+y)/(x+2y)\)</li>
+        <li>Direction of fastest increase of the field/value.</li>
+      </ol>
+    </details>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      renderMathInElement(document.body, {
+        delimiters: [{ left: "\\(", right: "\\)", display: false }, { left: "\\[", right: "\\]", display: true }],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>
