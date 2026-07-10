@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Row Operations, Echelon Form, Gaussian Elimination & Determinants</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+
+  header h1{
+    margin:0;
+    font-size:27px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+
+  header p{
+    margin:8px 0 0;
+    color:#c3ccdb;
+    font-size:15px;
+    max-width:680px;
+  }
+
+  .progress-wrap{
+    max-width:820px;
+    margin:22px auto 0;
+    padding:0 24px;
+  }
+
+  .progress-bar{
+    height:6px;
+    border-radius:3px;
+    background:rgba(255,255,255,0.15);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--red);
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    color:#9fb0c9;
+    margin-top:6px;
+  }
+
+  nav.toc{
+    max-width:820px;
+    margin:26px auto 0;
+    padding:16px 22px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  nav.toc ol{
+    margin:0;
+    padding-left:20px;
+    columns:2;
+    font-size:14px;
+    line-height:1.9;
+  }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{
+    max-width:820px;
+    margin:30px auto 0;
+    padding:0 24px;
+  }
+
+  section.topic{
+    margin-bottom:46px;
+  }
+
+  .section-title{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 6px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--navy);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    background:rgba(255,54,33,0.08);
+    border-radius:4px;
+    padding:3px 9px;
+  }
+
+  .prose{
+    font-size:16px;
+    line-height:1.65;
+    margin:16px 0;
+  }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0;
+    padding:16px 18px 18px;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+  .key-box{
+    background:#fff7f5;
+    border-left:4px solid var(--red);
+  }
+  .example-box{
+    background:#f7f9fc;
+    border-left:4px solid var(--navy);
+  }
+  .why-box{
+    background:var(--blue-box);
+    border-left:4px solid var(--navy);
+  }
+  .box-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid #33415a;
+    border-radius:6px;
+    margin:18px 0;
+    box-shadow:0 1px 2px rgba(27,36,49,0.05);
+    overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+
+  .p-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:14px 20px 4px;
+  }
+  .p-num{
+    font-family:'Roboto Mono',monospace;
+    font-weight:500;
+    font-size:12.5px;
+    color:#33415a;
+    background:#eef1f6;
+    border-radius:4px;
+    padding:2px 8px;
+    flex-shrink:0;
+  }
+  .p-body{
+    padding:4px 20px 16px;
+    font-size:15.5px;
+    line-height:1.55;
+  }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    color:var(--navy);
+    background:#fff;
+    border:1.5px solid var(--navy);
+    border-radius:5px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+    border-top:1px dashed var(--line);
+  }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{
+    padding:14px 20px 18px;
+    background:#fbfcfe;
+    font-size:15px;
+    line-height:1.6;
+  }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:8px;
+    display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  svg.diagram{
+    display:block;
+    margin:14px auto;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+  }
+
+  table.matrix-table{ border-collapse:collapse; margin:8px 0;}
+
+  .backlink{
+    display:inline-block;
+    margin-top:10px;
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    color:var(--muted);
+    text-decoration:none;
+  }
+  .backlink:hover{ color:var(--red); }
+
+  footer{
+    max-width:820px;
+    margin:10px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Linear Algebra Foundations</div>
+  <h1>Row Operations, Echelon Form, Gaussian Elimination &amp; Determinants</h1>
+  <p>A from-scratch lesson for a student who already knows how to add and scale matrices, and nothing more. We build every idea up from that starting point, with worked examples and practice problems along the way. Solutions are hidden until you click, so you can actually test yourself.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 13 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Why do we even need this?</a></li>
+    <li><a href="#sec1">The three legal row operations</a></li>
+    <li><a href="#sec2">Row echelon form (REF)</a></li>
+    <li><a href="#sec3">Gaussian elimination</a></li>
+    <li><a href="#sec4">Reduced row echelon form (RREF)</a></li>
+    <li><a href="#sec5">Rank</a></li>
+    <li><a href="#sec6">Determinants: what and why</a></li>
+    <li><a href="#sec7">Determinants by row reduction</a></li>
+    <li><a href="#sec8">The big picture: invertibility</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Why do we even need this?</div>
+  <div class="prose">
+    <p>You already know how to add two matrices together, entry by entry, and how to multiply a matrix by a scalar (multiply every entry by that number). That is genuinely almost everything you need to get started here. Everything in this lesson is really just those two operations, applied cleverly, to rows of numbers.</p>
+    <p>Here is the motivating problem. Suppose you have a system of linear equations, like</p>
+    <p>$$x + 2y + z = 4, \qquad 3x + 7y + 8z = 18, \qquad x + 2y + 3z = 6.$$</p>
+    <p>You could try to solve this by substitution, the way you probably did in high school: solve the first equation for $x$, substitute into the other two, and repeat. That works, but it gets messy fast, especially once you have four, five, or twenty equations. We want a systematic, mechanical procedure that always works, is easy to check, and scales to any number of equations. That procedure is called <strong>Gaussian elimination</strong>, and it is built entirely out of simple row manipulations of a matrix.</p>
+    <p>Along the way we will also meet the <strong>determinant</strong>, a single number attached to a square matrix that tells you, among other things, whether a system like the one above has exactly one solution, no solution, or infinitely many. The two ideas, row reduction and determinants, turn out to be deeply connected: the fastest way to compute a determinant by hand for anything bigger than a $3\times3$ matrix is to row-reduce it.</p>
+    <p>We will build up in this order: legal row operations first, then the "staircase" shape called echelon form, then the elimination algorithm itself, then how all of this connects to determinants and to the question of whether a system of equations is solvable at all.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> The three legal row operations</div>
+  <div class="prose">
+    <p>First, notice that the system of equations above can be written as an <strong>augmented matrix</strong>, just by stripping away the variable names and the plus signs, and keeping the numbers in their positions:</p>
+    <p>$$\left(\begin{array}{ccc|c}1&2&1&4\\3&7&8&18\\1&2&3&6\end{array}\right)$$</p>
+    <p>Each row of this matrix is just one of the original equations, written compactly. This means that anything you are allowed to do to an equation without changing its solution, you are also allowed to do to a row of the matrix. Think back to solving equations: you can swap the order you write two equations in, you can multiply both sides of an equation by a nonzero number, and you can add a multiple of one equation to another. All three of these are completely ordinary algebra, and none of them change what values of $x$, $y$, $z$ satisfy the system. Translated into matrix language, these become the <strong>three elementary row operations</strong>:</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><strong>1. Swap two rows.</strong> $R_i \leftrightarrow R_j$. This just reorders which equation you write first; it changes nothing about which $x,y,z$ satisfy all of them.</p>
+    <p><strong>2. Scale a row by a nonzero constant.</strong> $R_i \to kR_i$. Multiplying both sides of an equation by the same nonzero number preserves the equation.</p>
+    <p><strong>3. Add a multiple of one row to another.</strong> $R_i \to R_i + kR_j$. If two equations both hold, then adding $k$ times one of them to the other still holds, since you are adding equal amounts to both sides.</p>
+  </div>
+
+  <div class="prose">
+    <p>These are exactly the same moves you already know from adding and scaling matrices, just restricted to specific rows instead of the whole matrix at once. Operation 2 is scalar multiplication of a $1\times n$ row. Operation 3 is a scalar multiple of one row added to another, which is literally matrix addition applied to two rows. There is no new arithmetic here, only a new way of using arithmetic you already have.</p>
+    <p>The single most important fact about these three operations is this: <strong>none of them change the solution set of the system</strong>. If $(x,y,z)$ satisfies the original system, it satisfies every system you get afterwards by applying any sequence of these operations, and vice versa. That is the whole reason row operations are useful for solving equations: you are allowed to keep transforming the matrix into a simpler and simpler shape, and whatever solution you eventually read off is guaranteed to be the solution to the equations you started with.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Solve $x+y=3$ and $2x+5y=12$ using row operations, and check that the solution really does satisfy both original equations.</p>
+    <p class="step">Write the augmented matrix: $\left(\begin{array}{cc|c}1&1&3\\2&5&12\end{array}\right)$.</p>
+    <p class="step">Apply $R_2 \to R_2 - 2R_1$: the new row 2 is $(2-2(1),\,5-2(1),\,12-2(3)) = (0,3,6)$.</p>
+    <p class="step">Result: $\left(\begin{array}{cc|c}1&1&3\\0&3&6\end{array}\right)$, which says $x+y=3$ and $3y=6$.</p>
+    <p class="step">From the second row, $y=2$. Substituting into the first row, $x+2=3$, so $x=1$.</p>
+    <p class="step">Check against the <em>original</em> equations: $x+y = 1+2=3$ &check;, and $2x+5y = 2(1)+5(2)=2+10=12$ &check;. The row operation did not change the answer, it just made the second equation easier to read.</p>
+  </div>
+</section>
+
+<!-- Practice 1,2,3 -->
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Apply $R_2 \to R_2 - 3R_1$ to the matrix $\begin{pmatrix}1&2\\3&4\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Only row 2 changes. New row 2 $= (3-3(1),\ 4-3(2)) = (0,\,-2)$.</p>
+      <p>$$\begin{pmatrix}1&2\\0&-2\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Apply the swap $R_1 \leftrightarrow R_3$ to $\begin{pmatrix}1&0&2\\3&1&4\\0&5&1\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Rows 1 and 3 simply trade places; row 2 is untouched.</p>
+      <p>$$\begin{pmatrix}0&5&1\\3&1&4\\1&0&2\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Apply $R_2 \to \frac12 R_2$ to $\begin{pmatrix}2&4\\6&10\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Every entry of row 2 is halved: $(6,10) \to (3,5)$.</p>
+      <p>$$\begin{pmatrix}2&4\\3&5\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Row echelon form (REF)</div>
+  <div class="prose">
+    <p>Row operations are the tools. The goal, when solving a system, is to use those tools to push the matrix into a shape that is easy to read off an answer from. That target shape is called <strong>row echelon form</strong>, often abbreviated REF. "Echelon" just means a staircase pattern, and that is exactly what the matrix looks like once it is done.</p>
+    <p>In the worked example above, we turned $\left(\begin{array}{cc|c}1&1&3\\2&5&12\end{array}\right)$ into $\left(\begin{array}{cc|c}1&1&3\\0&3&6\end{array}\right)$. Notice the shape on the left of the second matrix: the first row starts with a nonzero entry in column 1, and the second row's first nonzero entry has moved over to column 2. That rightward staircase pattern of leading entries is the defining feature of echelon form.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: definition of REF</span>
+    <p>The first nonzero entry in a row (reading left to right) is called that row's <strong>pivot</strong> or <strong>leading entry</strong>. A matrix is in <strong>row echelon form</strong> when:</p>
+    <p class="step">1. Every entry below a pivot, in the same column, is zero.</p>
+    <p class="step">2. Each pivot sits strictly to the right of the pivot in the row above it.</p>
+    <p class="step">3. Any rows that are entirely zero are gathered at the bottom.</p>
+  </div>
+
+  <div class="prose">
+    <p>Why does this shape matter? Because once a matrix is in echelon form, the corresponding system of equations can be solved from the bottom up, one variable at a time, without any more guessing. The bottom nonzero row only involves the last variable or two, so you can solve for it immediately; then you substitute that value upward into the row above, which now only has one unknown left in it, and so on. This process is called <strong>back-substitution</strong>, and we will use it constantly starting in the next section.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example: is it REF?</span>
+    <p>Consider $\begin{pmatrix}1&2&3\\0&0&5\\0&0&0\end{pmatrix}$. The pivots are $1$ (row 1, column 1) and $5$ (row 2, column 3); row 2's pivot is strictly right of row 1's pivot, everything below each pivot in its column is zero, and the zero row sits at the bottom. This matrix <strong>is</strong> in REF, even though row 2 "skips" column 2 entirely, since REF only requires the pivots to move strictly rightward, not to move by exactly one column each time.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body">
+    <p>For each matrix, say whether it is in row echelon form. If it is not, say exactly which condition fails.</p>
+    <p>(a) $\begin{pmatrix}0&2&1\\1&0&3\\0&0&4\end{pmatrix}$ &nbsp;&nbsp; (b) $\begin{pmatrix}1&1&1\\0&1&1\\0&1&0\end{pmatrix}$</p>
+  </div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>(a)</strong> Not in REF. Row 1's leading entry is in column 2, but row 2's leading entry is in column 1, which is to the <em>left</em>, not the right. Pivots must move strictly rightward as you go down the rows, and here they move backward, so condition 2 fails.</p>
+      <p><strong>(b)</strong> Not in REF. Row 2's pivot is in column 2 (the entry there is $1$). Directly below it, row 3 has a $1$ in column 2 as well, that is, a nonzero entry below a pivot. Condition 1 fails.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Gaussian elimination</div>
+  <div class="prose">
+    <p><strong>Gaussian elimination</strong> is simply the name for the systematic procedure of applying row operations, in a fixed order, to push any matrix into row echelon form. Once you reach REF, back-substitution finishes the job. Here is the procedure in words before we see it in action:</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: the algorithm</span>
+    <p class="step">1. Look at the first column. If the entry in row 1 is zero but some entry below it is not, swap rows so that a nonzero entry is on top. (If the whole column is zero, move to the next column.)</p>
+    <p class="step">2. Use operation 3 (add a multiple of the pivot row to the rows below it) to turn every entry below that pivot into zero.</p>
+    <p class="step">3. Move down and right to the next row and column, and repeat steps 1 and 2, ignoring rows and columns you have already finished with.</p>
+    <p class="step">4. Once no more pivots can be created, the matrix is in echelon form. Solve for the last variable, then substitute upward, row by row, to find the rest.</p>
+  </div>
+
+  <div class="prose">
+    <p>Let's run this on the system we started the whole lesson with, since it is a clean example that uses every idea so far, and we will keep coming back to it later on.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example: full elimination</span>
+    <p>Solve</p>
+    <p>$$x + 2y + z = 4, \qquad 3x + 7y + 8z = 18, \qquad x + 2y + 3z = 6.$$</p>
+    <p class="step">Write the augmented matrix: $\left(\begin{array}{ccc|c}1&2&1&4\\3&7&8&18\\1&2&3&6\end{array}\right)$.</p>
+    <p class="step">The pivot in row 1 is already the $1$ in the top-left corner, so we use it to clear out everything below it in column 1: $R_2 \to R_2 - 3R_1$ gives new row 2 $= (3-3,\,7-6,\,8-3,\,18-12) = (0,1,5,6)$. Then $R_3 \to R_3 - R_1$ gives new row 3 $= (1-1,\,2-2,\,3-1,\,6-4) = (0,0,2,2)$.</p>
+    <p class="step">$$\left(\begin{array}{ccc|c}1&2&1&4\\0&1&5&6\\0&0&2&2\end{array}\right)$$</p>
+    <p class="step">This is already in echelon form: the pivots ($1$, then $1$, then $2$) move strictly rightward down the rows. No more elimination is needed.</p>
+    <p class="step"><strong>Back-substitute.</strong> The last row says $2z=2$, so $z=1$. Substitute into the middle row: $y + 5(1) = 6$, so $y = 1$. Substitute both into the top row: $x + 2(1) + 1 = 4$, so $x = 1$.</p>
+    <p class="step">Solution: $(x,y,z) = (1,1,1)$. You can check this satisfies all three original equations directly.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why this always works</span>
+    <p>Every step we used was one of the three legal row operations from Section 1, so the solution set never changed from the very first matrix to the very last. We are not solving a "new," different system by the time we reach echelon form: it is the exact same system, just rewritten in a form that happens to be trivial to finish by hand. That is the entire point of elimination: it trades algebraic cleverness for a completely mechanical, repeatable recipe.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Solve the system $x+y=3$, $2x+5y=12$ (you already reduced it in the Section 1 example) by writing out the echelon form and doing back-substitution explicitly, to make sure you can reproduce every step yourself.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Augmented matrix: $\left(\begin{array}{cc|c}1&1&3\\2&5&12\end{array}\right)$. Apply $R_2 \to R_2-2R_1$: $(2-2,\,5-2,\,12-6)=(0,3,6)$.</p>
+      <p>Echelon form: $\left(\begin{array}{cc|c}1&1&3\\0&3&6\end{array}\right)$. Bottom row: $3y=6 \Rightarrow y=2$. Top row: $x+2=3 \Rightarrow x=1$.</p>
+      <p>Solution: $(x,y)=(1,2)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Use Gaussian elimination and back-substitution to solve $x+y+z=6$, $\ 2x+y-z=1$, $\ x-y+2z=5$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Augmented matrix: $\left(\begin{array}{ccc|c}1&1&1&6\\2&1&-1&1\\1&-1&2&5\end{array}\right)$.</p>
+      <p class="step">$R_2 \to R_2 - 2R_1$: $(0,-1,-3,-11)$. $\ R_3 \to R_3 - R_1$: $(0,-2,1,-1)$.</p>
+      <p class="step">$\left(\begin{array}{ccc|c}1&1&1&6\\0&-1&-3&-11\\0&-2&1&-1\end{array}\right)$</p>
+      <p class="step">$R_3 \to R_3 - 2R_2$: $(0,\,-2-2(-1),\,1-2(-3),\,-1-2(-11)) = (0,0,7,21)$.</p>
+      <p class="step">$\left(\begin{array}{ccc|c}1&1&1&6\\0&-1&-3&-11\\0&0&7&21\end{array}\right)$, now in echelon form.</p>
+      <p class="step">Back-substitute: $7z=21 \Rightarrow z=3$. Then $-y-3(3)=-11 \Rightarrow -y=-2 \Rightarrow y=2$. Then $x+2+3=6 \Rightarrow x=1$.</p>
+      <p>Solution: $(x,y,z) = (1,2,3)$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Reduced row echelon form (RREF)</div>
+  <div class="prose">
+    <p>Row echelon form is enough to solve a system with back-substitution, but we can push the same idea one step further and make the answer appear <em>directly</em>, with no substitution required at all. If, on top of the REF conditions, we also insist that every pivot equals $1$, and that every entry directly <em>above</em> a pivot is also zero (not just below), the matrix is said to be in <strong>reduced row echelon form</strong>, or RREF. Reaching RREF is sometimes called <strong>Gauss&ndash;Jordan elimination</strong>, to distinguish it from ordinary Gaussian elimination that stops at plain REF.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: definition of RREF</span>
+    <p>A matrix is in <strong>reduced row echelon form</strong> when it satisfies the REF conditions, and in addition:</p>
+    <p class="step">4. Every pivot is exactly $1$.</p>
+    <p class="step">5. Every pivot is the <em>only</em> nonzero entry in its column, that is, entries above a pivot are zero as well as below.</p>
+    <p>When the augmented matrix of a system reaches RREF, the last column simply <em>is</em> the solution, with no further work needed.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example: continuing to RREF</span>
+    <p>Take the echelon form we reached in Section 3: $\left(\begin{array}{ccc|c}1&2&1&4\\0&1&5&6\\0&0&2&2\end{array}\right)$. Instead of stopping to back-substitute, let's push all the way to RREF.</p>
+    <p class="step"><strong>Make every pivot a 1.</strong> Scale $R_3 \to \frac12 R_3$: $(0,0,1,1)$.</p>
+    <p class="step">$$\left(\begin{array}{ccc|c}1&2&1&4\\0&1&5&6\\0&0&1&1\end{array}\right)$$</p>
+    <p class="step"><strong>Clear above the row-3 pivot.</strong> $R_2 \to R_2 - 5R_3$: $(0,1,0,\,6-5)=(0,1,0,1)$. &nbsp; $R_1 \to R_1 - R_3$: $(1,2,0,\,4-1)=(1,2,0,3)$.</p>
+    <p class="step">$$\left(\begin{array}{ccc|c}1&2&0&3\\0&1&0&1\\0&0&1&1\end{array}\right)$$</p>
+    <p class="step"><strong>Clear above the row-2 pivot.</strong> $R_1 \to R_1 - 2R_2$: $(1,0,0,\,3-2)=(1,0,0,1)$.</p>
+    <p class="step">$$\left(\begin{array}{ccc|c}1&0&0&1\\0&1&0&1\\0&0&1&1\end{array}\right)$$</p>
+    <p class="step">Read the answer straight off the last column: $x=1$, $y=1$, $z=1$. No substitution needed, exactly matching what we found before.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">REF or RREF: which should you use?</span>
+    <p>RREF is more satisfying because the answer appears automatically, but it usually takes more arithmetic steps to get there than plain REF plus back-substitution. In practice, by hand, REF with back-substitution is often faster for a one-off system. RREF becomes genuinely useful when you want a completely mechanical, foolproof answer with no separate back-substitution step, for example when working with a computer, or when you want to read off other structural information about the matrix (like the rank, coming up next) at a glance.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Starting from the echelon form you found in Practice 6, $\left(\begin{array}{ccc|c}1&1&1&6\\0&-1&-3&-11\\0&0&7&21\end{array}\right)$, continue on to reduced row echelon form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Scale $R_2 \to -R_2$: $(0,1,3,11)$. Scale $R_3 \to \frac17 R_3$: $(0,0,1,3)$.</p>
+      <p class="step">$\left(\begin{array}{ccc|c}1&1&1&6\\0&1&3&11\\0&0&1&3\end{array}\right)$</p>
+      <p class="step">Clear above row 3's pivot: $R_2 \to R_2-3R_3$: $(0,1,0,2)$. $\ R_1 \to R_1 - R_3$: $(1,1,0,3)$.</p>
+      <p class="step">$\left(\begin{array}{ccc|c}1&1&0&3\\0&1&0&2\\0&0&1&3\end{array}\right)$</p>
+      <p class="step">Clear above row 2's pivot: $R_1 \to R_1 - R_2$: $(1,0,0,1)$.</p>
+      <p class="step">$\left(\begin{array}{ccc|c}1&0&0&1\\0&1&0&2\\0&0&1&3\end{array}\right)$, giving $(x,y,z)=(1,2,3)$, matching Practice 6.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> Rank</div>
+  <div class="prose">
+    <p>Once a matrix is in echelon form, one very natural thing to count is how many <em>nonzero</em> rows it ended up with, that is, how many pivots you actually found. This number is called the <strong>rank</strong> of the matrix, and it does not depend on which particular sequence of row operations you used to get there. No matter how you row-reduce a given matrix, you always end up with the same number of pivots.</p>
+    <p>Rank tells you how many of the original equations were actually giving you new information. If you start with three equations in three unknowns but end up with only two pivots after elimination, that means one of your original equations was secretly a combination of the other two, it was not adding anything new, and the system does not pin down a unique solution.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>The <strong>rank</strong> of a matrix is the number of nonzero rows in its row echelon form, equivalently, the number of pivots. For a square $n\times n$ matrix, if the rank equals $n$ (every row produced a pivot), the matrix has "full rank." If the rank is less than $n$, some rows became entirely zero during elimination, and the matrix is missing information; we call it "rank deficient" or singular.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Find the rank of $\begin{pmatrix}1&2&3\\2&4&6\\1&1&1\end{pmatrix}$.</p>
+    <p class="step">$R_2 \to R_2 - 2R_1$: $(0,0,0)$. Already this row has vanished entirely, a warning sign.</p>
+    <p class="step">$R_3 \to R_3 - R_1$: $(0,-1,-2)$.</p>
+    <p class="step">$$\begin{pmatrix}1&2&3\\0&0&0\\0&-1&-2\end{pmatrix}$$</p>
+    <p class="step">Swap $R_2$ and $R_3$ to move the zero row to the bottom (standard practice for tidy echelon form): $\begin{pmatrix}1&2&3\\0&-1&-2\\0&0&0\end{pmatrix}$.</p>
+    <p class="step">There are two nonzero rows, so the rank is $2$, even though the matrix is $3\times3$. It is rank deficient. This happened because row 2 of the original matrix was exactly twice row 1, it carried no new information at all.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Is the matrix from the worked example above, $\begin{pmatrix}1&2&3\\2&4&6\\1&1&1\end{pmatrix}$, invertible? Justify your answer using its rank.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No. The matrix is $3\times3$, so full rank would mean rank $3$. We found its rank is only $2$, meaning row reduction produced a zero row, so the rows are not all independent (row 2 is just twice row 1). A square matrix that is not full rank cannot be invertible, so this matrix is singular.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Determinants: what and why</div>
+  <div class="prose">
+    <p>So far, every question we have asked has been about <em>solving</em> a system of equations. The <strong>determinant</strong> answers a slightly different, and in some ways more basic, question: without actually solving anything, can you tell just by looking at the coefficient matrix whether the system is guaranteed to have exactly one solution?</p>
+    <p>The determinant is a single number computed from a square matrix, and it turns out that this one number completely settles the question: a square matrix is invertible, meaning $A\mathbf{x}=\mathbf{b}$ has a unique solution for every choice of $\mathbf{b}$, exactly when its determinant is nonzero. We will make this precise in Section 8. For now, let's see what the determinant actually is and how to compute it for small matrices.</p>
+  </div>
+
+  <div class="prose">
+    <p>For a $2\times2$ matrix, the determinant has a wonderfully simple formula, and an equally simple geometric meaning.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: the 2&times;2 determinant</span>
+    <p>$$\det\begin{pmatrix}a&b\\c&d\end{pmatrix} = ad - bc.$$</p>
+    <p>Geometrically, if you think of the rows $(a,b)$ and $(c,d)$ as two vectors drawn from the origin, then $|ad-bc|$ is exactly the area of the parallelogram those two vectors span. The sign tells you the orientation: positive if going from the first row-vector to the second is a counter-clockwise turn, negative if clockwise.</p>
+  </div>
+
+  <div class="prose">
+    <p>Here is that geometric picture made concrete. Take the vectors $(3,1)$ and $(1,2)$ as the two rows.</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 240 240" width="240" height="240">
+    <line x1="0" y1="220" x2="240" y2="220" stroke="#c8d2de" stroke-width="1"/>
+    <line x1="40" y1="0" x2="40" y2="240" stroke="#c8d2de" stroke-width="1"/>
+    <polygon points="40,220 160,180 200,100 80,140" fill="#1B2431" fill-opacity="0.10" stroke="#1B2431" stroke-width="1"/>
+    <defs>
+      <marker id="arrNavyL" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#1B2431"/></marker>
+      <marker id="arrRedL" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#FF3621"/></marker>
+    </defs>
+    <line x1="40" y1="220" x2="157" y2="181" stroke="#1B2431" stroke-width="2.2" marker-end="url(#arrNavyL)"/>
+    <line x1="40" y1="220" x2="77" y2="141" stroke="#FF3621" stroke-width="2.2" marker-end="url(#arrRedL)"/>
+    <text x="162" y="178" font-family="Roboto Mono" font-size="12" fill="#1B2431">(3,1)</text>
+    <text x="82" y="138" font-family="Roboto Mono" font-size="12" fill="#FF3621">(1,2)</text>
+  </svg>
+
+  <div class="prose">
+    <p>$$\det\begin{pmatrix}3&1\\1&2\end{pmatrix} = 3(2)-1(1) = 5.$$</p>
+    <p>And indeed, the shaded parallelogram in the picture above has area exactly $5$. This is not a coincidence, it is what the determinant <em>is</em>, for a $2\times2$ matrix: a signed area.</p>
+    <p>For a $3\times3$ matrix, the determinant is computed by <strong>cofactor expansion</strong>: pick any row (row 1 is the usual choice), and for each entry in that row, multiply it by the determinant of the smaller $2\times2$ matrix left over when you delete that entry's row and column, with alternating signs $+,-,+$ across the row.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: the 3&times;3 determinant by cofactor expansion</span>
+    <p>$$\det\begin{pmatrix}a&b&c\\d&e&f\\g&h&i\end{pmatrix} = a\begin{vmatrix}e&f\\h&i\end{vmatrix} - b\begin{vmatrix}d&f\\g&i\end{vmatrix} + c\begin{vmatrix}d&e\\g&h\end{vmatrix}$$</p>
+    <p>Each $2\times2$ piece is the "minor" left over after deleting that entry's row and column, and you already know how to compute those from the formula above.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Compute $\det\begin{pmatrix}2&0&1\\1&3&2\\0&1&1\end{pmatrix}$ by expanding along the first row.</p>
+    <p class="step">$$= 2\begin{vmatrix}3&2\\1&1\end{vmatrix} - 0\begin{vmatrix}1&2\\0&1\end{vmatrix} + 1\begin{vmatrix}1&3\\0&1\end{vmatrix}$$</p>
+    <p class="step">$\begin{vmatrix}3&2\\1&1\end{vmatrix} = 3(1)-2(1) = 1$, and $\begin{vmatrix}1&3\\0&1\end{vmatrix} = 1(1)-3(0)=1$.</p>
+    <p class="step">$$= 2(1) - 0 + 1(1) = 2+1 = 3.$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Compute $\det\begin{pmatrix}3&5\\2&4\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det = 3(4)-5(2) = 12-10 = 2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Compute $\det\begin{pmatrix}2&0&1\\1&3&2\\0&1&1\end{pmatrix}$ by expanding along the <em>first column</em> instead, and check you get the same answer as the worked example above (which expanded along the first row).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Expanding along column 1, with signs $+,-,+$ down the column:</p>
+      <p>$$= 2\begin{vmatrix}3&2\\1&1\end{vmatrix} - 1\begin{vmatrix}0&1\\1&1\end{vmatrix} + 0\begin{vmatrix}0&1\\3&2\end{vmatrix}$$</p>
+      <p>$\begin{vmatrix}3&2\\1&1\end{vmatrix}=1$, $\ \begin{vmatrix}0&1\\1&1\end{vmatrix}=0(1)-1(1)=-1$.</p>
+      <p>$$= 2(1) - 1(-1) + 0 = 2+1 = 3.$$</p>
+      <p>Same answer, $3$, as before. This is a general fact: cofactor expansion along <em>any</em> row or column of a matrix always gives the same determinant. That gives you the freedom to pick whichever row or column has the most zeros, to save yourself arithmetic.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> Determinants by row reduction</div>
+  <div class="prose">
+    <p>Cofactor expansion works, but it gets painful fast: a $4\times4$ determinant by cofactor expansion requires computing four separate $3\times3$ determinants, each of which requires three $2\times2$ determinants. For anything bigger than $3\times3$, there is a much faster route, and it uses exactly the row operations you already know from Gaussian elimination.</p>
+    <p>The key fact is that the determinant of a matrix in echelon form (upper triangular, with zeros everywhere below the diagonal) is just the product of the diagonal entries. That is dramatically easier than cofactor expansion. So the strategy is: row-reduce the matrix to echelon form exactly as in Section 3, multiply the diagonal entries together, and then correct for whatever the row operations did to the determinant along the way.</p>
+    <p>That correction is the only new thing to learn here, and we actually already worked it out in an earlier lesson. Each of the three row operations affects the determinant in a specific, predictable way:</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why row operations affect the determinant the way they do</span>
+    <p><strong>Swapping two rows</strong> flips the sign of the determinant ($\times-1$). This is because the determinant is an <em>alternating</em> function of the rows: a matrix with two identical rows always has determinant $0$ (its rows are linearly dependent, so it cannot be invertible), and swapping two nearly-identical rows must flip the sign to stay consistent with that fact.</p>
+    <p><strong>Scaling a row by a constant $k$</strong> scales the whole determinant by $k$. This is linearity: every term in the determinant's expansion uses exactly one entry from that row, so scaling the row scales every one of those terms by $k$.</p>
+    <p><strong>Adding a multiple of one row to another</strong> ($R_i \to R_i + kR_j$) leaves the determinant <strong>completely unchanged</strong>. This also follows from linearity: $\det(\dots,R_i+kR_j,\dots) = \det(\dots,R_i,\dots) + k\det(\dots,R_j,\dots,R_j,\dots)$, and that second term is automatically zero because it has a repeated row $R_j$.</p>
+    <p>Putting this together: as you row-reduce, keep a running tally of how many row swaps you performed, and by what constants you scaled any rows. At the end, $\det(\text{original}) = (-1)^{\#\text{swaps}} \times \dfrac{1}{\prod(\text{scaling factors used})} \times (\text{product of the final diagonal})$. In practice, most of the time you will avoid scaling rows entirely and only use swaps and add-a-multiple operations, since those are free (they do not change the determinant at all, apart from the sign flip from a swap), which keeps the bookkeeping to just counting swaps.</p>
+  </div>
+
+  <div class="prose">
+    <p>One more thing needs explaining: <em>when</em> do you actually need to swap? The answer is, whenever the entry sitting in the pivot position is exactly zero, but some entry below it in the same column is not. You cannot use a zero pivot to eliminate the entries below it (there is nothing to work with), so you swap it out for a nonzero one first. Here is a worked example where that happens.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example: a swap is necessary</span>
+    <p>Compute $\det\begin{pmatrix}0&2&1\\1&3&2\\2&1&4\end{pmatrix}$ by row reduction.</p>
+    <p class="step">The $(1,1)$ entry is $0$, so we cannot eliminate below it yet. Swap $R_1 \leftrightarrow R_2$ (this flips the sign of the determinant):</p>
+    <p class="step">$$\begin{pmatrix}1&3&2\\0&2&1\\2&1&4\end{pmatrix}, \qquad \det(\text{original}) = -\det(\text{this matrix}).$$</p>
+    <p class="step">Eliminate below the new pivot: $R_3 \to R_3 - 2R_1$: $(2-2,\,1-6,\,4-4) = (0,-5,0)$. This operation does not change the determinant.</p>
+    <p class="step">$$\begin{pmatrix}1&3&2\\0&2&1\\0&-5&0\end{pmatrix}$$</p>
+    <p class="step">One more elimination: $R_3 \to R_3 + \frac52 R_2$: $\left(0,\,-5+\frac52(2),\,0+\frac52(1)\right) = (0,0,\tfrac52)$. Again, no change to the determinant.</p>
+    <p class="step">$$\begin{pmatrix}1&3&2\\0&2&1\\0&0&\frac52\end{pmatrix}$$</p>
+    <p class="step">This is upper triangular. Its determinant is the diagonal product: $1 \times 2 \times \frac52 = 5$.</p>
+    <p class="step">We performed exactly one swap along the way, so $\det(\text{original}) = -5$. (You can double-check this using cofactor expansion on the original matrix; it agrees.)</p>
+  </div>
+
+  <div class="prose">
+    <p>Now let's use this to tackle something a plain cofactor expansion would make you dread: a $4\times4$ determinant.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example: a full 4&times;4 determinant</span>
+    <p>Compute $\det\begin{pmatrix}2&4&2&6\\0&0&3&3\\1&1&1&1\\2&2&0&2\end{pmatrix}$.</p>
+    <p class="step">Swap $R_1 \leftrightarrow R_3$ to get a convenient leading $1$ (sign flips once):</p>
+    <p class="step">$$\begin{pmatrix}1&1&1&1\\0&0&3&3\\2&4&2&6\\2&2&0&2\end{pmatrix}$$</p>
+    <p class="step">Eliminate column 1 below the pivot: $R_3 \to R_3-2R_1$: $(0,2,0,4)$. $\ R_4 \to R_4-2R_1$: $(0,0,-2,0)$. (No change to the determinant.)</p>
+    <p class="step">$$\begin{pmatrix}1&1&1&1\\0&0&3&3\\0&2&0&4\\0&0&-2&0\end{pmatrix}$$</p>
+    <p class="step">Row 2's leading entry is currently $0$, but row 3 has a nonzero entry in that column. Swap $R_2\leftrightarrow R_3$ (sign flips a <em>second</em> time, canceling the first flip):</p>
+    <p class="step">$$\begin{pmatrix}1&1&1&1\\0&2&0&4\\0&0&3&3\\0&0&-2&0\end{pmatrix}$$</p>
+    <p class="step">Eliminate below the row-3 pivot: $R_4 \to R_4 + \frac23 R_3$: $\left(0,0,\,-2+\frac23(3),\,0+\frac23(3)\right) = (0,0,0,2)$.</p>
+    <p class="step">$$\begin{pmatrix}1&1&1&1\\0&2&0&4\\0&0&3&3\\0&0&0&2\end{pmatrix}$$</p>
+    <p class="step">Diagonal product: $1\times2\times3\times2=12$. We performed exactly <strong>two</strong> swaps, and two sign flips cancel out, so</p>
+    <p class="step">$$\det(\text{original}) = 12.$$</p>
+    <p>This is exactly the same determinant, and the same method, from Question 1 of the SGTA Week 6 worksheet, worked through here in full detail so you can see precisely where every step comes from.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Compute $\det\begin{pmatrix}0&1&3\\2&1&1\\1&4&2\end{pmatrix}$ by row reduction. You will need exactly one swap.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Swap $R_1 \leftrightarrow R_3$ (sign flips once): $\begin{pmatrix}1&4&2\\2&1&1\\0&1&3\end{pmatrix}$.</p>
+      <p class="step">$R_2 \to R_2 - 2R_1$: $(0,\,1-8,\,1-4) = (0,-7,-3)$.</p>
+      <p class="step">$\begin{pmatrix}1&4&2\\0&-7&-3\\0&1&3\end{pmatrix}$</p>
+      <p class="step">$R_3 \to R_3 + \frac17 R_2$: $\left(0,\,1+\frac17(-7),\,3+\frac17(-3)\right) = \left(0,0,\frac{18}{7}\right)$.</p>
+      <p class="step">$\begin{pmatrix}1&4&2\\0&-7&-3\\0&0&\frac{18}{7}\end{pmatrix}$, diagonal product $= 1\times(-7)\times\frac{18}{7} = -18$.</p>
+      <p class="step">One swap was used, so $\det(\text{original}) = -(-18) = 18$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Find the rank of $\begin{pmatrix}1&2&3\\2&4&6\\1&1&1\end{pmatrix}$ (same matrix as Section 5's worked example) and then compute its determinant directly. Do the two answers agree with the theorem in Section 8 before you've even read it? (Hint: think about what proportional rows do to a determinant.)</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>We already found in Section 5 that this matrix has rank $2$, not full rank $3$, because row 2 is exactly twice row 1.</p>
+      <p>For the determinant: since row 2 $= 2\times$row 1, the rows are linearly dependent. A determinant with two proportional rows is always exactly $0$ (this follows the same way as the "identical rows give zero" fact: factor the $2$ out of row 2 using the scaling rule, and you are left with a matrix that has two <em>identical</em> rows, whose determinant is $0$).</p>
+      <p>So $\det = 0$, matching rank $<3$: this is a singular (non-invertible) matrix, exactly as the rank told us.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec8">
+  <div class="section-title"><span class="tag">8</span> The big picture: invertibility</div>
+  <div class="prose">
+    <p>We now have three completely different-looking ways to investigate the same underlying question about a square matrix $A$: does the system $A\mathbf{x}=\mathbf{b}$ have exactly one solution? It turns out all three methods, row reduction, rank, and the determinant, always agree with each other. That is not a coincidence, and seeing why ties this whole lesson together.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: the equivalence theorem</span>
+    <p>For a square $n\times n$ matrix $A$, the following statements are all equivalent, meaning if any one of them is true, all of the others are true as well:</p>
+    <p class="step">1. $\det(A) \neq 0$.</p>
+    <p class="step">2. The row echelon form of $A$ has no zero rows, that is, $A$ has $n$ pivots.</p>
+    <p class="step">3. $\mathrm{rank}(A) = n$ (full rank).</p>
+    <p class="step">4. $A$ is invertible (there exists a matrix $A^{-1}$ with $AA^{-1}=A^{-1}A=I$).</p>
+    <p class="step">5. $A\mathbf{x}=\mathbf{b}$ has exactly one solution, for every possible $\mathbf{b}\in\mathbb{R}^n$.</p>
+    <p class="step">6. $A\mathbf{x}=\mathbf{0}$ has only the trivial solution $\mathbf{x}=\mathbf{0}$.</p>
+    <p>And, if any one of these fails, all of them fail together: $\det(A)=0$, some row vanishes during elimination, the rank is less than $n$, $A$ has no inverse, and $A\mathbf{x}=\mathbf{b}$ has either no solution or infinitely many solutions depending on $\mathbf{b}$ (never exactly one).</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why these all have to agree</span>
+    <p>The thread connecting everything is row reduction itself. When you row-reduce a square matrix, you either end up with a pivot in every row, or you end up with at least one zero row. Nothing else can happen.</p>
+    <p>If every row gets a pivot, the rank is automatically $n$ (full rank). Since the determinant of the echelon form is the product of the pivots, and none of the pivots are zero, the determinant is nonzero, and swaps or scalings along the way only ever change it by a nonzero factor (a sign, or a nonzero scalar), so the <em>original</em> determinant is nonzero too. A full set of pivots also means back-substitution can always solve for every variable, no matter what the right-hand side $\mathbf{b}$ is, giving exactly one solution.</p>
+    <p>If instead some row becomes entirely zero during elimination, the rank drops below $n$, the "diagonal product" for the determinant includes that zero row's missing pivot (effectively a zero factor), so the determinant is $0$, and the system no longer pins down a unique solution: that zero row translates into either an equation like $0=0$ (meaning infinitely many solutions remain, one free variable at least), or an equation like $0 = c$ for some nonzero $c$ (meaning no solution exists at all), depending on the specific right-hand side.</p>
+    <p>So all six statements are really just different ways of describing the exact same fork in the road that shows up the moment you start row-reducing: either you get a pivot in every row, or you don't.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example: putting it all together</span>
+    <p>Recall $\begin{pmatrix}1&2&1\\3&7&8\\1&2&3\end{pmatrix}$, the coefficient matrix from our running system in Sections 3 and 4.</p>
+    <p class="step">Row reducing (as in Section 3) gives $\begin{pmatrix}1&2&1\\0&1&5\\0&0&2\end{pmatrix}$, with a pivot in every row: rank $=3=n$, full rank.</p>
+    <p class="step">The determinant is the diagonal product, with zero swaps used, so $\det = 1\times1\times2 = 2 \neq 0$.</p>
+    <p class="step">By the theorem, this matrix is invertible, and indeed we found in Section 3 that $A\mathbf{x}=\mathbf{b}$ had exactly one solution, $(1,1,1)$, for the particular $\mathbf{b}$ we chose. The theorem guarantees this would hold for <em>any</em> choice of $\mathbf{b}$, not just that one.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body">
+    <p>Consider $A = \begin{pmatrix}0&2&1\\1&3&2\\2&1&4\end{pmatrix}$, from the Section 7 worked example, where we found $\det(A) = -5$.</p>
+    <p>Without doing any more row reduction, answer: (a) what is the rank of $A$? (b) is $A$ invertible? (c) does $A\mathbf{x}=\mathbf{0}$ have any solution other than $\mathbf{x}=\mathbf{0}$?</p>
+  </div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $\det(A) = -5 \neq 0$, the equivalence theorem tells us immediately, with no further row reduction needed, that:</p>
+      <p>(a) $\mathrm{rank}(A) = 3$ (full rank, since $A$ is $3\times3$).</p>
+      <p>(b) Yes, $A$ is invertible.</p>
+      <p>(c) No. Since $A$ is invertible, $A\mathbf{x}=\mathbf{0}$ has only the trivial solution $\mathbf{x}=\mathbf{0}$.</p>
+      <p>This is exactly the point of the theorem: one number, the determinant, instantly answers all three questions at once, without needing to re-derive the echelon form from scratch each time.</p>
+    </div>
+  </div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Everything in this lesson has been about square matrices and single systems of equations. The same row-reduction toolkit extends naturally to non-square matrices, to finding the inverse of a matrix directly (by row-reducing $(A \mid I)$ until the left side becomes $I$), and to understanding vector spaces, spans, and linear independence, all of which build directly on the idea of rank you met in Section 5. Every one of those topics still comes back to the same three row operations you started this lesson with.</p>
+</div>
+
+</main>
+
+<footer>Linear Algebra Foundations &middot; Row Operations, Echelon Form, Gaussian Elimination &amp; Determinants</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
