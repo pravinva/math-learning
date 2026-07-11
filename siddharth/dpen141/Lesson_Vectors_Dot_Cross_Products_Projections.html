@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Vectors, Dot &amp; Cross Products, and Projections</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+
+  header h1{
+    margin:0;
+    font-size:27px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+
+  header p{
+    margin:8px 0 0;
+    color:#c3ccdb;
+    font-size:15px;
+    max-width:680px;
+  }
+
+  .progress-wrap{
+    max-width:820px;
+    margin:22px auto 0;
+    padding:0 24px;
+  }
+
+  .progress-bar{
+    height:6px;
+    border-radius:3px;
+    background:rgba(255,255,255,0.15);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--red);
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    color:#9fb0c9;
+    margin-top:6px;
+  }
+
+  nav.toc{
+    max-width:820px;
+    margin:26px auto 0;
+    padding:16px 22px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  nav.toc ol{
+    margin:0;
+    padding-left:20px;
+    columns:2;
+    font-size:14px;
+    line-height:1.9;
+  }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{
+    max-width:820px;
+    margin:30px auto 0;
+    padding:0 24px;
+  }
+
+  section.topic{
+    margin-bottom:46px;
+  }
+
+  .section-title{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 6px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--navy);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    background:rgba(255,54,33,0.08);
+    border-radius:4px;
+    padding:3px 9px;
+  }
+
+  .prose{
+    font-size:16px;
+    line-height:1.65;
+    margin:16px 0;
+  }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0;
+    padding:16px 18px 18px;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+  .key-box{
+    background:#fff7f5;
+    border-left:4px solid var(--red);
+  }
+  .example-box{
+    background:#f7f9fc;
+    border-left:4px solid var(--navy);
+  }
+  .why-box{
+    background:var(--blue-box);
+    border-left:4px solid var(--navy);
+  }
+  .box-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid #33415a;
+    border-radius:6px;
+    margin:18px 0;
+    box-shadow:0 1px 2px rgba(27,36,49,0.05);
+    overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+
+  .p-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:14px 20px 4px;
+  }
+  .p-num{
+    font-family:'Roboto Mono',monospace;
+    font-weight:500;
+    font-size:12.5px;
+    color:#33415a;
+    background:#eef1f6;
+    border-radius:4px;
+    padding:2px 8px;
+    flex-shrink:0;
+  }
+  .p-body{
+    padding:4px 20px 16px;
+    font-size:15.5px;
+    line-height:1.55;
+  }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    color:var(--navy);
+    background:#fff;
+    border:1.5px solid var(--navy);
+    border-radius:5px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+    border-top:1px dashed var(--line);
+  }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{
+    padding:14px 20px 18px;
+    background:#fbfcfe;
+    font-size:15px;
+    line-height:1.6;
+  }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:8px;
+    display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  svg.diagram{
+    display:block;
+    margin:14px auto;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+  }
+
+  .backlink{
+    display:inline-block;
+    margin-top:10px;
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    color:var(--muted);
+    text-decoration:none;
+  }
+  .backlink:hover{ color:var(--red); }
+
+  footer{
+    max-width:820px;
+    margin:10px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Linear Algebra Foundations</div>
+  <h1>Vectors, Dot &amp; Cross Products, and Projections</h1>
+  <p>A from-scratch lesson building on the row-operations lesson. We start from what a vector even is and build up to angles, projections, and the cross product, with worked examples and practice problems throughout. Solutions stay hidden until you click, so you can test yourself honestly.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 77 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Why vectors?</a></li>
+    <li><a href="#sec1">Vectors as arrows and as lists</a></li>
+    <li><a href="#sec2">Addition and scalar multiplication</a></li>
+    <li><a href="#sec3">Magnitude (length)</a></li>
+    <li><a href="#sec4">The dot product and the angle formula</a></li>
+    <li><a href="#sec5">Unit vectors</a></li>
+    <li><a href="#sec6">Cauchy-Schwarz and the triangle inequality</a></li>
+    <li><a href="#sec7">Projections</a></li>
+    <li><a href="#sec8">The cross product</a></li>
+    <li><a href="#sec9">Scalar triple product and volume</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Why vectors?</div>
+  <div class="prose">
+    <p>Some quantities in the world are fully described by a single number: temperature, mass, the price of a coffee. Others need more than that. If someone tells you a plane is flying at 500 km/h, that is not enough information to know where it will be in an hour, you also need to know which direction it is heading. Speed plus direction together is called <strong>velocity</strong>, and it is the classic first example of a <strong>vector</strong>: a quantity with both a size and a direction.</p>
+    <p>You already have most of the tools you need for this. In the previous lesson you worked with matrices, adding them entry by entry and scaling them by a number. A vector, as far as the arithmetic goes, is nothing more than a matrix with a single column (or a single row): a list of numbers. So vector addition and scalar multiplication of vectors are exactly matrix addition and scalar multiplication, just for matrices shaped $n\times1$. What is genuinely new in this lesson is the <em>geometric</em> meaning we attach to that list of numbers, and two brand-new operations, the dot product and the cross product, that have no matrix-addition analogue at all.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Vectors as arrows and as lists</div>
+  <div class="prose">
+    <p>A vector in the plane can be written as a pair of numbers, $\mathbf{u} = (3,4)$, and drawn as an arrow starting at the origin $(0,0)$ and ending at the point $(3,4)$. The two numbers are called the <strong>components</strong> of the vector: they tell you how far to move in the $x$-direction and the $y$-direction to get from the tail of the arrow to its tip.</p>
+    <p>The same idea extends to any number of components. A vector in $\mathbb{R}^3$ like $\mathbf{u}=(1,2,2)$ is an arrow in three-dimensional space, and a vector in $\mathbb{R}^5$ is exactly the same idea even though you cannot easily draw a picture of it any more, it is simply a list of five numbers that you manipulate with the same rules.</p>
+    <p>Two facts about this picture matter a lot, and both are easy to miss the first time around. First, a vector has no fixed starting point: the arrow from $(0,0)$ to $(3,4)$ and the arrow from $(5,1)$ to $(8,5)$ represent the <em>same</em> vector $(3,4)$, because they point the same distance in the same direction. Second, a vector's components already <em>are</em> the differences you would compute between a tip and a tail, so if you know two points $P$ and $Q$, the vector from $P$ to $Q$ is just $Q-P$, computed by subtracting corresponding coordinates.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>A vector is a list of numbers, written $\mathbf{u}=(u_1,u_2,\dots,u_n)$, that can be pictured as an arrow from the origin to the point $(u_1,\dots,u_n)$. Two vectors are equal exactly when their components match, regardless of where you choose to draw the arrow. The vector pointing from a point $P$ to a point $Q$ is $\overrightarrow{PQ} = Q-P$.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Addition and scalar multiplication</div>
+  <div class="prose">
+    <p>Since a vector is just a column of numbers, adding two vectors and scaling a vector by a constant work exactly the way they did for matrices: entry by entry.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\mathbf{u}+\mathbf{v} = (u_1+v_1,\ u_2+v_2,\ \dots,\ u_n+v_n), \qquad k\mathbf{u} = (ku_1,\ ku_2,\ \dots,\ ku_n).$$</p>
+  </div>
+
+  <div class="prose">
+    <p>What is new here is the picture that goes with this arithmetic. Draw $\mathbf{u}$ and $\mathbf{v}$ as arrows from the origin, then slide a copy of $\mathbf{v}$ so its tail sits at the tip of $\mathbf{u}$: the arrow from the origin to the new tip of $\mathbf{v}$ is exactly $\mathbf{u}+\mathbf{v}$. This is called the <strong>tip-to-tail</strong> rule, and it is completely equivalent to just adding the components, it is simply the geometric picture of the same arithmetic. Doing this both ways (sliding $\mathbf{v}$ to the tip of $\mathbf{u}$, and sliding $\mathbf{u}$ to the tip of $\mathbf{v}$) traces out a parallelogram, with $\mathbf{u}+\mathbf{v}$ as its diagonal.</p>
+    <p>Scalar multiplication $k\mathbf{u}$ stretches or shrinks the arrow by a factor of $k$ without changing its direction, unless $k$ is negative, in which case the direction flips to point the opposite way.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $\mathbf{u}=(3,4)$ and $\mathbf{v}=(-1,2)$. Then</p>
+    <p>$$\mathbf{u}+\mathbf{v} = (3-1,\ 4+2) = (2,6), \qquad 2\mathbf{u} = (6,8).$$</p>
+    <svg class="diagram" viewBox="0 0 260 260" width="260" height="260">
+      <line x1="0" y1="220" x2="260" y2="220" stroke="#c8d2de" stroke-width="1"/>
+      <line x1="100" y1="0" x2="100" y2="260" stroke="#c8d2de" stroke-width="1"/>
+      <line x1="160" y1="140" x2="140" y2="100" stroke="#9fb0c9" stroke-width="1.2" stroke-dasharray="3 3"/>
+      <line x1="80" y1="180" x2="140" y2="100" stroke="#9fb0c9" stroke-width="1.2" stroke-dasharray="3 3"/>
+      <defs>
+        <marker id="arrNavyA" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#1B2431"/></marker>
+        <marker id="arrRedA" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#FF3621"/></marker>
+        <marker id="arrGreenA" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2f8f5b"/></marker>
+      </defs>
+      <line x1="100" y1="220" x2="157" y2="141" stroke="#1B2431" stroke-width="2.2" marker-end="url(#arrNavyA)"/>
+      <line x1="100" y1="220" x2="82" y2="181" stroke="#FF3621" stroke-width="2.2" marker-end="url(#arrRedA)"/>
+      <line x1="100" y1="220" x2="137" y2="101" stroke="#2f8f5b" stroke-width="2.4" marker-end="url(#arrGreenA)"/>
+      <text x="163" y="138" font-family="Roboto Mono" font-size="12" fill="#1B2431">u = (3,4)</text>
+      <text x="40" y="180" font-family="Roboto Mono" font-size="12" fill="#FF3621">v = (-1,2)</text>
+      <text x="140" y="95" font-family="Roboto Mono" font-size="12" fill="#2f8f5b">u+v = (2,6)</text>
+    </svg>
+    <p>The dashed lines are the sliding copies of $\mathbf{u}$ and $\mathbf{v}$ used to build the parallelogram; the green arrow, the diagonal, is the sum.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Let $\mathbf{u}=(2,-1)$ and $\mathbf{v}=(3,5)$. Compute $\mathbf{u}+\mathbf{v}$ and $2\mathbf{u}-\mathbf{v}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}+\mathbf{v} = (2+3,\ -1+5) = (5,4)$.</p>
+      <p>$2\mathbf{u} = (4,-2)$, so $2\mathbf{u}-\mathbf{v} = (4-3,\ -2-5) = (1,-7)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Let $\mathbf{u}=(4,1)$ and $\mathbf{v}=(-2,3)$. Compute $\mathbf{u}+\mathbf{v}$ and $3\mathbf{u}-2\mathbf{v}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}+\mathbf{v} = (4-2,\ 1+3) = (2,4)$.</p>
+      <p>$3\mathbf{u}=(12,3)$, $\ 2\mathbf{v}=(-4,6)$, so $3\mathbf{u}-2\mathbf{v} = (12-(-4),\ 3-6) = (16,-3)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Let $\mathbf{u}=(5,-2)$ and $\mathbf{v}=(1,4)$. Compute $\mathbf{u}+\mathbf{v}$ and $3\mathbf{u}-2\mathbf{v}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}+\mathbf{v} = (5+1,\ -2+4) = (6,2)$.</p>
+      <p>$3\mathbf{u}=(15,-6)$, $\ 2\mathbf{v}=(2,8)$, so $3\mathbf{u}-2\mathbf{v} = (15-2,\ -6-8) = (13,-14)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Let $\mathbf{u}=(1,2,3)$ and $\mathbf{v}=(2,-1,1)$. Compute $\mathbf{u}+\mathbf{v}$ and $3\mathbf{u}-2\mathbf{v}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}+\mathbf{v} = (1+2,\ 2-1,\ 3+1) = (3,1,4)$.</p>
+      <p>$3\mathbf{u}=(3,6,9)$, $\ 2\mathbf{v}=(4,-2,2)$, so $3\mathbf{u}-2\mathbf{v} = (3-4,\ 6-(-2),\ 9-2) = (-1,8,7)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Let $\mathbf{u}=(0,3,-2)$ and $\mathbf{v}=(4,1,1)$. Compute $\mathbf{u}+\mathbf{v}$ and $3\mathbf{u}-2\mathbf{v}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}+\mathbf{v} = (0+4,\ 3+1,\ -2+1) = (4,4,-1)$.</p>
+      <p>$3\mathbf{u}=(0,9,-6)$, $\ 2\mathbf{v}=(8,2,2)$, so $3\mathbf{u}-2\mathbf{v} = (0-8,\ 9-2,\ -6-2) = (-8,7,-8)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Let $\mathbf{u}=(3,-1)$ and $\mathbf{v}=(2,2)$. Compute $\mathbf{u}+\mathbf{v}$ and $3\mathbf{u}-2\mathbf{v}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}+\mathbf{v} = (3+2,\ -1+2) = (5,1)$.</p>
+      <p>$3\mathbf{u}=(9,-3)$, $\ 2\mathbf{v}=(4,4)$, so $3\mathbf{u}-2\mathbf{v} = (9-4,\ -3-4) = (5,-7)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Let $\mathbf{u}=(2,0,5)$ and $\mathbf{v}=(1,3,-2)$. Compute $\mathbf{u}+\mathbf{v}$ and $3\mathbf{u}-2\mathbf{v}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}+\mathbf{v} = (2+1,\ 0+3,\ 5-2) = (3,3,3)$.</p>
+      <p>$3\mathbf{u}=(6,0,15)$, $\ 2\mathbf{v}=(2,6,-4)$, so $3\mathbf{u}-2\mathbf{v} = (6-2,\ 0-6,\ 15-(-4)) = (4,-6,19)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Let $\mathbf{u}=(-1,4)$ and $\mathbf{v}=(3,-3)$. Compute $\mathbf{u}+\mathbf{v}$ and $3\mathbf{u}-2\mathbf{v}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}+\mathbf{v} = (-1+3,\ 4-3) = (2,1)$.</p>
+      <p>$3\mathbf{u}=(-3,12)$, $\ 2\mathbf{v}=(6,-6)$, so $3\mathbf{u}-2\mathbf{v} = (-3-6,\ 12-(-6)) = (-9,18)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Let $\mathbf{u}=(2,2,1)$ and $\mathbf{v}=(-1,0,3)$. Compute $\mathbf{u}+\mathbf{v}$ and $3\mathbf{u}-2\mathbf{v}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}+\mathbf{v} = (2-1,\ 2+0,\ 1+3) = (1,2,4)$.</p>
+      <p>$3\mathbf{u}=(6,6,3)$, $\ 2\mathbf{v}=(-2,0,6)$, so $3\mathbf{u}-2\mathbf{v} = (6-(-2),\ 6-0,\ 3-6) = (8,6,-3)$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Magnitude (length)</div>
+  <div class="prose">
+    <p>The length of the arrow representing a vector is called its <strong>magnitude</strong> or <strong>norm</strong>, written $\|\mathbf{u}\|$. In the plane, this is nothing more than the Pythagorean theorem applied to the right triangle formed by the vector and its two components: the horizontal leg has length $u_1$, the vertical leg has length $u_2$, and the hypotenuse, the vector itself, has length $\sqrt{u_1^2+u_2^2}$. The same formula extends to any number of dimensions, you just keep adding squares of components under the square root.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\|\mathbf{u}\| = \sqrt{u_1^2+u_2^2+\cdots+u_n^2}.$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>For $\mathbf{u}=(3,4)$: $\|\mathbf{u}\| = \sqrt{9+16} = \sqrt{25} = 5$. For $\mathbf{u}=(1,2,2)$ in $\mathbb{R}^3$: $\|\mathbf{u}\| = \sqrt{1+4+4}=\sqrt9=3$.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Find $\|\mathbf{u}\|$ for (a) $\mathbf{u}=(6,8)$ and (b) $\mathbf{u}=(2,-2,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(a) $\|\mathbf{u}\| = \sqrt{36+64} = \sqrt{100} = 10$.</p>
+      <p>(b) $\|\mathbf{u}\| = \sqrt{4+4+1} = \sqrt9 = 3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Find $\|\mathbf{u}\|$ for $\mathbf{u}=(5,12)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\| = \sqrt{25+144} = \sqrt{169} = 13$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Find $\|\mathbf{u}\|$ for $\mathbf{u}=(8,15)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\| = \sqrt{64+225} = \sqrt{289} = 17$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Find $\|\mathbf{u}\|$ for $\mathbf{u}=(7,24)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\| = \sqrt{49+576} = \sqrt{625} = 25$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Find $\|\mathbf{u}\|$ for $\mathbf{u}=(1,1,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\| = \sqrt{1+1+1} = \sqrt3$. Not every magnitude comes out to a whole number, and that is completely normal, $\sqrt3$ is just as valid an answer as an integer.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Find $\|\mathbf{u}\|$ for $\mathbf{u}=(2,3,6)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\| = \sqrt{4+9+36} = \sqrt{49} = 7$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Find $\|\mathbf{u}\|$ for $\mathbf{u}=(4,4,7)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\| = \sqrt{16+16+49} = \sqrt{81} = 9$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Find $\|\mathbf{u}\|$ for $\mathbf{u}=(-3,4,0)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\| = \sqrt{9+16+0} = \sqrt{25} = 5$. Negative components square away just fine, only the final square root needs to come out non-negative (which it always does).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Find $\|\mathbf{u}\|$ for $\mathbf{u}=(1,2,2,4)$, a vector in $\mathbb{R}^4$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\| = \sqrt{1+4+4+16} = \sqrt{25} = 5$. The formula does not care how many components there are, you just keep adding squares under the root.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> The dot product and the angle formula</div>
+  <div class="prose">
+    <p>Vector addition and scaling were just matrix arithmetic in disguise. The <strong>dot product</strong> is the first genuinely new operation in this lesson: it takes two vectors and returns a single number (not a vector), and that number turns out to encode the angle between them.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: definition</span>
+    <p>$$\mathbf{u}\cdot\mathbf{v} = u_1v_1+u_2v_2+\cdots+u_nv_n.$$</p>
+    <p>You multiply corresponding components together and add up the results. Notice this needs both vectors to have the same number of components, but otherwise costs nothing more than arithmetic you already know.</p>
+  </div>
+
+  <div class="prose">
+    <p>That definition is easy to compute, but on its own it does not look like it should mean anything about angles. Here is where the payoff comes from, and it is worth seeing the derivation once in full, because after this the formula stops looking like magic.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why the dot product gives you the angle</span>
+    <p>Draw $\mathbf{u}$ and $\mathbf{v}$ as two arrows from the origin, with angle $\theta$ between them. The arrow from the tip of $\mathbf{v}$ to the tip of $\mathbf{u}$ is $\mathbf{u}-\mathbf{v}$, and together $\mathbf{u}$, $\mathbf{v}$, and $\mathbf{u}-\mathbf{v}$ form a triangle. The law of cosines, which you already know from trigonometry, relates the three side lengths of that triangle to the angle between the two sides $\|\mathbf{u}\|$ and $\|\mathbf{v}\|$:</p>
+    <p class="step">$$\|\mathbf{u}-\mathbf{v}\|^2 = \|\mathbf{u}\|^2 + \|\mathbf{v}\|^2 - 2\|\mathbf{u}\|\|\mathbf{v}\|\cos\theta.$$</p>
+    <p>Now compute the same quantity $\|\mathbf{u}-\mathbf{v}\|^2$ algebraically, using nothing but the definition of the dot product and the fact that $\|\mathbf{w}\|^2 = \mathbf{w}\cdot\mathbf{w}$ for any vector $\mathbf{w}$:</p>
+    <p class="step">$$\|\mathbf{u}-\mathbf{v}\|^2 = (\mathbf{u}-\mathbf{v})\cdot(\mathbf{u}-\mathbf{v}) = \mathbf{u}\cdot\mathbf{u} - 2\,\mathbf{u}\cdot\mathbf{v} + \mathbf{v}\cdot\mathbf{v} = \|\mathbf{u}\|^2 + \|\mathbf{v}\|^2 - 2\,\mathbf{u}\cdot\mathbf{v}.$$</p>
+    <p>Both expressions equal $\|\mathbf{u}-\mathbf{v}\|^2$, so they equal each other. The $\|\mathbf{u}\|^2+\|\mathbf{v}\|^2$ terms cancel from both sides, leaving</p>
+    <p class="step">$$-2\,\mathbf{u}\cdot\mathbf{v} = -2\|\mathbf{u}\|\|\mathbf{v}\|\cos\theta \quad\Longrightarrow\quad \mathbf{u}\cdot\mathbf{v} = \|\mathbf{u}\|\|\mathbf{v}\|\cos\theta.$$</p>
+    <p>So the dot product, a quantity we can compute from components alone with no reference to angles at all, is secretly always equal to $\|\mathbf{u}\|\|\mathbf{v}\|\cos\theta$. Solving for $\theta$ gives us a completely practical way to find the angle between any two vectors:</p>
+    <p class="step">$$\cos\theta = \frac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|\|\mathbf{v}\|}.$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $\mathbf{u}=(2,3)$ and $\mathbf{v}=(4,-1)$.</p>
+    <p class="step">$\mathbf{u}\cdot\mathbf{v} = 2(4)+3(-1) = 8-3=5$.</p>
+    <p class="step">$\|\mathbf{u}\| = \sqrt{4+9}=\sqrt{13}$, $\ \|\mathbf{v}\|=\sqrt{16+1}=\sqrt{17}$.</p>
+    <p class="step">$$\cos\theta = \frac{5}{\sqrt{13}\sqrt{17}} = \frac{5}{\sqrt{221}} \approx 0.3363 \quad\Longrightarrow\quad \theta \approx 70.35^\circ.$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Find $\mathbf{u}\cdot\mathbf{v}$ and the angle between $\mathbf{u}=(1,0)$ and $\mathbf{v}=(1,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 1(1)+0(1) = 1$. $\ \|\mathbf{u}\|=1$, $\ \|\mathbf{v}\|=\sqrt2$.</p>
+      <p>$$\cos\theta = \frac{1}{1\cdot\sqrt2} = \frac{1}{\sqrt2} \quad\Longrightarrow\quad \theta = 45^\circ.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Find the angle between $\mathbf{u}=(4,2,-3)$ and $\mathbf{v}=(1,-3,-1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 4(1)+2(-3)+(-3)(-1) = 4-6+3 = 1$.</p>
+      <p>$\|\mathbf{u}\| = \sqrt{16+4+9}=\sqrt{29}$, $\ \|\mathbf{v}\|=\sqrt{1+9+1}=\sqrt{11}$.</p>
+      <p>$$\cos\theta = \frac{1}{\sqrt{29}\sqrt{11}} = \frac{1}{\sqrt{319}} \approx 0.0560 \quad\Longrightarrow\quad \theta \approx 86.79^\circ.$$</p>
+      <p>Notice the two vectors are almost, but not quite, perpendicular: a dot product very close to zero corresponds to an angle very close to $90^\circ$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Find $\mathbf{u}\cdot\mathbf{v}$ and the angle between $\mathbf{u}=(3,4)$ and $\mathbf{v}=(4,-3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 3(4)+4(-3) = 12-12=0$.</p>
+      <p>Whenever the dot product is exactly $0$, $\cos\theta=0$, so $\theta=90^\circ$: the vectors are perpendicular. (Here $\|\mathbf{u}\|=\|\mathbf{v}\|=5$, but their lengths did not even need to be computed, a zero dot product settles the angle immediately.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Find $\mathbf{u}\cdot\mathbf{v}$ and the angle between $\mathbf{u}=(1,1)$ and $\mathbf{v}=(1,-1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 1(1)+1(-1) = 0$, so $\theta=90^\circ$. These two vectors are the diagonals of a square, which is exactly why they meet at a right angle.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Find $\mathbf{u}\cdot\mathbf{v}$ and the angle between $\mathbf{u}=(2,1)$ and $\mathbf{v}=(1,3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 2(1)+1(3) = 5$. $\ \|\mathbf{u}\|=\sqrt5$, $\ \|\mathbf{v}\|=\sqrt{10}$.</p>
+      <p>$$\cos\theta = \frac{5}{\sqrt5\sqrt{10}} = \frac{5}{\sqrt{50}} = \frac{\sqrt2}{2} \quad\Longrightarrow\quad \theta=45^\circ.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Find $\mathbf{u}\cdot\mathbf{v}$ and the angle between $\mathbf{u}=(1,0,0)$ and $\mathbf{v}=(1,1,0)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 1(1)+0(1)+0(0) = 1$. $\ \|\mathbf{u}\|=1$, $\ \|\mathbf{v}\|=\sqrt2$.</p>
+      <p>$$\cos\theta = \frac{1}{\sqrt2} \quad\Longrightarrow\quad \theta=45^\circ.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Find $\mathbf{u}\cdot\mathbf{v}$ and the angle between $\mathbf{u}=(1,2,2)$ and $\mathbf{v}=(2,-1,2)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 1(2)+2(-1)+2(2) = 2-2+4=4$. $\ \|\mathbf{u}\|=\sqrt{1+4+4}=3$, $\ \|\mathbf{v}\|=\sqrt{4+1+4}=3$.</p>
+      <p>$$\cos\theta = \frac{4}{9} \approx 0.4444 \quad\Longrightarrow\quad \theta \approx 63.61^\circ.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Find $\mathbf{u}\cdot\mathbf{v}$ and the angle between $\mathbf{u}=(3,0,4)$ and $\mathbf{v}=(1,2,2)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 3(1)+0(2)+4(2) = 3+8=11$. $\ \|\mathbf{u}\|=\sqrt{9+0+16}=5$, $\ \|\mathbf{v}\|=\sqrt{1+4+4}=3$.</p>
+      <p>$$\cos\theta = \frac{11}{15} \approx 0.7333 \quad\Longrightarrow\quad \theta \approx 42.83^\circ.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Find $\mathbf{u}\cdot\mathbf{v}$ and the angle between $\mathbf{u}=(2,-1,1)$ and $\mathbf{v}=(1,1,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 2(1)+(-1)(1)+1(1) = 2-1+1=2$. $\ \|\mathbf{u}\|=\sqrt{4+1+1}=\sqrt6$, $\ \|\mathbf{v}\|=\sqrt{1+1+1}=\sqrt3$.</p>
+      <p>$$\cos\theta = \frac{2}{\sqrt6\sqrt3} = \frac{2}{\sqrt{18}} = \frac{\sqrt2}{3} \approx 0.4714 \quad\Longrightarrow\quad \theta \approx 61.87^\circ.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Find $\mathbf{u}\cdot\mathbf{v}$ and the angle between $\mathbf{u}=(5,1,-2)$ and $\mathbf{v}=(2,-3,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 5(2)+1(-3)+(-2)(1) = 10-3-2=5$. $\ \|\mathbf{u}\|=\sqrt{25+1+4}=\sqrt{30}$, $\ \|\mathbf{v}\|=\sqrt{4+9+1}=\sqrt{14}$.</p>
+      <p>$$\cos\theta = \frac{5}{\sqrt{30}\sqrt{14}} = \frac{5}{\sqrt{420}} \approx 0.2440 \quad\Longrightarrow\quad \theta \approx 75.88^\circ.$$</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> Unit vectors</div>
+  <div class="prose">
+    <p>A <strong>unit vector</strong> is simply a vector of length $1$. Given any nonzero vector $\mathbf{u}$, you can always produce a unit vector pointing in exactly the same direction by dividing every component by $\|\mathbf{u}\|$; this is called <strong>normalising</strong> the vector.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\hat{\mathbf{u}} = \frac{\mathbf{u}}{\|\mathbf{u}\|}.$$</p>
+    <p>You can check this really does have length $1$: $\|\hat{\mathbf{u}}\| = \left\|\dfrac{\mathbf{u}}{\|\mathbf{u}\|}\right\| = \dfrac{\|\mathbf{u}\|}{\|\mathbf{u}\|} = 1$, since scaling a vector by a positive constant scales its length by that same constant.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>For $\mathbf{u}=(3,4)$, we found $\|\mathbf{u}\|=5$, so $\hat{\mathbf{u}} = \left(\dfrac35,\dfrac45\right)$.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>Find the unit vector in the direction of $\mathbf{u}=(0,-5,12)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\| = \sqrt{0+25+144} = \sqrt{169} = 13$.</p>
+      <p>$$\hat{\mathbf{u}} = \left(0,\ \frac{-5}{13},\ \frac{12}{13}\right).$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>Find the unit vector in the direction of $\mathbf{u}=(3,4)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\|=5$, so $\hat{\mathbf{u}} = \left(\dfrac35,\dfrac45\right)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Find the unit vector in the direction of $\mathbf{u}=(5,12)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\|=13$, so $\hat{\mathbf{u}} = \left(\dfrac{5}{13},\dfrac{12}{13}\right)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Find the unit vector in the direction of $\mathbf{u}=(8,15)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\|=17$, so $\hat{\mathbf{u}} = \left(\dfrac{8}{17},\dfrac{15}{17}\right)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>Find the unit vector in the direction of $\mathbf{u}=(1,1,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\|=\sqrt3$, so $\hat{\mathbf{u}} = \left(\dfrac{1}{\sqrt3},\dfrac{1}{\sqrt3},\dfrac{1}{\sqrt3}\right) = \left(\dfrac{\sqrt3}{3},\dfrac{\sqrt3}{3},\dfrac{\sqrt3}{3}\right)$, writing it with a rational denominator.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>Find the unit vector in the direction of $\mathbf{u}=(2,3,6)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\|=7$, so $\hat{\mathbf{u}} = \left(\dfrac27,\dfrac37,\dfrac67\right)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>Find the unit vector in the direction of $\mathbf{u}=(-3,4,0)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\|=5$, so $\hat{\mathbf{u}} = \left(\dfrac{-3}{5},\dfrac45,0\right)$. A zero component just carries straight through unchanged (dividing $0$ by anything nonzero still gives $0$).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>Find the unit vector in the direction of $\mathbf{u}=(1,2,2)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\|=3$, so $\hat{\mathbf{u}} = \left(\dfrac13,\dfrac23,\dfrac23\right)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>Find the unit vector in the direction of $\mathbf{u}=(4,0,3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\|\mathbf{u}\|=5$, so $\hat{\mathbf{u}} = \left(\dfrac45,0,\dfrac35\right)$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Cauchy-Schwarz and the triangle inequality</div>
+  <div class="prose">
+    <p>Two famous inequalities fall straight out of the angle formula from Section 4, almost for free. Both are worth understanding rather than memorising, because the reasoning is short and genuinely explains why they must be true.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why Cauchy-Schwarz holds</span>
+    <p>From Section 4, $\mathbf{u}\cdot\mathbf{v} = \|\mathbf{u}\|\|\mathbf{v}\|\cos\theta$. Since $\cos\theta$ is always between $-1$ and $1$ no matter what $\theta$ is, we immediately get</p>
+    <p class="step">$$|\mathbf{u}\cdot\mathbf{v}| = \|\mathbf{u}\|\|\mathbf{v}\||\cos\theta| \le \|\mathbf{u}\|\|\mathbf{v}\|.$$</p>
+    <p>That is the entire content of the <strong>Cauchy-Schwarz inequality</strong>: $|\mathbf{u}\cdot\mathbf{v}| \le \|\mathbf{u}\|\|\mathbf{v}\|$. It holds for every pair of vectors, with equality exactly when $\cos\theta=\pm1$, that is, when $\mathbf{u}$ and $\mathbf{v}$ point along the same line (parallel or anti-parallel).</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why the triangle inequality holds</span>
+    <p>The triangle inequality says $\|\mathbf{u}+\mathbf{v}\| \le \|\mathbf{u}\|+\|\mathbf{v}\|$: going directly from the tail of $\mathbf{u}$ to the tip of $\mathbf{v}$ (tip-to-tail) is never longer than going the long way, along $\mathbf{u}$ then along $\mathbf{v}$ separately. Here is why it follows from Cauchy-Schwarz. Expand $\|\mathbf{u}+\mathbf{v}\|^2$ the same way we expanded $\|\mathbf{u}-\mathbf{v}\|^2$ earlier:</p>
+    <p class="step">$$\|\mathbf{u}+\mathbf{v}\|^2 = (\mathbf{u}+\mathbf{v})\cdot(\mathbf{u}+\mathbf{v}) = \|\mathbf{u}\|^2 + 2\,\mathbf{u}\cdot\mathbf{v} + \|\mathbf{v}\|^2.$$</p>
+    <p>By Cauchy-Schwarz, $\mathbf{u}\cdot\mathbf{v} \le \|\mathbf{u}\|\|\mathbf{v}\|$, so we can bound the middle term:</p>
+    <p class="step">$$\|\mathbf{u}+\mathbf{v}\|^2 \le \|\mathbf{u}\|^2 + 2\|\mathbf{u}\|\|\mathbf{v}\| + \|\mathbf{v}\|^2 = (\|\mathbf{u}\|+\|\mathbf{v}\|)^2.$$</p>
+    <p>Taking square roots of both sides (everything here is non-negative, so this is valid) gives exactly $\|\mathbf{u}+\mathbf{v}\| \le \|\mathbf{u}\|+\|\mathbf{v}\|$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Check both inequalities for $\mathbf{u}=(1,2)$, $\mathbf{v}=(2,1)$.</p>
+    <p class="step">$\mathbf{u}\cdot\mathbf{v} = 2+2=4$. $\ \|\mathbf{u}\|=\|\mathbf{v}\|=\sqrt5$. Cauchy-Schwarz: $|4| \le \sqrt5\cdot\sqrt5=5$. True.</p>
+    <p class="step">$\mathbf{u}+\mathbf{v}=(3,3)$, so $\|\mathbf{u}+\mathbf{v}\|=\sqrt{18}=3\sqrt2\approx4.243$. $\ \|\mathbf{u}\|+\|\mathbf{v}\|=2\sqrt5\approx4.472$. Triangle inequality: $4.243\le4.472$. True.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>Verify both the Cauchy-Schwarz inequality and the triangle inequality for $\mathbf{u}=(3,0)$ and $\mathbf{v}=(0,4)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 3(0)+0(4)=0$. $\ \|\mathbf{u}\|=3$, $\ \|\mathbf{v}\|=4$. Cauchy-Schwarz: $|0|\le 3\times4=12$. True (here the vectors are perpendicular, the dot product is exactly $0$, about as far from equality as Cauchy-Schwarz can get).</p>
+      <p>$\mathbf{u}+\mathbf{v}=(3,4)$, $\ \|\mathbf{u}+\mathbf{v}\|=\sqrt{9+16}=5$. $\ \|\mathbf{u}\|+\|\mathbf{v}\|=7$. Triangle inequality: $5\le7$. True.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>Verify both inequalities for $\mathbf{u}=(1,0)$ and $\mathbf{v}=(0,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=0$. $\ \|\mathbf{u}\|=\|\mathbf{v}\|=1$. Cauchy-Schwarz: $0\le1$. True.</p>
+      <p>$\mathbf{u}+\mathbf{v}=(1,1)$, $\|\mathbf{u}+\mathbf{v}\|=\sqrt2\approx1.414$. $\|\mathbf{u}\|+\|\mathbf{v}\|=2$. Triangle inequality: $1.414\le2$. True.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>Verify both inequalities for $\mathbf{u}=(2,2)$ and $\mathbf{v}=(3,-3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=6-6=0$. $\ \|\mathbf{u}\|=2\sqrt2$, $\ \|\mathbf{v}\|=3\sqrt2$, so $\|\mathbf{u}\|\|\mathbf{v}\|=12$. Cauchy-Schwarz: $0\le12$. True.</p>
+      <p>$\mathbf{u}+\mathbf{v}=(5,-1)$, $\|\mathbf{u}+\mathbf{v}\|=\sqrt{26}\approx5.099$. $\|\mathbf{u}\|+\|\mathbf{v}\|=5\sqrt2\approx7.071$. Triangle inequality: $5.099\le7.071$. True.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>Verify both inequalities for $\mathbf{u}=(1,2)$ and $\mathbf{v}=(3,4)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=3+8=11$. $\ \|\mathbf{u}\|=\sqrt5$, $\ \|\mathbf{v}\|=5$, so $\|\mathbf{u}\|\|\mathbf{v}\|=5\sqrt5\approx11.18$. Cauchy-Schwarz: $11\le11.18$. True, and notice this pair comes unusually close to equality, meaning $\mathbf{u}$ and $\mathbf{v}$ point in nearly (but not exactly) the same direction.</p>
+      <p>$\mathbf{u}+\mathbf{v}=(4,6)$, $\|\mathbf{u}+\mathbf{v}\|=\sqrt{52}=2\sqrt{13}\approx7.211$. $\|\mathbf{u}\|+\|\mathbf{v}\|\approx7.236$. Triangle inequality: $7.211\le7.236$. True.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>Verify both inequalities for $\mathbf{u}=(1,1,1)$ and $\mathbf{v}=(1,1,1)$. What is special about this pair?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=3$. $\ \|\mathbf{u}\|=\|\mathbf{v}\|=\sqrt3$, so $\|\mathbf{u}\|\|\mathbf{v}\|=3$. Cauchy-Schwarz: $3\le3$, an <strong>equality</strong>.</p>
+      <p>$\mathbf{u}+\mathbf{v}=(2,2,2)$, $\|\mathbf{u}+\mathbf{v}\|=2\sqrt3$. $\|\mathbf{u}\|+\|\mathbf{v}\|=2\sqrt3$. Triangle inequality is also an <strong>equality</strong> here: $2\sqrt3\le2\sqrt3$.</p>
+      <p>This is exactly the equality case mentioned back in Section 6: since $\mathbf{v}=\mathbf{u}$, the two vectors point along exactly the same line (in fact, they are identical), which is precisely when both inequalities stop being strict.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>Verify both inequalities for $\mathbf{u}=(2,0,0)$ and $\mathbf{v}=(0,0,5)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=0$. $\ \|\mathbf{u}\|=2$, $\|\mathbf{v}\|=5$, so $\|\mathbf{u}\|\|\mathbf{v}\|=10$. Cauchy-Schwarz: $0\le10$. True.</p>
+      <p>$\mathbf{u}+\mathbf{v}=(2,0,5)$, $\|\mathbf{u}+\mathbf{v}\|=\sqrt{29}\approx5.385$. $\|\mathbf{u}\|+\|\mathbf{v}\|=7$. Triangle inequality: $5.385\le7$. True.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>Verify both inequalities for $\mathbf{u}=(1,-1,2)$ and $\mathbf{v}=(2,1,-1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=2-1-2=-1$. $\ \|\mathbf{u}\|=\|\mathbf{v}\|=\sqrt6$, so $\|\mathbf{u}\|\|\mathbf{v}\|=6$. Cauchy-Schwarz uses the absolute value: $|-1|=1\le6$. True.</p>
+      <p>$\mathbf{u}+\mathbf{v}=(3,0,1)$, $\|\mathbf{u}+\mathbf{v}\|=\sqrt{10}\approx3.162$. $\|\mathbf{u}\|+\|\mathbf{v}\|=2\sqrt6\approx4.899$. Triangle inequality: $3.162\le4.899$. True.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 45</span></div>
+  <div class="p-body"><p>Verify both inequalities for $\mathbf{u}=(3,4)$ and $\mathbf{v}=(4,3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=12+12=24$. $\ \|\mathbf{u}\|=\|\mathbf{v}\|=5$, so $\|\mathbf{u}\|\|\mathbf{v}\|=25$. Cauchy-Schwarz: $24\le25$. True.</p>
+      <p>$\mathbf{u}+\mathbf{v}=(7,7)$, $\|\mathbf{u}+\mathbf{v}\|=7\sqrt2\approx9.899$. $\|\mathbf{u}\|+\|\mathbf{v}\|=10$. Triangle inequality: $9.899\le10$. True.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 46</span></div>
+  <div class="p-body"><p>Verify both inequalities for $\mathbf{u}=(1,2,3)$ and $\mathbf{v}=(-1,0,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=-1+0+3=2$. $\ \|\mathbf{u}\|=\sqrt{14}$, $\ \|\mathbf{v}\|=\sqrt2$, so $\|\mathbf{u}\|\|\mathbf{v}\|=2\sqrt7\approx5.292$. Cauchy-Schwarz: $2\le5.292$. True.</p>
+      <p>$\mathbf{u}+\mathbf{v}=(0,2,4)$, $\|\mathbf{u}+\mathbf{v}\|=2\sqrt5\approx4.472$. $\|\mathbf{u}\|+\|\mathbf{v}\|\approx5.156$. Triangle inequality: $4.472\le5.156$. True.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> Projections</div>
+  <div class="prose">
+    <p>Suppose you have two vectors $\mathbf{u}$ and $\mathbf{v}$, and you want to know "how much of $\mathbf{v}$ points in the same direction as $\mathbf{u}$." Picture shining a light straight down onto the line through $\mathbf{u}$, perpendicular to that line, and looking at the shadow that $\mathbf{v}$ casts on it. That shadow is called the <strong>projection</strong> of $\mathbf{v}$ onto $\mathbf{u}$, and it splits $\mathbf{v}$ into two useful pieces: the part of $\mathbf{v}$ that lies along $\mathbf{u}$, and the part that is perpendicular to it.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Deriving the projection formula</span>
+    <p>Drop a perpendicular from the tip of $\mathbf{v}$ down to the line through $\mathbf{u}$. This creates a right triangle, with $\mathbf{v}$ as the hypotenuse and the angle $\theta$ between $\mathbf{u}$ and $\mathbf{v}$ sitting at the origin. The length of the shadow, the adjacent side of that right triangle, is $\|\mathbf{v}\|\cos\theta$ by basic right-triangle trigonometry. This length is called the <strong>scalar projection</strong> of $\mathbf{v}$ onto $\mathbf{u}$, written $\mathrm{comp}_\mathbf{u}\mathbf{v}$.</p>
+    <p class="step">Using $\cos\theta = \dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|\|\mathbf{v}\|}$ from Section 4:</p>
+    <p class="step">$$\mathrm{comp}_\mathbf{u}\mathbf{v} = \|\mathbf{v}\|\cos\theta = \|\mathbf{v}\|\cdot\frac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|\|\mathbf{v}\|} = \frac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|}.$$</p>
+    <p>This scalar projection is just a length (technically, a signed length, it can come out negative, more on that below). To get the actual <strong>vector projection</strong>, the shadow drawn as an arrow rather than just a number, multiply this scalar by the unit vector $\hat{\mathbf{u}}$ pointing along $\mathbf{u}$'s direction:</p>
+    <p class="step">$$\mathrm{proj}_\mathbf{u}\mathbf{v} = \big(\mathrm{comp}_\mathbf{u}\mathbf{v}\big)\hat{\mathbf{u}} = \frac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|}\cdot\frac{\mathbf{u}}{\|\mathbf{u}\|} = \frac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|^2}\,\mathbf{u}.$$</p>
+    <p>One more useful fact: subtracting the projection from $\mathbf{v}$ leaves exactly the part of $\mathbf{v}$ perpendicular to $\mathbf{u}$. You can check this directly: $\mathbf{u}\cdot(\mathbf{v}-\mathrm{proj}_\mathbf{u}\mathbf{v}) = \mathbf{u}\cdot\mathbf{v} - \dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|^2}(\mathbf{u}\cdot\mathbf{u}) = \mathbf{u}\cdot\mathbf{v}-\mathbf{u}\cdot\mathbf{v}=0$, so this leftover piece is indeed perpendicular to $\mathbf{u}$.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: summary</span>
+    <p>Scalar projection (signed length): $\ \mathrm{comp}_\mathbf{u}\mathbf{v} = \dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|}$.</p>
+    <p>Vector projection (an actual vector, parallel to $\mathbf{u}$): $\ \mathrm{proj}_\mathbf{u}\mathbf{v} = \dfrac{\mathbf{u}\cdot\mathbf{v}}{\|\mathbf{u}\|^2}\mathbf{u}$.</p>
+    <p>Perpendicular leftover: $\ \mathbf{v} - \mathrm{proj}_\mathbf{u}\mathbf{v}$, which always satisfies $\mathbf{u}\cdot(\mathbf{v}-\mathrm{proj}_\mathbf{u}\mathbf{v})=0$.</p>
+    <p>A negative scalar projection just means the shadow falls on the opposite side of the origin from $\mathbf{u}$, that is, $\mathbf{v}$ leans away from $\mathbf{u}$'s direction rather than towards it. The vector projection formula handles this automatically, with no special cases needed.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $\mathbf{u}=(4,2)$ and $\mathbf{v}=(1,3)$.</p>
+    <p class="step">$\mathbf{u}\cdot\mathbf{v} = 4+6=10$, $\ \|\mathbf{u}\|^2=16+4=20$.</p>
+    <p class="step">$$\mathrm{proj}_\mathbf{u}\mathbf{v} = \frac{10}{20}(4,2) = (2,1).$$</p>
+    <p class="step">Perpendicular part: $\mathbf{v}-\mathrm{proj}_\mathbf{u}\mathbf{v} = (1,3)-(2,1) = (-1,2)$. Check: $\mathbf{u}\cdot(-1,2) = -4+4=0$ &check;.</p>
+    <svg class="diagram" viewBox="0 0 320 260" width="320" height="260">
+      <line x1="0" y1="220" x2="320" y2="220" stroke="#c8d2de" stroke-width="1"/>
+      <line x1="60" y1="0" x2="60" y2="260" stroke="#c8d2de" stroke-width="1"/>
+      <line x1="95" y1="115" x2="130" y2="185" stroke="#9fb0c9" stroke-width="1.2" stroke-dasharray="3 3"/>
+      <defs>
+        <marker id="arrNavyP" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#1B2431"/></marker>
+        <marker id="arrRedP" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#FF3621"/></marker>
+      </defs>
+      <line x1="60" y1="220" x2="197" y2="150" stroke="#1B2431" stroke-width="2.2" marker-end="url(#arrNavyP)"/>
+      <line x1="60" y1="220" x2="92" y2="118" stroke="#5b6779" stroke-width="2.2" marker-end="url(#arrNavyP)"/>
+      <line x1="60" y1="220" x2="127" y2="188" stroke="#FF3621" stroke-width="2.2" marker-end="url(#arrRedP)"/>
+      <text x="200" y="147" font-family="Roboto Mono" font-size="12" fill="#1B2431">u = (4,2)</text>
+      <text x="96" y="112" font-family="Roboto Mono" font-size="12" fill="#5b6779">v = (1,3)</text>
+      <text x="130" y="200" font-family="Roboto Mono" font-size="11" fill="#FF3621">proj_u v = (2,1)</text>
+    </svg>
+    <p>The dashed line is the perpendicular dropped from the tip of $\mathbf{v}$ down onto the line through $\mathbf{u}$; the red arrow is where that shadow lands.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 47</span></div>
+  <div class="p-body"><p>Find $\mathrm{proj}_\mathbf{u}\mathbf{v}$ for $\mathbf{u}=(1,2,3)$ and $\mathbf{v}=(5,2,-2)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v} = 5+4-6=3$. $\ \|\mathbf{u}\|^2 = 1+4+9=14$.</p>
+      <p>$$\mathrm{proj}_\mathbf{u}\mathbf{v} = \frac{3}{14}(1,2,3) = \left(\frac{3}{14},\ \frac{3}{7},\ \frac{9}{14}\right).$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 48</span></div>
+  <div class="p-body"><p>Let $\mathbf{v}=(2,4)$ and let $\mathbf{d}=(-2,-1)$ be the direction of a line through the origin. Find both the scalar projection and the vector projection of $\mathbf{v}$ onto $\mathbf{d}$, and explain what the sign of the scalar projection tells you.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{v}\cdot\mathbf{d} = 2(-2)+4(-1) = -8$. $\ \|\mathbf{d}\| = \sqrt5$, so $\|\mathbf{d}\|^2=5$.</p>
+      <p>Scalar projection: $\mathrm{comp}_\mathbf{d}\mathbf{v} = \dfrac{-8}{\sqrt5} \approx -3.578$.</p>
+      <p>Vector projection: $\mathrm{proj}_\mathbf{d}\mathbf{v} = \dfrac{-8}{5}(-2,-1) = \left(\dfrac{16}{5},\dfrac{8}{5}\right) = (3.2,\,1.6)$.</p>
+      <p>The scalar projection came out <em>negative</em>, even though the vector projection $(3.2,1.6)$ looks like an ordinary vector pointing into the first quadrant. This is not a contradiction: $\mathbf{d}=(-2,-1)$ itself points into the <em>third</em> quadrant, and a negative scalar projection means the shadow of $\mathbf{v}$ falls on the opposite side of the origin from $\mathbf{d}$, that is, along the same infinite line, just in the $-\mathbf{d}$ direction rather than the $+\mathbf{d}$ direction. The vector projection formula folds that sign in automatically, which is exactly why it is safer to trust than trying to reason about signs by eye.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 49</span></div>
+  <div class="p-body"><p>Find $\mathrm{proj}_\mathbf{u}\mathbf{v}$ and the perpendicular leftover for $\mathbf{u}=(3,4)$, $\mathbf{v}=(2,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=6+4=10$, $\ \|\mathbf{u}\|^2=25$.</p>
+      <p>$$\mathrm{proj}_\mathbf{u}\mathbf{v} = \frac{10}{25}(3,4) = \left(\frac65,\frac85\right).$$</p>
+      <p>Perpendicular leftover: $\mathbf{v}-\mathrm{proj}_\mathbf{u}\mathbf{v} = \left(2-\frac65,\ 1-\frac85\right) = \left(\frac45,-\frac35\right)$. Check: $\mathbf{u}\cdot\left(\frac45,-\frac35\right) = \frac{12}5-\frac{12}5=0$ &check;.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 50</span></div>
+  <div class="p-body"><p>Find $\mathrm{proj}_\mathbf{u}\mathbf{v}$ for $\mathbf{u}=(1,0)$, $\mathbf{v}=(3,3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=3$, $\ \|\mathbf{u}\|^2=1$.</p>
+      <p>$$\mathrm{proj}_\mathbf{u}\mathbf{v} = \frac31(1,0) = (3,0).$$</p>
+      <p>Perpendicular leftover: $(3,3)-(3,0)=(0,3)$. Since $\mathbf{u}$ points straight along the $x$-axis here, it makes sense that the projection just keeps $\mathbf{v}$'s $x$-component and the leftover is exactly its $y$-component.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 51</span></div>
+  <div class="p-body"><p>Find $\mathrm{proj}_\mathbf{u}\mathbf{v}$ for $\mathbf{u}=(2,2,1)$, $\mathbf{v}=(1,2,3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=2+4+3=9$, $\ \|\mathbf{u}\|^2=4+4+1=9$.</p>
+      <p>$$\mathrm{proj}_\mathbf{u}\mathbf{v} = \frac99(2,2,1) = (2,2,1) = \mathbf{u}.$$</p>
+      <p>The scalar projection came out to be exactly $1$, so $\mathbf{v}$ projects onto $\mathbf{u}$'s line to give back $\mathbf{u}$ itself.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 52</span></div>
+  <div class="p-body"><p>Find $\mathrm{proj}_\mathbf{u}\mathbf{v}$ for $\mathbf{u}=(1,1,1)$, $\mathbf{v}=(3,0,-1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=3+0-1=2$, $\ \|\mathbf{u}\|^2=3$.</p>
+      <p>$$\mathrm{proj}_\mathbf{u}\mathbf{v} = \frac23(1,1,1) = \left(\frac23,\frac23,\frac23\right).$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 53</span></div>
+  <div class="p-body"><p>Find $\mathrm{proj}_\mathbf{u}\mathbf{v}$ for $\mathbf{u}=(2,-1)$, $\mathbf{v}=(1,2)$, and explain the result.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=2-2=0$, so $\mathrm{proj}_\mathbf{u}\mathbf{v} = \mathbf{0} = (0,0)$.</p>
+      <p>This makes sense: $\mathbf{u}$ and $\mathbf{v}$ are perpendicular here, so $\mathbf{v}$ has no "shadow" at all along $\mathbf{u}$'s direction, it is entirely perpendicular to it already.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 54</span></div>
+  <div class="p-body"><p>Find $\mathrm{proj}_\mathbf{u}\mathbf{v}$ for $\mathbf{u}=(0,5)$, $\mathbf{v}=(3,4)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=0+20=20$, $\ \|\mathbf{u}\|^2=25$.</p>
+      <p>$$\mathrm{proj}_\mathbf{u}\mathbf{v} = \frac{20}{25}(0,5) = (0,4).$$</p>
+      <p>Since $\mathbf{u}$ points straight up the $y$-axis, the projection just picks out $\mathbf{v}$'s $y$-component, exactly as you would expect.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 55</span></div>
+  <div class="p-body"><p>Find $\mathrm{proj}_\mathbf{u}\mathbf{v}$ for $\mathbf{u}=(1,2,2)$, $\mathbf{v}=(4,0,3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=4+0+6=10$, $\ \|\mathbf{u}\|^2=9$.</p>
+      <p>$$\mathrm{proj}_\mathbf{u}\mathbf{v} = \frac{10}{9}(1,2,2) = \left(\frac{10}{9},\frac{20}{9},\frac{20}{9}\right).$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 56</span></div>
+  <div class="p-body"><p>Find $\mathrm{proj}_\mathbf{u}\mathbf{v}$ for $\mathbf{u}=(3,-4)$, $\mathbf{v}=(-2,-1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{u}\cdot\mathbf{v}=-6+4=-2$, $\ \|\mathbf{u}\|^2=25$.</p>
+      <p>$$\mathrm{proj}_\mathbf{u}\mathbf{v} = \frac{-2}{25}(3,-4) = \left(-\frac{6}{25},\frac{8}{25}\right).$$</p>
+      <p>The scalar coefficient here is negative, meaning this projection points opposite to $\mathbf{u}$, since $\mathbf{v}$ leans away from $\mathbf{u}$'s direction rather than towards it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec8">
+  <div class="section-title"><span class="tag">8</span> The cross product</div>
+  <div class="prose">
+    <p>The dot product takes two vectors and returns a number. In $\mathbb{R}^3$ only, there is a second, quite different operation, the <strong>cross product</strong>, that takes two vectors and returns a <em>third vector</em>, one that is perpendicular to both of the originals. It is written $\mathbf{u}\times\mathbf{v}$.</p>
+    <p>If you worked through the determinants lesson, this definition will look immediately familiar: the cross product is computed with exactly the same cofactor-expansion pattern as a $3\times3$ determinant, just with the symbols $\mathbf{i}$, $\mathbf{j}$, $\mathbf{k}$ (the unit vectors along the $x$, $y$, $z$ axes) sitting in the first row instead of numbers.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: definition</span>
+    <p>$$\mathbf{u}\times\mathbf{v} = \begin{vmatrix}\mathbf{i}&\mathbf{j}&\mathbf{k}\\u_1&u_2&u_3\\v_1&v_2&v_3\end{vmatrix} = \big(u_2v_3-u_3v_2,\ \ -(u_1v_3-u_3v_1),\ \ u_1v_2-u_2v_1\big).$$</p>
+  </div>
+
+  <div class="prose">
+    <p>Two facts make the cross product genuinely useful, and both are worth understanding rather than just memorising.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why the cross product is perpendicular to both vectors, and what its length means</span>
+    <p><strong>Perpendicularity.</strong> You can check directly, by expanding the dot product using the formula above, that $\mathbf{u}\cdot(\mathbf{u}\times\mathbf{v}) = 0$ and $\mathbf{v}\cdot(\mathbf{u}\times\mathbf{v})=0$ always, for any $\mathbf{u}$ and $\mathbf{v}$. So $\mathbf{u}\times\mathbf{v}$ is always perpendicular to the plane containing both $\mathbf{u}$ and $\mathbf{v}$. Its direction (which of the two possible perpendicular directions) follows the <strong>right-hand rule</strong>: point your right hand's fingers along $\mathbf{u}$, curl them towards $\mathbf{v}$, and your thumb points along $\mathbf{u}\times\mathbf{v}$.</p>
+    <p><strong>Length.</strong> It can be shown that $\|\mathbf{u}\times\mathbf{v}\| = \|\mathbf{u}\|\|\mathbf{v}\|\sin\theta$, where $\theta$ is the angle between $\mathbf{u}$ and $\mathbf{v}$ (compare this with $\mathbf{u}\cdot\mathbf{v}=\|\mathbf{u}\|\|\mathbf{v}\|\cos\theta$ from Section 4, sine instead of cosine). This is exactly the formula for the area of the parallelogram spanned by $\mathbf{u}$ and $\mathbf{v}$: base $\|\mathbf{u}\|$, height $\|\mathbf{v}\|\sin\theta$. So $\|\mathbf{u}\times\mathbf{v}\|$ is the area of that parallelogram, and half of it is the area of the triangle with $\mathbf{u}$ and $\mathbf{v}$ as two sides.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $\mathbf{u}=(2,2,0)$ and $\mathbf{v}=(1,2,4)$.</p>
+    <p class="step">$$\mathbf{u}\times\mathbf{v} = \big(2(4)-0(2),\ -(2(4)-0(1)),\ 2(2)-2(1)\big) = (8,-8,2).$$</p>
+    <p class="step">Check perpendicularity: $\mathbf{u}\cdot(8,-8,2) = 16-16+0=0$ &check;. $\ \mathbf{v}\cdot(8,-8,2) = 8-16+8=0$ &check;.</p>
+    <p class="step">Area of the parallelogram spanned by $\mathbf{u},\mathbf{v}$: $\|(8,-8,2)\| = \sqrt{64+64+4} = \sqrt{132} \approx 11.49$.</p>
+    <svg class="diagram" viewBox="0 0 260 220" width="260" height="220">
+      <polygon points="60,180 160,140 200,60 100,100" fill="#1B2431" fill-opacity="0.10" stroke="#1B2431" stroke-width="1.4"/>
+      <defs>
+        <marker id="arrNavyC" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#1B2431"/></marker>
+        <marker id="arrRedC" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#FF3621"/></marker>
+      </defs>
+      <line x1="60" y1="180" x2="157" y2="141" stroke="#1B2431" stroke-width="2.2" marker-end="url(#arrNavyC)"/>
+      <line x1="60" y1="180" x2="97" y2="101" stroke="#FF3621" stroke-width="2.2" marker-end="url(#arrRedC)"/>
+      <circle cx="200" cy="60" r="9" fill="none" stroke="#2f8f5b" stroke-width="1.6"/>
+      <circle cx="200" cy="60" r="2.4" fill="#2f8f5b"/>
+      <text x="163" y="138" font-family="Roboto Mono" font-size="12" fill="#1B2431">u</text>
+      <text x="100" y="96" font-family="Roboto Mono" font-size="12" fill="#FF3621">v</text>
+      <text x="212" y="64" font-family="Roboto Mono" font-size="11" fill="#2f8f5b">u&#215;v (out of the page)</text>
+    </svg>
+    <p>The shaded parallelogram lies in the plane containing $\mathbf{u}$ and $\mathbf{v}$; the circled dot is the standard symbol for a vector pointing straight out of that plane towards you, which is exactly where $\mathbf{u}\times\mathbf{v}$ points here, by the right-hand rule.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 57</span></div>
+  <div class="p-body"><p>Compute $\mathbf{i}\times\mathbf{j}$, that is, $(1,0,0)\times(0,1,0)$. Does the result match what the right-hand rule predicts?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\mathbf{i}\times\mathbf{j} = \big(0(0)-0(1),\ -(1(0)-0(0)),\ 1(1)-0(0)\big) = (0,0,1) = \mathbf{k}.$$</p>
+      <p>Yes: point your right hand's fingers along the $x$-axis and curl them towards the $y$-axis, your thumb points straight up along the $z$-axis, exactly matching $\mathbf{k}=(0,0,1)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 58</span></div>
+  <div class="p-body"><p>Find the area of the parallelogram spanned by $\mathbf{u}=(3,0,0)$ and $\mathbf{v}=(0,4,0)$, and check your answer makes sense given that these two vectors are just along the $x$ and $y$ axes.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\mathbf{u}\times\mathbf{v} = \big(0(0)-0(4),\ -(3(0)-0(0)),\ 3(4)-0(0)\big) = (0,0,12).$$</p>
+      <p>Area $= \|(0,0,12)\| = 12$. This makes sense: $\mathbf{u}$ and $\mathbf{v}$ are perpendicular and lie along the axes, so the "parallelogram" they span is just an ordinary $3\times4$ rectangle, with area $12$, exactly matching.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 59</span></div>
+  <div class="p-body"><p>Let $\mathbf{u}=(2,-1,2)$ and $\mathbf{v}=(4,4,4)$. Find $\mathbf{u}\times\mathbf{v}$ and the area of the parallelogram it spans.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\mathbf{u}\times\mathbf{v} = \big((-1)(4)-2(4),\ -(2(4)-2(4)),\ 2(4)-(-1)(4)\big) = (-12,0,12).$$</p>
+      <p>Area $= \|(-12,0,12)\| = \sqrt{144+0+144} = \sqrt{288} = 12\sqrt2 \approx 16.97$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 60</span></div>
+  <div class="p-body"><p>Compute $\mathbf{u}\times\mathbf{v}$ for $\mathbf{u}=(1,0,0)$ and $\mathbf{v}=(0,0,1)$, that is, $\mathbf{i}\times\mathbf{k}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\mathbf{i}\times\mathbf{k} = \big(0(1)-0(0),\ -(1(1)-0(0)),\ 1(0)-0(0)\big) = (0,-1,0) = -\mathbf{j}.$$</p>
+      <p>This is worth remembering: $\mathbf{i}\times\mathbf{k} = -\mathbf{j}$, the <em>negative</em> of the third axis direction, since curling your right hand's fingers from $\mathbf{i}$ towards $\mathbf{k}$ points your thumb downward, not upward.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 61</span></div>
+  <div class="p-body"><p>Compute $\mathbf{u}\times\mathbf{v}$ and the area of the parallelogram spanned, for $\mathbf{u}=(2,1,0)$ and $\mathbf{v}=(1,3,0)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\mathbf{u}\times\mathbf{v} = \big(1(0)-0(3),\ -(2(0)-0(1)),\ 2(3)-1(1)\big) = (0,0,5).$$</p>
+      <p>Area $=\|(0,0,5)\|=5$. Since both $\mathbf{u}$ and $\mathbf{v}$ lie flat in the $xy$-plane (zero $z$-component), the cross product points purely along $\mathbf{k}$, exactly matching what Section 8 of the row-operations-style reasoning in Practice 8 (determinants lesson) would predict for two vectors confined to a plane.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 62</span></div>
+  <div class="p-body"><p>Compute $\mathbf{u}\times\mathbf{v}$ for $\mathbf{u}=(1,1,1)$ and $\mathbf{v}=(2,0,1)$, and check perpendicularity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\mathbf{u}\times\mathbf{v} = \big(1(1)-1(0),\ -(1(1)-1(2)),\ 1(0)-1(2)\big) = (1,1,-2).$$</p>
+      <p>Check: $\mathbf{u}\cdot(1,1,-2)=1+1-2=0$ &check;. $\ \mathbf{v}\cdot(1,1,-2)=2+0-2=0$ &check;. Area $=\|(1,1,-2)\|=\sqrt6\approx2.449$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 63</span></div>
+  <div class="p-body"><p>Compute $\mathbf{u}\times\mathbf{v}$ for $\mathbf{u}=(3,1,2)$ and $\mathbf{v}=(1,4,0)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\mathbf{u}\times\mathbf{v} = \big(1(0)-2(4),\ -(3(0)-2(1)),\ 3(4)-1(1)\big) = (-8,2,11).$$</p>
+      <p>Area $= \|(-8,2,11)\| = \sqrt{64+4+121} = \sqrt{189} = 3\sqrt{21} \approx 13.75$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 64</span></div>
+  <div class="p-body"><p>Compute $\mathbf{u}\times\mathbf{v}$ for $\mathbf{u}=(0,2,1)$ and $\mathbf{v}=(3,0,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\mathbf{u}\times\mathbf{v} = \big(2(1)-1(0),\ -(0(1)-1(3)),\ 0(0)-2(3)\big) = (2,3,-6).$$</p>
+      <p>Area $= \|(2,3,-6)\| = \sqrt{4+9+36} = \sqrt{49} = 7$, a clean whole number despite the input vectors having no particularly special form.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 65</span></div>
+  <div class="p-body"><p>Compute $\mathbf{u}\times\mathbf{v}$ for $\mathbf{u}=(2,-1,3)$ and $\mathbf{v}=(1,2,-1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\mathbf{u}\times\mathbf{v} = \big((-1)(-1)-3(2),\ -(2(-1)-3(1)),\ 2(2)-(-1)(1)\big) = (-5,5,5).$$</p>
+      <p>Area $= \|(-5,5,5)\| = \sqrt{25+25+25} = \sqrt{75} = 5\sqrt3 \approx 8.66$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 66</span></div>
+  <div class="p-body"><p>Compute $\mathbf{u}\times\mathbf{v}$ for $\mathbf{u}=(1,0,2)$ and $\mathbf{v}=(0,3,0)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\mathbf{u}\times\mathbf{v} = \big(0(0)-2(3),\ -(1(0)-2(0)),\ 1(3)-0(0)\big) = (-6,0,3).$$</p>
+      <p>Area $= \|(-6,0,3)\| = \sqrt{36+0+9} = \sqrt{45} = 3\sqrt5 \approx 6.71$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 67</span></div>
+  <div class="p-body"><p>Compute $\mathbf{u}\times\mathbf{v}$ for $\mathbf{u}=(5,0,0)$ and $\mathbf{v}=(0,0,2)$, and check it against the right-hand rule.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\mathbf{u}\times\mathbf{v} = \big(0(2)-0(0),\ -(5(2)-0(0)),\ 5(0)-0(0)\big) = (0,-10,0).$$</p>
+      <p>Both $\mathbf{u}$ and $\mathbf{v}$ are just scaled versions of $\mathbf{i}$ and $\mathbf{k}$, so this is consistent with Practice 60's finding that $\mathbf{i}\times\mathbf{k}=-\mathbf{j}$: here $\mathbf{u}\times\mathbf{v} = 5(2)(\mathbf{i}\times\mathbf{k}) = 10(-\mathbf{j}) = (0,-10,0)$, area $=10$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec9">
+  <div class="section-title"><span class="tag">9</span> Scalar triple product and volume</div>
+  <div class="prose">
+    <p>There is one more natural combination to make from three vectors $\mathbf{u}$, $\mathbf{v}$, $\mathbf{w}$ in $\mathbb{R}^3$: take the cross product of two of them, then dot the result with the third. This is called the <strong>scalar triple product</strong>, and it connects cross products directly back to determinants.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = \det\begin{pmatrix}u_1&u_2&u_3\\v_1&v_2&v_3\\w_1&w_2&w_3\end{pmatrix}.$$</p>
+    <p>This is exactly the determinant of the matrix whose rows are $\mathbf{u}$, $\mathbf{v}$, $\mathbf{w}$, computed using everything from the determinants lesson.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why this gives you a volume</span>
+    <p>$\mathbf{v}\times\mathbf{w}$ is a vector perpendicular to the parallelogram spanned by $\mathbf{v}$ and $\mathbf{w}$, with length equal to that parallelogram's area. Dotting it with $\mathbf{u}$ picks out $\|\mathbf{u}\|\cos\phi$ (times that area), where $\phi$ is the angle between $\mathbf{u}$ and the perpendicular direction, and $\|\mathbf{u}\|\cos\phi$ is exactly the height of $\mathbf{u}$ above the base parallelogram. Area of base times height is volume, so</p>
+    <p class="step">$$\text{Volume of parallelepiped spanned by }\mathbf{u},\mathbf{v},\mathbf{w} = |\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w})|.$$</p>
+    <p>(The absolute value is there because the dot product can come out negative, depending on orientation, but a volume should always be reported as positive.)</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $\mathbf{u}=(2,-1,2)$, $\mathbf{v}=(4,4,4)$, $\mathbf{w}=(1,1,0)$. Find the volume of the parallelepiped they span.</p>
+    <p class="step">First, $\mathbf{v}\times\mathbf{w} = \big(4(0)-4(1),\ -(4(0)-4(1)),\ 4(1)-4(1)\big) = (-4,4,0)$.</p>
+    <p class="step">$$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = 2(-4)+(-1)(4)+2(0) = -8-4+0=-12.$$</p>
+    <p class="step">Volume $= |-12| = 12$.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 68</span></div>
+  <div class="p-body"><p>Find the volume of the parallelepiped spanned by $\mathbf{u}=(1,0,0)$, $\mathbf{v}=(0,1,0)$, $\mathbf{w}=(0,0,1)$, and check your answer makes sense given what shape these three vectors actually describe.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{v}\times\mathbf{w} = (1(1)-0(0),\ -(0(1)-0(0)),\ 0(0)-1(0)) = (1,0,0)$.</p>
+      <p>$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = 1(1)+0(0)+0(0) = 1$. Volume $=|1|=1$.</p>
+      <p>This makes sense: $\mathbf{u},\mathbf{v},\mathbf{w}$ are just the three coordinate axis directions, so the "parallelepiped" they span is an ordinary unit cube, with volume $1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 69</span></div>
+  <div class="p-body"><p>Three points in $\mathbb{R}^3$ are $(1,1,1)$, $(2,2,2)$, and $(3,1,3)$. Find the area of the parallelogram that has these three points as vertices (with the fourth vertex implied).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>First build two edge vectors from the shared vertex $(1,1,1)$: $\mathbf{u} = (2,2,2)-(1,1,1) = (1,1,1)$, and $\mathbf{v} = (3,1,3)-(1,1,1) = (2,0,2)$.</p>
+      <p>$$\mathbf{u}\times\mathbf{v} = \big(1(2)-1(0),\ -(1(2)-1(2)),\ 1(0)-1(2)\big) = (2,0,-2).$$</p>
+      <p>Area $= \|(2,0,-2)\| = \sqrt{4+0+4} = \sqrt8 = 2\sqrt2 \approx 2.828$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 70</span></div>
+  <div class="p-body"><p>Find the volume of the parallelepiped spanned by $\mathbf{u}=(1,0,0)$, $\mathbf{v}=(0,1,0)$, $\mathbf{w}=(0,0,2)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{v}\times\mathbf{w} = (1(2)-0(0),\ -(0(2)-0(0)),\ 0(0)-1(0)) = (2,0,0)$.</p>
+      <p>$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = 1(2)+0+0=2$. Volume $=2$. This is just a $1\times1\times2$ box standing on the unit square, so a volume of $2$ matches simple intuition.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 71</span></div>
+  <div class="p-body"><p>Find the volume of the parallelepiped spanned by $\mathbf{u}=(1,1,0)$, $\mathbf{v}=(0,1,1)$, $\mathbf{w}=(1,0,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{v}\times\mathbf{w} = (1(1)-1(0),\ -(0(1)-1(1)),\ 0(0)-1(1)) = (1,1,-1)$.</p>
+      <p>$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = 1(1)+1(1)+0(-1) = 2$. Volume $=2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 72</span></div>
+  <div class="p-body"><p>Find the volume of the parallelepiped spanned by $\mathbf{u}=(2,0,0)$, $\mathbf{v}=(0,3,0)$, $\mathbf{w}=(0,0,4)$, and check your answer against the shape these vectors describe.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{v}\times\mathbf{w} = (3(4)-0(0),\ -(0(4)-0(0)),\ 0(0)-3(0)) = (12,0,0)$.</p>
+      <p>$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = 2(12) = 24$. Volume $=24$.</p>
+      <p>These three vectors just point along the three axes with lengths $2$, $3$, and $4$, so the parallelepiped is an ordinary rectangular box, with volume $2\times3\times4=24$, exactly matching.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 73</span></div>
+  <div class="p-body"><p>Find the volume of the parallelepiped spanned by $\mathbf{u}=(1,2,0)$, $\mathbf{v}=(0,1,2)$, $\mathbf{w}=(2,0,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{v}\times\mathbf{w} = (1(1)-2(0),\ -(0(1)-2(2)),\ 0(0)-1(2)) = (1,4,-2)$.</p>
+      <p>$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = 1(1)+2(4)+0(-2) = 1+8=9$. Volume $=9$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 74</span></div>
+  <div class="p-body"><p>Find the volume of the parallelepiped spanned by $\mathbf{u}=(1,1,1)$, $\mathbf{v}=(1,2,3)$, $\mathbf{w}=(1,3,6)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{v}\times\mathbf{w} = (2(6)-3(3),\ -(1(6)-3(1)),\ 1(3)-2(1)) = (3,-3,1)$.</p>
+      <p>$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = 1(3)+1(-3)+1(1) = 3-3+1=1$. Volume $=1$, a surprisingly small, "flattened" parallelepiped given how ordinary the three vectors look.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 75</span></div>
+  <div class="p-body"><p>Find the volume of the parallelepiped spanned by $\mathbf{u}=(3,0,0)$, $\mathbf{v}=(1,2,0)$, $\mathbf{w}=(1,1,4)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{v}\times\mathbf{w} = (2(4)-0(1),\ -(1(4)-0(1)),\ 1(1)-2(1)) = (8,-4,-1)$.</p>
+      <p>$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = 3(8)+0+0=24$. Volume $=24$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 76</span></div>
+  <div class="p-body"><p>Find the volume of the parallelepiped spanned by $\mathbf{u}=(1,0,1)$, $\mathbf{v}=(0,1,1)$, $\mathbf{w}=(1,1,0)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{v}\times\mathbf{w} = (1(0)-1(1),\ -(0(0)-1(1)),\ 0(1)-1(1)) = (-1,1,-1)$.</p>
+      <p>$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = 1(-1)+0(1)+1(-1) = -1-1=-2$. Volume $=|-2|=2$. The negative sign before taking the absolute value just reflects the orientation (handedness) of this particular triple, not anything wrong with the calculation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 77</span></div>
+  <div class="p-body"><p>Find the volume of the parallelepiped spanned by $\mathbf{u}=(2,1,1)$, $\mathbf{v}=(1,2,1)$, $\mathbf{w}=(1,1,2)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{v}\times\mathbf{w} = (2(2)-1(1),\ -(1(2)-1(1)),\ 1(1)-2(1)) = (3,-1,-1)$.</p>
+      <p>$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = 2(3)+1(-1)+1(-1) = 6-1-1=4$. Volume $=4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Between this lesson and the row-operations one, you now have essentially every tool used in the vectors and determinants part of a first linear algebra course: adding and scaling vectors, measuring their length and the angle between them, decomposing one vector into components parallel and perpendicular to another, and, in three dimensions, building a new perpendicular vector out of two others and using it to measure areas and volumes. The next natural step is usually linear independence and span, asking not about two or three vectors at a time but about a whole collection of them at once, and that idea builds directly on the rank you met in the row-operations lesson.</p>
+</div>
+
+</main>
+
+<footer>Linear Algebra Foundations &middot; Vectors, Dot &amp; Cross Products, and Projections</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
