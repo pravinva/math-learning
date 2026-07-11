@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Differential Equations</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+
+  header h1{
+    margin:0;
+    font-size:27px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+
+  header p{
+    margin:8px 0 0;
+    color:#c3ccdb;
+    font-size:15px;
+    max-width:680px;
+  }
+
+  .progress-wrap{
+    max-width:820px;
+    margin:22px auto 0;
+    padding:0 24px;
+  }
+
+  .progress-bar{
+    height:6px;
+    border-radius:3px;
+    background:rgba(255,255,255,0.15);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--red);
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    color:#9fb0c9;
+    margin-top:6px;
+  }
+
+  nav.toc{
+    max-width:820px;
+    margin:26px auto 0;
+    padding:16px 22px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  nav.toc ol{
+    margin:0;
+    padding-left:20px;
+    columns:2;
+    font-size:14px;
+    line-height:1.9;
+  }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{
+    max-width:820px;
+    margin:30px auto 0;
+    padding:0 24px;
+  }
+
+  section.topic{
+    margin-bottom:46px;
+  }
+
+  .section-title{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 6px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--navy);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    background:rgba(255,54,33,0.08);
+    border-radius:4px;
+    padding:3px 9px;
+  }
+
+  .prose{
+    font-size:16px;
+    line-height:1.65;
+    margin:16px 0;
+  }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0;
+    padding:16px 18px 18px;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+  .key-box{
+    background:#fff7f5;
+    border-left:4px solid var(--red);
+  }
+  .example-box{
+    background:#f7f9fc;
+    border-left:4px solid var(--navy);
+  }
+  .why-box{
+    background:var(--blue-box);
+    border-left:4px solid var(--navy);
+  }
+  .box-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid #33415a;
+    border-radius:6px;
+    margin:18px 0;
+    box-shadow:0 1px 2px rgba(27,36,49,0.05);
+    overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+
+  .p-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:14px 20px 4px;
+  }
+  .p-num{
+    font-family:'Roboto Mono',monospace;
+    font-weight:500;
+    font-size:12.5px;
+    color:#33415a;
+    background:#eef1f6;
+    border-radius:4px;
+    padding:2px 8px;
+    flex-shrink:0;
+  }
+  .p-body{
+    padding:4px 20px 16px;
+    font-size:15.5px;
+    line-height:1.55;
+  }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    color:var(--navy);
+    background:#fff;
+    border:1.5px solid var(--navy);
+    border-radius:5px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+    border-top:1px dashed var(--line);
+  }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{
+    padding:14px 20px 18px;
+    background:#fbfcfe;
+    font-size:15px;
+    line-height:1.6;
+  }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:8px;
+    display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  svg.diagram{
+    display:block;
+    margin:14px auto;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+  }
+
+  footer{
+    max-width:820px;
+    margin:10px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Differential Equations</div>
+  <h1>First Order Differential Equations</h1>
+  <p>A from-scratch lesson on first order differential equations: what they are, how to picture their solutions without solving anything, and three progressively more general techniques for solving them, finishing with real modelling problems. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 38 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">Introduction to differential equations</a></li>
+    <li><a href="#sec2">Direction fields</a></li>
+    <li><a href="#sec3">Solving $y'=f(x)$</a></li>
+    <li><a href="#sec4">Solving $y'=g(y)$</a></li>
+    <li><a href="#sec5">Solving $y'=f(x)g(y)$</a></li>
+    <li><a href="#sec6">Modelling: first order</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Introduction to differential equations</div>
+  <div class="prose">
+    <p>Every equation you have solved so far has asked you to find a <em>number</em>: solve $2x+3=7$ for the number $x$. A <strong>differential equation</strong> asks a bigger question: find a <em>function</em> $y(x)$ that satisfies some relationship involving the function and its derivatives. For example, $y'=2y$ is a differential equation, it is asking: which functions $y(x)$ have the property that their derivative is always exactly twice the function's own value?</p>
+    <p>This is a genuinely different kind of problem, but it is everywhere in practice: population growth, radioactive decay, the temperature of a cooling cup of coffee, the motion of a falling object, all of these are naturally described by a relationship between a quantity and its <em>rate of change</em>, which is exactly what a differential equation captures.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: vocabulary</span>
+    <p>The <strong>order</strong> of a differential equation is the highest derivative that appears. $y'=2y$ is first order; $y''+3y'-y=0$ is second order. This lesson deals only with <strong>first order</strong> equations, those involving $y'$ but no higher derivative.</p>
+    <p>A <strong>general solution</strong> is a family of functions, usually containing one arbitrary constant $C$, that satisfies the equation for every value of $C$. A <strong>particular solution</strong> is one specific member of that family, pinned down by an extra piece of information called an <strong>initial condition</strong>, typically the value $y(x_0)=y_0$ at some starting point. A differential equation together with an initial condition is called an <strong>initial value problem</strong> (IVP).</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why solutions always come with a constant</span>
+    <p>Solving a differential equation is, at its core, a form of integration (Sections 3-5 make this completely explicit), and every integration introduces an arbitrary constant, since a function and that same function plus any constant have identical derivatives. So a first order differential equation never has just one solution, it has an entire one-parameter family of them. Geometrically, each value of $C$ traces out a different curve, and all of these curves together fill up the plane without crossing (for well-behaved equations), each one satisfying the same relationship between $y$ and $y'$. An initial condition selects exactly one curve out of that family, the one passing through the specified point.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Verify that $y=Ce^{2x}$ solves $y'=2y$ for every value of $C$, then find the particular solution with $y(0)=5$.</p>
+    <p class="step">Differentiate: $y'=2Ce^{2x}$. Compare with $2y=2(Ce^{2x})=2Ce^{2x}$. These match exactly, for any $C$, so $y=Ce^{2x}$ really is a solution, regardless of what $C$ is.</p>
+    <p class="step">Apply the initial condition: $y(0)=Ce^0=C=5$. So the particular solution is $y=5e^{2x}$.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Verify that $y=x^2+3x+C$ solves the differential equation $y'=2x+3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y' = 2x+3+0 = 2x+3$, matching the right-hand side of the equation for every $C$ (the constant vanishes under differentiation, which is exactly why it was free to be anything).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>State the order of each equation: (a) $y'''-2y=x$ &nbsp; (b) $y'=xy$ &nbsp; (c) $y''+y'=\sin x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(a) Third order (highest derivative present is $y'''$). (b) First order. (c) Second order.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Given the general solution $y=Ce^{-2x}$ to some differential equation, find the particular solution satisfying $y(0)=7$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y(0)=Ce^0=C=7$, so the particular solution is $y=7e^{-2x}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Is $y=\sin x+C$ a solution to $y'=\cos(2x)$? Check directly rather than guessing.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No. Differentiating gives $y'=\cos x$, not $\cos(2x)$, these are different functions (for example, at $x=\pi/2$, $\cos x=0$ but $\cos(2x)=\cos\pi=-1$). Always verify a proposed solution by substituting it back in, rather than trusting a family resemblance between the answer and the equation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Verify that $y=3+Ce^{-x}$ solves $y'=3-y$ for every value of $C$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y' = -Ce^{-x}$. And $3-y = 3-(3+Ce^{-x}) = -Ce^{-x}$. These match for every $C$, so the family does solve the equation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Using Practice 5's general solution $y=3+Ce^{-x}$, find the particular solution with $y(0)=1$, and state what happens to $y$ as $x\to\infty$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y(0)=3+C=1 \Rightarrow C=-2$, so $y=3-2e^{-x}$.</p>
+      <p>As $x\to\infty$, $e^{-x}\to0$, so $y\to3$: the solution approaches the constant value $3$ but never quite reaches it for any finite $x$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Explain, in your own words, the difference between a general solution and a particular solution, using $y'=2y$ as your example.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The general solution $y=Ce^{2x}$ describes an entire infinite family of curves, one for every possible value of $C$, all of which satisfy $y'=2y$. A particular solution is a single member of that family, for instance $y=5e^{2x}$ (taking $C=5$), pinned down by requiring the curve to pass through one specific point, such as $y(0)=5$. Without an initial condition, there is no way to prefer one value of $C$ over another, the differential equation alone is satisfied equally well by all of them.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Direction fields</div>
+  <div class="prose">
+    <p>A first order equation $y'=f(x,y)$ tells you the slope of the solution curve at every single point in the plane, even before you have solved the equation at all. Plotting a short line segment with that slope at a grid of points produces a <strong>direction field</strong> (or slope field), a picture that lets you sketch, or at least visualise, the shape of solution curves without doing any integration.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>At the point $(x_0,y_0)$, the slope of the solution curve passing through that point is simply $f(x_0,y_0)$, the right-hand side of the equation evaluated there. A solution curve, once you sketch one, must be tangent to the little slope segment at every point it passes through, since that segment <em>is</em> the derivative at that point, by definition.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Compute the slope of the solution to $y'=x-y$ at the points $(0,0)$, $(1,0)$, $(0,1)$, $(1,1)$, and sketch a small direction field.</p>
+    <p class="step">At $(0,0)$: slope $=0-0=0$. At $(1,0)$: slope $=1-0=1$. At $(0,1)$: slope $=0-1=-1$. At $(1,1)$: slope $=1-1=0$.</p>
+    <svg class="diagram" viewBox="0 0 240 200" width="240" height="200">
+      <line x1="0" y1="150" x2="240" y2="150" stroke="#c8d2de" stroke-width="1"/>
+      <line x1="70" y1="0" x2="70" y2="200" stroke="#c8d2de" stroke-width="1"/>
+      <line x1="55" y1="150" x2="85" y2="150" stroke="#1B2431" stroke-width="2"/>
+      <line x1="185" y1="150" x2="155" y2="120" stroke="#1B2431" stroke-width="2"/>
+      <line x1="55" y1="50" x2="85" y2="80" stroke="#1B2431" stroke-width="2"/>
+      <line x1="170" y1="65" x2="200" y2="65" stroke="#1B2431" stroke-width="2"/>
+      <text x="72" y="163" font-family="Roboto Mono" font-size="10" fill="#5b6779">(0,0)</text>
+      <text x="187" y="163" font-family="Roboto Mono" font-size="10" fill="#5b6779">(1,0)</text>
+      <text x="55" y="46" font-family="Roboto Mono" font-size="10" fill="#5b6779">(0,1)</text>
+      <text x="172" y="60" font-family="Roboto Mono" font-size="10" fill="#5b6779">(1,1)</text>
+    </svg>
+    <p>Each short segment shows the exact slope a solution curve must have if it passes through that point, no integration involved.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>For $y'=xy$, compute the slope at $(1,1)$, $(2,1)$, $(1,-1)$, and $(0,5)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(1,1)$: $1\times1=1$. $\ (2,1)$: $2\times1=2$. $\ (1,-1)$: $1\times(-1)=-1$. $\ (0,5)$: $0\times5=0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>For $y'=y$, describe (without solving the equation) what the direction field looks like along the line $y=0$, and what that suggests about the constant function $y=0$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Along $y=0$, the slope is $f(x,0)=0$ everywhere, horizontal segments all the way across. This means the constant function $y=0$ has a horizontal tangent at every point along its own graph, exactly what it needs to be a valid solution curve, since $y=0$ is indeed a solution to $y'=y$ (check: $y'=0$ and $y=0$ match). Direction fields often reveal these constant, "equilibrium" solutions just by looking at where the slope is uniformly zero.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>For the equation $y'=x/y$ (for $y\neq0$), find the set of points where the slope equals a fixed value $k$ (called an isocline), and describe its shape.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Setting $x/y=k$ gives $x=ky$, or equivalently $y=x/k$ (for $k\neq0$): a straight line through the origin. So every isocline of $y'=x/y$ is a line through the origin, with different lines (different slopes through the origin) corresponding to different constant values $k$ of the solution's slope there.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>For $y'=-x/y$, compute the slope at $(3,4)$ and at $(4,3)$, and notice that $3^2+4^2=4^2+3^2=25$. What does this suggest about the shape of the solution curve passing through both nearby regions of the circle $x^2+y^2=25$?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>At $(3,4)$: slope $=-3/4$. At $(4,3)$: slope $=-4/3$.</p>
+      <p>The slope $-x/y$ at any point on the circle $x^2+y^2=25$ is exactly the negative reciprocal of $y/x$, the slope of the radius to that point, meaning the direction field is everywhere perpendicular to the radius. A curve that stays perpendicular to every radius of a circle is, geometrically, the circle itself. This suggests the solution curves of $y'=-x/y$ are concentric circles centred at the origin, which is indeed correct (they satisfy $x^2+y^2=C$ for various $C$).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>For $y'=2$, describe the direction field and the shape of every solution curve, without solving anything.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The slope is $2$ at every single point in the plane, regardless of $x$ or $y$, so every little segment in the direction field points the same way. Solution curves must therefore be straight lines of slope $2$, and since there is one such line through every point, the family of solutions is $y=2x+C$ for every constant $C$, exactly what direct integration of $y'=2$ would give (Section 3), reached here purely by reasoning about the picture.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Solving $y'=f(x)$</div>
+  <div class="prose">
+    <p>The simplest possible first order equation is one where the right-hand side depends only on $x$, not on $y$ at all. This is not really a new technique, it is exactly the antiderivative-finding you already know from the integration lessons, just written using $y$ and $y'$ notation instead of $\int\cdots dx$.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>If $y'=f(x)$, then $y = \displaystyle\int f(x)\,dx$. Every technique from the integration lessons (substitution, parts, partial fractions, and so on) is fair game here, the differential equation is just asking you to undo a derivative.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Solve the IVP $y'=4x^3$, $y(1)=2$.</p>
+    <p class="step">Integrate: $y = \displaystyle\int4x^3\,dx = x^4+C$.</p>
+    <p class="step">Apply the initial condition: $y(1)=1^4+C=2 \Rightarrow C=1$.</p>
+    <p class="step">$$y = x^4+1.$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Solve $y'=\cos x$, $y(0)=1$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y=\sin x+C$. $\ y(0)=0+C=1 \Rightarrow C=1$. $\ y=\sin x+1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Solve $y'=\dfrac1x$ (for $x>0$), $y(1)=0$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y=\ln x+C$ (no absolute value needed since $x>0$). $\ y(1)=\ln1+C=C=0$. $\ y=\ln x$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Solve $y'=6x^2-2x+1$, $y(0)=3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y=2x^3-x^2+x+C$. $\ y(0)=C=3$. $\ y=2x^3-x^2+x+3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Solve $y'=e^{-x}$, $y(0)=0$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y=-e^{-x}+C$. $\ y(0)=-1+C=0 \Rightarrow C=1$. $\ y=1-e^{-x}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Solve $y'=\sin(2x)$, $y(0)=2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y=-\dfrac{\cos(2x)}2+C$. $\ y(0)=-\dfrac12+C=2 \Rightarrow C=\dfrac52$. $\ y=\dfrac52-\dfrac{\cos(2x)}2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Solve $y'=\dfrac3{x+2}$, $y(0)=3\ln2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y=3\ln|x+2|+C$. $\ y(0)=3\ln2+C=3\ln2 \Rightarrow C=0$. $\ y=3\ln|x+2|$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Solve $y'=xe^{x^2}$ (needs a substitution first), $y(0)=1$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Let $w=x^2$, $dw=2x\,dx$: $\displaystyle\int xe^{x^2}\,dx = \frac12\int e^w\,dw = \frac12e^{x^2}+C$.</p>
+      <p>$y(0)=\dfrac12+C=1 \Rightarrow C=\dfrac12$. $\ y=\dfrac12e^{x^2}+\dfrac12$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Solving $y'=g(y)$</div>
+  <div class="prose">
+    <p>Now suppose the right-hand side depends only on $y$, not $x$. Direct integration with respect to $x$ no longer works, since the right side isn't a function of $x$ to integrate. But you can still separate the variables: treat $y'=\dfrac{dy}{dx}$ as an honest ratio (it isn't quite one, but the algebra behaves exactly as if it were), and rearrange so all the $y$'s sit on one side and all the $x$'s (here, just $dx$) sit on the other.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$y'=g(y) \quad\Longrightarrow\quad \frac{dy}{dx}=g(y) \quad\Longrightarrow\quad \frac{dy}{g(y)} = dx \quad\Longrightarrow\quad \int\frac{dy}{g(y)} = \int dx = x+C.$$</p>
+    <p>This is called a <strong>separable</strong> equation. Once both sides are integrated, you have an equation relating $y$ and $x$ (possibly needing rearranging to isolate $y$ explicitly).</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why separating variables is legitimate</span>
+    <p>The rigorous justification isn't quite "cross-multiply the derivative like a fraction," it comes from the chain rule. Since $\dfrac1{g(y)}\dfrac{dy}{dx} = 1$ (dividing both sides of $y'=g(y)$ by $g(y)$), integrate both sides with respect to $x$: $\displaystyle\int\frac1{g(y)}\frac{dy}{dx}\,dx = \int1\,dx$. The left side is exactly a substitution integral in disguise (with $u=y(x)$, $du=y'\,dx$), so it simplifies to $\displaystyle\int\frac{dy}{g(y)}$, recovering the informal "separate and integrate" recipe from genuine substitution, not from treating $dy/dx$ as literal division.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Solve $y'=y^2$, $y(0)=1$, and describe what happens to the solution as $t$ increases (writing the independent variable as $t$, common when $y$ represents a quantity changing over time).</p>
+    <p class="step">Separate: $\displaystyle\frac{dy}{y^2}=dt \Rightarrow \int y^{-2}\,dy = \int dt \Rightarrow -\frac1y = t+C$.</p>
+    <p class="step">Apply the initial condition: $-\dfrac11 = 0+C \Rightarrow C=-1$. So $-\dfrac1y = t-1$, giving $y=\dfrac1{1-t}$.</p>
+    <p>As $t\to1^-$, the denominator $1-t\to0^+$, so $y\to+\infty$: the solution "blows up" and ceases to exist at the finite time $t=1$, even though the differential equation itself has no obvious warning sign of trouble at $t=1$. This is a genuinely important phenomenon in nonlinear differential equations, unlike linear equations, solutions to nonlinear ones can fail to exist for all time.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Solve $y'=5y$, $y(0)=2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\displaystyle\int\frac{dy}y = \int5\,dt \Rightarrow \ln|y|=5t+C_1 \Rightarrow y=Ce^{5t}$.</p>
+      <p>$y(0)=C=2$. $\ y=2e^{5t}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Solve $y'=-2y$, $y(0)=10$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Same method as Practice 20: $y=Ce^{-2t}$. $\ y(0)=C=10$. $\ y=10e^{-2t}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Solve $y'=\sqrt y$, $y(0)=4$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\displaystyle\int y^{-1/2}\,dy = \int dt \Rightarrow 2\sqrt y = t+C$.</p>
+      <p>$y(0)=2\sqrt4=4=C$. $\ 2\sqrt y=t+4 \Rightarrow \sqrt y = \dfrac{t+4}2 \Rightarrow y=\dfrac{(t+4)^2}4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Solve $y'=1+y^2$ (leave the answer in terms of $\arctan$ inverted, i.e.\ solve for $y$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\displaystyle\int\frac{dy}{1+y^2} = \int dt \Rightarrow \arctan y = t+C \Rightarrow y=\tan(t+C)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Solve $y'=\dfrac{y}2$, $y(0)=6$, and compare the shape of the solution to Practice 20's.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y=Ce^{t/2}$. $\ y(0)=C=6$. $\ y=6e^{t/2}$.</p>
+      <p>Same exponential shape as Practice 20, still growth (positive exponent), just at a slower rate, since $\frac12<5$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Without fully solving it, explain why $y'=y^3$, $y(0)=1$ should be expected to blow up in finite time as well, by comparing it to the worked example's $y'=y^2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Whenever $y>1$, $y^3>y^2$, so the growth rate for $y'=y^3$ is even more aggressive than for $y'=y^2$ once the solution exceeds $1$. Since $y'=y^2$ already blows up at a finite time starting from $y(0)=1$, and $y'=y^3$ grows at least as fast from the same starting point, it is reasonable to expect $y'=y^3$ blows up even sooner. (Solving it directly confirms this: separating gives $-\frac1{2y^2}=t+C$, with $C=-\frac12$ from $y(0)=1$, giving blow-up at $t=\frac12$, earlier than the worked example's $t=1$.)</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> Solving $y'=f(x)g(y)$</div>
+  <div class="prose">
+    <p>Sections 3 and 4 are really both special cases of one more general technique: whenever the right-hand side of $y'=\cdots$ can be factored into a piece depending only on $x$ times a piece depending only on $y$, the same separation idea from Section 4 still works, you just end up with a nontrivial integral on both sides instead of a trivial $\int dx$ on the right.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$y'=f(x)g(y) \quad\Longrightarrow\quad \frac{dy}{g(y)} = f(x)\,dx \quad\Longrightarrow\quad \int\frac{dy}{g(y)} = \int f(x)\,dx.$$</p>
+    <p>Section 3's technique is the special case $g(y)=1$; Section 4's is the special case $f(x)=1$. The general method is always: get every $y$ (including $dy$) on one side, every $x$ (including $dx$) on the other, then integrate each side separately.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Solve $y'=xy$.</p>
+    <p class="step">Separate: $\displaystyle\frac{dy}y = x\,dx$.</p>
+    <p class="step">Integrate both sides: $\ln|y| = \dfrac{x^2}2+C_1$.</p>
+    <p class="step">Exponentiate: $|y|=e^{x^2/2+C_1} = e^{C_1}e^{x^2/2}$. Since $e^{C_1}$ is just some positive constant, and allowing the sign to be absorbed, write $y=Ce^{x^2/2}$ for an arbitrary constant $C$ (this step, replacing $\pm e^{C_1}$ with a single unrestricted constant $C$, is standard and worth doing automatically once you've seen it).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Solve $y'=\dfrac{x}{y}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y\,dy = x\,dx \Rightarrow \displaystyle\int y\,dy = \int x\,dx \Rightarrow \frac{y^2}2 = \frac{x^2}2+C_1 \Rightarrow y^2=x^2+C$ (absorbing the $2$ into a renamed constant).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Solve $y'=x^2y^3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{dy}{y^3}=x^2\,dx \Rightarrow \displaystyle\int y^{-3}\,dy = \int x^2\,dx \Rightarrow -\frac1{2y^2} = \frac{x^3}3+C.$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Solve $y'=e^{x+y}$ (hint: $e^{x+y}=e^x\cdot e^y$, so this is already in $f(x)g(y)$ form).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{dy}{e^y} = e^x\,dx \Rightarrow e^{-y}\,dy = e^x\,dx \Rightarrow \displaystyle\int e^{-y}\,dy = \int e^x\,dx \Rightarrow -e^{-y} = e^x+C$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>Solve $y'=xy^2$, $y(0)=1$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{dy}{y^2}=x\,dx \Rightarrow -\dfrac1y = \dfrac{x^2}2+C$.</p>
+      <p>$y(0)=1$: $-1=0+C \Rightarrow C=-1$. So $-\dfrac1y = \dfrac{x^2}2-1$, giving $\dfrac1y = 1-\dfrac{x^2}2 = \dfrac{2-x^2}2$, so $y=\dfrac2{2-x^2}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>Solve $y'=\dfrac{x+1}y$, $y(0)=2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y\,dy=(x+1)\,dx \Rightarrow \dfrac{y^2}2 = \dfrac{x^2}2+x+C$.</p>
+      <p>$y(0)=2$: $\dfrac42=0+0+C \Rightarrow C=2$. So $y^2=x^2+2x+4$, and since $y(0)=2>0$, take the positive root: $y=\sqrt{x^2+2x+4}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Solve $y'=\dfrac{\cos x}{y}$, $y(0)=3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$y\,dy=\cos x\,dx \Rightarrow \dfrac{y^2}2=\sin x+C$.</p>
+      <p>$y(0)=3$: $\dfrac92=0+C \Rightarrow C=\dfrac92$. So $y^2=2\sin x+9$, and taking the positive root (since $y(0)=3>0$): $y=\sqrt{2\sin x+9}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Explain why $y'=x+y$ is <em>not</em> separable using the methods of this section (i.e., why it cannot be split into $f(x)$ times $g(y)$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The right-hand side is a <em>sum</em>, $x+y$, not a <em>product</em>, of a function of $x$ alone and a function of $y$ alone. There is no way to factor $x+y$ as $f(x)g(y)$: any such factoring would have to work for all $x,y$ simultaneously, but setting $y=0$ gives $f(x)g(0)=x$, forcing $f(x)$ to be proportional to $x$, while setting $x=0$ gives $f(0)g(y)=y$, forcing $g(y)$ to be proportional to $y$; multiplying those together gives something proportional to $xy$, not $x+y$. Equations like this need an entirely different technique (an "integrating factor," beyond this lesson's scope), not separation of variables.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Modelling: first order</div>
+  <div class="prose">
+    <p>The real payoff of everything in this lesson is being able to translate a word problem about a changing quantity directly into a differential equation, almost always separable, solve it using Sections 4 or 5's techniques, and then answer a concrete numerical question.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: two workhorse models</span>
+    <p><strong>Exponential growth/decay</strong>: whenever a quantity's rate of change is proportional to its current amount, $\dfrac{dP}{dt}=kP$, the solution is always $P=P_0e^{kt}$, with $k>0$ for growth (population, continuous compound interest) and $k<0$ for decay (radioactivity).</p>
+    <p><strong>Newton's law of cooling</strong>: an object's temperature changes at a rate proportional to the difference between its temperature and the surrounding (ambient) temperature $T_s$: $\dfrac{dT}{dt}=-k(T-T_s)$, with solution $T=T_s+(T_0-T_s)e^{-kt}$.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Where the cooling formula comes from</span>
+    <p>$\dfrac{dT}{dt}=-k(T-T_s)$ is separable: let $u=T-T_s$ (so $du=dT$, since $T_s$ is constant). The equation becomes $\dfrac{du}{dt}=-ku$, exactly the exponential model from the key idea, with solution $u=u_0e^{-kt}$, i.e.\ $T-T_s = (T_0-T_s)e^{-kt}$, giving $T=T_s+(T_0-T_s)e^{-kt}$. So Newton's law of cooling isn't really a separate technique to memorise, it is exponential decay in disguise, applied to the <em>difference</em> between the object's temperature and its surroundings rather than to the temperature itself.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A population starts at $100$ and doubles every $5$ hours. Find the population after $8$ hours.</p>
+    <p class="step">Model: $P=P_0e^{kt}$ with $P_0=100$. Use the doubling information to find $k$: $P(5)=200$, so $100e^{5k}=200 \Rightarrow e^{5k}=2 \Rightarrow k=\dfrac{\ln2}5$.</p>
+    <p class="step">$$P(t) = 100e^{(\ln2/5)t}.$$</p>
+    <p class="step">$P(8) = 100e^{(\ln2/5)(8)} = 100e^{1.6\ln2} \approx 303.1$.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>A sample of a radioactive isotope has a half-life of $10$ days. Starting from $50$g, how much remains after $30$ days?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$N=N_0e^{kt}$, $N_0=50$. Half-life gives $N(10)=25$: $50e^{10k}=25 \Rightarrow e^{10k}=\dfrac12 \Rightarrow k=\dfrac{\ln(1/2)}{10} = -\dfrac{\ln2}{10}$.</p>
+      <p>$N(30) = 50e^{-(\ln2/10)(30)} = 50e^{-3\ln2} = 50\cdot2^{-3} = 50\cdot\dfrac18 = 6.25\text{g}$.</p>
+      <p>(This also makes sense directly: $30$ days is exactly $3$ half-lives, so the amount is halved three times: $50\to25\to12.5\to6.25$.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>A cup of coffee starts at $90^\circ$C in a room at $20^\circ$C, and cools to $60^\circ$C after $10$ minutes. Find the temperature after $20$ minutes.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$T=20+(90-20)e^{-kt} = 20+70e^{-kt}$. Use $T(10)=60$: $60=20+70e^{-10k} \Rightarrow 40=70e^{-10k} \Rightarrow e^{-10k}=\dfrac47$.</p>
+      <p>$T(20) = 20+70e^{-20k} = 20+70(e^{-10k})^2 = 20+70\left(\dfrac47\right)^2 = 20+70\cdot\dfrac{16}{49} = 20+\dfrac{1120}{49} \approx 42.9^\circ\text{C}.$</p>
+      <p>Notice you never needed to solve for $k$ explicitly, squaring $e^{-10k}$ gives $e^{-20k}$ directly, since doubling the time squares the decay factor.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>$\$1000$ is invested at a continuous interest rate of $5\%$ per year, modelled by $\dfrac{dA}{dt}=rA$. Find the amount after $10$ years.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=A_0e^{rt} = 1000e^{0.05t}$. $\ A(10) = 1000e^{0.5} \approx \$1648.72$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>A tank contains $100$L of water with $5$kg of dissolved salt. Brine with concentration $0.1$kg/L flows in at $2$L/min, and the well-mixed solution flows out at the same rate (so the volume stays constant at $100$L). The salt amount $S(t)$ satisfies $\dfrac{dS}{dt} = \dfrac{10-S}{50}$. Solve for $S(t)$ with $S(0)=5$, and find the amount after $50$ minutes.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Separate: $\dfrac{dS}{10-S} = \dfrac{dt}{50} \Rightarrow -\ln|10-S| = \dfrac{t}{50}+C_1$.</p>
+      <p>$S(0)=5$: $-\ln5 = C_1$. So $-\ln|10-S| = \dfrac{t}{50}-\ln5 \Rightarrow \ln|10-S| = \ln5-\dfrac{t}{50} \Rightarrow 10-S = 5e^{-t/50}$.</p>
+      <p>$$S(t) = 10-5e^{-t/50}.$$</p>
+      <p>$S(50) = 10-5e^{-1} \approx 10-1.84 \approx 8.16$kg.</p>
+      <p>Notice $S\to10$ as $t\to\infty$: the tank's salt content approaches, but never exceeds, the amount corresponding to the inflow concentration ($0.1$kg/L $\times$ $100$L $=10$kg), exactly as you would expect physically.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>A population grows according to $\dfrac{dP}{dt}=kP$ and reaches $3$ times its initial size after $4$ years. Find $k$, and find how long it takes to reach $9$ times its initial size.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P=P_0e^{kt}$. $\ P(4)=3P_0$: $e^{4k}=3 \Rightarrow k=\dfrac{\ln3}4$.</p>
+      <p>Reaching $9P_0=3^2P_0$: since $9=3^2$, and each factor of $3$ takes $4$ years, reaching $9$ times takes $2\times4=8$ years. (Directly: $e^{kt}=9=3^2 \Rightarrow kt=2\ln3 \Rightarrow t = \dfrac{2\ln3}k = \dfrac{2\ln3}{\ln3/4}=8$.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>A hot metal bar at $200^\circ$C is placed in a room at $25^\circ$C. After $5$ minutes it has cooled to $150^\circ$C. Find the cooling constant $k$, and predict the temperature after $15$ minutes.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$T=25+175e^{-kt}$. $\ T(5)=150$: $125=175e^{-5k} \Rightarrow e^{-5k}=\dfrac{125}{175}=\dfrac57 \Rightarrow k = -\dfrac15\ln\left(\dfrac57\right) = \dfrac15\ln\left(\dfrac75\right)$.</p>
+      <p>$T(15) = 25+175e^{-15k} = 25+175(e^{-5k})^3 = 25+175\left(\dfrac57\right)^3 = 25+175\cdot\dfrac{125}{343} \approx 25+63.8 \approx 88.8^\circ\text{C}$.</p>
+      <p>Again, $e^{-15k}=(e^{-5k})^3$ sidesteps ever needing a decimal value for $k$ itself.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>Differential Equations &middot; First Order Equations</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>

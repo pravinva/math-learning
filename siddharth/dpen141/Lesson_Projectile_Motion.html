@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Projectile Motion</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+
+  header h1{
+    margin:0;
+    font-size:27px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+
+  header p{
+    margin:8px 0 0;
+    color:#c3ccdb;
+    font-size:15px;
+    max-width:680px;
+  }
+
+  .progress-wrap{
+    max-width:820px;
+    margin:22px auto 0;
+    padding:0 24px;
+  }
+
+  .progress-bar{
+    height:6px;
+    border-radius:3px;
+    background:rgba(255,255,255,0.15);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--red);
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    color:#9fb0c9;
+    margin-top:6px;
+  }
+
+  nav.toc{
+    max-width:820px;
+    margin:26px auto 0;
+    padding:16px 22px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  nav.toc ol{
+    margin:0;
+    padding-left:20px;
+    font-size:14px;
+    line-height:1.9;
+  }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{
+    max-width:820px;
+    margin:30px auto 0;
+    padding:0 24px;
+  }
+
+  section.topic{
+    margin-bottom:46px;
+  }
+
+  .section-title{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 6px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--navy);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    background:rgba(255,54,33,0.08);
+    border-radius:4px;
+    padding:3px 9px;
+  }
+
+  .prose{
+    font-size:16px;
+    line-height:1.65;
+    margin:16px 0;
+  }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0;
+    padding:16px 18px 18px;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+  .key-box{
+    background:#fff7f5;
+    border-left:4px solid var(--red);
+  }
+  .example-box{
+    background:#f7f9fc;
+    border-left:4px solid var(--navy);
+  }
+  .why-box{
+    background:var(--blue-box);
+    border-left:4px solid var(--navy);
+  }
+  .box-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid #33415a;
+    border-radius:6px;
+    margin:18px 0;
+    box-shadow:0 1px 2px rgba(27,36,49,0.05);
+    overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+
+  .p-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:14px 20px 4px;
+  }
+  .p-num{
+    font-family:'Roboto Mono',monospace;
+    font-weight:500;
+    font-size:12.5px;
+    color:#33415a;
+    background:#eef1f6;
+    border-radius:4px;
+    padding:2px 8px;
+    flex-shrink:0;
+  }
+  .p-body{
+    padding:4px 20px 16px;
+    font-size:15.5px;
+    line-height:1.55;
+  }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    color:var(--navy);
+    background:#fff;
+    border:1.5px solid var(--navy);
+    border-radius:5px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+    border-top:1px dashed var(--line);
+  }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{
+    padding:14px 20px 18px;
+    background:#fbfcfe;
+    font-size:15px;
+    line-height:1.6;
+  }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:8px;
+    display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  svg.diagram{
+    display:block;
+    margin:14px auto;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+  }
+
+  footer{
+    max-width:820px;
+    margin:10px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Mechanics</div>
+  <h1>Projectile Motion</h1>
+  <p>A from-scratch lesson on projectile motion: how launch speed and angle determine everything about the flight, and how eliminating time from the equations of motion gives the shape of the path itself. Everything is derived from the same two starting facts, constant horizontal velocity and constant downward acceleration. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 20 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">Time equations</a></li>
+    <li><a href="#sec2">Equation of the path</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Time equations</div>
+  <div class="prose">
+    <p>A projectile launched with speed $v_0$ at angle $\theta$ above the horizontal experiences two completely independent motions at once: horizontally, nothing pushes or slows it (ignoring air resistance), so it moves at constant velocity; vertically, gravity pulls it down with constant acceleration $g$, exactly like an object thrown straight up. The entire trick of this section is that these two directions never interact, you can analyse each one separately using nothing more than the constant-velocity and constant-acceleration formulas you already know, then combine the results.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: velocity and position as functions of time</span>
+    <p>Splitting the initial velocity into components, $v_{0x}=v_0\cos\theta$ (horizontal) and $v_{0y}=v_0\sin\theta$ (vertical):</p>
+    <p>$$v_x(t) = v_0\cos\theta \quad\text{(constant)}, \qquad v_y(t) = v_0\sin\theta - gt.$$</p>
+    <p>$$x(t) = (v_0\cos\theta)\,t, \qquad y(t) = (v_0\sin\theta)\,t - \frac12gt^2.$$</p>
+    <p>(These position formulas are just $x=x_0+v_{0x}t$ and $y=y_0+v_{0y}t-\frac12gt^2$ with the launch point taken as the origin, $x_0=y_0=0$.)</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why time to reach maximum height, time of flight, and range follow directly</span>
+    <p>The projectile reaches its <strong>maximum height</strong> at the instant $v_y=0$ (it is momentarily neither rising nor falling, exactly as a ball thrown straight up pauses at its peak): setting $v_0\sin\theta-gt=0$ gives $t_{\max} = \dfrac{v_0\sin\theta}g$. Substituting this back into $y(t)$ gives the maximum height itself, $H = \dfrac{(v_0\sin\theta)^2}{2g}$.</p>
+    <p class="step">The <strong>time of flight</strong> $T$ (assuming launch and landing at the same height) is when $y(t)$ returns to $0$: solving $0=(v_0\sin\theta)t-\frac12gt^2 = t\left(v_0\sin\theta-\frac12gt\right)$ gives $t=0$ (the launch itself) or $t=T=\dfrac{2v_0\sin\theta}g$, exactly double $t_{\max}$, a reflection of the fact that (again ignoring air resistance) the upward and downward halves of the trajectory are perfect time-reverses of each other.</p>
+    <p class="step">The <strong>range</strong> $R$ (horizontal distance travelled) is simply $x(T)$, the constant horizontal velocity multiplied by the total flight time: $R = (v_0\cos\theta)\cdot\dfrac{2v_0\sin\theta}g = \dfrac{2v_0^2\sin\theta\cos\theta}g = \dfrac{v_0^2\sin(2\theta)}g$, using the double-angle identity $2\sin\theta\cos\theta=\sin(2\theta)$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A projectile is launched at $v_0=25$m/s, at an angle $\theta$ with $\sin\theta=\frac45$, $\cos\theta=\frac35$ (a 3-4-5 triangle angle, about $53.13^\circ$), with $g=10$m/s$^2$. Find the velocity components, the time and height of the peak, and the time of flight and range.</p>
+    <p class="step">$v_{0x} = 25\times\frac35 = 15$m/s. $\ v_{0y} = 25\times\frac45=20$m/s.</p>
+    <p class="step">$t_{\max} = \dfrac{20}{10} = 2$s. $\ H = \dfrac{20^2}{2\times10} = \dfrac{400}{20} = 20$m.</p>
+    <p class="step">$T = 2t_{\max} = 4$s. $\ R = v_{0x}\cdot T = 15\times4 = 60$m.</p>
+    <p>Notice every number came out as a clean whole number, this was a deliberately chosen "nice" 3-4-5 triangle angle so the arithmetic stays transparent; real problems usually need a calculator for $\sin\theta$ and $\cos\theta$, but the method is identical.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A projectile is launched at $v_0=20$m/s at $\theta=30^\circ$, with $g=10$m/s$^2$. Find $v_{0x}$ and $v_{0y}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$v_{0x} = 20\cos30^\circ = 20\times\dfrac{\sqrt3}2 = 10\sqrt3 \approx 17.32$m/s.</p>
+      <p>$v_{0y} = 20\sin30^\circ = 20\times\dfrac12 = 10$m/s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Using Practice 1's numbers ($v_0=20$m/s, $\theta=30^\circ$, $g=10$m/s$^2$), find the time to reach maximum height and the maximum height.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$t_{\max} = \dfrac{v_{0y}}g = \dfrac{10}{10} = 1$s.</p>
+      <p>$H = \dfrac{v_{0y}^2}{2g} = \dfrac{100}{20} = 5$m.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Continuing Practice 1-2, find the total time of flight and the range.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$T = 2t_{\max} = 2$s.</p>
+      <p>$R = v_{0x}\cdot T = 10\sqrt3\times2 = 20\sqrt3 \approx 34.64$m.</p>
+      <p>(Check against the range formula directly: $R=\dfrac{v_0^2\sin(2\theta)}g = \dfrac{400\sin60^\circ}{10} = \dfrac{400\times\frac{\sqrt3}2}{10} = 20\sqrt3$, matching.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A ball is thrown at $v_0=40$m/s at $\theta=45^\circ$, with $g=9.8$m/s$^2$. Find the time of flight and the maximum height.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$v_{0y} = 40\sin45^\circ = 40\times\dfrac{\sqrt2}2 = 20\sqrt2 \approx 28.28$m/s.</p>
+      <p>$T = \dfrac{2v_{0y}}g = \dfrac{2\times20\sqrt2}{9.8} \approx \dfrac{56.57}{9.8} \approx 5.77$s.</p>
+      <p>$H = \dfrac{v_{0y}^2}{2g} = \dfrac{800}{19.6} \approx 40.82$m.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Find $x(t)$ and $y(t)$ for a projectile launched at $v_0=30$m/s, $\theta=60^\circ$, $g=10$m/s$^2$, and evaluate the position at $t=1$s.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$v_{0x}=30\cos60^\circ=15$m/s, $\ v_{0y}=30\sin60^\circ = 15\sqrt3$m/s.</p>
+      <p>$x(t)=15t$, $\ y(t)=15\sqrt3\,t - 5t^2$.</p>
+      <p>At $t=1$: $x(1)=15$m. $\ y(1) = 15\sqrt3-5 \approx 25.98-5 = 20.98$m.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>For the projectile in Practice 5, find $v_y$ at $t=1$s, and state whether the projectile is still rising or already falling at that instant.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$v_y(t) = 15\sqrt3-10t$. At $t=1$: $v_y = 15\sqrt3-10 \approx 25.98-10 = 15.98$m/s.</p>
+      <p>Since $v_y>0$, the projectile is still rising at $t=1$s, it has not yet reached its peak (peak occurs at $t_{\max}=\dfrac{15\sqrt3}{10}\approx2.6$s, which is later than $t=1$).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Two projectiles are launched with the same speed $v_0=20$m/s, one at $\theta=30^\circ$ and one at $\theta=60^\circ$, with $g=10$m/s$^2$. Show that they have the same range, without fully recomputing each one from scratch (use the range formula's structure).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$R=\dfrac{v_0^2\sin(2\theta)}g$. For $\theta=30^\circ$: $2\theta=60^\circ$, $\sin60^\circ=\dfrac{\sqrt3}2$. For $\theta=60^\circ$: $2\theta=120^\circ$, $\sin120^\circ=\dfrac{\sqrt3}2$ as well (since $\sin(180^\circ-x)=\sin x$, and $120^\circ=180^\circ-60^\circ$).</p>
+      <p>Since $\sin(2\theta)$ is identical for both angles, and $v_0$ and $g$ are the same, the ranges must be equal: $R=\dfrac{400\times\frac{\sqrt3}2}{10}=20\sqrt3$m for both. This is a general fact: any two launch angles that add up to $90^\circ$ (here $30^\circ+60^\circ=90^\circ$) give the same range, since $\sin(2\theta)$ and $\sin(2(90^\circ-\theta))=\sin(180^\circ-2\theta)=\sin(2\theta)$ always match.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>At what launch angle $\theta$ is the range $R=\dfrac{v_0^2\sin(2\theta)}g$ maximised, for a fixed launch speed $v_0$? Explain your reasoning.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$R$ is proportional to $\sin(2\theta)$, and $\sin$ reaches its largest possible value, $1$, when its argument is $90^\circ$. So $R$ is maximised when $2\theta=90^\circ$, i.e.\ $\theta=45^\circ$. This matches the everyday intuition that throwing something at a $45^\circ$ angle sends it the farthest, now justified directly from the range formula rather than just asserted.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A projectile launched at $g=10$m/s$^2$ has a maximum height of $H=45$m. Find $v_{0y}$ (the initial vertical velocity component), and the total time of flight.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>From $H=\dfrac{v_{0y}^2}{2g}$: $45 = \dfrac{v_{0y}^2}{20} \Rightarrow v_{0y}^2 = 900 \Rightarrow v_{0y}=30$m/s.</p>
+      <p>$T = \dfrac{2v_{0y}}g = \dfrac{60}{10}=6$s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A projectile is launched at $v_0=50$m/s, $\theta=37^\circ$ (take $\sin37^\circ\approx0.6$, $\cos37^\circ\approx0.8$), $g=10$m/s$^2$. Find the range.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$v_{0x}=50\times0.8=40$m/s, $\ v_{0y}=50\times0.6=30$m/s.</p>
+      <p>$T=\dfrac{2\times30}{10}=6$s. $\ R = v_{0x}\times T = 40\times6=240$m.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Equation of the path</div>
+  <div class="prose">
+    <p>Section 1 described the projectile's motion as two separate functions of time, $x(t)$ and $y(t)$. But the actual visible <em>shape</em> of the trajectory, the curve you would see if you traced the path in the air, is a relationship between $x$ and $y$ directly, with no reference to time at all. Eliminating $t$ between the two time-equations gives exactly that curve, and it turns out to always be a parabola.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$y = x\tan\theta - \frac{g}{2v_0^2\cos^2\theta}\,x^2.$$</p>
+    <p>This is a quadratic in $x$ with negative leading coefficient (since $g,v_0^2,\cos^2\theta$ are all positive), confirming that the path is a downward-opening parabola, exactly the shape you would sketch by eye for a thrown object.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Deriving the equation of the path</span>
+    <p>Start from the two time-equations: $x=(v_0\cos\theta)t$ and $y=(v_0\sin\theta)t-\frac12gt^2$.</p>
+    <p class="step">Solve the $x$ equation for $t$: $t = \dfrac{x}{v_0\cos\theta}$.</p>
+    <p class="step">Substitute into the $y$ equation:</p>
+    <p class="step">$$y = (v_0\sin\theta)\cdot\frac{x}{v_0\cos\theta} - \frac12g\left(\frac{x}{v_0\cos\theta}\right)^2.$$</p>
+    <p class="step">The first term simplifies since $\dfrac{\sin\theta}{\cos\theta}=\tan\theta$ and the $v_0$'s cancel: $x\tan\theta$. The second term becomes $\dfrac{gx^2}{2v_0^2\cos^2\theta}$. So</p>
+    <p class="step">$$y = x\tan\theta - \frac{g}{2v_0^2\cos^2\theta}\,x^2,$$</p>
+    <p>exactly the key idea's formula. Every quantity here ($\theta$, $v_0$, $g$) is a constant fixed by the launch conditions, so this really is an equation purely in $x$ and $y$, with time nowhere in sight, exactly the visible shape of the path.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Using the Section 1 worked example's numbers ($v_0=25$m/s, $\sin\theta=\frac45$, $\cos\theta=\frac35$, $g=10$m/s$^2$), find the equation of the path, and verify it passes through the launch point, the peak, and the landing point already found.</p>
+    <p class="step">$\tan\theta = \dfrac{4/5}{3/5}=\dfrac43$. $\ v_0^2\cos^2\theta = 625\times\dfrac9{25}=225$.</p>
+    <p class="step">$$y = \frac43x - \frac{10}{2\times225}x^2 = \frac43x - \frac{x^2}{45}.$$</p>
+    <p class="step">At $x=0$: $y=0$ &check; (the launch point). At $x=60$ (the range found in Section 1): $y=\dfrac43(60)-\dfrac{3600}{45} = 80-80=0$ &check; (lands back at ground level). At $x=30$ (halfway to the range, where the peak should sit by symmetry): $y=\dfrac43(30)-\dfrac{900}{45}=40-20=20$ &check;, exactly matching the maximum height $H=20$m found in Section 1.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Find the equation of the path for a projectile launched at $v_0=20$m/s, $\theta=30^\circ$, $g=10$m/s$^2$ (Practice 1's numbers).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tan30^\circ = \dfrac1{\sqrt3}$. $\ v_0^2\cos^2\theta = 400\times\dfrac34=300$.</p>
+      <p>$$y = \frac{x}{\sqrt3} - \frac{10}{2\times300}x^2 = \frac{x}{\sqrt3} - \frac{x^2}{60}.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Using Practice 11's path equation, verify that $y=0$ at both $x=0$ and $x=20\sqrt3$ (the range found in Practice 3).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>At $x=0$: $y=0-0=0$ &check;.</p>
+      <p>At $x=20\sqrt3$: $y = \dfrac{20\sqrt3}{\sqrt3} - \dfrac{(20\sqrt3)^2}{60} = 20 - \dfrac{1200}{60} = 20-20=0$ &check;.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A projectile has path equation $y=x-\dfrac{x^2}{100}$ (with $x,y$ in metres). Find where it lands (the nonzero root), and its maximum height (using the parabola's symmetry, the peak sits halfway between the two roots).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Set $y=0$: $x-\dfrac{x^2}{100}=0 \Rightarrow x\left(1-\dfrac{x}{100}\right)=0 \Rightarrow x=0$ or $x=100$. Lands at $x=100$m.</p>
+      <p>By symmetry, the peak is at $x=50$: $y=50-\dfrac{2500}{100}=50-25=25$m.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Find the equation of the path for a projectile launched at $v_0=50$m/s, $\theta=37^\circ$ ($\sin37^\circ\approx0.6$, $\cos37^\circ\approx0.8$), $g=10$m/s$^2$ (Practice 10's numbers), and verify it gives $y=0$ at the range found there ($x=240$m).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tan37^\circ \approx \dfrac{0.6}{0.8}=0.75$. $\ v_0^2\cos^2\theta = 2500\times0.64=1600$.</p>
+      <p>$$y = 0.75x - \frac{10}{3200}x^2 = 0.75x - \frac{x^2}{320}.$$</p>
+      <p>At $x=240$: $y=0.75(240)-\dfrac{240^2}{320} = 180-\dfrac{57600}{320}=180-180=0$ &check;.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A path equation is $y=2x-0.1x^2$. Rewrite it in the standard form $y=x\tan\theta - \dfrac{g}{2v_0^2\cos^2\theta}x^2$ terms by identifying $\tan\theta$, and explain what a coefficient comparison like this tells you even without knowing $v_0$ or $g$ individually.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Matching the linear coefficient: $\tan\theta=2$, so $\theta=\arctan2\approx63.43^\circ$, fully determined without needing to know $v_0$ or $g$ at all. The quadratic coefficient, $\dfrac{g}{2v_0^2\cos^2\theta}=0.1$, links $v_0$ and $g$ together but cannot separate them individually from this equation alone; you would need one more piece of information (such as knowing $g$, or measuring $v_0$ directly) to pin down $v_0$ on its own. This illustrates that the launch angle is recoverable from the path shape alone, while speed and gravity are only recoverable as a combined ratio.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Using the path equation from Practice 15 ($y=2x-0.1x^2$), find the $x$-coordinate of the peak and the maximum height, using the same symmetry idea as Practice 13.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Find the landing point: $2x-0.1x^2=0 \Rightarrow x(2-0.1x)=0 \Rightarrow x=0$ or $x=20$. Peak sits halfway, at $x=10$.</p>
+      <p>$y(10) = 2(10)-0.1(100) = 20-10=10$m.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Explain why the path equation $y=x\tan\theta - \dfrac{g}{2v_0^2\cos^2\theta}x^2$ has no linear term missing and no constant term at all (i.e.\ why there is no "$+c$" added on), tying your answer back to the physical setup.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The constant term of the path equation is exactly its $y$-value at $x=0$, and $x=0$ corresponds to $t=0$, the instant of launch, where by construction $y(0)=0$ (the launch point is taken as the origin). Since there is no constant added, the parabola automatically passes through the origin, exactly matching the physical fact that the projectile starts its flight from height $0$ at horizontal position $0$. If the launch point were elevated (fired from a height $y_0>0$, off a cliff for instance), the path equation would need an explicit "$+y_0$" term added, since then $y(0)=y_0\neq0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A projectile is launched at $v_0=30$m/s, $\theta=60^\circ$, $g=10$m/s$^2$. Find the equation of the path, and use it to find the height when $x=10$m.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tan60^\circ=\sqrt3$. $\ v_0^2\cos^2\theta = 900\times\dfrac14=225$.</p>
+      <p>$$y = \sqrt3\,x - \frac{10}{450}x^2 = \sqrt3\,x - \frac{x^2}{45}.$$</p>
+      <p>At $x=10$: $y = 10\sqrt3 - \dfrac{100}{45} \approx 17.32-2.22 \approx 15.10$m.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Two projectiles are launched from the same point with the same $v_0$, at angles $\theta$ and $90^\circ-\theta$ (complementary angles). Explain, using the path equation's quadratic coefficient $\dfrac{g}{2v_0^2\cos^2\theta}$, why the two parabolas are generally <em>not</em> mirror images of each other (even though Practice 7 showed they share the same range).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The linear coefficient $\tan\theta$ and the quadratic coefficient $\dfrac{g}{2v_0^2\cos^2\theta}$ both depend on $\theta$ in a way that is not simply "flip the sign" under $\theta\to90^\circ-\theta$: for instance $\tan\theta$ and $\tan(90^\circ-\theta)=\cot\theta=\dfrac1{\tan\theta}$ are reciprocals, not equal (unless $\theta=45^\circ$, where they coincide). So while both parabolas start and end at the same two points on the ground (equal range, from Practice 7), one of them is generally taller and narrower (the steeper launch angle) while the other is shorter and wider (the shallower angle), not mirror images, they are two genuinely different parabolas that happen to share the same two roots.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A projectile's path equation is $y=1.5x-0.05x^2$. Find $v_0$ given that $g=10$m/s$^2$ (first find $\theta$ from the linear term, then use the quadratic term).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tan\theta=1.5$, so $\cos^2\theta = \dfrac1{1+\tan^2\theta} = \dfrac1{1+2.25}=\dfrac1{3.25}$ (using $\sec^2\theta=1+\tan^2\theta$).</p>
+      <p>From the quadratic term: $\dfrac{g}{2v_0^2\cos^2\theta}=0.05 \Rightarrow v_0^2 = \dfrac{g}{2\times0.05\times\cos^2\theta} = \dfrac{10}{0.1\times\frac1{3.25}} = \dfrac{10\times3.25}{0.1} = 325$.</p>
+      <p>$v_0 = \sqrt{325} \approx 18.03$m/s.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>Mechanics &middot; Projectile Motion</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
