@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Eigenvalues and Eigenvectors</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+
+  header h1{
+    margin:0;
+    font-size:27px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+
+  header p{
+    margin:8px 0 0;
+    color:#c3ccdb;
+    font-size:15px;
+    max-width:680px;
+  }
+
+  .progress-wrap{
+    max-width:820px;
+    margin:22px auto 0;
+    padding:0 24px;
+  }
+
+  .progress-bar{
+    height:6px;
+    border-radius:3px;
+    background:rgba(255,255,255,0.15);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--red);
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    color:#9fb0c9;
+    margin-top:6px;
+  }
+
+  nav.toc{
+    max-width:820px;
+    margin:26px auto 0;
+    padding:16px 22px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  nav.toc ol{
+    margin:0;
+    padding-left:20px;
+    columns:2;
+    font-size:14px;
+    line-height:1.9;
+  }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{
+    max-width:820px;
+    margin:30px auto 0;
+    padding:0 24px;
+  }
+
+  section.topic{
+    margin-bottom:46px;
+  }
+
+  .section-title{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 6px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--navy);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    background:rgba(255,54,33,0.08);
+    border-radius:4px;
+    padding:3px 9px;
+  }
+
+  .prose{
+    font-size:16px;
+    line-height:1.65;
+    margin:16px 0;
+  }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0;
+    padding:16px 18px 18px;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+  .key-box{
+    background:#fff7f5;
+    border-left:4px solid var(--red);
+  }
+  .example-box{
+    background:#f7f9fc;
+    border-left:4px solid var(--navy);
+  }
+  .why-box{
+    background:var(--blue-box);
+    border-left:4px solid var(--navy);
+  }
+  .box-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid #33415a;
+    border-radius:6px;
+    margin:18px 0;
+    box-shadow:0 1px 2px rgba(27,36,49,0.05);
+    overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+
+  .p-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:14px 20px 4px;
+  }
+  .p-num{
+    font-family:'Roboto Mono',monospace;
+    font-weight:500;
+    font-size:12.5px;
+    color:#33415a;
+    background:#eef1f6;
+    border-radius:4px;
+    padding:2px 8px;
+    flex-shrink:0;
+  }
+  .p-body{
+    padding:4px 20px 16px;
+    font-size:15.5px;
+    line-height:1.55;
+  }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    color:var(--navy);
+    background:#fff;
+    border:1.5px solid var(--navy);
+    border-radius:5px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+    border-top:1px dashed var(--line);
+  }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{
+    padding:14px 20px 18px;
+    background:#fbfcfe;
+    font-size:15px;
+    line-height:1.6;
+  }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:8px;
+    display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  svg.diagram{
+    display:block;
+    margin:14px auto;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+  }
+
+  footer{
+    max-width:820px;
+    margin:10px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Linear Algebra &middot; Capstone</div>
+  <h1>Eigenvalues and Eigenvectors</h1>
+  <p>This is where matrices, determinants, and complex numbers meet. We find the directions a matrix leaves unrotated, discover why that question always comes down to a polynomial (and can therefore have complex roots even for a perfectly ordinary real matrix), and see what all of this buys you. Worked examples and practice problems throughout, solutions hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 51 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Why eigenvalues?</a></li>
+    <li><a href="#sec1">The characteristic equation</a></li>
+    <li><a href="#sec2">Finding eigenvalues</a></li>
+    <li><a href="#sec3">Finding eigenvectors</a></li>
+    <li><a href="#sec4">Complex eigenvalues</a></li>
+    <li><a href="#sec5">Repeated eigenvalues</a></li>
+    <li><a href="#sec6">Properties of eigenvalues</a></li>
+    <li><a href="#sec7">Diagonalization</a></li>
+    <li><a href="#sec8">Symmetric matrices</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Why eigenvalues?</div>
+  <div class="prose">
+    <p>A square matrix $A$ takes a vector $\mathbf{x}$ and sends it to a new vector $A\mathbf{x}$, generally somewhere else entirely, pointing in a different direction and possibly a different length. But for almost every matrix, there exist certain special directions that $A$ does not rotate at all, it only stretches or shrinks them (or flips them backward). A vector $\mathbf{x}\neq\mathbf{0}$ lying along one of these special directions satisfies</p>
+    <p>$$A\mathbf{x} = \lambda\mathbf{x}$$</p>
+    <p>for some scalar $\lambda$: multiplying by the matrix has exactly the same effect as multiplying by an ordinary number. Such a vector $\mathbf{x}$ is called an <strong>eigenvector</strong> of $A$, and the corresponding scalar $\lambda$ is its <strong>eigenvalue</strong> (from the German <em>eigen</em>, meaning "own" or "characteristic"; these are the directions "belonging to" the matrix).</p>
+    <p>Why care? Because a matrix can look complicated in the standard $x,y,z$ coordinate axes, yet become almost trivial once you switch to a coordinate system built out of its eigenvectors, in those directions, $A$ is nothing more than independent scaling. This is the idea behind diagonalization (Section 7), and it is also exactly why eigenvalues show up whenever a matrix gets applied repeatedly, in dynamical systems, population models, vibration analysis, search engine ranking algorithms, and quantum mechanics, to name only a few.</p>
+    <p>Finding eigenvalues turns out to require exactly the two skills the earlier lessons built: computing a determinant, and finding the roots of a polynomial, roots that, as the complex numbers lesson showed, are not always real, even when every entry of $A$ is.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> The characteristic equation</div>
+  <div class="prose">
+    <p>The defining equation $A\mathbf{x}=\lambda\mathbf{x}$ can be rewritten as $A\mathbf{x}-\lambda\mathbf{x}=\mathbf{0}$, or, inserting the identity matrix so that both terms are genuine matrix-vector products, $(A-\lambda I)\mathbf{x} = \mathbf{0}$. This says $\mathbf{x}$ lies in the null space of the matrix $A-\lambda I$. We are told $\mathbf{x}\neq\mathbf{0}$, so we need $A-\lambda I$ to have a <em>nontrivial</em> null space, and Section 8 of the row-operations lesson gave an exact test for that: a square matrix has nontrivial solutions to $M\mathbf{x}=\mathbf{0}$ precisely when $\det(M)=0$.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: the characteristic equation</span>
+    <p>$$\det(A-\lambda I) = 0.$$</p>
+    <p>This is called the <strong>characteristic equation</strong> of $A$, and $\det(A-\lambda I)$, expanded out, is always a polynomial in $\lambda$ called the <strong>characteristic polynomial</strong>. For an $n\times n$ matrix, this polynomial has degree $n$, so by the fundamental theorem of algebra (from the complex numbers lesson), it has exactly $n$ roots counting multiplicity, and those roots are exactly the eigenvalues of $A$.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why we need the determinant to be zero</span>
+    <p>If $\det(A-\lambda I) \neq 0$, then $A-\lambda I$ is invertible (this is the big equivalence theorem from the row-operations lesson), and an invertible matrix has only the trivial solution to $M\mathbf{x}=\mathbf{0}$: multiply both sides by $(A-\lambda I)^{-1}$ to get $\mathbf{x} = (A-\lambda I)^{-1}\mathbf{0} = \mathbf{0}$. But eigenvectors are required to be nonzero by definition, an eigenvector pointing nowhere carries no directional information at all. So the only way $(A-\lambda I)\mathbf{x}=\mathbf{0}$ can have the nonzero solution we need is for $A-\lambda I$ to be singular, which is exactly $\det(A-\lambda I)=0$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Find the characteristic equation of $A=\begin{pmatrix}4&1\\2&3\end{pmatrix}$.</p>
+    <p class="step">$$A-\lambda I = \begin{pmatrix}4-\lambda&1\\2&3-\lambda\end{pmatrix}$$</p>
+    <p class="step">$$\det(A-\lambda I) = (4-\lambda)(3-\lambda) - (1)(2) = 12-7\lambda+\lambda^2-2 = \lambda^2-7\lambda+10.$$</p>
+    <p class="step">Characteristic equation: $\lambda^2-7\lambda+10=0$. (Section 2 continues this example by solving it.)</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Write the characteristic equation of $A=\begin{pmatrix}2&0\\0&5\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A-\lambda I = \begin{pmatrix}2-\lambda&0\\0&5-\lambda\end{pmatrix}$. Since this is upper (and lower) triangular, the determinant is just the product of the diagonal: $(2-\lambda)(5-\lambda)=0$, i.e.\ $\lambda^2-7\lambda+10=0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Write the characteristic equation of $A=\begin{pmatrix}1&2\\2&1\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det\begin{pmatrix}1-\lambda&2\\2&1-\lambda\end{pmatrix} = (1-\lambda)^2-4 = 1-2\lambda+\lambda^2-4 = \lambda^2-2\lambda-3=0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Verify directly that $\lambda=5$ satisfies the characteristic equation of $A=\begin{pmatrix}4&1\\2&3\end{pmatrix}$ (the Section 1 worked example), by checking $\det(A-5I)=0$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A-5I = \begin{pmatrix}-1&1\\2&-2\end{pmatrix}$. $\ \det = (-1)(-2)-(1)(2) = 2-2=0$ &check;. Row 2 is exactly $-2\times$ row 1, confirming the matrix is singular, consistent with $\lambda=5$ being an eigenvalue.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Write the characteristic equation of $A = \begin{pmatrix}1&0&0\\0&2&0\\0&0&3\end{pmatrix}$, without expanding a full $3\times3$ determinant from scratch.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A-\lambda I$ is diagonal, so its determinant is just the product of the diagonal entries: $(1-\lambda)(2-\lambda)(3-\lambda) = 0$. For any diagonal matrix, the eigenvalues are always just its diagonal entries, read straight off, no computation required.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Write the characteristic equation of $A=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det\begin{pmatrix}-\lambda&-1\\1&-\lambda\end{pmatrix} = \lambda^2-(-1)(1) = \lambda^2+1=0$. Notice this equation has no real solutions at all, Section 4 returns to exactly this matrix.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Explain why $\det(A-\lambda I)$, expanded out, is always a polynomial in $\lambda$ of degree exactly $n$ for an $n\times n$ matrix $A$ (rather than some other degree).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Cofactor expansion of an $n\times n$ determinant produces a sum of products of $n$ entries, one from each row and column (the Leibniz formula). Along the main diagonal, each entry of $A-\lambda I$ contributes a $-\lambda$ term (from $a_{ii}-\lambda$), and the single product that uses <em>all</em> $n$ diagonal entries, $(a_{11}-\lambda)(a_{22}-\lambda)\cdots(a_{nn}-\lambda)$, is the only term in the whole expansion capable of producing $\lambda^n$; every other term in the determinant expansion uses at least one off-diagonal entry (which contributes no $\lambda$ at all), so it can supply at most $\lambda^{n-1}$. This guarantees the $\lambda^n$ term survives with a nonzero coefficient ($(-1)^n$), fixing the degree at exactly $n$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Finding eigenvalues</div>
+  <div class="prose">
+    <p>Once you have the characteristic equation, finding the eigenvalues is just solving a polynomial equation, exactly the skill built up across the row-operations and complex-numbers lessons: factor when you can, use the quadratic formula for a quadratic characteristic polynomial, and fall back on spotting an integer root plus polynomial division for a cubic.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Finish finding the eigenvalues of $A=\begin{pmatrix}4&1\\2&3\end{pmatrix}$ from Section 1.</p>
+    <p class="step">Characteristic equation: $\lambda^2-7\lambda+10=0$.</p>
+    <p class="step">Factor: $(\lambda-5)(\lambda-2)=0$, so $\lambda=5$ or $\lambda=2$.</p>
+    <p>Both eigenvalues are real, as they always will be for this matrix, since $A$ is not symmetric here but happens to have a positive discriminant; Section 4 explores what happens when the discriminant goes negative.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $A=\begin{pmatrix}3&2\\1&4\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det\begin{pmatrix}3-\lambda&2\\1&4-\lambda\end{pmatrix} = (3-\lambda)(4-\lambda)-2 = \lambda^2-7\lambda+10=0$.</p>
+      <p>$(\lambda-5)(\lambda-2)=0 \Rightarrow \lambda=5,2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $A=\begin{pmatrix}5&4\\1&2\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(5-\lambda)(2-\lambda)-4 = \lambda^2-7\lambda+6=0 \Rightarrow (\lambda-6)(\lambda-1)=0 \Rightarrow \lambda=6,1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $A=\begin{pmatrix}6&-1\\2&3\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(6-\lambda)(3-\lambda)-(-1)(2) = \lambda^2-9\lambda+18+2 = \lambda^2-9\lambda+20=0 \Rightarrow (\lambda-5)(\lambda-4)=0 \Rightarrow \lambda=5,4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $A=\begin{pmatrix}1&2\\2&1\end{pmatrix}$ (from Practice 2).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda^2-2\lambda-3=0 \Rightarrow (\lambda-3)(\lambda+1)=0 \Rightarrow \lambda=3,-1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Find the eigenvalues of the $3\times3$ matrix $A=\begin{pmatrix}1&2&0\\0&3&0\\2&-4&2\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Expand $\det(A-\lambda I)$ along column 3, which has two zeros:</p>
+      <p>$$\det\begin{pmatrix}1-\lambda&2&0\\0&3-\lambda&0\\2&-4&2-\lambda\end{pmatrix} = (2-\lambda)\det\begin{pmatrix}1-\lambda&2\\0&3-\lambda\end{pmatrix} = (2-\lambda)(1-\lambda)(3-\lambda).$$</p>
+      <p>Characteristic equation: $(1-\lambda)(2-\lambda)(3-\lambda)=0 \Rightarrow \lambda=1,2,3$. Because the matrix was "almost" triangular (the $(1,3)$ and $(2,3)$ entries were both zero), the determinant factored immediately without needing the full cofactor machinery.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $A=\begin{pmatrix}2&0&0\\0&3&0\\0&0&4\end{pmatrix}$, and explain why no algebra was really needed.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=2,3,4$, read directly off the diagonal (as in Practice 4). For any diagonal matrix, $Ae_i = a_{ii}e_i$ for each standard basis vector $e_i$, so each $e_i$ is already an eigenvector with eigenvalue $a_{ii}$, no determinant needed at all.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Finding eigenvectors</div>
+  <div class="prose">
+    <p>Once an eigenvalue $\lambda$ is known, finding its eigenvector is a direct application of the row-operations lesson: solve $(A-\lambda I)\mathbf{x} = \mathbf{0}$ by row-reducing $A-\lambda I$. Because $\lambda$ was chosen specifically to make $\det(A-\lambda I)=0$, this matrix is guaranteed to be singular, so row reduction will always produce at least one free variable, giving infinitely many solutions, a whole line (or higher-dimensional space) of eigenvectors, not just one. It is standard to report the simplest one.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>For each eigenvalue $\lambda$, solve the homogeneous system $(A-\lambda I)\mathbf{x}=\mathbf{0}$ using row reduction. The solution set (a line through the origin, at minimum) is called the <strong>eigenspace</strong> for $\lambda$; any nonzero vector in it is a valid eigenvector. Eigenvectors are never unique: if $\mathbf{x}$ is an eigenvector, so is $k\mathbf{x}$ for any nonzero scalar $k$, since $A(k\mathbf{x}) = k(A\mathbf{x}) = k(\lambda\mathbf{x}) = \lambda(k\mathbf{x})$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Find the eigenvectors of $A=\begin{pmatrix}4&1\\2&3\end{pmatrix}$ for each eigenvalue $\lambda=5,2$ (from Section 2).</p>
+    <p class="step"><strong>For $\lambda=5$:</strong> $A-5I = \begin{pmatrix}-1&1\\2&-2\end{pmatrix}$. Row reduce: $R_2\to R_2+2R_1$ gives $(0,0)$, confirming singularity. The first row says $-x+y=0$, i.e.\ $y=x$. Taking $x=1$: eigenvector $\begin{pmatrix}1\\1\end{pmatrix}$.</p>
+    <p class="step"><strong>For $\lambda=2$:</strong> $A-2I = \begin{pmatrix}2&1\\2&1\end{pmatrix}$. Row reduce: $R_2\to R_2-R_1$ gives $(0,0)$. The first row says $2x+y=0$, i.e.\ $y=-2x$. Taking $x=1$: eigenvector $\begin{pmatrix}1\\-2\end{pmatrix}$.</p>
+    <p class="step">Check: $A\begin{pmatrix}1\\-2\end{pmatrix} = \begin{pmatrix}4-2\\2-6\end{pmatrix} = \begin{pmatrix}2\\-4\end{pmatrix} = 2\begin{pmatrix}1\\-2\end{pmatrix}$ &check;.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Find the eigenvectors of $A=\begin{pmatrix}3&2\\1&4\end{pmatrix}$ for its eigenvalues $\lambda=5,2$ (Practice 7).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=5$: $A-5I=\begin{pmatrix}-2&2\\1&-1\end{pmatrix}$. Row 1 says $-2x+2y=0$, i.e.\ $y=x$: eigenvector $\begin{pmatrix}1\\1\end{pmatrix}$.</p>
+      <p>$\lambda=2$: $A-2I=\begin{pmatrix}1&2\\1&2\end{pmatrix}$. Row 1 says $x+2y=0$, i.e.\ $x=-2y$: eigenvector $\begin{pmatrix}-2\\1\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Find the eigenvectors of $A=\begin{pmatrix}5&4\\1&2\end{pmatrix}$ for its eigenvalues $\lambda=6,1$ (Practice 8).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=6$: $A-6I=\begin{pmatrix}-1&4\\1&-4\end{pmatrix}$. Row 1: $-x+4y=0 \Rightarrow x=4y$: eigenvector $\begin{pmatrix}4\\1\end{pmatrix}$.</p>
+      <p>$\lambda=1$: $A-I=\begin{pmatrix}4&4\\1&1\end{pmatrix}$. Row 1: $4x+4y=0 \Rightarrow y=-x$: eigenvector $\begin{pmatrix}1\\-1\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Find the eigenvectors of $A=\begin{pmatrix}1&2\\2&1\end{pmatrix}$ for its eigenvalues $\lambda=3,-1$ (Practice 10).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=3$: $A-3I=\begin{pmatrix}-2&2\\2&-2\end{pmatrix}$. Row 1: $-2x+2y=0\Rightarrow y=x$: eigenvector $\begin{pmatrix}1\\1\end{pmatrix}$.</p>
+      <p>$\lambda=-1$: $A+I=\begin{pmatrix}2&2\\2&2\end{pmatrix}$. Row 1: $2x+2y=0\Rightarrow y=-x$: eigenvector $\begin{pmatrix}1\\-1\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Find the eigenvectors of $A=\begin{pmatrix}6&-1\\2&3\end{pmatrix}$ for its eigenvalues $\lambda=5,4$ (Practice 9).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=5$: $A-5I=\begin{pmatrix}1&-1\\2&-2\end{pmatrix}$. Row 1: $x-y=0\Rightarrow y=x$: eigenvector $\begin{pmatrix}1\\1\end{pmatrix}$.</p>
+      <p>$\lambda=4$: $A-4I=\begin{pmatrix}2&-1\\2&-1\end{pmatrix}$. Row 1: $2x-y=0\Rightarrow y=2x$: eigenvector $\begin{pmatrix}1\\2\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Confirm, by direct multiplication, that $\begin{pmatrix}4\\1\end{pmatrix}$ found in Practice 14 really is an eigenvector of $A=\begin{pmatrix}5&4\\1&2\end{pmatrix}$ with eigenvalue $6$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A\begin{pmatrix}4\\1\end{pmatrix} = \begin{pmatrix}5(4)+4(1)\\1(4)+2(1)\end{pmatrix} = \begin{pmatrix}24\\6\end{pmatrix}$. And $6\begin{pmatrix}4\\1\end{pmatrix} = \begin{pmatrix}24\\6\end{pmatrix}$. They match &check;, confirming this vector really does get scaled by exactly $6$, with no rotation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Find the eigenvectors of the diagonal matrix $A=\begin{pmatrix}2&0\\0&5\end{pmatrix}$ (Practice 1) for its eigenvalues $\lambda=2,5$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=2$: $A-2I=\begin{pmatrix}0&0\\0&3\end{pmatrix}$. This forces $y=0$, with $x$ free: eigenvector $\begin{pmatrix}1\\0\end{pmatrix}$.</p>
+      <p>$\lambda=5$: $A-5I=\begin{pmatrix}-3&0\\0&0\end{pmatrix}$. This forces $x=0$, with $y$ free: eigenvector $\begin{pmatrix}0\\1\end{pmatrix}$.</p>
+      <p>For any diagonal matrix, the eigenvectors are always the standard basis vectors, matching Practice 12's observation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Find an eigenvector of $A=\begin{pmatrix}1&2&0\\0&3&0\\2&-4&2\end{pmatrix}$ (Practice 11) for the eigenvalue $\lambda=1$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A-I = \begin{pmatrix}0&2&0\\0&2&0\\2&-4&1\end{pmatrix}$. Row 1 says $2y=0 \Rightarrow y=0$. Row 3: $2x-4y+z=0$, and with $y=0$ this is $2x+z=0 \Rightarrow z=-2x$. Taking $x=1$: eigenvector $\begin{pmatrix}1\\0\\-2\end{pmatrix}$.</p>
+      <p>Check: $A\begin{pmatrix}1\\0\\-2\end{pmatrix} = \begin{pmatrix}1+0+0\\0+0+0\\2-0-4\end{pmatrix} = \begin{pmatrix}1\\0\\-2\end{pmatrix} = 1\cdot\begin{pmatrix}1\\0\\-2\end{pmatrix}$ &check;.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Complex eigenvalues</div>
+  <div class="prose">
+    <p>The characteristic polynomial of a real matrix has real coefficients (every entry of $A-\lambda I$ involves only real numbers combined with $\lambda$), which means the conjugate root theorem from the complex numbers lesson applies directly: any non-real eigenvalues of a real matrix must occur in conjugate pairs. There is nothing defective or unusual about a real matrix having complex eigenvalues, it is simply what happens whenever the characteristic quadratic (or an irreducible quadratic factor of a larger characteristic polynomial) has a negative discriminant.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">What a complex eigenvalue means geometrically</span>
+    <p>A real $2\times2$ matrix with complex eigenvalues has no real eigenvectors at all, there is no real direction it leaves unrotated. Geometrically, such a matrix always acts as some combination of a rotation and a scaling: it turns every vector through some angle, rather than only stretching special ones. The classic example is a pure rotation matrix, which rotates <em>every</em> vector, so of course no real vector can come back out pointing the same way it went in.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Find the eigenvalues of the $90^\circ$ rotation matrix $A=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ (from Practice 5).</p>
+    <p class="step">Characteristic equation (Practice 5): $\lambda^2+1=0$, so $\lambda = \pm i$.</p>
+    <p class="step">These are a genuine conjugate pair ($i$ and $-i=\bar i$), consistent with the conjugate root theorem, since $A$'s entries are all real.</p>
+    <p>This makes complete sense geometrically: a $90^\circ$ rotation turns every single vector in the plane, including a full $360^\circ$ turn taking $4$ applications to return home ($i^4=1$), so there is no real direction $A$ could possibly leave unrotated.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $A=\begin{pmatrix}1&-1\\1&1\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det\begin{pmatrix}1-\lambda&-1\\1&1-\lambda\end{pmatrix} = (1-\lambda)^2+1 = \lambda^2-2\lambda+2=0$.</p>
+      <p>$\lambda = \dfrac{2\pm\sqrt{4-8}}2 = \dfrac{2\pm2i}2 = 1\pm i$: a conjugate pair, as guaranteed since $A$ is real.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $A=\begin{pmatrix}2&-5\\1&-2\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det\begin{pmatrix}2-\lambda&-5\\1&-2-\lambda\end{pmatrix} = (2-\lambda)(-2-\lambda)+5 = \lambda^2-4+5 = \lambda^2+1=0 \Rightarrow \lambda=\pm i$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $A=\begin{pmatrix}3&-2\\4&-1\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det\begin{pmatrix}3-\lambda&-2\\4&-1-\lambda\end{pmatrix} = (3-\lambda)(-1-\lambda)+8 = \lambda^2-2\lambda+5=0$.</p>
+      <p>$\lambda = \dfrac{2\pm\sqrt{4-20}}2 = \dfrac{2\pm4i}2 = 1\pm2i$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Find an eigenvector for $A=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ corresponding to $\lambda=i$ (the rotation matrix from Section 4's worked example).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A-iI = \begin{pmatrix}-i&-1\\1&-i\end{pmatrix}$. Row 1: $-ix-y=0 \Rightarrow y=-ix$. Taking $x=1$: eigenvector $\begin{pmatrix}1\\-i\end{pmatrix}$.</p>
+      <p>Check: $A\begin{pmatrix}1\\-i\end{pmatrix} = \begin{pmatrix}0(1)+(-1)(-i)\\1(1)+0(-i)\end{pmatrix} = \begin{pmatrix}i\\1\end{pmatrix}$, and $i\begin{pmatrix}1\\-i\end{pmatrix} = \begin{pmatrix}i\\-i^2\end{pmatrix} = \begin{pmatrix}i\\1\end{pmatrix}$, matching &check;. Eigenvectors for complex eigenvalues are themselves genuinely complex vectors, entries that are themselves complex numbers, there is nothing wrong with that, it is simply what the algebra requires once the eigenvalue itself is complex.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $A=\begin{pmatrix}0&-2\\2&0\end{pmatrix}$, and compare with $\begin{pmatrix}0&-1\\1&0\end{pmatrix}$. What is the effect of the extra factor of $2$?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det\begin{pmatrix}-\lambda&-2\\2&-\lambda\end{pmatrix} = \lambda^2+4=0 \Rightarrow \lambda=\pm2i$.</p>
+      <p>Compared to $\pm i$ for the plain rotation matrix, the eigenvalues are exactly doubled in magnitude. This matrix is a $90^\circ$ rotation combined with a scaling by $2$ (it equals $2\begin{pmatrix}0&-1\\1&0\end{pmatrix}$), and scaling a matrix by a constant $k$ scales every eigenvalue by that same $k$ (a special case of the Section 6 properties).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>A real $3\times3$ matrix has characteristic polynomial $-(\lambda-2)(\lambda^2-2\lambda+2)$. Find all three eigenvalues, and state which are real.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=2$ from the linear factor. For the quadratic factor: $\lambda = \dfrac{2\pm\sqrt{4-8}}2 = 1\pm i$.</p>
+      <p>Eigenvalues: $2$, $1+i$, $1-i$. Only $\lambda=2$ is real; the other two form a conjugate pair. This matches Section 5 of the complex numbers lesson, a real-coefficient cubic (degree 3, odd) must have at least one real root, and here it has exactly one, with the rest paired up.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Without any calculation, explain why a real $3\times3$ matrix can never have exactly two real eigenvalues and one non-real eigenvalue.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The characteristic polynomial has real coefficients (since $A$ is real), so any non-real eigenvalue must come with its conjugate as a second eigenvalue, the conjugate root theorem applies just as it does to any real-coefficient polynomial. A lone, unpaired non-real eigenvalue is therefore impossible, non-real eigenvalues always arrive in pairs, so a $3\times3$ real matrix has either $3$ real eigenvalues, or exactly $1$ real eigenvalue plus one conjugate pair, never $2$ real and $1$ non-real.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> Repeated eigenvalues</div>
+  <div class="prose">
+    <p>Just like any other polynomial, a characteristic polynomial can have a repeated root. When that happens, some genuinely new subtlety appears: the eigenspace for that eigenvalue might, or might not, be as large as the repetition would suggest.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: two kinds of multiplicity</span>
+    <p>The <strong>algebraic multiplicity</strong> of an eigenvalue is how many times it appears as a root of the characteristic polynomial (its multiplicity as discussed in the complex numbers lesson). The <strong>geometric multiplicity</strong> is the dimension of its eigenspace, how many independent eigenvectors it actually produces after row-reducing $A-\lambda I$. It is always true that geometric multiplicity $\leq$ algebraic multiplicity, but it can be a <em>strict</em> inequality: an eigenvalue can be a double root of the characteristic polynomial while producing only a single independent eigenvector. Such a matrix is called <strong>defective</strong>.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why geometric multiplicity can fall short</span>
+    <p>Algebraic multiplicity only counts how many times $\lambda$ appears as a root of a polynomial equation, it says nothing directly about how large the null space of $A-\lambda I$ turns out to be after row reduction. Compare $\begin{pmatrix}2&0\\0&2\end{pmatrix}$ with $\begin{pmatrix}2&1\\0&2\end{pmatrix}$: both have characteristic polynomial $(\lambda-2)^2$, so $\lambda=2$ has algebraic multiplicity $2$ in both cases. But $A-2I$ is the zero matrix in the first case (every vector is an eigenvector, geometric multiplicity $2$), while in the second, $A-2I=\begin{pmatrix}0&1\\0&0\end{pmatrix}$, whose null space is only the line $y=0$ (geometric multiplicity $1$). The extra off-diagonal $1$ in the second matrix genuinely restricts how many independent directions get scaled purely by $2$, even though the characteristic polynomial cannot see that restriction at all.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Find the eigenvalues and eigenvectors of $A=\begin{pmatrix}2&1\\0&2\end{pmatrix}$.</p>
+    <p class="step">$A-\lambda I = \begin{pmatrix}2-\lambda&1\\0&2-\lambda\end{pmatrix}$, upper triangular, so $\det = (2-\lambda)^2=0 \Rightarrow \lambda=2$ (algebraic multiplicity $2$).</p>
+    <p class="step">$A-2I = \begin{pmatrix}0&1\\0&0\end{pmatrix}$. Row 1 says $y=0$, with $x$ free: only one independent eigenvector, $\begin{pmatrix}1\\0\end{pmatrix}$ (geometric multiplicity $1$).</p>
+    <p>This matrix is defective: a double eigenvalue with only a single eigenvector direction to show for it. As Section 7 will show, this is exactly the situation that prevents diagonalization.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Find the eigenvalues and eigenvectors of $A=\begin{pmatrix}3&0\\0&3\end{pmatrix}$. Is this matrix defective?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(3-\lambda)^2=0 \Rightarrow \lambda=3$, algebraic multiplicity $2$. $A-3I = O$, the zero matrix, so every nonzero vector is an eigenvector: $\begin{pmatrix}1\\0\end{pmatrix}$ and $\begin{pmatrix}0\\1\end{pmatrix}$ are two independent ones, geometric multiplicity $2$, matching the algebraic multiplicity exactly. Not defective, this is the "nice" case, already achieved here since $A$ was diagonal to begin with.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Find the eigenvalues and eigenvectors of $A=\begin{pmatrix}5&1\\0&5\end{pmatrix}$. Is this matrix defective?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(5-\lambda)^2=0 \Rightarrow \lambda=5$, algebraic multiplicity $2$. $A-5I = \begin{pmatrix}0&1\\0&0\end{pmatrix}$: forces $y=0$, only $\begin{pmatrix}1\\0\end{pmatrix}$ (up to scaling), geometric multiplicity $1$. Defective, exactly the same pattern as the Section 5 worked example, just with $2$ in place of $5$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>Find the eigenvalues and the eigenvector(s) of the $3\times3$ matrix $A=\begin{pmatrix}3&1&0\\0&3&1\\0&0&3\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A-\lambda I$ is upper triangular with $3-\lambda$ repeated three times on the diagonal, so $(3-\lambda)^3=0 \Rightarrow \lambda=3$, algebraic multiplicity $3$.</p>
+      <p>$A-3I = \begin{pmatrix}0&1&0\\0&0&1\\0&0&0\end{pmatrix}$. Row 1: $y=0$. Row 2: $z=0$. $x$ is free. Only one independent eigenvector, $\begin{pmatrix}1\\0\\0\end{pmatrix}$: geometric multiplicity just $1$, despite algebraic multiplicity $3$, an even more extreme case of defectiveness.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>Explain why geometric multiplicity can never exceed algebraic multiplicity (you don't need a full proof, a convincing explanation is enough).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>If the eigenspace for $\lambda$ had geometric multiplicity $k$, you could build $k$ independent eigenvectors for $\lambda$, and it can be shown that using these (extended to a full basis) to change coordinates puts at least $k$ copies of $\lambda$ on the diagonal of a triangular representation of $A$, forcing $(\lambda-x)^k$ to divide the characteristic polynomial. That means the algebraic multiplicity, the total power of $(\lambda-x)$ dividing the characteristic polynomial, must be at least $k$ as well. So geometric multiplicity can fall short of algebraic multiplicity (as the defective examples show), but it can never overshoot it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Properties of eigenvalues</div>
+  <div class="prose">
+    <p>Two quantities you already know how to compute directly from a matrix, the trace (sum of diagonal entries) and the determinant, turn out to be readable straight off the list of eigenvalues, with no extra work. Several other simple, useful facts follow from playing with the defining equation $A\mathbf{x}=\lambda\mathbf{x}$ directly.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>For an $n\times n$ matrix $A$ with eigenvalues $\lambda_1,\dots,\lambda_n$ (counting multiplicity):</p>
+    <p>$$\mathrm{trace}(A) = \lambda_1+\lambda_2+\cdots+\lambda_n, \qquad \det(A) = \lambda_1\lambda_2\cdots\lambda_n.$$</p>
+    <p>If $\mathbf{x}$ is an eigenvector of $A$ with eigenvalue $\lambda$, then $\mathbf{x}$ is also an eigenvector of $A^k$ with eigenvalue $\lambda^k$, and (when $A$ is invertible) an eigenvector of $A^{-1}$ with eigenvalue $1/\lambda$, and an eigenvector of $A+cI$ with eigenvalue $\lambda+c$, for any scalar $c$.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why powers and inverses shift eigenvalues so simply</span>
+    <p>Start from $A\mathbf{x}=\lambda\mathbf{x}$. Apply $A$ again: $A^2\mathbf{x} = A(A\mathbf{x}) = A(\lambda\mathbf{x}) = \lambda(A\mathbf{x}) = \lambda(\lambda\mathbf{x}) = \lambda^2\mathbf{x}$, so $\mathbf{x}$ is an eigenvector of $A^2$ with eigenvalue $\lambda^2$; repeating this argument gives $A^k\mathbf{x}=\lambda^k\mathbf{x}$ for any whole number $k$. For the inverse (assuming $A$ is invertible, so $\lambda\neq0$): multiply $A\mathbf{x}=\lambda\mathbf{x}$ on the left by $A^{-1}$ to get $\mathbf{x} = \lambda A^{-1}\mathbf{x}$, and dividing by $\lambda$ gives $A^{-1}\mathbf{x} = \frac1\lambda\mathbf{x}$. For the shift: $(A+cI)\mathbf{x} = A\mathbf{x}+c\mathbf{x} = \lambda\mathbf{x}+c\mathbf{x} = (\lambda+c)\mathbf{x}$. In every case, the <em>same</em> eigenvector $\mathbf{x}$ works throughout, only the eigenvalue transforms, exactly the way the corresponding operation transforms an ordinary number.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>For $A=\begin{pmatrix}4&1\\2&3\end{pmatrix}$ (eigenvalues $5,2$), verify the trace and determinant properties, and find the eigenvalues of $A^3$ and $A^{-1}$.</p>
+    <p class="step">$\mathrm{trace}(A) = 4+3=7$, and $5+2=7$ &check;. $\ \det(A) = 4(3)-1(2)=10$, and $5\times2=10$ &check;.</p>
+    <p class="step">Eigenvalues of $A^3$: $5^3=125$ and $2^3=8$.</p>
+    <p class="step">Eigenvalues of $A^{-1}$: $\dfrac15$ and $\dfrac12$.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Without finding the eigenvalues individually, use the trace and determinant of $A=\begin{pmatrix}3&2\\1&4\end{pmatrix}$ (Practice 7) to check that $5$ and $2$ really are its eigenvalues.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathrm{trace}(A) = 3+4=7 = 5+2$ &check;. $\ \det(A) = 3(4)-2(1) = 10 = 5\times2$ &check;. Both properties confirm the eigenvalues found in Practice 7 without redoing the characteristic-equation calculation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>A $2\times2$ matrix has trace $7$ and determinant $12$. Find its two eigenvalues without computing the characteristic equation from a full matrix.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The eigenvalues $\lambda_1,\lambda_2$ satisfy $\lambda_1+\lambda_2=7$ and $\lambda_1\lambda_2=12$. Two numbers with that sum and product: solve $t^2-7t+12=0 \Rightarrow (t-3)(t-4)=0 \Rightarrow t=3,4$. Eigenvalues: $3$ and $4$. (This is really just the characteristic equation written directly in terms of trace and determinant, since for a $2\times2$ matrix the characteristic polynomial is always $\lambda^2-\mathrm{trace}(A)\lambda+\det(A)$.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>For $A=\begin{pmatrix}5&4\\1&2\end{pmatrix}$ (eigenvalues $6,1$ from Practice 8), find the eigenvalues of $A^2$ and of $A+3I$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Eigenvalues of $A^2$: $6^2=36$ and $1^2=1$.</p>
+      <p>Eigenvalues of $A+3I$: $6+3=9$ and $1+3=4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>For $A=\begin{pmatrix}6&-1\\2&3\end{pmatrix}$ (eigenvalues $5,4$ from Practice 9), find the eigenvalues of $A^{-1}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Eigenvalues of $A^{-1}$: $\dfrac15$ and $\dfrac14$. (This also confirms $A$ is invertible in the first place, since neither eigenvalue is $0$; recall from the row-operations lesson that $\det(A)=0$ exactly when $A$ has a zero eigenvalue, since $\det(A)$ is the product of the eigenvalues.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>Explain, using the eigenvalue-product property, why a matrix with a zero eigenvalue is always singular (non-invertible).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det(A) = \lambda_1\lambda_2\cdots\lambda_n$. If any single eigenvalue is $0$, the whole product is $0$, so $\det(A)=0$, and by the equivalence theorem from the row-operations lesson, $\det(A)=0$ means $A$ is singular. This also runs the other way: $\det(A-0\cdot I)=\det(A)=0$ is exactly the characteristic equation's statement that $\lambda=0$ is an eigenvalue, so "singular" and "has $0$ as an eigenvalue" are simply two descriptions of the same fact.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>A $3\times3$ matrix has eigenvalues $2$, $-1$, and $3$. Find its trace and determinant.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Trace $= 2+(-1)+3 = 4$. Determinant $= 2\times(-1)\times3 = -6$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>For the rotation matrix $A=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ (eigenvalues $\pm i$), verify the trace and determinant properties still hold even though the eigenvalues are complex.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathrm{trace}(A) = 0+0=0$, and $i+(-i)=0$ &check;. $\ \det(A) = 0(0)-(-1)(1) = 1$, and $i\times(-i) = -i^2 = 1$ &check;. Both properties hold exactly as they do for real eigenvalues, complex numbers obey the same arithmetic rules, so nothing in the derivation of these two properties ever needed the eigenvalues to be real.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> Diagonalization</div>
+  <div class="prose">
+    <p>Section 0 promised that a matrix becomes "almost trivial" once viewed along its eigenvector directions. Diagonalization makes that promise precise: if you assemble the eigenvectors as the columns of a matrix $P$, then $P^{-1}AP$ is exactly a diagonal matrix, with the eigenvalues sitting on the diagonal.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>If an $n\times n$ matrix $A$ has $n$ independent eigenvectors $\mathbf{v}_1,\dots,\mathbf{v}_n$ (that is, if algebraic and geometric multiplicity match for every eigenvalue, so there is no defectiveness anywhere), let $P = \begin{pmatrix}\mathbf{v}_1&\cdots&\mathbf{v}_n\end{pmatrix}$ (the eigenvectors as columns) and $D = \mathrm{diag}(\lambda_1,\dots,\lambda_n)$ (the corresponding eigenvalues, in the same order, on the diagonal). Then</p>
+    <p>$$P^{-1}AP = D, \qquad \text{equivalently} \qquad A = PDP^{-1}.$$</p>
+    <p>A defective matrix (Section 5) cannot be diagonalized this way, since it does not have enough independent eigenvectors to fill out all $n$ columns of $P$ and keep $P$ invertible.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why this formula works</span>
+    <p>Compute $AP$ column by column: the $j$th column of $AP$ is $A\mathbf{v}_j = \lambda_j\mathbf{v}_j$ (since $\mathbf{v}_j$ is an eigenvector), which is exactly $\lambda_j$ times the $j$th column of $P$. Assembling all the columns back together, this says $AP = PD$, since multiplying $P$ on the right by the diagonal matrix $D$ scales each column of $P$ by the matching diagonal entry, exactly the pattern just described. Because the eigenvectors are independent, $P$ is invertible, so multiplying both sides on the left by $P^{-1}$ gives $P^{-1}AP = D$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Diagonalize $A=\begin{pmatrix}4&1\\2&3\end{pmatrix}$, using the eigenvalues $5,2$ and eigenvectors $\begin{pmatrix}1\\1\end{pmatrix}$, $\begin{pmatrix}1\\-2\end{pmatrix}$ found earlier.</p>
+    <p class="step">$$P = \begin{pmatrix}1&1\\1&-2\end{pmatrix}, \qquad D = \begin{pmatrix}5&0\\0&2\end{pmatrix}.$$</p>
+    <p class="step">$P^{-1} = \dfrac1{\det P}\begin{pmatrix}-2&-1\\-1&1\end{pmatrix}$, and $\det P = 1(-2)-1(1)=-3$, so $P^{-1} = -\dfrac13\begin{pmatrix}-2&-1\\-1&1\end{pmatrix} = \begin{pmatrix}\frac23&\frac13\\\frac13&-\frac13\end{pmatrix}$.</p>
+    <p class="step">You can check $P^{-1}AP = \begin{pmatrix}5&0\\0&2\end{pmatrix}$ directly by carrying out the two matrix multiplications, or simply trust the derivation above, since $P$'s columns were built to be genuine eigenvectors in the first place.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>Using the eigenvalues $\lambda=5,2$ and eigenvectors $\begin{pmatrix}1\\1\end{pmatrix},\begin{pmatrix}-2\\1\end{pmatrix}$ of $A=\begin{pmatrix}3&2\\1&4\end{pmatrix}$ (Practice 7 and 13), write down $P$ and $D$ for its diagonalization.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$P = \begin{pmatrix}1&-2\\1&1\end{pmatrix}, \qquad D = \begin{pmatrix}5&0\\0&2\end{pmatrix}.$$</p>
+      <p>The order of the columns in $P$ must match the order of the eigenvalues along $D$'s diagonal, the eigenvector for $\lambda=5$ goes in the column lined up with $5$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>Can $A=\begin{pmatrix}2&1\\0&2\end{pmatrix}$ (from the Section 5 worked example) be diagonalized? Explain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No. $A$ is defective: the eigenvalue $\lambda=2$ has algebraic multiplicity $2$ but geometric multiplicity only $1$, meaning there is only one independent eigenvector direction to work with, $\begin{pmatrix}1\\0\end{pmatrix}$. Diagonalizing a $2\times2$ matrix requires $2$ independent eigenvectors to fill both columns of $P$ and keep it invertible; here there simply are not enough.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>Using the eigenvalues and eigenvectors of $A=\begin{pmatrix}1&2\\2&1\end{pmatrix}$ (Practice 10, 15), write down $P$ and $D$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$P = \begin{pmatrix}1&1\\1&-1\end{pmatrix}, \qquad D = \begin{pmatrix}3&0\\0&-1\end{pmatrix}.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>Explain why, once $A=PDP^{-1}$, computing $A^{10}$ becomes much easier than multiplying $A$ by itself $10$ times directly.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A^{10} = (PDP^{-1})(PDP^{-1})\cdots(PDP^{-1})$, and every adjacent $P^{-1}P$ pair cancels to $I$, collapsing the whole chain down to $A^{10}=PD^{10}P^{-1}$. Since $D$ is diagonal, $D^{10}$ is just each diagonal entry raised to the $10$th power, $\mathrm{diag}(\lambda_1^{10},\lambda_2^{10})$, no matrix multiplication needed at all for that part. So the entire computation reduces to one matrix inverse, two matrix multiplications, and raising ordinary numbers to a power, dramatically cheaper than nine full matrix multiplications performed directly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>Is a diagonal matrix itself always diagonalizable? What would $P$ and $D$ look like in that case?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Yes. As Practices 4, 12, and 18 showed, a diagonal matrix's eigenvectors are exactly the standard basis vectors, and these are always independent. So $P=I$ (the eigenvectors, in order, literally form the identity matrix) and $D=A$ itself. The diagonalization of an already-diagonal matrix is, appropriately, the trivial one.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>Using the eigenvalues and eigenvectors of $A=\begin{pmatrix}5&4\\1&2\end{pmatrix}$ (Practice 8, 14), write down $P$ and $D$, and state $\det(P)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$P = \begin{pmatrix}4&1\\1&-1\end{pmatrix}, \qquad D = \begin{pmatrix}6&0\\0&1\end{pmatrix}.$$</p>
+      <p>$\det(P) = 4(-1)-1(1) = -5 \neq0$, confirming $P$ is invertible, exactly what is needed for the diagonalization to make sense.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec8">
+  <div class="section-title"><span class="tag">8</span> Symmetric matrices</div>
+  <div class="prose">
+    <p>Section 4 showed that a real matrix can have complex eigenvalues, and Section 5 showed a real matrix can fail to have enough eigenvectors to diagonalize. Symmetric matrices, recall from the matrix-fundamentals lesson, $A^T=A$, are completely immune to both problems, and this fact is important enough to have its own name.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: the spectral theorem</span>
+    <p>Every real symmetric matrix has only <strong>real</strong> eigenvalues, and eigenvectors corresponding to <strong>different</strong> eigenvalues are always <strong>orthogonal</strong> (their dot product is $0$). Moreover, a real symmetric matrix is always diagonalizable, it is never defective.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why eigenvectors of a symmetric matrix are orthogonal</span>
+    <p>Let $\mathbf{v}_1,\mathbf{v}_2$ be eigenvectors of a symmetric $A$ with different eigenvalues $\lambda_1\neq\lambda_2$. Consider $\mathbf{v}_1^TA\mathbf{v}_2$, computed two ways. Using $A\mathbf{v}_2=\lambda_2\mathbf{v}_2$ directly: $\mathbf{v}_1^TA\mathbf{v}_2 = \lambda_2(\mathbf{v}_1^T\mathbf{v}_2)$. Alternatively, using $A^T=A$ and the transpose rule $(AB)^T=B^TA^T$ from the matrix-fundamentals lesson: $\mathbf{v}_1^TA\mathbf{v}_2 = \mathbf{v}_1^TA^T\mathbf{v}_2 = (A\mathbf{v}_1)^T\mathbf{v}_2 = (\lambda_1\mathbf{v}_1)^T\mathbf{v}_2 = \lambda_1(\mathbf{v}_1^T\mathbf{v}_2)$. Both expressions equal $\mathbf{v}_1^TA\mathbf{v}_2$, so $\lambda_2(\mathbf{v}_1^T\mathbf{v}_2) = \lambda_1(\mathbf{v}_1^T\mathbf{v}_2)$, meaning $(\lambda_1-\lambda_2)(\mathbf{v}_1^T\mathbf{v}_2)=0$. Since $\lambda_1\neq\lambda_2$ by assumption, the only way this can hold is $\mathbf{v}_1^T\mathbf{v}_2=0$, that is, $\mathbf{v}_1\cdot\mathbf{v}_2=0$: the eigenvectors are orthogonal. Symmetry, via $A^T=A$, is exactly what let the two computations of $\mathbf{v}_1^TA\mathbf{v}_2$ come out matchable in the first place.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Find the eigenvalues and eigenvectors of the symmetric matrix $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$, and verify orthogonality.</p>
+    <p class="step">$\det\begin{pmatrix}2-\lambda&1\\1&2-\lambda\end{pmatrix} = (2-\lambda)^2-1 = \lambda^2-4\lambda+3=0 \Rightarrow (\lambda-3)(\lambda-1)=0 \Rightarrow \lambda=3,1$: real, as guaranteed.</p>
+    <p class="step">$\lambda=3$: $A-3I=\begin{pmatrix}-1&1\\1&-1\end{pmatrix}$, giving $y=x$: eigenvector $\begin{pmatrix}1\\1\end{pmatrix}$.</p>
+    <p class="step">$\lambda=1$: $A-I=\begin{pmatrix}1&1\\1&1\end{pmatrix}$, giving $y=-x$: eigenvector $\begin{pmatrix}1\\-1\end{pmatrix}$.</p>
+    <p>Dot product: $\begin{pmatrix}1\\1\end{pmatrix}\cdot\begin{pmatrix}1\\-1\end{pmatrix} = 1-1=0$: orthogonal, exactly as the spectral theorem promises.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>Find the eigenvalues and eigenvectors of the symmetric matrix $A=\begin{pmatrix}4&2\\2&1\end{pmatrix}$, and verify orthogonality.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det\begin{pmatrix}4-\lambda&2\\2&1-\lambda\end{pmatrix} = (4-\lambda)(1-\lambda)-4 = \lambda^2-5\lambda = \lambda(\lambda-5)=0 \Rightarrow \lambda=0,5$.</p>
+      <p>$\lambda=0$: $A=\begin{pmatrix}4&2\\2&1\end{pmatrix}$ itself; row 1 gives $4x+2y=0 \Rightarrow y=-2x$: eigenvector $\begin{pmatrix}1\\-2\end{pmatrix}$.</p>
+      <p>$\lambda=5$: $A-5I=\begin{pmatrix}-1&2\\2&-4\end{pmatrix}$; row 1 gives $-x+2y=0 \Rightarrow x=2y$: eigenvector $\begin{pmatrix}2\\1\end{pmatrix}$.</p>
+      <p>Dot product: $\begin{pmatrix}1\\-2\end{pmatrix}\cdot\begin{pmatrix}2\\1\end{pmatrix} = 2-2=0$: orthogonal &check;. (Note $\lambda=0$ is a perfectly legitimate eigenvalue, it just also confirms, via Section 6, that this particular matrix is singular.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 45</span></div>
+  <div class="p-body"><p>Is $A=\begin{pmatrix}1&3\\2&4\end{pmatrix}$ symmetric? Does the spectral theorem guarantee anything about its eigenvalues?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No, $A$ is not symmetric: $a_{12}=3$ but $a_{21}=2$, they don't match, so $A^T\neq A$. The spectral theorem simply does not apply here, it says nothing at all about this matrix's eigenvalues one way or the other (they could turn out real or complex; the theorem is a guarantee specifically for symmetric matrices, not a claim about matrices in general).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 46</span></div>
+  <div class="p-body"><p>Find the eigenvalues of the symmetric $3\times3$ matrix $A=\begin{pmatrix}3&1&0\\1&3&0\\0&0&5\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Expand along row 3 (or column 3), which has two zeros: $\det(A-\lambda I) = (5-\lambda)\det\begin{pmatrix}3-\lambda&1\\1&3-\lambda\end{pmatrix} = (5-\lambda)\big((3-\lambda)^2-1\big)$.</p>
+      <p>$(3-\lambda)^2-1 = \lambda^2-6\lambda+8 = (\lambda-4)(\lambda-2)$.</p>
+      <p>Eigenvalues: $\lambda=5,4,2$, all real, as guaranteed for a symmetric matrix, even without computing a single eigenvector.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 47</span></div>
+  <div class="p-body"><p>Explain why a real symmetric matrix can never be defective (i.e.\ why algebraic and geometric multiplicity always match, for every eigenvalue), using what Section 8 has already told you about orthogonal eigenvectors.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The spectral theorem guarantees enough mutually orthogonal eigenvectors to span the whole space, one full set of $n$ independent directions for an $n\times n$ symmetric matrix, with eigenvectors for different eigenvalues automatically orthogonal (Section 8's "why" box) and eigenvectors within a repeated eigenvalue's eigenspace always filling out its full algebraic multiplicity (a fact the spectral theorem also guarantees, beyond just orthogonality across different eigenvalues). Since $n$ independent eigenvectors is exactly the condition Section 7 required for diagonalizability, and defectiveness is precisely the failure of that condition, symmetry rules out defectiveness entirely.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 48</span></div>
+  <div class="p-body"><p>Find the eigenvalues and eigenvectors of the symmetric matrix $A=\begin{pmatrix}0&2\\2&3\end{pmatrix}$, and verify orthogonality.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det\begin{pmatrix}-\lambda&2\\2&3-\lambda\end{pmatrix} = -\lambda(3-\lambda)-4 = \lambda^2-3\lambda-4 = (\lambda-4)(\lambda+1)=0 \Rightarrow \lambda=4,-1$.</p>
+      <p>$\lambda=4$: $A-4I=\begin{pmatrix}-4&2\\2&-1\end{pmatrix}$; row 1: $-4x+2y=0 \Rightarrow y=2x$: eigenvector $\begin{pmatrix}1\\2\end{pmatrix}$.</p>
+      <p>$\lambda=-1$: $A+I=\begin{pmatrix}1&2\\2&4\end{pmatrix}$; row 1: $x+2y=0 \Rightarrow x=-2y$: eigenvector $\begin{pmatrix}-2\\1\end{pmatrix}$.</p>
+      <p>Dot product: $\begin{pmatrix}1\\2\end{pmatrix}\cdot\begin{pmatrix}-2\\1\end{pmatrix} = -2+2=0$: orthogonal &check;.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 49</span></div>
+  <div class="p-body"><p>A symmetric $4\times4$ matrix is known to have algebraic multiplicity $2$ for the eigenvalue $\lambda=3$. What does the spectral theorem tell you about its geometric multiplicity, and hence about how many independent eigenvectors exist for $\lambda=3$?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since real symmetric matrices are never defective (Practice 47), the geometric multiplicity must equal the algebraic multiplicity exactly, so it is also $2$: there are $2$ independent eigenvectors for $\lambda=3$, spanning a genuine $2$-dimensional eigenspace, not just $1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 50</span></div>
+  <div class="p-body"><p>Find the eigenvalues of the symmetric matrix $A=\begin{pmatrix}1&2\\2&-2\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det\begin{pmatrix}1-\lambda&2\\2&-2-\lambda\end{pmatrix} = (1-\lambda)(-2-\lambda)-4 = \lambda^2+\lambda-2-4 = \lambda^2+\lambda-6=0$.</p>
+      <p>$(\lambda+3)(\lambda-2)=0 \Rightarrow \lambda=-3,2$: real, as guaranteed since $A$ is symmetric.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 51</span></div>
+  <div class="p-body"><p>Summarise, in a sentence or two, why a symmetric matrix is the "best case" among everything covered in this lesson.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A symmetric matrix avoids both of the complications this lesson had to work around: its eigenvalues are guaranteed real (Section 4's complex-eigenvalue phenomenon cannot occur), and it always has a full set of independent, mutually orthogonal eigenvectors (Section 5's defectiveness cannot occur), so it is always diagonalizable, with an especially clean, orthogonal $P$. This is exactly why symmetric matrices play such an outsized role in applications, from statistics (covariance matrices) to physics (moment of inertia tensors), the guaranteed real eigenvalues and clean diagonalization are not a coincidence, they are a direct consequence of the symmetry itself.</p>
+    </div>
+  </div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Eigenvalues and eigenvectors are the point where the four earlier lessons stop being separate toolkits and become one connected picture: matrix multiplication defines what an eigenvector even means, the determinant is what turns "find an eigenvalue" into "solve a polynomial," and the complex numbers lesson is what lets that polynomial always have a full set of roots, real or not, exactly as promised by the fundamental theorem of algebra. From here, natural next steps include the spectral decomposition in full (writing a symmetric matrix as a sum of rank-one pieces built from its eigenvectors), singular value decomposition (which extends these ideas to matrices that aren't even square), and the role eigenvalues play in solving systems of differential equations, where they determine whether a system spirals, decays, or grows over time.</p>
+</div>
+
+</main>
+
+<footer>Linear Algebra &middot; Eigenvalues and Eigenvectors</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
