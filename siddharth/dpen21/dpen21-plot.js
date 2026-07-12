@@ -56,5 +56,5 @@ function drawPlot(canvas){
 }
 document.addEventListener("DOMContentLoaded",()=>{
   document.querySelectorAll('canvas[data-plot]').forEach(drawPlot);
-  renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"\\(",right:"\\)",display:false}],throwOnError:false});
+  renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"\\[",right:"\\]",display:true},{left:"\\(",right:"\\)",display:false},{left:"$",right:"$",display:false}],throwOnError:false});
 });
