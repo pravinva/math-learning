@@ -2,974 +2,910 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>DPEN100 · MATLAB Study Guide</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DPEN100 — MATLAB Programming</title>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --navy:#1B3A5C;--navy-lt:#1e4570;--orange:#FF3621;
-  --blue-lt:#E6F1FB;--blue-mid:#185FA5;
-  --amber-lt:#FAEEDA;--amber-dk:#7A4800;
-  --green-lt:#E1F5EE;--green-dk:#0a5c3f;
-  --grey-lt:#F6F5F2;--grey-md:#e8e6e0;
-  --text:#2c2a28;--text-muted:#6b6762;
-  --sidebar-w:260px;--content-max:820px;
+  --navy:#1B2431;
+  --red:#FF3621;
+  --paper:#ffffff;
+  --grid:#dfe6ef;
+  --ink:#1B2431;
+  --muted:#5b6472;
+  --line:#d8dee6;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--text);display:flex;min-height:100vh}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Barlow',sans-serif;
+  color:var(--ink);
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 24px 24px,
+    var(--paper);
+  min-height:100vh;
+  display:flex;
+}
 
-/* ══ SIDEBAR ══ */
-.sidebar{width:var(--sidebar-w);background:var(--navy);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
-.sidebar-brand{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
-.sidebar-brand-title{font-family:'Crimson Pro',Georgia,serif;font-size:17px;font-weight:600;color:white;line-height:1.3}
-.sidebar-brand-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:.04em}
-.nav-section{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
-.nav-section-label{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.3);padding:6px 20px 4px;text-transform:uppercase}
-.nav-link{display:flex;align-items:center;gap:10px;padding:8px 20px;color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;transition:all .15s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
-.nav-link:hover{color:white;background:rgba(255,255,255,.06)}
-.nav-link.active{color:white;background:rgba(255,255,255,.1);border-left:2px solid var(--orange);padding-left:18px}
-.nav-num{font-size:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.5);border-radius:3px;padding:1px 5px;flex-shrink:0;font-variant-numeric:tabular-nums}
-.nav-link.active .nav-num{background:var(--orange);color:white}
+/* ---------- Sidebar ---------- */
+#sidebar{
+  width:280px;
+  min-width:280px;
+  background:var(--navy);
+  color:#fff;
+  height:100vh;
+  position:sticky;
+  top:0;
+  display:flex;
+  flex-direction:column;
+  overflow-y:auto;
+}
+#sidebar .brand{
+  padding:22px 20px 14px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.12);
+}
+#sidebar .brand h1{
+  font-size:19px;
+  font-weight:800;
+  letter-spacing:0.5px;
+}
+#sidebar .brand p{
+  font-size:12.5px;
+  color:#b7c0cc;
+  margin-top:4px;
+}
+#progress-wrap{
+  padding:14px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.12);
+}
+#progress-label{
+  font-size:11.5px;
+  color:#b7c0cc;
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+}
+#progress-bar-bg{
+  width:100%;
+  height:8px;
+  background:rgba(255,255,255,0.15);
+  border-radius:6px;
+  overflow:hidden;
+}
+#progress-bar-fill{
+  height:100%;
+  width:0%;
+  background:var(--red);
+  border-radius:6px;
+  transition:width 0.35s ease;
+}
+nav#module-nav{
+  flex:1;
+  padding:8px 10px 20px 10px;
+}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+  color:#dfe4ea;
+  margin-bottom:2px;
+  transition:background 0.15s ease;
+}
+.nav-item:hover{background:rgba(255,255,255,0.08);}
+.nav-item.active{background:var(--red);color:#fff;font-weight:600;}
+.nav-item .wk{
+  font-family:'Roboto Mono',monospace;
+  font-size:10.5px;
+  color:#9aa4b1;
+  min-width:26px;
+}
+.nav-item.active .wk{color:#ffd8d3;}
+.nav-item .chk{
+  width:16px;height:16px;border-radius:4px;
+  border:1.5px solid #6c7684;
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;
+}
+.nav-item.done .chk{background:#3ecf6e;border-color:#3ecf6e;color:#fff;}
 
-/* ══ MAIN ══ */
-.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
-.topbar{background:white;border-bottom:1px solid var(--grey-md);padding:12px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
-.topbar-breadcrumb{font-size:12px;color:var(--text-muted)}
-.topbar-breadcrumb span{color:var(--navy);font-weight:500}
-.topbar-btns{display:flex;gap:8px}
-.tb-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--grey-md);background:white;font-size:12px;color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all .15s}
-.tb-btn:hover{border-color:var(--navy);color:var(--navy)}
+/* ---------- Main ---------- */
+#main{
+  flex:1;
+  min-width:0;
+  padding:40px 56px 90px 56px;
+  max-width:980px;
+}
+.module{display:none;animation:fade 0.25s ease;}
+.module.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
 
-/* ══ CONTENT ══ */
-.content{max-width:var(--content-max);margin:0 auto;padding:48px 40px 80px}
-.page{display:none}
-.page.active{display:block;animation:fadeIn .25s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.module-header{
+  border-bottom:3px solid var(--navy);
+  padding-bottom:14px;
+  margin-bottom:26px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.module-header .tag{
+  font-family:'Roboto Mono',monospace;
+  font-size:12px;
+  color:var(--red);
+  font-weight:600;
+  letter-spacing:0.5px;
+}
+.module-header h2{
+  font-size:30px;
+  font-weight:800;
+  color:var(--navy);
+  margin-top:2px;
+}
+.mark-done-btn{
+  background:var(--navy);
+  color:#fff;
+  border:none;
+  padding:9px 16px;
+  border-radius:7px;
+  font-family:'Barlow',sans-serif;
+  font-weight:600;
+  font-size:13.5px;
+  cursor:pointer;
+  transition:background 0.15s ease;
+}
+.mark-done-btn:hover{background:#2a3546;}
+.mark-done-btn.done{background:#3ecf6e;}
 
-.page-hero{margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid var(--grey-md)}
-.page-hero-label{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--orange);text-transform:uppercase;margin-bottom:6px}
-.page-hero-title{font-family:'Crimson Pro',Georgia,serif;font-size:38px;font-weight:600;color:var(--navy);line-height:1.15;margin-bottom:8px}
-.page-hero-sub{font-size:15px;color:var(--text-muted);line-height:1.6}
+.section{margin-bottom:30px;}
+.section h3{
+  font-size:17px;
+  font-weight:700;
+  color:var(--navy);
+  margin-bottom:10px;
+  padding-left:10px;
+  border-left:4px solid var(--red);
+}
+.section p, .section li{
+  font-size:15px;
+  line-height:1.65;
+  color:#333d4a;
+}
+.section ul{padding-left:22px;margin-top:6px;}
+.section li{margin-bottom:5px;}
 
-/* ══ TOPIC SECTIONS ══ */
-.topic-section{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:28px 32px;margin-bottom:24px}
-.topic-section h3{font-family:'Crimson Pro',Georgia,serif;font-size:20px;font-weight:600;color:var(--navy);margin:24px 0 12px}
-.topic-section h3:first-child{margin-top:0}
-.topic-section h4{font-family:'DM Sans',sans-serif;font-weight:500;font-size:15px;color:var(--navy);margin:16px 0 8px}
-.topic-section p{font-size:14px;line-height:1.7;margin-bottom:10px}
-.topic-section ul,.topic-section ol{padding-left:24px;margin-bottom:12px;font-size:14px;line-height:1.7}
-.topic-section li{margin-bottom:6px}
-.topic-section strong{color:var(--navy);font-weight:500}
+.callout{
+  background:#fff5f4;
+  border:1px solid #ffd2cc;
+  border-left:4px solid var(--red);
+  border-radius:6px;
+  padding:12px 16px;
+  font-size:14px;
+  margin:14px 0;
+  color:#4a2420;
+}
+.callout b{color:var(--red);}
 
-/* ══ CODE ══ */
-code{font-family:'Courier New',Courier,monospace;font-size:13px;background:var(--grey-lt);padding:2px 6px;border-radius:3px;color:#c7254e;border:1px solid var(--grey-md)}
+.pycompare{
+  background:#f4f7fb;
+  border:1px solid var(--line);
+  border-left:4px solid var(--navy);
+  border-radius:6px;
+  padding:12px 16px;
+  font-size:14px;
+  margin:14px 0;
+  color:#333d4a;
+}
+.pycompare b{color:var(--navy);}
 
-pre{background:#f9f9f7;border:1px solid var(--grey-md);border-radius:8px;padding:16px 18px;overflow-x:auto;margin:12px 0;font-family:'Courier New',Courier,monospace;font-size:13px;line-height:1.6;color:#333}
-pre .kw{color:#0066cc;font-weight:600}
-pre .fn{color:#008800}
-pre .str{color:#d14}
-pre .cm{color:#998;font-style:italic}
-pre .num{color:#d14}
-pre .op{color:#333}
-pre .var{color:#333}
+pre.code{
+  background:var(--navy);
+  color:#e7ecf3;
+  font-family:'Roboto Mono',monospace;
+  font-size:13.5px;
+  line-height:1.6;
+  padding:16px 18px;
+  border-radius:8px;
+  overflow-x:auto;
+  margin:10px 0 16px 0;
+}
+pre.code .cm{color:#8fa3bf;}
+pre.code .kw{color:#ff8a7a;}
+pre.code .fn{color:#7fd4ff;}
 
-/* ══ OUTPUT BOX ══ */
-.output{background:#f0f4f0;border:1px dashed #9cb99c;border-radius:6px;padding:12px 16px;margin:0 0 16px;font-family:'Courier New',Courier,monospace;font-size:12px;color:#2d5832;line-height:1.5}
-.output::before{content:'OUTPUT';display:block;font-size:9px;letter-spacing:.1em;color:#6b8e6b;margin-bottom:6px;font-weight:500}
+.qbox{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:16px 18px;
+  margin-bottom:14px;
+  background:#fafcfe;
+}
+.qbox .qhead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+}
+.qbox .qtitle{font-weight:600;font-size:14.5px;color:var(--navy);}
+.qbox .qnum{
+  font-family:'Roboto Mono',monospace;
+  font-size:11.5px;
+  color:var(--red);
+  margin-right:8px;
+}
+.qbox .toggle-icon{font-size:13px;color:var(--muted);transition:transform 0.2s ease;}
+.qbox.open .toggle-icon{transform:rotate(180deg);}
+.qbox .answer{
+  display:none;
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px dashed var(--line);
+  font-size:14px;
+  color:#333d4a;
+  line-height:1.6;
+}
+.qbox.open .answer{display:block;}
 
-/* ══ CALLOUTS ══ */
-.callout-info{background:var(--blue-lt);border-left:3px solid var(--blue-mid);padding:12px 16px;font-size:13px;line-height:1.6;margin:12px 0;border-radius:0 6px 6px 0}
-.callout-info strong{color:var(--blue-mid)}
+.footnav{
+  display:flex;
+  justify-content:space-between;
+  margin-top:36px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+}
+.footnav button{
+  background:#fff;
+  border:1.5px solid var(--navy);
+  color:var(--navy);
+  padding:9px 18px;
+  border-radius:7px;
+  font-family:'Barlow',sans-serif;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+}
+.footnav button:hover{background:var(--navy);color:#fff;}
+.footnav button:disabled{opacity:0.35;cursor:default;}
+.footnav button:disabled:hover{background:#fff;color:var(--navy);}
 
-.callout-warn{background:var(--amber-lt);border-left:3px solid #c07a00;padding:12px 16px;font-size:13px;line-height:1.6;margin:12px 0;border-radius:0 6px 6px 0;color:var(--amber-dk)}
-.callout-warn strong{color:#c07a00}
-
-.callout-success{background:var(--green-lt);border-left:3px solid #1a7a5a;padding:12px 16px;font-size:13px;line-height:1.6;margin:12px 0;border-radius:0 6px 6px 0;color:var(--green-dk)}
-.callout-success strong{color:#1a7a5a}
-
-/* ══ EXAMPLES ══ */
-.example-box{background:#fdfcfa;border:1px solid #d4e9d4;border-radius:8px;padding:18px 20px;margin:16px 0}
-.example-label{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.08em;color:#0a7a4a;font-weight:600;text-transform:uppercase;margin-bottom:8px}
-.example-step{font-weight:500;font-size:14px;color:var(--green-dk);margin:12px 0 6px}
-
-/* ══ PRACTICE PROBLEMS ══ */
-.practice-box{background:#faf8fd;border:1px solid #d4d4e9;border-radius:8px;padding:18px 20px;margin:16px 0}
-.practice-label{font-size:11px;letter-spacing:.08em;color:#6b5aa0;font-weight:600;text-transform:uppercase;margin-bottom:8px}
-.practice-box ol{padding-left:20px;font-size:14px;line-height:1.7}
-.practice-box li{margin-bottom:10px}
-
-details.answer{margin-top:12px;background:rgba(107,90,160,.05);border-radius:6px;border:1px solid rgba(107,90,160,.2)}
-details.answer summary{font-family:'DM Sans',sans-serif;font-size:12px;padding:8px 14px;cursor:pointer;color:#6b5aa0;letter-spacing:.04em;font-weight:500}
-details.answer .ans-body{padding:12px 16px;border-top:1px solid rgba(107,90,160,.2);font-size:13px}
-details.answer pre{font-size:12px}
-
-/* ══ TABLES ══ */
-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
-th{font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:.05em;color:white;background:var(--navy);padding:8px 12px;text-align:left;font-weight:500}
-td{padding:8px 12px;border-bottom:1px solid var(--grey-md);line-height:1.6;vertical-align:top}
-tr:nth-child(even) td{background:var(--grey-lt)}
-tr:last-child td{border-bottom:none}
-
-/* ══ REFERENCE GRID ══ */
-.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin:12px 0}
-.ref-cell{background:var(--grey-lt);border:1px solid var(--grey-md);border-radius:6px;padding:10px 12px;font-family:'Courier New',Courier,monospace;font-size:12px}
-.ref-cell .rc-fn{color:#008800;font-weight:600;display:block;margin-bottom:4px}
-.ref-cell .rc-desc{color:var(--text-muted);font-size:11px;font-family:'DM Sans',sans-serif}
-
-/* ══ RESPONSIVE ══ */
-@media(max-width:700px){
-  .sidebar{display:none}.main{margin-left:0}.content{padding:24px 18px 60px}
-  .topbar{padding:10px 18px}
+@media (max-width: 860px){
+  body{flex-direction:column;}
+  #sidebar{position:relative;width:100%;height:auto;}
+  #main{padding:28px 20px 60px 20px;}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ SIDEBAR ══ -->
-<nav class="sidebar">
-  <div class="sidebar-brand">
-    <div class="sidebar-brand-title">DPEN100 — MATLAB Programming</div>
-    <div class="sidebar-brand-sub">Full lessons: theory, syntax, examples & practice</div>
+<div id="sidebar">
+  <div class="brand">
+    <h1>DPEN100 / ENGG100</h1>
+    <p>Engineering Computing &amp; Analysis — MATLAB Guide</p>
   </div>
-  <div class="nav-section">
-    <div class="nav-section-label">Topics</div>
-    <button class="nav-link active" onclick="goTo('t1')"><span class="nav-num">1</span>Environment & Basics</button>
-    <button class="nav-link" onclick="goTo('t2')"><span class="nav-num">2</span>Variables & Operators</button>
-    <button class="nav-link" onclick="goTo('t3')"><span class="nav-num">3</span>Algorithm Design</button>
-    <button class="nav-link" onclick="goTo('t4')"><span class="nav-num">4</span>Conditionals</button>
-    <button class="nav-link" onclick="goTo('t5')"><span class="nav-num">5</span>Loops</button>
-    <button class="nav-link" onclick="goTo('t6')"><span class="nav-num">6</span>Functions</button>
-    <button class="nav-link" onclick="goTo('t7')"><span class="nav-num">7</span>Arrays & Matrices</button>
-    <button class="nav-link" onclick="goTo('t8')"><span class="nav-num">8</span>Vectorisation</button>
-    <button class="nav-link" onclick="goTo('t9')"><span class="nav-num">9</span>Data Visualisation</button>
-    <button class="nav-link" onclick="goTo('t10')"><span class="nav-num">10</span>File I/O</button>
+  <div id="progress-wrap">
+    <div id="progress-label"><span>Progress</span><span id="progress-count">0 / 10</span></div>
+    <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
   </div>
-</nav>
-
-<!-- ══ MAIN ══ -->
-<div class="main">
-  <div class="topbar">
-    <div class="topbar-breadcrumb">DPEN100 / MATLAB / <span id="breadcrumbPage">Topic 1</span></div>
-    <div class="topbar-btns">
-      <button class="tb-btn" onclick="expandAll()">Expand All</button>
-    </div>
-  </div>
-  <div class="content">
-
-<!-- ═══════════════════════════════════════
-     TOPIC 1 — ENVIRONMENT & BASICS
-════════════════════════════════════════ -->
-<div class="page active" id="page-t1">
-  <div class="page-hero">
-    <div class="page-hero-label">Topic 1</div>
-    <div class="page-hero-title">The MATLAB Environment & Basics</div>
-    <div class="page-hero-sub">Interface, workspace, scripts, output, comments, order of operations</div>
-  </div>
-
-  <div class="topic-section">
-    <h3>The Four Windows</h3>
-    <table>
-      <tr><th>Window</th><th>Purpose</th><th>Key point</th></tr>
-      <tr><td><strong>Command Window</strong></td><td>Type commands, see output immediately</td><td>Good for quick tests; nothing is saved</td></tr>
-      <tr><td><strong>Editor</strong></td><td>Write and save scripts (.m files)</td><td>Press F5 or Run button to execute</td></tr>
-      <tr><td><strong>Workspace</strong></td><td>Shows all current variables</td><td>Variables persist until cleared or MATLAB closes</td></tr>
-      <tr><td><strong>Command History</strong></td><td>Log of past commands</td><td>Press ↑ in Command Window to recall</td></tr>
-    </table>
-
-    <h3>Scripts vs Command Window</h3>
-    <p>A <strong>script</strong> is a plain text file ending in <code>.m</code> that contains a sequence of MATLAB commands. Running the script is identical to typing those commands one by one. Scripts share the workspace — variables they create persist after the script finishes.</p>
-    <div class="callout-info">
-      <strong>Convention:</strong> Start every script with <code>clc; clear; close all</code> to clear the command window, delete old variables, and close old figures. This prevents bugs caused by leftover state from previous runs.
-    </div>
-
-    <h3>Output and Suppression</h3>
-    <p>By default MATLAB prints the result of every statement. Add a <strong>semicolon</strong> <code>;</code> to suppress output. Without it, every line prints — fine for debugging, messy in final code.</p>
-
-<pre><span class="var">x</span> = <span class="num">5</span>          <span class="cm">% prints: x = 5</span>
-<span class="var">y</span> = <span class="num">10</span>;        <span class="cm">% silent — no output</span>
-<span class="var">z</span> = <span class="var">x</span> + <span class="var">y</span>     <span class="cm">% prints: z = 15</span></pre>
-
-    <h3>Comments</h3>
-    <p>A percent sign <code>%</code> starts a comment. Everything after it on that line is ignored. Comments explain <em>why</em>, not what — the code itself shows what.</p>
-<pre><span class="cm">% This whole line is a comment</span>
-<span class="var">r</span> = <span class="num">5</span>;      <span class="cm">% radius in metres — inline comment</span></pre>
-
-    <h3>Displaying Output</h3>
-    <table>
-      <tr><th>Command</th><th>What it does</th><th>Example</th></tr>
-      <tr><td><code>disp(x)</code></td><td>Prints value, no label</td><td><code>disp(3.14)</code> → <code>3.1400</code></td></tr>
-      <tr><td><code>disp('text')</code></td><td>Prints a string</td><td><code>disp('hello')</code></td></tr>
-      <tr><td><code>fprintf(fmt, ...)</code></td><td>Formatted output (like printf)</td><td><code>fprintf('x = %.2f\n', x)</code></td></tr>
-    </table>
-
-    <h3>fprintf Format Specifiers</h3>
-    <table>
-      <tr><th>Specifier</th><th>Meaning</th><th>Example</th><th>Output</th></tr>
-      <tr><td><code>%d</code></td><td>Integer</td><td><code>fprintf('%d\n', 7)</code></td><td><code>7</code></td></tr>
-      <tr><td><code>%f</code></td><td>Fixed decimal</td><td><code>fprintf('%f\n', 3.14)</code></td><td><code>3.140000</code></td></tr>
-      <tr><td><code>%.2f</code></td><td>2 decimal places</td><td><code>fprintf('%.2f\n', 3.14159)</code></td><td><code>3.14</code></td></tr>
-      <tr><td><code>%e</code></td><td>Scientific notation</td><td><code>fprintf('%e\n', 12500)</code></td><td><code>1.250000e+04</code></td></tr>
-      <tr><td><code>%s</code></td><td>String</td><td><code>fprintf('%s\n', 'hi')</code></td><td><code>hi</code></td></tr>
-      <tr><td><code>\n</code></td><td>Newline</td><td colspan="2">Always include at end of line</td></tr>
-      <tr><td><code>\t</code></td><td>Tab</td><td colspan="2">Align columns</td></tr>
-    </table>
-
-    <h3>Order of Operations (PEMDAS/BODMAS)</h3>
-    <p>MATLAB follows standard mathematical precedence:</p>
-    <ol>
-      <li>Parentheses <code>()</code> — innermost first</li>
-      <li>Exponentiation <code>^</code> — right to left</li>
-      <li>Unary minus <code>-x</code></li>
-      <li>Multiplication <code>*</code>, Division <code>/</code> — left to right</li>
-      <li>Addition <code>+</code>, Subtraction <code>-</code> — left to right</li>
-    </ol>
-
-    <h3>Useful Workspace Commands</h3>
-    <div class="ref-grid">
-      <div class="ref-cell"><span class="rc-fn">clc</span><div class="rc-desc">clear command window</div></div>
-      <div class="ref-cell"><span class="rc-fn">clear</span><div class="rc-desc">delete all variables</div></div>
-      <div class="ref-cell"><span class="rc-fn">clear x y</span><div class="rc-desc">delete named variables</div></div>
-      <div class="ref-cell"><span class="rc-fn">who</span><div class="rc-desc">list variable names</div></div>
-      <div class="ref-cell"><span class="rc-fn">whos</span><div class="rc-desc">list with size and type</div></div>
-      <div class="ref-cell"><span class="rc-fn">close all</span><div class="rc-desc">close all figure windows</div></div>
-    </div>
-  </div>
-
-  <div class="example-box">
-    <div class="example-label">Worked Example 1.1 — First complete script</div>
-    <p>Write a script that asks for the radius of a sphere and outputs its volume and surface area, formatted to 3 decimal places.</p>
-<pre><span class="cm">% Sphere calculator</span>
-<span class="fn">clc</span>; <span class="kw">clear</span>;
-
-<span class="var">r</span> = <span class="fn">input</span>(<span class="str">'Enter sphere radius (m): '</span>);
-
-<span class="var">V</span> = (<span class="num">4</span>/<span class="num">3</span>) * pi * <span class="var">r</span>^<span class="num">3</span>;
-<span class="var">A</span> = <span class="num">4</span> * pi * <span class="var">r</span>^<span class="num">2</span>;
-
-<span class="fn">fprintf</span>(<span class="str">'Radius        = %.3f m\n'</span>, <span class="var">r</span>);
-<span class="fn">fprintf</span>(<span class="str">'Volume        = %.3f m^3\n'</span>, <span class="var">V</span>);
-<span class="fn">fprintf</span>(<span class="str">'Surface area  = %.3f m^2\n'</span>, <span class="var">A</span>);</pre>
-    <div class="output">Enter sphere radius (m): 3
-Radius        = 3.000 m
-Volume        = 113.097 m^3
-Surface area  = 113.097 m^2</div>
-  </div>
-
-  <div class="example-box">
-    <div class="example-label">Worked Example 1.2 — Order of operations traps</div>
-    <p>Predict the output before running, then verify.</p>
-<pre><span class="var">a</span> = <span class="num">2</span> + <span class="num">3</span> * <span class="num">4</span>;        <span class="cm">% → 14, not 20</span>
-<span class="var">b</span> = (<span class="num">2</span> + <span class="num">3</span>) * <span class="num">4</span>;      <span class="cm">% → 20</span>
-<span class="var">c</span> = <span class="num">2</span> ^ <span class="num">3</span> ^ <span class="num">2</span>;        <span class="cm">% → 512 (2^(3^2) = 2^9), right-to-left</span>
-<span class="var">d</span> = <span class="num">10</span> / <span class="num">2</span> * <span class="num">5</span>;       <span class="cm">% → 25, not 1 (left-to-right)</span>
-<span class="var">e</span> = -<span class="num">2</span>^<span class="num">2</span>;             <span class="cm">% → -4, not 4 (power before unary minus)</span>
-<span class="fn">fprintf</span>(<span class="str">'%d %d %d %d %d\n'</span>, <span class="var">a</span>, <span class="var">b</span>, <span class="var">c</span>, <span class="var">d</span>, <span class="var">e</span>);</pre>
-    <div class="output">14 20 512 25 -4</div>
-  </div>
-
-  <div class="practice-box">
-    <div class="practice-label">Practice Problems</div>
-    <ol>
-      <li>Write a script that reads a temperature in Celsius and prints it in Fahrenheit (F = C × 9/5 + 32) and Kelvin (K = C + 273.15), both to 2 decimal places.</li>
-      <li>Without running MATLAB, evaluate: 3 + 4 ^ 2 / 8 - 1. Show each step.</li>
-      <li>Write a script that reads two numbers and prints their sum, difference, product, and quotient in a neatly formatted table using fprintf.</li>
-    </ol>
-    <details class="answer">
-      <summary>▶ Show Answers</summary>
-      <div class="ans-body">
-<pre><span class="cm">% Q1 — Temperature converter</span>
-<span class="var">C</span> = <span class="fn">input</span>(<span class="str">'Celsius: '</span>);
-<span class="fn">fprintf</span>(<span class="str">'Fahrenheit = %.2f\n'</span>, <span class="var">C</span>*<span class="num">9</span>/<span class="num">5</span> + <span class="num">32</span>);
-<span class="fn">fprintf</span>(<span class="str">'Kelvin     = %.2f\n'</span>, <span class="var">C</span> + <span class="num">273.15</span>);</pre>
-        <p><strong>Q2:</strong> 4^2 = 16 → 16/8 = 2 → 3 + 2 - 1 = 4</p>
-<pre><span class="cm">% Q3 — Two number table</span>
-<span class="var">a</span> = <span class="fn">input</span>(<span class="str">'First number: '</span>);
-<span class="var">b</span> = <span class="fn">input</span>(<span class="str">'Second number: '</span>);
-<span class="fn">fprintf</span>(<span class="str">'Sum        = %.4f\n'</span>, <span class="var">a</span>+<span class="var">b</span>);
-<span class="fn">fprintf</span>(<span class="str">'Difference = %.4f\n'</span>, <span class="var">a</span>-<span class="var">b</span>);
-<span class="fn">fprintf</span>(<span class="str">'Product    = %.4f\n'</span>, <span class="var">a</span>*<span class="var">b</span>);
-<span class="fn">fprintf</span>(<span class="str">'Quotient   = %.4f\n'</span>, <span class="var">a</span>/<span class="var">b</span>);</pre>
-      </div>
-    </details>
-  </div>
-
+  <nav id="module-nav"></nav>
 </div>
 
-<!-- ═══════════════════════════════════════
-     TOPIC 2 — VARIABLES & OPERATORS
-════════════════════════════════════════ -->
-<div class="page" id="page-t2">
-  <div class="page-hero">
-    <div class="page-hero-label">Topic 2</div>
-    <div class="page-hero-title">Variables, Data Types & Operators</div>
-    <div class="page-hero-sub">Naming, double, char, logical, type conversion, math functions</div>
-  </div>
-
-  <div class="topic-section">
-    <h3>Variable Naming Rules</h3>
-    <ul>
-      <li>Must start with a letter</li>
-      <li>Can contain letters, digits, and underscore _</li>
-      <li>Case-sensitive: Mass and mass are different variables</li>
-      <li>Cannot be a MATLAB keyword (for, if, end, etc.)</li>
-      <li>Avoid names that shadow built-in functions: don't name a variable sum, max, pi</li>
-    </ul>
-
-    <h3>Data Types</h3>
-    <table>
-      <tr><th>Type</th><th>How to create</th><th>Size</th><th>Notes</th></tr>
-      <tr><td><strong>double</strong></td><td>x = 3.14</td><td>64-bit float</td><td>Default for all numeric literals</td></tr>
-      <tr><td><strong>int32</strong></td><td>n = int32(5)</td><td>32-bit integer</td><td>Must cast explicitly; arithmetic wraps</td></tr>
-      <tr><td><strong>char</strong></td><td>c = 'hello'</td><td>16-bit per char</td><td>Single quotes; array of ASCII codes</td></tr>
-      <tr><td><strong>string</strong></td><td>s = "hello"</td><td>—</td><td>Double quotes; string object (newer MATLAB)</td></tr>
-      <tr><td><strong>logical</strong></td><td>b = true or x > 0</td><td>1-bit</td><td>Only true(1) or false(0)</td></tr>
-    </table>
-
-    <h3>Type Checking and Conversion</h3>
-    <div class="ref-grid">
-      <div class="ref-cell"><span class="rc-fn">class(x)</span><div class="rc-desc">returns type as string</div></div>
-      <div class="ref-cell"><span class="rc-fn">isnumeric(x)</span><div class="rc-desc">true if numeric</div></div>
-      <div class="ref-cell"><span class="rc-fn">ischar(x)</span><div class="rc-desc">true if char array</div></div>
-      <div class="ref-cell"><span class="rc-fn">islogical(x)</span><div class="rc-desc">true if logical</div></div>
-      <div class="ref-cell"><span class="rc-fn">double(x)</span><div class="rc-desc">convert to double</div></div>
-      <div class="ref-cell"><span class="rc-fn">int32(x)</span><div class="rc-desc">convert to int32</div></div>
-      <div class="ref-cell"><span class="rc-fn">char(65)</span><div class="rc-desc">→ 'A' (ASCII)</div></div>
-      <div class="ref-cell"><span class="rc-fn">num2str(x)</span><div class="rc-desc">number to string</div></div>
-      <div class="ref-cell"><span class="rc-fn">str2num(s)</span><div class="rc-desc">string to number</div></div>
-    </div>
-
-    <h3>Arithmetic Operators</h3>
-    <table>
-      <tr><th>Operator</th><th>Operation</th><th>Example</th><th>Result</th></tr>
-      <tr><td>+</td><td>Addition</td><td>7 + 3</td><td>10</td></tr>
-      <tr><td>-</td><td>Subtraction</td><td>7 - 3</td><td>4</td></tr>
-      <tr><td>*</td><td>Multiply</td><td>7 * 3</td><td>21</td></tr>
-      <tr><td>/</td><td>Divide</td><td>7 / 3</td><td>2.3333</td></tr>
-      <tr><td>\</td><td>Left divide</td><td>3 \ 7</td><td>2.3333 (= 7/3)</td></tr>
-      <tr><td>^</td><td>Power</td><td>2 ^ 8</td><td>256</td></tr>
-      <tr><td>mod(a,b)</td><td>Remainder</td><td>mod(17,5)</td><td>2</td></tr>
-    </table>
-
-    <h3>Built-in Mathematical Functions</h3>
-    <div class="ref-grid">
-      <div class="ref-cell"><span class="rc-fn">sqrt(x)</span><div class="rc-desc">square root</div></div>
-      <div class="ref-cell"><span class="rc-fn">abs(x)</span><div class="rc-desc">absolute value</div></div>
-      <div class="ref-cell"><span class="rc-fn">exp(x)</span><div class="rc-desc">e^x</div></div>
-      <div class="ref-cell"><span class="rc-fn">log(x)</span><div class="rc-desc">natural log (ln)</div></div>
-      <div class="ref-cell"><span class="rc-fn">log10(x)</span><div class="rc-desc">log base 10</div></div>
-      <div class="ref-cell"><span class="rc-fn">sin/cos/tan(x)</span><div class="rc-desc">x in radians</div></div>
-      <div class="ref-cell"><span class="rc-fn">sind/cosd/tand(x)</span><div class="rc-desc">x in degrees</div></div>
-      <div class="ref-cell"><span class="rc-fn">floor(x)</span><div class="rc-desc">round down</div></div>
-      <div class="ref-cell"><span class="rc-fn">ceil(x)</span><div class="rc-desc">round up</div></div>
-      <div class="ref-cell"><span class="rc-fn">round(x)</span><div class="rc-desc">round to nearest</div></div>
-    </div>
-
-    <h3>Special Constants</h3>
-    <table>
-      <tr><th>Constant</th><th>Value</th><th>Notes</th></tr>
-      <tr><td>pi</td><td>3.14159265…</td><td>Don't overwrite!</td></tr>
-      <tr><td>exp(1)</td><td>2.71828…</td><td>Euler's number e</td></tr>
-      <tr><td>Inf</td><td>∞</td><td>e.g. result of 1/0</td></tr>
-      <tr><td>NaN</td><td>Not a Number</td><td>result of 0/0, Inf-Inf</td></tr>
-      <tr><td>eps</td><td>~2.2×10⁻¹⁶</td><td>machine precision</td></tr>
-    </table>
-
-    <div class="callout-warn">
-      <strong>Degrees vs Radians:</strong> sin, cos, tan all expect <strong>radians</strong>. Convert: deg2rad(angle) or multiply by pi/180. Use sind/cosd/tand for degrees directly.
-    </div>
-  </div>
-
-  <div class="example-box">
-    <div class="example-label">Worked Example 2.1 — Kinematic calculation</div>
-    <p>A projectile launched at 25 m/s at 40°. Calculate horizontal and vertical velocity components.</p>
-<pre><span class="fn">clc</span>; <span class="kw">clear</span>;
-<span class="var">v0</span>  = <span class="num">25</span>;          <span class="cm">% m/s</span>
-<span class="var">deg</span> = <span class="num">40</span>;          <span class="cm">% degrees</span>
-<span class="var">rad</span> = <span class="fn">deg2rad</span>(<span class="var">deg</span>);
-
-<span class="var">vx</span> = <span class="var">v0</span> * <span class="fn">cos</span>(<span class="var">rad</span>);
-<span class="var">vy</span> = <span class="var">v0</span> * <span class="fn">sin</span>(<span class="var">rad</span>);
-<span class="var">speed</span> = <span class="fn">sqrt</span>(<span class="var">vx</span>^<span class="num">2</span> + <span class="var">vy</span>^<span class="num">2</span>);
-
-<span class="fn">fprintf</span>(<span class="str">'vx    = %.4f m/s\n'</span>, <span class="var">vx</span>);
-<span class="fn">fprintf</span>(<span class="str">'vy    = %.4f m/s\n'</span>, <span class="var">vy</span>);
-<span class="fn">fprintf</span>(<span class="str">'speed = %.4f m/s\n'</span>, <span class="var">speed</span>);</pre>
-    <div class="output">vx    = 19.1511 m/s
-vy    = 16.0697 m/s
-speed = 25.0000 m/s</div>
-  </div>
-
-  <div class="practice-box">
-    <div class="practice-label">Practice Problems</div>
-    <ol>
-      <li>Write a script that reads a hypotenuse and one angle (in degrees) of a right triangle and outputs both other sides.</li>
-      <li>What does class(int32(5) + 2.7) return? Predict first, then verify.</li>
-      <li>Given x = -7.6, find: abs(x), floor(x), ceil(x), round(x), fix(x). Predict all five.</li>
-    </ol>
-    <details class="answer">
-      <summary>▶ Show Answers</summary>
-      <div class="ans-body">
-<pre><span class="cm">% Q1</span>
-<span class="var">h</span>   = <span class="fn">input</span>(<span class="str">'Hypotenuse: '</span>);
-<span class="var">ang</span> = <span class="fn">input</span>(<span class="str">'Angle (degrees): '</span>);
-<span class="var">opp</span> = <span class="var">h</span> * <span class="fn">sind</span>(<span class="var">ang</span>);
-<span class="var">adj</span> = <span class="var">h</span> * <span class="fn">cosd</span>(<span class="var">ang</span>);
-<span class="fn">fprintf</span>(<span class="str">'Opposite = %.4f\n'</span>, <span class="var">opp</span>);
-<span class="fn">fprintf</span>(<span class="str">'Adjacent = %.4f\n'</span>, <span class="var">adj</span>);</pre>
-        <p><strong>Q2:</strong> int32 — integer type wins when mixed with double.</p>
-        <p><strong>Q3:</strong> abs = 7.6, floor = -8, ceil = -7, round = -8, fix = -7</p>
-      </div>
-    </details>
-  </div>
-
-</div>
-
-<!-- Additional topics 3-10 continue with same pattern... -->
-<!-- For brevity, I'll include outlines for remaining topics -->
-
-<!-- TOPIC 3 — ALGORITHM DESIGN -->
-<div class="page" id="page-t3">
-  <div class="page-hero">
-    <div class="page-hero-label">Topic 3</div>
-    <div class="page-hero-title">Algorithm Design & Pseudocode</div>
-    <div class="page-hero-sub">Problem decomposition, flowcharts, pseudocode, tracing, debugging</div>
-  </div>
-
-  <div class="topic-section">
-    <h3>What is an Algorithm?</h3>
-    <p>An algorithm is a finite, unambiguous sequence of instructions that solves a problem. Good algorithms are correct, efficient, readable, and handle edge cases.</p>
-
-    <h3>The Engineering Problem-Solving Process</h3>
-    <ol>
-      <li><strong>Understand the problem</strong> — what are inputs, outputs, constraints?</li>
-      <li><strong>Work an example by hand</strong> — for small inputs, trace through manually</li>
-      <li><strong>Design the algorithm</strong> — flowchart or pseudocode</li>
-      <li><strong>Code it</strong> — translate to MATLAB</li>
-      <li><strong>Test with known cases</strong> — simple inputs where you know the answer</li>
-      <li><strong>Test edge cases</strong> — zero, negative, empty, very large inputs</li>
-    </ol>
-
-    <h3>Flowchart Symbols</h3>
-    <table>
-      <tr><th>Symbol</th><th>Shape</th><th>Meaning</th></tr>
-      <tr><td>Terminal</td><td>Oval / Rounded rect</td><td>Start and End</td></tr>
-      <tr><td>Process</td><td>Rectangle</td><td>Computation or assignment</td></tr>
-      <tr><td>Input/Output</td><td>Parallelogram</td><td>Read input or write output</td></tr>
-      <tr><td>Decision</td><td>Diamond</td><td>Yes/No branch (condition)</td></tr>
-      <tr><td>Connector</td><td>Small circle</td><td>Connect flow across page breaks</td></tr>
-      <tr><td>Arrow</td><td>→</td><td>Direction of flow</td></tr>
-    </table>
-  </div>
-
-  <div class="example-box">
-    <div class="example-label">Worked Example 3.1 — Counting odd numbers</div>
-    <p><strong>Problem:</strong> Read N numbers from the user. Count how many are odd.</p>
-<pre><span class="var">N</span> = <span class="fn">input</span>(<span class="str">'How many numbers? '</span>);
-<span class="var">count</span> = <span class="num">0</span>;
-<span class="kw">for</span> <span class="var">i</span> = <span class="num">1</span>:<span class="var">N</span>
-    <span class="var">num</span> = <span class="fn">input</span>(<span class="str">'Enter number: '</span>);
-    <span class="kw">if</span> <span class="fn">mod</span>(<span class="var">num</span>, <span class="num">2</span>) ~= <span class="num">0</span>
-        <span class="var">count</span> = <span class="var">count</span> + <span class="num">1</span>;
-    <span class="kw">end</span>
-<span class="kw">end</span>
-<span class="fn">fprintf</span>(<span class="str">'Odd numbers: %d\n'</span>, <span class="var">count</span>);</pre>
-  </div>
-
-  <div class="practice-box">
-    <div class="practice-label">Practice Problems</div>
-    <ol>
-      <li>Design (pseudocode + trace table) an algorithm that reads 10 numbers and prints the count of positives, negatives, and zeros.</li>
-      <li>Draw a flowchart for: read a number, keep reading more numbers until the user enters 0, then print the running total.</li>
-    </ol>
-  </div>
-
-</div>
-
-<!-- TOPIC 4 — CONDITIONALS -->
-<div class="page" id="page-t4">
-  <div class="page-hero">
-    <div class="page-hero-label">Topic 4</div>
-    <div class="page-hero-title">Conditional Statements</div>
-    <div class="page-hero-sub">if, elseif, else, switch, nested, short-circuit operators</div>
-  </div>
-
-  <div class="topic-section">
-    <h3>if / elseif / else</h3>
-    <p>Only one branch executes — the first one whose condition is true.</p>
-<pre><span class="kw">if</span> condition_1
-    <span class="cm">% runs ONLY if condition_1 is true</span>
-<span class="kw">elseif</span> condition_2
-    <span class="cm">% runs ONLY if condition_1 false AND condition_2 true</span>
-<span class="kw">else</span>
-    <span class="cm">% runs if ALL conditions above are false</span>
-<span class="kw">end</span></pre>
-
-    <h3>Relational Operators</h3>
-    <table>
-      <tr><th>Operator</th><th>Meaning</th><th>Example</th><th>Result</th></tr>
-      <tr><td>==</td><td>Equal to</td><td>5 == 5</td><td>true</td></tr>
-      <tr><td>~=</td><td>Not equal</td><td>5 ~= 3</td><td>true</td></tr>
-      <tr><td>&lt;</td><td>Less than</td><td>3 &lt; 5</td><td>true</td></tr>
-      <tr><td>&lt;=</td><td>Less or equal</td><td>5 &lt;= 5</td><td>true</td></tr>
-      <tr><td>&gt;</td><td>Greater than</td><td>3 &gt; 5</td><td>false</td></tr>
-      <tr><td>&gt;=</td><td>Greater or equal</td><td>5 &gt;= 6</td><td>false</td></tr>
-    </table>
-
-    <h3>Logical Operators</h3>
-    <table>
-      <tr><th>Operator</th><th>Meaning</th><th>Use</th></tr>
-      <tr><td>&&</td><td>AND (short-circuit)</td><td>Scalars in if conditions</td></tr>
-      <tr><td>||</td><td>OR (short-circuit)</td><td>Scalars in if conditions</td></tr>
-      <tr><td>&</td><td>AND (element-wise)</td><td>Arrays</td></tr>
-      <tr><td>|</td><td>OR (element-wise)</td><td>Arrays</td></tr>
-      <tr><td>~</td><td>NOT</td><td>Both scalars and arrays</td></tr>
-    </table>
-  </div>
-
-  <div class="example-box">
-    <div class="example-label">Worked Example 4.1 — Grade classifier</div>
-<pre><span class="var">mark</span> = <span class="fn">input</span>(<span class="str">'Enter mark (0-100): '</span>);
-
-<span class="kw">if</span> <span class="var">mark</span> < <span class="num">0</span> || <span class="var">mark</span> > <span class="num">100</span>
-    <span class="fn">fprintf</span>(<span class="str">'Error: mark must be between 0 and 100\n'</span>);
-<span class="kw">elseif</span> <span class="var">mark</span> >= <span class="num">85</span>
-    <span class="var">grade</span> = <span class="str">'HD'</span>;
-<span class="kw">elseif</span> <span class="var">mark</span> >= <span class="num">75</span>
-    <span class="var">grade</span> = <span class="str">'D'</span>;
-<span class="kw">elseif</span> <span class="var">mark</span> >= <span class="num">65</span>
-    <span class="var">grade</span> = <span class="str">'C'</span>;
-<span class="kw">elseif</span> <span class="var">mark</span> >= <span class="num">50</span>
-    <span class="var">grade</span> = <span class="str">'P'</span>;
-<span class="kw">else</span>
-    <span class="var">grade</span> = <span class="str">'F'</span>;
-<span class="kw">end</span>
-
-<span class="kw">if</span> <span class="var">mark</span> >= <span class="num">0</span> && <span class="var">mark</span> <= <span class="num">100</span>
-    <span class="fn">fprintf</span>(<span class="str">'Grade: %s\n'</span>, <span class="var">grade</span>);
-<span class="kw">end</span></pre>
-  </div>
-
-  <div class="practice-box">
-    <div class="practice-label">Practice Problems</div>
-    <ol>
-      <li>Write a script that reads a year and determines whether it is a leap year.</li>
-      <li>Write a calculator: read two numbers and an operator (+, -, *, /). Use switch to perform the correct operation.</li>
-    </ol>
-  </div>
-
-</div>
-
-<!-- TOPIC 5 — LOOPS -->
-<div class="page" id="page-t5">
-  <div class="page-hero">
-    <div class="page-hero-label">Topic 5</div>
-    <div class="page-hero-title">Loops — for, while, break, continue</div>
-    <div class="page-hero-sub">Count-controlled, condition-controlled, nested, loop patterns</div>
-  </div>
-
-  <div class="topic-section">
-    <h3>for Loop — Count-Controlled</h3>
-    <p>Use when you know exactly how many iterations to run.</p>
-<pre><span class="kw">for</span> <span class="var">variable</span> = start:step:stop
-    <span class="cm">% body — runs for each value of variable</span>
-<span class="kw">end</span></pre>
-    <ul>
-      <li>Default step is 1: for i = 1:10 → i = 1, 2, …, 10</li>
-      <li>Custom step: for k = 0:0.5:2 → k = 0, 0.5, 1.0, 1.5, 2.0</li>
-      <li>Negative step: for j = 10:-1:1</li>
-    </ul>
-
-    <h3>while Loop — Condition-Controlled</h3>
-<pre><span class="kw">while</span> condition
-    <span class="cm">% body — runs while condition is true</span>
-<span class="kw">end</span></pre>
-
-    <h3>break and continue</h3>
-    <table>
-      <tr><th>Keyword</th><th>Effect</th></tr>
-      <tr><td>break</td><td>Exit the innermost loop immediately</td></tr>
-      <tr><td>continue</td><td>Skip rest of current iteration, go to next</td></tr>
-    </table>
-  </div>
-
-  <div class="example-box">
-    <div class="example-label">Worked Example 5.1 — Factorial</div>
-<pre><span class="var">n</span> = <span class="fn">input</span>(<span class="str">'Enter n: '</span>);
-<span class="var">fact</span> = <span class="num">1</span>;
-<span class="kw">for</span> <span class="var">k</span> = <span class="num">1</span>:<span class="var">n</span>
-    <span class="var">fact</span> = <span class="var">fact</span> * <span class="var">k</span>;
-<span class="kw">end</span>
-<span class="fn">fprintf</span>(<span class="str">'%d! = %d\n'</span>, <span class="var">n</span>, <span class="var">fact</span>);</pre>
-  </div>
-
-  <div class="practice-box">
-    <div class="practice-label">Practice Problems</div>
-    <ol>
-      <li>Write a for loop that computes the sum of 1/k² for k=1 to 100.</li>
-      <li>Write a while loop that finds the smallest n such that n! > 10⁶.</li>
-      <li>Use nested loops to print a triangle pattern of asterisks (5 rows).</li>
-    </ol>
-  </div>
-
-</div>
-
-<!-- TOPIC 6 — FUNCTIONS -->
-<div class="page" id="page-t6">
-  <div class="page-hero">
-    <div class="page-hero-label">Topic 6</div>
-    <div class="page-hero-title">Functions</div>
-    <div class="page-hero-sub">Definition, scope, multiple outputs, anonymous, recursion</div>
-  </div>
-
-  <div class="topic-section">
-    <h3>Function Syntax</h3>
-<pre><span class="kw">function</span> [<span class="var">out1</span>, <span class="var">out2</span>] = <span class="fn">functionName</span>(<span class="var">in1</span>, <span class="var">in2</span>)
-    <span class="cm">% Function body</span>
-    <span class="var">out1</span> = <span class="var">in1</span> + <span class="var">in2</span>;
-    <span class="var">out2</span> = <span class="var">in1</span> * <span class="var">in2</span>;
-<span class="kw">end</span></pre>
-
-    <h3>Variable Scope</h3>
-    <p>Function workspaces are <strong>completely isolated</strong>. Variables inside exist only during that function call.</p>
-
-    <h3>Anonymous Functions</h3>
-<pre><span class="var">square</span>  = @(<span class="var">x</span>) <span class="var">x</span>.^<span class="num">2</span>;
-<span class="var">hyp</span>     = @(<span class="var">a</span>,<span class="var">b</span>) <span class="fn">sqrt</span>(<span class="var">a</span>.^<span class="num">2</span> + <span class="var">b</span>.^<span class="num">2</span>);</pre>
-  </div>
-
-  <div class="example-box">
-    <div class="example-label">Worked Example 6.1 — Statistics function</div>
-<pre><span class="kw">function</span> [mn, mx, avg] = <span class="fn">myStats</span>(<span class="var">data</span>)
-    <span class="var">mn</span>  = <span class="fn">min</span>(<span class="var">data</span>);
-    <span class="var">mx</span>  = <span class="fn">max</span>(<span class="var">data</span>);
-    <span class="var">avg</span> = <span class="fn">mean</span>(<span class="var">data</span>);
-<span class="kw">end</span></pre>
-  </div>
-
-  <div class="practice-box">
-    <div class="practice-label">Practice Problems</div>
-    <ol>
-      <li>Write a function isPrime(n) that returns true if n is prime.</li>
-      <li>Write a function BMI(mass_kg, height_m) that returns the BMI value and a category string.</li>
-    </ol>
-  </div>
-
-</div>
-
-<!-- TOPIC 7 — ARRAYS & MATRICES -->
-<div class="page" id="page-t7">
-  <div class="page-hero">
-    <div class="page-hero-label">Topic 7</div>
-    <div class="page-hero-title">Arrays & Matrices</div>
-    <div class="page-hero-sub">Creation, indexing, slicing, operations, built-in functions</div>
-  </div>
-
-  <div class="topic-section">
-    <h3>Creating Arrays</h3>
-<pre><span class="cm">% Row vectors</span>
-<span class="var">v</span> = [<span class="num">1</span> <span class="num">2</span> <span class="num">3</span> <span class="num">4</span>];
-
-<span class="cm">% Range notation</span>
-<span class="var">a</span> = <span class="num">1</span>:<span class="num">5</span>;                  <span class="cm">% [1 2 3 4 5]</span>
-<span class="var">b</span> = <span class="num">0</span>:<span class="num">0.25</span>:<span class="num">1</span>;             <span class="cm">% [0 0.25 0.5 0.75 1.0]</span>
-
-<span class="cm">% Matrices</span>
-<span class="var">A</span> = [<span class="num">1</span> <span class="num">2</span> <span class="num">3</span>; <span class="num">4</span> <span class="num">5</span> <span class="num">6</span>];      <span class="cm">% 2×3 matrix</span>
-
-<span class="cm">% Special matrices</span>
-<span class="fn">zeros</span>(<span class="num">3</span>)            <span class="cm">% 3×3 zeros</span>
-<span class="fn">ones</span>(<span class="num">2</span>,<span class="num">4</span>)           <span class="cm">% 2×4 ones</span>
-<span class="fn">eye</span>(<span class="num">3</span>)              <span class="cm">% 3×3 identity</span></pre>
-
-    <h3>Indexing</h3>
-    <div class="callout-warn"><strong>MATLAB is 1-based.</strong> First element is index 1, not 0.</div>
-<pre><span class="var">v</span> = [<span class="num">10</span> <span class="num">20</span> <span class="num">30</span> <span class="num">40</span> <span class="num">50</span>];
-<span class="var">v</span>(<span class="num">1</span>)             <span class="cm">% → 10  (first)</span>
-<span class="var">v</span>(<span class="kw">end</span>)           <span class="cm">% → 50  (last)</span>
-<span class="var">v</span>(<span class="num">2</span>:<span class="num">4</span>)          <span class="cm">% → [20 30 40]</span></pre>
-
-    <h3>Essential Array Functions</h3>
-    <div class="ref-grid">
-      <div class="ref-cell"><span class="rc-fn">length(v)</span><div class="rc-desc">number of elements</div></div>
-      <div class="ref-cell"><span class="rc-fn">size(A)</span><div class="rc-desc">[rows, cols]</div></div>
-      <div class="ref-cell"><span class="rc-fn">sum(v)</span><div class="rc-desc">sum of elements</div></div>
-      <div class="ref-cell"><span class="rc-fn">min(v) / max(v)</span><div class="rc-desc">minimum/maximum</div></div>
-      <div class="ref-cell"><span class="rc-fn">mean(v)</span><div class="rc-desc">average</div></div>
-      <div class="ref-cell"><span class="rc-fn">sort(v)</span><div class="rc-desc">sort ascending</div></div>
-    </div>
-  </div>
-
-  <div class="example-box">
-    <div class="example-label">Worked Example 7.1 — Logical indexing</div>
-<pre><span class="var">readings</span> = [<span class="num">42</span> <span class="num">67</span> <span class="num">38</span> <span class="num">91</span> <span class="num">55</span>];
-<span class="var">high</span>     = <span class="var">readings</span>(<span class="var">readings</span> > <span class="num">50</span>);
-<span class="fn">fprintf</span>(<span class="str">'High readings: '</span>);
-<span class="fn">fprintf</span>(<span class="str">'%d '</span>, <span class="var">high</span>);
-<span class="fn">fprintf</span>(<span class="str">'\n'</span>);</pre>
-    <div class="output">High readings: 67 91 55</div>
-  </div>
-
-  <div class="practice-box">
-    <div class="practice-label">Practice Problems</div>
-    <ol>
-      <li>Create the vector v = [5 3 8 1 9 2 7]. Find: sum, max and its index, extract all elements greater than 4.</li>
-      <li>Create a 4×4 matrix where A(i,j) = i + j using nested loops.</li>
-    </ol>
-  </div>
-
-</div>
-
-<!-- TOPIC 8 — VECTORISATION -->
-<div class="page" id="page-t8">
-  <div class="page-hero">
-    <div class="page-hero-label">Topic 8</div>
-    <div class="page-hero-title">Vectorisation & Code Optimisation</div>
-    <div class="page-hero-sub">Element-wise ops, pre-allocation, speed comparison</div>
-  </div>
-
-  <div class="topic-section">
-    <h3>Why Vectorise?</h3>
-    <p>MATLAB is built on highly optimised linear algebra libraries. Vectorised operations can be 10–100× faster than equivalent for loops.</p>
-
-    <h3>Element-wise Operators</h3>
-    <table>
-      <tr><th>Operator</th><th>Name</th><th>Example</th><th>Result</th></tr>
-      <tr><td>.*</td><td>Element multiply</td><td>v .* [1 2 3]</td><td>[2 6 12]</td></tr>
-      <tr><td>./</td><td>Element divide</td><td>v ./ [2 3 4]</td><td>[1 1 1]</td></tr>
-      <tr><td>.^</td><td>Element power</td><td>v .^ 2</td><td>[4 9 16]</td></tr>
-    </table>
-
-    <h3>Pre-allocation</h3>
-<pre><span class="cm">% BAD — array grows every iteration</span>
-<span class="var">result</span> = [];
-<span class="kw">for</span> <span class="var">i</span> = <span class="num">1</span>:<span class="var">n</span>
-    <span class="var">result</span>(<span class="kw">end</span>+<span class="num">1</span>) = <span class="var">i</span>^<span class="num">2</span>;
-<span class="kw">end</span>
-
-<span class="cm">% GOOD — allocate once</span>
-<span class="var">result</span> = <span class="fn">zeros</span>(<span class="num">1</span>, <span class="var">n</span>);
-<span class="kw">for</span> <span class="var">i</span> = <span class="num">1</span>:<span class="var">n</span>
-    <span class="var">result</span>(<span class="var">i</span>) = <span class="var">i</span>^<span class="num">2</span>;
-<span class="kw">end</span>
-
-<span class="cm">% BEST — fully vectorised</span>
-<span class="var">i</span> = <span class="num">1</span>:<span class="var">n</span>;
-<span class="var">result</span> = <span class="var">i</span>.^<span class="num">2</span>;</pre>
-  </div>
-
-  <div class="example-box">
-    <div class="example-label">Worked Example 8.1 — Vectorised kinematics</div>
-<pre><span class="var">v0</span> = <span class="num">15</span>; <span class="var">g</span> = <span class="num">9.81</span>;
-<span class="var">t</span>  = <span class="num">0</span>:<span class="num">0.1</span>:<span class="num">3</span>;
-
-<span class="var">s</span> = <span class="var">v0</span>*<span class="var">t</span> - <span class="num">0.5</span>*<span class="var">g</span>*<span class="var">t</span>.^<span class="num">2</span>;    <span class="cm">% vectorised</span>
-<span class="var">v</span> = <span class="var">v0</span> - <span class="var">g</span>*<span class="var">t</span>;</pre>
-  </div>
-
-  <div class="practice-box">
-    <div class="practice-label">Practice Problems</div>
-    <ol>
-      <li>Vectorise: given x = 1:20, compute y = x³ - 5x² + 2x without using a loop.</li>
-      <li>Replace this loop with vectorised code: if data(i) > 100, set data(i) = 100.</li>
-    </ol>
-    <details class="answer">
-      <summary>▶ Show Answers</summary>
-      <div class="ans-body">
-<pre><span class="cm">% Q1</span>
-<span class="var">x</span> = <span class="num">1</span>:<span class="num">20</span>;
-<span class="var">y</span> = <span class="var">x</span>.^<span class="num">3</span> - <span class="num">5</span>*<span class="var">x</span>.^<span class="num">2</span> + <span class="num">2</span>*<span class="var">x</span>;
-
-<span class="cm">% Q2</span>
-<span class="var">data</span>(<span class="var">data</span> > <span class="num">100</span>) = <span class="num">100</span>;</pre>
-      </div>
-    </details>
-  </div>
-
-</div>
-
-<!-- TOPIC 9 — DATA VISUALISATION -->
-<div class="page" id="page-t9">
-  <div class="page-hero">
-    <div class="page-hero-label">Topic 9</div>
-    <div class="page-hero-title">Data Visualisation & Plotting</div>
-    <div class="page-hero-sub">plot, formatting, multiple lines, subplot, other chart types</div>
-  </div>
-
-  <div class="topic-section">
-    <h3>Basic 2D Plot</h3>
-<pre><span class="var">x</span> = <span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">2</span>*pi, <span class="num">200</span>);
-<span class="var">y</span> = <span class="fn">sin</span>(<span class="var">x</span>);
-
-<span class="fn">figure</span>
-<span class="fn">plot</span>(<span class="var">x</span>, <span class="var">y</span>)
-<span class="fn">xlabel</span>(<span class="str">'x (radians)'</span>)
-<span class="fn">ylabel</span>(<span class="str">'sin(x)'</span>)
-<span class="fn">title</span>(<span class="str">'Sine Function'</span>)
-<span class="fn">grid</span> on</pre>
-
-    <h3>Line Formatting</h3>
-    <table>
-      <tr><th>Colours</th><th>Line styles</th><th>Markers</th></tr>
-      <tr><td>r red, b blue, g green</td><td>- solid, -- dashed</td><td>o circle, x cross</td></tr>
-      <tr><td>k black, m magenta</td><td>: dotted, -. dash-dot</td><td>s square, ^ triangle</td></tr>
-    </table>
-
-    <h3>Multiple Lines</h3>
-<pre><span class="fn">plot</span>(<span class="var">x</span>, <span class="fn">sin</span>(<span class="var">x</span>), <span class="str">'b-'</span>)
-<span class="fn">hold</span> on
-<span class="fn">plot</span>(<span class="var">x</span>, <span class="fn">cos</span>(<span class="var">x</span>), <span class="str">'r--'</span>)
-<span class="fn">hold</span> off
-<span class="fn">legend</span>(<span class="str">'sin'</span>, <span class="str">'cos'</span>)</pre>
-
-    <h3>Subplots</h3>
-<pre><span class="fn">subplot</span>(<span class="num">2</span>, <span class="num">2</span>, <span class="num">1</span>)
-<span class="fn">plot</span>(<span class="var">x</span>, <span class="fn">sin</span>(<span class="var">x</span>)); <span class="fn">title</span>(<span class="str">'sin'</span>)
-
-<span class="fn">subplot</span>(<span class="num">2</span>, <span class="num">2</span>, <span class="num">2</span>)
-<span class="fn">plot</span>(<span class="var">x</span>, <span class="fn">cos</span>(<span class="var">x</span>), <span class="str">'r'</span>); <span class="fn">title</span>(<span class="str">'cos'</span>)</pre>
-  </div>
-
-  <div class="example-box">
-    <div class="example-label">Worked Example 9.1 — Projectile trajectories</div>
-<pre><span class="var">angles</span> = [<span class="num">30</span> <span class="num">45</span> <span class="num">60</span>];  <span class="var">v0</span> = <span class="num">20</span>;
-<span class="fn">figure</span>; <span class="fn">hold</span> on;
-<span class="kw">for</span> <span class="var">k</span> = <span class="num">1</span>:<span class="fn">length</span>(<span class="var">angles</span>)
-    <span class="var">th</span> = <span class="fn">deg2rad</span>(<span class="var">angles</span>(<span class="var">k</span>));
-    <span class="var">vx</span> = <span class="var">v0</span>*<span class="fn">cos</span>(<span class="var">th</span>);  <span class="var">vy</span> = <span class="var">v0</span>*<span class="fn">sin</span>(<span class="var">th</span>);
-    <span class="var">T</span>  = <span class="num">2</span>*<span class="var">vy</span>/<span class="num">9.81</span>;
-    <span class="var">t</span>  = <span class="fn">linspace</span>(<span class="num">0</span>, <span class="var">T</span>, <span class="num">200</span>);
-    <span class="fn">plot</span>(<span class="var">vx</span>*<span class="var">t</span>, <span class="var">vy</span>*<span class="var">t</span> - <span class="num">0.5</span>*<span class="num">9.81</span>*<span class="var">t</span>.^<span class="num">2</span>);
-<span class="kw">end</span>
-<span class="fn">legend</span>(<span class="str">'30°'</span>, <span class="str">'45°'</span>, <span class="str">'60°'</span>);
-<span class="fn">grid</span> on;</pre>
-  </div>
-
-  <div class="practice-box">
-    <div class="practice-label">Practice Problems</div>
-    <ol>
-      <li>Plot y = e^(-0.3x)sin(2πx) for x ∈ [0, 10]. Add horizontal line at y = 0, labels, title and grid.</li>
-      <li>Create a 2×2 subplot with sin(x), sin²(x), cos(x), cos²(x) for x ∈ [0, 2π].</li>
-    </ol>
-  </div>
-
-</div>
-
-<!-- TOPIC 10 — FILE I/O -->
-<div class="page" id="page-t10">
-  <div class="page-hero">
-    <div class="page-hero-label">Topic 10</div>
-    <div class="page-hero-title">File I/O — Reading & Writing Data Files</div>
-    <div class="page-hero-sub">fopen/fclose, fprintf, fscanf, fgetl, CSV, error handling</div>
-  </div>
-
-  <div class="topic-section">
-    <h3>Why File I/O?</h3>
-    <p>In engineering, data comes from sensors, instruments, simulations — not keyboard input. File I/O lets you load large datasets automatically, save results, and share data between programs.</p>
-
-    <h3>The File Access Lifecycle</h3>
-    <ol>
-      <li><strong>Open</strong> — fid = fopen(filename, mode)</li>
-      <li><strong>Read/Write</strong> — use the file identifier fid</li>
-      <li><strong>Close</strong> — fclose(fid) — always, even if something went wrong</li>
-    </ol>
-
-    <h3>fopen Modes</h3>
-    <table>
-      <tr><th>Mode</th><th>Meaning</th><th>If file doesn't exist</th></tr>
-      <tr><td>'r'</td><td>Read only</td><td>Returns fid = -1 (error)</td></tr>
-      <tr><td>'w'</td><td>Write (overwrite)</td><td>Creates new file</td></tr>
-      <tr><td>'a'</td><td>Append</td><td>Creates new file</td></tr>
-    </table>
-
-    <h3>Always Check the File Opened Successfully</h3>
-<pre><span class="var">fid</span> = <span class="fn">fopen</span>(<span class="str">'data.txt'</span>, <span class="str">'r'</span>);
-<span class="kw">if</span> <span class="var">fid</span> == <span class="op">-</span><span class="num">1</span>
-    <span class="fn">error</span>(<span class="str">'Cannot open file: data.txt'</span>);
-<span class="kw">end</span>
-<span class="cm">% ... read file ...</span>
-<span class="fn">fclose</span>(<span class="var">fid</span>);</pre>
-
-    <h3>Writing Text Files with fprintf</h3>
-<pre><span class="var">fid</span> = <span class="fn">fopen</span>(<span class="str">'results.txt'</span>, <span class="str">'w'</span>);
-<span class="fn">fprintf</span>(<span class="var">fid</span>, <span class="str">'Results\n'</span>);
-<span class="kw">for</span> <span class="var">i</span> = <span class="num">1</span>:<span class="fn">length</span>(<span class="var">data</span>)
-    <span class="fn">fprintf</span>(<span class="var">fid</span>, <span class="str">'%.4f\n'</span>, <span class="var">data</span>(<span class="var">i</span>));
-<span class="kw">end</span>
-<span class="fn">fclose</span>(<span class="var">fid</span>);</pre>
-
-    <h3>Reading with fscanf</h3>
-<pre><span class="var">fid</span> = <span class="fn">fopen</span>(<span class="str">'temps.txt'</span>, <span class="str">'r'</span>);
-<span class="var">data</span> = <span class="fn">fscanf</span>(<span class="var">fid</span>, <span class="str">'%f'</span>);
-<span class="fn">fclose</span>(<span class="var">fid</span>);</pre>
-
-    <h3>CSV Files — Easiest Approach</h3>
-<pre><span class="cm">% Reading a numeric CSV</span>
-<span class="var">data</span> = <span class="fn">readmatrix</span>(<span class="str">'sensors.csv'</span>);
-
-<span class="cm">% Writing a numeric CSV</span>
-<span class="fn">writematrix</span>(<span class="var">data</span>, <span class="str">'output.csv'</span>);</pre>
-  </div>
-
-  <div class="example-box">
-    <div class="example-label">Worked Example 10.1 — Write and read data</div>
-<pre><span class="cm">%% Generate data</span>
-<span class="var">t</span>   = (<span class="num">0</span>:<span class="num">0.5</span>:<span class="num">5</span>)';
-<span class="var">pos</span> = <span class="num">10</span>*<span class="var">t</span> - <span class="num">0.5</span>*<span class="num">9.81</span>*<span class="var">t</span>.^<span class="num">2</span>;
-
-<span class="cm">%% Write to file</span>
-<span class="var">fid</span> = <span class="fn">fopen</span>(<span class="str">'kinematics.txt'</span>, <span class="str">'w'</span>);
-<span class="kw">for</span> <span class="var">i</span> = <span class="num">1</span>:<span class="fn">length</span>(<span class="var">t</span>)
-    <span class="fn">fprintf</span>(<span class="var">fid</span>, <span class="str">'%.1f %.4f\n'</span>, <span class="var">t</span>(<span class="var">i</span>), <span class="var">pos</span>(<span class="var">i</span>));
-<span class="kw">end</span>
-<span class="fn">fclose</span>(<span class="var">fid</span>);
-
-<span class="cm">%% Read back</span>
-<span class="var">M</span> = <span class="fn">readmatrix</span>(<span class="str">'kinematics.txt'</span>);
-<span class="fn">fprintf</span>(<span class="str">'Read %d rows\n'</span>, <span class="fn">size</span>(<span class="var">M</span>,<span class="num">1</span>));</pre>
-  </div>
-
-  <div class="practice-box">
-    <div class="practice-label">Practice Problems</div>
-    <ol>
-      <li>Generate 20 random integers 1-100, write to file (one per line), read back, print sum and count of even numbers.</li>
-      <li>Create a temperature logging function that appends readings to a file with timestamps.</li>
-    </ol>
-  </div>
-
-</div>
-
-</div>
-</div>
+<div id="main"></div>
 
 <script>
-function goTo(page) {
-  // Hide all pages
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  // Show selected page
-  document.getElementById('page-' + page).classList.add('active');
-  // Update navigation
-  document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-  event.target.closest('.nav-link').classList.add('active');
-  // Update breadcrumb
-  const topicMap = {
-    't1': 'Environment & Basics',
-    't2': 'Variables & Operators',
-    't3': 'Algorithm Design',
-    't4': 'Conditionals',
-    't5': 'Loops',
-    't6': 'Functions',
-    't7': 'Arrays & Matrices',
-    't8': 'Vectorisation',
-    't9': 'Data Visualisation',
-    't10': 'File I/O'
-  };
-  document.getElementById('breadcrumbPage').textContent = topicMap[page] || 'Topic';
+const modules = [
+{
+  id:'m1', week:'W2', title:'Data Types &amp; Operators',
+  sections:[
+    {h:'Numeric types', body:`
+      <p>MATLAB stores numbers as <b>double</b> (floating point) by default — this is the type you get any time you type a number without thinking about it.</p>
+      <ul>
+        <li><b>Integers</b>: whole numbers only. Comes in 8-, 16-, 32- and 64-bit flavours (<code>int8</code>, <code>int16</code>, <code>int32</code>, <code>int64</code>). Bigger bit-width = larger range but more memory.</li>
+        <li><b>Double (floating point)</b>: can store decimals. Range up to roughly 1.7977 &times; 10<sup>308</sup>. This is MATLAB's default numeric type — if you don't specify otherwise, a variable is a double.</li>
+        <li><b>Single</b>: a smaller floating point type, max around 3.4028 &times; 10<sup>38</sup>. Less memory than double, less precision.</li>
+        <li><b>Complex numbers</b>: created with <code>i</code> or <code>j</code>. Use <code>real()</code>, <code>imag()</code>, <code>conj()</code>, <code>abs()</code> and <code>angle()</code> to pull out parts, magnitude and phase.</li>
+      </ul>
+      <pre class="code"><span class="cm">% complex number example</span>
+z = 3 + 4i;
+mag = abs(z);      <span class="cm">% magnitude = 5</span>
+ph  = angle(z);     <span class="cm">% phase angle in radians</span>
+c   = conj(z);       <span class="cm">% 3 - 4i</span></pre>
+    `},
+    {h:'Arrays: vectors, matrices, cell arrays', body:`
+      <p>What other languages call "arrays," MATLAB calls <b>vectors</b> and <b>matrices</b> — get comfortable with this naming early, it shows up constantly.</p>
+      <ul>
+        <li><b>Vector (1D array)</b> — built with square brackets, indexed starting at <b>1</b> (not 0).</li>
+        <li><b>Matrix (2D array)</b> — rows and columns, indexed as <code>A(row, col)</code>.</li>
+        <li><b>3D array</b> — adds a third index (row / column / "page").</li>
+        <li><b>Cell array</b> — can hold mixed data types and sizes in each cell. Accessed with curly braces <code>{ }</code> instead of parentheses.</li>
+      </ul>
+      <pre class="code"><span class="cm">% vector</span>
+v = [1 4 9 16 25];
+v(3)          <span class="cm">% returns 9 — indexing starts at 1</span>
+
+<span class="cm">% matrix</span>
+A = [1 2; 3 4];
+A(2,1)        <span class="cm">% returns 3</span>
+
+<span class="cm">% cell array — mixed types</span>
+c = {1, 'hello', [1 2 3]};
+c{2}          <span class="cm">% returns 'hello'</span></pre>
+      <div class="callout"><b>Common trip-up:</b> MATLAB indexes from 1. Python indexes from 0. If you're jumping between the two for DPEN100's Python week, this is the single most common source of off-by-one bugs.</div>
+    `},
+    {h:'Numeric operators &amp; logical values', body:`
+      <p>Standard arithmetic (<code>+ - * / ^</code>) works element-wise only when you add a dot: <code>.* ./ .^</code>. Without the dot, MATLAB tries matrix multiplication/division rules instead.</p>
+      <pre class="code">a = [1 2 3];
+b = [4 5 6];
+a .* b   <span class="cm">% [4 10 18]  — element-wise</span>
+a * b'   <span class="cm">% 32         — matrix (dot) product, note the transpose</span></pre>
+      <p>Logical values in MATLAB are <code>true (1)</code> or <code>false (0)</code> — comparisons like <code>a > b</code> return an array of these.</p>
+    `}
+  ],
+  questions:[
+    {q:'What is the default numeric type in MATLAB when you type <code>x = 5</code>?', a:'Double (floating point). Even whole-looking numbers are stored as doubles unless you explicitly cast them, e.g. with <code>int32(5)</code>.'},
+    {q:'Given <code>v = [10 20 30 40]</code>, what does <code>v(2)</code> return, and why is this different from Python?', a:'It returns <b>20</b>. MATLAB indexing starts at 1, so <code>v(1)</code> is the first element. In Python, <code>v[2]</code> would return the third element (30) because Python indexes from 0.'},
+    {q:'What is the difference between <code>A*B</code> and <code>A.*B</code> for two same-sized matrices?', a:'<code>A*B</code> performs matrix multiplication (rows-by-columns, dimensions must be compatible). <code>A.*B</code> performs element-wise multiplication — each element multiplied by the corresponding element in the same position.'},
+    {q:'How do you access the second element of a cell array <code>c</code>, and why not use <code>c(2)</code>?', a:'Use curly braces: <code>c{2}</code>. Parentheses <code>c(2)</code> return a 1x1 cell (a "box" containing the value), while curly braces unwrap the box and give you the value itself.'}
+  ]
+},
+{
+  id:'m2', week:'W3', title:'Problem Solving &amp; Flow Charts',
+  sections:[
+    {h:'Why flow charts first', body:`
+      <p>Before writing code, DPEN100 wants you to sketch the logic as a flow chart. This matters more than it seems — it forces you to nail down decision points and loop conditions before syntax gets in the way.</p>
+      <ul>
+        <li><b>Oval</b> — start / end</li>
+        <li><b>Rectangle</b> — a process or calculation step</li>
+        <li><b>Diamond</b> — a decision point (yes/no branch)</li>
+        <li><b>Parallelogram</b> — input or output</li>
+        <li><b>Arrows</b> — direction of flow</li>
+      </ul>
+      <p>A good habit: for any problem, write the flow chart, then translate each shape almost 1:1 into MATLAB — diamonds become <code>if</code> statements, loops-back-arrows become <code>for</code>/<code>while</code>.</p>
+    `},
+    {h:'Problem-solving process', body:`
+      <ul>
+        <li><b>1. Understand the problem</b> — what are the known inputs, what output is required?</li>
+        <li><b>2. Plan</b> — flow chart or pseudocode.</li>
+        <li><b>3. Code</b> — translate the plan into MATLAB.</li>
+        <li><b>4. Test</b> — check with known values (edge cases especially: zero, negative, empty input).</li>
+        <li><b>5. Refine</b> — clean up, comment, remove repetition.</li>
+      </ul>
+    `}
+  ],
+  questions:[
+    {q:'What flow chart shape represents a decision point, e.g. "is x > 0?"', a:'A diamond. It has two (or more) exit arrows corresponding to the possible outcomes (e.g. yes/no).'},
+    {q:'Why plan with a flow chart before writing MATLAB code, rather than just diving in?', a:'It separates the logic of the solution from the syntax of the language. This makes it easier to catch a flawed approach early and makes translating to code (or even to a different language, like Python in Week 13) far more direct.'}
+  ]
+},
+{
+  id:'m3', week:'W4', title:'Control Flow Constructs',
+  sections:[
+    {h:'if / elseif / else', body:`
+      <ul>
+        <li><b>if</b> — runs the block if the condition is true.</li>
+        <li><b>else</b> — runs if the condition was false.</li>
+        <li><b>elseif</b> — checks another condition if the previous one(s) were false.</li>
+      </ul>
+      <pre class="code">score = 72;
+if score >= 85
+    grade = 'HD';
+elseif score >= 75
+    grade = 'D';
+elseif score >= 65
+    grade = 'C';
+else
+    grade = 'F';
+end</pre>
+      <p><b>When to use which pattern:</b></p>
+      <ul>
+        <li><b>Simple if-else</b> — one condition, single yes/no fork.</li>
+        <li><b>if-elseif-else chain</b> — a range of conditions in a logical sequence (grading systems, categorising data — exactly the example above).</li>
+        <li><b>Nested if</b> — when a primary condition needs a further check inside it (e.g. check score range, then within that check attendance).</li>
+      </ul>
+    `},
+    {h:'Logical operators', body:`
+      <p>Combine multiple conditions into one decision:</p>
+      <ul>
+        <li><code>&amp;&amp;</code> — AND (both must be true)</li>
+        <li><code>||</code> — OR (at least one must be true)</li>
+        <li><code>~</code> — NOT</li>
+      </ul>
+      <pre class="code">if age >= 18 && hasLicense
+    disp('Can drive')
+end</pre>
+      <div class="callout"><b>Common trip-up:</b> <code>&&</code> and <code>||</code> short-circuit and only work on single logical values (scalars). For element-wise comparison across whole arrays, use <code>&</code> and <code>|</code> instead.</div>
+    `},
+    {h:'For loops, nested loops, and while loops', body:`
+      <ul>
+        <li><b>for loop</b> — use when you know exactly how many times it should run.</li>
+        <li><b>nested for loop</b> — a loop inside a loop, needed when iterating over something like a matrix (rows and columns).</li>
+        <li><b>while loop</b> — use when you only know the stopping <i>condition</i>, not the exact iteration count.</li>
+      </ul>
+      <pre class="code"><span class="cm">% for loop</span>
+total = 0;
+for i = 1:10
+    total = total + i;
+end
+
+<span class="cm">% nested for — iterating a matrix</span>
+A = magic(3);
+for r = 1:3
+    for c = 1:3
+        fprintf('%d ', A(r,c));
+    end
+end
+
+<span class="cm">% while loop</span>
+x = 100;
+count = 0;
+while x > 1
+    x = x / 2;
+    count = count + 1;
+end</pre>
+    `}
+  ],
+  questions:[
+    {q:'You need to categorise exam scores into HD/D/C/P/F bands. Which control-flow pattern fits best, and why?', a:'An <b>if-elseif-else chain</b>. The bands form a logical, ordered sequence of ranges — exactly the case this pattern is designed for, as opposed to a single yes/no fork or a nested check.'},
+    {q:'What is the key difference between choosing a <code>for</code> loop vs a <code>while</code> loop?', a:'Use a <code>for</code> loop when you know the exact number of iterations in advance. Use a <code>while</code> loop when you only know the condition that should stop the loop, and the number of iterations isn\'t known ahead of time.'},
+    {q:'Why would <code>if a && b</code> throw an error if <code>a</code> is a 1x3 array?', a:'<code>&&</code> requires scalar (single-value) logical operands — it short-circuits based on one true/false value. For array-wise comparisons, use the non-short-circuit <code>&</code> operator instead, e.g. <code>if all(a & b)</code>.'}
+  ]
+},
+{
+  id:'m4', week:'W5', title:'Functions &amp; Modular Programming',
+  sections:[
+    {h:'What is a function?', body:`
+      <p>A function is a reusable block of code that performs a specific task. It takes <b>inputs</b> (parameters/arguments), processes them, and (usually) returns an <b>output</b>.</p>
+      <pre class="code">function avg = calcAverage(values)
+    avg = sum(values) / length(values);
+end
+
+<span class="cm">% calling it</span>
+result = calcAverage([4 8 15 16 23]);</pre>
+      <p>A MATLAB function file typically has the same name as the function itself (<code>calcAverage.m</code>) and the <code>function</code> keyword must be the first line.</p>
+    `},
+    {h:'Modular vs non-modular programming', body:`
+      <table style="width:100%;border-collapse:collapse;margin:10px 0;font-size:14px;">
+        <tr style="background:#f4f7fb;"><th style="text-align:left;padding:8px;border:1px solid var(--line);">Modular</th><th style="text-align:left;padding:8px;border:1px solid var(--line);">Non-modular</th></tr>
+        <tr><td style="padding:8px;border:1px solid var(--line);">Breaks code into smaller, manageable parts (functions, loops). Functions can call other functions.</td><td style="padding:8px;border:1px solid var(--line);">All code written as one continuous block with no separation between logical steps.</td></tr>
+      </table>
+      <p>Modular code is easier to test (test each function alone), easier to reuse, and easier to debug (isolate which function is wrong).</p>
+    `},
+    {h:'Recursive programming', body:`
+      <ul>
+        <li>Recursion is a <b>divide-and-conquer</b> technique: a function calls itself with a smaller version of the same problem.</li>
+        <li>Must always have a <b>base case</b> — a condition where it stops calling itself. Without one, recursion never terminates.</li>
+        <li>Classic example: factorial, <code>n! = n &times; (n-1)!</code></li>
+      </ul>
+      <pre class="code">function result = factorial_r(n)
+    if n <= 1          <span class="cm">% base case — stops the recursion</span>
+        result = 1;
+    else
+        result = n * factorial_r(n-1);   <span class="cm">% recursive call</span>
+    end
+end</pre>
+    `}
+  ],
+  questions:[
+    {q:'What two things does a function always need conceptually, beyond its name?', a:'Inputs (parameters/arguments it receives) and, usually, an output (the value it returns) — though functions can technically have zero of either.'},
+    {q:'Why does every recursive function need a base case?', a:'Without a base case, the function keeps calling itself indefinitely with no way to stop, causing infinite recursion (and eventually a stack overflow error). The base case is the condition that halts further recursive calls.'},
+    {q:'Give one practical benefit of modular programming over writing one long block of code.', a:'Any of: easier to test in isolation, easier to reuse elsewhere, easier to debug (you can pinpoint which function misbehaves), easier to read and maintain.'}
+  ]
+},
+{
+  id:'m5', week:'W6', title:'Graphics &amp; Visualisation',
+  sections:[
+    {h:'Basic plotting', body:`
+      <p><code>linspace(start, stop, n)</code> generates <code>n</code> evenly spaced values between <code>start</code> and <code>stop</code>, inclusive of both endpoints. It's the standard way to build a smooth x-axis for plotting — you tell it <b>how many points you want</b>, not the step size.</p>
+      <pre class="code">linspace(0, 10, 5)
+<span class="cm">% returns: 0  2.5  5  7.5  10</span></pre>
+      <p><b>linspace vs the colon operator</b> — both can build the same vector, but you specify a different thing:</p>
+      <pre class="code">linspace(0, 10, 5)   <span class="cm">% you specify the COUNT of points (5)</span>
+0:2.5:10              <span class="cm">% you specify the STEP size (2.5) — same result</span></pre>
+      <p>Rule of thumb: use <b>linspace</b> when you know how many points you want (e.g. "100 points for a smooth curve"). Use <b>a:step:b</b> when you know the exact step size (e.g. "every 0.1 seconds").</p>
+      <div class="callout"><b>Note:</b> some study notes misspell this as "Linscape" — the real function name is <b>linspace</b> (line + space).</div>
+      <pre class="code">x = linspace(0, 2*pi, 100);
+y = sin(x);
+plot(x, y);
+xlabel('x'); ylabel('sin(x)'); title('Sine wave');
+grid on;</pre>
+    `},
+    {h:'Multiple plots on the same axis, and subplots', body:`
+      <pre class="code"><span class="cm">% multiple plots, same axis</span>
+plot(x, sin(x)); hold on;
+plot(x, cos(x));
+legend('sin(x)', 'cos(x)');
+hold off;
+
+<span class="cm">% subplots — separate panels in one figure</span>
+subplot(2,1,1); plot(x, sin(x)); title('sin');
+subplot(2,1,2); plot(x, cos(x)); title('cos');</pre>
+      <p><code>subplot(rows, cols, index)</code> — think of it as slicing the figure into a grid, then picking which cell to draw into next.</p>
+    `},
+    {h:'3D, logarithmic and polar plots', body:`
+      <ul>
+        <li><b>3D graphing</b>: <code>plot3(x,y,z)</code> or <code>surf(X,Y,Z)</code> for surfaces.</li>
+        <li><b>semilogx</b> — logarithmic scale on the x-axis only.</li>
+        <li><b>semilogy</b> — logarithmic scale on the y-axis only.</li>
+        <li><b>loglog</b> — logarithmic scale on both axes. Use when data spans several orders of magnitude.</li>
+        <li><b>polar plots</b> — <code>polarplot(theta, r)</code> for angle/radius data.</li>
+      </ul>
+    `}
+  ],
+  questions:[
+    {q:'You have data spanning from 1 to 1,000,000 on the y-axis and want to see detail across the whole range. Which plot type fits best?', a:'<code>semilogy</code> (or <code>loglog</code> if the x-axis also spans a huge range). A logarithmic scale compresses large ranges so smaller values remain visible instead of being squashed near zero.'},
+    {q:'What does <code>subplot(2,2,3)</code> do?', a:'Sets up a 2x2 grid of plot panels within the figure, and selects the 3rd panel (bottom-left, since MATLAB numbers subplot positions left-to-right, top-to-bottom) as the target for the next plotting command.'},
+    {q:'What is <code>linspace(0, 10, 5)</code> equivalent to conceptually, and how is it different from <code>0:2.5:10</code>?', a:'Both return <code>[0 2.5 5 7.5 10]</code> — 5 evenly spaced values between 0 and 10 inclusive. The difference is what you specify: <code>linspace</code> takes the number of points you want (5), while the colon operator takes the step size (2.5). Use linspace when you know the point count; use the colon operator when you know the exact step.'}
+  ]
+},
+{
+  id:'m6', week:'W7', title:'File Input &amp; Output',
+  sections:[
+    {h:'Why import/export data', body:`
+      <p>Real engineering data usually comes from somewhere else — a sensor log, a spreadsheet, a GPS device. MATLAB can read these files in for analysis and write results back out.</p>
+    `},
+    {h:'Common functions', body:`
+      <pre class="code"><span class="cm">% reading a CSV / delimited text file</span>
+data = readmatrix('sensor_data.csv');
+
+<span class="cm">% reading with more control (headers, mixed types)</span>
+T = readtable('results.csv');
+
+<span class="cm">% writing data out</span>
+writematrix(data, 'output.csv');</pre>
+    `},
+    {h:'Delimited text files', body:`
+      <p>Not every file uses a comma as the separator. When the delimiter is something else (tab, semicolon, space), you need to tell MATLAB explicitly:</p>
+      <pre class="code">data = readmatrix('data.txt', 'Delimiter', ';');</pre>
+    `}
+  ],
+  questions:[
+    {q:'What is the difference between <code>readmatrix</code> and <code>readtable</code>?', a:'<code>readmatrix</code> returns a plain numeric matrix — good for pure numeric data. <code>readtable</code> returns a table object that preserves column headers and can mix data types per column (numbers, strings, dates) — better for structured, labelled datasets.'},
+    {q:'A text file uses semicolons instead of commas to separate values. How do you read it correctly in MATLAB?', a:"Specify the delimiter explicitly, e.g. <code>readmatrix('data.txt', 'Delimiter', ';')</code>. Without this, MATLAB assumes the default comma delimiter and will misread the file."}
+  ]
+},
+{
+  id:'m7', week:'W8', title:'Rectilinear Motion',
+  sections:[
+    {h:'Core relationships', body:`
+      <p>Rectilinear motion is motion along a <b>straight line</b>. Position, velocity and acceleration are linked by calculus:</p>
+      <ul>
+        <li>Differentiate <b>position</b> → get <b>velocity</b></li>
+        <li>Differentiate <b>velocity</b> → get <b>acceleration</b></li>
+        <li>Integrate the reverse direction to go back</li>
+      </ul>
+      <p>In MATLAB, the <code>diff</code> function approximates a numeric derivative from a data series — this is exactly how the coursework's kinematic plotting project turns raw position data into velocity and acceleration.</p>
+      <pre class="code">t = 0:0.1:10;
+s = 5*t.^2;          <span class="cm">% position</span>
+v = diff(s)./diff(t); <span class="cm">% approximate velocity</span>
+a = diff(v)./diff(t(1:end-1)); <span class="cm">% approximate acceleration</span></pre>
+    `},
+    {h:'Finding total distance travelled', body:`
+      <ol style="padding-left:20px;">
+        <li>Find critical points where motion changes direction — set the <b>velocity</b> equation to zero and solve.</li>
+        <li>Compute the position at each critical point, plus the start and end times.</li>
+        <li>Sum the absolute distances between consecutive points.</li>
+      </ol>
+      <div class="callout"><b>Why this matters:</b> total distance ≠ displacement. If the particle reverses direction partway through, displacement can be small (or zero) while total distance travelled is large. Always check for a direction change first.</div>
+    `},
+    {h:'Finding maximum velocity', body:`
+      <ol style="padding-left:20px;">
+        <li>Set the <b>acceleration</b> equation equal to zero and solve for time — this is the instant velocity is at a turning point.</li>
+        <li>Substitute that time back into the <b>velocity</b> equation to get the actual maximum (or minimum) velocity value.</li>
+      </ol>
+    `}
+  ],
+  questions:[
+    {q:'A particle\'s velocity function is v(t) = 6t − 12. At what critical time(s) does the particle change direction, and how would you use this to find total distance travelled?', a:'Set v(t) = 0: 6t − 12 = 0 → t = 2. This is the critical point. To find total distance, compute the position s(t) at t=2, plus at the start and end of the interval in question, then sum the absolute distances between consecutive points rather than just subtracting start from end position.'},
+    {q:'How do you find the time at which velocity is maximum, given an acceleration function a(t)?', a:'Set a(t) = 0 and solve for t (since acceleration is the derivative of velocity, a turning point in velocity occurs where acceleration is zero). Substitute that t back into v(t) to get the actual maximum velocity value.'},
+    {q:'Why is displacement not always the same as total distance travelled?', a:'Displacement is the net change in position (end minus start), while total distance sums up every bit of path length travelled, including any backtracking. If a particle reverses direction, distance keeps accumulating even while displacement may decrease or return to zero.'}
+  ]
+},
+{
+  id:'m8', week:'W9', title:'Curvilinear Motion',
+  sections:[
+    {h:'Motion along a curved path', body:`
+      <p>Curvilinear motion sits on a <b>curved</b> path rather than a straight line, so it needs to be broken into components. Three coordinate systems come up:</p>
+      <ul>
+        <li><b>Cartesian (x, y, z)</b> — perpendicular axes through a fixed origin. Most common starting point.</li>
+        <li><b>Normal-tangential (n, t)</b> — origin travels with the object; t-axis points along the direction of motion, n-axis points toward the centre of curvature.</li>
+        <li><b>Cylindrical (r, θ, z)</b> — position defined by a radius, angle and height from a reference axis/plane.</li>
+      </ul>
+    `},
+    {h:'Projectile motion', body:`
+      <p>The classic curvilinear example. The trick is to <b>split into x and y components and solve independently</b>, then combine:</p>
+      <ul>
+        <li><b>Horizontal (x)</b>: zero acceleration → constant velocity.</li>
+        <li><b>Vertical (y)</b>: constant acceleration (gravity, <code>g</code>) throughout the flight.</li>
+      </ul>
+      <p>Solve the two sets of equations simultaneously (they share the same time variable, <code>t</code>) to find things like range, max height, or time of flight.</p>
+      <pre class="code">v0 = 20;      <span class="cm">% initial speed (m/s)</span>
+theta = 45;   <span class="cm">% launch angle (deg)</span>
+g = 9.81;
+vx = v0*cosd(theta);   <span class="cm">% constant — horizontal</span>
+vy0 = v0*sind(theta);  <span class="cm">% initial vertical component</span>
+
+t = linspace(0, 2*vy0/g, 100);
+x = vx*t;
+y = vy0*t - 0.5*g*t.^2;
+plot(x,y); xlabel('Range (m)'); ylabel('Height (m)');</pre>
+    `}
+  ],
+  questions:[
+    {q:'In projectile motion, why is the horizontal component solved separately from the vertical component?', a:'Because they experience different accelerations — horizontal acceleration is zero (constant velocity), while vertical acceleration is constant due to gravity. Splitting into independent x/y equations lets each be solved with simple kinematics, then recombined using the shared time variable to describe the full curved path.'},
+    {q:'What is the key difference between the normal-tangential coordinate system and the cartesian system?', a:'Cartesian axes are fixed in space. The normal-tangential system\'s origin travels with the moving object — its tangential (t) axis always points along the current direction of motion, and the normal (n) axis always points toward the centre of curvature, so the axes themselves rotate as the object moves along the curve.'}
+  ]
+},
+{
+  id:'m9', week:'W11', title:'Advanced Data Structures',
+  sections:[
+    {h:'Beyond basic arrays', body:`
+      <p>Building on Week 2's data types, more advanced problems need structures that organise mixed or hierarchical data cleanly.</p>
+      <ul>
+        <li><b>Structures (struct)</b> — group related data under named fields, similar to a record.</li>
+        <li><b>Cell arrays revisited</b> — useful for holding variable-length or mixed-type collections (e.g. a list of student records each with different numbers of subjects).</li>
+        <li><b>Preallocation</b> — declaring an array's full size before a loop fills it in (<code>zeros(1,n)</code>) is significantly faster than growing an array one element at a time.</li>
+      </ul>
+      <pre class="code">student.name = 'Siddharth';
+student.marks = [78 85 91];
+student.average = mean(student.marks);
+
+<span class="cm">% preallocation before a loop</span>
+result = zeros(1,1000);
+for i = 1:1000
+    result(i) = i^2;
+end</pre>
+    `},
+    {h:'Programming techniques', body:`
+      <ul>
+        <li><b>Vectorisation</b> — replacing an explicit loop with a single operation across a whole array (e.g. <code>y = x.^2</code> instead of looping element-by-element). MATLAB is optimised for this and it's usually faster.</li>
+        <li><b>Logical indexing</b> — selecting elements of an array using a condition instead of explicit indices, e.g. <code>x(x > 0)</code> returns only the positive elements.</li>
+      </ul>
+      <pre class="code">x = [-3 5 -1 8 2 -6];
+positives = x(x > 0);   <span class="cm">% [5 8 2] — logical indexing</span></pre>
+    `}
+  ],
+  questions:[
+    {q:'Why is preallocating an array with <code>zeros(1,n)</code> before a loop generally faster than growing it inside the loop?', a:"When an array grows dynamically (e.g. result(i) = ... with no preallocation), MATLAB has to reallocate memory and copy the entire array each time it grows. Preallocating reserves the full block of memory upfront, so each loop iteration just writes into existing space instead of triggering a resize."},
+    {q:'Given <code>x = [-3 5 -1 8 2 -6]</code>, what does <code>x(x > 0)</code> return and what technique is this?', a:'It returns <code>[5 8 2]</code> — this is logical indexing. <code>x > 0</code> produces a logical array of trues/falses the same size as x, and using that as an index selects only the elements where the condition was true.'}
+  ]
+},
+{
+  id:'m10', week:'W12-13', title:'Algorithms &amp; Python Transition',
+  sections:[
+    {h:'Algorithmic thinking', body:`
+      <p>Week 12 pulls together control flow, functions and data structures into full algorithms — e.g. sorting, searching, or simulating a process step by step. The flow-chart-first habit from Week 3 pays off here: complex algorithms are just several simple constructs chained together.</p>
+    `},
+    {h:'MATLAB → Python: key differences', body:`
+      <div class="pycompare"><b>Indexing:</b> MATLAB starts at 1. Python starts at 0. This is the single biggest source of translation bugs.</div>
+      <div class="pycompare"><b>Line endings:</b> MATLAB commands often end in <code>;</code> (suppresses output). Python needs no semicolon — a new line ends the statement, and output is never printed automatically unless you call <code>print()</code>.</div>
+      <div class="pycompare"><b>Code blocks:</b> MATLAB uses <code>end</code> to close blocks (if/for/while/function). Python uses indentation (whitespace) instead — no <code>end</code> keyword at all.</div>
+      <div class="pycompare"><b>Data types:</b> Python variables are dynamically typed automatically on assignment — no declaration needed. Use <code>type(variable_name)</code> to check a type.</div>
+      <div class="pycompare"><b>Arrays vs lists:</b> MATLAB's native structure is the matrix. Python's native structure is the list — square brackets <code>[ ]</code>, mutable. For real matrix math, Python typically imports <b>NumPy</b> (<code>import numpy as np</code>).</div>
+      <pre class="code"><span class="cm">% MATLAB</span>
+for i = 1:5
+    disp(i)
+end
+
+<span class="cm"># Python equivalent</span>
+for i in range(1, 6):
+    print(i)</pre>
+    `},
+    {h:'Plotting and matrices in Python', body:`
+      <ul>
+        <li><b>matplotlib.pyplot</b> is Python's equivalent to MATLAB's plotting: <code>plt.plot(x, y, label='data')</code>, <code>plt.xlabel()</code>, <code>plt.legend()</code>, <code>plt.show()</code>.</li>
+        <li><b>NumPy</b> handles matrix work: <code>np.multiply()</code> for element-wise multiplication (like MATLAB's <code>.*</code>), <code>np.matmul()</code> for true matrix multiplication (like MATLAB's <code>*</code>).</li>
+        <li>Logarithmic plots: <code>plt.xscale('log')</code> / <code>plt.yscale('log')</code> instead of MATLAB's <code>semilogx</code>/<code>semilogy</code>.</li>
+      </ul>
+    `}
+  ],
+  questions:[
+    {q:'Translate this MATLAB snippet\'s logic into Python, noting the indexing difference: <code>v = [10 20 30]; disp(v(1))</code>', a:"In MATLAB, <code>v(1)</code> returns 10 (the first element, 1-indexed). In Python, the equivalent list is <code>v = [10, 20, 30]</code>, and the first element is accessed as <code>v[0]</code>, printed with <code>print(v[0])</code> — also returning 10, but via index 0, not 1."},
+    {q:'What replaces MATLAB\'s <code>end</code> keyword in Python for closing an if/for/while block?', a:"Nothing explicit — Python uses indentation (consistent whitespace) to define where a code block starts and ends, rather than an end keyword or curly braces."},
+    {q:'In NumPy, what is the difference between <code>np.multiply(A,B)</code> and <code>np.matmul(A,B)</code>?', a:'<code>np.multiply(A,B)</code> performs element-wise multiplication (like MATLAB\'s <code>.*</code>). <code>np.matmul(A,B)</code> performs true matrix multiplication (like MATLAB\'s <code>*</code>), following standard rows-by-columns matrix rules.'}
+  ]
+},
+{
+  id:'m11', week:'REF', title:'Reference Chart: Which Structure?',
+  sections:[
+    {h:'How to use this chart', body:`
+      <p>Before picking a MATLAB construct, work out what <i>kind</i> of problem you're looking at. Most exam questions are really just one or two of these, chained together.</p>
+    `},
+    {h:'Decision structures — choosing between outcomes', body:`
+      <ul>
+        <li><b>One yes/no fork</b> → <code>if / else</code></li>
+        <li><b>Ordered ranges</b> (grades, tiers, categories) → <code>if / elseif / else</code> chain</li>
+        <li><b>A condition needs a further check inside it</b> → nested <code>if</code></li>
+        <li><b>Several conditions must ALL or ANY be true</b> → <code>&amp;&amp;</code> / <code>||</code> combined with <code>if</code></li>
+      </ul>
+    `},
+    {h:'Repetition structures — repeating something', body:`
+      <ul>
+        <li><b>You know exactly how many times to repeat</b> → <code>for</code> loop</li>
+        <li><b>You only know the stopping condition, not the count</b> → <code>while</code> loop</li>
+        <li><b>Iterating rows AND columns</b> (a matrix, a grid) → nested <code>for</code> loop</li>
+        <li><b>Same operation on every element, no branching</b> → vectorisation instead of a loop</li>
+      </ul>
+    `},
+    {h:'Organisational structures — how data or code is grouped', body:`
+      <ul>
+        <li><b>A calculation you'll reuse in multiple places</b> → function</li>
+        <li><b>Problem defined in terms of a smaller version of itself</b> (factorial, Fibonacci) → recursion (always needs a base case)</li>
+        <li><b>Related values belonging to one "thing"</b> (name + marks + average) → struct</li>
+        <li><b>A collection where items differ in type or size</b> → cell array</li>
+        <li><b>A simple list of same-type numbers</b> → vector / array</li>
+      </ul>
+      <div class="callout"><b>Quick diagnostic when stuck:</b> (1) Does it need a decision? → if-family. (2) Does it repeat, and is the count known or condition-based? → for vs while. (3) Is the same logic needed more than once, or is the problem recursive? → function / recursion. (4) Is the data itself mixed or grouped? → struct or cell array over a plain vector.</div>
+    `}
+  ],
+  questions:[]
+},
+{
+  id:'m12', week:'REAL', title:'Real ENGG100 Examples',
+  sections:[
+    {h:'Real exam format (from the subject outline)', body:`
+      <p>Good to know exactly what you're walking into — neither final exam is fully open-book:</p>
+      <ul>
+        <li><b>Final Dynamics Exam</b> — 20% · 1 hour · restricted resources allowed · covers rectilinear + curvilinear motion (Weeks 8–9) · 40% minimum to avoid Technical Fail</li>
+        <li><b>Final Programming Exam</b> — 30% · 2 hours (1hr theory + 1hr practical) · restricted resources allowed · covers Weeks 2–7, 11–13 · 40% minimum to avoid Technical Fail</li>
+      </ul>
+    `},
+    {h:'Real if-elseif grading example (from ENGG100 notes)', body:`
+      <pre class="code">grade = 67;
+if grade >= 90
+    disp('A');
+elseif grade >= 80
+    disp('B');
+elseif grade >= 70
+    disp('C');
+elseif grade >= 60
+    disp('D');
+else
+    disp('F');
+end
+<span class="cm">% Output: D</span></pre>
+    `},
+    {h:'Real recursion example — Fibonacci (from ENGG100 notes)', body:`
+      <p>Notice the <b>two</b> base cases here, since Fibonacci depends on the two previous terms, not just one — unlike the single-base-case factorial example earlier in this guide.</p>
+      <pre class="code">function answer = fibonacci(n)
+    if n == 0
+        answer = 0;      <span class="cm">% base case 1</span>
+    elseif n == 1
+        answer = 1;      <span class="cm">% base case 2</span>
+    else
+        answer = fibonacci(n-1) + fibonacci(n-2);  <span class="cm">% recursive case</span>
+    end
+end
+<span class="cm">% fibonacci(9) returns 34</span></pre>
+    `},
+    {h:'Real rectilinear motion code — from the P:314 STRAVA major project', body:`
+      <p>This is the actual pattern used to turn GPS position data into velocity, using <code>diff</code> exactly as covered in the Rectilinear Motion module:</p>
+      <pre class="code"><span class="cm">% distance between consecutive GPS points, from the project's cumulative distance calc</span>
+distance = cumsum(sqrt(diff(Final_Northing).^2 + diff(Final_Easting).^2 + diff(Final_Elevation).^2));
+
+<span class="cm">% velocity — change in distance over change in time, converted to km/h</span>
+hours = time./3600;
+velocity = distance./hours;
+plot(hours, velocity);
+title('Time(h) vs. Velocity'); xlabel('Time(h)'); ylabel('Velocity(km/h)');</pre>
+      <div class="callout"><b>Note:</b> the project used <code>cumsum(sqrt(diff(x)^2+diff(y)^2+diff(z)^2))</code> as its core distance formula — the same distance formula from the motion modules, just applied cumulatively over many points instead of two.</div>
+    `},
+    {h:'Real tangential acceleration example (Challenge Problem 1)', body:`
+      <pre class="code">velocity_ms = velocity_kmhr./3.6;              <span class="cm">% convert km/h to m/s</span>
+vDiff = [0; diff(velocity_ms)];                 <span class="cm">% change in velocity between points</span>
+at = velocity_ms.*(vDiff./RawData(:,17));        <span class="cm">% tangential acceleration formula</span>
+plot(time2, at);
+title('Tangential Acceleration vs Time');
+xlabel('Time (seconds)'); ylabel('Tangential Acceleration (m/s^-2)');</pre>
+    `},
+    {h:'Real formula-chaining example — cycling power (Challenge Problem 2)', body:`
+      <p>Shows how several dynamics formulas combine into one MATLAB calculation — a good model for how exam questions often chain multiple concepts together:</p>
+      <pre class="code">g = 9.81;                                       <span class="cm">% gravity constant</span>
+Fg = g.*sin(atan(slope)).*(M+m);                <span class="cm">% resistance force due to gravity</span>
+Fr = g.*cos(atan(slope)).*(M+m).*Crr;           <span class="cm">% rolling resistance force</span>
+Fa = 1/2.*cda.*p.*(v+w);                        <span class="cm">% aerodynamic drag</span>
+P  = ((Fg+Fr+Fa).*v)./(1-loss);                 <span class="cm">% power formula — combines all three forces</span>
+plot(time, P); xlabel('Time (s)'); ylabel('Power (W)');</pre>
+      <div class="callout"><b>Takeaway for the exam:</b> real ENGG100 questions rarely test one concept in isolation. The project shows the typical pattern — a loop or vector operation, feeding a dynamics formula, feeding a plot. Practice spotting all three layers in a question, not just the one it seems to be asking about.</div>
+    `}
+  ],
+  questions:[
+    {q:'Why does the Fibonacci function need two base cases (n==0 and n==1) instead of just one?', a:'Because each Fibonacci term depends on the <i>two</i> preceding terms, not one. A single base case (like factorial\'s n<=1) wouldn\'t give the recursion enough starting information — it needs both F(0) and F(1) defined before F(n-1)+F(n-2) can resolve down to real numbers.'},
+    {q:'In the real project code, what does <code>cumsum(sqrt(diff(x).^2 + diff(y).^2 + diff(z).^2))</code> calculate?', a:'The cumulative distance travelled along a 3D path. <code>diff(x)</code>, <code>diff(y)</code>, <code>diff(z)</code> give the change in each coordinate between consecutive points; squaring, summing and square-rooting gives the straight-line distance between each pair of points (Pythagoras in 3D); <code>cumsum</code> then adds these up running-total style to give total distance travelled at each point in time.'}
+  ]
+}
+];
+
+let currentIndex = 0;
+const doneSet = new Set();
+
+function renderNav(){
+  const nav = document.getElementById('module-nav');
+  nav.innerHTML = '';
+  modules.forEach((m, idx) => {
+    const item = document.createElement('div');
+    item.className = 'nav-item' + (idx === currentIndex ? ' active' : '') + (doneSet.has(m.id) ? ' done' : '');
+    item.innerHTML = `<span class="wk">${m.week}</span><span class="chk">${doneSet.has(m.id) ? '✓' : ''}</span><span>${m.title}</span>`;
+    item.addEventListener('click', () => { currentIndex = idx; renderAll(); });
+    nav.appendChild(item);
+  });
+  updateProgress();
 }
 
-function expandAll() {
-  document.querySelectorAll('details').forEach(d => d.open = true);
+function updateProgress(){
+  const count = doneSet.size;
+  document.getElementById('progress-count').textContent = `${count} / ${modules.length}`;
+  document.getElementById('progress-bar-fill').style.width = `${(count/modules.length)*100}%`;
 }
+
+function renderMain(){
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+  const m = modules[currentIndex];
+
+  const header = document.createElement('div');
+  header.className = 'module-header';
+  header.innerHTML = `
+    <div><div class="tag">${m.week} · SYLLABUS TOPIC</div><h2>${m.title}</h2></div>
+    <button class="mark-done-btn ${doneSet.has(m.id) ? 'done' : ''}" id="mark-done">${doneSet.has(m.id) ? '✓ Completed' : 'Mark as done'}</button>
+  `;
+  main.appendChild(header);
+
+  m.sections.forEach(s => {
+    const sec = document.createElement('div');
+    sec.className = 'section';
+    sec.innerHTML = `<h3>${s.h}</h3>${s.body}`;
+    main.appendChild(sec);
+  });
+
+  if(m.questions && m.questions.length){
+    const qSection = document.createElement('div');
+    qSection.className = 'section';
+    qSection.innerHTML = '<h3>Practice Questions</h3>';
+    m.questions.forEach((q, i) => {
+      const box = document.createElement('div');
+      box.className = 'qbox';
+      box.innerHTML = `
+        <div class="qhead">
+          <div><span class="qnum">Q${i+1}</span><span class="qtitle">${q.q}</span></div>
+          <span class="toggle-icon">▾</span>
+        </div>
+        <div class="answer">${q.a}</div>
+      `;
+      box.querySelector('.qhead').addEventListener('click', () => box.classList.toggle('open'));
+      qSection.appendChild(box);
+    });
+    main.appendChild(qSection);
+  }
+
+  const footnav = document.createElement('div');
+  footnav.className = 'footnav';
+  footnav.innerHTML = `
+    <button id="prev-btn" ${currentIndex === 0 ? 'disabled' : ''}>&larr; Previous</button>
+    <button id="next-btn" ${currentIndex === modules.length-1 ? 'disabled' : ''}>Next &rarr;</button>
+  `;
+  main.appendChild(footnav);
+
+  document.getElementById('mark-done').addEventListener('click', () => {
+    if(doneSet.has(m.id)){ doneSet.delete(m.id); } else { doneSet.add(m.id); }
+    renderAll();
+  });
+  document.getElementById('prev-btn').addEventListener('click', () => { if(currentIndex>0){ currentIndex--; renderAll(); window.scrollTo(0,0); }});
+  document.getElementById('next-btn').addEventListener('click', () => { if(currentIndex<modules.length-1){ currentIndex++; renderAll(); window.scrollTo(0,0); }});
+}
+
+function renderAll(){
+  renderNav();
+  renderMain();
+}
+
+renderAll();
 </script>
 </body>
 </html>
