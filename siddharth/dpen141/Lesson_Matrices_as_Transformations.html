@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Matrices as Transformations</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  .grid-svg-wrap{ text-align:center; margin:14px 0; }
+  .grid-svg-wrap svg{ max-width:100%; height:auto; background:#fff; border:1px solid var(--line); border-radius:6px; }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Linear Algebra Foundations &middot; Slots after Matrix Fundamentals</div>
+  <h1>Matrices as Transformations</h1>
+  <p>Every matrix you've added, scaled, and multiplied so far has been a grid of numbers obeying rules. This lesson is the reframe: a matrix is a <em>function</em> that moves every point in the plane somewhere else, all at once, in a completely predictable way. Once that picture is in place, matrix multiplication, non-commutativity, rank, and the determinant all stop being rules to memorise and start being things you can see. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 44 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">A matrix is a function</a></li>
+    <li><a href="#sec1">Where do the basis vectors go?</a></li>
+    <li><a href="#sec2">Scaling</a></li>
+    <li><a href="#sec3">Reflections</a></li>
+    <li><a href="#sec4">Rotations</a></li>
+    <li><a href="#sec5">Shears</a></li>
+    <li><a href="#sec6">Composition: what multiplication means</a></li>
+    <li><a href="#sec7">The determinant as area and orientation</a></li>
+    <li><a href="#sec8">Preview: directions that don't rotate</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> A matrix is a function</div>
+  <div class="prose">
+    <p>In Matrix Fundamentals, you learned that $A\mathbf{x}$ means: take row $i$ of $A$, dot it with $\mathbf{x}$, and that gives you the $i$th entry of the output. That's the mechanical definition, and it's correct, but it hides something worth seeing directly: $A\mathbf{x}$ is really a rule that eats a vector and spits out a new vector. Feed it any point in the plane, and it tells you exactly where that point goes.</p>
+    <p>That reframing, matrix as <strong>transformation</strong> rather than matrix as <strong>grid of numbers</strong>, is what this whole lesson is about. Nothing here contradicts what you already know about matrix arithmetic; it's the same arithmetic, viewed as motion instead of bookkeeping. And once you can see a matrix move a point, a lot of what felt arbitrary in Matrix Fundamentals (why does $AB\neq BA$?) and a lot of what's coming in Row Operations (what does it actually mean for a matrix to be "singular"?) stops being a rule and starts being a picture you already understand.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Where do the basis vectors go?</div>
+  <div class="prose">
+    <p>Here is the single most useful fact in this entire lesson, and everything else builds on it. Every vector in the plane can be written as a combination of the two special vectors $\mathbf{e}_1=\begin{pmatrix}1\\0\end{pmatrix}$ and $\mathbf{e}_2=\begin{pmatrix}0\\1\end{pmatrix}$ (a horizontal step and a vertical step). If you know where a transformation sends $\mathbf{e}_1$ and $\mathbf{e}_2$, you automatically know where it sends <em>every other vector</em>, because linearity lets you build any vector's image out of those two images.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>For a $2\times2$ matrix $A$, $A\mathbf{e}_1$ is exactly the <strong>first column</strong> of $A$, and $A\mathbf{e}_2$ is exactly the <strong>second column</strong>. That's not a coincidence, it's what matrix-vector multiplication does: $A\mathbf{e}_1$ picks out column 1 because $\mathbf{e}_1$ has a $1$ in the first slot and $0$s everywhere else.</p>
+    <p>Once you know the two columns are the images of $\mathbf{e}_1,\mathbf{e}_2$, any vector $\mathbf{v}=\begin{pmatrix}x\\y\end{pmatrix}=x\mathbf{e}_1+y\mathbf{e}_2$ transforms as $A\mathbf{v} = x(A\mathbf{e}_1)+y(A\mathbf{e}_2)$: just scale the two column-images by $x$ and $y$ and add them.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>For $A=\begin{pmatrix}2&1\\0&3\end{pmatrix}$, find $A\mathbf{e}_1$ and $A\mathbf{e}_2$ directly from the columns, then use that to find $A\mathbf{v}$ for $\mathbf{v}=\begin{pmatrix}3\\-2\end{pmatrix}$ without multiplying $A$ by $\mathbf{v}$ from scratch.</p>
+    <p class="step">Column 1 is $\begin{pmatrix}2\\0\end{pmatrix}$, so $A\mathbf{e}_1=\begin{pmatrix}2\\0\end{pmatrix}$. Column 2 is $\begin{pmatrix}1\\3\end{pmatrix}$, so $A\mathbf{e}_2=\begin{pmatrix}1\\3\end{pmatrix}$.</p>
+    <p class="step">$\mathbf{v}=3\mathbf{e}_1-2\mathbf{e}_2$, so $A\mathbf{v} = 3(A\mathbf{e}_1)-2(A\mathbf{e}_2) = 3\begin{pmatrix}2\\0\end{pmatrix}-2\begin{pmatrix}1\\3\end{pmatrix} = \begin{pmatrix}6\\0\end{pmatrix}-\begin{pmatrix}2\\6\end{pmatrix} = \begin{pmatrix}4\\-6\end{pmatrix}$.</p>
+    <p>This matches ordinary matrix multiplication exactly, $A\mathbf{v}$ computed the usual way also gives $\begin{pmatrix}4\\-6\end{pmatrix}$, but here you never had to redo a dot-product calculation: once you know where the two basis vectors land, every other vector's landing spot is just a scaled combination of those two answers.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>For $A=\begin{pmatrix}1&4\\3&2\end{pmatrix}$, state where $\mathbf{e}_1$ and $\mathbf{e}_2$ land, reading straight off the columns.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A\mathbf{e}_1 = \begin{pmatrix}1\\3\end{pmatrix}$ (column 1). $\ A\mathbf{e}_2 = \begin{pmatrix}4\\2\end{pmatrix}$ (column 2).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A transformation sends $\mathbf{e}_1$ to $\begin{pmatrix}2\\5\end{pmatrix}$ and $\mathbf{e}_2$ to $\begin{pmatrix}-1\\3\end{pmatrix}$. Write down its matrix $A$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The images of $\mathbf{e}_1,\mathbf{e}_2$ become the columns, in order: $$A = \begin{pmatrix}2&-1\\5&3\end{pmatrix}.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>For $A=\begin{pmatrix}3&0\\1&2\end{pmatrix}$, use the column images (not full matrix multiplication) to find where $\begin{pmatrix}4\\1\end{pmatrix}$ lands.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A\mathbf{e}_1=\begin{pmatrix}3\\1\end{pmatrix}$, $\ A\mathbf{e}_2=\begin{pmatrix}0\\2\end{pmatrix}$. $\begin{pmatrix}4\\1\end{pmatrix}=4\mathbf{e}_1+1\mathbf{e}_2$, so the image is $4\begin{pmatrix}3\\1\end{pmatrix}+1\begin{pmatrix}0\\2\end{pmatrix} = \begin{pmatrix}12\\4\end{pmatrix}+\begin{pmatrix}0\\2\end{pmatrix} = \begin{pmatrix}12\\6\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A $3\times3$ transformation sends $\mathbf{e}_1\to(1,0,0)$, $\mathbf{e}_2\to(0,2,0)$, $\mathbf{e}_3\to(0,0,-1)$. Write the matrix, and describe in words what it does to space.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$A = \begin{pmatrix}1&0&0\\0&2&0\\0&0&-1\end{pmatrix}$$</p>
+      <p>It leaves the $x$-direction alone, doubles the $y$-direction, and flips the $z$-direction backward (a reflection along $z$ combined with no change in $x$ and a stretch in $y$). This is a preview of Section 2, every diagonal matrix is exactly this kind of "stretch each axis independently" transformation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Explain, in your own words, why knowing where $\mathbf{e}_1$ and $\mathbf{e}_2$ land is enough information to know where <em>every</em> vector in the plane lands.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Every vector $\mathbf{v}=\begin{pmatrix}x\\y\end{pmatrix}$ can be written as $x\mathbf{e}_1+y\mathbf{e}_2$, a specific scaled combination of the two basis vectors, no vector in the plane is left out of this description. Matrix multiplication respects scaling and addition (this is exactly the distributive and scalar-factoring properties from Matrix Fundamentals), so $A\mathbf{v} = A(x\mathbf{e}_1+y\mathbf{e}_2) = x(A\mathbf{e}_1)+y(A\mathbf{e}_2)$. Once $A\mathbf{e}_1$ and $A\mathbf{e}_2$ are known, this formula hands you $A\mathbf{v}$ for absolutely any $\mathbf{v}$, with no further guessing about what the transformation does elsewhere.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>A matrix has columns $\begin{pmatrix}1\\1\end{pmatrix}$ and $\begin{pmatrix}1\\-1\end{pmatrix}$. Find where $\begin{pmatrix}2\\0\end{pmatrix}$ and $\begin{pmatrix}0\\2\end{pmatrix}$ each land.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\begin{pmatrix}2\\0\end{pmatrix}=2\mathbf{e}_1$, so it lands at $2\begin{pmatrix}1\\1\end{pmatrix}=\begin{pmatrix}2\\2\end{pmatrix}$.</p>
+      <p>$\begin{pmatrix}0\\2\end{pmatrix}=2\mathbf{e}_2$, so it lands at $2\begin{pmatrix}1\\-1\end{pmatrix}=\begin{pmatrix}2\\-2\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Scaling</div>
+  <div class="prose">
+    <p>The simplest transformation of all: stretch or shrink along each axis independently, leaving the axes themselves pointing the same direction. A <strong>diagonal</strong> matrix always does exactly this, and Section 1's column trick tells you why immediately: the columns of a diagonal matrix are $\begin{pmatrix}k_1\\0\end{pmatrix}$ and $\begin{pmatrix}0\\k_2\end{pmatrix}$, meaning $\mathbf{e}_1$ just gets stretched by $k_1$ along its own direction, and $\mathbf{e}_2$ gets stretched by $k_2$ along its own direction, with no mixing between the axes at all.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\begin{pmatrix}k_1&0\\0&k_2\end{pmatrix}$$ scales the $x$-direction by $k_1$ and the $y$-direction by $k_2$. If $k_1=k_2=k$, every direction scales by the same amount, a <strong>uniform</strong> scaling. A negative $k$ doesn't just shrink, it flips that axis to point the other way, scaling and reflecting in one move.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Find where $\begin{pmatrix}4\\5\end{pmatrix}$ lands under the scaling matrix $\begin{pmatrix}2&0\\0&3\end{pmatrix}$.</p>
+    <p class="step">$$\begin{pmatrix}2&0\\0&3\end{pmatrix}\begin{pmatrix}4\\5\end{pmatrix} = \begin{pmatrix}2(4)\\3(5)\end{pmatrix} = \begin{pmatrix}8\\15\end{pmatrix}.$$</p>
+    <p>The $x$-coordinate doubled, the $y$-coordinate tripled, exactly matching the two diagonal entries, with no cross-influence between them.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Write the matrix that scales $x$ by $3$ and leaves $y$ completely unchanged.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Leaving $y$ unchanged means scaling it by $1$: $$\begin{pmatrix}3&0\\0&1\end{pmatrix}.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Find where $\begin{pmatrix}2\\-1\end{pmatrix}$ lands under $\begin{pmatrix}4&0\\0&\frac12\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\begin{pmatrix}4(2)\\\frac12(-1)\end{pmatrix} = \begin{pmatrix}8\\-\frac12\end{pmatrix}.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A transformation sends $\mathbf{e}_1\to\begin{pmatrix}5\\0\end{pmatrix}$ and $\mathbf{e}_2\to\begin{pmatrix}0\\5\end{pmatrix}$. Write the matrix, and name what kind of scaling this is.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$A = \begin{pmatrix}5&0\\0&5\end{pmatrix}$$</p>
+      <p>Both axes scale by the same factor, $5$: this is a <strong>uniform</strong> scaling, everything gets $5\times$ bigger with its shape completely preserved, just like zooming in on a photo.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>What does $\begin{pmatrix}-2&0\\0&1\end{pmatrix}$ do geometrically? Find the image of $\begin{pmatrix}3\\4\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>It stretches $x$ by a factor of $2$ <em>and</em> flips it to the opposite side (the negative sign), while leaving $y$ untouched, a combination of scaling and reflecting across the $y$-axis in one matrix.</p>
+      <p>$$\begin{pmatrix}-2(3)\\1(4)\end{pmatrix} = \begin{pmatrix}-6\\4\end{pmatrix}.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>What matrix would collapse every point in the plane down to the single point at the origin? What do its columns look like, and why does that make sense given Section 1?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The zero matrix, $\begin{pmatrix}0&0\\0&0\end{pmatrix}$. Its columns are both $\begin{pmatrix}0\\0\end{pmatrix}$, meaning $\mathbf{e}_1$ and $\mathbf{e}_2$ both land on the origin. Since Section 1 showed every vector's image is built from scaled copies of $A\mathbf{e}_1$ and $A\mathbf{e}_2$, and both of those are already $\mathbf{0}$, every combination of them is $\mathbf{0}$ too, no matter what $x$ and $y$ were. The whole plane really does get crushed to a single point.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>The unit square with corners $(0,0),(1,0),(1,1),(0,1)$ (area $1$) is transformed by $\begin{pmatrix}2&0\\0&3\end{pmatrix}$. Find the new corners, and the new area.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>New corners: $(0,0),\ (2,0),\ (2,3),\ (0,3)$, still a rectangle (scaling never bends straight lines).</p>
+      <p>New area: width $2$ times height $3$ gives area $6$, exactly the product of the two scale factors, $2\times3$. Section 7 turns this observation into a general rule connecting the determinant to area.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Reflections</div>
+  <div class="prose">
+    <p>A reflection flips every point across a fixed line, like a mirror. It's really just a special case of scaling: flipping across the $x$-axis, for instance, leaves $x$ alone (scale factor $1$) and flips $y$ (scale factor $-1$).</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Reflect across the $x$-axis: $\begin{pmatrix}1&0\\0&-1\end{pmatrix}$. Reflect across the $y$-axis: $\begin{pmatrix}-1&0\\0&1\end{pmatrix}$. Reflect across the line $y=x$: $\begin{pmatrix}0&1\\1&0\end{pmatrix}$ (this one swaps the two coordinates directly, since it sends $\mathbf{e}_1\to\mathbf{e}_2$ and $\mathbf{e}_2\to\mathbf{e}_1$).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Reflect $\begin{pmatrix}3\\4\end{pmatrix}$ across the $x$-axis.</p>
+    <p class="step">$$\begin{pmatrix}1&0\\0&-1\end{pmatrix}\begin{pmatrix}3\\4\end{pmatrix} = \begin{pmatrix}3\\-4\end{pmatrix}.$$</p>
+    <p>The $x$-coordinate is untouched, the $y$-coordinate flips sign, exactly matching what "reflecting across the $x$-axis" should mean physically.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Reflect $\begin{pmatrix}2\\5\end{pmatrix}$ across the $y$-axis.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\begin{pmatrix}-1&0\\0&1\end{pmatrix}\begin{pmatrix}2\\5\end{pmatrix} = \begin{pmatrix}-2\\5\end{pmatrix}.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Reflect $\begin{pmatrix}-3\\1\end{pmatrix}$ across the line $y=x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Reflecting across $y=x$ swaps the coordinates: $\begin{pmatrix}-3\\1\end{pmatrix} \to \begin{pmatrix}1\\-3\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Verify that reflecting across the $x$-axis twice in a row returns a point to where it started, using $\begin{pmatrix}5\\2\end{pmatrix}$ as an example, and explain why that has to happen for <em>any</em> reflection, not just this one.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>First reflection: $\begin{pmatrix}5\\2\end{pmatrix}\to\begin{pmatrix}5\\-2\end{pmatrix}$. Second reflection: $\begin{pmatrix}5\\-2\end{pmatrix}\to\begin{pmatrix}5\\2\end{pmatrix}$, back to the start.</p>
+      <p>This must always happen for any reflection, because a mirror flip undoes itself: flipping to the other side of a line and then flipping again brings you right back, there's no accumulating drift the way there might be with a rotation or scaling. Algebraically, the reflection matrix $R$ always satisfies $R^2=I$ for exactly this reason.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A point lands at $\begin{pmatrix}4\\-4\end{pmatrix}$ after being reflected across $y=x$. What was the original point?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Reflecting across $y=x$ swaps coordinates, and (as Practice 15 showed) doing it twice undoes it. So the original point also had its coordinates swapped relative to the result: original $=\begin{pmatrix}-4\\4\end{pmatrix}$. Check: reflecting $\begin{pmatrix}-4\\4\end{pmatrix}$ across $y=x$ swaps to $\begin{pmatrix}4\\-4\end{pmatrix}$ ✓.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Using Section 1's column trick, explain why the reflection-across-the-$x$-axis matrix has to have columns $\begin{pmatrix}1\\0\end{pmatrix}$ and $\begin{pmatrix}0\\-1\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{e}_1=\begin{pmatrix}1\\0\end{pmatrix}$ already sits exactly on the $x$-axis, the mirror line itself, so reflecting it across that same line leaves it completely unmoved: its image is still $\begin{pmatrix}1\\0\end{pmatrix}$, giving the first column. $\mathbf{e}_2=\begin{pmatrix}0\\1\end{pmatrix}$ sits directly above the $x$-axis; reflecting it across that axis sends it to directly below, $\begin{pmatrix}0\\-1\end{pmatrix}$, giving the second column. The columns aren't an arbitrary rule to memorise, they're just the reflection applied to the two simplest possible test points.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Reflect $\begin{pmatrix}1\\1\end{pmatrix}$ across the $y$-axis, then reflect the result across the $x$-axis. What single, more familiar transformation does doing both in sequence match?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Reflect across $y$-axis: $\begin{pmatrix}1\\1\end{pmatrix}\to\begin{pmatrix}-1\\1\end{pmatrix}$. Reflect that across the $x$-axis: $\begin{pmatrix}-1\\1\end{pmatrix}\to\begin{pmatrix}-1\\-1\end{pmatrix}$.</p>
+      <p>This matches a $180^\circ$ rotation directly: rotating $\begin{pmatrix}1\\1\end{pmatrix}$ by $180^\circ$ also gives $\begin{pmatrix}-1\\-1\end{pmatrix}$. Two mirror flips across perpendicular lines always combine into a half-turn, a first taste of Section 6's idea that composing simple transformations can produce a completely different-looking one.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Rotations</div>
+  <div class="prose">
+    <p>A rotation spins every point around the origin by the same fixed angle. Working out its matrix is a nice payoff for Section 1's column trick: just track where $\mathbf{e}_1$ and $\mathbf{e}_2$ land after rotating by $\theta$, using ordinary right-triangle trigonometry, and those landing spots become the columns.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Rotating $\mathbf{e}_1=\begin{pmatrix}1\\0\end{pmatrix}$ counter-clockwise by angle $\theta$ lands it at $\begin{pmatrix}\cos\theta\\\sin\theta\end{pmatrix}$ (standard unit-circle coordinates). Rotating $\mathbf{e}_2=\begin{pmatrix}0\\1\end{pmatrix}$, which starts $90^\circ$ ahead of $\mathbf{e}_1$, lands it at $\begin{pmatrix}-\sin\theta\\\cos\theta\end{pmatrix}$. So:</p>
+    <p>$$R_\theta = \begin{pmatrix}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{pmatrix}$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Find the $90^\circ$ rotation matrix, and use it to rotate $\begin{pmatrix}2\\0\end{pmatrix}$ by $45^\circ$ instead.</p>
+    <p class="step">At $\theta=90^\circ$: $\cos90^\circ=0$, $\sin90^\circ=1$, so $R_{90} = \begin{pmatrix}0&-1\\1&0\end{pmatrix}$.</p>
+    <p class="step">For the $45^\circ$ case: $\cos45^\circ=\sin45^\circ=\dfrac{\sqrt2}2$, so $R_{45} = \begin{pmatrix}\frac{\sqrt2}2&-\frac{\sqrt2}2\\\frac{\sqrt2}2&\frac{\sqrt2}2\end{pmatrix}$.</p>
+    <p>$$R_{45}\begin{pmatrix}2\\0\end{pmatrix} = \begin{pmatrix}\sqrt2\\\sqrt2\end{pmatrix}.$$</p>
+    <p>This makes sense on sight: a point $2$ units out along the positive $x$-axis, spun halfway toward the positive $y$-axis, should land equally spaced between the two axes, at $(\sqrt2,\sqrt2)$, still at distance $2$ from the origin.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Rotate $\begin{pmatrix}1\\0\end{pmatrix}$ by $180^\circ$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\cos180^\circ=-1$, $\sin180^\circ=0$: $R_{180}=\begin{pmatrix}-1&0\\0&-1\end{pmatrix}$.</p>
+      <p>$$R_{180}\begin{pmatrix}1\\0\end{pmatrix} = \begin{pmatrix}-1\\0\end{pmatrix}.$$ A half-turn sends every point to its exact opposite, as expected.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Rotate $\begin{pmatrix}0\\2\end{pmatrix}$ by $90^\circ$ counter-clockwise.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$R_{90}\begin{pmatrix}0\\2\end{pmatrix} = \begin{pmatrix}0&-1\\1&0\end{pmatrix}\begin{pmatrix}0\\2\end{pmatrix} = \begin{pmatrix}-2\\0\end{pmatrix}.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Write the rotation matrix for $30^\circ$, and use it to rotate $\begin{pmatrix}2\\0\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\cos30^\circ=\dfrac{\sqrt3}2$, $\sin30^\circ=\dfrac12$: $R_{30}=\begin{pmatrix}\frac{\sqrt3}2&-\frac12\\\frac12&\frac{\sqrt3}2\end{pmatrix}$.</p>
+      <p>$$R_{30}\begin{pmatrix}2\\0\end{pmatrix} = \begin{pmatrix}\sqrt3\\1\end{pmatrix}.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Using Section 1's column trick directly, explain why the columns of $R_\theta$ are $\begin{pmatrix}\cos\theta\\\sin\theta\end{pmatrix}$ and $\begin{pmatrix}-\sin\theta\\\cos\theta\end{pmatrix}$, rather than treating this as a formula to just memorise.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The first column is, by Section 1, exactly where $\mathbf{e}_1$ lands. $\mathbf{e}_1$ sits at angle $0^\circ$ on the unit circle; rotating it by $\theta$ moves it to angle $\theta$, which by definition of sine and cosine on the unit circle is the point $(\cos\theta,\sin\theta)$. The second column is where $\mathbf{e}_2$ lands; $\mathbf{e}_2$ already sits at angle $90^\circ$, so after rotating by $\theta$ it sits at angle $90^\circ+\theta$, and using the angle-addition identities, $\cos(90^\circ+\theta)=-\sin\theta$ and $\sin(90^\circ+\theta)=\cos\theta$, giving exactly the second column. Nothing here is an arbitrary rule, it's the unit circle applied to the two simplest test vectors, same idea as Practice 17's reflection columns.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Rotate $\begin{pmatrix}3\\4\end{pmatrix}$ by $90^\circ$ twice in a row, and compare to rotating it by $180^\circ$ directly.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>First $90^\circ$: $\begin{pmatrix}0&-1\\1&0\end{pmatrix}\begin{pmatrix}3\\4\end{pmatrix}=\begin{pmatrix}-4\\3\end{pmatrix}$. Second $90^\circ$: $\begin{pmatrix}0&-1\\1&0\end{pmatrix}\begin{pmatrix}-4\\3\end{pmatrix}=\begin{pmatrix}-3\\-4\end{pmatrix}$.</p>
+      <p>Directly by $180^\circ$: $\begin{pmatrix}-1&0\\0&-1\end{pmatrix}\begin{pmatrix}3\\4\end{pmatrix}=\begin{pmatrix}-3\\-4\end{pmatrix}$, matching exactly. Two $90^\circ$ turns really do add up to one $180^\circ$ turn, angles of rotation combine by simple addition when rotations are composed, a fact Section 6 makes precise for transformations in general.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>A rotation matrix has first column $\begin{pmatrix}0\\1\end{pmatrix}$. What angle is this, and what must the second column be?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The first column is $(\cos\theta,\sin\theta)=(0,1)$, so $\theta=90^\circ$. The second column must then be $(-\sin90^\circ,\cos90^\circ)=(-1,0)$, matching $R_{90}=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ exactly, the same matrix from the worked example.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> Shears</div>
+  <div class="prose">
+    <p>A shear is the transformation behind the "leaning" effect in italic text or a deck of cards fanned out sideways: one axis stays completely fixed, and points get pushed sideways by an amount proportional to how far they are from that fixed axis.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><strong>Horizontal shear</strong>: $\begin{pmatrix}1&k\\0&1\end{pmatrix}$. Every point's $x$-coordinate shifts by $k$ times its $y$-coordinate; points already on the $x$-axis ($y=0$) don't move at all.</p>
+    <p><strong>Vertical shear</strong>: $\begin{pmatrix}1&0\\k&1\end{pmatrix}$. Every point's $y$-coordinate shifts by $k$ times its $x$-coordinate; points on the $y$-axis stay fixed.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Apply the horizontal shear $\begin{pmatrix}1&2\\0&1\end{pmatrix}$ to $\begin{pmatrix}1\\1\end{pmatrix}$, and to $\begin{pmatrix}5\\0\end{pmatrix}$.</p>
+    <p class="step">$$\begin{pmatrix}1&2\\0&1\end{pmatrix}\begin{pmatrix}1\\1\end{pmatrix} = \begin{pmatrix}1+2\\1\end{pmatrix} = \begin{pmatrix}3\\1\end{pmatrix}.$$</p>
+    <p class="step">$$\begin{pmatrix}1&2\\0&1\end{pmatrix}\begin{pmatrix}5\\0\end{pmatrix} = \begin{pmatrix}5+0\\0\end{pmatrix} = \begin{pmatrix}5\\0\end{pmatrix}.$$</p>
+    <p>The point already on the $x$-axis didn't move at all, exactly matching the key idea, while the point with $y=1$ got pushed sideways by $2$ (the shear factor times its $y$-coordinate).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Apply the horizontal shear $\begin{pmatrix}1&3\\0&1\end{pmatrix}$ to $\begin{pmatrix}2\\1\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\begin{pmatrix}1&3\\0&1\end{pmatrix}\begin{pmatrix}2\\1\end{pmatrix} = \begin{pmatrix}2+3\\1\end{pmatrix} = \begin{pmatrix}5\\1\end{pmatrix}.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Which points are left completely unchanged by a horizontal shear? Explain using the matrix's columns.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The first column of $\begin{pmatrix}1&k\\0&1\end{pmatrix}$ is $\begin{pmatrix}1\\0\end{pmatrix}$, meaning $\mathbf{e}_1$ itself doesn't move. Every point on the $x$-axis is just a scalar multiple of $\mathbf{e}_1$, and scaling an unmoved vector still leaves it on the same line, unmoved. So the entire $x$-axis is left fixed, point for point, only points with a nonzero $y$-coordinate get pushed sideways.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Write the vertical shear matrix with shear factor $2$, and apply it to $\begin{pmatrix}3\\0\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\begin{pmatrix}1&0\\2&1\end{pmatrix}\begin{pmatrix}3\\0\end{pmatrix} = \begin{pmatrix}3\\2(3)+0\end{pmatrix} = \begin{pmatrix}3\\6\end{pmatrix}.$$</p>
+      <p>The $x$-coordinate ($3$) pushed the $y$-coordinate from $0$ up to $6$, exactly matching "shift $y$ by the shear factor times $x$."</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>The unit square is sheared horizontally with $k=1$. Describe in words what happens to its shape, and find the area of the resulting parallelogram.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The bottom edge (on the $x$-axis) stays exactly where it is, since points there are unmoved (Practice 26). The top edge, sitting at $y=1$, slides sideways by $1\times k=1$: the corner $(0,1)$ moves to $(1,1)$, and $(1,1)$ moves to $(2,1)$. The square leans over into a parallelogram, like a stack of cards pushed sideways.</p>
+      <p>The area stays exactly $1$: the base is still $1$ and the height is still $1$ (shears never change how far a point sits from the fixed axis, only how far sideways it slides), so base times height is unchanged even though the shape is no longer a square. Section 7 explains this in terms of the determinant.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>Is a shear matrix ever also a scaling matrix? Explain using what makes each one geometrically distinctive.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No (except in the trivial case $k=0$, where the shear matrix is just $I$ and does nothing at all, which isn't a very interesting kind of scaling either). A genuine scaling matrix moves every point <em>along its own axis direction</em>, stretching distances from the origin along $x$ and $y$ independently, but never introduces sideways sliding between the axes. A genuine shear does the opposite: it leaves distances along the fixed axis completely alone and only slides points sideways, parallel to that axis, by an amount depending on their distance from it. The two effects, stretching along an axis versus sliding parallel to one, are fundamentally different kinds of motion, which is exactly why they get different names and different matrix shapes (diagonal vs. one off-diagonal entry).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Composition: what multiplication means</div>
+  <div class="prose">
+    <p>Matrix Fundamentals taught you the mechanical rule for computing $AB$. Here is what that product actually <em>means</em>: $(AB)\mathbf{v}$ is "first transform $\mathbf{v}$ by $B$, then transform the result by $A$." Reading a product of matrices is a right-to-left instruction: whichever matrix sits closest to the vector gets applied first.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$(AB)\mathbf{v} = A(B\mathbf{v})$: apply $B$ first, then $A$. Since $AB\neq BA$ in general (Matrix Fundamentals, Section 6), doing transformation $B$ then $A$ is generally a genuinely different overall motion from doing $A$ then $B$, not just the same result computed in a different order.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why order visibly matters here</span>
+    <p>Take $A=$ rotate $90^\circ$ and $B=$ scale $x$ by $2$ (leave $y$ alone), and track $\mathbf{v}=\begin{pmatrix}1\\0\end{pmatrix}$.</p>
+    <p class="step"><strong>Scale then rotate</strong> ($A(B\mathbf{v})$, i.e.\ matrix $AB$): first $B\mathbf{v}=\begin{pmatrix}2\\0\end{pmatrix}$ (stretched along $x$), then rotate that $90^\circ$: $\begin{pmatrix}0\\2\end{pmatrix}$.</p>
+    <p class="step"><strong>Rotate then scale</strong> ($B(A\mathbf{v})$, i.e.\ matrix $BA$): first $A\mathbf{v}=\begin{pmatrix}0\\1\end{pmatrix}$ (rotated onto the $y$-axis), then scale $x$ by $2$: scaling $x$ does nothing to a vector that's already sitting entirely on the $y$-axis, giving $\begin{pmatrix}0\\1\end{pmatrix}$.</p>
+    <p>Two completely different landing spots, $\begin{pmatrix}0\\2\end{pmatrix}$ versus $\begin{pmatrix}0\\1\end{pmatrix}$, from the exact same two building-block transformations, just applied in the opposite order. This is $AB\neq BA$ made visible: stretching before you turn is not the same motion as turning before you stretch, because by the time you turn, the stretch has already happened along a direction that turning then carries somewhere the un-stretched rotation never visits.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>Apply reflection-across-the-$x$-axis, then rotation-by-$90^\circ$, to the point $\begin{pmatrix}1\\0\end{pmatrix}$ (i.e.\ compute rotate(reflect($\mathbf{v}$))).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Reflect first: $\begin{pmatrix}1&0\\0&-1\end{pmatrix}\begin{pmatrix}1\\0\end{pmatrix}=\begin{pmatrix}1\\0\end{pmatrix}$ (unchanged, since it's already on the $x$-axis). Then rotate: $\begin{pmatrix}0&-1\\1&0\end{pmatrix}\begin{pmatrix}1\\0\end{pmatrix}=\begin{pmatrix}0\\1\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Now reverse the order from Practice 30: apply rotation-by-$90^\circ$ first, then reflection-across-the-$x$-axis, to the same point $\begin{pmatrix}1\\0\end{pmatrix}$. Confirm you get a different answer.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Rotate first: $\begin{pmatrix}0&-1\\1&0\end{pmatrix}\begin{pmatrix}1\\0\end{pmatrix}=\begin{pmatrix}0\\1\end{pmatrix}$. Then reflect: $\begin{pmatrix}1&0\\0&-1\end{pmatrix}\begin{pmatrix}0\\1\end{pmatrix}=\begin{pmatrix}0\\-1\end{pmatrix}$.</p>
+      <p>$\begin{pmatrix}0\\-1\end{pmatrix}$, not $\begin{pmatrix}0\\1\end{pmatrix}$ from Practice 30: genuinely different, confirming order matters here too, not just in the rotate/scale example from the "why" box.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Apply a horizontal shear ($k=1$), then a vertical shear ($k=1$), to $\begin{pmatrix}1\\0\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Horizontal shear first: $\begin{pmatrix}1\\0\end{pmatrix}$ is on the $x$-axis, unmoved (Practice 26): still $\begin{pmatrix}1\\0\end{pmatrix}$.</p>
+      <p>Vertical shear: $\begin{pmatrix}1&0\\1&1\end{pmatrix}\begin{pmatrix}1\\0\end{pmatrix} = \begin{pmatrix}1\\1\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>Explain, using the "apply $B$ first, then $A$" reading of $(AB)\mathbf{v}$, why the definition $(AB)\mathbf{v} = A(B\mathbf{v})$ is exactly what you'd want associativity, $A(B\mathbf{v})=(AB)\mathbf{v}$, to mean geometrically.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A(B\mathbf{v})$ is an instruction carried out in two separate steps: transform $\mathbf{v}$ by $B$, then take that result and transform it by $A$. $(AB)\mathbf{v}$ is a single matrix, $AB$, applied once. Associativity says these must give the same final landing spot for $\mathbf{v}$, which matches the everyday meaning of "do $B$, then do $A$" being interchangeable with "do the single combined motion $AB$": whether you think of a compound motion as two separate steps or as one pre-computed combined transformation, the vector ends up in the same place either way. This is exactly why Matrix Fundamentals could state associativity, $A(BC)=(AB)C$, as a general algebraic fact, it's the geometric statement that grouping a sequence of motions doesn't change where anything ends up, only whether you compute the combined matrix ahead of time or apply each step one at a time.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>Compose reflection-across-the-$x$-axis with reflection-across-the-$y$-axis (either order, check it doesn't matter here). Which single familiar transformation does the combination match? Verify with the test point $\begin{pmatrix}2\\3\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Reflect $\begin{pmatrix}2\\3\end{pmatrix}$ across the $x$-axis: $\begin{pmatrix}2\\-3\end{pmatrix}$. Then across the $y$-axis: $\begin{pmatrix}-2\\-3\end{pmatrix}$.</p>
+      <p>This matches a $180^\circ$ rotation of $\begin{pmatrix}2\\3\end{pmatrix}$, which is also $\begin{pmatrix}-2\\-3\end{pmatrix}$. Unlike Practice 30–31, this particular pair of reflections happens to give the same result regardless of order (you can check the other order lands the same place too), because reflecting across two <em>perpendicular</em> lines is a special case where the combined motion, a half-turn, is symmetric enough not to care which mirror you use first.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> The determinant as area and orientation</div>
+  <div class="prose">
+    <p>Row Operations introduces the determinant as a number that decides whether a system has a unique solution. Geometrically, that same number is answering a much more visual question: how much does this transformation stretch or shrink area, and does it flip the picture over like a mirror, or keep it right-side up?</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>For a $2\times2$ matrix $A$, $|\det A|$ is exactly the factor by which $A$ scales area, any shape's area gets multiplied by $|\det A|$ after the transformation. The <strong>sign</strong> of $\det A$ tells you about orientation: positive means the picture keeps its original handedness (going counter-clockwise around a shape stays counter-clockwise), negative means the transformation flips it, like a reflection.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Interpret $\det\begin{pmatrix}3&1\\1&2\end{pmatrix} = 5$ geometrically, and contrast with $\det\begin{pmatrix}0&1\\1&0\end{pmatrix}=-1$.</p>
+    <p class="step">The first matrix scales every area by a factor of $5$, and since $\det>0$, it preserves orientation, no flipping. Any shape you transform by this matrix comes out $5\times$ bigger in area, but still "the right way round."</p>
+    <p class="step">The second matrix is the reflection-across-$y=x$ matrix from Section 3. Its determinant, $-1$, has magnitude $1$: area is completely unchanged. But the sign is negative, confirming what you already know about reflections: they flip orientation, exactly what the negative sign is built to detect.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>Find $\det\begin{pmatrix}4&0\\0&3\end{pmatrix}$, and interpret it as an area factor, connecting back to Practice 12.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det = 4(3)-0(0) = 12$. This matches Practice 12's scaling matrix, where the unit square's area of $1$ became $6$ under $\mathrm{diag}(2,3)$ ($\det=6$ there); here, scaling by $4$ and $3$ instead multiplies area by $4\times3=12$, exactly the determinant.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>Find $\det$ of the reflection-across-$y=x$ matrix, and explain the negative sign in terms of orientation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det\begin{pmatrix}0&1\\1&0\end{pmatrix} = 0(0)-1(1) = -1$. The magnitude, $1$, says area is unchanged, exactly what you'd expect from a mirror flip (it doesn't stretch anything, just flips it). The negative sign is the determinant's way of flagging that a reflection reverses handedness: trace a counter-clockwise loop around any shape, and after reflecting, that same loop reads clockwise, the defining signature of every reflection matrix.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>A transformation has determinant $0$. What does that tell you about what happens to the unit square? (This connects directly to invertibility in Row Operations.)</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The unit square gets squashed down to something with zero area, a line segment, or in the most extreme case, a single point (exactly like Practice 11's zero matrix, whose determinant is also $0$). A transformation that collapses area to nothing has genuinely destroyed information, you cannot tell two different starting points apart anymore once they've both been squashed onto the same flattened line. This is precisely why $\det=0$ signals a non-invertible matrix in Row Operations: there's no way to reverse a transformation that has erased information by collapsing a 2D region down to something with less than 2 dimensions.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>Find $\det$ of the shear matrix $\begin{pmatrix}1&5\\0&1\end{pmatrix}$, and explain why shears never change area, connecting to Practice 28.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det = 1(1)-5(0) = 1$. A determinant of exactly $1$ means area is completely preserved, no stretching, no shrinking, matching Practice 28's direct finding that the sheared unit square kept area $1$ despite changing shape into a parallelogram. Every shear matrix has this same triangular shape with $1$s on the diagonal, so its determinant is always $1\times1-k\times0=1$, regardless of the shear factor $k$: sliding a shape sideways parallel to a fixed axis never changes its base or its height, only how slanted it becomes.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>A transformation doubles every area and reverses orientation. Give a possible value for its determinant.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det = -2$: the magnitude $2$ accounts for doubling every area, and the negative sign accounts for the orientation flip.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>Two transformations $A$ and $B$ have $\det(A)=2$ and $\det(B)=3$. Using the fact that $\det(AB)=\det(A)\det(B)$, find $\det(AB)$, and explain what that says about area scaling when the two transformations are applied one after the other.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det(AB) = 2\times3 = 6$. This makes complete sense from the area-scaling picture: if $B$ triples every area and then $A$ doubles whatever area it's handed, applying both in sequence multiplies area by $3$ and then by $2$, a combined factor of $6$, exactly matching the product of the two individual determinants. Area-scaling factors combine by multiplication under composition, precisely because composing transformations means applying one scaling effect on top of the other.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec8">
+  <div class="section-title"><span class="tag">8</span> Preview: directions that don't rotate</div>
+  <div class="prose">
+    <p>Most vectors, under most transformations, end up pointing in a completely new direction. But for many matrices, a small number of special directions are the exception: whatever's along one of these directions gets stretched or shrunk, and possibly flipped backward, but it never gets rotated off its own line. These special directions are the single most important idea the rest of the Linear Algebra track is building toward.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">A first look, no new machinery required</span>
+    <p>Take $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$. Try the vector $\begin{pmatrix}1\\1\end{pmatrix}$:</p>
+    <p class="step">$$A\begin{pmatrix}1\\1\end{pmatrix} = \begin{pmatrix}2+1\\1+2\end{pmatrix} = \begin{pmatrix}3\\3\end{pmatrix} = 3\begin{pmatrix}1\\1\end{pmatrix}.$$</p>
+    <p class="step">The output is just $3$ times the input, same direction, just $3\times$ longer. Now try $\begin{pmatrix}1\\-1\end{pmatrix}$:</p>
+    <p class="step">$$A\begin{pmatrix}1\\-1\end{pmatrix} = \begin{pmatrix}2-1\\1-2\end{pmatrix} = \begin{pmatrix}1\\-1\end{pmatrix} = 1\begin{pmatrix}1\\-1\end{pmatrix}.$$</p>
+    <p>Unchanged entirely. But try an ordinary vector like $\begin{pmatrix}1\\0\end{pmatrix}$: $A\begin{pmatrix}1\\0\end{pmatrix}=\begin{pmatrix}2\\1\end{pmatrix}$, pointing in a visibly different direction from where it started, a genuinely new direction, not just a stretched or flipped copy of the original. Most starting directions behave like this last one; only $\begin{pmatrix}1\\1\end{pmatrix}$ and $\begin{pmatrix}1\\-1\end{pmatrix}$ (and anything lying along those same two lines) survive with their direction intact.</p>
+  </div>
+
+  <div class="prose">
+    <p>These surviving directions are called <strong>eigenvectors</strong>, and the stretch factor each one experiences ($3$ and $1$, in the example above) is its <strong>eigenvalue</strong>. Finding them systematically, for any matrix, needs two tools you're about to build in the next two lessons: solving $A\mathbf{x}=\mathbf{b}$-style systems (Row Operations) and the determinant's connection to singularity (also Row Operations), plus, for the matrices where these special directions turn out to be complex rather than real, everything the Complex Numbers lesson builds. That's exactly the path this track takes from here, and exactly why <strong>Eigenvalues and Eigenvectors</strong> sits at the very end as the capstone: it's the payoff for every tool built along the way.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>Verify that $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$ sends $\begin{pmatrix}2\\2\end{pmatrix}$ to a scalar multiple of itself, and state the scale factor.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$A\begin{pmatrix}2\\2\end{pmatrix} = \begin{pmatrix}4+2\\2+4\end{pmatrix} = \begin{pmatrix}6\\6\end{pmatrix} = 3\begin{pmatrix}2\\2\end{pmatrix}.$$</p>
+      <p>Scale factor $3$, matching the "why" box's finding for $\begin{pmatrix}1\\1\end{pmatrix}$ exactly, since $\begin{pmatrix}2\\2\end{pmatrix}$ lies along that same surviving direction, just twice as long.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>For the $90^\circ$ rotation matrix, explain why <em>no</em> real, nonzero vector can survive with its direction unchanged.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A $90^\circ$ rotation turns <em>every</em> direction in the plane by the same fixed angle, with no exceptions built in anywhere: whichever direction you start with, after a quarter-turn it's pointing somewhere genuinely new, at a right angle to where it began. There's no special starting line that a quarter-turn happens to leave alone, unlike Section 8's matrix, which had two such lines. This is a genuine preview of Section 5's complex eigenvalues in the Eigenvalues lesson: a pure rotation turns out to have eigenvalues that are complex, not real, exactly because there's no real direction left standing still for it to stretch instead of rotate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>For $A=\begin{pmatrix}5&0\\0&3\end{pmatrix}$, which two directions obviously survive unrotated, and what are their stretch factors?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The $x$-axis direction $\begin{pmatrix}1\\0\end{pmatrix}$ and the $y$-axis direction $\begin{pmatrix}0\\1\end{pmatrix}$: since $A$ is diagonal, it stretches each axis independently with no mixing (Section 2), so $A\begin{pmatrix}1\\0\end{pmatrix}=\begin{pmatrix}5\\0\end{pmatrix}=5\begin{pmatrix}1\\0\end{pmatrix}$ and $A\begin{pmatrix}0\\1\end{pmatrix}=\begin{pmatrix}0\\3\end{pmatrix}=3\begin{pmatrix}0\\1\end{pmatrix}$. Stretch factors $5$ and $3$, read straight off the diagonal. This is no accident: for <em>any</em> diagonal matrix, the eigenvectors are always exactly the coordinate axes, and the eigenvalues are always exactly the diagonal entries, the easiest possible case, and exactly the case the Eigenvalues lesson uses as its own first checkpoint.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>For the shear matrix $\begin{pmatrix}1&2\\0&1\end{pmatrix}$, does $\begin{pmatrix}1\\0\end{pmatrix}$ survive with its direction unchanged? Verify directly.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\begin{pmatrix}1&2\\0&1\end{pmatrix}\begin{pmatrix}1\\0\end{pmatrix} = \begin{pmatrix}1\\0\end{pmatrix} = 1\begin{pmatrix}1\\0\end{pmatrix}.$$</p>
+      <p>Yes, completely unchanged (stretch factor exactly $1$), matching Practice 26's finding that shears leave every point on the fixed axis exactly where it is. This vector is an eigenvector of the shear matrix with eigenvalue $1$, but it's the <em>only</em> independent direction that survives, a shear matrix turns out to be an example of exactly the "defective" case the Eigenvalues lesson's Section 5 (Repeated eigenvalues) is built around: one repeated eigenvalue, but only one surviving direction to show for it, not two.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>Linear Algebra Foundations &middot; Matrices as Transformations</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
