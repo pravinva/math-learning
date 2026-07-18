@@ -17,6 +17,10 @@
     .ans { background: #f0fdf4; border-color: #bbf7d0; }
     li { margin: 7px 0; line-height: 1.6; }
     .tag { font-size: 12px; color: #185FA5; }
+    .graph-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 12px; }
+    .graph-card { background: #ffffff; border: 1px solid #d1d5db; border-radius: 8px; padding: 8px; }
+    .graph-card strong { font-size: 12px; color: #1B3A5C; display: block; margin-bottom: 4px; }
+    canvas.graph { width: 100%; height: 180px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; }
   </style>
 </head>
 <body>
@@ -424,10 +428,119 @@
         <li>Asymptote \(x=1\). Exact point when \(x-1=1\): \((2,2)\). Domain \(x>1\), range \(\mathbb R\).</li>
         <li>\(y=\ln x\): domain \(x>0\), vertical asymptote \(x=0\). \(y=e^x\): domain \(\mathbb R\), horizontal asymptote \(y=0\). Both pass through \((1,0)\) and \((0,1)\) respectively and are increasing.</li>
       </ol>
+      <div class="graph-grid">
+        <div class="graph-card"><strong>Q1 Sketch</strong><canvas id="gsb1" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q2 Sketch</strong><canvas id="gsb2" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q3 Sketch</strong><canvas id="gsb3" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q4 Sketch</strong><canvas id="gsb4" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q5 Sketch</strong><canvas id="gsb5" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q6 Sketch</strong><canvas id="gsb6" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q7 Sketch</strong><canvas id="gsb7" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q8 Sketch</strong><canvas id="gsb8" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q9 Sketch</strong><canvas id="gsb9" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q10 Sketch</strong><canvas id="gsb10" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q11 Sketch</strong><canvas id="gsb11" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q12 Sketch</strong><canvas id="gsb12" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q13 Sketch</strong><canvas id="gsb13" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q14 Sketch</strong><canvas id="gsb14" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q15 Sketch</strong><canvas id="gsb15" class="graph" width="320" height="180"></canvas></div>
+        <div class="graph-card"><strong>Q16 Sketch</strong><canvas id="gsb16" class="graph" width="320" height="180"></canvas></div>
+      </div>
     </div>
   </div>
 
   <script>
+    function makeMap(w,h,xMin,xMax,yMin,yMax){
+      return {
+        toX: x => (x-xMin)/(xMax-xMin)*w,
+        toY: y => h-(y-yMin)/(yMax-yMin)*h
+      };
+    }
+    function drawAxes(ctx,w,h,xMin,xMax,yMin,yMax){
+      const map=makeMap(w,h,xMin,xMax,yMin,yMax);
+      ctx.clearRect(0,0,w,h);
+      ctx.strokeStyle="#eef2f7";
+      ctx.lineWidth=1;
+      const xTick=Math.max(1,Math.round((xMax-xMin)/8));
+      const yTick=Math.max(1,Math.round((yMax-yMin)/8));
+      for(let x=Math.ceil(xMin/xTick)*xTick;x<=xMax;x+=xTick){
+        ctx.beginPath(); ctx.moveTo(map.toX(x),0); ctx.lineTo(map.toX(x),h); ctx.stroke();
+      }
+      for(let y=Math.ceil(yMin/yTick)*yTick;y<=yMax;y+=yTick){
+        ctx.beginPath(); ctx.moveTo(0,map.toY(y)); ctx.lineTo(w,map.toY(y)); ctx.stroke();
+      }
+      ctx.strokeStyle="#1B3A5C";
+      ctx.lineWidth=1.3;
+      if(yMin<=0&&0<=yMax){ctx.beginPath();ctx.moveTo(0,map.toY(0));ctx.lineTo(w,map.toY(0));ctx.stroke();}
+      if(xMin<=0&&0<=xMax){ctx.beginPath();ctx.moveTo(map.toX(0),0);ctx.lineTo(map.toX(0),h);ctx.stroke();}
+      return map;
+    }
+    function plotFn(ctx,map,fn,xMin,xMax,step,color){
+      ctx.strokeStyle=color||"#185FA5";
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      let started=false;
+      for(let x=xMin;x<=xMax;x+=step){
+        const y=fn(x);
+        if(!Number.isFinite(y) || Math.abs(y)>1e4){ started=false; continue; }
+        const px=map.toX(x), py=map.toY(y);
+        if(!started){ ctx.moveTo(px,py); started=true; }
+        else{ ctx.lineTo(px,py); }
+      }
+      ctx.stroke();
+    }
+    function plotCircle(ctx,map,cx,cy,r,color){
+      ctx.strokeStyle=color||"#D85A30";
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      for(let t=0;t<=2*Math.PI+0.02;t+=0.02){
+        const x=cx+r*Math.cos(t), y=cy+r*Math.sin(t);
+        const px=map.toX(x), py=map.toY(y);
+        if(t===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+    }
+    function drawPoint(ctx,map,x,y,color){
+      ctx.fillStyle=color||"#FF3621";
+      ctx.beginPath();
+      ctx.arc(map.toX(x),map.toY(y),3,0,2*Math.PI);
+      ctx.fill();
+    }
+    function drawGraphingBoosterPlots(){
+      const cfgs = [
+        {id:"gsb1", xMin:-2, xMax:8, yMin:-6, yMax:10, curves:[x=>(x*x-6*x+5)]},
+        {id:"gsb2", xMin:-6, xMax:4, yMin:-4, yMax:10, curves:[x=>-2*(x+1)*(x+1)+8]},
+        {id:"gsb3", xMin:-1, xMax:7, yMin:-3, yMax:9, curves:[x=>x*x-4*x+3, x=>2*x-1], colors:["#185FA5","#D85A30"]},
+        {id:"gsb4", xMin:-4, xMax:6, yMin:-10, yMax:10, curves:[x=>x*x-2*x-8]},
+        {id:"gsb5", xMin:-3, xMax:9, yMin:-8, yMax:5, circle:[3,-2,4]},
+        {id:"gsb6", xMin:-10, xMax:6, yMin:-4, yMax:10, circle:[-2,3,5]},
+        {id:"gsb7", xMin:-7, xMax:5, yMin:-4, yMax:7, circle:[-1,1,3], lines:[x=>2]},
+        {id:"gsb8", xMin:-4, xMax:12, yMin:-8, yMax:6, circle:[4,-1,5]},
+        {id:"gsb9", xMin:-1, xMax:5, yMin:-5, yMax:4, curves:[x=>Math.abs(2*x-4)-3]},
+        {id:"gsb10", xMin:-8, xMax:4, yMin:-4, yMax:7, curves:[x=>-Math.abs(x+2)+5]},
+        {id:"gsb11", xMin:-4, xMax:6, yMin:-1, yMax:5, curves:[x=>Math.abs(x-1), x=>2], colors:["#185FA5","#D85A30"]},
+        {id:"gsb12", xMin:-2, xMax:8, yMin:-2, yMax:6, curves:[x=>Math.abs(x-3)-1]},
+        {id:"gsb13", xMin:-4, xMax:4, yMin:-4, yMax:8, curves:[x=>Math.exp(x)-2]},
+        {id:"gsb14", xMin:-3, xMax:5, yMin:0, yMax:20, curves:[x=>3*Math.pow(2,x-1)+1]},
+        {id:"gsb15", xMin:-1, xMax:8, yMin:-3, yMax:6, curves:[x=>Math.log(x-1)+2]},
+        {id:"gsb16", xMin:-3, xMax:3, yMin:-2, yMax:8, curves:[x=>Math.log(x), x=>Math.exp(x)], colors:["#185FA5","#D85A30"]}
+      ];
+      cfgs.forEach(cfg=>{
+        const c=document.getElementById(cfg.id);
+        if(!c) return;
+        const ctx=c.getContext("2d");
+        const map=drawAxes(ctx,c.width,c.height,cfg.xMin,cfg.xMax,cfg.yMin,cfg.yMax);
+        if(cfg.circle){ plotCircle(ctx,map,cfg.circle[0],cfg.circle[1],cfg.circle[2],"#1D9E75"); }
+        (cfg.lines||[]).forEach(fn=>plotFn(ctx,map,fn,cfg.xMin,cfg.xMax,0.02,"#D85A30"));
+        (cfg.curves||[]).forEach((fn,i)=>plotFn(ctx,map,fn,cfg.xMin,cfg.xMax,0.02,(cfg.colors&&cfg.colors[i])||"#185FA5"));
+        if(cfg.id==="gsb1"){ drawPoint(ctx,map,3,-4); }
+        if(cfg.id==="gsb2"){ drawPoint(ctx,map,-1,8); }
+        if(cfg.id==="gsb5"){ drawPoint(ctx,map,3,-2); }
+        if(cfg.id==="gsb9"){ drawPoint(ctx,map,2,-3); }
+        if(cfg.id==="gsb10"){ drawPoint(ctx,map,-2,5); }
+        if(cfg.id==="gsb15"){ drawPoint(ctx,map,2,2); }
+      });
+    }
     document.addEventListener("DOMContentLoaded", () => renderMathInElement(document.body, {
       delimiters: [
         { left: "\\(", right: "\\)", display: false },
@@ -435,6 +548,7 @@
       ],
       throwOnError: false
     }));
+    document.addEventListener("DOMContentLoaded", drawGraphingBoosterPlots);
   </script>
 </body>
 </html>
