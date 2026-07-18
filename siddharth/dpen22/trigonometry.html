@@ -3584,17 +3584,51 @@ function drawUnitCircleCommonAngles(){
 function drawAxes(ctx,w,h,xMin,xMax,yMin,yMax){
   const toX=x=>(x-xMin)/(xMax-xMin)*w;
   const toY=y=>h-(y-yMin)/(yMax-yMin)*h;
+  const axisY=(yMin<=0&&0<=yMax)?toY(0):h-16;
+  const axisX=(xMin<=0&&0<=xMax)?toX(0):24;
+  const fmtPi=(x)=>{
+    const k=Math.round((x/(Math.PI/2)));
+    if(Math.abs(x-k*(Math.PI/2))>1e-6) return '';
+    if(k===0) return '0';
+    const sign=k<0?'-':'';
+    const n=Math.abs(k);
+    if(n===1) return `${sign}\u03c0/2`;
+    if(n===2) return `${sign}\u03c0`;
+    if(n%2===0) return `${sign}${n/2}\u03c0`;
+    return `${sign}${n}\u03c0/2`;
+  };
   ctx.strokeStyle='#d9d6cf';
   ctx.lineWidth=1;
-  for(let i=-4;i<=4;i++){
-    const x=i*Math.PI/2;
+  const xStep=((xMax-xMin)>4*Math.PI)?Math.PI:Math.PI/2;
+  const xStart=Math.ceil((xMin-1e-9)/xStep)*xStep;
+  for(let x=xStart;x<=xMax+1e-9;x+=xStep){
     if(x>=xMin&&x<=xMax){ctx.beginPath();ctx.moveTo(toX(x),0);ctx.lineTo(toX(x),h);ctx.stroke();}
   }
-  for(let y=-3;y<=3;y++){ctx.beginPath();ctx.moveTo(0,toY(y));ctx.lineTo(w,toY(y));ctx.stroke();}
+  const yStep=((yMax-yMin)>8)?2:1;
+  const yStart=Math.ceil(yMin/yStep)*yStep;
+  for(let y=yStart;y<=yMax+1e-9;y+=yStep){ctx.beginPath();ctx.moveTo(0,toY(y));ctx.lineTo(w,toY(y));ctx.stroke();}
   ctx.strokeStyle='#1B3A5C';
   ctx.lineWidth=1.4;
-  ctx.beginPath();ctx.moveTo(0,toY(0));ctx.lineTo(w,toY(0));ctx.stroke();
-  ctx.beginPath();ctx.moveTo(toX(0),0);ctx.lineTo(toX(0),h);ctx.stroke();
+  if(yMin<=0&&0<=yMax){ctx.beginPath();ctx.moveTo(0,toY(0));ctx.lineTo(w,toY(0));ctx.stroke();}
+  if(xMin<=0&&0<=xMax){ctx.beginPath();ctx.moveTo(toX(0),0);ctx.lineTo(toX(0),h);ctx.stroke();}
+
+  // Axis tick labels (x and y) for all graphs
+  ctx.fillStyle='#5b6779';
+  ctx.font='10px DM Sans, sans-serif';
+  for(let x=xStart;x<=xMax+1e-9;x+=xStep){
+    const lbl=fmtPi(x);
+    if(!lbl) continue;
+    const px=toX(x);
+    ctx.beginPath();
+    ctx.moveTo(px,axisY-3); ctx.lineTo(px,axisY+3); ctx.strokeStyle='#8f8a82'; ctx.lineWidth=1; ctx.stroke();
+    if(lbl!=='0') ctx.fillText(lbl,px-10,axisY+13);
+  }
+  for(let y=yStart;y<=yMax+1e-9;y+=yStep){
+    const py=toY(y);
+    ctx.beginPath();
+    ctx.moveTo(axisX-3,py); ctx.lineTo(axisX+3,py); ctx.strokeStyle='#8f8a82'; ctx.lineWidth=1; ctx.stroke();
+    if(Math.abs(y)>1e-9) ctx.fillText(`${Math.round(y*100)/100}`,axisX+6,py+3);
+  }
   return {toX,toY};
 }
 function plotFn(ctx,map,fn,color,xMin,xMax,step){
