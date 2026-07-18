@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Limits</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  table.datatable{
+    width:100%; border-collapse:collapse; font-size:14px; margin:14px 0;
+    font-family:'Roboto Mono',monospace; background:#fff; border:1px solid var(--line); border-radius:6px; overflow:hidden;
+  }
+  table.datatable th{
+    background:var(--navy); color:#fff; font-size:11px; text-transform:uppercase; padding:7px 8px; text-align:center;
+  }
+  table.datatable td{ padding:6px 8px; text-align:center; border-bottom:1px solid var(--line); }
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH141 Prep &middot; For a student who already knows basic differentiation</div>
+  <h1>Limits</h1>
+  <p>You've already differentiated by rule, power rule, product rule, chain rule, without necessarily seeing what those rules are secretly built from. This lesson fills that in: the formal machinery of limits, where the derivative actually comes from, the algebra of indeterminate forms, infinite behaviour, continuity, and L'H&ocirc;pital's Rule, a genuinely new tool that only becomes available once differentiation is already in hand. Ten worked-through problems per section, solutions hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 90 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Why formalise limits?</a></li>
+    <li><a href="#sec1">From intuition to formal notation</a></li>
+    <li><a href="#sec2">Limit laws</a></li>
+    <li><a href="#sec3">The derivative, formally</a></li>
+    <li><a href="#sec4">One-sided limits and non-existence</a></li>
+    <li><a href="#sec5">Indeterminate forms: factoring and conjugates</a></li>
+    <li><a href="#sec6">Infinite limits and vertical asymptotes</a></li>
+    <li><a href="#sec7">Limits at infinity and horizontal asymptotes</a></li>
+    <li><a href="#sec8">Continuity</a></li>
+    <li><a href="#sec9">L'H&ocirc;pital's Rule</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Why formalise limits?</div>
+  <div class="prose">
+    <p>You already know that the derivative of $x^2$ is $2x$, and you got there by memorising the power rule, not by re-deriving it from scratch each time. That's completely fine, rules exist so you don't have to re-derive them constantly. But the power rule, product rule, chain rule, and every other differentiation shortcut you own are all consequences of a single formal definition, and that definition is built entirely out of a <strong>limit</strong>. Section 3 of this lesson shows you exactly that: plug $x^2$ into the formal machine, and $2x$ falls out, not as a rule you're told to trust, but as something you watch happen.</p>
+    <p>That's one reason to formalise limits properly. Here's the other, more practical one: limits are not just the hidden engine behind derivatives, they're an independent toolkit with real uses of their own, describing what happens near a vertical asymptote, what a function does as $x\to\infty$, whether a graph has a hole or a genuine break in it, and, once you have derivatives available, a genuinely new technique, <strong>L'H&ocirc;pital's Rule</strong>, for cracking limits that factoring alone can't touch. That last one, Section 9, is only teachable now, precisely because you already know how to differentiate. This lesson builds toward it deliberately.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> From intuition to formal notation</div>
+  <div class="prose">
+    <p>The notation $\displaystyle\lim_{x\to a}f(x)=L$ asks a single question: as $x$ gets closer and closer to $a$ (from either side, without ever actually landing exactly on $a$), does $f(x)$ settle down and approach one specific number $L$? Note carefully what this does <em>not</em> ask: it says nothing about $f(a)$ itself, the function doesn't even need to be defined at $a$ for the limit to exist there. The limit is entirely about the function's behaviour <em>near</em> $a$, not <em>at</em> $a$.</p>
+    <p>Most of the limits you'll meet in practice, anywhere the function is a "nice," unbroken formula at the point in question, can be evaluated by direct substitution: just plug in $x=a$ and see what comes out. The interesting cases, the ones the rest of this lesson is built around, are exactly the places where direct substitution breaks down.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\lim_{x\to a}f(x) = L$$</p>
+    <p>means $f(x)$ can be made as close as you like to $L$, simply by taking $x$ close enough to $a$ (on either side, $x\neq a$). If $f$ is defined by a single smooth formula throughout a neighbourhood of $a$ (a polynomial, a standard trig/exponential/log function, or any combination built from these without division by zero), then $\displaystyle\lim_{x\to a}f(x) = f(a)$: direct substitution works.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Estimate $\displaystyle\lim_{x\to2}\dfrac{x^2-4}{x-2}$ numerically, using a table of values approaching $x=2$ from both sides, without simplifying the expression algebraically first.</p>
+    <table class="datatable">
+      <tr><th>$x$</th><th>1.9</th><th>1.99</th><th>1.999</th><th>&rarr; 2 &larr;</th><th>2.001</th><th>2.01</th><th>2.1</th></tr>
+      <tr><td>$f(x)$</td><td>3.9</td><td>3.99</td><td>3.999</td><td>?</td><td>4.001</td><td>4.01</td><td>4.1</td></tr>
+    </table>
+    <p class="step">Notice $f(2)$ itself is undefined ($\frac00$, direct substitution fails), but from both sides the outputs are clearly homing in on $4$.</p>
+    <p>$$\lim_{x\to2}\frac{x^2-4}{x-2} = 4.$$</p>
+    <p>Section 5 shows the algebraic shortcut (factor and cancel) that reaches this same answer without a table. The table is worth doing once by hand, though, since it's the most direct way to <em>see</em> what "the limit" is actually asking for, entirely independent of any algebra trick.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Build a table of values (using $x=2.9,2.99,3.1,3.01$) to estimate $\displaystyle\lim_{x\to3}\dfrac{x^2-9}{x-3}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(2.9)=5.9$, $f(2.99)=5.99$, $f(3.01)=6.01$, $f(3.1)=6.1$. Both sides approach $6$.</p>
+      <p>$$\lim_{x\to3}\frac{x^2-9}{x-3} = 6.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to1}(3x+2)$ by direct substitution.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$3(1)+2=5$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to0}\cos x$ by direct substitution.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\cos0=1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to4}\sqrt x$ by direct substitution.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sqrt4=2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Let $f(x)=\dfrac{x^2-4}{x-2}$ for $x\neq2$, with $f(2)$ left undefined. State $f(2)$ and $\displaystyle\lim_{x\to2}f(x)$ separately, and explain why they can be different kinds of answers (one a genuine number, one "undefined").</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(2)$ is undefined (division by zero, never computed). $\displaystyle\lim_{x\to2}f(x)=4$ (found in this section's worked example). The limit only cares about values of $x$ <em>near</em> $2$, never $x=2$ itself, so a function can fail to be defined at a point while still having a perfectly well-behaved limit there, exactly the situation a "hole" in a graph represents.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to5}\dfrac{x^2-3x}{x+1}$ by direct substitution.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{25-15}{6} = \dfrac{10}6 = \dfrac53$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to-1}(x^3+2x)$ by direct substitution.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(-1)^3+2(-1) = -1-2=-3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Build a table (using $x=\pm0.1,\pm0.01$) to estimate $\displaystyle\lim_{x\to0}\dfrac{\sin x}x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(0.1)\approx0.99833$, $\ f(0.01)\approx0.999983$, $\ f(-0.1)\approx0.99833$, $\ f(-0.01)\approx0.999983$ (an even function's ratio here, symmetric from both sides). All four values are creeping toward $1$.</p>
+      <p>$$\lim_{x\to0}\frac{\sin x}x = 1.$$</p>
+      <p>This particular limit is worth remembering permanently, it resurfaces constantly (and Section 9 revisits it via L'H&ocirc;pital as a cross-check).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Without a calculator, explain why $\displaystyle\lim_{x\to0}\dfrac{\sin x}x$ cannot be evaluated by direct substitution, even though the table in Practice 8 shows it clearly settling on a value.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Substituting $x=0$ directly gives $\dfrac{\sin0}0 = \dfrac00$, an undefined expression, division by zero is never a legitimate arithmetic step, regardless of what the numerator happens to be. This is the first example in the lesson of what Section 5 calls an <strong>indeterminate form</strong>: direct substitution fails outright, yet the limit itself still exists and is perfectly well-behaved, as the table confirms. The whole reason limits need techniques beyond "just substitute" is to handle exactly this gap, cases where the formula breaks but the function's actual behaviour doesn't.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Explain, in a sentence or two, why "the limit as $x\to a$" is fundamentally a statement about behaviour <em>near</em> $a$, and never a statement about the single value $f(a)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The formal idea (Section 0's motivation, made precise here) only ever asks what $f(x)$ does for $x$ close to $a$ but not equal to $a$, the point $a$ itself is explicitly excluded from the process of "getting closer." This is why a function can have a well-defined limit at a point where it isn't even defined (Practice 5), and, as Section 8 will show, also why a function can be defined at a point <em>and</em> have a limit there, yet still have those two values disagree, the third and most interesting kind of discontinuity.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Limit laws</div>
+  <div class="prose">
+    <p>Once you accept that $\displaystyle\lim_{x\to a}f(x)$ and $\displaystyle\lim_{x\to a}g(x)$ exist individually, a small set of rules tells you exactly how to combine them, sums, products, quotients, and powers all behave exactly the way you'd hope, and this is what lets you break a complicated expression into simple pieces rather than fighting the whole thing at once.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>If $\displaystyle\lim_{x\to a}f(x)=L$ and $\displaystyle\lim_{x\to a}g(x)=M$ both exist:</p>
+    <p>$$\lim_{x\to a}\big[f(x)\pm g(x)\big] = L\pm M, \qquad \lim_{x\to a}\big[cf(x)\big] = cL,$$</p>
+    <p>$$\lim_{x\to a}\big[f(x)g(x)\big] = LM, \qquad \lim_{x\to a}\frac{f(x)}{g(x)} = \frac LM \ \ (M\neq0), \qquad \lim_{x\to a}\big[f(x)\big]^n = L^n.$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Given $\displaystyle\lim_{x\to a}f(x)=3$ and $\displaystyle\lim_{x\to a}g(x)=5$, find $\displaystyle\lim_{x\to a}\big[2f(x)-3g(x)\big]$ and $\displaystyle\lim_{x\to a}\dfrac{f(x)g(x)}{g(x)+1}$.</p>
+    <p class="step">$$\lim_{x\to a}\big[2f(x)-3g(x)\big] = 2(3)-3(5) = 6-15=-9.$$</p>
+    <p class="step">$$\lim_{x\to a}\frac{f(x)g(x)}{g(x)+1} = \frac{3\times5}{5+1} = \frac{15}6 = \frac52.$$</p>
+    <p>Neither computation ever needed to know what $f$ or $g$ actually <em>were</em> as functions, only their limiting values, exactly the shortcut these laws are built to provide.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Given $\displaystyle\lim_{x\to2}f(x)=4$ and $\displaystyle\lim_{x\to2}g(x)=-1$, find $\displaystyle\lim_{x\to2}\big[f(x)+g(x)\big]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$4+(-1)=3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Using the same $f,g$ as Practice 11, find $\displaystyle\lim_{x\to2}\big[3f(x)\big]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$3(4)=12$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Using the same $f,g$, find $\displaystyle\lim_{x\to2}\big[f(x)g(x)\big]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$4\times(-1)=-4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Using the same $f,g$, find $\displaystyle\lim_{x\to2}\dfrac{f(x)}{g(x)}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac4{-1}=-4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Using the same $f$, find $\displaystyle\lim_{x\to2}\big[f(x)\big]^3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$4^3=64$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>If $\displaystyle\lim_{x\to a}f(x)=9$ and $f(x)\ge0$ near $a$, find $\displaystyle\lim_{x\to a}\sqrt{f(x)}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sqrt9=3$ (the power law with exponent $\frac12$).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to3}(2x^2-5x+1)$ using the limit laws (sum/constant-multiple/power rules on each term).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$2(9)-5(3)+1 = 18-15+1=4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to1}\dfrac{x^2+2}{x-3}$ using the quotient law.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{1+2}{1-3} = \dfrac3{-2} = -\dfrac32$. (Valid since the denominator's limit, $-2$, is nonzero.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to0}(x+1)^5$ using the power law.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(0+1)^5=1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Explain why the quotient law explicitly requires $M\neq0$ (the denominator's limit can't be zero). What goes wrong in the argument if $M=0$?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The conclusion of the quotient law is $\dfrac{f(x)}{g(x)}\to\dfrac LM$, a specific finite number, and $\dfrac L0$ isn't a number at all, division by zero is undefined regardless of what $L$ is. If $M=0$, the ratio $f(x)/g(x)$ might still have a limit (this is exactly what Section 5's indeterminate-form techniques are built to find, when $L=0$ too), or it might blow up to $\pm\infty$ (Section 6), or fail to exist entirely, but the quotient law's clean, guaranteed answer $\frac LM$ simply doesn't apply anymore once $M=0$; a separate, more careful technique is needed instead of the blanket rule.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> The derivative, formally</div>
+  <div class="prose">
+    <p>Here is the payoff for everything so far. Every derivative rule you already know, power rule, whatever else, is a shortcut for one single limit. This section asks you to stop using the shortcut, just for a few problems, and watch the shortcut get rebuilt from scratch.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$f'(x) = \lim_{h\to0}\frac{f(x+h)-f(x)}h$$</p>
+    <p>This is called the <strong>difference quotient</strong> limit, and it's the formal definition every differentiation rule you've ever used is secretly computing in advance, once and for all, for an entire family of functions, so you never have to run the limit by hand again for that family.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Find $f'(x)$ for $f(x)=x^2$ directly from the definition, and confirm it matches the power rule.</p>
+    <p class="step">$$f'(x) = \lim_{h\to0}\frac{(x+h)^2-x^2}h.$$</p>
+    <p class="step">Expand the numerator: $(x+h)^2-x^2 = x^2+2xh+h^2-x^2 = 2xh+h^2$.</p>
+    <p class="step">$$f'(x) = \lim_{h\to0}\frac{2xh+h^2}h = \lim_{h\to0}\frac{h(2x+h)}h = \lim_{h\to0}(2x+h).$$</p>
+    <p class="step">The $h$ in the denominator was never actually zero throughout this cancellation, $h\to0$ means "getting arbitrarily close," never "equal to," so dividing by $h$ was completely legal right up until the very last step, where substituting $h=0$ into the now-simplified expression $2x+h$ is finally safe.</p>
+    <p>$$f'(x) = 2x+0 = 2x,$$</p>
+    <p>exactly the power rule's answer for $x^2$, now derived rather than recalled.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Use the definition to find $f'(x)$ for $f(x)=x^3$, and confirm it matches the power rule.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(x+h)^3-x^3 = 3x^2h+3xh^2+h^3$ (binomial expansion, dropping the $x^3$ terms that cancel).</p>
+      <p>$$f'(x) = \lim_{h\to0}\frac{3x^2h+3xh^2+h^3}h = \lim_{h\to0}\big(3x^2+3xh+h^2\big) = 3x^2.$$</p>
+      <p>Matches the power rule exactly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Use the definition to find $f'(x)$ for $f(x)=5x+3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(x+h)-f(x) = 5(x+h)+3-(5x+3) = 5h$.</p>
+      <p>$$f'(x) = \lim_{h\to0}\frac{5h}h = \lim_{h\to0}5 = 5,$$</p>
+      <p>the constant slope of the line, exactly matching what "derivative of a linear function" should mean.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Use the definition to find $f'(x)$ for $f(x)=x^2+2x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(x+h)-f(x) = (x+h)^2+2(x+h) - (x^2+2x) = 2xh+h^2+2h$.</p>
+      <p>$$f'(x) = \lim_{h\to0}\frac{2xh+h^2+2h}h = \lim_{h\to0}(2x+h+2) = 2x+2.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Use the definition to find $f'(x)$ for $f(x)=\dfrac1x$ (this one needs a common denominator before anything cancels).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\frac{f(x+h)-f(x)}h = \frac1h\left(\frac1{x+h}-\frac1x\right) = \frac1h\cdot\frac{x-(x+h)}{x(x+h)} = \frac1h\cdot\frac{-h}{x(x+h)} = \frac{-1}{x(x+h)}.$$</p>
+      <p>$$f'(x) = \lim_{h\to0}\frac{-1}{x(x+h)} = \frac{-1}{x^2}.$$</p>
+      <p>Matches $\dfrac{d}{dx}x^{-1} = -x^{-2}$ from the power rule (which extends to negative exponents too).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Use the definition to find $f'(x)$ for $f(x)=\sqrt x$ (needs the conjugate trick from Section 5, applied inside the difference quotient).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\frac{\sqrt{x+h}-\sqrt x}h.$$</p>
+      <p class="step">Multiply top and bottom by the conjugate $\sqrt{x+h}+\sqrt x$:</p>
+      <p class="step">$$\frac{(\sqrt{x+h}-\sqrt x)(\sqrt{x+h}+\sqrt x)}{h(\sqrt{x+h}+\sqrt x)} = \frac{(x+h)-x}{h(\sqrt{x+h}+\sqrt x)} = \frac{h}{h(\sqrt{x+h}+\sqrt x)} = \frac1{\sqrt{x+h}+\sqrt x}.$$</p>
+      <p>$$f'(x) = \lim_{h\to0}\frac1{\sqrt{x+h}+\sqrt x} = \frac1{2\sqrt x},$$</p>
+      <p>matching $\dfrac{d}{dx}x^{1/2} = \dfrac12x^{-1/2}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Use the definition directly (not the general formula) to find $f'(3)$ for $f(x)=x^2$, plugging $a=3$ in from the start rather than finding $f'(x)$ in general first.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$f'(3) = \lim_{h\to0}\frac{(3+h)^2-9}h = \lim_{h\to0}\frac{9+6h+h^2-9}h = \lim_{h\to0}(6+h) = 6.$$</p>
+      <p>Matches the worked example's general formula, $f'(x)=2x$, evaluated at $x=3$: $2(3)=6$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Explain why the definition insists $h\to0$ rather than simply setting $h=0$ directly from the start.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Setting $h=0$ immediately gives $\dfrac{f(x+0)-f(x)}0 = \dfrac00$, undefined, exactly the same problem Practice 9 hit with $\sin x/x$. The entire point of the difference quotient is to measure the <em>average</em> rate of change over a tiny but nonzero interval of width $h$, and then ask what that average rate approaches as the interval shrinks toward nothing, without the interval's width ever literally reaching zero mid-calculation. The limit process is precisely what lets $h$ get arbitrarily small (small enough that the algebra always cancels the troublesome $h$ in the denominator first, as in every worked example and practice problem above) without ever actually dividing by zero.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Use the definition to find $f'(x)$ for the constant function $f(x)=7$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(x+h)-f(x) = 7-7=0$ for every $h$.</p>
+      <p>$$f'(x) = \lim_{h\to0}\frac0h = \lim_{h\to0}0 = 0.$$</p>
+      <p>A constant function has zero slope everywhere, exactly as expected: it never rises or falls.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>Use the definition to find $f'(x)$ for $f(x)=x^2-4x+1$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(x+h)-f(x) = 2xh+h^2-4h$.</p>
+      <p>$$f'(x) = \lim_{h\to0}(2x+h-4) = 2x-4.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>Use the definition to find $f'(x)$ for $f(x)=x^4$ (binomial expansion required, same technique as Practice 21).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(x+h)^4-x^4 = 4x^3h+6x^2h^2+4xh^3+h^4$.</p>
+      <p>$$f'(x) = \lim_{h\to0}\big(4x^3+6x^2h+4xh^2+h^3\big) = 4x^3,$$</p>
+      <p>matching the power rule again. Practices 21 and 30 together make the pattern in the power rule, $\frac{d}{dx}x^n = nx^{n-1}$, visible directly: in both cases, every term of the binomial expansion except the very first ($nx^{n-1}h$) carries at least two factors of $h$, so every term except that one vanishes once $h\to0$, leaving exactly $nx^{n-1}$ behind.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> One-sided limits and non-existence</div>
+  <div class="prose">
+    <p>Some functions approach different values depending on which direction you sneak up on them from. A <strong>one-sided limit</strong> only considers one direction of approach, and the ordinary (two-sided) limit only exists when both directions agree.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\lim_{x\to a^-}f(x) \quad \text{(from the left, } x<a\text{)}, \qquad \lim_{x\to a^+}f(x) \quad \text{(from the right, } x>a\text{)}.$$</p>
+    <p>$$\lim_{x\to a}f(x) \text{ exists} \quad\Longleftrightarrow\quad \lim_{x\to a^-}f(x) = \lim_{x\to a^+}f(x).$$</p>
+    <p>If the two one-sided limits disagree (or either one fails to exist), the two-sided limit simply does not exist (DNE).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $f(x) = \begin{cases}x+1 & x<2\\x^2 & x\ge2\end{cases}$. Determine whether $\displaystyle\lim_{x\to2}f(x)$ exists.</p>
+    <p class="step">From the left ($x<2$, using $f(x)=x+1$): $\displaystyle\lim_{x\to2^-}f(x) = 2+1=3$.</p>
+    <p class="step">From the right ($x\ge2$, using $f(x)=x^2$): $\displaystyle\lim_{x\to2^+}f(x) = 2^2=4$.</p>
+    <p>$3\neq4$: the two one-sided limits disagree, so $\displaystyle\lim_{x\to2}f(x)$ <strong>does not exist</strong>, even though both individual one-sided limits are perfectly well-defined numbers. This is a genuine jump discontinuity, revisited in Section 8.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Let $f(x)=\begin{cases}2x&x<1\\x+3&x\ge1\end{cases}$. Find $\displaystyle\lim_{x\to1^-}f(x)$ and $\displaystyle\lim_{x\to1^+}f(x)$, and state whether $\displaystyle\lim_{x\to1}f(x)$ exists.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Left: $2(1)=2$. Right: $1+3=4$. $2\neq4$, so $\displaystyle\lim_{x\to1}f(x)$ <strong>does not exist</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>For $f(x)=\dfrac{|x|}x$, find $\displaystyle\lim_{x\to0^-}f(x)$ and $\displaystyle\lim_{x\to0^+}f(x)$. Does $\displaystyle\lim_{x\to0}f(x)$ exist?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For $x<0$: $|x|=-x$, so $f(x)=\dfrac{-x}x=-1$. $\ \displaystyle\lim_{x\to0^-}f(x)=-1$.</p>
+      <p>For $x>0$: $|x|=x$, so $f(x)=1$. $\ \displaystyle\lim_{x\to0^+}f(x)=1$.</p>
+      <p>$-1\neq1$: $\displaystyle\lim_{x\to0}f(x)$ <strong>does not exist</strong>. This is the classic sign function example, its graph genuinely jumps from $-1$ to $1$ right at $x=0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>Let $f(x)=\begin{cases}x^2-1&x<3\\2x+2&x\ge3\end{cases}$. Verify that $\displaystyle\lim_{x\to3}f(x)$ exists, by checking both one-sided limits agree.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Left: $3^2-1=8$. Right: $2(3)+2=8$. Both give $8$, so $\displaystyle\lim_{x\to3}f(x)=8$ genuinely exists, the two pieces meet up exactly at the boundary, with no jump.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>For the floor function $f(x)=\lfloor x\rfloor$ (rounds down to the nearest integer), find $\displaystyle\lim_{x\to2^-}f(x)$ and $\displaystyle\lim_{x\to2^+}f(x)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Just below $2$ (like $1.9,1.99,\dots$), the floor is $1$: $\displaystyle\lim_{x\to2^-}\lfloor x\rfloor=1$.</p>
+      <p>At and just above $2$ (like $2,2.01,\dots$), the floor is $2$: $\displaystyle\lim_{x\to2^+}\lfloor x\rfloor=2$.</p>
+      <p>$1\neq2$: the two-sided limit does not exist. The floor function jumps at every integer, this is why staircase-shaped graphs are the standard picture for jump discontinuities.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>A graph shows a function approaching height $5$ as $x\to1$ from the left, and also approaching height $5$ from the right, but the function is defined to equal $8$ exactly at $x=1$ (an isolated point sitting above the rest of the curve). Does $\displaystyle\lim_{x\to1}f(x)$ exist? If so, what is it?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Yes, the limit exists and equals $5$. Both one-sided limits agree ($5$ from each side), and by Section 1's central point, the limit only cares about the function's behaviour <em>near</em> $x=1$, never the isolated value $f(1)=8$ actually assigned there. The limit is $5$ despite $f(1)=8$, a mismatch Section 8 classifies as a removable discontinuity.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>Let $f(x)=\begin{cases}\sqrt x&x\ge0\\ \text{undefined}&x<0\end{cases}$. Explain why $\displaystyle\lim_{x\to0^-}f(x)$ doesn't exist, even though $\displaystyle\lim_{x\to0^+}f(x)$ does, and what that implies for the two-sided limit.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f$ isn't defined at all for $x<0$, there are no output values to even examine as $x$ approaches $0$ from the left, so "the limit from the left" isn't asking about a well-posed situation, it fails to exist by default, not because of disagreement but because of absence. Meanwhile $\displaystyle\lim_{x\to0^+}f(x)=\sqrt0=0$ perfectly well. Since the two-sided limit requires <em>both</em> one-sided limits to exist and agree, and the left one doesn't even exist, $\displaystyle\lim_{x\to0}f(x)$ does not exist either, this is a slightly different failure mode from Practice 31–34's disagreement, but the same ultimate conclusion.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>Explain in your own words why $\displaystyle\lim_{x\to a}f(x)$ existing requires <em>both</em> one-sided limits to exist <em>and</em> to be equal, rather than just one of those two conditions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The two-sided limit is a claim about approaching $a$ from <em>either</em> direction and always landing on the same single number. If only one side's limit exists (Practice 36), there's no way to make a two-directional claim at all, half the picture is missing. If both sides exist but land on different numbers (Practice 31–34), the function is genuinely doing two different things depending on which direction you approach from, so there's no single number that correctly describes "the" behaviour near $a$; asserting one anyway would be simply false for whichever direction you didn't check. Both conditions together, existence and agreement, are exactly what's needed to make "the function approaches $L$ near $a$" an honest, unambiguous statement.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>Let $f(x)=\begin{cases}x+1&x<2\\x^2&x\ge2\end{cases}$ (the worked example's function). Confirm $\displaystyle\lim_{x\to2}f(x)$ doesn't exist by recomputing both one-sided limits yourself.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Left: $\displaystyle\lim_{x\to2^-}(x+1) = 3$. Right: $\displaystyle\lim_{x\to2^+}x^2 = 4$. $3\neq4$, confirming the two-sided limit does not exist, exactly as the worked example found.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>Let $f(x)=\begin{cases}3-x&x<1\\2x&x\ge1\end{cases}$. Find both one-sided limits at $x=1$, and state whether $\displaystyle\lim_{x\to1}f(x)$ exists.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Left: $3-1=2$. Right: $2(1)=2$. Both give $2$: $\displaystyle\lim_{x\to1}f(x)=2$ exists.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>Let $f(x)=\begin{cases}x^2+1&x<0\\x-1&x\ge0\end{cases}$. Find both one-sided limits at $x=0$, and state whether $\displaystyle\lim_{x\to0}f(x)$ exists.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Left: $0^2+1=1$. Right: $0-1=-1$. $1\neq-1$: $\displaystyle\lim_{x\to0}f(x)$ <strong>does not exist</strong>, a jump of size $2$ right at the boundary.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> Indeterminate forms: factoring and conjugates</div>
+  <div class="prose">
+    <p>Whenever direct substitution produces $\dfrac00$, that's not the answer, it's a signal that the expression needs to be rewritten first, in a form where the troublesome factor of zero in the denominator cancels against a matching factor in the numerator before you substitute. Two techniques handle the overwhelming majority of these cases: factoring polynomials, and rationalising (multiplying by the conjugate) when a square root is involved.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>If direct substitution gives $\dfrac00$: <strong>factor</strong> both numerator and denominator and cancel the common factor causing the zero (works for polynomial-only expressions), or, if a square root is present, <strong>multiply by the conjugate</strong> of whichever piece has the root, to convert the root into a polynomial via the difference-of-squares identity $(\sqrt a-\sqrt b)(\sqrt a+\sqrt b)=a-b$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\displaystyle\lim_{x\to3}\dfrac{x^2-9}{x-3}$ (matching Section 1's table, now algebraically), and separately $\displaystyle\lim_{x\to9}\dfrac{\sqrt x-3}{x-9}$.</p>
+    <p class="step">Direct substitution on the first: $\dfrac{0}0$, indeterminate. Factor the numerator: $x^2-9=(x-3)(x+3)$.</p>
+    <p class="step">$$\lim_{x\to3}\frac{(x-3)(x+3)}{x-3} = \lim_{x\to3}(x+3) = 6.$$</p>
+    <p class="step">Second one: direct substitution also gives $\dfrac00$. Multiply top and bottom by the conjugate $\sqrt x+3$:</p>
+    <p class="step">$$\frac{(\sqrt x-3)(\sqrt x+3)}{(x-9)(\sqrt x+3)} = \frac{x-9}{(x-9)(\sqrt x+3)} = \frac1{\sqrt x+3}.$$</p>
+    <p>$$\lim_{x\to9}\frac{\sqrt x-3}{x-9} = \frac1{\sqrt9+3} = \frac16.$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to2}\dfrac{x^2-4}{x-2}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{(x-2)(x+2)}{x-2} \to x+2 \to 4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to1}\dfrac{x^2-1}{x^2-3x+2}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x^2-1=(x-1)(x+1)$. $\ x^2-3x+2=(x-1)(x-2)$.</p>
+      <p>$$\lim_{x\to1}\frac{(x-1)(x+1)}{(x-1)(x-2)} = \lim_{x\to1}\frac{x+1}{x-2} = \frac2{-1} = -2.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to-3}\dfrac{x^2+5x+6}{x+3}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x^2+5x+6=(x+3)(x+2)$, so the limit is $\displaystyle\lim_{x\to-3}(x+2) = -1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to4}\dfrac{\sqrt x-2}{x-4}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Multiply by the conjugate $\sqrt x+2$: $$\frac{(\sqrt x-2)(\sqrt x+2)}{(x-4)(\sqrt x+2)} = \frac{x-4}{(x-4)(\sqrt x+2)} = \frac1{\sqrt x+2}.$$</p>
+      <p>$$\lim_{x\to4}\frac1{\sqrt x+2} = \frac1{2+2} = \frac14.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 45</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to0}\dfrac{\sqrt{x+9}-3}x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Conjugate: $\sqrt{x+9}+3$. $$\frac{(x+9)-9}{x(\sqrt{x+9}+3)} = \frac{x}{x(\sqrt{x+9}+3)} = \frac1{\sqrt{x+9}+3}.$$</p>
+      <p>$$\lim_{x\to0}\frac1{\sqrt{x+9}+3} = \frac1{3+3} = \frac16.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 46</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to9}\dfrac{x-9}{\sqrt x-3}$ (the conjugate trick works even with the root in the denominator, applied the same way).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Multiply by $\dfrac{\sqrt x+3}{\sqrt x+3}$: $$\frac{(x-9)(\sqrt x+3)}{(\sqrt x-3)(\sqrt x+3)} = \frac{(x-9)(\sqrt x+3)}{x-9} = \sqrt x+3.$$</p>
+      <p>$$\lim_{x\to9}(\sqrt x+3) = 3+3=6.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 47</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to2}\dfrac{x^3-8}{x-2}$ (needs the difference-of-cubes factorisation, $a^3-b^3=(a-b)(a^2+ab+b^2)$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x^3-8 = (x-2)(x^2+2x+4)$.</p>
+      <p>$$\lim_{x\to2}(x^2+2x+4) = 4+4+4=12.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 48</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to1}\dfrac{x^2-1}{\sqrt x-1}$ (needs both a factorisation <em>and</em> a conjugate step).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Factor the numerator: $x^2-1=(x-1)(x+1)$. Multiply by the conjugate $\sqrt x+1$ to handle the denominator:</p>
+      <p>$$\frac{(x-1)(x+1)(\sqrt x+1)}{(\sqrt x-1)(\sqrt x+1)} = \frac{(x-1)(x+1)(\sqrt x+1)}{x-1} = (x+1)(\sqrt x+1).$$</p>
+      <p>$$\lim_{x\to1}(x+1)(\sqrt x+1) = (2)(2) = 4.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 49</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{h\to0}\dfrac{(3+h)^2-9}h$ (this is literally a difference-quotient calculation, the same structure as Section 3, just with a specific number in place of a general $x$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(3+h)^2-9 = 9+6h+h^2-9 = 6h+h^2 = h(6+h)$.</p>
+      <p>$$\lim_{h\to0}\frac{h(6+h)}h = \lim_{h\to0}(6+h) = 6.$$</p>
+      <p>This is exactly $f'(3)$ for $f(x)=x^2$, matching Practice 26 precisely, the indeterminate-form technique here and the derivative-from-definition technique in Section 3 are the same skill, just applied to different-looking expressions.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 50</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to5}\dfrac{x^2-25}{x^2-3x-10}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x^2-25=(x-5)(x+5)$. $\ x^2-3x-10=(x-5)(x+2)$.</p>
+      <p>$$\lim_{x\to5}\frac{x+5}{x+2} = \frac{10}7.$$</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Infinite limits and vertical asymptotes</div>
+  <div class="prose">
+    <p>When the denominator of a fraction approaches $0$ but the numerator does <em>not</em>, the fraction doesn't settle on a finite number, it grows without bound. Tracking the <em>sign</em> the denominator carries as it approaches zero from each side tells you whether the function shoots up to $+\infty$ or plunges to $-\infty$.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>If $f(x)\to c\neq0$ (finite, nonzero) and $g(x)\to0$ as $x\to a$, then $\dfrac{f(x)}{g(x)}\to\pm\infty$, with the sign determined by the signs of $f$ and $g$ near $a$ on that particular side. A vertical line $x=a$ is a <strong>vertical asymptote</strong> of $f$ when $\displaystyle\lim_{x\to a^-}f(x)$ or $\displaystyle\lim_{x\to a^+}f(x)$ (or both) is $\pm\infty$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Analyse $\displaystyle\lim_{x\to2}\dfrac1{x-2}$ from both sides, and state the vertical asymptote.</p>
+    <p class="step">As $x\to2^+$ ($x$ slightly bigger than $2$, like $2.01$): the denominator $x-2$ is a tiny <em>positive</em> number, so $\dfrac1{x-2}$ is a huge positive number.</p>
+    <p class="step">$$\lim_{x\to2^+}\frac1{x-2} = +\infty.$$</p>
+    <p class="step">As $x\to2^-$ ($x$ slightly smaller than $2$, like $1.99$): the denominator is a tiny <em>negative</em> number, so the fraction is a huge negative number.</p>
+    <p>$$\lim_{x\to2^-}\frac1{x-2} = -\infty.$$</p>
+    <p>The two sides disagree (one $+\infty$, one $-\infty$), so the ordinary two-sided limit doesn't exist, but there's still a vertical asymptote at $x=2$, the function is unbounded from both directions, even though it's unbounded in <em>opposite</em> ways.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 51</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to3^+}\dfrac1{x-3}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Denominator is a tiny positive number as $x\to3^+$: $$\lim_{x\to3^+}\frac1{x-3} = +\infty.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 52</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to3^-}\dfrac1{x-3}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Denominator is a tiny negative number as $x\to3^-$: $$\lim_{x\to3^-}\frac1{x-3} = -\infty.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 53</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to0}\dfrac1{x^2}$ (both sides at once, since the denominator is squared).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x^2$ is always positive (for $x\neq0$), regardless of which side $x$ approaches $0$ from, so $\dfrac1{x^2}$ is always positive and grows without bound from <em>both</em> sides:</p>
+      <p>$$\lim_{x\to0}\frac1{x^2} = +\infty.$$</p>
+      <p>Unlike the worked example, both sides agree here (both $+\infty$), so it's meaningful to write the two-sided statement directly, even though the limit still isn't a finite number.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 54</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to5^+}\dfrac x{x-5}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Numerator $\to5$ (positive, nonzero). Denominator is a tiny positive number as $x\to5^+$. Positive divided by tiny positive: $$\lim_{x\to5^+}\frac x{x-5} = +\infty.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 55</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to-1}\dfrac1{(x+1)^2}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(x+1)^2$ is always positive near $x=-1$ (squared, same reasoning as Practice 53), so both sides agree:</p>
+      <p>$$\lim_{x\to-1}\frac1{(x+1)^2} = +\infty.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 56</span></div>
+  <div class="p-body"><p>Analyse $\displaystyle\lim_{x\to3}\dfrac{x+3}{x^2-9}$. Careful, factor first before deciding whether $x=3$ genuinely gives an infinite limit.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x^2-9=(x-3)(x+3)$, so $\dfrac{x+3}{x^2-9} = \dfrac{x+3}{(x-3)(x+3)} = \dfrac1{x-3}$ for $x\neq-3$. The $(x+3)$ factor cancels, but only because $x=-3$ is a <em>different</em> point from the one being examined here.</p>
+      <p>At $x=3$: numerator of the simplified form is $1$ (nonzero), denominator $\to0$: this is a genuine vertical asymptote, with $\displaystyle\lim_{x\to3^+}=+\infty$ and $\displaystyle\lim_{x\to3^-}=-\infty$, exactly the worked example's pattern.</p>
+      <p>(By contrast, at the <em>other</em> zero of the original denominator, $x=-3$, the factor that caused it exactly cancelled, so that point is a removable hole, not an asymptote at all, a distinction developed fully in Practice 58 and Section 8.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 57</span></div>
+  <div class="p-body"><p>Find both vertical asymptotes of $f(x)=\dfrac{2x}{x^2-4}$, and determine the sign of $f$ (and hence $+\infty$ or $-\infty$) on each side of each asymptote.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x^2-4=(x-2)(x+2)$, zero at $x=2$ and $x=-2$; the numerator $2x$ is nonzero at both, so both are genuine vertical asymptotes.</p>
+      <p><strong>At $x=2$:</strong> $\displaystyle\lim_{x\to2^+}f(x)=+\infty$ (numerator positive, denominator a tiny positive number), $\ \displaystyle\lim_{x\to2^-}f(x)=-\infty$.</p>
+      <p><strong>At $x=-2$:</strong> $\displaystyle\lim_{x\to-2^+}f(x)=+\infty$, $\ \displaystyle\lim_{x\to-2^-}f(x)=-\infty$.</p>
+      <p>Both asymptotes share the identical left/right sign pattern here ($-\infty$ on the approach from below, $+\infty$ from above), worth noticing as a feature of this particular function's symmetry, not something to expect at every vertical asymptote in general.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 58</span></div>
+  <div class="p-body"><p>Explain why $\displaystyle\lim_{x\to0}\dfrac1x$ is correctly described as "does not exist," rather than being written as $\pm\infty$, even though both one-sided limits individually are infinite.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\displaystyle\lim_{x\to0^+}\frac1x=+\infty$ and $\displaystyle\lim_{x\to0^-}\frac1x=-\infty$, two individually well-understood infinite behaviours, but they disagree in sign, one side grows without bound in the positive direction, the other in the negative direction. Section 4's rule stands: a two-sided limit exists (even an infinite one, loosely speaking) only when both one-sided limits agree; here they emphatically don't, one is $+\infty$ and the other is $-\infty$, genuinely opposite behaviours, not two versions of the same trend. So the honest, precise statement is "does not exist," it would be misleading to write $\displaystyle\lim_{x\to0}\frac1x=\infty$ as if there were one single unbounded trend, when there are actually two opposite ones on either side.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 59</span></div>
+  <div class="p-body"><p>For $f(x)=\dfrac{x-1}{x^2-1}$, determine whether $x=1$ is a vertical asymptote or a removable hole, and find the actual behaviour there.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x^2-1=(x-1)(x+1)$, so $f(x)=\dfrac{x-1}{(x-1)(x+1)} = \dfrac1{x+1}$ for $x\neq1$. The factor causing the zero at $x=1$ cancels completely.</p>
+      <p>$$\lim_{x\to1}f(x) = \lim_{x\to1}\frac1{x+1} = \frac12,$$</p>
+      <p>a genuine finite limit: $x=1$ is a <strong>removable hole</strong> (the graph has a gap there, but doesn't blow up), not a vertical asymptote. (By contrast, $x=-1$ is a true vertical asymptote, since $x+1\to0$ there with nothing left to cancel it.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 60</span></div>
+  <div class="p-body"><p>Explain the general procedure for telling whether a zero of a rational function's denominator is a genuine vertical asymptote or a removable hole, based on Practices 56 and 59.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Factor both the numerator and the denominator completely first, always, before drawing any conclusion about a zero of the denominator. If a factor cancels between numerator and denominator (Practice 59's $(x-1)$, or Practice 56's $(x+3)$ at the point $x=-3$), that zero is a <strong>removable hole</strong>: the simplified expression has a genuine finite limit there. If a factor of the denominator does <em>not</em> cancel against anything in the numerator (Practice 56's $(x-3)$, or either factor in Practice 57), that zero is a <strong>genuine vertical asymptote</strong>: the function blows up to $\pm\infty$ there. Never judge a denominator's zero as an asymptote by inspection alone, without checking first whether the numerator secretly shares that same factor.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> Limits at infinity and horizontal asymptotes</div>
+  <div class="prose">
+    <p>A different question: what does a function do as $x$ grows without bound, in either direction? For a rational function (a polynomial over a polynomial), the answer only ever depends on the two <strong>leading</strong> terms, the rest of the polynomial becomes utterly irrelevant once $x$ is enormous. The standard technique makes this precise: divide every term, top and bottom, by the highest power of $x$ appearing anywhere in the expression.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>For a rational function $\dfrac{p(x)}{q(x)}$ as $x\to\pm\infty$: compare the degrees of $p$ and $q$.</p>
+    <p><strong>Same degree:</strong> the limit is the ratio of the leading coefficients. <strong>Numerator's degree lower:</strong> the limit is $0$. <strong>Numerator's degree higher:</strong> the limit is $\pm\infty$ (no finite horizontal asymptote in that direction).</p>
+    <p>A horizontal asymptote at $y=L$ means $\displaystyle\lim_{x\to\infty}f(x)=L$ or $\displaystyle\lim_{x\to-\infty}f(x)=L$ (or both, possibly at two different heights).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{3x^2+1}{x^2-5}$.</p>
+    <p class="step">Divide every term by $x^2$, the highest power present:</p>
+    <p class="step">$$\frac{3x^2+1}{x^2-5} = \frac{3+\frac1{x^2}}{1-\frac5{x^2}}.$$</p>
+    <p class="step">As $x\to\infty$, both $\dfrac1{x^2}$ and $\dfrac5{x^2}$ shrink toward $0$:</p>
+    <p>$$\lim_{x\to\infty}\frac{3x^2+1}{x^2-5} = \frac{3+0}{1-0} = 3,$$</p>
+    <p>exactly the ratio of the two leading coefficients ($3$ and $1$), matching the key idea's "same degree" rule directly.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 61</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{2x+1}{x-3}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Same degree (both linear); ratio of leading coefficients: $\dfrac21 = 2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 62</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{5x^2}{x^3+1}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Denominator's degree ($3$) exceeds the numerator's ($2$): the limit is $0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 63</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{x^3}{2x^2+1}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Numerator's degree ($3$) exceeds the denominator's ($2$): the limit is $+\infty$ (no horizontal asymptote in this direction).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 64</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to-\infty}\dfrac{3x^2-2}{x^2+4}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Same degree; ratio of leading coefficients: $\dfrac31=3$. The rule works identically as $x\to-\infty$, the leading-term comparison doesn't care which direction $x$ is heading.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 65</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{\sqrt{x^2+1}}x$ (careful: for $x>0$, $\sqrt{x^2}=x$, so this needs slightly more care than the polynomial cases above).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Divide inside the square root by $x^2$ (equivalently, factor $x^2$ out from under the root, using $x=\sqrt{x^2}$ since $x>0$ here):</p>
+      <p>$$\frac{\sqrt{x^2+1}}x = \frac{\sqrt{x^2\left(1+\frac1{x^2}\right)}}x = \frac{|x|\sqrt{1+\frac1{x^2}}}x = \frac{x\sqrt{1+\frac1{x^2}}}x = \sqrt{1+\frac1{x^2}}$$</p>
+      <p>(using $|x|=x$ since $x\to+\infty$ means $x>0$).</p>
+      <p>$$\lim_{x\to\infty}\sqrt{1+\frac1{x^2}} = \sqrt{1+0} = 1.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 66</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to-\infty}\dfrac{\sqrt{x^2+1}}x$, and compare carefully with Practice 65.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Same setup as Practice 65, but now $x\to-\infty$ means $x<0$, so $|x|=-x$, not $x$:</p>
+      <p>$$\frac{\sqrt{x^2+1}}x = \frac{|x|\sqrt{1+\frac1{x^2}}}x = \frac{-x\sqrt{1+\frac1{x^2}}}x = -\sqrt{1+\frac1{x^2}}.$$</p>
+      <p>$$\lim_{x\to-\infty}\left(-\sqrt{1+\frac1{x^2}}\right) = -1.$$</p>
+      <p>The sign genuinely flips between the two directions, $1$ as $x\to\infty$, but $-1$ as $x\to-\infty$, purely because of the hidden $|x|$ lurking inside $\sqrt{x^2}$. This function has two different horizontal asymptotes, $y=1$ and $y=-1$, one for each direction, exactly the kind of case the key idea flagged as possible.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 67</span></div>
+  <div class="p-body"><p>Find the horizontal asymptote of $f(x)=\dfrac{4x-1}{2x+3}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Same degree; ratio of leading coefficients: $\dfrac42=2$. Horizontal asymptote: $y=2$ (and by the same computation as $x\to-\infty$, this holds in both directions here, since it's a same-degree case, unlike Practices 65–66).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 68</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{7x^5-2x}{x^5+3x^2-1}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Same degree (both degree $5$); ratio of leading coefficients: $\dfrac71=7$. Every other term, $-2x$, $3x^2$, $-1$, becomes utterly negligible next to the $x^5$ terms once $x$ is huge, exactly the point of the key idea's "only the leading terms matter" rule.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 69</span></div>
+  <div class="p-body"><p>Determine the end behaviour of $f(x)=\dfrac{x^2-1}{x+1}$ as $x\to\infty$. (Simplify first, don't apply the degree-comparison rule blindly.)</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x^2-1=(x-1)(x+1)$, so $f(x) = \dfrac{(x-1)(x+1)}{x+1} = x-1$ for $x\neq-1$. The function is secretly just a line (with a hole at $x=-1$), not a genuine rational function once simplified.</p>
+      <p>$$\lim_{x\to\infty}(x-1) = +\infty.$$</p>
+      <p>No horizontal asymptote exists, even though the raw, unsimplified degrees (numerator $2$, denominator $1$) might tempt you to reach for the "numerator's degree is higher, so $\pm\infty$" rule directly, which happens to give the right qualitative answer here, but only because the simplification confirms it; always simplify first rather than trusting raw degree-counting on an unfactored expression.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 70</span></div>
+  <div class="p-body"><p>Explain, using the "divide by the highest power" technique, why a rational function's limit at infinity only ever depends on the leading terms of the numerator and denominator, and never on any of the lower-degree terms.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Dividing every term by the highest power of $x$ present turns every non-leading term into something of the form $\dfrac{c}{x^k}$ for some $k\ge1$, and every one of those fractions shrinks to $0$ as $x\to\pm\infty$ (Practices 62's denominator terms, or the worked example's $\frac1{x^2}$ and $\frac5{x^2}$, are exactly this). Only the leading terms, the ones that turn into plain constants (no $x$ left at all) after the division, survive the limit untouched. So no matter how complicated the rest of the polynomial looks, once $x$ is large enough, only the highest-power terms are still contributing anything non-negligible to the ratio, everything else has already been dwarfed into irrelevance.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec8">
+  <div class="section-title"><span class="tag">8</span> Continuity</div>
+  <div class="prose">
+    <p>A function is <strong>continuous</strong> at a point when there's no gap, jump, or blow-up there, informally, when you could trace the graph through that point without lifting your pen. Formally, this comes down to three separate conditions all holding simultaneously, and every discontinuity you've met so far in this lesson (Sections 1, 4, and 6) turns out to be exactly one of these three conditions failing.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$f$ is continuous at $x=a$ when all three hold: (1) $f(a)$ is defined; (2) $\displaystyle\lim_{x\to a}f(x)$ exists; (3) $\displaystyle\lim_{x\to a}f(x)=f(a)$.</p>
+    <p>If condition (2) fails because $f(a)$ is undefined but the limit itself exists (Section 1, Practice 5), it's a <strong>removable</strong> discontinuity. If condition (2) fails because the one-sided limits disagree (Section 4), it's a <strong>jump</strong> discontinuity. If condition (2) fails because the limit is infinite (Section 6), it's an <strong>infinite</strong> discontinuity.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Differentiable implies continuous, but not the reverse</span>
+    <p>If $f'(a)$ exists (Section 3's limit is a genuine finite number), then $f$ must be continuous at $a$: the existence of $\displaystyle\lim_{h\to0}\dfrac{f(a+h)-f(a)}h$ as a finite number forces $f(a+h)-f(a)\to0$ as $h\to0$ (otherwise the ratio itself couldn't settle on a finite value), which is exactly $\displaystyle\lim_{x\to a}f(x)=f(a)$, continuity.</p>
+    <p class="step">The reverse fails. Take $f(x)=|x|$ at $a=0$: continuous, since $\displaystyle\lim_{x\to0}|x|=0=f(0)$. But the derivative from the left is $\displaystyle\lim_{h\to0^-}\dfrac{|0+h|-0}h = \dfrac{-h}h=-1$, while from the right it's $\displaystyle\lim_{h\to0^+}\dfrac{h}h=1$. Different one-sided derivatives, so $f'(0)$ doesn't exist (Section 4's disagreement condition, now applied to the difference quotient itself, not to $f$ directly): the graph has a sharp corner at the origin, perfectly connected, but not smooth.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 71</span></div>
+  <div class="p-body"><p>Verify $f(x)=x^2+1$ is continuous at $x=2$, checking all three conditions explicitly.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(1) $f(2)=4+1=5$, defined. (2) $\displaystyle\lim_{x\to2}(x^2+1)=5$, exists (direct substitution, a polynomial). (3) $5=5$ ✓. All three conditions hold: continuous at $x=2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 72</span></div>
+  <div class="p-body"><p>Let $f(x)=\begin{cases}x+2&x\le1\\3x&x>1\end{cases}$. Determine whether $f$ is continuous at $x=1$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(1)=1+2=3$. $\displaystyle\lim_{x\to1^-}(x+2)=3$. $\displaystyle\lim_{x\to1^+}3x=3$. All three agree, $3=3=3$: <strong>continuous</strong> at $x=1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 73</span></div>
+  <div class="p-body"><p>Find the value of $k$ that makes $f(x)=\begin{cases}kx+1&x<2\\x^2-1&x\ge2\end{cases}$ continuous at $x=2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(2)=4-1=3$ (using the right-hand piece, since $x=2$ falls in that case). For continuity, the left-hand limit must also equal $3$:</p>
+      <p>$$\lim_{x\to2^-}(kx+1) = 2k+1 = 3 \quad\Rightarrow\quad k=1.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 74</span></div>
+  <div class="p-body"><p>Classify the discontinuity of $f(x)=\dfrac{x^2-4}{x-2}$ at $x=2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(2)$ is undefined (condition (1) fails), but $\displaystyle\lim_{x\to2}f(x)=4$ exists (Section 1's worked example). Undefined at the point, but a perfectly good limit exists there: a <strong>removable</strong> discontinuity, a single-point hole in the graph.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 75</span></div>
+  <div class="p-body"><p>Classify the discontinuity of $f(x)=\dfrac1{x-3}$ at $x=3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\displaystyle\lim_{x\to3^+}f(x)=+\infty$, $\ \displaystyle\lim_{x\to3^-}f(x)=-\infty$ (Section 6): condition (2) fails because the limit is infinite. An <strong>infinite</strong> discontinuity, matching the vertical asymptote there.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 76</span></div>
+  <div class="p-body"><p>Classify the discontinuity of $f(x)=\dfrac{|x|}x$ at $x=0$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>From Practice 32: $\displaystyle\lim_{x\to0^-}f(x)=-1$, $\ \displaystyle\lim_{x\to0^+}f(x)=1$, disagreeing finite one-sided limits: a <strong>jump</strong> discontinuity (the graph genuinely leaps from height $-1$ to height $1$).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 77</span></div>
+  <div class="p-body"><p>Verify $f(x)=|x|$ is continuous at $x=0$ (condition-by-condition), but explain, referencing the "why" box, why this does <em>not</em> mean $f$ is differentiable there.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(1) $f(0)=0$, defined. (2) $\displaystyle\lim_{x\to0}|x|=0$, exists. (3) $0=0$ ✓. Continuous.</p>
+      <p>But continuity only requires <em>the function itself</em> to have matching one-sided limits, it says nothing about the <em>difference quotient's</em> one-sided limits, which is a separate, stricter question (differentiability). The "why" box already computed those separately: left derivative $-1$, right derivative $1$, disagreeing. A function can be perfectly connected (continuous) while still having a sharp corner (non-differentiable) at the very same point, connectedness and smoothness are genuinely different properties.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 78</span></div>
+  <div class="p-body"><p>Let $f(x)=\begin{cases}x^2&x\le0\\2x&x>0\end{cases}$. Verify $f$ is continuous at $x=0$, then determine whether $f$ is differentiable there.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Continuity:</strong> $f(0)=0$. $\displaystyle\lim_{x\to0^-}x^2=0$. $\displaystyle\lim_{x\to0^+}2x=0$. All agree: continuous.</p>
+      <p><strong>Differentiability:</strong> left derivative, using $f(x)=x^2$: $\displaystyle\lim_{h\to0^-}\dfrac{h^2-0}h = \lim_{h\to0^-}h=0$. Right derivative, using $f(x)=2x$: $\displaystyle\lim_{h\to0^+}\dfrac{2h-0}h = \lim_{h\to0^+}2=2$.</p>
+      <p>$0\neq2$: the one-sided derivatives disagree, so $f$ is <strong>not differentiable</strong> at $x=0$, despite being continuous there, another corner, just like $|x|$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 79</span></div>
+  <div class="p-body"><p>Can $f(x)=\dfrac{x^3-1}{x-1}$ be made continuous at $x=1$ by defining $f(1)$ appropriately? If so, find the value $f(1)$ would need.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x^3-1=(x-1)(x^2+x+1)$ (difference-of-cubes factorisation), so $f(x)=x^2+x+1$ for $x\neq1$.</p>
+      <p>$$\lim_{x\to1}f(x) = 1+1+1=3.$$</p>
+      <p>Yes: defining $f(1)=3$ makes all three continuity conditions hold, this is precisely what "removable" means, the discontinuity can be patched by filling in a single, correctly-chosen point.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 80</span></div>
+  <div class="p-body"><p>Using the derivative definition from Section 3, explain precisely why $f'(a)$ existing (as a finite number) forces $f$ to be continuous at $a$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>If $\displaystyle\lim_{h\to0}\dfrac{f(a+h)-f(a)}h = f'(a)$, a specific finite number, then for the ratio itself to settle on a finite value as $h\to0$ (rather than blowing up, since the denominator $h$ is shrinking to $0$), the numerator $f(a+h)-f(a)$ must <em>also</em> shrink to $0$ at a matching rate, if it didn't, the fraction would blow up to $\pm\infty$ instead of settling on $f'(a)$. Formally: $f(a+h)-f(a) = h\cdot\dfrac{f(a+h)-f(a)}h \to 0\cdot f'(a) = 0$ as $h\to0$ (product of something $\to0$ with something $\to$ a finite number). That's exactly $\displaystyle\lim_{h\to0}f(a+h)=f(a)$, i.e.\ $\displaystyle\lim_{x\to a}f(x)=f(a)$: continuity, derived directly from differentiability's own definition, not assumed separately.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec9">
+  <div class="section-title"><span class="tag">9</span> L'H&ocirc;pital's Rule</div>
+  <div class="prose">
+    <p>Everything in Section 5 relied on being able to factor or rationalise your way out of a $\frac00$ form. Plenty of genuinely important limits, ones involving $\ln x$, $e^x$, or trig functions mixed together, don't factor at all. L'H&ocirc;pital's Rule is the payoff for already knowing how to differentiate: for exactly the indeterminate forms $\frac00$ and $\frac{\infty}{\infty}$, you can replace the limit of a quotient with the limit of the quotient of derivatives, and that new limit is very often dramatically easier.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>If $\displaystyle\lim_{x\to a}f(x)=\displaystyle\lim_{x\to a}g(x)=0$ (a $\frac00$ form), or both $\to\pm\infty$ (a $\frac{\infty}{\infty}$ form), and $\displaystyle\lim_{x\to a}\dfrac{f'(x)}{g'(x)}$ exists, then:</p>
+    <p>$$\lim_{x\to a}\frac{f(x)}{g(x)} = \lim_{x\to a}\frac{f'(x)}{g'(x)}.$$</p>
+    <p>Crucially, this rule only applies to genuinely indeterminate forms. If direct substitution already gives a real number (not $\frac00$ or $\frac{\infty}{\infty}$), L'H&ocirc;pital's Rule simply doesn't apply, there's nothing indeterminate left to resolve. And if, after one application, the new limit is <em>still</em> indeterminate, you can apply the rule again, taking derivatives a second (or third) time.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\displaystyle\lim_{x\to0}\sin x/x$ using L'H&ocirc;pital's Rule (cross-checking Practice 8's numerical answer), then evaluate $\displaystyle\lim_{x\to0}\dfrac{1-\cos(2x)}{x^2}$, which needs the rule applied <em>twice</em>.</p>
+    <p class="step">First one: direct substitution gives $\dfrac{\sin0}0=\dfrac00$, genuinely indeterminate, so L'H&ocirc;pital applies. Differentiate top and bottom separately: $\dfrac{d}{dx}\sin x=\cos x$, $\ \dfrac{d}{dx}x=1$.</p>
+    <p>$$\lim_{x\to0}\frac{\sin x}x = \lim_{x\to0}\frac{\cos x}1 = \cos0=1,$$</p>
+    <p class="step">matching Practice 8's table exactly, now confirmed algebraically rather than numerically.</p>
+    <p class="step">Second one: direct substitution gives $\dfrac{1-\cos0}0=\dfrac00$. Differentiate: $\dfrac{d}{dx}\big[1-\cos(2x)\big]=2\sin(2x)$, $\ \dfrac{d}{dx}x^2=2x$.</p>
+    <p class="step">$$\lim_{x\to0}\frac{2\sin(2x)}{2x} = \lim_{x\to0}\frac{\sin(2x)}x.$$</p>
+    <p class="step">Substituting $x=0$ here gives $\dfrac{\sin0}0=\dfrac00$ again, <em>still</em> indeterminate: apply L'H&ocirc;pital a second time. Differentiate again: $\dfrac{d}{dx}\sin(2x)=2\cos(2x)$, $\ \dfrac{d}{dx}x=1$.</p>
+    <p>$$\lim_{x\to0}\frac{2\cos(2x)}1 = 2\cos0 = 2.$$</p>
+    <p>So $\displaystyle\lim_{x\to0}\dfrac{1-\cos(2x)}{x^2}=2$, reached only by recognising, honestly, that the form was still $\frac00$ after the first application, and applying the rule again rather than stopping too early.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 81</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to0}\dfrac{e^x-1}x$ using L'H&ocirc;pital's Rule.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Direct substitution: $\dfrac{e^0-1}0=\dfrac00$, indeterminate. Differentiate: $\dfrac{d}{dx}(e^x-1)=e^x$, $\ \dfrac{d}{dx}x=1$.</p>
+      <p>$$\lim_{x\to0}\frac{e^x}1 = e^0 = 1.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 82</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to0}\dfrac{1-\cos x}{x^2}$ using L'H&ocirc;pital's Rule (you may need to apply it more than once, check carefully after each step).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{1-\cos0}0=\dfrac00$. Differentiate: $\dfrac{\sin x}{2x}$. Substituting $x=0$: $\dfrac{\sin0}0=\dfrac00$, still indeterminate, apply again: $\dfrac{d}{dx}\sin x=\cos x$, $\ \dfrac{d}{dx}2x=2$.</p>
+      <p>$$\lim_{x\to0}\frac{\cos x}2 = \frac12.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 83</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{\ln x}x$ using L'H&ocirc;pital's Rule.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{\infty}{\infty}$ form. Differentiate: $\dfrac{d}{dx}\ln x=\dfrac1x$, $\ \dfrac{d}{dx}x=1$.</p>
+      <p>$$\lim_{x\to\infty}\frac{1/x}1 = \lim_{x\to\infty}\frac1x = 0.$$</p>
+      <p>A genuinely useful fact this confirms: $\ln x$ grows without bound, but so slowly that it becomes negligible compared to $x$ itself.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 84</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to0}\dfrac{x-\sin x}{x^3}$ using L'H&ocirc;pital's Rule. This one genuinely needs <strong>three</strong> applications, don't stop early just because the algebra looks like it should be settling down.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{0-\sin0}0=\dfrac00$. First derivative: $\dfrac{1-\cos x}{3x^2}$. At $x=0$: $\dfrac{1-1}0=\dfrac00$, still indeterminate.</p>
+      <p class="step">Second derivative: $\dfrac{\sin x}{6x}$. At $x=0$: $\dfrac{0}0$, <em>still</em> indeterminate, a third round is genuinely necessary here.</p>
+      <p class="step">Third derivative: $\dfrac{\cos x}6$. At $x=0$: $\dfrac{\cos0}6 = \dfrac16$.</p>
+      <p>$$\lim_{x\to0}\frac{x-\sin x}{x^3} = \frac16.$$</p>
+      <p>This is the single most important habit L'H&ocirc;pital's Rule demands: check the form <em>every single time</em> before deciding you're done, never assume one or two rounds is automatically enough.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 85</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{x^2}{e^x}$ using L'H&ocirc;pital's Rule (this one needs two applications).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{\infty}{\infty}$. Differentiate: $\dfrac{2x}{e^x}$. As $x\to\infty$: still $\dfrac{\infty}{\infty}$, apply again: $\dfrac{2}{e^x}$.</p>
+      <p>$$\lim_{x\to\infty}\frac{2}{e^x} = 0,$$</p>
+      <p>since $e^x\to\infty$. This confirms $e^x$ eventually outpaces <em>any</em> power of $x$, not just $x$ itself, the exact opposite growth-rate relationship from Practice 83's $\ln x$ falling behind $x$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 86</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to1}\dfrac{\ln x}{x-1}$ using L'H&ocirc;pital's Rule.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{\ln1}0=\dfrac00$. Differentiate: $\dfrac{1/x}1 = \dfrac1x$.</p>
+      <p>$$\lim_{x\to1}\frac1x = 1.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 87</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to2}\dfrac{x^2-4}{x-2}$ using L'H&ocirc;pital's Rule, and confirm it matches Practice 41's factoring answer.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac00$. Differentiate: $\dfrac{2x}1=2x$.</p>
+      <p>$$\lim_{x\to2}2x = 4,$$</p>
+      <p>matching Practice 41 exactly. For a simple polynomial ratio like this one, factoring and L'H&ocirc;pital are both about equally fast, the real value of L'H&ocirc;pital shows up on expressions (like Practices 83–86) that don't factor at all.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 88</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to0^+}x\ln x$. This isn't in the $\frac00$ or $\frac{\infty}{\infty}$ form yet, it's a "$0\times\infty$" form, rewrite it as a quotient first before L'H&ocirc;pital can apply.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Rewrite $x\ln x = \dfrac{\ln x}{1/x}$: as $x\to0^+$, $\ln x\to-\infty$ and $\dfrac1x\to+\infty$, a genuine $\dfrac{\infty}{\infty}$ (well, $\dfrac{-\infty}{\infty}$, the rule still applies) form now.</p>
+      <p class="step">Differentiate: $\dfrac{d}{dx}\ln x = \dfrac1x$, $\ \dfrac{d}{dx}x^{-1} = -x^{-2}$.</p>
+      <p>$$\lim_{x\to0^+}\frac{1/x}{-1/x^2} = \lim_{x\to0^+}\left(-x\right) = 0.$$</p>
+      <p>A useful general lesson: L'H&ocirc;pital's Rule only ever applies directly to $\frac00$ or $\frac{\infty}{\infty}$; forms like $0\times\infty$, $\infty-\infty$, or $1^\infty$ all need to be algebraically massaged into one of the two standard forms first, before the rule can be used at all.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 89</span></div>
+  <div class="p-body"><p>Explain why applying L'H&ocirc;pital's Rule to $\displaystyle\lim_{x\to0}\dfrac{x+1}{x+2}$ would be a misuse of the rule, even though differentiating top and bottom happens not to change the numeric answer for this particular pair of functions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Direct substitution gives $\dfrac{0+1}{0+2} = \dfrac12$, a perfectly ordinary, non-indeterminate real number, no division-by-zero problem, nothing left unresolved. L'H&ocirc;pital's Rule is a tool for resolving indeterminate forms specifically; here there simply isn't one to resolve. (Differentiating anyway happens to give $\dfrac{d}{dx}(x+1)=1$ and $\dfrac{d}{dx}(x+2)=1$, so $\displaystyle\lim_{x\to0}\frac11=1\neq\frac12$: applying the rule here would actually have produced the <em>wrong</em> answer, not merely an unnecessary one, a useful cautionary example that misusing the rule outside its actual conditions isn't just sloppy, it can be flatly incorrect.) Always check that the form is genuinely $\frac00$ or $\frac{\infty}{\infty}$ by direct substitution first, every single time, before reaching for derivatives.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 90</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\lim_{x\to\infty}\dfrac{3x^2+2x}{5x^2-1}$ two ways: using Section 7's "divide by the highest power" technique, and using L'H&ocirc;pital's Rule (two applications). Confirm they agree, and comment on which method felt faster.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Section 7's method:</strong> same degree, ratio of leading coefficients: $\dfrac35$.</p>
+      <p><strong>L'H&ocirc;pital:</strong> $\dfrac{\infty}{\infty}$ form. First derivative: $\dfrac{6x+2}{10x}$, as $x\to\infty$ still $\dfrac{\infty}{\infty}$. Second derivative: $\dfrac6{10}=\dfrac35$.</p>
+      <p>Both methods agree: $\dfrac35$. For rational functions specifically, Section 7's degree-comparison trick is almost always faster, no differentiation required at all, just reading off leading coefficients. L'H&ocirc;pital's real advantage shows up on the non-polynomial cases from earlier in this section ($\ln x$, $e^x$, trig functions), exactly the situations where no purely algebraic shortcut like Section 7's exists at all.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>MATH141 Prep &middot; Limits</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
