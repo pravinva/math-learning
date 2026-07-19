@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Polar Coordinates</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+
+  header h1{
+    margin:0;
+    font-size:27px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+
+  header p{
+    margin:8px 0 0;
+    color:#c3ccdb;
+    font-size:15px;
+    max-width:680px;
+  }
+
+  .progress-wrap{
+    max-width:820px;
+    margin:22px auto 0;
+    padding:0 24px;
+  }
+
+  .progress-bar{
+    height:6px;
+    border-radius:3px;
+    background:rgba(255,255,255,0.15);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--red);
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    color:#9fb0c9;
+    margin-top:6px;
+  }
+
+  nav.toc{
+    max-width:820px;
+    margin:26px auto 0;
+    padding:16px 22px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  nav.toc ol{
+    margin:0;
+    padding-left:20px;
+    columns:2;
+    font-size:14px;
+    line-height:1.9;
+  }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{
+    max-width:820px;
+    margin:30px auto 0;
+    padding:0 24px;
+  }
+
+  section.topic{
+    margin-bottom:46px;
+  }
+
+  .section-title{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 6px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--navy);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    background:rgba(255,54,33,0.08);
+    border-radius:4px;
+    padding:3px 9px;
+  }
+
+  .prose{
+    font-size:16px;
+    line-height:1.65;
+    margin:16px 0;
+  }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0;
+    padding:16px 18px 18px;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+  .key-box{
+    background:#fff7f5;
+    border-left:4px solid var(--red);
+  }
+  .example-box{
+    background:#f7f9fc;
+    border-left:4px solid var(--navy);
+  }
+  .why-box{
+    background:var(--blue-box);
+    border-left:4px solid var(--navy);
+  }
+  .box-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid #33415a;
+    border-radius:6px;
+    margin:18px 0;
+    box-shadow:0 1px 2px rgba(27,36,49,0.05);
+    overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+
+  .p-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:14px 20px 4px;
+  }
+  .p-num{
+    font-family:'Roboto Mono',monospace;
+    font-weight:500;
+    font-size:12.5px;
+    color:#33415a;
+    background:#eef1f6;
+    border-radius:4px;
+    padding:2px 8px;
+    flex-shrink:0;
+  }
+  .p-body{
+    padding:4px 20px 16px;
+    font-size:15.5px;
+    line-height:1.55;
+  }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    color:var(--navy);
+    background:#fff;
+    border:1.5px solid var(--navy);
+    border-radius:5px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+    border-top:1px dashed var(--line);
+  }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{
+    padding:14px 20px 18px;
+    background:#fbfcfe;
+    font-size:15px;
+    line-height:1.6;
+  }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:8px;
+    display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  .backlink{
+    display:inline-block;
+    margin-top:10px;
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    color:var(--muted);
+    text-decoration:none;
+  }
+  .backlink:hover{ color:var(--red); }
+
+  footer{
+    max-width:820px;
+    margin:10px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH141 &middot; DPEN141</div>
+  <h1>Polar Coordinates</h1>
+  <p>A from-scratch lesson on the polar coordinate system: plotting points, converting between Cartesian and polar (both points and equations), recognising the standard polar curves, testing for symmetry, and the polar form of complex numbers, exactly the ground MATH141's Polar Coordinates unit covers. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 40 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Why polar coordinates?</a></li>
+    <li><a href="#sec1">The polar coordinate system</a></li>
+    <li><a href="#sec2">Converting points: Cartesian &rarr; polar</a></li>
+    <li><a href="#sec3">Converting points: polar &rarr; Cartesian</a></li>
+    <li><a href="#sec4">Converting equations</a></li>
+    <li><a href="#sec5">The standard polar curves</a></li>
+    <li><a href="#sec6">Symmetry and sketching strategy</a></li>
+    <li><a href="#sec7">Polar form of complex numbers</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Why polar coordinates?</div>
+  <div class="prose">
+    <p>Cartesian coordinates, $(x,y)$, describe a point by how far to walk right and how far to walk up. That is a natural fit for grids and rectangles, but it is a clumsy fit for anything built around a centre and a sweeping angle, a satellite orbiting the earth, a radar beam sweeping the sky, a robotic arm reaching out from a fixed joint, or the rotating phasors used to describe AC circuits.</p>
+    <p><strong>Polar coordinates</strong> describe a point differently: instead of "how far right, how far up," you specify "how far out, and in which direction," a distance $r$ from a fixed centre point, and an angle $\theta$ measured from a fixed reference direction. For anything with circular or radial symmetry, a shape that would need a genuinely awkward equation in $x,y$ often becomes almost trivial in $r,\theta$: a circle centred at the origin, which is $x^2+y^2=a^2$ in Cartesian form, is simply $r=a$ in polar form.</p>
+    <p>This lesson builds the whole toolkit: plotting a point given $(r,\theta)$, converting freely between the two coordinate systems (both for individual points and for whole equations), recognising the handful of curve shapes that show up constantly (circles, cardioids, roses, spirals), and, since it is directly on MATH141's own formula sheet, the polar form of a complex number, which turns out to use exactly the same conversion formulas as an ordinary point.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> The polar coordinate system</div>
+  <div class="prose">
+    <p>A point in the polar system is written $(r,\theta)$. The fixed centre point is called the <strong>pole</strong> (it plays the role the origin plays in Cartesian coordinates), and the fixed reference direction, usually drawn pointing right, is called the <strong>polar axis</strong> (it plays the role of the positive $x$-axis).</p>
+    <p>$r$ is the distance from the pole to the point. $\theta$ is the angle, measured counter-clockwise from the polar axis, that you rotate through before walking outward a distance $r$. Angles can be given in degrees or radians; MATH141 mostly works in radians, so that is the default here unless a question states degrees explicitly.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: polar coordinates are not unique</span>
+    <p>Unlike Cartesian coordinates, where every point has exactly one $(x,y)$ pair, a single point has <strong>infinitely many</strong> valid polar representations:</p>
+    <p>$$(r,\theta) = (r,\ \theta+2k\pi) \quad \text{for any integer } k$$</p>
+    <p>(a full extra revolution lands you back on the same point), and also</p>
+    <p>$$(r,\theta) = (-r,\ \theta+\pi)$$</p>
+    <p>(walking a negative distance $r$ in direction $\theta$ is the same as walking the positive distance $|r|$ in the opposite direction, $\theta+\pi$). The pole itself is the special case $(0,\theta)$ for <em>any</em> angle $\theta$ at all, since a distance of $0$ never actually goes anywhere.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Give three different polar representations of the point $\left(2,\dfrac{\pi}3\right)$.</p>
+    <p class="step">Add a full revolution: $\left(2,\ \dfrac{\pi}3+2\pi\right) = \left(2,\ \dfrac{7\pi}3\right)$.</p>
+    <p class="step">Subtract a full revolution: $\left(2,\ \dfrac{\pi}3-2\pi\right) = \left(2,\ -\dfrac{5\pi}3\right)$.</p>
+    <p class="step">Flip the sign of $r$ and add $\pi$ to the angle: $\left(-2,\ \dfrac{\pi}3+\pi\right) = \left(-2,\ \dfrac{4\pi}3\right)$.</p>
+    <p class="step">All four pairs, the original plus these three, land on exactly the same physical point.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Give another representation of $\left(5,\dfrac{\pi}6\right)$ using $r>0$ and a different angle.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Add a full revolution: $\left(5,\ \dfrac{\pi}6+2\pi\right) = \left(5,\ \dfrac{13\pi}6\right)$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Give a representation of $\left(5,\dfrac{\pi}6\right)$ using a negative value of $r$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$\left(-5,\ \dfrac{\pi}6+\pi\right) = \left(-5,\ \dfrac{7\pi}6\right)$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Is $\left(3,\dfrac{\pi}2\right)$ the same point as $\left(3,\dfrac{5\pi}2\right)$? Justify.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Yes.</strong> $\dfrac{5\pi}2 - \dfrac{\pi}2 = 2\pi$, exactly one full revolution, so both angles point in the same direction with the same distance $r=3$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Is $\left(3,\dfrac{\pi}2\right)$ the same point as $\left(-3,\dfrac{3\pi}2\right)$? Justify.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Yes.</strong> Using $(r,\theta)=(-r,\theta+\pi)$: $\left(3,\dfrac{\pi}2\right) = \left(-3,\ \dfrac{\pi}2+\pi\right) = \left(-3,\dfrac{3\pi}2\right)$, exactly the pair given.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>What are all the valid polar representations of the pole (the origin)?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$(0,\theta)$ for <strong>any</strong> angle $\theta$ at all. Since $r=0$, the point never actually moves away from the pole no matter what direction you rotate through first, so every angle describes the identical point.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Converting points: Cartesian &rarr; polar</div>
+  <div class="prose">
+    <p>Given a point as $(x,y)$, finding $r$ is just the distance formula from the origin: Pythagoras' theorem. Finding $\theta$ needs a little more care, since $\tan\theta=y/x$ alone only ever returns an angle between $-90^\circ$ and $90^\circ$, it has no way to tell you whether the point was actually in the left half of the plane. You have to look at the signs of $x$ and $y$ to place $\theta$ in the correct quadrant.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$r = \sqrt{x^2+y^2}$$</p>
+    <p>For $\theta$, first find the <strong>reference angle</strong> $\alpha=\tan^{-1}\left|\dfrac{y}{x}\right|$ (always taken as positive, between $0$ and $\dfrac{\pi}2$), then place it using the quadrant of $(x,y)$:</p>
+    <p><strong>Quadrant I</strong> ($x>0,y>0$): $\theta=\alpha$. &nbsp; <strong>Quadrant II</strong> ($x<0,y>0$): $\theta=\pi-\alpha$.</p>
+    <p><strong>Quadrant III</strong> ($x<0,y<0$): $\theta=-(\pi-\alpha)$. &nbsp; <strong>Quadrant IV</strong> ($x>0,y<0$): $\theta=-\alpha$.</p>
+    <p>On an axis ($x=0$ or $y=0$), skip the formula and read the angle straight off: positive $x$-axis is $\theta=0$, positive $y$-axis is $\theta=\dfrac{\pi}2$, negative $x$-axis is $\theta=\pi$, negative $y$-axis is $\theta=-\dfrac{\pi}2$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Convert $(3,3)$ and $(-1,\sqrt3)$ to polar form.</p>
+    <p class="step">$(3,3)$: $r=\sqrt{9+9}=\sqrt{18}=3\sqrt2$. Quadrant I, reference angle $\alpha=\tan^{-1}(1)=\dfrac{\pi}4$, so $\theta=\dfrac{\pi}4$.</p>
+    <p class="step">$(-1,\sqrt3)$: $r=\sqrt{1+3}=2$. Quadrant II ($x<0,y>0$), reference angle $\alpha=\tan^{-1}(\sqrt3)=\dfrac{\pi}3$, so $\theta=\pi-\dfrac{\pi}3=\dfrac{2\pi}3$.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Convert $(5,5)$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r=\sqrt{25+25}=5\sqrt2$. Quadrant I: $\theta=\tan^{-1}(1)=\dfrac{\pi}4$. $\ \left(5\sqrt2,\dfrac{\pi}4\right)$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Convert $(-2,2)$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r=\sqrt{4+4}=2\sqrt2$. Quadrant II: reference angle $\tan^{-1}(1)=\dfrac{\pi}4$, so $\theta=\pi-\dfrac{\pi}4=\dfrac{3\pi}4$. $\ \left(2\sqrt2,\dfrac{3\pi}4\right)$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Convert $(-3,-3)$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r=\sqrt{9+9}=3\sqrt2$. Quadrant III: reference angle $\tan^{-1}(1)=\dfrac{\pi}4$, so $\theta=-\left(\pi-\dfrac{\pi}4\right)=-\dfrac{3\pi}4$. $\ \left(3\sqrt2,-\dfrac{3\pi}4\right)$ (equivalently $\dfrac{5\pi}4$).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Convert $(1,-\sqrt3)$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r=\sqrt{1+3}=2$. Quadrant IV: reference angle $\tan^{-1}(\sqrt3)=\dfrac{\pi}3$, so $\theta=-\dfrac{\pi}3$. $\ \left(2,-\dfrac{\pi}3\right)$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Convert $(0,-5)$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>On the negative $y$-axis: $r=5$, $\theta=-\dfrac{\pi}2$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Convert $(-6,0)$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>On the negative $x$-axis: $r=6$, $\theta=\pi$.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Converting points: polar &rarr; Cartesian</div>
+  <div class="prose">
+    <p>This direction is the easy one: no quadrant-checking needed at all, just ordinary right-triangle trigonometry, exactly the reasoning the rotation-matrix worked example used in the Transformations lesson.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$x = r\cos\theta, \qquad y = r\sin\theta.$$</p>
+    <p>These formulas work for any $r$, including negative values, no special cases needed: a negative $r$ simply lands the point on the opposite side of the pole, and the formulas handle that automatically through the sign of cosine and sine.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Convert $\left(4,\dfrac{\pi}3\right)$ and $\left(2,-\dfrac{\pi}4\right)$ to Cartesian form.</p>
+    <p class="step">$\left(4,\dfrac{\pi}3\right)$: $x=4\cos60^\circ=4\left(\dfrac12\right)=2$. $\ y=4\sin60^\circ=4\left(\dfrac{\sqrt3}2\right)=2\sqrt3$. Point: $(2,2\sqrt3)$.</p>
+    <p class="step">$\left(2,-\dfrac{\pi}4\right)$: $x=2\cos(-45^\circ)=2\left(\dfrac{\sqrt2}2\right)=\sqrt2$. $\ y=2\sin(-45^\circ)=-\sqrt2$. Point: $(\sqrt2,-\sqrt2)$.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Convert $\left(6,\dfrac{\pi}6\right)$ to Cartesian form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$x=6\cos30^\circ=6\left(\dfrac{\sqrt3}2\right)=3\sqrt3$. $\ y=6\sin30^\circ=6\left(\dfrac12\right)=3$. $\ (3\sqrt3,\ 3)$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Convert $\left(4,\dfrac{2\pi}3\right)$ to Cartesian form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$x=4\cos120^\circ=4\left(-\dfrac12\right)=-2$. $\ y=4\sin120^\circ=4\left(\dfrac{\sqrt3}2\right)=2\sqrt3$. $\ (-2,\ 2\sqrt3)$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Convert $\left(5,-\dfrac{\pi}4\right)$ to Cartesian form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$x=5\cos(-45^\circ)=\dfrac{5\sqrt2}2$. $\ y=5\sin(-45^\circ)=-\dfrac{5\sqrt2}2$. $\ \left(\dfrac{5\sqrt2}2,\ -\dfrac{5\sqrt2}2\right)$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Convert $\left(-4,\dfrac{\pi}3\right)$ to Cartesian form (note the negative $r$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$x=-4\cos60^\circ=-4\left(\dfrac12\right)=-2$. $\ y=-4\sin60^\circ=-4\left(\dfrac{\sqrt3}2\right)=-2\sqrt3$. $\ (-2,\ -2\sqrt3)$. The formulas needed no special handling for the negative $r$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Convert $(3,180^\circ)$ to Cartesian form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$x=3\cos180^\circ=-3$. $\ y=3\sin180^\circ=0$. $\ (-3,\ 0)$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Convert $\left(2,\dfrac{5\pi}6\right)$ to Cartesian form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$x=2\cos150^\circ=2\left(-\dfrac{\sqrt3}2\right)=-\sqrt3$. $\ y=2\sin150^\circ=2\left(\dfrac12\right)=1$. $\ (-\sqrt3,\ 1)$.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Converting equations</div>
+  <div class="prose">
+    <p>Converting a single <em>point</em> is Sections 2–3. Converting a whole <em>equation</em>, an entire curve's worth of points at once, uses the same two substitutions, $x=r\cos\theta$ and $y=r\sin\theta$, plus one more identity worth keeping on hand: $x^2+y^2=r^2$ (immediate from $r=\sqrt{x^2+y^2}$).</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><strong>Cartesian &rarr; polar:</strong> substitute $x=r\cos\theta$, $y=r\sin\theta$, and $x^2+y^2=r^2$ wherever they fit, then simplify. A factor of $r$ can often be cancelled from both sides (this is legal everywhere except at the pole itself, which is usually still included on the curve anyway).</p>
+    <p><strong>Polar &rarr; Cartesian:</strong> the same three substitutions run in reverse. If the polar equation has a lone $r$ (not $r^2$) multiplied by $\cos\theta$ or $\sin\theta$, multiply both sides by $r$ first, so that $r\cos\theta$ and $r\sin\theta$ appear and can become $x$ and $y$, and $r^2$ appears and can become $x^2+y^2$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Convert the Cartesian circle $x^2+y^2=4x$ to polar form, and convert the polar equation $r=6\sin\theta$ back to Cartesian form, identifying the curve.</p>
+    <p class="step"><strong>$x^2+y^2=4x$:</strong> substitute $r^2$ for the left side and $r\cos\theta$ for $x$ on the right: $r^2 = 4r\cos\theta$. Cancel a factor of $r$: $r=4\cos\theta$.</p>
+    <p class="step"><strong>$r=6\sin\theta$:</strong> multiply both sides by $r$ first, so a substitutable pattern appears: $r^2=6r\sin\theta$, i.e.\ $x^2+y^2=6y$.</p>
+    <p class="step">Complete the square on $y$: $x^2+(y^2-6y+9)=9$, i.e.\ $x^2+(y-3)^2=9$. This is a <strong>circle</strong> of radius $3$ centred at $(0,3)$, which passes through the pole (check: $(0,0)$ satisfies $x^2+(y-3)^2=0+9=9$ &check;).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Convert $x^2+y^2=25$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r^2=25 \Rightarrow r=5$ (a circle of radius $5$ centred at the pole).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Convert $y=\sqrt3\,x$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r\sin\theta = \sqrt3\,r\cos\theta \Rightarrow \tan\theta=\sqrt3 \Rightarrow \theta=\dfrac{\pi}3$ (a straight line through the pole at a fixed angle — polar equations of lines through the pole are just "$\theta=$ constant").</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Convert $x^2+y^2=6y$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r^2 = 6r\sin\theta \Rightarrow r=6\sin\theta$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Convert $x^2+y^2=-8x$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r^2 = -8r\cos\theta \Rightarrow r=-8\cos\theta$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Convert $r=4\cos\theta$ to Cartesian form, and identify the curve.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Multiply by $r$: $r^2=4r\cos\theta \Rightarrow x^2+y^2=4x$. Complete the square: $(x-2)^2+y^2=4$: a <strong>circle</strong> of radius $2$ centred at $(2,0)$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Convert $r\cos\theta=5$ to Cartesian form, and identify the curve.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r\cos\theta=x$, directly: $x=5$, a <strong>vertical line</strong>.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> The standard polar curves</div>
+  <div class="prose">
+    <p>A handful of equation shapes come up constantly, and it is worth being able to recognise each family on sight, straight from the equation, without needing to plot a single point.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><strong>Circles:</strong> $r=a$ (centred at the pole); $r=2a\cos\theta$ (through the pole, centred on the polar axis); $r=2a\sin\theta$ (through the pole, centred on the $\theta=\frac{\pi}2$ axis).</p>
+    <p><strong>Lines:</strong> $\theta=k$ (a straight line through the pole at fixed angle $k$); $r\cos\theta=k$ (vertical line $x=k$); $r\sin\theta=k$ (horizontal line $y=k$).</p>
+    <p><strong>Cardioids and limaçons:</strong> $r=a\pm b\cos\theta$ or $r=a\pm b\sin\theta$. If $a=b$: a <strong>cardioid</strong> (heart-shaped, passes through the pole). If $a>b$: a <strong>limaçon without an inner loop</strong>. If $a<b$: a <strong>limaçon with an inner loop</strong>.</p>
+    <p><strong>Roses:</strong> $r=a\cos(n\theta)$ or $r=a\sin(n\theta)$. If $n$ is odd, the rose has $n$ petals; if $n$ is even, it has $2n$ petals.</p>
+    <p><strong>Spirals:</strong> $r=a\theta$ (an Archimedean spiral, $r$ grows steadily as $\theta$ increases without bound).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Identify $r=2+5\cos\theta$ and $r=4\cos(3\theta)$.</p>
+    <p class="step">$r=2+5\cos\theta$: here $a=2$, $b=5$, and $b>a$, so this is a <strong>limaçon with an inner loop</strong>.</p>
+    <p class="step">$r=4\cos(3\theta)$: this is a rose with $n=3$, which is odd, so it has exactly <strong>3 petals</strong>.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Identify $r=3+3\cos\theta$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$a=b=3$: a <strong>cardioid</strong>.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Identify $r=6+2\sin\theta$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$a=6$, $b=2$, $a>b$: a <strong>limaçon without an inner loop</strong>, symmetric about the $\theta=\frac{\pi}2$ axis (since it's written in terms of $\sin\theta$).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Identify $r=5\sin(2\theta)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$n=2$, even: a rose with $2n=4$ petals.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Identify $r=2\theta$ for $\theta\geq0$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>An <strong>Archimedean spiral</strong>: $r$ grows steadily and without bound as $\theta$ increases.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Identify $r=4\sin\theta$ (compare against the circle rules in the key idea).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Matches $r=2a\sin\theta$ with $2a=4 \Rightarrow a=2$: a <strong>circle</strong> of radius $2$, passing through the pole, centred on the $\theta=\frac{\pi}2$ axis.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>For the cardioid $r=1+\cos\theta$, build a table of $r$ at $\theta=0,\ \frac{\pi}2,\ \pi,\ \frac{3\pi}2$, and state which point sits farthest from the pole and which one touches it.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$\theta=0$: $r=1+1=2$. $\ \theta=\frac{\pi}2$: $r=1+0=1$. $\ \theta=\pi$: $r=1+(-1)=0$. $\ \theta=\frac{3\pi}2$: $r=1+0=1$.</p>
+    <p>Farthest point: $r=2$ at $\theta=0$ (along the polar axis). The curve actually touches the pole at $\theta=\pi$ ($r=0$), which is exactly the cardioid's characteristic "dimple."</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Symmetry and sketching strategy</div>
+  <div class="prose">
+    <p>Before plotting a table of points by hand, it is worth checking for symmetry first, it can cut the amount of plotting you need to do roughly in half, and it is a quick, purely algebraic check.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: three symmetry tests</span>
+    <p><strong>Symmetric about the polar axis</strong> (the $x$-axis) if replacing $\theta\to-\theta$ leaves the equation unchanged.</p>
+    <p><strong>Symmetric about the $\theta=\frac{\pi}2$ axis</strong> (the $y$-axis) if replacing $\theta\to\pi-\theta$ leaves the equation unchanged.</p>
+    <p><strong>Symmetric about the pole</strong> if replacing $r\to-r$ (equivalently $\theta\to\theta+\pi$) leaves the equation unchanged.</p>
+    <p>These are sufficient conditions, not strictly necessary ones (a curve can sometimes be symmetric without passing one of these particular algebraic tests, because of the multiple-representation issue from Section 1), but when a test does pass, the symmetry is guaranteed.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Test the cardioid $r=2+2\cos\theta$ for symmetry about the polar axis.</p>
+    <p class="step">Replace $\theta$ with $-\theta$: $\cos(-\theta)=\cos\theta$ (cosine is an even function), so the equation becomes $r=2+2\cos\theta$, completely unchanged.</p>
+    <p class="step"><strong>Symmetric about the polar axis</strong>, matching the shape you'd expect: a cardioid built from $\cos\theta$ points its "nose" along the polar axis, with the two halves mirroring each other above and below it.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>Test $r=2\sin\theta$ for symmetry about the $\theta=\frac{\pi}2$ axis.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Replace $\theta\to\pi-\theta$: $\sin(\pi-\theta)=\sin\theta$, so the equation is unchanged. <strong>Symmetric about the $\theta=\frac{\pi}2$ axis.</strong></p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Test $r^2=4\cos(2\theta)$ for symmetry about the pole.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Replace $r\to-r$: $(-r)^2=r^2$, so the left side is unchanged and the equation still holds. <strong>Symmetric about the pole.</strong></p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Test the rose $r=4\cos(3\theta)$ for symmetry about the polar axis.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Replace $\theta\to-\theta$: $\cos(-3\theta)=\cos(3\theta)$, unchanged. <strong>Symmetric about the polar axis.</strong></p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>A curve is known to satisfy $r(\theta) = r(\pi-\theta)$ for every $\theta$. Which symmetry does this indicate, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>This is precisely the $\theta\to\pi-\theta$ substitution test stated directly: it indicates <strong>symmetry about the $\theta=\frac{\pi}2$ axis</strong>.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>Using the symmetry test, explain why the limaçon $r=3+5\sin\theta$ is symmetric about the $\theta=\frac{\pi}2$ axis but there is no guarantee it is symmetric about the polar axis.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$\theta\to\pi-\theta$: $\sin(\pi-\theta)=\sin\theta$, unchanged, so the $\theta=\frac{\pi}2$-axis test passes. But $\theta\to-\theta$: $\sin(-\theta)=-\sin\theta$, giving $r=3-5\sin\theta$, a genuinely different equation, so the polar-axis test fails, there is no guarantee of that symmetry (and, geometrically, a sine-based limaçon's "nose" points along the $y$-axis, not the $x$-axis, so this is exactly what you'd expect).</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> Polar form of complex numbers</div>
+  <div class="prose">
+    <p>Every complex number $z=a+bj$ (engineering notation uses $j$ instead of $i$, to avoid clashing with current $i$ in circuit analysis) can be plotted as a point at $(a,b)$ on the complex plane, and that point has a polar form exactly like any other: a distance from the origin, called the <strong>modulus</strong>, and an angle, called the <strong>argument</strong>. The conversion formulas are identical to Section 2, just with the labels renamed.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>For $z=a+bj$: modulus $r=|z|=\sqrt{a^2+b^2}$, argument $\theta=\arg z$ found by the exact same quadrant rules as Section 2 (with $a$ playing the role of $x$, $b$ playing the role of $y$).</p>
+    <p><strong>Polar form:</strong> $z = r(\cos\theta+j\sin\theta)$. <strong>Euler's form</strong> (the same statement, written more compactly): $z=re^{j\theta}$.</p>
+    <p>Multiplication and division become simple in polar form: $|z_1z_2|=|z_1|\,|z_2|$ and $\arg(z_1z_2)=\arg z_1+\arg z_2$, moduli multiply, arguments add. This is the main reason engineers reach for polar form at all, it turns rotation-and-scaling problems (like AC phasors) into simple arithmetic.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Convert $z=3+3j$ to polar form, and convert $z=4(\cos120^\circ+j\sin120^\circ)$ back to $a+bj$ form.</p>
+    <p class="step">$z=3+3j$: $r=\sqrt{9+9}=3\sqrt2$. Quadrant I: $\theta=\tan^{-1}(1)=\dfrac{\pi}4$ ($45^\circ$).</p>
+    <p class="step">$$z = 3\sqrt2(\cos45^\circ+j\sin45^\circ) = 3\sqrt2\,e^{j\pi/4}.$$</p>
+    <p class="step">$z=4(\cos120^\circ+j\sin120^\circ)$: $a=4\cos120^\circ=4\left(-\dfrac12\right)=-2$. $\ b=4\sin120^\circ=4\left(\dfrac{\sqrt3}2\right)=2\sqrt3$.</p>
+    <p class="step">$$z = -2+2\sqrt3\,j.$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>Convert $z=4+4j$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r=\sqrt{16+16}=4\sqrt2$. Quadrant I: $\theta=45^\circ=\dfrac{\pi}4$.</p>
+    <p>$$z = 4\sqrt2(\cos45^\circ+j\sin45^\circ) = 4\sqrt2\,e^{j\pi/4}.$$</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>Convert $z=-3+3j$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r=\sqrt{9+9}=3\sqrt2$. Quadrant II: reference angle $45^\circ$, so $\theta=180^\circ-45^\circ=135^\circ$.</p>
+    <p>$$z = 3\sqrt2(\cos135^\circ+j\sin135^\circ).$$</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>Convert $z=-2-2j$ to polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$r=\sqrt{4+4}=2\sqrt2$. Quadrant III: reference angle $45^\circ$, so $\theta=-(180^\circ-45^\circ)=-135^\circ$.</p>
+    <p>$$z = 2\sqrt2(\cos(-135^\circ)+j\sin(-135^\circ)).$$</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>Convert $z=6(\cos60^\circ+j\sin60^\circ)$ to $a+bj$ form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$a=6\cos60^\circ=6\left(\dfrac12\right)=3$. $\ b=6\sin60^\circ=6\left(\dfrac{\sqrt3}2\right)=3\sqrt3$.</p>
+    <p>$$z = 3+3\sqrt3\,j.$$</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>Given $z_1=2(\cos30^\circ+j\sin30^\circ)$ and $z_2=3(\cos40^\circ+j\sin40^\circ)$, find $z_1z_2$ in polar form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Moduli multiply: $|z_1z_2| = 2\times3=6$. Arguments add: $\arg(z_1z_2) = 30^\circ+40^\circ=70^\circ$.</p>
+    <p>$$z_1z_2 = 6(\cos70^\circ+j\sin70^\circ).$$</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>Convert $z=5(\cos270^\circ+j\sin270^\circ)$ to $a+bj$ form, and simplify.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$a=5\cos270^\circ=5(0)=0$. $\ b=5\sin270^\circ=5(-1)=-5$.</p>
+    <p>$$z = 0-5j = -5j.$$</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> That's the full 3-hour Polar Coordinates unit: plotting, converting points, converting equations, recognising the standard curves, symmetry, and the polar form of complex numbers. It stands alone, nothing here depends on the matrices material, and nothing later in MATH141 builds on it, so it can be revised independently at any point in the session. The one place it does connect outward is complex numbers: if you go on to any further work with phasors or AC analysis, the $r(\cos\theta+j\sin\theta)$ and $re^{j\theta}$ forms from Section 7 are exactly the tools that make that work manageable.</p>
+</div>
+
+</main>
+
+<footer>MATH141 &middot; DPEN141 &middot; Polar Coordinates</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
