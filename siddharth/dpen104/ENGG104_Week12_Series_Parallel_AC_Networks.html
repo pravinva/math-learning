@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Series-Parallel AC Networks Analysis</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG104 &middot; Week 12</div>
+  <h1>Series-Parallel AC Networks Analysis</h1>
+  <p>The AC equivalent of Week 4's DC series-parallel circuits: reduce a mixed network of resistive and reactive branches down to a single equivalent impedance, then work back out to find every branch current and voltage.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 10 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">Series-parallel impedance reduction</a></li>
+    <li><a href="#sec2">Full network analysis: current, voltage, power</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Series-parallel impedance reduction</div>
+  <div class="prose">
+    <p>Impedances combine using the same series/parallel structure as resistors, series impedances simply add, parallel impedances combine via reciprocals, but because \(Z=R\pm jX\) carries both magnitude and phase, the arithmetic must be done as complex numbers, not plain real numbers.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Series: \(Z_t=Z_1+Z_2\) (add real parts and imaginary parts separately). Parallel: convert each branch to admittance \(Y=1/Z\), sum the admittances, then invert back: \(Z_{parallel}=1/(Y_1+Y_2)\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>\(R_1=10\ \Omega\) in series with a parallel combination of \(R_2=20\ \Omega\) and a pure inductive branch \(X_L=15\ \Omega\). Find the parallel section's equivalent impedance, then the total.</p>
+    <p class="step">\(Y_{R2}=1/20=0.05\text{ S}\). \(Y_L=1/(j15)=-j0.0667\text{ S}\). \(Y_{total}=0.05-j0.0667\text{ S}\).</p>
+    <p class="step">\(|Y|=\sqrt{0.05^2+0.0667^2}=0.0834\text{ S}\). \(|Z_{parallel}|=1/0.0834=12.0\ \Omega\), at angle \(+53.13^\circ\) (angle flips sign when inverting \(Y\to Z\)).</p>
+    <p class="step">In rectangular form: \(Z_{parallel}=12(\cos53.13^\circ+j\sin53.13^\circ)=7.2+j9.6\ \Omega\).</p>
+    <p class="step">\(Z_{total}=R_1+Z_{parallel}=10+7.2+j9.6=17.2+j9.6\ \Omega\). \(|Z_{total}|=\sqrt{17.2^2+9.6^2}=19.7\ \Omega\), \(\theta=\tan^{-1}(9.6/17.2)=29.2^\circ\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A parallel section has equivalent impedance \(Z_p=8+j6\ \Omega\), in series with \(R_1=5\ \Omega\). Find the total impedance (rectangular form) and its magnitude.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(Z_{total}=5+8+j6=13+j6\ \Omega\). \(|Z_{total}|=\sqrt{169+36}=14.32\ \Omega\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>For Practice 1, find the total phase angle \(\theta\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\theta=\tan^{-1}(6/13)=24.78^\circ\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A parallel combination of \(R=30\ \Omega\) and a pure inductive branch \(X_L=40\ \Omega\). Using the admittance method, find \(|Z_{parallel}|\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(Y_R=1/30=0.0333\text{ S}\). \(Y_L=-j/40=-j0.025\text{ S}\). \(|Y|=\sqrt{0.0333^2+0.025^2}=0.04166\text{ S}\). \(|Z_{parallel}|=1/0.04166=24.0\ \Omega\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Explain why you cannot simply average or directly add two parallel branches' impedances the way you might expect from DC parallel resistor intuition.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Impedances have both magnitude AND phase (they're complex quantities), a resistive branch and a reactive branch don't align in the same "direction." Combining them requires proper complex (vector) arithmetic, via admittances, summed then inverted, not simple real-number parallel formulas, since the reactive branch's opposition is 90&deg; phase-shifted from the resistive branch's.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Outline the general workflow for solving a series-parallel AC network's total impedance.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>1.</strong> Express each branch as a complex impedance \(R\pm jX\). <strong>2.</strong> For any parallel sections, convert to admittances (\(Y=1/Z\)), sum them, then invert back to get that section's equivalent impedance. <strong>3.</strong> Add that result in series with any remaining series elements (impedances in series simply add). <strong>4.</strong> The final total \(Z\) gives both magnitude \(|Z|\) and phase angle \(\theta\) for the whole network.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Full network analysis: current, voltage, power</div>
+  <div class="prose">
+    <p>Once the total impedance is known, current, power factor, and power follow directly, then you can work backward to any individual branch.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Using Section 1's network (\(Z_{total}=17.2+j9.6\ \Omega\), \(|Z_{total}|=19.7\ \Omega\), \(\theta=29.2^\circ\)), with \(V_{rms}=120\text{ V}\), find \(I_{total}\), \(PF\), and average power.</p>
+    <p class="step">\(I_{total}=120/19.7=6.09\text{ A}\). \(PF=\cos(29.2^\circ)=0.873\).</p>
+    <p class="step">\(P=120(6.09)(0.873)=637.8\text{ W}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>A network has \(|Z_{total}|=25\ \Omega\), \(\theta=36.87^\circ\), \(V_{rms}=100\text{ V}\). Find \(I_{total}\), \(PF\), and \(P\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I=100/25=4\text{ A}\). \(PF=\cos(36.87^\circ)=0.8\). \(P=100(4)(0.8)=320\text{ W}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A network has \(|Z_{total}|=50\ \Omega\), \(\theta=53.13^\circ\), \(V_{rms}=200\text{ V}\). Find \(I_{total}\), \(PF\), and \(P\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I=200/50=4\text{ A}\). \(PF=\cos(53.13^\circ)=0.6\). \(P=200(4)(0.6)=480\text{ W}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Once \(I_{total}\) is known for a series-parallel network, explain how you'd find the voltage across the parallel section specifically.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Multiply the total current by the parallel section's own equivalent impedance magnitude: \(V_{parallel}=I_{total}\times|Z_{parallel}|\), since the parallel block, once reduced, behaves like a single series element carrying the same total current.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Once the voltage across a parallel section is known, explain how you'd find the current in one specific branch of that section.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Divide that voltage by the specific branch's own impedance: \(I_{branch}=V_{parallel}/Z_{branch}\), Ohm's Law applied to that branch alone, since all parallel branches share the same voltage.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Summarise why series-parallel AC analysis is really just the DC series-parallel techniques from Weeks 2&ndash;4, applied with complex numbers instead of plain real ones.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Every rule stays the same in structure, series impedances add, parallel impedances combine via reciprocals (admittances), Ohm's Law relates \(V\), \(I\), and \(Z\). Only now \(R\) is replaced by the complex impedance \(Z=R\pm jX\), which carries both magnitude and phase. The underlying logic of reducing a network step by step is identical to Weeks 2&ndash;4's DC circuit analysis.</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Week 13 leaves circuit theory behind and introduces the physical device that makes rectifiers (like this week's lab, Experiment 11) possible: the semiconductor diode, plus a revision pass across the whole course.</p>
+</div>
+
+</main>
+
+<footer>ENGG104 &middot; Week 12 &middot; Series-Parallel AC Networks Analysis</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
