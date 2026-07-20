@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Impedance, Power &amp; Power Factor</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG104 &middot; Week 10</div>
+  <h1>Impedance, Frequency Response &amp; Power Factor</h1>
+  <p>How resistance and reactance combine into a single quantity (impedance), how RL and RC circuits behave differently at low vs high frequency, and why the phase angle between voltage and current determines how much of the delivered power is actually useful.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 16 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">Impedance &amp; phasor representation</a></li>
+    <li><a href="#sec2">Frequency response summary</a></li>
+    <li><a href="#sec3">Average power &amp; power factor</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Impedance &amp; phasor representation</div>
+  <div class="prose">
+    <p>Impedance folds resistance and reactance into one number that carries both magnitude and phase.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$Z=R+jX, \qquad |Z|=\sqrt{R^2+X^2}, \qquad \theta=\tan^{-1}\left(\frac{X}{R}\right).$$</p>
+    <p>For series RL: \(X=+X_L\) (\(\theta\) positive, voltage leads). For series RC: \(X=-X_C\) (\(\theta\) negative, current leads).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A series RL circuit: \(R=30\ \Omega\), \(X_L=40\ \Omega\). Find \(|Z|\) and \(\theta\).</p>
+    <p class="step">\(|Z|=\sqrt{30^2+40^2}=\sqrt{2500}=50\ \Omega\). \(\theta=\tan^{-1}(40/30)=53.13^\circ\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>For that circuit, \(V_{rms}=100\text{ V}\). Find \(I_{rms}\).</p>
+    <p class="step">\(I_{rms}=100/50=2\text{ A}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Series RL: \(R=6\ \Omega, X_L=8\ \Omega\). Find \(|Z|\) and \(\theta\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(|Z|=\sqrt{36+64}=10\ \Omega\). \(\theta=\tan^{-1}(8/6)=53.13^\circ\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Series RC: \(R=12\ \Omega, X_C=5\ \Omega\). Find \(|Z|\) and \(\theta\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(|Z|=\sqrt{144+25}=13\ \Omega\). \(\theta=\tan^{-1}(-5/12)=-22.62^\circ\) (current leads).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>For Practice 1, \(V_{rms}=50\text{ V}\). Find \(I_{rms}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I_{rms}=50/10=5\text{ A}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Explain why a series RL circuit's \(\theta\) is positive, while a series RC circuit's is negative.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>In RL, inductive reactance makes current lag voltage (voltage leads), giving a positive \(\theta\) by convention. In RC, capacitive reactance makes current lead voltage, giving a negative \(\theta\). The sign of \(\theta\) directly tells you whether the circuit is net inductive or net capacitive.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A circuit has \(|Z|=25\ \Omega\), \(\theta=0^\circ\). What does this tell you about its composition?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\theta=0^\circ\) means voltage and current are exactly in phase, indicating the circuit is purely resistive, no net reactance (\(X_L\) and \(X_C\) either don't exist or perfectly cancel).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Explain why impedance combines \(R\) and \(X\) using \(\sqrt{R^2+X^2}\) rather than simple addition.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Resistance and reactance affect the circuit 90&deg; out of phase with each other, so they can't simply add like ordinary numbers. Combining them requires treating them like perpendicular components of a right triangle, exactly like finding a vector's magnitude from its \(x\) and \(y\) components, hence the Pythagorean-style combination.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Frequency response summary</div>
+  <div class="prose">
+    <p>Because \(X_L\) and \(X_C\) respond to frequency in opposite directions, RL and RC circuits behave very differently as frequency changes.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A series RC circuit, \(R=100\ \Omega\), \(C=10\ \mu\text{F}\). Find \(X_C\) and \(|Z|\) at \(f=100\text{ Hz}\) and \(f=10{,}000\text{ Hz}\), and compare.</p>
+    <p class="step">\(f=100\text{ Hz}\): \(X_C=1/(2\pi\times100\times10^{-5})=159.2\ \Omega\). \(|Z|=\sqrt{100^2+159.2^2}=188.0\ \Omega\).</p>
+    <p class="step">\(f=10{,}000\text{ Hz}\): \(X_C=1/(2\pi\times10{,}000\times10^{-5})=1.592\ \Omega\). \(|Z|=\sqrt{100^2+1.592^2}\approx100.01\ \Omega\).</p>
+    <p class="step">At high frequency, \(X_C\) becomes negligible and \(|Z|\approx R\) (the capacitor acts almost like a wire); at low frequency, \(X_C\) dominates and \(|Z|\) is much larger (the capacitor blocks more).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>For the same RC circuit, find \(X_C\) and \(|Z|\) at \(f=1000\text{ Hz}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(X_C=1/(2\pi\times1000\times10^{-5})=15.92\ \Omega\). \(|Z|=\sqrt{100^2+15.92^2}=101.26\ \Omega\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Based on the pattern observed, does a series RC circuit pass high or low frequencies more easily? Explain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>High frequencies</strong> pass more easily, as frequency increases, \(X_C\) decreases, so total impedance decreases toward just \(R\), offering less opposition. This makes an RC circuit behave like a "high-pass" filter.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>For a series RL circuit, would you expect LOW or HIGH frequencies to pass more easily?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Low frequencies</strong> pass more easily, since \(X_L=2\pi fL\) increases with frequency, higher frequencies see more opposition (larger \(|Z|\)), so an RL circuit tends to block high frequencies more, behaving like a "low-pass" filter.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Summarise, in one sentence each, how \(X_L\) and \(X_C\) individually respond to increasing frequency.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(X_L\) <strong>increases</strong> with frequency; \(X_C\) <strong>decreases</strong> with frequency, exactly opposite trends.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Average power &amp; power factor</div>
+  <div class="prose">
+    <p>Only the resistive part of a circuit actually dissipates power. Power factor tells you what fraction of the apparent VI product is real, useful power.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$P=V_{rms}I_{rms}\cos\theta, \qquad PF=\cos\theta.$$</p>
+    <p>\(PF=1\) (\(\theta=0^\circ\)): all power is real (purely resistive). \(PF=0\) (\(\theta=90^\circ\)): no real power delivered (purely reactive).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>\(V_{rms}=100\text{ V}\), \(I_{rms}=5\text{ A}\), \(\theta=30^\circ\). Find the average power and power factor.</p>
+    <p class="step">\(PF=\cos(30^\circ)=0.866\). \(P=100(5)(0.866)=433\text{ W}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>For the series RL circuit from Section 1 (\(R=30\ \Omega, X_L=40\ \Omega, |Z|=50\ \Omega, \theta=53.13^\circ, V_{rms}=100\text{ V}, I_{rms}=2\text{ A}\)), find the average power.</p>
+    <p class="step">\(PF=\cos(53.13^\circ)=0.6\). \(P=100(2)(0.6)=120\text{ W}\).</p>
+    <p class="step">Check: \(P=I^2R=2^2(30)=120\text{ W}\) &check;, confirming real power in a resistive-reactive circuit always equals \(I^2R\), the reactive part contributes zero net power.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>\(V_{rms}=120\text{ V}\), \(I_{rms}=3\text{ A}\), \(\theta=45^\circ\). Find \(PF\) and average power.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(PF=\cos45^\circ=0.707\). \(P=120(3)(0.707)=254.5\text{ W}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>A purely resistive circuit has \(\theta=0^\circ\). Find its power factor.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(PF=\cos(0)=1\) (unity power factor).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A purely reactive circuit has \(\theta=90^\circ\). Find its power factor and average power delivered.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(PF=\cos(90^\circ)=0\), so average power \(=0\), no real power delivered, purely reactive.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Series RC: \(R=12\ \Omega, X_C=5\ \Omega, |Z|=13\ \Omega\), \(V_{rms}=26\text{ V}\). Find \(I_{rms}\), \(PF\), and average power.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I_{rms}=26/13=2\text{ A}\). \(\theta=22.62^\circ\), \(PF=\cos(22.62^\circ)=0.923\). \(P=26(2)(0.923)=48\text{ W}\). Check: \(I^2R=2^2(12)=48\text{ W}\) &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Explain physically why a purely reactive circuit delivers ZERO average power, even though voltage and current are both nonzero.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Because voltage and current are 90&deg; out of phase, energy flows INTO the component during part of the cycle and flows entirely back OUT during another part. Over a full cycle, the net energy transferred averages to exactly zero, the component only stores and releases energy, it never consumes any.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Explain why power companies care about power factor, using \(I=P/(V\cdot PF)\) for a fixed useful power \(P\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>For a fixed amount of useful power \(P\), a lower power factor means MORE current must flow to deliver that same real power, since some current is "wasted" going back and forth without doing useful work. This extra current still causes resistive losses in the supply wiring, so utilities penalise low power factor to discourage this inefficiency.</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Week 11's lab (AC RL circuits) is the direct practical application of everything in Sections 1 and 3 here. Week 12 then scales this same impedance-and-power approach up to full series-parallel AC networks.</p>
+</div>
+
+</main>
+
+<footer>ENGG104 &middot; Week 10 &middot; Impedance, Frequency Response &amp; Power Factor</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>

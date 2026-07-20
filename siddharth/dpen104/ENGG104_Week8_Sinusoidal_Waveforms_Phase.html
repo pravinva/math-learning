@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Sinusoidal Waveforms &amp; Phase Relationships</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  svg.diagram{ display:block; margin:16px auto; background:#fff; border:1px solid var(--line); border-radius:6px; max-width:100%; height:auto; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG104 &middot; Week 8</div>
+  <h1>Sinusoidal Alternating Waveforms &amp; Phase Relationships</h1>
+  <p>The foundation for every AC topic that follows: describing a sine wave mathematically, its RMS and average values, and how two waveforms relate to each other in time (phase).</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 22 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">Sine wave basics</a></li>
+    <li><a href="#sec2">Instantaneous value &amp; angular frequency</a></li>
+    <li><a href="#sec3">RMS &amp; average values</a></li>
+    <li><a href="#sec4">Phase relationships</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Sine wave basics</div>
+  <div class="prose">
+    <p>An AC voltage or current constantly changes, sinusoidally, described by three linked quantities: how big it gets, how long one cycle takes, and how many cycles happen per second.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$v(t) = V_m\sin(\omega t)$$</p>
+    <p>\(V_m\) = peak (amplitude), \(T\) = period (seconds), \(f=1/T\) (Hz), \(\omega=2\pi f\) (rad/s).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A sine wave has frequency 50&nbsp;Hz. Find its period and angular frequency.</p>
+    <p class="step">\(T=1/50=0.02\text{ s}=20\text{ ms}\). \(\omega=2\pi(50)=314.16\text{ rad/s}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>A voltage waveform has period 4&nbsp;ms. Find its frequency.</p>
+    <p class="step">\(f=1/0.004=250\text{ Hz}\).</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 360 160" xmlns="http://www.w3.org/2000/svg">
+    <line x1="20" y1="80" x2="340" y2="80" stroke="#c8d2de" stroke-width="1"/>
+    <path d="M 20 80 Q 60 20, 100 80 T 180 80 T 260 80 T 340 80" fill="none" stroke="#c0392b" stroke-width="2.5"/>
+    <line x1="100" y1="80" x2="100" y2="130" stroke="#5b6779" stroke-width="1" stroke-dasharray="3,2"/>
+    <line x1="20" y1="80" x2="20" y2="130" stroke="#5b6779" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="45" y="145" font-size="11" fill="#5b6779">one period T</text>
+    <text x="45" y="45" font-size="11" fill="#c0392b" font-weight="600">Vm (peak)</text>
+  </svg>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>\(f=60\text{ Hz}\). Find \(T\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(T=1/60=16.67\text{ ms}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>\(T=25\text{ ms}\). Find \(f\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(f=1/0.025=40\text{ Hz}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>\(f=100\text{ Hz}\). Find \(\omega\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\omega=2\pi(100)=628.3\text{ rad/s}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>\(\omega=377\text{ rad/s}\). Find \(f\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(f=377/(2\pi)=60\text{ Hz}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Explain the relationship between period and frequency in words.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>They're reciprocals of each other, frequency is how many complete cycles occur per second, period is how long one single cycle takes: \(f=1/T\) and \(T=1/f\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>A generator produces a 50&nbsp;Hz sine wave. How many complete cycles occur in 0.5&nbsp;s?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Cycles \(=f\times t=50(0.5)=25\) cycles.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Instantaneous value &amp; angular frequency</div>
+  <div class="prose">
+    <p>At any specific moment in time, a sine wave has one particular value, found by plugging that time into \(v(t)=V_m\sin(\omega t)\).</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$v(t) = V_m\sin(\omega t+\theta)$$ Since \(\omega\) is in rad/s, \(\omega t\) is already in radians, no separate conversion needed.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>\(V_m=100\text{ V}\), \(f=50\text{ Hz}\). Find \(v(t)\) at \(t=2\text{ ms}\) (\(\theta=0\)).</p>
+    <p class="step">\(\omega=314.16\text{ rad/s}\). \(\omega t=314.16(0.002)=0.6283\text{ rad}\).</p>
+    <p class="step">\(v=100\sin(0.6283)=100(0.5878)=58.78\text{ V}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>Same wave, find \(v(t)\) at \(t=5\text{ ms}\).</p>
+    <p class="step">\(\omega t=314.16(0.005)=1.5708\text{ rad}=90^\circ\). \(v=100\sin(90^\circ)=100\text{ V}\), exactly the peak, as expected at \(t=T/4\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>\(V_m=50\text{ V}\), \(f=60\text{ Hz}\). Find \(v(t)\) at \(t=1\text{ ms}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\omega=376.99\text{ rad/s}\). \(\omega t=0.377\text{ rad}\). \(v=50\sin(0.377)=50(0.368)=18.4\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>\(V_m=20\text{ V}\), \(\omega=200\text{ rad/s}\). Find \(v(t)\) at \(t=0.01\text{ s}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\omega t=2\text{ rad}\). \(v=20\sin(2)=20(0.909)=18.18\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Explain why radians (not degrees) are used inside \(\sin(\omega t)\) when \(\omega\) is in rad/s.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Since \(\omega\) itself has units of radians per second, multiplying by \(t\) (seconds) directly gives an angle already in radians, keeping units consistent without needing a conversion step.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A sine wave reaches its peak at \(t=T/4\). Explain why, using \(\omega t=\pi/2\) at that instant.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>At \(t=T/4\): \(\omega t=(2\pi/T)(T/4)=\pi/2=90^\circ\), and \(\sin(90^\circ)=1\), the maximum possible value, so the wave is exactly at its peak.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>\(V_m=15\text{ V}\), \(f=50\text{ Hz}\). Find \(v(t)\) at \(t=T/2\), and explain the result physically.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>At \(t=T/2\): \(\omega t=\pi=180^\circ\), \(\sin(180^\circ)=0\), so \(v=0\), the wave has completed half a cycle and crossed back through zero, about to go negative.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> RMS &amp; average values</div>
+  <div class="prose">
+    <p>The peak value alone doesn't tell you how much real work an AC wave can do. RMS gives the DC-equivalent value for power purposes.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$V_{rms}=\frac{V_m}{\sqrt2}\approx0.707V_m, \qquad V_{avg}\ (\text{half-cycle})=\frac{2V_m}{\pi}\approx0.637V_m.$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A sine wave has \(V_m=170\text{ V}\) (a typical mains peak). Find \(V_{rms}\).</p>
+    <p class="step">\(V_{rms}=170/1.414=120.2\text{ V}\), matching the standard 120&nbsp;V RMS mains supply.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>Find the average value (half-cycle) of the same wave.</p>
+    <p class="step">\(V_{avg}=2(170)/\pi=340/3.1416=108.2\text{ V}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>\(V_m=100\text{ V}\). Find \(V_{rms}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V_{rms}=100/1.414=70.7\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>\(V_{rms}=230\text{ V}\) (standard mains). Find \(V_m\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V_m=230(1.414)=325.3\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>\(V_m=50\text{ V}\). Find the average value (half-cycle).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V_{avg}=2(50)/\pi=31.83\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Explain why RMS value is used for power calculations rather than peak or average.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>RMS is defined as the equivalent DC value that delivers the SAME average power to a resistive load. It accounts for power depending on voltage squared, so a simple average (which is even zero over a full cycle) doesn't correctly represent the wave's power-delivering capability.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Why is the average value of a FULL sine wave cycle always zero?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>The positive half of the cycle is perfectly mirrored by an equal negative half, they cancel out exactly over a full cycle, giving zero net average, which is why average value is conventionally quoted over a half-cycle instead.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Phase relationships</div>
+  <div class="prose">
+    <p>Two sine waves at the same frequency can still differ in WHEN they reach their peak, that offset is the phase angle.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$v(t)=V_m\sin(\omega t+\theta)$$</p>
+    <p>A larger (more positive) \(\theta\) means the wave reaches its peak <strong>earlier</strong> (it "leads"). A smaller (more negative) \(\theta\) means it "lags."</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>\(v_1=V_m\sin(\omega t+30^\circ)\), \(v_2=V_m\sin(\omega t-20^\circ)\). Find the phase difference and state which leads.</p>
+    <p class="step">Difference \(=30-(-20)=50^\circ\). \(v_1\) leads \(v_2\) by 50&deg;.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>A current \(i=I_m\sin(\omega t-40^\circ)\) and voltage \(v=V_m\sin(\omega t+10^\circ)\). Find the phase angle between them.</p>
+    <p class="step">Difference \(=10-(-40)=50^\circ\). Current lags voltage by 50&deg;.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>\(v_1=V_m\sin(\omega t+60^\circ)\), \(v_2=V_m\sin(\omega t+20^\circ)\). Find the phase difference and which leads.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Difference \(=60-20=40^\circ\). \(v_1\) leads \(v_2\) by 40&deg;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>\(i=I_m\sin(\omega t-15^\circ)\), \(v=V_m\sin(\omega t+25^\circ)\). Find the phase angle and describe the relationship.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Difference \(=25-(-15)=40^\circ\). Current lags voltage by 40&deg;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Two waves are "in phase." What does this mean about their phase angles?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Their phase angles are equal (\(\theta_1=\theta_2\)), so they reach their peaks, zero-crossings, and troughs at exactly the same instants.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Two waves are 180&deg; out of phase. Describe their relationship at any given instant.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>They are always exact opposites, when one is at its positive peak, the other is at its negative peak, and vice versa.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Explain the difference between a wave that "leads" and one that "lags."</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>A leading wave reaches its peak (and every other point in its cycle) EARLIER in time than the lagging wave; the leading wave has the larger (more positive) phase angle \(\theta\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>In an inductive AC circuit, current lags voltage by 90&deg;. Write \(i(t)\) if \(v(t)=V_m\sin(\omega t)\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(i(t) = I_m\sin(\omega t - 90^\circ)\).</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Week 9 applies everything here to the three basic components, resistor, inductor, capacitor, and shows exactly why current and voltage stay in phase for one, but split by &plusmn;90&deg; for the other two.</p>
+</div>
+
+</main>
+
+<footer>ENGG104 &middot; Week 8 &middot; Sinusoidal Alternating Waveforms &amp; Phase Relationships</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>

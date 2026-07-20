@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Inductors, Induced Voltage &amp; RL Transients</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG104 &middot; Week 7</div>
+  <h1>Inductors, Induced Voltage &amp; RL Transients</h1>
+  <p>The inductor's defining behaviour: it resists <em>changes</em> in current, not current itself. This week covers self-inductance and induced voltage, how inductors combine (like resistors, unlike capacitors), and the RL time constant governing current build-up.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 16 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">Self-inductance &amp; induced voltage</a></li>
+    <li><a href="#sec2">Inductors in series &amp; parallel</a></li>
+    <li><a href="#sec3">RL transients &amp; time constants</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Self-inductance &amp; induced voltage</div>
+  <div class="prose">
+    <p>An inductor doesn't oppose current, it opposes <em>change</em> in current. A steady DC current, once established, flows through an ideal inductor as if it were a plain wire.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$V_L = L\frac{di}{dt}$$ where \(L\) is inductance in henries (H). The induced voltage opposes the change (Lenz's Law).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>An inductor \(L=0.5\text{ H}\) has current changing at 4&nbsp;A/s. Find the induced voltage.</p>
+    <p class="step">\(V=L(di/dt)=0.5(4)=2\text{ V}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>A 200&nbsp;mH inductor has 6&nbsp;V induced across it. Find the rate of current change.</p>
+    <p class="step">\(di/dt=V/L=6/0.2=30\text{ A/s}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>An inductor \(L=2\text{ H}\), current changes at 3&nbsp;A/s. Find the induced voltage.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V=2(3)=6\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A 50&nbsp;mH inductor has 4&nbsp;V across it. Find the rate of current change.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(di/dt=4/0.05=80\text{ A/s}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Explain why an inductor opposes CHANGES in current, but not a steady current itself.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V_L=L(di/dt)\); if current is steady (constant), \(di/dt=0\), so \(V_L=0\). The inductor only generates an opposing voltage when current is actually changing, at steady-state it behaves like a plain wire.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>If current through an inductor is INCREASING, in which direction does the induced voltage act?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>It opposes the increase (Lenz's Law), effectively "pushing back" against the current trying to grow.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>An inductor has zero voltage across it. What does this tell you about the current through it?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>The current must be constant (steady-state) at that instant, since \(V_L=0\) only when \(di/dt=0\).</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Inductors in series &amp; parallel</div>
+  <div class="prose">
+    <p>Unlike capacitors, inductors combine exactly like resistors.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><strong>Series:</strong> $$L_t=L_1+L_2+\cdots+L_n$$</p>
+    <p><strong>Parallel:</strong> $$\frac1{L_t}=\frac1{L_1}+\frac1{L_2}+\cdots+\frac1{L_n}$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>Three inductors in series: 2&nbsp;H, 3&nbsp;H, 5&nbsp;H. Find \(L_t\).</p>
+    <p class="step">\(L_t=2+3+5=10\text{ H}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>Two inductors in parallel: 4&nbsp;H, 6&nbsp;H. Find \(L_t\).</p>
+    <p class="step">\(1/L_t=1/4+1/6=0.4167\). \(L_t=2.4\text{ H}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Two inductors in series: 1.5&nbsp;H, 2.5&nbsp;H. Find \(L_t\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(L_t=1.5+2.5=4\text{ H}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Two inductors in parallel: 3&nbsp;H, 3&nbsp;H. Find \(L_t\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(L_t=3/2=1.5\text{ H}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Three equal 6&nbsp;H inductors in parallel. Find \(L_t\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(L_t=6/3=2\text{ H}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Explain why inductors combine the SAME way as resistors, unlike capacitors (which do the opposite).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Inductance represents opposition to changing current, structurally similar to how resistance opposes steady current. More series inductors mean more total opposition to current change (adding, like resistors); parallel inductors give current more paths, reducing overall opposition (like resistors in parallel), exactly mirroring resistor rules rather than the reciprocal capacitor rules.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A single 8&nbsp;H inductor is replaced by two 16&nbsp;H inductors in parallel. Show these give the same total inductance.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(1/L_t=1/16+1/16=2/16=1/8 \Rightarrow L_t=8\text{ H}\), matching the original &check;.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> RL transients &amp; time constants</div>
+  <div class="prose">
+    <p>Just as a capacitor's voltage can't jump instantly, an inductor's current can't jump instantly, the RL time constant governs how fast it ramps up.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\tau=\frac{L}{R} \text{ (seconds)}, \qquad i(t)=I_{max}\left(1-e^{-t/\tau}\right), \qquad I_{max}=\frac{E}{R}.$$</p>
+    <p>After \(5\tau\), current is essentially at steady-state.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A circuit has \(L=2\text{ H}\), \(R=4\ \Omega\). Find the time constant.</p>
+    <p class="step">\(\tau=L/R=2/4=0.5\text{ s}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>For that circuit with \(E=12\text{ V}\), find \(I_{max}\) and the current at \(t=\tau\).</p>
+    <p class="step">\(I_{max}=12/4=3\text{ A}\).</p>
+    <p class="step">\(i(\tau)=3(1-e^{-1})=3(0.632)=1.897\text{ A}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>\(L=1\text{ H}, R=5\ \Omega\). Find \(\tau\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\tau=1/5=0.2\text{ s}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>For Practice 11, \(E=10\text{ V}\). Find \(I_{max}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I_{max}=10/5=2\text{ A}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>For Practices 11&ndash;12's circuit, find \(i(t)\) at \(t=\tau\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(i=2(1-e^{-1})=2(0.632)=1.264\text{ A}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>How long, in terms of \(\tau\), is current generally considered to have reached steady-state?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(5\tau\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Explain why current through an inductor cannot change instantaneously.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Since \(V_L=L(di/dt)\), an instantaneous change would require \(di/dt\to\infty\), demanding infinite voltage, which is physically impossible. The induced voltage inherently limits how quickly current can change, forcing it to ramp gradually rather than jump.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Compare \(\tau=L/R\) (RL) to \(\tau=RC\) (RC, Week 6). Why is one a ratio and the other a product?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Both must give units of seconds. Resistance (&Omega;) times capacitance (F) gives seconds directly, so RC is a product. For inductance (H) and resistance (&Omega;), the combination that yields seconds is L divided by R (H/&Omega; = s), so RL's time constant is a ratio, the difference comes from how each unit is dimensionally defined relative to &Omega; and seconds.</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Week 8 leaves DC transients behind and introduces sinusoidal AC waveforms and phase relationships, the foundation for every AC analysis technique in the back half of the course.</p>
+</div>
+
+</main>
+
+<footer>ENGG104 &middot; Week 7 &middot; Inductors, Induced Voltage &amp; RL Transients</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>

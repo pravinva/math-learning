@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Superposition &amp; Th&eacute;venin's Theorem</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG104 &middot; Week 5</div>
+  <h1>Superposition &amp; Th&eacute;venin's Theorem</h1>
+  <p>Two of the most powerful circuit-simplification tools: Superposition handles circuits with multiple sources one at a time, and Th&eacute;venin's Theorem collapses an entire complicated network down to just two numbers.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 11 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">Superposition Theorem</a></li>
+    <li><a href="#sec2">Th&eacute;venin's Theorem</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Superposition Theorem</div>
+  <div class="prose">
+    <p>In a linear circuit with multiple sources, it's often easier to handle one source at a time than to solve everything at once.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>For each source in turn: "kill" every <em>other</em> independent source (voltage source &rarr; short circuit, current source &rarr; open circuit), find the desired current or voltage due to that one source alone, then <strong>algebraically add</strong> all the individual contributions together.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Two sources, \(E_1=20\text{ V}\) (in series with \(R_1=4\ \Omega\)) and \(E_2=8\text{ V}\) (in series with \(R_2=2\ \Omega\)), both connect in parallel across a shared load \(R_3=6\ \Omega\). Find the current through \(R_3\).</p>
+    <p class="step"><strong>Kill \(E_2\)</strong> (short it): \(E_1\) now drives \(R_1\) in series with \((R_2\|R_3)\). \(R_2\|R_3=(2)(6)/8=1.5\ \Omega\). Total \(=4+1.5=5.5\ \Omega\). \(I_{total}=20/5.5=3.636\text{ A}\) (through \(R_1\)).</p>
+    <p class="step">This splits between \(R_2,R_3\) (current divider): \(I_{R3,\ due\ to\ E_1}=3.636\times\dfrac{2}{8}=0.909\text{ A}\).</p>
+    <p class="step"><strong>Kill \(E_1\)</strong> (short it): \(E_2\) drives \(R_2\) in series with \((R_1\|R_3)\). \(R_1\|R_3=(4)(6)/10=2.4\ \Omega\). Total \(=2+2.4=4.4\ \Omega\). \(I_{total}=8/4.4=1.818\text{ A}\).</p>
+    <p class="step">\(I_{R3,\ due\ to\ E_2}=1.818\times\dfrac{4}{10}=0.727\text{ A}\).</p>
+    <p class="step"><strong>Sum:</strong> \(I_{R3}=0.909+0.727=1.636\text{ A}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>State the two steps of superposition in your own words.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>1.</strong> Analyse the circuit with only one source active at a time, replacing every other source with its "killed" equivalent, and find the desired current/voltage from that source alone. <strong>2.</strong> Repeat for every other source, then add all the individual contributions together (respecting direction/sign) to get the true total.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>When "killing" a voltage source, what do you replace it with, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>A <strong>short circuit</strong> (0&nbsp;V). An ideal voltage source maintains a fixed voltage regardless of current, so "turning it off" means setting its voltage to zero, exactly what a short circuit represents.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>When "killing" a current source, what do you replace it with, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>An <strong>open circuit</strong>. An ideal current source maintains a fixed current regardless of voltage, so "turning it off" means setting that current to zero, exactly what an open circuit (no path at all) represents.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A resistor carries 3&nbsp;A due to source A alone and 2&nbsp;A due to source B alone, both in the SAME direction. Find the total current.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(3+2=5\text{ A}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>If the two contributions from Practice 4 instead flowed in OPPOSITE directions, find the net current.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(3-2=1\text{ A}\), in the direction of the larger contribution.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Th&eacute;venin's Theorem</div>
+  <div class="prose">
+    <p>Any linear two-terminal network, however complicated, behaves exactly like a single voltage source in series with a single resistor, as far as anything connected to those two terminals is concerned.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>\(V_{th}\): the open-circuit voltage at the two terminals, with the load removed. \(R_{th}\): the resistance seen looking back into the network from those terminals, with all independent sources killed.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A source \(E=12\text{ V}\) connects through \(R_1=4\ \Omega\) to node A; from A, \(R_2=8\ \Omega\) goes to ground (node B). The load, removed for this analysis, would connect across A&ndash;B. Find \(V_{th}\) and \(R_{th}\).</p>
+    <p class="step">With the load removed, this is just a voltage divider: \(V_{th}=E\times\dfrac{R_2}{R_1+R_2}=12\times\dfrac{8}{12}=8\text{ V}\).</p>
+    <p class="step">Killing the source (shorting it) puts \(R_1\) and \(R_2\) in parallel as seen from A&ndash;B: \(R_{th}=R_1\|R_2=\dfrac{4(8)}{12}=2.667\ \Omega\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>Using that Th&eacute;venin equivalent (\(V_{th}=8\text{ V}, R_{th}=2.667\ \Omega\)), a load \(R_L=5\ \Omega\) is now connected. Find the load current and voltage.</p>
+    <p class="step">\(I_L=\dfrac{V_{th}}{R_{th}+R_L}=\dfrac{8}{2.667+5}=\dfrac{8}{7.667}=1.043\text{ A}\).</p>
+    <p class="step">\(V_L=I_LR_L=1.043(5)=5.217\text{ V}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>A source \(E=15\text{ V}\), \(R_1=3\ \Omega\), \(R_2=6\ \Omega\) (same voltage-divider topology, load removed at the \(R_2\) tap). Find \(V_{th}\) and \(R_{th}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V_{th}=15\times6/9=10\text{ V}\). \(R_{th}=R_1\|R_2=(3)(6)/9=2\ \Omega\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>For Practice 6, a load \(R_L=4\ \Omega\) is connected. Find the load current and voltage.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I_L=10/(2+4)=1.667\text{ A}\). \(V_L=1.667(4)=6.667\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A network has \(E=20\text{ V}\), \(R_1=5\ \Omega\), \(R_2=10\ \Omega\) (same topology). Find \(V_{th}\) and \(R_{th}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V_{th}=20\times10/15=13.33\text{ V}\). \(R_{th}=(5)(10)/15=3.33\ \Omega\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Explain, step by step, how to find \(R_{th}\) for a network of only resistors and independent sources.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>"Kill" every independent source (voltage sources &rarr; short, current sources &rarr; open), then compute the equivalent resistance of the remaining resistor network as seen from the two open terminals, using ordinary series/parallel combination rules.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Explain why finding \(V_{th}\) specifically requires the load to be removed (open-circuit).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V_{th}\) is defined as the open-circuit voltage. With the load still connected, current would flow through it and change the terminal voltage, so it wouldn't capture the network's true, load-independent characteristic, removing the load isolates the pure source-and-network behaviour.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Once \(V_{th}\) and \(R_{th}\) are known, explain why they let you quickly find the current for ANY load resistor without re-analysing the whole original circuit each time.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>The entire original network's behaviour at those two terminals is captured in just two numbers, so the load simply sees a simple series circuit: \(I_L=V_{th}/(R_{th}+R_L)\) works directly for any \(R_L\), without repeating the full original analysis every time the load changes.</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Week 6 shifts from resistive circuits to a genuinely new component: the capacitor, and the energy-storage behaviour that comes with it.</p>
+</div>
+
+</main>
+
+<footer>ENGG104 &middot; Week 5 &middot; Superposition &amp; Th&eacute;venin's Theorem</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>

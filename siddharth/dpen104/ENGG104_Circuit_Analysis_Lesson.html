@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Circuit Analysis &mdash; Ohm's Law, Kirchhoff's Laws &amp; Divider Rules</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  svg.diagram{ display:block; margin:16px auto; background:#fff; border:1px solid var(--line); border-radius:6px; max-width:100%; height:auto; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG104 &middot; Electrical Systems</div>
+  <h1>Circuit Analysis: Ohm's Law, Kirchhoff's Laws &amp; Divider Rules</h1>
+  <p>Everything needed for Experiment 3 and beyond: Ohm's Law, series and parallel resistance, Kirchhoff's Current and Voltage Laws, the Voltage Divider Rule, the Current Divider Rule, and full series-parallel combination circuits. Several worked examples reuse the exact resistor values from your Experiment 3 lab report, so you can check your own results against them.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 39 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">Ohm's Law</a></li>
+    <li><a href="#sec2">Series circuits &amp; total resistance</a></li>
+    <li><a href="#sec3">Parallel circuits &amp; total resistance</a></li>
+    <li><a href="#sec4">Kirchhoff's Current &amp; Voltage Laws</a></li>
+    <li><a href="#sec5">Voltage Divider Rule</a></li>
+    <li><a href="#sec6">Current Divider Rule</a></li>
+    <li><a href="#sec7">Advanced: series-parallel combination circuits</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Ohm's Law</div>
+  <div class="prose">
+    <p>The relationship every other formula in this lesson builds on: voltage, current, and resistance are locked together.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$V=IR, \qquad I=\frac{V}{R}, \qquad R=\frac{V}{I}.$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A 12&nbsp;V supply pushes current through a 3.3&nbsp;k&Omega; resistor. Find the current.</p>
+    <p class="step">\(I=\dfrac{V}{R}=\dfrac{12}{3300}=3.636\text{ mA}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>A resistor has 5&nbsp;V across it and 2&nbsp;mA flowing through it. Find its resistance.</p>
+    <p class="step">\(R=\dfrac{V}{I}=\dfrac{5}{0.002}=2500\ \Omega=2.5\text{ k}\Omega\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A 9&nbsp;V battery is connected to a 1.2&nbsp;k&Omega; resistor. Find the current.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I=9/1200=7.5\text{ mA}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A resistor carries 15&nbsp;mA with 45&nbsp;V across it. Find its resistance.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R=45/0.015=3000\ \Omega=3\text{ k}\Omega\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A 2.2&nbsp;k&Omega; resistor carries 3&nbsp;mA. Find the voltage across it.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V=IR=0.003(2200)=6.6\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A 10&nbsp;k&Omega; resistor has 12&nbsp;V across it. Find the current, in mA.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I=12/10000=1.2\text{ mA}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>If the voltage across a fixed resistor doubles, what happens to the current? Explain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>The current also <strong>doubles</strong>. Since \(I=V/R\) and \(R\) is fixed, current is directly proportional to voltage.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>A component draws 50&nbsp;mA from a 5&nbsp;V supply. Find its resistance.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R=5/0.05=100\ \Omega\).</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Series circuits &amp; total resistance</div>
+  <div class="prose">
+    <p>In series, resistors sit one after another along a single path, so there's only one route for current, meaning the same current flows through every one of them.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$R_t=R_1+R_2+\cdots+R_n.$$</p>
+    <p>Current is identical through every series component; voltage divides between them.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>Three resistors in series: \(R_1=3.3\text{ k}\Omega\), \(R_2=10\text{ k}\Omega\), \(R_3=2.2\text{ k}\Omega\) (the exact values from Experiment 3's Circuit 1). Find \(R_t\).</p>
+    <p class="step">\(R_t=3300+10000+2200=15{,}500\ \Omega=15.5\text{ k}\Omega\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>For that same circuit with \(E=12\text{ V}\), find the total (and only) current.</p>
+    <p class="step">\(I=\dfrac{E}{R_t}=\dfrac{12}{15{,}500}=0.7742\text{ mA}=774.2\ \mu\text{A}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Resistors 700&nbsp;&Omega;, 700&nbsp;&Omega;, and 1&nbsp;k&Omega; in series. Find \(R_t\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R_t=700+700+1000=2400\ \Omega=2.4\text{ k}\Omega\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A series circuit: \(R_1=1.2\text{ k}\Omega, R_2=2.2\text{ k}\Omega, R_3=3.3\text{ k}\Omega\), supply 15&nbsp;V. Find \(R_t\) and the current.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R_t=1200+2200+3300=6700\ \Omega\). \(I=15/6700=2.239\text{ mA}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>If a fourth resistor is added to a series circuit, does total resistance increase or decrease? Explain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Increases.</strong> Series resistances simply add, so any additional resistor increases \(R_t\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A series circuit has \(R_t=8\text{ k}\Omega\) and carries 1.5&nbsp;mA. Find the supply voltage.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(E=IR_t=0.0015(8000)=12\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Explain why current is the same through every component in a series circuit.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>There's only one path for current to flow, no branches exist. Whatever current enters one end must be the exact same current that exits the other; current can't "pile up" or disappear anywhere along a single path.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Three equal 1&nbsp;k&Omega; resistors are in series, supply 9&nbsp;V. Find the voltage across each, reasoning from symmetry (before the formal rule in Section 5).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Equal resistors share the voltage equally: \(9/3=3\text{ V}\) each.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Parallel circuits &amp; total resistance</div>
+  <div class="prose">
+    <p>In parallel, resistors sit side by side, each getting its own direct connection across the same two nodes, so every parallel branch sees the identical voltage.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\frac1{R_t}=\frac1{R_1}+\frac1{R_2}+\cdots+\frac1{R_n}.$$</p>
+    <p>Voltage is identical across every parallel branch; current divides between them.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>Two resistors in parallel: \(2.2\text{ k}\Omega\) and \(3.3\text{ k}\Omega\) (matching Experiment 3's Circuit 2, R2 and R3). Find \(R_t\).</p>
+    <p class="step">\(\dfrac1{R_t}=\dfrac1{2200}+\dfrac1{3300}=0.0004545+0.0003030=0.0007576\).</p>
+    <p class="step">\(R_t=1/0.0007576=1320\ \Omega=1.32\text{ k}\Omega\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>Add the series \(R_1=1.2\text{ k}\Omega\) from Circuit 2 in front of that parallel pair, supply 15&nbsp;V. Find the total current.</p>
+    <p class="step">\(R_{total}=1200+1320=2520\ \Omega\). \(I_t=15/2520=5.952\text{ mA}\), matching Experiment 3's Table 3 exactly.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Two resistors, \(4.7\text{ k}\Omega\) and \(5.6\text{ k}\Omega\), in parallel. Find \(R_t\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(1/R_t=1/4700+1/5600=0.0003913\). \(R_t=2555\ \Omega=2.555\text{ k}\Omega\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Three equal 6&nbsp;k&Omega; resistors in parallel. Find \(R_t\) (shortcut: \(R/n\) for \(n\) equal resistors).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R_t=6000/3=2000\ \Omega=2\text{ k}\Omega\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A 12&nbsp;V supply connects across two parallel branches: 3&nbsp;k&Omega; and 6&nbsp;k&Omega;. Find the current in each branch.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Same voltage (12&nbsp;V) across both: \(I_{3k}=12/3000=4\text{ mA}\). \(I_{6k}=12/6000=2\text{ mA}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>For Practice 15, find the total current supplied, and confirm it equals the sum of the branch currents.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I_t=4+2=6\text{ mA}\) — this is exactly Kirchhoff's Current Law, covered formally next section.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Explain why the total resistance of a parallel combination is always LESS than the smallest individual resistor.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Adding a parallel path gives current more routes to flow, so overall resistance to current flow only ever decreases when a new branch is added, \(R_t\) must be smaller than even the smallest single resistor.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Two equal resistors, each \(R\), are placed in parallel. Show that \(R_t=R/2\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\dfrac1{R_t}=\dfrac1R+\dfrac1R=\dfrac2R \Rightarrow R_t=\dfrac{R}{2}\).</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Kirchhoff's Current &amp; Voltage Laws</div>
+  <div class="prose">
+    <p>Two conservation statements, one for charge at a junction, one for energy around a loop, that must hold in every circuit, no matter how complex.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><strong>KCL (Current Law):</strong> the sum of currents flowing into a node equals the sum flowing out.</p>
+    <p><strong>KVL (Voltage Law):</strong> around any complete loop, the sum of voltage drops equals the source voltage.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1 (KCL)</span>
+    <p>At a node, 8&nbsp;mA flows in, splitting into two branches, one carrying 5&nbsp;mA. Find the other branch's current.</p>
+    <p class="step">\(8=5+I_2 \Rightarrow I_2=3\text{ mA}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2 (KVL)</span>
+    <p>A series circuit has a 12&nbsp;V supply and two resistor drops, \(V_1=7\text{ V}\) and \(V_2=?\). Find \(V_2\).</p>
+    <p class="step">\(12=7+V_2 \Rightarrow V_2=5\text{ V}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>At a node, two currents enter: 4&nbsp;mA and 6&nbsp;mA. One current leaves. Find it.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I_{leaving}=4+6=10\text{ mA}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A series loop has a 15&nbsp;V supply and drops \(V_1=3\text{ V}, V_2=8\text{ V}, V_3=?\). Find \(V_3\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(15=3+8+V_3 \Rightarrow V_3=4\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>At a node, 10&nbsp;mA flows in, splitting into three branches: 4&nbsp;mA, 3&nbsp;mA, and \(I_3\). Find \(I_3\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I_3=10-4-3=3\text{ mA}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Explain KVL in your own words, connecting it to energy conservation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Travelling all the way around a closed loop and back to the starting point, the total "push" (voltage) supplied must exactly equal the total "drop" used up by components. Energy can't be created or destroyed, so whatever electrical energy per unit charge goes in around the loop must come back out as drops.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>A circuit has a 24&nbsp;V supply and four series resistors. Three of the drops are 5&nbsp;V, 9&nbsp;V, and 6&nbsp;V. Find the fourth.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(24=5+9+6+V_4 \Rightarrow V_4=4\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Explain why KCL must be true, using the idea that charge cannot accumulate at a node.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Charge is conserved and doesn't pile up anywhere in a standard circuit node, so whatever current flows into a junction per unit time must flow back out; otherwise charge would be mysteriously appearing or vanishing.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> Voltage Divider Rule</div>
+  <div class="prose">
+    <p>A direct shortcut for series circuits: find any resistor's share of the total voltage without computing the current first.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$V_n = E\times\frac{R_n}{\Sigma R}$$</p>
+    <p>where \(\Sigma R\) is the total series resistance.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Using Experiment 3's exact Circuit 1 (\(R_1=3.3\text{ k}\Omega, R_2=10\text{ k}\Omega, R_3=2.2\text{ k}\Omega, E=12\text{ V}\)), find \(V_1, V_2, V_3\).</p>
+    <p class="step">\(\Sigma R = 15{,}500\ \Omega\).</p>
+    <p class="step">\(V_1=12\times\dfrac{3300}{15500}=2.555\text{ V}\). \(\quad V_2=12\times\dfrac{10000}{15500}=7.742\text{ V}\). \(\quad V_3=12\times\dfrac{2200}{15500}=1.703\text{ V}\).</p>
+    <p class="step">Check (KVL): \(2.555+7.742+1.703=12.0\text{ V}\) &check;. These are the exact calculated values from Experiment 3's Table 2.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Series circuit: \(R_1=1\text{ k}\Omega, R_2=4\text{ k}\Omega, E=10\text{ V}\). Find \(V_1\) and \(V_2\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\Sigma R=5000\). \(V_1=10(1000/5000)=2\text{ V}\). \(V_2=10(4000/5000)=8\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Series circuit: \(R_1=2.2\text{ k}\Omega, R_2=3.3\text{ k}\Omega, R_3=1.2\text{ k}\Omega, E=9\text{ V}\). Find \(V_2\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\Sigma R=6700\). \(V_2=9(3300/6700)=4.428\text{ V}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Three equal \(5\text{ k}\Omega\) resistors in series, \(E=15\text{ V}\). Find the voltage across each.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\Sigma R=15{,}000\). Each: \(15(5000/15000)=5\text{ V}\), confirming the equal-split expectation.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>For Practice 26's circuit, find \(V_1\) and \(V_3\), then verify all three sum to \(E\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V_1=9(2200/6700)=2.955\text{ V}\). \(V_3=9(1200/6700)=1.612\text{ V}\). Sum: \(2.955+4.428+1.612\approx9\text{ V}\) &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>Explain why a LARGER resistor in a series circuit gets a LARGER share of the voltage.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Since current is the same through every series resistor, \(V=IR\) means a bigger resistance with the same current produces a bigger voltage drop, the \(R_n/\Sigma R\) ratio directly reflects that a resistor's share of total resistance equals its share of total voltage.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>A series circuit has \(R_1=6\text{ k}\Omega\) getting 8&nbsp;V, out of a 20&nbsp;V total supply. Find \(\Sigma R\), without knowing the other resistors.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(8=20(6000/\Sigma R) \Rightarrow \Sigma R = 20(6000)/8=15{,}000\ \Omega=15\text{ k}\Omega\).</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Current Divider Rule</div>
+  <div class="prose">
+    <p>The parallel-circuit counterpart to the Voltage Divider Rule: find one branch's share of the total current.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea (two resistors in parallel)</span>
+    <p>$$I_1 = I_s\times\frac{R_2}{R_1+R_2}, \qquad I_2 = I_s\times\frac{R_1}{R_1+R_2}.$$</p>
+    <p>Notice each branch's current uses the <strong>other</strong> resistor in the numerator.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Using Experiment 3's exact Circuit 2 (\(R_1=1.2\text{ k}\Omega\) in series feeding a parallel pair \(R_2=2.2\text{ k}\Omega, R_3=3.3\text{ k}\Omega\), supply 15&nbsp;V), find \(I_1\) and \(I_2\) (the currents through \(R_2\) and \(R_3\)).</p>
+    <p class="step">From Section 3: \(R_{2}\|R_{3}=1320\ \Omega\), \(R_{total}=2520\ \Omega\), \(I_s=15/2520=5.952\text{ mA}\).</p>
+    <p class="step">\(I_{R2}=I_s\times\dfrac{R_3}{R_2+R_3}=5.952\times\dfrac{3300}{5500}=5.952(0.6)=3.571\text{ mA}\).</p>
+    <p class="step">\(I_{R3}=I_s\times\dfrac{R_2}{R_2+R_3}=5.952\times\dfrac{2200}{5500}=5.952(0.4)=2.381\text{ mA}\).</p>
+    <p class="step">Check: \(3.571+2.381=5.952\text{ mA}=I_s\) &check;. These match Experiment 3's Table 3 calculated values exactly.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Two resistors in parallel, \(R_1=4\text{ k}\Omega, R_2=6\text{ k}\Omega\), total current \(I_s=10\text{ mA}\). Find \(I_1\) and \(I_2\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I_1=10(6000/10000)=6\text{ mA}\). \(I_2=10(4000/10000)=4\text{ mA}\). Check: \(6+4=10\) &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Two resistors in parallel, \(R_1=1\text{ k}\Omega, R_2=9\text{ k}\Omega\), \(I_s=20\text{ mA}\). Find \(I_1\) and \(I_2\). Which carries more, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I_1=20(9000/10000)=18\text{ mA}\). \(I_2=20(1000/10000)=2\text{ mA}\). \(R_1\) (the smaller resistor) carries more, current prefers the path of least resistance.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>Two equal resistors in parallel share total current \(I_s=8\text{ mA}\). Find the current through each.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>By symmetry, \(4\text{ mA}\) each. Formula check: \(I_1=I_s\times R/(R+R)=I_s(0.5)=4\text{ mA}\) &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>A parallel pair has \(R_1=2\text{ k}\Omega\) carrying 6&nbsp;mA, \(R_2=4\text{ k}\Omega\). Find the total current \(I_s\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(6=I_s(4000/6000)=I_s(0.6667) \Rightarrow I_s=6/0.6667=9\text{ mA}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>Explain why the Current Divider Rule uses the OPPOSITE resistor in its formula, and how this connects to smaller resistors carrying more current.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Since voltage is identical across both branches, \(I_1=V/R_1\) and \(I_2=V/R_2\): a bigger \(R_1\) gives a smaller \(I_1\) for the same \(V\). Combining \(V=I_1R_1=I_2R_2\) with \(I_s=I_1+I_2\) algebraically produces the "opposite resistor" formula, and it naturally makes the smaller resistor pull the larger share of current.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> Advanced: series-parallel combination circuits</div>
+  <div class="prose">
+    <p>Real circuits, like Experiment 3's Part 1, mix series and parallel sections together. The strategy: reduce the parallel sub-groups to single equivalent resistors first, then treat what's left as a straightforward series chain.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>\(R_1=700\ \Omega\) in series with (\(R_2=700\ \Omega \parallel R_3=1\text{ k}\Omega\)), that combination in series with (\(R_4=2\text{ k}\Omega \parallel R_5=2.2\text{ k}\Omega\)), supply 12&nbsp;V. Find \(R_t\) and the total current.</p>
+    <p class="step">\(R_2\|R_3 = \dfrac{700\times1000}{700+1000}=411.76\ \Omega\).</p>
+    <p class="step">\(R_4\|R_5 = \dfrac{2000\times2200}{2000+2200}=1047.62\ \Omega\).</p>
+    <p class="step">\(R_t=700+411.76+1047.62=2159.38\ \Omega\). \(I_t=12/2159.38=5.557\text{ mA}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>A circuit has \(R_1=1\text{ k}\Omega\) in series with (\(R_2=2\text{ k}\Omega \parallel R_3=3\text{ k}\Omega\)), supply 9&nbsp;V. Find \(R_t\) and \(I_t\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R_2\|R_3=(2000\times3000)/5000=1200\ \Omega\). \(R_t=1000+1200=2200\ \Omega\). \(I_t=9/2200=4.09\text{ mA}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>For Practice 36, find the voltage across the parallel block, then the individual branch currents through \(R_2\) and \(R_3\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Using VDR: \(V_{parallel}=9(1200/2200)=4.909\text{ V}\).</p>
+    <p>\(I_{R2}=4.909/2000=2.455\text{ mA}\). \(I_{R3}=4.909/3000=1.636\text{ mA}\). Check: \(2.455+1.636=4.09\text{ mA}\) &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>A circuit has (\(R_1=500\ \Omega \parallel R_2=1500\ \Omega\)) in series with \(R_3=2\text{ k}\Omega\), supply 20&nbsp;V. Find \(R_t\) and \(I_t\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R_1\|R_2=(500\times1500)/2000=375\ \Omega\). \(R_t=375+2000=2375\ \Omega\). \(I_t=20/2375=8.421\text{ mA}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>Outline, step by step, the general strategy for solving any series-parallel combination circuit, without doing the arithmetic.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>1.</strong> Identify which resistors are purely series and which are purely parallel within sub-groups. <strong>2.</strong> Reduce each parallel sub-group to a single equivalent resistance. <strong>3.</strong> Add the now-simplified series chain to find total \(R_t\). <strong>4.</strong> Use Ohm's Law to find the total current from the source. <strong>5.</strong> Work backward: find the voltage across each reduced parallel block (VDR, or Ohm's Law with the total current), then apply the Current Divider Rule within each block for the individual branch currents.</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Every value calculated in this lesson can be cross-checked directly against your Experiment 3 report, the Section 2 and Section 5 worked examples reproduce your Table 2 exactly, and the Section 3 and Section 6 worked examples reproduce your Table 3 exactly. If your lab's measured values differ slightly from these calculated ones, that's expected, exactly what your report's discussion section is about: component tolerance, meter accuracy, and small real-world losses the ideal formulas don't capture.</p>
+</div>
+
+</main>
+
+<footer>ENGG104 &middot; Circuit Analysis</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
