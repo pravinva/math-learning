@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Truss Analysis (Method of Sections)</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  svg.diagram{ display:block; margin:16px auto; background:#fff; border:1px solid var(--line); border-radius:6px; max-width:100%; height:auto; }
+  svg.mini-diagram{ display:block; margin:10px auto 6px; background:#fbfcfe; border:1px solid var(--line); border-radius:6px; max-width:320px; width:100%; height:auto; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">DPEN102 &middot; Week 6</div>
+  <h1>Truss Analysis (Method of Sections)</h1>
+  <p>Instead of solving every joint in sequence, method of sections cuts straight through a truss and finds one specific member's force directly, using the same equilibrium tools from every prior week: FBDs, reactions, and moments.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 18 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Assumptions &amp; why method of sections</a></li>
+    <li><a href="#sec1">Zero-force members</a></li>
+    <li><a href="#sec2">Global support reactions for trusses</a></li>
+    <li><a href="#sec3">The method of sections algorithm</a></li>
+    <li><a href="#sec4">Advanced: tension/compression classification</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Assumptions &amp; why method of sections</div>
+  <div class="prose">
+    <p>A truss is analysed under three assumptions: loads act only at joints, members are two-force members carrying purely axial force (no bending), and joints behave as ideal frictionless pins. Under these assumptions, <strong>method of joints</strong> (solving each joint's \(\Sigma F_x=0,\Sigma F_y=0\) one at a time) works, but is slow if you only need one member deep inside the truss. <strong>Method of sections</strong> cuts straight through up to three unknown members at once and solves for them directly, using the same equilibrium tools, applied to a whole cut portion of the truss instead of one joint.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Zero-force members</div>
+  <div class="prose">
+    <p>Some members carry no force at all under a given loading, and can be spotted by inspection, no calculation needed, which trims the analysis before it even starts.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Two rules</span>
+    <p><strong>Rule 1:</strong> if only two non-collinear members meet at an unloaded joint, both are zero-force members.</p>
+    <p><strong>Rule 2:</strong> if three members meet at an unloaded joint and two of them are collinear (in a straight line), the third (non-collinear) member is a zero-force member, and the two collinear members carry equal force.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>At joint A, members AB and AC meet at 90&deg;, with no external load applied at A and nothing else connected there. State the force in each.</p>
+    <p class="step">Rule 1 applies directly: two non-collinear members, unloaded joint. <strong>Both AB and AC are zero-force members.</strong></p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>At joint D, three members meet: DE and DF are collinear, DG is at an angle to them, and there is no load at D. Which member is zero-force?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>DG</strong>, the non-collinear third member (Rule 2).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>At joint H, only two members meet, HI and HJ, not collinear, and there's no external load at H. State the force in each.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Both are <strong>zero-force members</strong> (Rule 1).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>At joint K, KL and KM are collinear, KN is at an angle, but there IS an external load applied at K. Does Rule 2 still apply? Explain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>No.</strong> Rule 2 only applies at <em>unloaded</em> joints. With an external load present, KN generally must carry a nonzero force to help balance it.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A truss has 8 members. By inspection you identify 2 zero-force members. How many members must actually be solved via joints/sections?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>6.</strong> The 2 zero-force members are already known without calculation, leaving only the remaining 6 to analyse.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Zero-force members carry no force under this specific load case, so why do engineers still include them in the truss at all?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>They provide bracing and stability, preventing buckling or shifting under <em>other</em> loading conditions (wind, construction loads, unbalanced live loads) not present in this particular idealised case. Zero-force here does not mean zero-force always.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Global support reactions for trusses</div>
+  <div class="prose">
+    <p>Before any cut can be made, the truss's overall support reactions must be known, exactly the same beam-style reaction-finding from Weeks 4&ndash;5, just applied to the truss as a whole rigid assembly.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A truss spans 8&nbsp;m, pin at A (left), roller at B (right), with a single 500&nbsp;N downward load at a joint 3&nbsp;m from A. Find the reactions.</p>
+    <p class="step">\(\Sigma M_A\): \(R_B(8)=500(3)=1500 \Rightarrow R_B=187.5\text{ N}\).</p>
+    <p class="step">\(\Sigma F_y\): \(R_A=500-187.5=312.5\text{ N}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Truss span 10&nbsp;m, pin-roller, 800&nbsp;N load at 4&nbsp;m from A. Find the reactions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R_B=800(4)/10=320\text{ N}\). \(R_A=480\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Truss span 12&nbsp;m, two loads: 400&nbsp;N at 3&nbsp;m, 600&nbsp;N at 8&nbsp;m from A. Find the reactions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\Sigma M_A\): \(R_B(12)=400(3)+600(8)=6000 \Rightarrow R_B=500\text{ N}\). \(R_A=1000-500=500\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Truss span 6&nbsp;m, single 300&nbsp;N load exactly at midspan. Find the reactions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Symmetric: \(R_A=R_B=150\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Explain why the global support reactions must be found before cutting a truss with the method of sections.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>The cut portion's equilibrium equations include any support reaction acting on it. If those reactions are still unknown, the cut piece has too many unknowns (member forces plus unknown reactions) to solve with only three equilibrium equations.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> The method of sections algorithm</div>
+  <div class="prose">
+    <p>Cut through no more than three unknown members, keep one side, and use moments cleverly to isolate one unknown at a time.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">The 5-step algorithm</span>
+    <p><strong>1.</strong> Find global support reactions. <strong>2.</strong> Cut through at most 3 unknown members of interest. <strong>3.</strong> Take moments about the point where two of the unknown members' lines of action intersect, this eliminates both from that equation, isolating the third. <strong>4.</strong> Use \(\Sigma F_x,\Sigma F_y\) for the remaining unknowns. <strong>5.</strong> Classify each result: positive (under a tension assumption) means tension, negative means compression.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A truss: span 16&nbsp;m, height 3&nbsp;m, panel width 4&nbsp;m (giving 3-4-5 diagonals). Bottom joints A(0,0), C(4,0), E(8,0), G(12,0), I(16,0); top joints B(4,3), D(8,3), F(12,3); pin at A, roller at I. A single 800&nbsp;N load acts at D. By symmetry, \(R_A=R_I=400\text{ N}\).</p>
+    <p class="step">Cut through panel 2 (top chord BD, diagonal EB, bottom chord CE). Keep the left portion (joints A, C, B, with \(R_A=400\text{ N}\), nothing else since the load at D sits to the right of this cut).</p>
+    <p class="step">\(\Sigma M_E=0\) (both \(F_{CE}\) and \(F_{EB}\) pass through E, eliminating them): \(R_A(8)=F_{BD}(3) \Rightarrow F_{BD}=400(8)/3=1066.67\text{ N}\) (compression, typical for a top chord).</p>
+    <p class="step">\(\Sigma M_B=0\) (both \(F_{BD}\) and \(F_{EB}\) pass through B): \(R_A(4)=F_{CE}(3) \Rightarrow F_{CE}=400(4)/3=533.33\text{ N}\) (tension, typical for a bottom chord).</p>
+    <p class="step">\(\Sigma F_y=0\): \(R_A=F_{EB}\sin\theta\), with \(\sin\theta=3/5\) for this 3-4-5 diagonal: \(F_{EB}=400(5)/3=666.67\text{ N}\) (tension).</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="ar-red6t" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c0392b"/></marker></defs>
+    <line x1="30" y1="160" x2="370" y2="160" stroke="#1B2431" stroke-width="2"/>
+    <line x1="115" y1="160" x2="115" y2="80" stroke="#1B2431" stroke-width="2"/>
+    <line x1="200" y1="160" x2="200" y2="80" stroke="#1B2431" stroke-width="2"/>
+    <line x1="285" y1="160" x2="285" y2="80" stroke="#1B2431" stroke-width="2"/>
+    <line x1="115" y1="80" x2="285" y2="80" stroke="#1B2431" stroke-width="2"/>
+    <line x1="30" y1="160" x2="115" y2="80" stroke="#5b6779" stroke-width="1.5"/>
+    <line x1="200" y1="160" x2="115" y2="80" stroke="#c07830" stroke-width="2.5"/>
+    <line x1="200" y1="160" x2="285" y2="80" stroke="#5b6779" stroke-width="1.5"/>
+    <line x1="370" y1="160" x2="285" y2="80" stroke="#5b6779" stroke-width="1.5"/>
+    <circle cx="30" cy="160" r="3" fill="#1B2431"/><text x="20" y="178" font-size="11" fill="#5b6779">A</text>
+    <circle cx="115" cy="160" r="3" fill="#1B2431"/><text x="105" y="178" font-size="11" fill="#5b6779">C</text>
+    <circle cx="200" cy="160" r="3" fill="#1B2431"/><text x="190" y="178" font-size="11" fill="#5b6779">E</text>
+    <circle cx="285" cy="160" r="3" fill="#1B2431"/><text x="278" y="178" font-size="11" fill="#5b6779">G</text>
+    <circle cx="370" cy="160" r="3" fill="#1B2431"/><text x="360" y="178" font-size="11" fill="#5b6779">I</text>
+    <circle cx="115" cy="80" r="3" fill="#1B2431"/><text x="105" y="70" font-size="11" fill="#5b6779">B</text>
+    <circle cx="200" cy="80" r="3" fill="#1B2431"/><text x="195" y="70" font-size="11" fill="#5b6779">D</text>
+    <circle cx="285" cy="80" r="3" fill="#1B2431"/><text x="278" y="70" font-size="11" fill="#5b6779">F</text>
+    <line x1="200" y1="80" x2="200" y2="45" stroke="#c0392b" stroke-width="2.5" marker-end="url(#ar-red6t)"/>
+    <text x="205" y="50" font-size="11" fill="#c0392b" font-weight="600">800N</text>
+    <line x1="150" y1="70" x2="150" y2="180" stroke="#5b6779" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="120" y="195" font-size="10" fill="#5b6779">section cut (panel 2)</text>
+  </svg>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Using the same truss and loading as the worked example, cut through panel 3 (members: top chord DF, diagonal GD, bottom chord EG). By left&ndash;right symmetry with the worked example, state \(F_{DF}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>By symmetry (load at midspan, symmetric supports): \(F_{DF}=F_{BD}=1066.67\text{ N}\) (compression).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>For the same panel 3 cut, state \(F_{EG}\) (bottom chord) and \(F_{GD}\) (diagonal) by symmetry.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(F_{EG}=F_{CE}=533.33\text{ N}\) (tension). \(F_{GD}=F_{EB}=666.67\text{ N}\) (tension).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Now the load is moved to joint F(12,3) instead of D, with magnitude 600&nbsp;N. Find the new reactions \(R_A,R_I\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\Sigma M_A\): \(R_I(16)=600(12)=7200 \Rightarrow R_I=450\text{ N}\). \(R_A=600-450=150\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Using the load-at-F scenario from Practice 12, cut through panel 2 (top BD, diagonal EB, bottom CE) using the left portion (\(R_A=150\text{ N}\), no load between A and this cut). Find \(F_{BD}\), \(F_{CE}\), and \(F_{EB}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\Sigma M_E\): \(F_{BD}=150(8)/3=400\text{ N}\) (compression).</p>
+    <p>\(\Sigma M_B\): \(F_{CE}=150(4)/3=200\text{ N}\) (tension).</p>
+    <p>\(\Sigma F_y\): \(F_{EB}=150(5)/3=250\text{ N}\) (tension).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>In the worked example, \(F_{BD}=1066.67\text{ N}\) but \(F_{CE}=533.33\text{ N}\), exactly half. Explain why, referencing the moment arms used in each equation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(F_{BD}\) came from \(R_A(8)=F_{BD}(3)\), using moment centre E, 8&nbsp;m from A. \(F_{CE}\) came from \(R_A(4)=F_{CE}(3)\), using moment centre B, only 4&nbsp;m from A. The numerator halves (8 vs 4) because E and B sit at different horizontal distances from the support, a direct geometric consequence of where each moment centre is located, not an error.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Advanced: tension/compression classification</div>
+  <div class="prose">
+    <p>Always assume tension as the default direction when setting up the equations. The sign of the result then tells you the physical answer directly.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Positive result (under a tension assumption) &rarr; member is in <strong>tension</strong>. Negative result &rarr; the assumed direction was wrong, the member is actually in <strong>compression</strong>, with that magnitude.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Solving a cut, an engineer assumes tension for a bottom-chord member and gets a result of \(-450\text{ N}\). What does this mean?</p>
+    <p class="step">A negative result under a tension assumption means the member is actually in <strong>compression</strong>, with magnitude <strong>450&nbsp;N</strong>.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A diagonal member's force comes out as \(+320\text{ N}\) under a tension assumption. State its actual condition and magnitude.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Tension</strong>, 320&nbsp;N (the positive sign confirms the assumed direction).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A top chord in a simply-supported, gravity-loaded truss is calculated to have a force of \(-890\text{ N}\) assuming tension. Is this consistent with the general expectation for top chords?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Yes.</strong> Top chords in simply-supported, gravity-loaded trusses are typically in compression, and the negative sign confirms exactly that (890&nbsp;N compression).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>A bottom chord's calculation gives \(+610\text{ N}\) under a tension assumption. Is this the expected sign for a bottom chord? Explain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Yes.</strong> Bottom chords are typically in tension in this type of truss, and the positive sign confirms it.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Why is it good practice to always assume tension as the default direction when setting up method-of-sections equations, before you know the actual answer?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>A consistent default convention means the sign of the final result directly tells you the physical state (positive = tension, negative = compression), without re-deriving the assumed direction case by case for every single member. It standardises the bookkeeping and avoids sign confusion across a larger truss with many members.</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Method of sections leans on exactly the same tools built across Weeks 1&ndash;5: FBDs, equilibrium, and moment-taking, now applied to a cut portion of a truss instead of a whole beam. Week 7's friction systems and Week 8's centroid work both reuse this same equilibrium foundation again.</p>
+</div>
+
+</main>
+
+<footer>DPEN102 &middot; Week 6 &middot; Truss Analysis (Method of Sections)</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
