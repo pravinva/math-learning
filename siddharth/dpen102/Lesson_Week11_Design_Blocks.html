@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Design Blocks &mdash; Stress, Centroid &amp; Second Moment</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">DPEN102 &middot; Week 11</div>
+  <h1>Design Blocks: Stress, Centroid &amp; Second Moment</h1>
+  <p>Weeks 4 and 8 built the individual tools, stress checks, centroids, second moment of area. This week fuses them into the actual design workflow: given a section and a load, is it safe? Given a section and an allowable stress, how much can it carry?</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 21 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">Checking if a section is safe</a></li>
+    <li><a href="#sec2">Finding the maximum safe load</a></li>
+    <li><a href="#sec3">Composite section design blocks</a></li>
+    <li><a href="#sec4">Advanced: shape &amp; design decisions</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Checking if a section is safe</div>
+  <div class="prose">
+    <p>The most common real design question: given an actual load and a chosen section, does it pass?</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Compute \(\sigma_{work}=F/A\), compare against \(\sigma_{allow}=\sigma_y/FoS\). \(\sigma_{work}\le\sigma_{allow}\): <strong>PASS</strong>. Otherwise: <strong>FAIL</strong>.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A tie rod, diameter 20&nbsp;mm, carries 60&nbsp;kN. \(\sigma_y=300\text{ MPa}\), \(FoS=2.5\). Is it safe?</p>
+    <p class="step">\(A=\pi(10)^2=314.16\text{ mm}^2\). \(\sigma_{work}=60{,}000/314.16=190.99\text{ MPa}\).</p>
+    <p class="step">\(\sigma_{allow}=300/2.5=120\text{ MPa}\). \(190.99>120\): <strong>FAILS.</strong></p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>The same rod's diameter is increased to 28&nbsp;mm. Recheck.</p>
+    <p class="step">\(A=\pi(14)^2=615.75\text{ mm}^2\). \(\sigma_{work}=60{,}000/615.75=97.44\text{ MPa}\).</p>
+    <p class="step">\(97.44<120\): <strong>PASSES</strong>, margin \(=120-97.44=22.56\text{ MPa}\) (18.8%).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A rod, diameter 15&nbsp;mm, carries 30&nbsp;kN. \(\sigma_y=250\text{ MPa}\), \(FoS=2\). Is it safe?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(A=\pi(7.5)^2=176.7\text{ mm}^2\). \(\sigma_{work}=30{,}000/176.7=169.8\text{ MPa}\). \(\sigma_{allow}=125\text{ MPa}\). \(169.8>125\): <strong>FAILS.</strong></p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A column, area 2000&nbsp;mm&sup2;, carries 180&nbsp;kN compressive. \(\sigma_y=300\text{ MPa}\), \(FoS=3\). Safe?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\sigma_{work}=180{,}000/2000=90\text{ MPa}\). \(\sigma_{allow}=100\text{ MPa}\). \(90<100\): <strong>PASSES.</strong></p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A bolt, diameter 10&nbsp;mm, carries 15&nbsp;kN. \(\sigma_y=400\text{ MPa}\), \(FoS=2.5\). Safe? Find the margin.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(A=78.54\text{ mm}^2\). \(\sigma_{work}=15{,}000/78.54=190.99\text{ MPa}\). \(\sigma_{allow}=160\text{ MPa}\). <strong>FAILS</strong> by 30.99&nbsp;MPa.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A cable, area 50&nbsp;mm&sup2;, carries 4&nbsp;kN. \(\sigma_y=1000\text{ MPa}\), \(FoS=4\). Safe?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\sigma_{work}=4000/50=80\text{ MPa}\). \(\sigma_{allow}=250\text{ MPa}\). \(80<250\): <strong>PASSES</strong>, comfortably.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Explain the difference between "the material yields" and "the design fails," in terms of \(\sigma_{work}\), \(\sigma_y\), and \(\sigma_{allow}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Yielding happens only when \(\sigma_{work}\) exceeds \(\sigma_y\), actual physical failure onset. "Design fails" in the engineering sense happens earlier, whenever \(\sigma_{work}\) exceeds \(\sigma_{allow}\) (which is \(\sigma_y\) divided by \(FoS\), a deliberately lower threshold). A design can fail its safety check well before the material would actually yield, that's the whole point of building in a margin.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Design A has \(\sigma_{work}=80\text{ MPa}\), Design B has \(\sigma_{work}=110\text{ MPa}\), same load and material, \(\sigma_{allow}=100\text{ MPa}\). Which passes, and what does this tell you about their areas?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Design A passes</strong> (80<100), Design B fails. Since \(\sigma=F/A\) with the same \(F\), Design B's higher stress means it has a <strong>smaller</strong> area than Design A, Design B is undersized for this load.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Finding the maximum safe load</div>
+  <div class="prose">
+    <p>The reverse question: given a chosen section, how much load can it actually carry before the allowable stress is exceeded?</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$F_{max}=\sigma_{allow}\times A.$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A column, area 2500&nbsp;mm&sup2;, \(\sigma_y=280\text{ MPa}\), \(FoS=2.8\). Find the maximum safe axial load.</p>
+    <p class="step">\(\sigma_{allow}=280/2.8=100\text{ MPa}\). \(F_{max}=100(2500)=250{,}000\text{ N}=250\text{ kN}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>If the column above must actually support 220&nbsp;kN, does it pass? Find the percentage margin.</p>
+    <p class="step">\(220<250\): <strong>PASSES.</strong> Margin \(=250-220=30\text{ kN}\), or \(30/250=12\%\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A rod, area 400&nbsp;mm&sup2;, \(\sigma_y=320\text{ MPa}\), \(FoS=2\). Find the maximum safe load.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\sigma_{allow}=160\text{ MPa}\). \(F_{max}=160(400)=64{,}000\text{ N}=64\text{ kN}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>For Practice 7, if the actual load is 55&nbsp;kN, does it pass? Find the margin.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(55<64\): <strong>PASSES.</strong> Margin \(=9\text{ kN}\) (14.1%).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A beam section, area 6000&nbsp;mm&sup2;, \(\sigma_y=250\text{ MPa}\), \(FoS=2.5\). Find the maximum safe axial load.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\sigma_{allow}=100\text{ MPa}\). \(F_{max}=100(6000)=600{,}000\text{ N}=600\text{ kN}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>For Practice 9, the actual demand is 640&nbsp;kN. Does it pass?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(640>600\): <strong>FAILS</strong>, by 40&nbsp;kN (6.7% over capacity).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A cable, area 30&nbsp;mm&sup2;, \(\sigma_{allow}=300\text{ MPa}\) (given directly). Find the max safe load, in kN.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(F_{max}=300(30)=9000\text{ N}=9\text{ kN}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Explain why "percentage margin" is often more useful than a raw kN difference when reporting a pass/fail result.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>A raw difference (say, 30&nbsp;kN) doesn't convey how significant that gap is relative to total capacity, 30&nbsp;kN out of 250&nbsp;kN (12%) is comfortable, but 30&nbsp;kN out of a 40&nbsp;kN capacity (75%) would be alarmingly tight. Percentage margin puts the safety cushion in proper context regardless of the load's absolute size.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Composite section design blocks</div>
+  <div class="prose">
+    <p>Real sections aren't simple rectangles, they're composites. The full design block strings the Week 8 geometry tools directly into the Week 4 stress check.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>An L-shaped bracket: vertical leg 100&times;20&nbsp;mm (area 2000, centroid \(x=10,y=60\)), horizontal leg 80&times;20&nbsp;mm (area 1600, centroid \(x=50,y=10\)). Find the composite centroid, then check whether it's safe under a pure axial load of 90&nbsp;kN, \(\sigma_y=260\text{ MPa}\), \(FoS=2.6\).</p>
+    <p class="step">Total area \(=3600\text{ mm}^2\). \(\bar x=\dfrac{2000(10)+1600(50)}{3600}=27.78\text{ mm}\). \(\bar y=\dfrac{2000(60)+1600(10)}{3600}=37.78\text{ mm}\).</p>
+    <p class="step">For a <em>pure axial</em> check, only the total area matters: \(\sigma_{allow}=260/2.6=100\text{ MPa}\). \(\sigma_{work}=90{,}000/3600=25\text{ MPa}\).</p>
+    <p class="step">\(25<100\): <strong>PASSES</strong>, with a huge margin (the centroid, while found, wasn't actually needed for this particular check).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>An L-shaped bracket: leg 1 area 1500 (centroid \(x=8,y=45\)), leg 2 area 1200 (centroid \(x=40,y=8\)). Find the composite centroid.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Total \(=2700\). \(\bar x=\dfrac{1500(8)+1200(40)}{2700}=22.22\text{ mm}\). \(\bar y=\dfrac{1500(45)+1200(8)}{2700}=28.56\text{ mm}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>The bracket in Practice 13 (total area 2700&nbsp;mm&sup2;) carries a pure axial load of 150&nbsp;kN. \(\sigma_y=240\text{ MPa}\), \(FoS=2.4\). Check if safe.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\sigma_{allow}=100\text{ MPa}\). \(\sigma_{work}=150{,}000/2700=55.56\text{ MPa}\). \(55.56<100\): <strong>PASSES.</strong></p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A T-shaped column section, total area 4400&nbsp;mm&sup2;, carries 380&nbsp;kN axial. \(\sigma_y=275\text{ MPa}\), \(FoS=2.75\). Check if safe, find the margin as a percentage.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\sigma_{allow}=100\text{ MPa}\). \(\sigma_{work}=380{,}000/4400=86.36\text{ MPa}\). \(86.36<100\): <strong>PASSES</strong>, margin \(=13.64\%\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Explain why, for a PURE AXIAL load check (not bending), the centroid location and second moment of area \(I\) aren't actually needed, only the total area is.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Axial stress is simply \(\sigma=F/A\), force divided by TOTAL cross-sectional area, it doesn't care where that area is distributed or how it's shaped, only how much of it there is. Centroid and \(I\) only become relevant once bending enters the picture, since bending stress depends on distance from the centroid via \(\sigma=Mc/I\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>If the same bracket from Practice 14 instead carried a bending moment (not pure axial), which additional section properties would you need, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>The composite centroid (to establish the neutral axis), the composite second moment of area \(I\) about that centroid, and the extreme-fibre distance \(c\) from the centroid to the outermost point, all needed to apply \(\sigma=Mc/I\) for the bending stress check.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Advanced: shape &amp; design decisions</div>
+  <div class="prose">
+    <p>For the same amount of material, different shapes give wildly different bending stiffness, even though axial capacity stays identical. Choosing the shape is itself a design decision.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Worked comparison</span>
+    <p>Two beam sections, both area \(4000\text{ mm}^2\). Section A, a solid square (\(s\approx63.25\text{ mm}\)): \(I=s^4/12\approx1{,}333{,}733\text{ mm}^4\). Section B, an I-shape concentrating material in two flanges: \(I\approx30{,}000{,}000\text{ mm}^4\), roughly <strong>22&times;</strong> stiffer for the exact same amount of material, exactly the parallel-axis lesson from Week 8 in action.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Two sections, same area and material: Section X has \(I=5{,}000{,}000\text{ mm}^4\), Section Y has \(I=18{,}000{,}000\text{ mm}^4\). Which resists bending deflection better, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Section Y</strong>, higher \(I\) directly means greater bending stiffness (less deflection) for the same material and loading.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>A designer has a fixed material budget and needs to maximise bending stiffness. Based on Weeks 8 and 11, what general shape strategy should they follow?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Concentrate material as far from the centroidal axis as possible (like an I-beam's flanges), since the parallel-axis transfer term \(Ad^2\) grows quadratically with distance, maximising \(I\) for a given area.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Does changing a section's shape, keeping the same total area, change its PURE AXIAL load capacity? Explain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>No.</strong> Axial capacity depends only on total area (\(\sigma=F/A\)), so reshaping the same amount of material doesn't change how much pure axial load it can carry, even though it dramatically changes bending performance.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Summarise, in your own words, why "bigger area" and "better section" are not the same design goal.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Bigger area helps axial capacity roughly proportionally, but bending performance depends on <em>how</em> that area is arranged (via \(I\)), not just how much there is. A well-shaped section can outperform a poorly-shaped one with the same, or even more, material, good design is about the placement of material, not just its quantity.</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> This is the last new-content week. Week 12 runs timed mixed practice across everything built so far, no new theory, just speed and consistency under exam conditions. Week 13 closes the course with a formula reference sheet and final readiness checklist.</p>
+</div>
+
+</main>
+
+<footer>DPEN102 &middot; Week 11 &middot; Design Blocks: Stress, Centroid &amp; Second Moment</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
