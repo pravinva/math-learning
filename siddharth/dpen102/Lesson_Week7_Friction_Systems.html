@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Friction Systems</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  svg.diagram{ display:block; margin:16px auto; background:#fff; border:1px solid var(--line); border-radius:6px; max-width:100%; height:auto; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">DPEN102 &middot; Week 7</div>
+  <h1>Friction Systems</h1>
+  <p>Static vs kinetic friction, the angle of repose on inclines, two-body wedge problems, and the exponential belt-friction relationship, four escalating applications of the same core idea: friction resists relative sliding, up to a maximum.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 23 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">The three friction states</a></li>
+    <li><a href="#sec1">Friction on inclines &amp; angle of repose</a></li>
+    <li><a href="#sec2">Wedges</a></li>
+    <li><a href="#sec3">Belt friction</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> The three friction states</div>
+  <div class="prose">
+    <p>Friction isn't one fixed value, it's whatever is <em>needed</em> for equilibrium, up to a ceiling. Below that ceiling, the object stays put; at the ceiling, it's about to slip; once actually sliding, a different (usually lower) coefficient applies.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><strong>Static, not impending:</strong> \(F<F_s^{max}=\mu_sN\) (friction exactly matches whatever's needed).</p>
+    <p><strong>Impending:</strong> \(F=F_s^{max}=\mu_sN\) (about to slip).</p>
+    <p><strong>Kinetic:</strong> \(F_k=\mu_kN\), once actually sliding, usually with \(\mu_k<\mu_s\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A 20&nbsp;kg crate sits on a floor, \(\mu_s=0.4\). A horizontal force of 60&nbsp;N is applied. Does it move? Find the actual friction force.</p>
+    <p class="step">\(W=196\text{ N}=N\). \(F_s^{max}=0.4(196)=78.4\text{ N}\).</p>
+    <p class="step">\(60\text{ N} < 78.4\text{ N}\): the crate <strong>does not move</strong>. Friction simply matches the applied force: \(f=60\text{ N}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>Same crate, the applied force is increased to 90&nbsp;N (\(\mu_k=0.3\)). Does it move now, and what's the actual friction while moving?</p>
+    <p class="step">\(90\text{ N} > 78.4\text{ N}\) (the static maximum): the crate <strong>does slide</strong>.</p>
+    <p class="step">Once sliding, kinetic friction applies: \(f_k=\mu_kN=0.3(196)=58.8\text{ N}\), leaving a net force of \(90-58.8=31.2\text{ N}\) to accelerate the crate.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A 15&nbsp;kg box, \(\mu_s=0.35\), on a floor. Applied force 40&nbsp;N. Does it move? Find the actual friction.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(W=147\text{ N}\). \(F_s^{max}=0.35(147)=51.45\text{ N}\). \(40<51.45\): does not move; \(f=40\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Same box, force increased to 55&nbsp;N. Does it move?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(55>51.45\): <strong>yes</strong>, it moves.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A 10&nbsp;kg block, \(\mu_s=0.5\), applied force 55&nbsp;N. Find \(F_s^{max}\) and determine if it moves.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(W=98\text{ N}\). \(F_s^{max}=0.5(98)=49\text{ N}\). \(55>49\): it moves.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>For Practice 3 (\(\mu_k=0.35\)), find the kinetic friction and the net accelerating force once moving.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(f_k=0.35(98)=34.3\text{ N}\). Net force \(=55-34.3=20.7\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A 25&nbsp;kg crate, \(\mu_s=0.45\). What is the maximum horizontal force before it moves?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(W=245\text{ N}\). \(F_s^{max}=0.45(245)=110.25\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Explain why \(\mu_k\) is typically less than \(\mu_s\), and what this means for a crate that has just started sliding.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Once surfaces are sliding, microscopic contact points don't "lock in" as strongly as when stationary, reducing resistance. Practically, this means the force needed to <em>keep</em> a crate moving is less than what it took to start it moving, once it breaks free, the crate can suddenly accelerate as the resisting force drops from \(F_s^{max}\) to the lower \(F_k\).</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Friction on inclines &amp; angle of repose</div>
+  <div class="prose">
+    <p>On an incline, gravity's down-slope pull is \(W\sin\theta\), balanced by \(N=W\cos\theta\). At the exact angle where friction alone can no longer hold a block, \(\tan\theta=\mu_s\), the "angle of repose", the mass cancels out entirely.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A block is on the verge of sliding on a 22&deg; incline (friction alone, no rope). Find \(\mu_s\).</p>
+    <p class="step">\(\mu_s=\tan22^\circ = 0.404\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>A 30&nbsp;kg crate sits on a 15&deg; incline, \(\mu_s=0.3\). Does it stay in place? Find the actual friction force.</p>
+    <p class="step">\(W=294\text{ N}\). \(N=294\cos15^\circ=284.0\text{ N}\). \(F_s^{max}=0.3(284)=85.2\text{ N}\).</p>
+    <p class="step">Required friction \(=W\sin15^\circ=294(0.2588)=76.1\text{ N}\). Since \(76.1<85.2\): <strong>stays in place</strong>, actual friction \(=76.1\text{ N}\) (below maximum).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A block is on the verge of sliding on an 18&deg; incline. Find \(\mu_s\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\mu_s=\tan18^\circ=0.325\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A 40&nbsp;kg crate on a 20&deg; incline, \(\mu_s=0.25\). Does it stay? Compare required vs maximum friction.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(W=392\text{ N}\). \(N=392\cos20^\circ=368.4\text{ N}\). \(F_s^{max}=0.25(368.4)=92.1\text{ N}\). Required \(=392\sin20^\circ=134.1\text{ N}\). Since \(134.1>92.1\): <strong>it slides.</strong></p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>For Practice 8, once sliding (\(\mu_k=0.18\)), find the kinetic friction and the net force down the slope.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(f_k=0.18(368.4)=66.3\text{ N}\). Net force \(=134.1-66.3=67.8\text{ N}\) down the slope.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Find the acceleration of the crate in Practice 9 (mass 40&nbsp;kg).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(a=67.8/40=1.695\text{ m/s}^2\) down the slope.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A 20&nbsp;kg crate on a 25&deg; incline, \(\mu_s=0.5\), no rope. Find the maximum additional downslope force before it slides.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(W=196\text{ N}\). \(N=196\cos25^\circ=177.6\text{ N}\). \(F_s^{max}=0.5(177.6)=88.8\text{ N}\). Required (gravity alone) \(=196\sin25^\circ=82.8\text{ N}\). Margin \(=88.8-82.8=6.0\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Explain, using \(\tan\theta=\mu_s\), why a steeper incline than the angle of repose guarantees sliding regardless of the block's weight.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>The ratio "required friction / maximum available" \(=\tan\theta/\mu_s\) is entirely independent of \(W\), the mass cancels out completely. Whether a block slides depends only on the angle versus \(\mu_s\), never on how heavy the block is, so once the incline exceeds \(\arctan(\mu_s)\), sliding is guaranteed for any weight.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Wedges</div>
+  <div class="prose">
+    <p>A wedge problem needs a separate FBD at each contact surface. Using the "friction angle" \(\varphi=\arctan(\mu)\) simplifies things: instead of tracking a normal force and a separate friction force, treat their combined effect as a single resultant tilted \(\varphi\) away from the true normal, in the direction that opposes motion.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea (single friction surface, frictionless floor)</span>
+    <p>For a wedge of angle \(\theta\) raising a vertically-guided block, with friction \(\mu\) only between wedge and block: $$P = W\tan(\theta+\varphi), \qquad \varphi=\arctan(\mu).$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A 15&deg; wedge raises a 500&nbsp;N block (vertically guided, frictionless wall), \(\mu=0.25\) between wedge and block, frictionless floor. Find the force \(P\) needed to just start raising the block.</p>
+    <p class="step">\(\varphi=\arctan(0.25)=14.04^\circ\). \(\theta+\varphi=29.04^\circ\).</p>
+    <p class="step">\(P=W\tan(\theta+\varphi)=500\tan(29.04^\circ)=500(0.5548)=277.4\text{ N}\).</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="ar-g7" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2f8f5b"/></marker><marker id="ar-r7" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c0392b"/></marker></defs>
+    <polygon points="40,150 220,150 220,110" fill="#f2f4f7" stroke="#1B2431" stroke-width="1.5"/>
+    <rect x="200" y="80" width="50" height="30" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <line x1="250" y1="95" x2="250" y2="140" stroke="#5b6779" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <line x1="220" y1="150" x2="270" y2="150" stroke="#2f8f5b" stroke-width="2.5" marker-end="url(#ar-g7)"/>
+    <text x="272" y="154" font-size="12" fill="#2f8f5b" font-weight="600">P</text>
+    <line x1="225" y1="95" x2="225" y2="150" stroke="#c0392b" stroke-width="2" marker-end="url(#ar-r7)"/>
+    <text x="230" y="130" font-size="12" fill="#c0392b" font-weight="600">W=500N</text>
+    <text x="60" y="145" font-size="12" fill="#5b6779">&#952;=15&deg;</text>
+  </svg>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Wedge \(\theta=10^\circ\), block 400&nbsp;N, \(\mu=0.3\). Find \(\varphi\) and \(P\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\varphi=\arctan(0.3)=16.70^\circ\). \(P=400\tan(26.70^\circ)=400(0.5029)=201.2\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Wedge \(\theta=20^\circ\), block 800&nbsp;N, \(\mu=0.2\). Find \(P\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\varphi=\arctan(0.2)=11.31^\circ\). \(P=800\tan(31.31^\circ)=800(0.6086)=486.9\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Wedge \(\theta=12^\circ\), block 350&nbsp;N, \(\mu=0.35\). Find \(P\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\varphi=\arctan(0.35)=19.29^\circ\). \(P=350\tan(31.29^\circ)=350(0.6082)=212.9\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Explain why \(P=W\tan(\theta+\varphi)\) grows extremely quickly as \(\theta+\varphi\) approaches 90&deg;.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>As \((\theta+\varphi)\to90^\circ\), \(\tan(\theta+\varphi)\to\infty\). Physically, a steep, high-friction wedge becomes extremely hard to drive in, almost all the applied force fights friction and geometry rather than usefully lifting the load.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>The formula assumed a frictionless floor. Qualitatively, how would adding floor friction change \(P\), and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(P\) would <strong>increase</strong>: the wedge now must also overcome resistance from the floor as it's driven forward, an additional friction force enters the wedge's horizontal equilibrium, always opposing \(P\).</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Belt friction</div>
+  <div class="prose">
+    <p>Wrapping a rope or belt around a drum lets friction accumulate over the entire contact arc, producing an exponential, not linear, relationship between the two side tensions.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\frac{T_2}{T_1}=e^{\mu\beta}$$ where \(T_2\) is the tension on the side about to slip toward (the "tight" side), \(T_1\) the slack side, and \(\beta\) the wrap angle in <strong>radians</strong>.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A belt wraps 180&deg; (\(\pi\) rad) around a drum, \(\mu=0.3\). Tight-side tension is 500&nbsp;N. Find the maximum slack-side tension before slipping.</p>
+    <p class="step">\(T_2/T_1=e^{\mu\beta}=e^{0.3\pi}=e^{0.9425}=2.566\).</p>
+    <p class="step">\(T_1=500/2.566=194.9\text{ N}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>A rope is wrapped 2.5 times (\(5\pi\) rad) around a capstan, \(\mu=0.25\). Find the maximum load \(W\) a person can hold by pulling with just 100&nbsp;N.</p>
+    <p class="step">\(\mu\beta=0.25(5\pi)=3.927\). \(e^{3.927}=50.75\).</p>
+    <p class="step">\(W=T_2=100(50.75)=5075\text{ N}\), over 5&nbsp;kN held by a 100&nbsp;N pull.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Belt wraps 90&deg; (\(\pi/2\) rad), \(\mu=0.25\). \(T_2=300\text{ N}\). Find \(T_1\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\mu\beta=0.25(1.5708)=0.3927\). \(e^{0.3927}=1.481\). \(T_1=300/1.481=202.6\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Belt wraps 270&deg; (\(3\pi/2\) rad), \(\mu=0.35\). \(T_2=800\text{ N}\). Find \(T_1\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\mu\beta=0.35(4.712)=1.649\). \(e^{1.649}=5.203\). \(T_1=800/5.203=153.8\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Belt wraps \(\pi\) rad, \(\mu=0.2\). \(T_1=100\text{ N}\). Find the max \(T_2\) before slipping.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\mu\beta=0.2\pi=0.6283\). \(e^{0.6283}=1.874\). \(T_2=100(1.874)=187.4\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Belt wraps \(2\pi\) rad (full wrap), \(\mu=0.3\). \(T_1=50\text{ N}\). Find \(T_2\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\mu\beta=0.3(2\pi)=1.885\). \(e^{1.885}=6.585\). \(T_2=50(6.585)=329.3\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Belt wraps 150&deg; (\(5\pi/6\) rad), \(\mu=0.28\). \(T_1=250\text{ N}\). Find \(T_2\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\beta=2.618\). \(\mu\beta=0.28(2.618)=0.733\). \(e^{0.733}=2.081\). \(T_2=250(2.081)=520.3\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Explain why increasing the wrap angle \(\beta\) increases the sustainable tension ratio so dramatically, and why engineers wrap a rope multiple times around a capstan to hold huge loads.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Since \(T_2/T_1=e^{\mu\beta}\) grows <strong>exponentially</strong> with \(\beta\), even a modest increase in wrap angle dramatically boosts the sustainable ratio. Wrapping a rope multiple times adds several full turns (each \(2\pi\)) to \(\beta\), making the ratio astronomically large, exactly why a small hand-held tension can resist an enormous load without slipping, the working principle of every capstan and belay device.</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Every friction problem here still runs on the same FBD and equilibrium skills from Week 1&ndash;3, friction is just one more force in the list. Week 8 shifts focus to geometry, centroids and second moments of area, which then feed directly into the stress calculations from Week 4.</p>
+</div>
+
+</main>
+
+<footer>DPEN102 &middot; Week 7 &middot; Friction Systems</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>

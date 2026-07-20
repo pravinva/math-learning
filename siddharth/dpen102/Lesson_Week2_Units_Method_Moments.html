@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Units, Method &amp; Moments</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">DPEN102 &middot; Week 2</div>
+  <h1>Units, Method &amp; Moments</h1>
+  <p>A physically correct force reported in the wrong units, or with false precision, is functionally wrong. This week builds the bookkeeping discipline, SI units, significant figures, and the 6-step engineering method, that keeps every later calculation trustworthy, then introduces moments: the rotational cousin of force.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 20 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">SI units &amp; conversions</a></li>
+    <li><a href="#sec2">Significant figures</a></li>
+    <li><a href="#sec3">The 6-step engineering method</a></li>
+    <li><a href="#sec4">Moments: &Sigma;M=0 basics</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> SI units &amp; conversions</div>
+  <div class="prose">
+    <p>Every calculation in DPEN102 should run in one consistent unit system, preferably SI, before any arithmetic happens.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Base SI units: length (m), mass (kg), time (s). Force is derived: \(\text{N}=\text{kg}\cdot\text{m/s}^2\). Common conversions: \(1\text{ kN}=1000\text{ N}\), \(1\text{ mm}=0.001\text{ m}\), \(1\text{ MPa}=10^6\text{ Pa}=1\text{ N/mm}^2\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>Convert 2.5&nbsp;kN to N.</p>
+    <p class="step">\(2.5\times1000=2500\text{ N}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>A force of 450&nbsp;N acts on an area of 15&nbsp;mm&sup2;. Find the stress in MPa.</p>
+    <p class="step">\(\sigma = 450/(15\times10^{-6}\text{ m}^2) = 30\times10^6\text{ Pa} = 30\text{ MPa}\).</p>
+    <p class="step">Shortcut: since \(1\text{ N/mm}^2=1\text{ MPa}\), you can skip straight to \(450\text{ N}/15\text{ mm}^2=30\text{ N/mm}^2=30\text{ MPa}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Convert 3.2&nbsp;kN to N.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(3200\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Convert 850&nbsp;mm to m.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(0.85\text{ m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Convert 0.06&nbsp;m&sup2; to mm&sup2;.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(0.06\times10^6=60{,}000\text{ mm}^2\) (since \(1\text{ m}^2=10^6\text{ mm}^2\)).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A stress of 85&nbsp;MPa acts over an area of 200&nbsp;mm&sup2;. Find the force in N.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(F=\sigma\times A=85(200)=17{,}000\text{ N}=17\text{ kN}\) (using the MPa \(=\) N/mm&sup2; shortcut directly).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Convert 45,000&nbsp;Pa to kPa and to MPa.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(45\text{ kPa}\), \(0.045\text{ MPa}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Show why 1&nbsp;N/mm&sup2; is numerically equal to 1&nbsp;MPa.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(1\text{ N/mm}^2 = 1\text{ N}/(10^{-3}\text{ m})^2 = 1\text{ N}/10^{-6}\text{ m}^2 = 10^6\text{ N/m}^2 = 10^6\text{ Pa} = 1\text{ MPa}\). The conversion factor works out to exactly 1, making the two units interchangeable for stress calculations.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Significant figures</div>
+  <div class="prose">
+    <p>Report answers to a precision consistent with your least precise given value, no more, no less.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>The final answer's significant figures are limited by the <strong>least</strong> precise input value. Don't round mid-calculation, only round the final reported answer.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>Multiply 4.2 (2 sig figs) by 1.75 (3 sig figs). How many sig figs should the answer have?</p>
+    <p class="step">The least precise input has 2 sig figs, so the answer is limited to 2: \(4.2\times1.75=7.35 \to 7.4\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>A calculated stress comes out to 83.276491&nbsp;MPa. The input data had 3 significant figures. How should this be reported?</p>
+    <p class="step"><strong>83.3 MPa</strong> (3 sig figs).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>How many significant figures does 0.00450 have?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>3</strong> (the trailing zero after the 5 is explicitly written, so it counts; the leading zeros do not).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Multiply \(2.5\times3.14159\) and report to appropriate significant figures (2.5 has 2 sig figs).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(2.5\times3.14159=7.853975 \to \mathbf{7.9}\) (2 sig figs).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A length is measured as 12.400&nbsp;m. How many significant figures does it have?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>5</strong> (all digits, including trailing zeros after a decimal point, are significant).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Explain why reporting a result as "83.276491 MPa" when your input data only had 3 sig figs is misleading.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>It implies a level of certainty the original measurements never had. Carrying that many digits falsely suggests you know the answer to within millionths of a MPa, when the input data was only reliable to 3 significant figures.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>During a multi-step calculation, should you round after every step, or only at the very end? Explain why.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Only at the very end.</strong> Rounding after every intermediate step introduces small errors that can compound and produce a noticeably wrong final answer. Keep full precision through the calculation and round only the final reported result.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> The 6-step engineering method</div>
+  <div class="prose">
+    <p>Define &rarr; Data/Diagram &rarr; Theory &rarr; Estimate &rarr; Solve &rarr; Verify. Always loop back if a units, sign, or physics check fails.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Apply the 6-step method to: "Find the tension in a rope holding a 20&nbsp;kg mass at rest."</p>
+    <p class="step"><strong>Define:</strong> the rope tension. <strong>Data/Diagram:</strong> \(m=20\text{ kg}\), \(g=9.8\), FBD showing \(W\) down, \(T\) up.</p>
+    <p class="step"><strong>Theory:</strong> \(\Sigma F_y=0\) (static equilibrium). <strong>Estimate:</strong> roughly \(20\times10=200\text{ N}\).</p>
+    <p class="step"><strong>Solve:</strong> \(T=W=20(9.8)=196\text{ N}\). <strong>Verify:</strong> close to the 200&nbsp;N estimate, units are N (force), sign makes sense, checks out.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Why does "Estimate" come BEFORE "Solve" in the 6-step method?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>A rough estimate gives something to sanity-check the precise answer against. Having it in advance prevents unconsciously adjusting the estimate to match whatever answer you calculate, it keeps the check honest.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A calculated answer comes out in the wrong units (expected N, got N&middot;m). Which step catches this, and what should you do?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Caught at <strong>Verify</strong>. Loop back through the calculation (likely to Theory or Solve) to find where an extra length term was accidentally introduced.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Why is drawing the FBD placed under "Data/Diagram" rather than "Theory"?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>The FBD is a visual organisation of the given information (what forces exist and where), part of correctly capturing the data, not yet applying the physics laws (equilibrium equations) that come next under Theory.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Apply the 6-step method (briefly, one line per step) to: "Find the acceleration of a 4&nbsp;kg block pushed by a net force of 20&nbsp;N."</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Define: find acceleration. Data: \(m=4\text{ kg}, F=20\text{ N}\). Theory: \(\Sigma F=ma\). Estimate: roughly \(5\text{ m/s}^2\). Solve: \(a=20/4=5\text{ m/s}^2\). Verify: matches the estimate, units correct &check;.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Moments: &Sigma;M=0 basics</div>
+  <div class="prose">
+    <p>A moment is force's rotational cousin, how much a force tends to twist something around a pivot.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$M=F\times d$$ where \(d\) is the perpendicular distance from the pivot to the force's line of action. Fix a sign convention (commonly counter-clockwise positive) <strong>before</strong> calculating. For rigid-body equilibrium: \(\Sigma M_O=0\) about any chosen point \(O\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A 50&nbsp;N force is applied 3&nbsp;m from a pivot, perpendicular to the lever arm. Find the moment.</p>
+    <p class="step">\(M=50(3)=150\text{ N}\cdot\text{m}\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>A seesaw is balanced with a 40&nbsp;kg child sitting 1.5&nbsp;m from the pivot on one side. Where must a 30&nbsp;kg child sit on the other side to balance it?</p>
+    <p class="step">\(M_1=M_2\): \(40(9.8)(1.5)=30(9.8)(d)\), mass and \(g\) both cancel: \(40(1.5)=30d \Rightarrow d=2\text{ m}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A 100&nbsp;N force acts 2&nbsp;m from a pivot, perpendicular. Find the moment.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(M=100(2)=200\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>A wrench applies 80&nbsp;N at the end of a 0.3&nbsp;m handle, perpendicular. Find the moment on the bolt.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(M=80(0.3)=24\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A 25&nbsp;kg child sits 2&nbsp;m from a seesaw's pivot. Find the distance for a 20&nbsp;kg child on the other side to balance it.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(25(2)=20d \Rightarrow d=2.5\text{ m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Two moments act about a pivot: 60&nbsp;N&middot;m clockwise and 60&nbsp;N&middot;m counter-clockwise. Is the system in rotational equilibrium?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Yes.</strong> The two moments are equal and opposite, so \(\Sigma M=0\), satisfying rotational equilibrium.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Explain why the sign convention (clockwise vs counter-clockwise) must be fixed BEFORE calculating moments, not decided afterward.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Without a fixed convention, it's easy to accidentally add two moments that should actually be subtracted (or vice versa), since a moment's sign depends entirely on its rotational direction relative to the chosen convention. Deciding it first ensures every term in \(\Sigma M=0\) is combined correctly.</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Moments here are the direct foundation for Week 4's internal bending moment \(M\) and Week 5's full bending moment diagrams, exactly the same \(F\times d\) idea, just applied at every point along a beam instead of one pivot. Week 3 adds the vector-algebra tools, components and resultants, needed to handle forces at angles.</p>
+</div>
+
+</main>
+
+<footer>DPEN102 &middot; Week 2 &middot; Units, Method &amp; Moments</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>

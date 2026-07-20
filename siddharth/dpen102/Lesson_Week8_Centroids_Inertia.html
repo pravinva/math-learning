@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Centroids &amp; Second Moment of Area</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  svg.diagram{ display:block; margin:16px auto; background:#fff; border:1px solid var(--line); border-radius:6px; max-width:100%; height:auto; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">DPEN102 &middot; Week 8</div>
+  <h1>Centroids, Center of Gravity &amp; Inertia</h1>
+  <p>Where a shape's weight "balances," how to handle composite shapes built from simple pieces (and holes cut out of them), and the second moment of area, the geometric property that decides how stiff a beam actually is.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 23 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Composite centroids: addition</a></li>
+    <li><a href="#sec1">Composite areas with holes: subtraction</a></li>
+    <li><a href="#sec2">Second moment of area &amp; parallel axis theorem</a></li>
+    <li><a href="#sec3">Advanced: composite second moment of area</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Composite centroids: addition</div>
+  <div class="prose">
+    <p>The centroid of a composite shape is an area-weighted average of each piece's own centroid, larger pieces pull the average toward themselves, exactly like a weighted mean.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\bar x = \frac{\sum A_ix_i}{\sum A_i}, \qquad \bar y = \frac{\sum A_iy_i}{\sum A_i}.$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>Two rectangles: \(R_1\) area 8, centroid \((2,1)\); \(R_2\) area 6, centroid \((5,1.5)\). Find the composite centroid.</p>
+    <p class="step">\(\bar x = \dfrac{8(2)+6(5)}{14}=\dfrac{46}{14}=3.286\).</p>
+    <p class="step">\(\bar y = \dfrac{8(1)+6(1.5)}{14}=\dfrac{17}{14}=1.214\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>An L-shaped section: base rectangle 6&times;2 (area 12, centroid \((3,1)\)), upright rectangle 2&times;4 sitting on top of its right end (area 8, centroid \((5,4)\)). Find the composite centroid.</p>
+    <p class="step">\(\bar x = \dfrac{12(3)+8(5)}{20}=\dfrac{76}{20}=3.8\).</p>
+    <p class="step">\(\bar y = \dfrac{12(1)+8(4)}{20}=\dfrac{44}{20}=2.2\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Two rectangles: \(A_1=10\) at \((1,2)\), \(A_2=15\) at \((4,3)\). Find the composite centroid.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\bar x=\dfrac{10(1)+15(4)}{25}=\dfrac{70}{25}=2.8\). \(\bar y=\dfrac{10(2)+15(3)}{25}=\dfrac{65}{25}=2.6\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Three equal squares, each area 4, centroids at \((1,1),(3,1),(5,1)\). Find the composite centroid.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\bar x=\dfrac{4(1)+4(3)+4(5)}{12}=\dfrac{36}{12}=3\). \(\bar y=1\) (all pieces share the same \(y\)).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A rectangle \(A_1=20\) at \((2,5)\) and a triangle \(A_2=6\) at \((6,2)\). Find the composite centroid.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\bar x=\dfrac{20(2)+6(6)}{26}=\dfrac{76}{26}=2.923\). \(\bar y=\dfrac{20(5)+6(2)}{26}=\dfrac{112}{26}=4.308\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A T-shape: top rectangle \(A_1=12\) at \((3,5)\), stem \(A_2=8\) at \((3,2)\). Find the composite centroid.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\bar x=3\) (symmetric, both pieces share \(x=3\)). \(\bar y=\dfrac{12(5)+8(2)}{20}=\dfrac{76}{20}=3.8\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>State the centroid location (from the flat edge) of a semicircle of radius \(r=6\), using \(\bar y=\dfrac{4r}{3\pi}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\bar y=\dfrac{4(6)}{3\pi}=\dfrac{24}{9.4248}=2.546\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Explain why an L-shaped composite section's centroid does NOT sit at the "visual middle" of the shape.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\bar x,\bar y\) are area-weighted averages, so the piece with more area pulls the composite centroid toward itself, exactly like a weighted average leans toward the larger weight. The "visual middle" only coincides with the centroid for symmetric shapes.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Composite areas with holes: subtraction</div>
+  <div class="prose">
+    <p>A hole is just negative area, plug it into the exact same formulas with a minus sign.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A 10&times;8 rectangle (area 80, centroid \((5,4)\)) has a circular hole radius 2 (area \(=12.57\)) centered at \((7,4)\). Find the composite centroid.</p>
+    <p class="step">\(\bar x=\dfrac{80(5)-12.57(7)}{80-12.57}=\dfrac{312.04}{67.43}=4.629\).</p>
+    <p class="step">\(\bar y=\dfrac{80(4)-12.57(4)}{67.43}=4.0\) (unchanged, since the hole's \(y\) matches the gross centroid's \(y\)).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>A 12&times;6 rectangle (area 72, centroid \((6,3)\)) has two square holes: side 2 (area 4) at \((3,3)\), and side 1.5 (area 2.25) at \((9,4)\). Find the composite centroid.</p>
+    <p class="step">Total area \(=72-4-2.25=65.75\).</p>
+    <p class="step">\(\bar x=\dfrac{72(6)-4(3)-2.25(9)}{65.75}=\dfrac{399.75}{65.75}=6.080\).</p>
+    <p class="step">\(\bar y=\dfrac{72(3)-4(3)-2.25(4)}{65.75}=\dfrac{195}{65.75}=2.966\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>An 8&times;6 rectangle (area 48, centroid \((4,3)\)) with a circular hole radius 1.5 (area 7.069) at \((5,3)\). Find \(\bar x,\bar y\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Total \(=40.93\). \(\bar x=\dfrac{48(4)-7.069(5)}{40.93}=\dfrac{156.66}{40.93}=3.828\). \(\bar y=3.0\) (unchanged).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A 10&times;10 square (area 100, centroid \((5,5)\)) with a square hole side 3 (area 9) at \((2,2)\). Find \(\bar x,\bar y\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Total \(=91\). \(\bar x=\bar y=\dfrac{100(5)-9(2)}{91}=\dfrac{482}{91}=5.297\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A 6&times;4 rectangle (area 24, centroid \((3,2)\)) with two circular holes, each radius 1, at \((2,2)\) and \((4,2)\). Find \(\bar x,\bar y\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Total \(=24-3.1416-3.1416=17.717\). \(\bar x=\dfrac{72-6.283-12.566}{17.717}=3.0\) (symmetric). \(\bar y=2\) (unchanged).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Explain why removing a hole located exactly AT the gross shape's centroid doesn't shift \(\bar x\) or \(\bar y\) at all.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>The hole's coordinates equal the gross centroid's coordinates, so the amount subtracted from the numerator is exactly proportional to what's subtracted from the denominator, algebraically, removing area exactly at the current balance point can't shift that balance point.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A 12&times;8 rectangle (area 96, centroid \((6,4)\)) has a rectangular hole 4&times;2 (area 8) centered at \((9,6)\). Find \(\bar x,\bar y\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Total \(=88\). \(\bar x=\dfrac{576-72}{88}=5.727\). \(\bar y=\dfrac{384-48}{88}=3.818\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>A washer is formed by removing a 2&nbsp;cm-radius hole from the centre of a 6&nbsp;cm-radius disk. Where is the composite centroid, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Still at the exact centre. Since both the gross disk and the hole are concentric, sharing the same centroid, removing the hole doesn't move the balance point at all.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Second moment of area &amp; parallel axis theorem</div>
+  <div class="prose">
+    <p>Second moment of area \(I\) measures how resistant a cross-section is to bending, larger \(I\) means a stiffer beam for the same material. The parallel axis theorem lets you shift \(I\) from a shape's own centroidal axis to any other parallel axis.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Rectangle about its own centroidal axis: $$I=\frac{bh^3}{12}.$$ Parallel axis theorem: $$I_{other} = I_{centroidal} + Ad^2,$$ where \(d\) is the distance between the two parallel axes.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 1</span>
+    <p>A rectangular beam cross-section, \(b=100\text{ mm}\), \(h=200\text{ mm}\). Find \(I\) about its own centroidal axis.</p>
+    <p class="step">\(I=\dfrac{100(200)^3}{12}=\dfrac{800{,}000{,}000}{12}=66{,}666{,}667\text{ mm}^4\).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example 2</span>
+    <p>The same rectangle's centroid sits 150&nbsp;mm from a reference axis. Find \(I\) about that reference axis.</p>
+    <p class="step">\(A=100(200)=20{,}000\text{ mm}^2\).</p>
+    <p class="step">\(I_{ref}=66{,}666{,}667+20{,}000(150)^2=66{,}666{,}667+450{,}000{,}000=516{,}666{,}667\text{ mm}^4\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A rectangle, \(b=80\text{ mm}, h=150\text{ mm}\). Find its centroidal \(I\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I=\dfrac{80(150)^3}{12}=\dfrac{270{,}000{,}000}{12}=22{,}500{,}000\text{ mm}^4\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>A rectangle, \(b=60\text{ mm}, h=250\text{ mm}\). Find its centroidal \(I\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I=\dfrac{60(250)^3}{12}=\dfrac{937{,}500{,}000}{12}=78{,}125{,}000\text{ mm}^4\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A rectangle, \(A=20{,}000\text{ mm}^2\), centroidal \(I=40{,}000{,}000\text{ mm}^4\), centroid 100&nbsp;mm from a reference axis. Find \(I\) about that axis.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(I_{ref}=40{,}000{,}000+20{,}000(100)^2=40{,}000{,}000+200{,}000{,}000=240{,}000{,}000\text{ mm}^4\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A shape has \(A=5000\text{ mm}^2\), centroidal \(I=1{,}000{,}000\text{ mm}^4\), centroid 80&nbsp;mm from a reference axis. Find \(I_{ref}\), and what fraction came from the transfer term.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Transfer term \(=5000(80)^2=32{,}000{,}000\text{ mm}^4\). \(I_{ref}=1{,}000{,}000+32{,}000{,}000=33{,}000{,}000\text{ mm}^4\). Fraction from transfer \(=32{,}000{,}000/33{,}000{,}000=97.0\%\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Two identical rectangles, each centroidal \(I=10{,}000{,}000\text{ mm}^4\) and \(A=8000\text{ mm}^2\), placed with centroids 30&nbsp;mm on either side of a reference axis. Find the total \(I\) about that axis.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Each: \(10{,}000{,}000+8000(30)^2=10{,}000{,}000+7{,}200{,}000=17{,}200{,}000\text{ mm}^4\). Total \(=2(17{,}200{,}000)=34{,}400{,}000\text{ mm}^4\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Explain why the parallel-axis transfer term (\(Ad^2\)) makes I-beams put most of their material in the flanges, far from the centroid, rather than spreading it evenly.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Because the transfer term is \(Ad^2\), doubling the distance \(d\) <strong>quadruples</strong> that term's contribution. Material far from the axis contributes vastly more stiffness per unit area than material near it, so I-beams concentrate material at the flanges to maximise \(I\) for a given amount of material, rather than wasting it near the centroid where it barely helps.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Advanced: composite second moment of area</div>
+  <div class="prose">
+    <p>For a composite section: find the composite centroid first (Sections 0&ndash;1), then apply the parallel axis theorem to <em>each piece individually</em>, shifting its own \(I\) to the shared composite axis, then sum everything.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A T-section: flange 100&times;20&nbsp;mm (area 2000, centroid at \(y=190\text{ mm}\)), stem 20&times;180&nbsp;mm (area 3600, centroid at \(y=90\text{ mm}\)). Find the composite centroidal \(I\).</p>
+    <p class="step">Composite centroid: \(\bar y=\dfrac{2000(190)+3600(90)}{5600}=\dfrac{704{,}000}{5600}=125.71\text{ mm}\).</p>
+    <p class="step">Flange's own \(I_1=\dfrac{100(20)^3}{12}=66{,}667\text{ mm}^4\). Stem's own \(I_2=\dfrac{20(180)^3}{12}=9{,}720{,}000\text{ mm}^4\).</p>
+    <p class="step">Distances to composite centroid: \(d_1=|190-125.71|=64.29\text{ mm}\), \(d_2=|90-125.71|=35.71\text{ mm}\).</p>
+    <p class="step">\(I_{1,total}=66{,}667+2000(64.29)^2=8{,}333{,}067\text{ mm}^4\). \(I_{2,total}=9{,}720{,}000+3600(35.71)^2=14{,}310{,}720\text{ mm}^4\).</p>
+    <p class="step">Composite \(I=8{,}333{,}067+14{,}310{,}720=22{,}643{,}787\text{ mm}^4\).</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="20" width="180" height="30" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <rect x="100" y="50" width="40" height="120" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <line x1="20" y1="20" x2="20" y2="170" stroke="#5b6779" stroke-width="1"/>
+    <line x1="15" y1="35" x2="220" y2="35" stroke="#c0392b" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="222" y="39" font-size="10" fill="#c0392b">flange centroid, y=190mm</text>
+    <line x1="15" y1="110" x2="220" y2="110" stroke="#c0392b" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="222" y="114" font-size="10" fill="#c0392b">stem centroid, y=90mm</text>
+    <line x1="15" y1="66" x2="220" y2="66" stroke="#2f8f5b" stroke-width="1.5"/>
+    <text x="222" y="70" font-size="10" fill="#2f8f5b" font-weight="600">composite &#375;=125.71mm</text>
+  </svg>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>For the T-section above, is the composite centroid closer to the stem's own centroid (90) or the flange's (190)? Why, given the areas?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Closer to the <strong>stem</strong> (distance 35.71 vs 64.29), since the stem has more area (3600 vs 2000), pulling the composite centroid toward itself.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A composite section: \(R_1\) area 1500, own \(I=50{,}000\text{ mm}^4\), centroid 40&nbsp;mm from the composite axis; \(R_2\) area 2500, own \(I=120{,}000\text{ mm}^4\), centroid 25&nbsp;mm away (opposite side). Find the total composite \(I\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R_1\): \(50{,}000+1500(40)^2=2{,}450{,}000\text{ mm}^4\). \(R_2\): \(120{,}000+2500(25)^2=1{,}682{,}500\text{ mm}^4\). Total \(=4{,}132{,}500\text{ mm}^4\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Explain why you must find the OVERALL composite centroid first, before applying the parallel axis theorem to each piece.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>The parallel-axis theorem shifts a piece's own centroidal \(I\) to a <em>different, chosen</em> reference axis. If that reference were each piece's own local centroid, you'd just recover each piece's own \(I\) with no meaningful combination, the whole point is measuring every piece's contribution relative to the <em>same shared</em> axis, which must be the composite centroid.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>If a piece's own centroid happens to sit exactly at the composite centroid (\(\bar y=125.71\text{ mm}\)), what is its transfer term, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Zero.</strong> The transfer term is \(Ad^2\), and \(d=0\) when the piece's own centroid coincides with the composite centroid, its full contribution comes purely from its own centroidal \(I\), with no transfer needed.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Two composite sections have the same total area and height. Section A concentrates area far from the centroid (I-beam-like); Section B spreads it evenly (solid rectangle). Which has the larger \(I\), and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p><strong>Section A.</strong> The transfer term \(Ad^2\) rewards area placed far from the axis quadratically, concentrating area at the extremes maximises \(I\) for a given total area, exactly why I-beams are shaped the way they are.</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> Second moment of area is what turns Week 4's internal bending moment \(M\) into an actual bending stress, via \(\sigma=Mc/I\), where \(c\) is the distance from the composite centroid to the extreme fibre. Week 9 shifts gears entirely, from geometry and stress to energy methods.</p>
+</div>
+
+</main>
+
+<footer>DPEN102 &middot; Week 8 &middot; Centroids, Center of Gravity &amp; Inertia</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>
