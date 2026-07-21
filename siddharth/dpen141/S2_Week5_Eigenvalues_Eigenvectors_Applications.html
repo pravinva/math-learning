@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Eigenvalues, Eigenvectors &amp; Applications</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH141 &middot; Strand 2 (Linear Algebra) &middot; Lesson 5</div>
+  <h1>Eigenvalues, Eigenvectors &amp; Applications</h1>
+  <p>The directions a matrix leaves unrotated, only stretched: how to find them via the characteristic equation, how to find the corresponding eigenvectors, and why this pair of ideas is exactly what powers diagonalisation, fast matrix exponentiation, and the steady-state behaviour of repeated transformations. Builds directly on the transformation picture from your Matrices as Transformations lesson. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 15 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Eigenvalues</a></li>
+<li><a href="#sec1">Eigenvectors</a></li>
+<li><a href="#sec2">Applications: diagonalisation &amp; matrix powers</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Eigenvalues</div>
+  <div class="prose">
+    
+<p>Recall from Matrices as Transformations: most vectors change <em>direction</em> when a matrix acts on them. An <strong>eigenvector</strong> is a special exception &mdash; a direction the matrix doesn't rotate at all, only stretches or shrinks (or flips). The stretch factor is the corresponding <strong>eigenvalue</strong>.</p>
+
+  </div>
+  
+  <div class="key-box">
+    <span class="box-label">Key definition</span>
+    
+<p>$\lambda$ is an eigenvalue of $A$, with eigenvector $\mathbf{v}\ne\mathbf{0}$, if $$A\mathbf{v}=\lambda\mathbf{v}.$$ Rearranging: $(A-\lambda I)\mathbf{v}=\mathbf{0}$. Since $\mathbf{v}\ne\mathbf{0}$, the matrix $A-\lambda I$ must be singular, giving the <strong>characteristic equation</strong> $$\det(A-\lambda I)=0.$$ Solving this polynomial equation in $\lambda$ gives every eigenvalue of $A$.</p>
+
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    
+<p>Find the eigenvalues of $A=\begin{pmatrix}2&3\\3&2\end{pmatrix}$.</p>
+<p class="step">$A-\lambda I = \begin{pmatrix}2-\lambda&3\\3&2-\lambda\end{pmatrix}$.</p>
+<p class="step">$\det(A-\lambda I) = (2-\lambda)^2-9 = 0 \ \Rightarrow\ (2-\lambda)^2=9 \ \Rightarrow\ 2-\lambda=\pm3$.</p>
+<p>$\lambda=2-3=-1$ or $\lambda=2+3=5$. Two eigenvalues: $\lambda_1=5,\ \lambda_2=-1$.</p>
+
+  </div>
+
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $\begin{pmatrix}4&0\\0&7\end{pmatrix}$, and explain why they could be read off without any calculation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Eigenvalues $4$ and $7$. For a diagonal matrix, the diagonal entries themselves are always the eigenvalues &mdash; the standard basis vectors are already eigenvectors, since a diagonal matrix scales each axis independently without mixing them.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $\begin{pmatrix}5&2\\2&2\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\det(A-\lambda I)=(5-\lambda)(2-\lambda)-4 = \lambda^2-7\lambda+10-4=\lambda^2-7\lambda+6=(\lambda-1)(\lambda-6)=0$. Eigenvalues $\lambda=1,6$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $\begin{pmatrix}1&4\\2&3\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(1-\lambda)(3-\lambda)-8=\lambda^2-4\lambda+3-8=\lambda^2-4\lambda-5=(\lambda-5)(\lambda+1)=0$. Eigenvalues $\lambda=5,-1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Find the eigenvalues of $\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ (the $90^\circ$ rotation matrix), and interpret why they aren't real.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(0-\lambda)(0-\lambda)-(-1)(1) = \lambda^2+1=0 \Rightarrow \lambda=\pm j$. A genuine rotation (other than by $0$ or $\pi$) never leaves any real direction unchanged &mdash; every real vector gets rotated to a new direction &mdash; so there can be no real eigenvalues at all, consistent with getting complex ones instead.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A $3\times3$ matrix has characteristic equation $\lambda^3-6\lambda^2+11\lambda-6=0$. Verify that $\lambda=1$ is a root, then find the remaining two eigenvalues.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$1-6+11-6=0$. &check; Factor out $(\lambda-1)$: $\lambda^3-6\lambda^2+11\lambda-6=(\lambda-1)(\lambda^2-5\lambda+6)=(\lambda-1)(\lambda-2)(\lambda-3)$. Eigenvalues: $1,2,3$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Eigenvectors</div>
+  <div class="prose">
+    
+<p>Once you have an eigenvalue $\lambda$, its eigenvectors are found by solving $(A-\lambda I)\mathbf{v}=\mathbf{0}$ &mdash; a homogeneous system that (because $A-\lambda I$ is singular by construction) always has infinitely many solutions, forming a line (or higher-dimensional space) through the origin.</p>
+
+  </div>
+  
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    
+<p>Eigenvectors are only ever determined <strong>up to a scalar multiple</strong> &mdash; if $\mathbf{v}$ is an eigenvector, so is $c\mathbf{v}$ for any $c\ne0$. It's conventional to present the simplest integer-entry version.</p>
+
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    
+<p>Find the eigenvectors of $A=\begin{pmatrix}2&3\\3&2\end{pmatrix}$ corresponding to $\lambda_1=5$ and $\lambda_2=-1$ (eigenvalues found in Section 0).</p>
+<p class="step">For $\lambda_1=5$: solve $(A-5I)\mathbf{v}=\mathbf{0}$: $\begin{pmatrix}-3&3\\3&-3\end{pmatrix}\begin{pmatrix}v_1\\v_2\end{pmatrix}=\begin{pmatrix}0\\0\end{pmatrix}$. Both rows give $-3v_1+3v_2=0 \Rightarrow v_1=v_2$. Eigenvector: $\begin{pmatrix}1\\1\end{pmatrix}$.</p>
+<p class="step">For $\lambda_2=-1$: solve $(A+I)\mathbf{v}=\mathbf{0}$: $\begin{pmatrix}3&3\\3&3\end{pmatrix}\begin{pmatrix}v_1\\v_2\end{pmatrix}=\begin{pmatrix}0\\0\end{pmatrix}$. Both rows give $3v_1+3v_2=0 \Rightarrow v_1=-v_2$. Eigenvector: $\begin{pmatrix}1\\-1\end{pmatrix}$.</p>
+<p>Check: $A\begin{pmatrix}1\\1\end{pmatrix}=\begin{pmatrix}5\\5\end{pmatrix}=5\begin{pmatrix}1\\1\end{pmatrix}$. &check;</p>
+
+  </div>
+
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Find the eigenvector of $\begin{pmatrix}4&0\\0&7\end{pmatrix}$ corresponding to $\lambda=4$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(A-4I)\mathbf{v}=\mathbf{0}$: $\begin{pmatrix}0&0\\0&3\end{pmatrix}\mathbf{v}=\mathbf{0} \Rightarrow 3v_2=0 \Rightarrow v_2=0$, $v_1$ free. Eigenvector: $\begin{pmatrix}1\\0\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Find the eigenvectors of $\begin{pmatrix}5&2\\2&2\end{pmatrix}$ (eigenvalues $\lambda=1,6$ from Practice 2).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For $\lambda=1$: $(A-I)\mathbf{v}=\mathbf{0}$: $\begin{pmatrix}4&2\\2&1\end{pmatrix}\mathbf{v}=\mathbf{0} \Rightarrow 4v_1+2v_2=0 \Rightarrow v_2=-2v_1$. Eigenvector: $\begin{pmatrix}1\\-2\end{pmatrix}$. For $\lambda=6$: $\begin{pmatrix}-1&2\\2&-4\end{pmatrix}\mathbf{v}=\mathbf{0} \Rightarrow -v_1+2v_2=0 \Rightarrow v_1=2v_2$. Eigenvector: $\begin{pmatrix}2\\1\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Find the eigenvectors of $\begin{pmatrix}1&4\\2&3\end{pmatrix}$ (eigenvalues $\lambda=5,-1$ from Practice 3).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For $\lambda=5$: $\begin{pmatrix}-4&4\\2&-2\end{pmatrix}\mathbf{v}=\mathbf{0}\Rightarrow -4v_1+4v_2=0\Rightarrow v_1=v_2$. Eigenvector $\begin{pmatrix}1\\1\end{pmatrix}$. For $\lambda=-1$: $\begin{pmatrix}2&4\\2&4\end{pmatrix}\mathbf{v}=\mathbf{0}\Rightarrow 2v_1+4v_2=0\Rightarrow v_1=-2v_2$. Eigenvector $\begin{pmatrix}2\\-1\end{pmatrix}$ (taking $v_2=-1$).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Verify directly that $\begin{pmatrix}2\\1\end{pmatrix}$ is an eigenvector of $A=\begin{pmatrix}5&2\\2&2\end{pmatrix}$, and state its eigenvalue.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A\begin{pmatrix}2\\1\end{pmatrix}=\begin{pmatrix}10+2\\4+2\end{pmatrix}=\begin{pmatrix}12\\6\end{pmatrix}=6\begin{pmatrix}2\\1\end{pmatrix}$. &check; Eigenvalue $6$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>For a $3\times3$ matrix with eigenvalue $\lambda=2$, the equation $(A-2I)\mathbf{v}=\mathbf{0}$ reduces (after row operations) to the single equation $v_1-2v_2+v_3=0$. Describe the eigenspace (the set of all valid eigenvectors) for this eigenvalue, and give two linearly independent eigenvectors.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since there's only one equation constraining three unknowns, two free parameters remain: the eigenspace is a whole <em>plane</em> through the origin, $v_1=2v_2-v_3$. Two independent eigenvectors, found by choosing free values: $v_2=1,v_3=0 \Rightarrow \begin{pmatrix}2\\1\\0\end{pmatrix}$; and $v_2=0,v_3=1 \Rightarrow \begin{pmatrix}-1\\0\\1\end{pmatrix}$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Applications of Eigenvalues and Eigenvectors</div>
+  <div class="prose">
+    
+<p>Eigenvalues and eigenvectors aren't just an algebraic curiosity &mdash; they're the natural language for describing repeated application of a matrix (population models, Markov chains, vibration modes) and for simplifying matrix powers dramatically via diagonalisation.</p>
+
+  </div>
+  
+  <div class="key-box">
+    <span class="box-label">Key idea &mdash; diagonalisation and matrix powers</span>
+    
+<p>If $A$ has eigenvalues $\lambda_1,\lambda_2$ with independent eigenvectors $\mathbf{v}_1,\mathbf{v}_2$, forming $P=(\mathbf{v}_1\ \mathbf{v}_2)$ gives $$A = PDP^{-1}, \qquad D=\begin{pmatrix}\lambda_1&0\\0&\lambda_2\end{pmatrix}.$$ Then $A^n = PD^nP^{-1}$, and $D^n$ is trivial to compute (just raise each diagonal entry to the power $n$) &mdash; turning an otherwise painful repeated matrix multiplication into three easy steps.</p>
+
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    
+<p>Given $A=\begin{pmatrix}2&3\\3&2\end{pmatrix}$ has eigenvalues $5,-1$ with eigenvectors $\begin{pmatrix}1\\1\end{pmatrix},\begin{pmatrix}1\\-1\end{pmatrix}$ (from Sections 0&ndash;1), describe how you would compute $A^{10}$ efficiently, without multiplying $A$ by itself ten times.</p>
+<p class="step">Form $P=\begin{pmatrix}1&1\\1&-1\end{pmatrix}$ and $D=\begin{pmatrix}5&0\\0&-1\end{pmatrix}$, so $A=PDP^{-1}$.</p>
+<p class="step">Then $A^{10}=PD^{10}P^{-1}$, and $D^{10}=\begin{pmatrix}5^{10}&0\\0&(-1)^{10}\end{pmatrix}=\begin{pmatrix}9765625&0\\0&1\end{pmatrix}$ &mdash; instantly, with no repeated matrix multiplication at all.</p>
+<p>Only $P^{-1}$ and two matrix multiplications remain, versus nine successive matrix-matrix multiplications the direct way &mdash; a dramatic saving for large powers.</p>
+
+  </div>
+
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A population model has transition matrix $A=\begin{pmatrix}0.8&0.3\\0.2&0.7\end{pmatrix}$ with an eigenvalue $\lambda=1$. Explain the significance of an eigenvalue exactly equal to $1$ for the long-term behaviour of the population.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>An eigenvalue of $1$ means there's a direction (a particular population distribution) that the matrix leaves completely unchanged, $A\mathbf{v}=\mathbf{v}$ &mdash; a <strong>steady state</strong>. Over time, repeated application of $A$ tends to drive the population distribution toward this eigenvector, provided the other eigenvalue has magnitude less than $1$ (so its contribution decays away).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>If $A$ has eigenvalues $3$ and $-2$, state the eigenvalues of $A^2$, and explain the general rule.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Eigenvalues of $A^2$ are $3^2=9$ and $(-2)^2=4$. In general, if $\lambda$ is an eigenvalue of $A$ with eigenvector $\mathbf{v}$, then $A^2\mathbf{v}=A(\lambda\mathbf{v})=\lambda A\mathbf{v}=\lambda^2\mathbf{v}$, so $\lambda^2$ is an eigenvalue of $A^2$ with the <em>same</em> eigenvector.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>The trace of a matrix (sum of diagonal entries) always equals the sum of its eigenvalues, and the determinant always equals their product. Use this shortcut to set up an equation for the eigenvalues of $\begin{pmatrix}7&2\\-3&-2\end{pmatrix}$, without computing $\det(A-\lambda I)$ directly.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Trace $=7+(-2)=5$. Determinant $=7(-2)-2(-3)=-14+6=-8$. Every $2\times2$ matrix's eigenvalues satisfy $\lambda^2-(\text{trace})\lambda+\det=0$, i.e. $\lambda^2-5\lambda-8=0$, giving $\lambda=\dfrac{5\pm\sqrt{25+32}}{2}=\dfrac{5\pm\sqrt{57}}{2}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Explain why a matrix with a repeated eigenvalue does not necessarily fail to be diagonalisable, but a matrix that cannot supply enough independent eigenvectors does.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Diagonalisability requires, for an $n\times n$ matrix, a full set of $n$ linearly independent eigenvectors &mdash; not necessarily $n$ <em>distinct</em> eigenvalues. A repeated eigenvalue can still be diagonalisable if its eigenspace has dimension matching the repetition (e.g. the identity matrix has eigenvalue $1$ repeated $n$ times, yet is trivially diagonal already). Failure occurs only when a repeated eigenvalue's eigenspace is smaller than its multiplicity, leaving too few independent directions to build $P$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A vibrating system's mode shapes are the eigenvectors of its stiffness matrix $K=\begin{pmatrix}3&-1\\-1&3\end{pmatrix}$. Find the eigenvalues (representing squared natural frequencies) and describe the physical meaning of the eigenvector for the smaller eigenvalue.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(3-\lambda)^2-1=0 \Rightarrow 3-\lambda=\pm1 \Rightarrow \lambda=2$ or $\lambda=4$. For $\lambda=2$: $(K-2I)\mathbf{v}=\mathbf{0} \Rightarrow \begin{pmatrix}1&-1\\-1&1\end{pmatrix}\mathbf{v}=\mathbf{0}\Rightarrow v_1=v_2$, eigenvector $\begin{pmatrix}1\\1\end{pmatrix}$: physically, both masses move together, in phase &mdash; the lower-frequency, &lsquo;softer&rsquo; mode, since it requires less relative stretching of the connecting spring.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>MATH141 Foundations of Engineering Mathematics &middot; Strand 2, Lesson 5 (Lectures 9&ndash;10)</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

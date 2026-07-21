@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>De Moivre's Theorem &amp; Introduction to Functions</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH141 &middot; Strand 1 (Calculus) &middot; Lesson 5</div>
+  <h1>De Moivre's Theorem &amp; Introduction to Functions</h1>
+  <p>How polar form makes powers and roots of complex numbers almost effortless via De Moivre's Theorem, and the foundational function vocabulary &mdash; domain, range, algebra of functions, piecewise definitions, and graphical transformations &mdash; that every later lesson on differentiation and integration will assume you have. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 16 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">De Moivre's Theorem</a></li>
+<li><a href="#sec1">Functions: domain, range, algebra</a></li>
+<li><a href="#sec2">Piecewise functions &amp; transformations</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> De Moivre's Theorem</div>
+  <div class="prose">
+    
+<p>De Moivre's Theorem is the payoff for putting a complex number into polar form: raising it to a power, or taking an $n$th root, becomes almost effortless &mdash; multiply the argument (or divide it, for roots) and raise (or take the root of) the modulus.</p>
+
+  </div>
+  
+  <div class="key-box">
+    <span class="box-label">Key statement</span>
+    
+<p>For any integer $n$: $$\big(r(\cos\theta+j\sin\theta)\big)^n = r^n(\cos n\theta+j\sin n\theta).$$</p>
+<p><strong>$n$th roots:</strong> the $n$ roots of $z=r(\cos\theta+j\sin\theta)$ are $$w_k = r^{1/n}\left(\cos\frac{\theta+2k\pi}{n}+j\sin\frac{\theta+2k\pi}{n}\right), \qquad k=0,1,\dots,n-1.$$ They're evenly spaced around a circle of radius $r^{1/n}$.</p>
+
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    
+<p>Find the polar form of $z=-1+j\sqrt3$, and hence find $z^{10}$.</p>
+<p class="step">$r=\sqrt{1+3}=2$. Second quadrant, reference angle $\dfrac{\pi}{3}$: $\theta=\pi-\dfrac{\pi}{3}=\dfrac{2\pi}{3}$.</p>
+<p class="step">$z=2\left(\cos\dfrac{2\pi}{3}+j\sin\dfrac{2\pi}{3}\right)$.</p>
+<p class="step">$z^{10}=2^{10}\left(\cos\dfrac{20\pi}{3}+j\sin\dfrac{20\pi}{3}\right)$. Reduce the angle mod $2\pi$: $\dfrac{20\pi}{3}-6\pi=\dfrac{20\pi-18\pi}{3}=\dfrac{2\pi}{3}$.</p>
+<p>$$z^{10} = 1024\left(\cos\frac{2\pi}{3}+j\sin\frac{2\pi}{3}\right) = 1024\left(-\frac12+j\frac{\sqrt3}{2}\right) = -512+512\sqrt3\,j.$$</p>
+
+  </div>
+
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Find $(1+j)^8$ using De Moivre's Theorem.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Polar form: $r=\sqrt2$, $\theta=\dfrac{\pi}{4}$. $(1+j)^8 = (\sqrt2)^8\left(\cos2\pi+j\sin2\pi\right)=16(1+0)=16$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Find $\left(\sqrt3-j\right)^6$ using De Moivre's Theorem.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$r=\sqrt{3+1}=2$, $\theta=-\dfrac{\pi}{6}$ (Q4). $z^6=2^6\left(\cos(-\pi)+j\sin(-\pi)\right)=64(-1+0)=-64$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Solve $z^4+1=j\sqrt3$ for all values of $z$ (leave your answer in polar form).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Rewrite: $z^4 = -1+j\sqrt3$. Polar form of RHS: $r=2$, $\theta=\dfrac{2\pi}{3}$ (Q2, as in the worked example). Fourth roots: $w_k = 2^{1/4}\left(\cos\dfrac{\tfrac{2\pi}{3}+2k\pi}{4}+j\sin\dfrac{\tfrac{2\pi}{3}+2k\pi}{4}\right)$ for $k=0,1,2,3$, giving angles $\dfrac{\pi}{6},\dfrac{\pi}{6}+\dfrac{\pi}{2},\dfrac{\pi}{6}+\pi,\dfrac{\pi}{6}+\dfrac{3\pi}{2}$, i.e. $\dfrac{\pi}{6},\dfrac{2\pi}{3},\dfrac{7\pi}{6},\dfrac{5\pi}{3}$, each with modulus $2^{1/4}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Find all cube roots of $z=8$ (i.e. solve $w^3=8$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$8=8(\cos0+j\sin0)$. Roots: $w_k=8^{1/3}\left(\cos\dfrac{2k\pi}{3}+j\sin\dfrac{2k\pi}{3}\right)$, $k=0,1,2$: $w_0=2$, $w_1=2\left(\cos\tfrac{2\pi}{3}+j\sin\tfrac{2\pi}{3}\right)=-1+j\sqrt3$, $w_2=2\left(\cos\tfrac{4\pi}{3}+j\sin\tfrac{4\pi}{3}\right)=-1-j\sqrt3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Use De Moivre's Theorem with $n=3$ to derive an identity for $\cos3\theta$ in terms of $\cos\theta$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(\cos\theta+j\sin\theta)^3=\cos3\theta+j\sin3\theta$. Expand the left side using the binomial theorem: $\cos^3\theta+3\cos^2\theta(j\sin\theta)+3\cos\theta(j\sin\theta)^2+(j\sin\theta)^3 = \cos^3\theta+3j\cos^2\theta\sin\theta-3\cos\theta\sin^2\theta-j\sin^3\theta$. Equating real parts: $\cos3\theta=\cos^3\theta-3\cos\theta\sin^2\theta=\cos^3\theta-3\cos\theta(1-\cos^2\theta)=4\cos^3\theta-3\cos\theta$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Introduction to Functions: Domain, Range, and Algebra of Functions</div>
+  <div class="prose">
+    
+<p>A function is a rule assigning exactly one output to each valid input. Its <strong>domain</strong> is every input the rule can legally accept; its <strong>range</strong> is every value the rule can actually produce. Combining functions (adding, multiplying, dividing) can only ever shrink the domain &mdash; never grow it &mdash; since every combined operation must itself be defined.</p>
+
+  </div>
+  
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    
+<p>For $(f+g)(x)$, $(fg)(x)$: domain is $\text{dom}(f)\cap\text{dom}(g)$. For $\left(\dfrac{f}{g}\right)(x)$: domain is $\text{dom}(f)\cap\text{dom}(g)$, further excluding any $x$ where $g(x)=0$.</p>
+
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    
+<p>Let $f(x)=\sqrt{x^2-1}$ and $g(x)=\dfrac{1}{\sqrt{4-x^2}}$. Find $(fg)(x)$ and state the domain of each function, including $f$ and $g$.</p>
+<p class="step">$\text{dom}(f)$: need $x^2-1\ge0 \Rightarrow |x|\ge1 \Rightarrow x\in(-\infty,-1]\cup[1,\infty)$.</p>
+<p class="step">$\text{dom}(g)$: need $4-x^2>0$ (strict, since it's in a denominator under a root) $\Rightarrow |x|<2 \Rightarrow x\in(-2,2)$.</p>
+<p class="step">$(fg)(x) = \sqrt{x^2-1}\cdot\dfrac{1}{\sqrt{4-x^2}} = \sqrt{\dfrac{x^2-1}{4-x^2}}$.</p>
+<p>$\text{dom}(fg) = \text{dom}(f)\cap\text{dom}(g) = (-2,-1]\cup[1,2)$.</p>
+
+  </div>
+
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Find the domain of $f(x)=\dfrac{1}{x-3}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>All reals except where the denominator is zero: $x\ne3$, i.e. $x\in(-\infty,3)\cup(3,\infty)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Find the domain of $g(x)=\sqrt{5-x}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Need $5-x\ge0 \Rightarrow x\le5$, i.e. $x\in(-\infty,5]$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>For $f(x)=x^2-4$, find the range of $f$, given its domain is all real numbers.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Vertex at $(0,-4)$, opening upward, so the minimum value is $-4$ and $f$ increases without bound either side: range $=[-4,\infty)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Let $f(x)=\sqrt{x}$ and $g(x)=\dfrac{1}{x-2}$. Find $\left(\dfrac{f}{g}\right)(x)$ and its domain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\left(\dfrac{f}{g}\right)(x) = \sqrt{x}\cdot(x-2) = (x-2)\sqrt{x}$. Domain of $f$: $x\ge0$. Domain of $g$: $x\ne2$. Also need $g(x)\ne0$, which is automatic since $g$ is never zero. Domain of $f/g$: $x\ge0,\ x\ne2$, i.e. $[0,2)\cup(2,\infty)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Let $f(x)=\ln(x-1)$ and $g(x)=\sqrt{6-x}$. Find the domain of $(f+g)(x)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Domain of $f$: $x>1$. Domain of $g$: $x\le6$. Intersection: $1<x\le6$, i.e. $(1,6]$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A signal's power is $P(t)=\dfrac{1}{\sqrt{t^2-4}}$. Find the domain of $P$, and explain the physical significance of the excluded region.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Need $t^2-4>0$ (strict, as it's under a root in a denominator) $\Rightarrow |t|>2 \Rightarrow t\in(-\infty,-2)\cup(2,\infty)$. For $-2\le t\le2$, the formula is either undefined (at $t=\pm2$) or would require a square root of a negative number (strictly between), so the model simply doesn't apply in that time window &mdash; the signal's power isn't described by this formula there.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Piecewise Functions and Graphical Transformations</div>
+  <div class="prose">
+    
+<p>Many real functions aren't given by a single formula everywhere &mdash; they're defined piece by piece, switching rule at certain break points. Recognising how shifts, stretches, and reflections move a graph around lets you sketch a transformed function quickly from a known parent shape.</p>
+
+  </div>
+  
+  <div class="key-box">
+    <span class="box-label">Key transformations of $y=f(x)$</span>
+    
+<p>$f(x)+a$: shift up $a$ (down if $a<0$). $\ f(x-a)$: shift right $a$ (left if $a<0$). $\ -f(x)$: reflect in the $x$-axis. $\ f(-x)$: reflect in the $y$-axis. $\ cf(x)$ ($c>1$): stretch vertically by factor $c$.</p>
+
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    
+<p>Describe how the graph of $g(x)=-2f(x-3)+1$ relates to the graph of $y=f(x)$.</p>
+<p class="step">Read the transformations from the inside out: $f(x-3)$ shifts $f$ right by $3$.</p>
+<p class="step">$-2f(x-3)$ then reflects that graph in the $x$-axis and stretches it vertically by a factor of $2$.</p>
+<p>$-2f(x-3)+1$ finally shifts the whole thing up by $1$. Order: shift right 3, reflect &amp; stretch vertically by 2, shift up 1.</p>
+
+  </div>
+
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Given $f(x)=x^2$, describe the graph of $g(x)=(x+4)^2-2$ as a transformation of $f$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Shift left $4$, then shift down $2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Given $f(x)=\sqrt{x}$, describe the graph of $h(x)=-\sqrt{x}+5$ as a transformation of $f$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Reflect in the $x$-axis, then shift up $5$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>A function is defined piecewise as $f(x)=\begin{cases}x+2 & x<0\\x^2 & x\ge0\end{cases}$. Evaluate $f(-3)$, $f(0)$, and $f(2)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(-3)=-3+2=-1$ (using the first rule, since $-3<0$). $f(0)=0^2=0$ (using the second rule, since $0\ge0$). $f(2)=2^2=4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Sketch (describe key features of) $y=|x-2|$ as a transformation of $y=|x|$, and state its minimum value and where it occurs.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Shift right $2$. Minimum value $0$, occurring at $x=2$ (the vertex of the V-shape).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A tax bracket function charges $0\%$ on income up to \$18{,}200$ and $19\%$ on each dollar above that, up to \$45{,}000$. Write this as a piecewise function $T(x)$ for $0\le x\le45{,}000$, and evaluate $T(30{,}000)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$T(x)=\begin{cases}0 & 0\le x\le18200\\0.19(x-18200) & 18200<x\le45000\end{cases}$$ $T(30000)=0.19(30000-18200)=0.19(11800)=2242$.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>MATH141 Foundations of Engineering Mathematics &middot; Strand 1, Lesson 5 (Lectures 9&ndash;10)</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

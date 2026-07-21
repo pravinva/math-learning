@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Distances: Points, Lines &amp; Planes &mdash; The Complete Toolkit</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .exam-badge{
+    font-family:'Roboto Mono',monospace; font-weight:600; font-size:10.5px; letter-spacing:0.08em;
+    color:#fff; background:var(--red); border-radius:4px; padding:3px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH141 &middot; Strand 2 (Linear Algebra / Vector Geometry) &middot; Lesson 11</div>
+  <h1>Distances: Points, Lines &amp; Planes &mdash; The Complete Toolkit</h1>
+  <p>Every distance calculation in 3D geometry, gathered into one place: point-to-point, point-to-line, point-to-plane, plane-to-parallel-plane, and the trickiest one of all &mdash; the shortest distance between two skew lines, found using the same scalar-triple-product idea that measured volume back in Lesson 9. A comprehensive exam-style review closes out the vector geometry sequence. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 11 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Distance formulas: a complete toolkit</a></li>
+<li><a href="#sec1">Distance between skew lines</a></li>
+<li><a href="#sec2">Mixed exam-style review</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Distance Formulas: A Complete Toolkit</div>
+  <div class="prose">
+    
+<p>This lesson pulls together every distance calculation from the whole vector geometry sequence into one place, filling in the two combinations not yet covered: the distance between two <em>parallel</em> lines, and the distance between two parallel <em>planes</em>.</p>
+
+  </div>
+  
+  <div class="key-box">
+    <span class="box-label">Key formulas</span>
+    
+<p><strong>Point to point:</strong> $|\overrightarrow{AB}|$. <strong>Point to line:</strong> $\dfrac{|\overrightarrow{AP}\times\mathbf{d}|}{|\mathbf{d}|}$. <strong>Point to plane:</strong> $\dfrac{|n_1x_0+n_2y_0+n_3z_0-d|}{|\mathbf{n}|}$.</p>
+<p><strong>Parallel planes</strong> $n_1x+n_2y+n_3z=d_1$ and $n_1x+n_2y+n_3z=d_2$ (same normal): $$\text{dist} = \frac{|d_1-d_2|}{|\mathbf{n}|}.$$</p>
+
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    
+<p>Find the distance between the parallel planes $2x-y+2z=5$ and $2x-y+2z=-4$.</p>
+<p class="step">Same normal $\mathbf{n}=(2,-1,2)$, $|\mathbf{n}|=\sqrt{4+1+4}=3$.</p>
+<p>$$\text{dist} = \frac{|5-(-4)|}{3} = \frac{9}{3}=3.$$</p>
+
+  </div>
+
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Find the distance between the parallel planes $x+2y-2z=1$ and $x+2y-2z=7$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$|\mathbf{n}|=\sqrt{1+4+4}=3$. Distance $=\dfrac{|1-7|}{3}=\dfrac63=2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Find the distance between the parallel planes $2x-2y+z=4$ and $4x-4y+2z=6$ (note the second isn't in the same normalised form).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Rewrite the second by dividing by $2$: $2x-2y+z=3$. Same normal as the first, $\mathbf{n}=(2,-2,1)$, $|\mathbf{n}|=3$. Distance $=\dfrac{|4-3|}{3}=\dfrac13$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Find the distance from the point $(3,-1,2)$ to the plane $x+y+z=0$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$|\mathbf{n}|=\sqrt3$. Distance $=\dfrac{|3-1+2-0|}{\sqrt3}=\dfrac{4}{\sqrt3}=\dfrac{4\sqrt3}{3}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Find the distance from the point $(0,0,0)$ to the line through $(2,3,1)$ with direction $(1,0,0)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\overrightarrow{AP}=(0,0,0)-(2,3,1)=(-2,-3,-1)$. Cross with $(1,0,0)$: $\mathbf{i}$: $(-3)(0)-(-1)(0)=0$. $\mathbf{j}$: $-[(-2)(0)-(-1)(1)]=-1$. $\mathbf{k}$: $(-2)(0)-(-3)(1)=3$. Result $(0,-1,3)$, magnitude $\sqrt{10}$. $|\mathbf{d}|=1$. Distance $=\sqrt{10}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Two parallel power lines run along $\mathbf{r}_1=(0,0,0)+t(1,1,0)$ and $\mathbf{r}_2=(0,3,0)+t(1,1,0)$ (in metres). Find the distance between them.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since the lines are parallel, pick any point on $\mathcal{L}_2$, e.g. $(0,3,0)$, and find its distance to $\mathcal{L}_1$. $\overrightarrow{AP}=(0,3,0)-(0,0,0)=(0,3,0)$. Cross with $(1,1,0)$: $\mathbf{i}$: $(3)(0)-(0)(1)=0$. $\mathbf{j}$: $-[(0)(0)-(0)(1)]=0$. $\mathbf{k}$: $(0)(1)-(3)(1)=-3$. Result $(0,0,-3)$, magnitude $3$. $|\mathbf{d}|=\sqrt2$. Distance $=\dfrac{3}{\sqrt2}=\dfrac{3\sqrt2}{2}$ m.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Distance Between Skew Lines</div>
+  <div class="prose">
+    
+<p>Two skew lines (non-parallel, non-intersecting) are still separated by a well-defined shortest distance &mdash; measured along the one direction perpendicular to <em>both</em> lines simultaneously. That perpendicular direction is exactly the cross product of the two direction vectors.</p>
+
+  </div>
+  
+  <div class="key-box">
+    <span class="box-label">Key formula</span>
+    
+<p>For lines through $A_1$ (direction $\mathbf{d}_1$) and $A_2$ (direction $\mathbf{d}_2$): $$\text{dist} = \frac{\big|\overrightarrow{A_1A_2}\cdot(\mathbf{d}_1\times\mathbf{d}_2)\big|}{|\mathbf{d}_1\times\mathbf{d}_2|}.$$ This is exactly the scalar triple product volume, divided by the base parallelogram area &mdash; the same "volume over base = height" idea from the point-to-line formula, generalised to two skew lines.</p>
+
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    
+<p>Find the distance between $\mathcal{L}_1: \mathbf{r}=(0,1,0)+s(1,1,0)$ and $\mathcal{L}_2: \mathbf{r}=(0,1,1)+t(1,0,1)$ (shown to be skew in Strand 2, Lesson 8).</p>
+<p class="step">$A_1=(0,1,0)$, $A_2=(0,1,1)$. $\overrightarrow{A_1A_2}=(0,0,1)$.</p>
+<p class="step">$\mathbf{d}_1\times\mathbf{d}_2 = (1,1,0)\times(1,0,1)$: $\mathbf{i}$: $(1)(1)-(0)(0)=1$. $\mathbf{j}$: $-[(1)(1)-(0)(1)]=-1$. $\mathbf{k}$: $(1)(0)-(1)(1)=-1$. Result $(1,-1,-1)$.</p>
+<p class="step">$\overrightarrow{A_1A_2}\cdot(1,-1,-1) = 0(1)+0(-1)+1(-1)=-1$. $|(1,-1,-1)|=\sqrt3$.</p>
+<p>$$\text{dist} = \frac{|-1|}{\sqrt3}=\frac{1}{\sqrt3}=\frac{\sqrt3}{3}.$$</p>
+
+  </div>
+
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Find the distance between the skew lines $\mathcal{L}_1: \mathbf{r}=(0,0,0)+s(1,0,0)$ and $\mathcal{L}_2: \mathbf{r}=(0,1,1)+t(0,1,0)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\overrightarrow{A_1A_2}=(0,1,1)$. $\mathbf{d}_1\times\mathbf{d}_2=(1,0,0)\times(0,1,0)$: this is $\mathbf{i}\times\mathbf{j}=\mathbf{k}=(0,0,1)$. Dot product: $(0,1,1)\cdot(0,0,1)=1$. $|(0,0,1)|=1$. Distance $=\dfrac{1}{1}=1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Find the distance between the skew lines $\mathcal{L}_1: \mathbf{r}=(1,0,0)+s(0,1,1)$ and $\mathcal{L}_2: \mathbf{r}=(0,0,2)+t(1,0,1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\overrightarrow{A_1A_2}=(0,0,2)-(1,0,0)=(-1,0,2)$. $\mathbf{d}_1\times\mathbf{d}_2=(0,1,1)\times(1,0,1)$: $\mathbf{i}$: $(1)(1)-(1)(0)=1$. $\mathbf{j}$: $-[(0)(1)-(1)(1)]=1$. $\mathbf{k}$: $(0)(0)-(1)(1)=-1$. Result $(1,1,-1)$. Dot: $(-1)(1)+0(1)+2(-1)=-1-2=-3$. $|(1,1,-1)|=\sqrt3$. Distance $=\dfrac{3}{\sqrt3}=\sqrt3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Explain why the distance-between-skew-lines formula reduces to $0$ if the lines actually intersect, without doing any calculation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>If the lines intersect, $\overrightarrow{A_1A_2}$ (from a point on one line to a point on the other, taken as their actual intersection point coinciding) can be written as a combination of $\mathbf{d}_1$ and $\mathbf{d}_2$ (it lies in the plane they span), making the scalar triple product $\overrightarrow{A_1A_2}\cdot(\mathbf{d}_1\times\mathbf{d}_2)$ equal to $0$ &mdash; consistent with zero distance.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Mixed Exam-Style Review: Vector Geometry</div>
+  <div class="prose">
+    
+<p>Comprehensive multi-part questions drawing on the full vector geometry sequence &mdash; vectors, lines, planes, and every distance formula &mdash; the way a real end-of-session exam question would combine them.</p>
+
+  </div>
+  
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span> <span class="exam-badge">EXAM-STYLE</span></div>
+  <div class="p-body"><p>[<em>Exam-style, multi-part</em>] Consider the line $\mathcal{L}: \mathbf{r}=(1,2,0)+t(2,-1,2)$ and the plane $\mathcal{P}: x+y+z=6$. (a) Find the point where $\mathcal{L}$ meets $\mathcal{P}$ (substitute the parametric coordinates into the plane equation and solve for $t$). (b) Find the distance from the point $(1,2,0)$ to the plane $\mathcal{P}$. (c) Find the angle between the line's direction and the plane's normal.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(a) $x=1+2t,\ y=2-t,\ z=2t$. Substitute: $(1+2t)+(2-t)+2t=6 \Rightarrow 3+3t=6 \Rightarrow t=1$. Point: $(3,1,2)$.</p><p>(b) $|\mathbf{n}|=\sqrt3$. Distance $=\dfrac{|1+2+0-6|}{\sqrt3}=\dfrac{3}{\sqrt3}=\sqrt3$.</p><p>(c) $\mathbf{d}=(2,-1,2)$, $\mathbf{n}=(1,1,1)$. $\mathbf{d}\cdot\mathbf{n}=2-1+2=3$. $|\mathbf{d}|=3$, $|\mathbf{n}|=\sqrt3$. $\cos\theta=\dfrac{3}{3\sqrt3}=\dfrac{1}{\sqrt3} \Rightarrow \theta\approx54.7^\circ$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span> <span class="exam-badge">EXAM-STYLE</span></div>
+  <div class="p-body"><p>[<em>Exam-style, multi-part</em>] Let $A=(1,0,0)$, $B=(0,1,0)$, $C=(0,0,2)$. (a) Find the equation of the plane through $A,B,C$. (b) Find the area of triangle $ABC$ using $\dfrac12|\overrightarrow{AB}\times\overrightarrow{AC}|$. (c) Find the distance from the origin to this plane.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(a) $\overrightarrow{AB}=(-1,1,0)$, $\overrightarrow{AC}=(-1,0,2)$. Normal: $\mathbf{i}$: $(1)(2)-(0)(0)=2$. $\mathbf{j}$: $-[(-1)(2)-(0)(-1)]=2$. $\mathbf{k}$: $(-1)(0)-(1)(-1)=1$. $\mathbf{n}=(2,2,1)$. Equation: $2(x-1)+2y+z=0 \Rightarrow 2x+2y+z=2$.</p><p>(b) $|\mathbf{n}|=\sqrt{4+4+1}=3$. Area $=\dfrac{3}{2}$.</p><p>(c) Distance from $(0,0,0)$: $\dfrac{|0+0+0-2|}{3}=\dfrac23$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span> <span class="exam-badge">EXAM-STYLE</span></div>
+  <div class="p-body"><p>[<em>Exam-style, multi-part</em>] Two lines are given by $\mathcal{L}_1: \mathbf{r}=(2,0,1)+s(1,1,0)$ and $\mathcal{L}_2: \mathbf{r}=(0,2,0)+t(1,-1,1)$. (a) Show that $\mathcal{L}_1$ and $\mathcal{L}_2$ are skew. (b) Find the distance between them.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(a) Directions $(1,1,0)$ and $(1,-1,1)$ aren't parallel. Equate: $2+s=t$ (from $x$), $s=2-t$ (from $y$), $1=t$ (from $z$). From $z$: $t=1$. Then from $y$: $s=2-1=1$. Check $x$: $2+1=3$, but $t=1$ gives $3\ne1$ &mdash; inconsistent, so no intersection: the lines are skew.</p><p>(b) $\overrightarrow{A_1A_2}=(0,2,0)-(2,0,1)=(-2,2,-1)$. $\mathbf{d}_1\times\mathbf{d}_2=(1,1,0)\times(1,-1,1)$: $\mathbf{i}$: $(1)(1)-(0)(-1)=1$. $\mathbf{j}$: $-[(1)(1)-(0)(1)]=-1$. $\mathbf{k}$: $(1)(-1)-(1)(1)=-2$. Result $(1,-1,-2)$. Dot: $(-2)(1)+2(-1)+(-1)(-2)=-2-2+2=-2$. $|(1,-1,-2)|=\sqrt6$. Distance $=\dfrac{2}{\sqrt6}=\dfrac{\sqrt6}{3}$.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>MATH141 Foundations of Engineering Mathematics &middot; Strand 2, Lesson 11 (Lecture 20)</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>
