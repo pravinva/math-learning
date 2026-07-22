@@ -171,13 +171,13 @@ window.MathJax = {
     <li><a href="#sec0">Why formalise limits?</a></li>
     <li><a href="#sec1">From intuition to formal notation</a></li>
     <li><a href="#sec2">Limit laws</a></li>
-    <li><a href="#sec2s">Squeeze theorem</a></li>
-    <li><a href="#sec3">The derivative, formally</a></li>
     <li><a href="#sec4">One-sided limits and non-existence</a></li>
     <li><a href="#sec5">Indeterminate forms: factoring and conjugates</a></li>
+    <li><a href="#sec2s">Squeeze theorem</a></li>
     <li><a href="#sec6">Infinite limits and vertical asymptotes</a></li>
     <li><a href="#sec7">Limits at infinity and horizontal asymptotes</a></li>
     <li><a href="#sec8">Continuity</a></li>
+    <li><a href="#sec3">The derivative, formally</a></li>
     <li><a href="#sec9">L'H&ocirc;pital's Rule</a></li>
   </ol>
 </nav>
@@ -1844,6 +1844,39 @@ window.MathJax = {
 <footer>MATH141 Prep &middot; Limits</footer>
 
 <script>
+function extractTopicBlock(sectionId){
+  const start = document.getElementById(sectionId);
+  if(!start) return [];
+  const nodes = [];
+  let current = start;
+  while(current){
+    const next = current.nextSibling;
+    nodes.push(current);
+    if(
+      next &&
+      next.nodeType === 1 &&
+      next.matches('section.topic')
+    ){
+      break;
+    }
+    current = next;
+  }
+  return nodes;
+}
+
+function moveTopicBlockBefore(sectionIdToMove, targetSectionId){
+  const target = document.getElementById(targetSectionId);
+  if(!target) return;
+  const nodes = extractTopicBlock(sectionIdToMove);
+  if(nodes.length === 0) return;
+  const parent = target.parentNode;
+  nodes.forEach(node => parent.insertBefore(node, target));
+}
+
+// Pedagogical flow: place squeeze after Section 5, and derivative after Section 8.
+moveTopicBlockBefore('sec2s', 'sec6');
+moveTopicBlockBefore('sec3', 'sec9');
+
 const cards = document.querySelectorAll('[data-card]');
 const fill = document.getElementById('progressFill');
 const label = document.getElementById('progressLabel');
