@@ -1355,9 +1355,19 @@ window.MathJax = {
   <div class="why-box">
     <span class="box-label">Why row operations affect the determinant the way they do</span>
     <p><strong>Swapping two rows</strong> flips the sign of the determinant ($\times-1$). This is because the determinant is an <em>alternating</em> function of the rows: a matrix with two identical rows always has determinant $0$ (its rows are linearly dependent, so it cannot be invertible), and swapping two nearly-identical rows must flip the sign to stay consistent with that fact.</p>
-    <p><strong>Scaling a row by a constant $k$</strong> scales the whole determinant by $k$. This is linearity: every term in the determinant's expansion uses exactly one entry from that row, so scaling the row scales every one of those terms by $k$.</p>
-    <p><strong>Adding a multiple of one row to another</strong> ($R_i \to R_i + kR_j$) leaves the determinant <strong>completely unchanged</strong>. This also follows from linearity: $\det(\dots,R_i+kR_j,\dots) = \det(\dots,R_i,\dots) + k\det(\dots,R_j,\dots,R_j,\dots)$, and that second term is automatically zero because it has a repeated row $R_j$.</p>
-    <p>Putting this together: as you row-reduce, keep a running tally of how many row swaps you performed, and by what constants you scaled any rows. At the end, $\det(\text{original}) = (-1)^{\#\text{swaps}} \times \dfrac{1}{\prod(\text{scaling factors used})} \times (\text{product of the final diagonal})$. In practice, most of the time you will avoid scaling rows entirely and only use swaps and add-a-multiple operations, since those are free (they do not change the determinant at all, apart from the sign flip from a swap), which keeps the bookkeeping to just counting swaps.</p>
+    <p><strong>Scaling a row by a constant $k$</strong> multiplies the determinant by $k$. A concrete way to remember this: each term in the determinant expansion picks exactly one entry from that row, so every term gets multiplied by $k$, so the whole determinant gets multiplied by $k$.</p>
+    <p><strong>Adding a multiple of one row to another</strong> ($R_i \to R_i + kR_j$) leaves the determinant unchanged. Write it using linearity in row $i$:
+    $\det(\dots,R_i+kR_j,\dots)=\det(\dots,R_i,\dots)+k\det(\dots,R_j,\dots,R_j,\dots)$.
+    The second determinant is $0$ because it has two identical rows, so only the first term remains.</p>
+    <p>A cleaner bookkeeping method than memorizing a formula is to track a multiplier $F$ with
+    $\det(\text{current matrix})=F\cdot\det(\text{original matrix})$.
+    Start with $F=1$, then update as you row-reduce:
+    swap rows $\Rightarrow F\leftarrow -F$;
+    scale a row by $k$ $\Rightarrow F\leftarrow kF$;
+    add a multiple of another row $\Rightarrow F$ unchanged.
+    If the final echelon matrix is $U$, then
+    $$\det(U)=F\det(A)\quad\Rightarrow\quad \det(A)=\frac{\det(U)}{F}.$$
+    Since $\det(U)$ is just the product of the diagonal entries, this gives a reliable step-by-step workflow. In practice, if you avoid row-scaling operations, then $F$ is just $(-1)^{\#\text{swaps}}$.</p>
   </div>
 
   <div class="prose">
