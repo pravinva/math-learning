@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Partial Derivatives, the Chain Rule &amp; Double Integrals (Introduction)</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH283 &middot; Advanced Engineering Mathematics &amp; Statistics &middot; Week 2</div>
+  <h1>Partial Derivatives, the Chain Rule &amp; Double Integrals (Introduction)</h1>
+  <p>Differentiating a multivariable function means asking how it changes with respect to ONE variable at a time, holding the others fixed &mdash; this single idea (the partial derivative) unlocks the multivariable chain rule, implicit differentiation, linear approximation/error estimation, and (reversing the process) double integration. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 80 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this week's toolkit</span>
+  <ul>
+<li><strong>Partial derivative:</strong> $\dfrac{\partial f}{\partial x}$ treats $y$ (and any other variables) as a constant, differentiating with respect to $x$ alone; $\dfrac{\partial f}{\partial y}$ does the reverse.</li>
+<li><strong>Higher-order &amp; mixed partials:</strong> $f_{xy}=\dfrac{\partial^2f}{\partial y\partial x}$; for well-behaved (continuous second partials) functions, $f_{xy}=f_{yx}$ (Clairaut's theorem) &mdash; a useful check.</li>
+<li><strong>Multivariable chain rule</strong> (for $z=f(x,y)$ with $x=x(t),y=y(t)$): $\dfrac{dz}{dt}=\dfrac{\partial z}{\partial x}\dfrac{dx}{dt}+\dfrac{\partial z}{\partial y}\dfrac{dy}{dt}$.</li>
+<li><strong>Implicit differentiation</strong> (for $F(x,y)=0$): $\dfrac{dy}{dx}=-\dfrac{F_x}{F_y}$.</li>
+<li><strong>Linear approximation / differentials:</strong> $dz=f_x\,dx+f_y\,dy \approx \Delta z$ &mdash; used for error estimation: if $x,y$ have measurement errors $dx,dy$, the resulting error in $z=f(x,y)$ is approximately $dz$.</li>
+<li><strong>Double integral (Cartesian, over a rectangle or general region):</strong> $\displaystyle\iint_R f(x,y)\,dA = \int_c^d\int_a^b f(x,y)\,dx\,dy$ (or the other integration order) &mdash; evaluated as an iterated integral, working from the inside out.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Partial Derivatives</a></li>
+<li><a href="#sec1">The Multivariable Chain Rule &amp; Implicit Differentiation</a></li>
+<li><a href="#sec2">Applications of Partial Derivatives &mdash; Linear Approximation &amp; Error Estimation</a></li>
+<li><a href="#sec3">Double Integrals in Cartesian Coordinates (Introduction)</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+  <div class="section-title"><span class="tag">0</span> Partial Derivatives</div>
+
+  <div class="prose">
+<p>For $z=f(x,y)$, the partial derivative $\dfrac{\partial f}{\partial x}$ measures the rate of change of $f$ in the $x$-direction alone &mdash; found by differentiating with respect to $x$ exactly as in single-variable calculus, while treating every other variable ($y$, and any others) as a fixed constant. $\dfrac{\partial f}{\partial y}$ does the same in the $y$-direction.</p>
+<p><strong>Higher-order partials.</strong> Differentiating $f_x$ again with respect to $x$ gives $f_{xx}$; differentiating $f_x$ with respect to $y$ instead gives the <em>mixed</em> partial $f_{xy}$. For essentially all functions encountered in this course (those with continuous second partial derivatives), the order of mixed differentiation doesn't matter: $f_{xy}=f_{yx}$ &mdash; a handy way to check your work.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$\frac{\partial f}{\partial x} = \lim_{h\to0}\frac{f(x+h,y)-f(x,y)}{h}, \qquad f_{xy}=f_{yx} \ \text{(Clairaut's theorem, when continuous)}$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example 1.</strong> Find $f_x$ and $f_y$ for $f(x,y)=x^3y^2+\sin(xy)$.</p>
+<p class="step">$f_x=3x^2y^2+y\cos(xy)$ (treat $y$ as constant); $f_y=2x^3y+x\cos(xy)$ (treat $x$ as constant).</p>
+<p><strong>Example 2.</strong> Verify $f_{xy}=f_{yx}$ for $f(x,y)=x^2y^3$.</p>
+<p class="step">$f_x=2xy^3 \implies f_{xy}=6xy^2$. $f_y=3x^2y^2 \implies f_{yx}=6xy^2$. Match. &#10003;</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Find $f_x$ and $f_y$ for $f(x,y)=e^{xy}\ln(x+y)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f_x=ye^{xy}\ln(x+y)+e^{xy}\cdot\dfrac{1}{x+y}$ (product rule, treating $y$ constant).</p>
+<p>$f_y=xe^{xy}\ln(x+y)+e^{xy}\cdot\dfrac{1}{x+y}$ (by symmetry, treating $x$ constant).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Find $f_{xx}$, $f_{yy}$, and $f_{xy}$ for $f(x,y)=x^4y^3-2x^2y$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f_x=4x^3y^3-4xy$; $f_{xx}=12x^2y^3-4y$.</p>
+<p>$f_y=3x^4y^2-2x^2$; $f_{yy}=6x^4y$.</p>
+<p>$f_{xy}=\dfrac{\partial}{\partial y}(4x^3y^3-4xy)=12x^3y^2-4x$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Find $\dfrac{\partial z}{\partial x}$ and $\dfrac{\partial z}{\partial y}$ for $z=\tan^{-1}\left(\dfrac{y}{x}\right)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Let $u=y/x$; $\dfrac{\partial z}{\partial u}=\dfrac{1}{1+u^2}$.</p>
+<p>$\dfrac{\partial u}{\partial x}=-\dfrac{y}{x^2}$: $z_x=\dfrac{1}{1+y^2/x^2}\cdot\left(-\dfrac{y}{x^2}\right)=\dfrac{-y}{x^2+y^2}$.</p>
+<p>$\dfrac{\partial u}{\partial y}=\dfrac1x$: $z_y=\dfrac{1}{1+y^2/x^2}\cdot\dfrac1x=\dfrac{x}{x^2+y^2}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Verify Clairaut's theorem ($f_{xy}=f_{yx}$) for $f(x,y)=\sin(x^2y)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f_x=2xy\cos(x^2y)$; $f_{xy}=2x\cos(x^2y)+2xy\cdot(-x^2\sin(x^2y))=2x\cos(x^2y)-2x^3y\sin(x^2y)$.</p>
+<p>$f_y=x^2\cos(x^2y)$; $f_{yx}=2x\cos(x^2y)+x^2\cdot(-2xy\sin(x^2y))=2x\cos(x^2y)-2x^3y\sin(x^2y)$.</p>
+<p><strong>Answer:</strong> both mixed partials match exactly. &#10003;</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>The ideal gas law gives $P=\dfrac{nRT}{V}$ ($n,R$ constant). Find $\dfrac{\partial P}{\partial T}$ and $\dfrac{\partial P}{\partial V}$, and interpret each physically.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{\partial P}{\partial T}=\dfrac{nR}{V}$ &mdash; at fixed volume, pressure increases linearly with temperature.</p>
+<p>$\dfrac{\partial P}{\partial V}=-\dfrac{nRT}{V^2}$ &mdash; at fixed temperature, pressure decreases (and does so more steeply at smaller $V$) as volume increases, consistent with Boyle's Law.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Find all second-order partial derivatives ($f_{xx},f_{yy},f_{xy},f_{yx}$) of $f(x,y)=e^x\cos y$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f_x=e^x\cos y$; $f_{xx}=e^x\cos y$.</p>
+<p>$f_y=-e^x\sin y$; $f_{yy}=-e^x\cos y$.</p>
+<p>$f_{xy}=\dfrac{\partial}{\partial y}(e^x\cos y)=-e^x\sin y$; $f_{yx}=\dfrac{\partial}{\partial x}(-e^x\sin y)=-e^x\sin y$. Match. &#10003;</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Show that $u(x,t)=\sin(x-ct)$ satisfies the wave equation $\dfrac{\partial^2u}{\partial t^2}=c^2\dfrac{\partial^2u}{\partial x^2}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$u_x=\cos(x-ct)$; $u_{xx}=-\sin(x-ct)$.</p>
+<p>$u_t=-c\cos(x-ct)$; $u_{tt}=-c^2\sin(x-ct)$.</p>
+<p>Check: $u_{tt}=-c^2\sin(x-ct)=c^2\big[-\sin(x-ct)\big]=c^2u_{xx}$. &#10003; Satisfies the wave equation for any constant $c$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Find $f_x(1,2)$ and $f_y(1,2)$ for $f(x,y)=x^2y+3xy^2$, and interpret the sign of each.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f_x=2xy+3y^2 \implies f_x(1,2)=2(1)(2)+3(4)=4+12=16$.</p>
+<p>$f_y=x^2+6xy \implies f_y(1,2)=1+12=13$.</p>
+<p><strong>Interpretation:</strong> both are positive, meaning $f$ is increasing at $(1,2)$ in both the $x$-direction and the $y$-direction (moving slightly in either positive direction increases $f$'s value).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Find $\dfrac{\partial w}{\partial x}$, $\dfrac{\partial w}{\partial y}$, and $\dfrac{\partial w}{\partial z}$ for the three-variable function $w=x^2yz^3+\ln(xz)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$w_x=2xyz^3+\dfrac1x$ (treating $y,z$ constant).</p>
+<p>$w_y=x^2z^3$ (treating $x,z$ constant; the $\ln(xz)$ term has no $y$, so its partial is $0$).</p>
+<p>$w_z=3x^2yz^2+\dfrac1z$ (treating $x,y$ constant).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Explain, using the definition of the partial derivative as a limit, why $\dfrac{\partial f}{\partial x}$ at a point $(a,b)$ can be interpreted as the ordinary single-variable derivative of the "slice" function $g(x)=f(x,b)$ (holding $y=b$ fixed) at $x=a$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>By definition, $\dfrac{\partial f}{\partial x}(a,b)=\displaystyle\lim_{h\to0}\frac{f(a+h,b)-f(a,b)}{h}$ &mdash; note that $y=b$ is held fixed throughout this limit, never varying. Defining $g(x)=f(x,b)$ (the single-variable function obtained by "slicing" the surface at the fixed height $y=b$), this limit is exactly $\lim_{h\to0}\dfrac{g(a+h)-g(a)}{h}=g'(a)$ &mdash; the ordinary derivative of $g$ at $x=a$. This is precisely why computing a partial derivative just means "treat the other variable as a constant and differentiate normally": you're differentiating the single-variable slice function through that fixed value.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+  <div class="section-title"><span class="tag">1</span> The Multivariable Chain Rule &amp; Implicit Differentiation</div>
+
+  <div class="prose">
+<p>If $z=f(x,y)$ and both $x$ and $y$ are themselves functions of a third variable $t$ (e.g. both position coordinates changing over time), the total rate of change of $z$ with respect to $t$ has to account for <em>both</em> pathways of dependence &mdash; this is the multivariable chain rule, summing the contribution through $x$ and the contribution through $y$.</p>
+<p><strong>Implicit differentiation, revisited.</strong> An equation like $F(x,y)=0$ implicitly defines $y$ as a function of $x$ (locally). Treating $F$ as a function of two variables and applying the chain rule along the curve $F(x,y(x))=0$ gives a clean formula for $dy/dx$ directly in terms of the partial derivatives of $F$ &mdash; no need to laboriously isolate $y$ first.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$\frac{dz}{dt}=\frac{\partial z}{\partial x}\frac{dx}{dt}+\frac{\partial z}{\partial y}\frac{dy}{dt}, \qquad \frac{dy}{dx}=-\frac{F_x}{F_y} \ \text{(for } F(x,y)=0\text{)}$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example 1 &mdash; chain rule.</strong> If $z=x^2y$, $x=\cos t$, $y=\sin t$, find $\dfrac{dz}{dt}$ at $t=\pi/4$.</p>
+<p class="step">$z_x=2xy,z_y=x^2$; $\dfrac{dx}{dt}=-\sin t,\dfrac{dy}{dt}=\cos t$. $\dfrac{dz}{dt}=2xy(-\sin t)+x^2\cos t$.</p>
+<p class="step">At $t=\pi/4$: $x=y=\dfrac{\sqrt2}{2}$. $\dfrac{dz}{dt}=2\cdot\tfrac12\cdot\left(-\tfrac{\sqrt2}{2}\right)+\tfrac12\cdot\tfrac{\sqrt2}{2}=-\tfrac{\sqrt2}{2}+\tfrac{\sqrt2}{4}=-\tfrac{\sqrt2}{4}$.</p>
+<p><strong>Example 2 &mdash; implicit differentiation.</strong> Find $dy/dx$ for $x^3+y^3=6xy$.</p>
+<p class="step">$F(x,y)=x^3+y^3-6xy$; $F_x=3x^2-6y,F_y=3y^2-6x$. $\dfrac{dy}{dx}=-\dfrac{3x^2-6y}{3y^2-6x}=\dfrac{2y-x^2}{y^2-2x}$.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>If $z=x^2+3y^2$, $x=t^2$, $y=2t$, find $\dfrac{dz}{dt}$ using the chain rule, then verify by direct substitution.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Chain rule:</strong> $z_x=2x,z_y=6y$; $dx/dt=2t,dy/dt=2$.</p>
+<p>$\dfrac{dz}{dt}=2x(2t)+6y(2)=2(t^2)(2t)+6(2t)(2)=4t^3+24t$.</p>
+<p><strong>Direct substitution:</strong> $z=(t^2)^2+3(2t)^2=t^4+12t^2$; $\dfrac{dz}{dt}=4t^3+24t$. Match. &#10003;</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Find $dy/dx$ implicitly for $\sin(xy)=x+y$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F(x,y)=\sin(xy)-x-y$; $F_x=y\cos(xy)-1$; $F_y=x\cos(xy)-1$.</p>
+<p><strong>Answer:</strong> $\dfrac{dy}{dx}=-\dfrac{y\cos(xy)-1}{x\cos(xy)-1}=\dfrac{1-y\cos(xy)}{x\cos(xy)-1}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>If $w=x^2y-z^3$, $x=t$, $y=t^2$, $z=t^3$, find $\dfrac{dw}{dt}$ using the (three-variable) chain rule.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$w_x=2xy,w_y=x^2,w_z=-3z^2$; $dx/dt=1,dy/dt=2t,dz/dt=3t^2$.</p>
+<p>$\dfrac{dw}{dt}=2xy(1)+x^2(2t)+(-3z^2)(3t^2) = 2(t)(t^2)+t^2(2t)-9z^2t^2$.</p>
+<p>$=2t^3+2t^3-9(t^3)^2t^2=4t^3-9t^8$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Find $dy/dx$ implicitly for $e^{xy}=x^2-y^2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F(x,y)=e^{xy}-x^2+y^2$; $F_x=ye^{xy}-2x$; $F_y=xe^{xy}+2y$.</p>
+<p><strong>Answer:</strong> $\dfrac{dy}{dx}=-\dfrac{ye^{xy}-2x}{xe^{xy}+2y}=\dfrac{2x-ye^{xy}}{xe^{xy}+2y}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A point moves along the curve $x=\cos t, y=\sin t$ on the surface $z=xy$. Find the rate of change of the point's height $z$ at time $t=\pi/3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$z_x=y,z_y=x$; $dx/dt=-\sin t,dy/dt=\cos t$. $\dfrac{dz}{dt}=y(-\sin t)+x\cos t$.</p>
+<p>At $t=\pi/3$: $x=\tfrac12,y=\tfrac{\sqrt3}{2}$. $\dfrac{dz}{dt}=\dfrac{\sqrt3}{2}\left(-\dfrac{\sqrt3}{2}\right)+\dfrac12\cdot\dfrac12=-\dfrac34+\dfrac14=-\dfrac12$.</p>
+<p><strong>Answer:</strong> $-\dfrac12$ (the height is momentarily decreasing at this instant).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Use implicit differentiation to find the slope of the tangent line to the curve $x^2y+y^3=10$ at the point $(1,2)$ (verify the point lies on the curve first).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Check: $1^2(2)+2^3=2+8=10$. &#10003; Point lies on the curve.</p>
+<p>$F(x,y)=x^2y+y^3-10$; $F_x=2xy$; $F_y=x^2+3y^2$.</p>
+<p>$\dfrac{dy}{dx}=-\dfrac{2xy}{x^2+3y^2}$; at $(1,2)$: $-\dfrac{2(1)(2)}{1+12}=-\dfrac{4}{13}$.</p>
+<p><strong>Answer:</strong> slope $=-\dfrac{4}{13}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>If $z=f(x,y)$ where $x=r\cos\theta,y=r\sin\theta$ (polar coordinates), use the chain rule to express $\dfrac{\partial z}{\partial r}$ in terms of $z_x,z_y,\theta$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{\partial x}{\partial r}=\cos\theta$, $\dfrac{\partial y}{\partial r}=\sin\theta$ (holding $\theta$ fixed).</p>
+<p><strong>Answer:</strong> $\dfrac{\partial z}{\partial r}=z_x\cos\theta+z_y\sin\theta$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A conical tank's volume is $V=\dfrac{1}{3}\pi r^2h$. If both $r$ and $h$ are increasing functions of time, with $dr/dt=2$ cm/min and $dh/dt=3$ cm/min at the instant $r=4$ cm, $h=10$ cm, find $dV/dt$ at that instant.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V_r=\dfrac23\pi rh$, $V_h=\dfrac13\pi r^2$.</p>
+<p>$\dfrac{dV}{dt}=V_r\dfrac{dr}{dt}+V_h\dfrac{dh}{dt}=\dfrac23\pi(4)(10)(2)+\dfrac13\pi(16)(3)$.</p>
+<p>$=\dfrac{160\pi}{3}+16\pi=\dfrac{160\pi}{3}+\dfrac{48\pi}{3}=\dfrac{208\pi}{3}$.</p>
+<p><strong>Answer:</strong> $\dfrac{208\pi}{3}\approx217.8\ \text{cm}^3\text{/min}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Find $dy/dx$ implicitly for the circle $x^2+y^2=r^2$ (a fixed constant $r$), and verify your answer matches the standard geometric fact that a tangent to a circle is perpendicular to the radius at the point of tangency.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F(x,y)=x^2+y^2-r^2$; $F_x=2x,F_y=2y$. $\dfrac{dy}{dx}=-\dfrac{2x}{2y}=-\dfrac{x}{y}$.</p>
+<p><strong>Geometric check:</strong> the radius to point $(x,y)$ has slope $\dfrac{y}{x}$ (from the origin). The tangent line's slope is $-\dfrac{x}{y}$, which is the negative reciprocal of $\dfrac{y}{x}$ &mdash; confirming the tangent is perpendicular to the radius, as expected from basic geometry.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Explain why the implicit differentiation formula $\dfrac{dy}{dx}=-\dfrac{F_x}{F_y}$ fails (becomes undefined) at any point where $F_y=0$, and give the geometric interpretation of what's happening at such a point on the curve $F(x,y)=0$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The formula divides by $F_y$, so it's simply undefined whenever $F_y=0$ &mdash; ordinary division by zero.</p>
+<p><strong>Geometric interpretation:</strong> $F_y=0$ typically signals that the curve $F(x,y)=0$ has a <em>vertical</em> tangent line at that point (the curve momentarily isn't expressible as a function $y=g(x)$ with a finite slope there) &mdash; for example, the rightmost and leftmost points of a circle $x^2+y^2=r^2$ have $y=0$, giving $F_y=2y=0$, exactly where the circle's tangent is vertical.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+  <div class="section-title"><span class="tag">2</span> Applications of Partial Derivatives &mdash; Linear Approximation &amp; Error Estimation</div>
+
+  <div class="prose">
+<p>Just as $dy=f'(x)\,dx$ approximates the change in a single-variable function, the multivariable version $dz=f_x\,dx+f_y\,dy$ approximates the change in $z=f(x,y)$ when $x$ and $y$ both change slightly &mdash; summing the individual contributions from each variable's change.</p>
+<p><strong>Error estimation.</strong> If $x$ and $y$ are measured quantities with possible errors $dx,dy$ (e.g. instrument precision), the resulting error in a computed quantity $z=f(x,y)$ is approximated by $dz=f_x\,dx+f_y\,dy$ &mdash; letting engineers estimate how measurement uncertainty propagates into a final calculated result, without needing to recompute $f$ at every possible error combination.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$dz = f_x\,dx+f_y\,dy \approx \Delta z = f(x+\Delta x,y+\Delta y)-f(x,y)$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example 1 &mdash; linear approximation.</strong> Use differentials to estimate $\sqrt{(3.02)^2+(3.97)^2}$.</p>
+<p class="step">$f(x,y)=\sqrt{x^2+y^2}$; at $(3,4)$: $f=5$. $f_x=\dfrac{x}{\sqrt{x^2+y^2}},f_y=\dfrac{y}{\sqrt{x^2+y^2}}$; at $(3,4)$: $f_x=0.6,f_y=0.8$.</p>
+<p class="step">$dx=0.02,dy=-0.03$: $dz=0.6(0.02)+0.8(-0.03)=0.012-0.024=-0.012$. Estimate: $5-0.012=4.988$.</p>
+<p><strong>Example 2 &mdash; error estimation.</strong> A cylinder's radius is measured as $r=5$ cm (&plusmn;0.1 cm) and height $h=10$ cm (&plusmn;0.2 cm). Estimate the maximum error in the computed volume $V=\pi r^2h$.</p>
+<p class="step">$V_r=2\pi rh,V_h=\pi r^2$; at $(5,10)$: $V_r=100\pi,V_h=25\pi$.</p>
+<p class="step">$dV=100\pi(0.1)+25\pi(0.2)=10\pi+5\pi=15\pi\approx47.1\ \text{cm}^3$.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Use differentials to estimate $(2.01)^3(1.98)^2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$f(x,y)=x^3y^2$; at $(2,2)$: $f=8(4)=32$. $f_x=3x^2y^2,f_y=2x^3y$; at $(2,2)$: $f_x=3(4)(4)=48,f_y=2(8)(2)=32$.</p>
+<p>$dx=0.01,dy=-0.02$: $dz=48(0.01)+32(-0.02)=0.48-0.64=-0.16$.</p>
+<p><strong>Answer:</strong> $32-0.16=31.84$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>The dimensions of a rectangular box are measured as $l=10$ cm, $w=8$ cm, $h=5$ cm, each with a possible error of &plusmn;0.1 cm. Estimate the maximum error in the computed volume $V=lwh$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V_l=wh=40,V_w=lh=50,V_h=lw=80$ (all at the given measurements).</p>
+<p>$dV=40(0.1)+50(0.1)+80(0.1)=4+5+8=17$.</p>
+<p><strong>Answer:</strong> maximum estimated error $\approx17\ \text{cm}^3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>The resistance of two resistors in parallel is $R=\dfrac{R_1R_2}{R_1+R_2}$. If $R_1=100\ \Omega$ and $R_2=200\ \Omega$, each measured with possible error &plusmn;2 $\Omega$, estimate the maximum resulting error in $R$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$R=\dfrac{R_1R_2}{R_1+R_2}$; at $(100,200)$: $R=\dfrac{20000}{300}=\dfrac{200}{3}$.</p>
+<p>$R_{R_1}=\dfrac{R_2^2}{(R_1+R_2)^2}=\dfrac{40000}{90000}=\dfrac49$; $R_{R_2}=\dfrac{R_1^2}{(R_1+R_2)^2}=\dfrac{10000}{90000}=\dfrac19$.</p>
+<p>$dR=\dfrac49(2)+\dfrac19(2)=\dfrac89+\dfrac29=\dfrac{10}{9}\approx1.11\ \Omega$.</p>
+<p><strong>Answer:</strong> maximum estimated error $\approx1.11\ \Omega$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Use differentials to estimate the change in $z=\sqrt{x^2+y^3}$ as $(x,y)$ moves from $(3,2)$ to $(3.1,1.98)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>At $(3,2)$: $z=\sqrt{9+8}=\sqrt{17}$. $z_x=\dfrac{x}{\sqrt{x^2+y^3}},z_y=\dfrac{3y^2}{2\sqrt{x^2+y^3}}$; at $(3,2)$: $z_x=\dfrac{3}{\sqrt{17}},z_y=\dfrac{6}{\sqrt{17}}$.</p>
+<p>$dx=0.1,dy=-0.02$: $dz=\dfrac{3}{\sqrt{17}}(0.1)+\dfrac{6}{\sqrt{17}}(-0.02)=\dfrac{0.3-0.12}{\sqrt{17}}=\dfrac{0.18}{\sqrt{17}}\approx0.0437$.</p>
+<p><strong>Answer:</strong> $z$ increases by approximately $0.0437$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>A pendulum's period is $T=2\pi\sqrt{L/g}$. If $L=1.0$ m (&plusmn;0.005 m) and $g=9.8\ \text{m/s}^2$ (&plusmn;0.01 m/s²), estimate the maximum resulting error in $T$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$T_L=2\pi\cdot\dfrac{1}{2\sqrt{Lg}}=\dfrac{\pi}{\sqrt{Lg}}$; $T_g=2\pi\sqrt{L}\cdot\left(-\dfrac12\right)g^{-3/2}=-\pi\sqrt{L}\,g^{-3/2}$.</p>
+<p>At $(1.0,9.8)$: $\sqrt{Lg}=\sqrt{9.8}\approx3.130$; $T_L=\dfrac{\pi}{3.130}\approx1.004$.</p>
+<p>$T_g=-\pi(1)(9.8)^{-3/2}=-\dfrac{\pi}{9.8\sqrt{9.8}}\approx-\dfrac{\pi}{30.68}\approx-0.1024$.</p>
+<p>$dT=1.004(0.005)+|-0.1024|(0.01)=0.00502+0.00102=0.00604$.</p>
+<p><strong>Answer:</strong> maximum estimated error $\approx0.006$ s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Use differentials to approximate $\ln(1.02^3+0.97^3-1)$ (treat as $f(x,y)=\ln(x^3+y^3-1)$ near $(1,1)$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>At $(1,1)$: $f=\ln(1+1-1)=\ln1=0$.</p>
+<p>$f_x=\dfrac{3x^2}{x^3+y^3-1},f_y=\dfrac{3y^2}{x^3+y^3-1}$; at $(1,1)$: both equal $\dfrac{3}{1}=3$.</p>
+<p>$dx=0.02,dy=-0.03$: $dz=3(0.02)+3(-0.03)=0.06-0.09=-0.03$.</p>
+<p><strong>Answer:</strong> $\approx0-0.03=-0.03$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>A surveying instrument measures the two legs of a right triangle as $a=30$ m and $b=40$ m, each with possible error &plusmn;0.05 m. Estimate the maximum resulting error in the computed hypotenuse $c=\sqrt{a^2+b^2}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>At $(30,40)$: $c=\sqrt{900+1600}=\sqrt{2500}=50$.</p>
+<p>$c_a=\dfrac{a}{\sqrt{a^2+b^2}}=\dfrac{30}{50}=0.6$; $c_b=\dfrac{b}{\sqrt{a^2+b^2}}=\dfrac{40}{50}=0.8$.</p>
+<p>$dc=0.6(0.05)+0.8(0.05)=0.03+0.04=0.07$.</p>
+<p><strong>Answer:</strong> maximum estimated error $\approx0.07$ m.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Explain why the differential formula $dz=f_x\,dx+f_y\,dy$ gives the <em>maximum</em> estimated error when $dx$ and $dy$ are taken as the maximum possible measurement errors (rather than their actual, unknown signed values), and why engineers typically use $|f_x||dx|+|f_y||dy|$ in practice.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The true error $\Delta z$ could have either measurement error contribute positively or negatively to the final result, depending on the (unknown, in practice) actual signs of the individual measurement errors. Since we don't know those signs in advance, the <em>worst case</em> (maximum possible combined error) occurs when both terms happen to have the same sign, adding constructively rather than partially cancelling. Using $|f_x||dx|+|f_y||dy|$ (absolute values throughout) guarantees this worst-case bound is captured, giving a safe upper estimate on how large the error in $z$ could possibly be &mdash; which is what matters for engineering tolerances and safety margins.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>The volume of a cone is $V=\dfrac13\pi r^2h$. If $r$ is measured with a 2% error and $h$ with a 3% error, use differentials (in terms of percentage/relative error) to estimate the resulting percentage error in $V$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Relative error approach: $\dfrac{dV}{V}=\dfrac{V_r\,dr+V_h\,dh}{V}$. Since $V_r=\dfrac23\pi rh$ and $V=\dfrac13\pi r^2h$: $\dfrac{V_r\,dr}{V}=\dfrac{2\,dr}{r}$ (a 2% error in $r$ contributes twice, since $V\propto r^2$).</p>
+<p>Since $V_h=\dfrac13\pi r^2$ and $V=\dfrac13\pi r^2h$: $\dfrac{V_h\,dh}{V}=\dfrac{dh}{h}$ (a 1-to-1 contribution, since $V\propto h^1$).</p>
+<p>Total relative error: $2(2\%)+1(3\%)=4\%+3\%=7\%$.</p>
+<p><strong>Answer:</strong> approximately 7% error in $V$ (this "multiply by the exponent" shortcut for relative errors in power-law formulas is a fast, commonly-used technique).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>A company's revenue is modelled as $R(p,q)=pq$ where $p$ is price and $q$ is quantity sold. If the current price is $\$50$ with quantity 200 units, and a market analysis estimates $dp=\$2$ and $dq=-15$ units (price increase causing a quantity decrease), estimate the resulting change in revenue, and explain the economic meaning of each term.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$R_p=q,R_q=p$; at $(50,200)$: $R_p=200,R_q=50$.</p>
+<p>$dR=R_p\,dp+R_q\,dq=200(2)+50(-15)=400-750=-350$.</p>
+<p><strong>Answer:</strong> revenue decreases by approximately $\$350$.</p>
+<p><strong>Economic meaning:</strong> the first term ($200\times2=400$) is the revenue gained purely from selling the same 200 units at $\$2$ more each. The second term ($50\times(-15)=-750$) is the revenue lost from selling 15 fewer units at the (new) price. Since the quantity-loss effect outweighs the price-gain effect here, the net result is a revenue decrease &mdash; a direct illustration of price elasticity of demand.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+  <div class="section-title"><span class="tag">3</span> Double Integrals in Cartesian Coordinates (Introduction)</div>
+
+  <div class="prose">
+<p>Just as a single integral sums up thin slices to find an area, a double integral sums up thin rectangular pieces of a 2D region to find a volume under a surface $z=f(x,y)$. In practice, a double integral is evaluated as an <strong>iterated integral</strong>: integrate with respect to one variable first (treating the other as constant, exactly like a partial derivative in reverse), then integrate the result with respect to the second variable.</p>
+<p><strong>Order of integration.</strong> For a rectangular region $a\le x\le b,\ c\le y\le d$, the order doesn't matter: $\displaystyle\int_a^b\int_c^d f(x,y)\,dy\,dx = \int_c^d\int_a^b f(x,y)\,dx\,dy$. For non-rectangular regions, the bounds of the inner integral typically depend on the outer variable &mdash; correctly identifying those bounds is the main new skill this topic introduces (with reverse-order integration and polar coordinates arriving next week).</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$\iint_R f(x,y)\,dA = \int_a^b\left[\int_c^d f(x,y)\,dy\right]dx$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example 1 &mdash; rectangular region.</strong> Evaluate $\displaystyle\int_0^2\int_0^1 (x^2+y)\,dy\,dx$.</p>
+<p class="step">Inner integral (with respect to $y$, $x$ fixed): $\displaystyle\int_0^1(x^2+y)\,dy = \left[x^2y+\dfrac{y^2}{2}\right]_0^1=x^2+\dfrac12$.</p>
+<p class="step">Outer integral: $\displaystyle\int_0^2\left(x^2+\dfrac12\right)dx=\left[\dfrac{x^3}{3}+\dfrac{x}{2}\right]_0^2=\dfrac83+1=\dfrac{11}{3}$.</p>
+<p><strong>Example 2 &mdash; region with variable bounds.</strong> Evaluate $\displaystyle\int_0^1\int_0^x xy\,dy\,dx$ (a triangular region, $0\le y\le x\le1$).</p>
+<p class="step">Inner: $\displaystyle\int_0^x xy\,dy=x\left[\dfrac{y^2}{2}\right]_0^x=\dfrac{x^3}{2}$. Outer: $\displaystyle\int_0^1\dfrac{x^3}{2}\,dx=\dfrac18$.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\int_1^3\int_0^2 (3x+2y)\,dy\,dx$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Inner: $\displaystyle\int_0^2(3x+2y)\,dy=\left[3xy+y^2\right]_0^2=6x+4$.</p>
+<p>Outer: $\displaystyle\int_1^3(6x+4)\,dx=\left[3x^2+4x\right]_1^3=(27+12)-(3+4)=39-7=32$.</p>
+<p><strong>Answer:</strong> $32$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\int_0^1\int_0^{y^2} (2x)\,dx\,dy$ (variable inner bounds, integrating $x$ first).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Inner: $\displaystyle\int_0^{y^2}2x\,dx=\left[x^2\right]_0^{y^2}=y^4$.</p>
+<p>Outer: $\displaystyle\int_0^1 y^4\,dy=\left[\dfrac{y^5}{5}\right]_0^1=\dfrac15$.</p>
+<p><strong>Answer:</strong> $\dfrac15$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\int_0^{\pi}\int_0^1 x\sin(xy)\,dy\,dx$ (inner integral requires basic substitution).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Inner (with respect to $y$, treating $x$ as constant): $\displaystyle\int_0^1 x\sin(xy)\,dy = \left[-\cos(xy)\right]_0^1=1-\cos x$ (since $\int x\sin(xy)\,dy=-\cos(xy)+C$, differentiating with respect to $y$ confirms this).</p>
+<p>Outer: $\displaystyle\int_0^{\pi}(1-\cos x)\,dx=\left[x-\sin x\right]_0^{\pi}=(\pi-0)-0=\pi$.</p>
+<p><strong>Answer:</strong> $\pi$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>Set up and evaluate the double integral for the volume under $z=x+y+1$ over the rectangle $0\le x\le2,0\le y\le3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V=\displaystyle\int_0^2\int_0^3(x+y+1)\,dy\,dx$.</p>
+<p>Inner: $\displaystyle\int_0^3(x+y+1)\,dy=\left[xy+\dfrac{y^2}{2}+y\right]_0^3=3x+4.5+3=3x+7.5$.</p>
+<p>Outer: $\displaystyle\int_0^2(3x+7.5)\,dx=\left[\dfrac{3x^2}{2}+7.5x\right]_0^2=6+15=21$.</p>
+<p><strong>Answer:</strong> $V=21$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\int_0^1\int_x^1 e^{y^2}\,dy\,dx$ (this integral cannot be done in the given order &mdash; explain why, then reverse the order of integration and evaluate).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\displaystyle\int e^{y^2}\,dy$ has no elementary antiderivative (similar to the Gaussian integral), so the inner integral (as given) cannot be evaluated in closed form directly.</p>
+<p><strong>Reverse the order:</strong> the region is $0\le x\le1,\ x\le y\le1$, equivalently $0\le y\le1,\ 0\le x\le y$ (sketching the triangular region confirms this swap). $$\int_0^1\int_0^y e^{y^2}\,dx\,dy$$</p>
+<p>Inner (now trivial, since $e^{y^2}$ doesn't depend on $x$): $\displaystyle\int_0^y e^{y^2}\,dx = ye^{y^2}$.</p>
+<p>Outer: $\displaystyle\int_0^1 ye^{y^2}\,dy$; let $u=y^2,du=2y\,dy$: $\dfrac12\int_0^1e^u\,du=\dfrac12(e-1)$.</p>
+<p><strong>Answer:</strong> $\dfrac{e-1}{2}\approx0.859$ (this is a classic example previewing next week's reverse-order-integration topic).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\int_0^2\int_0^{4-x^2} y\,dy\,dx$ (region under a parabola).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Inner: $\displaystyle\int_0^{4-x^2}y\,dy=\left[\dfrac{y^2}{2}\right]_0^{4-x^2}=\dfrac{(4-x^2)^2}{2}$.</p>
+<p>Outer: $\displaystyle\int_0^2\dfrac{(4-x^2)^2}{2}\,dx=\dfrac12\int_0^2(16-8x^2+x^4)\,dx$.</p>
+<p>$=\dfrac12\left[16x-\dfrac{8x^3}{3}+\dfrac{x^5}{5}\right]_0^2=\dfrac12\left(32-\dfrac{64}{3}+\dfrac{32}{5}\right)$.</p>
+<p>Common denominator 15: $32=\tfrac{480}{15},\tfrac{64}{3}=\tfrac{320}{15},\tfrac{32}{5}=\tfrac{96}{15}$: $\dfrac{480-320+96}{15}=\dfrac{256}{15}$.</p>
+<p><strong>Answer:</strong> $\dfrac12\cdot\dfrac{256}{15}=\dfrac{128}{15}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\int_0^1\int_0^1 \frac{1}{(x+y+1)^2}\,dy\,dx$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Inner: let $u=x+y+1$, $du=dy$: $\displaystyle\int\frac{1}{u^2}\,du=-\frac1u$. Evaluated from $y=0$ ($u=x+1$) to $y=1$ ($u=x+2$): $-\dfrac{1}{x+2}+\dfrac{1}{x+1}$.</p>
+<p>Outer: $\displaystyle\int_0^1\left(\frac{1}{x+1}-\frac{1}{x+2}\right)dx=\Big[\ln(x+1)-\ln(x+2)\Big]_0^1$.</p>
+<p>At $x=1$: $\ln2-\ln3$. At $x=0$: $\ln1-\ln2=-\ln2$.</p>
+<p>Subtract: $(\ln2-\ln3)-(-\ln2)=2\ln2-\ln3=\ln\dfrac{4}{3}$.</p>
+<p><strong>Answer:</strong> $\ln\dfrac43\approx0.2877$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>Set up (do not evaluate) the double integral for the area of the region bounded by $y=x^2$ and $y=2x$, choosing the order of integration and finding the correct bounds.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Find intersections:</strong> $x^2=2x\implies x(x-2)=0\implies x=0,2$.</p>
+<p>For $0\le x\le2$, $2x\ge x^2$ (check at $x=1$: $2\ge1$), so $y$ ranges from the lower curve $y=x^2$ to the upper curve $y=2x$.</p>
+<p><strong>Answer:</strong> $$A=\int_0^2\int_{x^2}^{2x} 1\,dy\,dx$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\int_0^1\int_{\sqrt y}^1 \sqrt{1+x^3}\,dx\,dy$ by reversing the order of integration (the integrand has no elementary antiderivative in $x$ directly, so reversing is necessary).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Original region: $0\le y\le1,\ \sqrt y\le x\le1$. Reversed: for $0\le x\le1$, $y$ ranges from $0$ to $x^2$ (since $x\ge\sqrt y \iff y\le x^2$).</p>
+<p>$$\int_0^1\int_0^{x^2}\sqrt{1+x^3}\,dy\,dx$$</p>
+<p>Inner (trivial, integrand doesn't depend on $y$): $\displaystyle\int_0^{x^2}\sqrt{1+x^3}\,dy=x^2\sqrt{1+x^3}$.</p>
+<p>Outer: let $u=1+x^3,du=3x^2dx$: $\displaystyle\int_0^1 x^2\sqrt{1+x^3}\,dx=\dfrac13\int_1^2\sqrt u\,du=\dfrac13\cdot\dfrac23\left[u^{3/2}\right]_1^2=\dfrac29(2\sqrt2-1)$.</p>
+<p><strong>Answer:</strong> $\dfrac{2(2\sqrt2-1)}{9}\approx0.407$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>Explain, using a sketch-in-words of the region, why $\displaystyle\int_0^1\int_0^x f(x,y)\,dy\,dx$ and $\displaystyle\int_0^1\int_y^1 f(x,y)\,dx\,dy$ describe integration over the exact same triangular region, just with the two variables' roles in the bounds swapped.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The first form describes: for each $x$ from $0$ to $1$, $y$ ranges from $0$ up to the line $y=x$ &mdash; this is the triangular region bounded by $y=0$, $x=1$, and $y=x$, i.e. all points below the diagonal line and within the unit square.</p>
+<p>The second form describes: for each $y$ from $0$ to $1$, $x$ ranges from the line $x=y$ up to $1$ &mdash; this describes exactly the same triangular region (points where $x\ge y$, within the unit square), just scanned in horizontal strips instead of vertical strips. Both integrals sweep out the identical set of $(x,y)$ points, just organised in a different order &mdash; which is exactly why reversing the order of integration is always a legitimate operation, provided the new bounds are set up to describe the same region.</p>
+    </div>
+  </div>
+</div>
+
+<div class="why-box">
+  <span class="box-label">Exam Challenge Extension</span>
+  <p><strong>Purpose:</strong> additional exam-grade applications, method-selection, and mixed-skill integration.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>Reverse order for $\int_0^1\int_{x^2}^{2x} f(x,y)\,dy\,dx$ and rewrite integral.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sketch region between parabola $y=x^2$ and line $y=2x$, then split y-range if needed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>Compute $\iint_R x\,dA$ where $R$ is bounded by $y=x^2$ and $y=2x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use vertical strips: intersections at $x=0,2$, integral $\int_0^2 x(2x-x^2)dx$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>Evaluate $\iint_D (x^2+y^2)\,dA$ on disk $x^2+y^2\le 9$ via polar.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Convert to $\int_0^{2\pi}\int_0^3 r^2\cdot r\,dr\,d	heta$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>Find area enclosed by cardioid $r=2(1+\cos	heta)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use area formula $A=	frac12\int_0^{2\pi}r^2d	heta$ with trig identities.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 45</span></div>
+  <div class="p-body"><p>Evaluate $\iint_R e^{x+y}\,dA$, $R=[0,1]	imes[0,2]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Separable integrand on rectangle: product of one-dimensional integrals.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 46</span></div>
+  <div class="p-body"><p>Compute average value of $f(x,y)=x^2+y^2$ on rectangle $[0,2]	imes[0,1]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Average $=rac{1}{	ext{Area}(R)}\iint_R f\,dA$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 47</span></div>
+  <div class="p-body"><p>Use Jacobian to transform $x=u-v, y=u+v$ and evaluate $\iint_R (x+y)\,dA$ on mapped rectangle in $uv$-plane.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Find $|J|$, convert integrand and limits, then integrate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 48</span></div>
+  <div class="p-body"><p>Evaluate $\iint_R (1x+2y)\,dA$ over triangle with vertices $(0,0),(2,0),(0,3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Set $0\le x\le2$, $0\le y\le 3-rac{3}{2}x$ (or reversed order), integrate exactly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 49</span></div>
+  <div class="p-body"><p>Reverse order for $\int_0^1\int_{x^2}^{2x} f(x,y)\,dy\,dx$ and rewrite integral.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sketch region between parabola $y=x^2$ and line $y=2x$, then split y-range if needed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 50</span></div>
+  <div class="p-body"><p>Compute $\iint_R x\,dA$ where $R$ is bounded by $y=x^2$ and $y=2x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use vertical strips: intersections at $x=0,2$, integral $\int_0^2 x(2x-x^2)dx$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 51</span></div>
+  <div class="p-body"><p>Evaluate $\iint_D (x^2+y^2)\,dA$ on disk $x^2+y^2\le 9$ via polar.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Convert to $\int_0^{2\pi}\int_0^3 r^2\cdot r\,dr\,d	heta$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 52</span></div>
+  <div class="p-body"><p>Find area enclosed by cardioid $r=2(1+\cos	heta)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use area formula $A=	frac12\int_0^{2\pi}r^2d	heta$ with trig identities.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 53</span></div>
+  <div class="p-body"><p>Evaluate $\iint_R e^{x+y}\,dA$, $R=[0,1]	imes[0,2]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Separable integrand on rectangle: product of one-dimensional integrals.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 54</span></div>
+  <div class="p-body"><p>Compute average value of $f(x,y)=x^2+y^2$ on rectangle $[0,2]	imes[0,1]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Average $=rac{1}{	ext{Area}(R)}\iint_R f\,dA$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 55</span></div>
+  <div class="p-body"><p>Use Jacobian to transform $x=u-v, y=u+v$ and evaluate $\iint_R (x+y)\,dA$ on mapped rectangle in $uv$-plane.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Find $|J|$, convert integrand and limits, then integrate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 56</span></div>
+  <div class="p-body"><p>Evaluate $\iint_R (1x+2y)\,dA$ over triangle with vertices $(0,0),(2,0),(0,3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Set $0\le x\le2$, $0\le y\le 3-rac{3}{2}x$ (or reversed order), integrate exactly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 57</span></div>
+  <div class="p-body"><p>Reverse order for $\int_0^1\int_{x^2}^{2x} f(x,y)\,dy\,dx$ and rewrite integral.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sketch region between parabola $y=x^2$ and line $y=2x$, then split y-range if needed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 58</span></div>
+  <div class="p-body"><p>Compute $\iint_R x\,dA$ where $R$ is bounded by $y=x^2$ and $y=2x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use vertical strips: intersections at $x=0,2$, integral $\int_0^2 x(2x-x^2)dx$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 59</span></div>
+  <div class="p-body"><p>Evaluate $\iint_D (x^2+y^2)\,dA$ on disk $x^2+y^2\le 9$ via polar.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Convert to $\int_0^{2\pi}\int_0^3 r^2\cdot r\,dr\,d	heta$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 60</span></div>
+  <div class="p-body"><p>Find area enclosed by cardioid $r=2(1+\cos	heta)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use area formula $A=	frac12\int_0^{2\pi}r^2d	heta$ with trig identities.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 61</span></div>
+  <div class="p-body"><p>Evaluate $\iint_R e^{x+y}\,dA$, $R=[0,1]	imes[0,2]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Separable integrand on rectangle: product of one-dimensional integrals.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 62</span></div>
+  <div class="p-body"><p>Compute average value of $f(x,y)=x^2+y^2$ on rectangle $[0,2]	imes[0,1]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Average $=rac{1}{	ext{Area}(R)}\iint_R f\,dA$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 63</span></div>
+  <div class="p-body"><p>Use Jacobian to transform $x=u-v, y=u+v$ and evaluate $\iint_R (x+y)\,dA$ on mapped rectangle in $uv$-plane.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Find $|J|$, convert integrand and limits, then integrate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 64</span></div>
+  <div class="p-body"><p>Evaluate $\iint_R (1x+2y)\,dA$ over triangle with vertices $(0,0),(2,0),(0,3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Set $0\le x\le2$, $0\le y\le 3-rac{3}{2}x$ (or reversed order), integrate exactly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 65</span></div>
+  <div class="p-body"><p>Reverse order for $\int_0^1\int_{x^2}^{2x} f(x,y)\,dy\,dx$ and rewrite integral.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sketch region between parabola $y=x^2$ and line $y=2x$, then split y-range if needed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 66</span></div>
+  <div class="p-body"><p>Compute $\iint_R x\,dA$ where $R$ is bounded by $y=x^2$ and $y=2x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use vertical strips: intersections at $x=0,2$, integral $\int_0^2 x(2x-x^2)dx$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 67</span></div>
+  <div class="p-body"><p>Evaluate $\iint_D (x^2+y^2)\,dA$ on disk $x^2+y^2\le 9$ via polar.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Convert to $\int_0^{2\pi}\int_0^3 r^2\cdot r\,dr\,d	heta$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 68</span></div>
+  <div class="p-body"><p>Find area enclosed by cardioid $r=2(1+\cos	heta)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use area formula $A=	frac12\int_0^{2\pi}r^2d	heta$ with trig identities.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 69</span></div>
+  <div class="p-body"><p>Evaluate $\iint_R e^{x+y}\,dA$, $R=[0,1]	imes[0,2]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Separable integrand on rectangle: product of one-dimensional integrals.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 70</span></div>
+  <div class="p-body"><p>Compute average value of $f(x,y)=x^2+y^2$ on rectangle $[0,2]	imes[0,1]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Average $=rac{1}{	ext{Area}(R)}\iint_R f\,dA$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 71</span></div>
+  <div class="p-body"><p>Use Jacobian to transform $x=u-v, y=u+v$ and evaluate $\iint_R (x+y)\,dA$ on mapped rectangle in $uv$-plane.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Find $|J|$, convert integrand and limits, then integrate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 72</span></div>
+  <div class="p-body"><p>Evaluate $\iint_R (1x+2y)\,dA$ over triangle with vertices $(0,0),(2,0),(0,3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Set $0\le x\le2$, $0\le y\le 3-rac{3}{2}x$ (or reversed order), integrate exactly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 73</span></div>
+  <div class="p-body"><p>Reverse order for $\int_0^1\int_{x^2}^{2x} f(x,y)\,dy\,dx$ and rewrite integral.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sketch region between parabola $y=x^2$ and line $y=2x$, then split y-range if needed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 74</span></div>
+  <div class="p-body"><p>Compute $\iint_R x\,dA$ where $R$ is bounded by $y=x^2$ and $y=2x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use vertical strips: intersections at $x=0,2$, integral $\int_0^2 x(2x-x^2)dx$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 75</span></div>
+  <div class="p-body"><p>Evaluate $\iint_D (x^2+y^2)\,dA$ on disk $x^2+y^2\le 9$ via polar.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Convert to $\int_0^{2\pi}\int_0^3 r^2\cdot r\,dr\,d	heta$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 76</span></div>
+  <div class="p-body"><p>Find area enclosed by cardioid $r=2(1+\cos	heta)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use area formula $A=	frac12\int_0^{2\pi}r^2d	heta$ with trig identities.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 77</span></div>
+  <div class="p-body"><p>Evaluate $\iint_R e^{x+y}\,dA$, $R=[0,1]	imes[0,2]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Separable integrand on rectangle: product of one-dimensional integrals.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 78</span></div>
+  <div class="p-body"><p>Compute average value of $f(x,y)=x^2+y^2$ on rectangle $[0,2]	imes[0,1]$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Average $=rac{1}{	ext{Area}(R)}\iint_R f\,dA$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 79</span></div>
+  <div class="p-body"><p>Use Jacobian to transform $x=u-v, y=u+v$ and evaluate $\iint_R (x+y)\,dA$ on mapped rectangle in $uv$-plane.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Find $|J|$, convert integrand and limits, then integrate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 80</span></div>
+  <div class="p-body"><p>Evaluate $\iint_R (1x+2y)\,dA$ over triangle with vertices $(0,0),(2,0),(0,3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Set $0\le x\le2$, $0\le y\le 3-rac{3}{2}x$ (or reversed order), integrate exactly.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>MATH283 Advanced Engineering Mathematics &amp; Statistics &middot; Week 2</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>
