@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>First-Order Linear DE Applications: Changing-Volume Mixing &amp; RL Circuits</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH142 &middot; Engineering Mathematics 2 &middot; Week 8 (Phase 2: Differential Equations)</div>
+  <h1>First-Order Linear DE Applications: Changing-Volume Mixing &amp; RL Circuits</h1>
+  <p>The separable mixing problems from last week assumed constant tank volume. Once inflow and outflow rates differ, the volume &mdash; and the outflow concentration's denominator &mdash; changes with time, turning the equation genuinely linear rather than separable. RL circuits share exactly the same linear structure. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 20 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this week's toolkit</span>
+  <ul>
+<li><strong>Changing-volume mixing:</strong> if inflow rate $r_{in}$ and outflow rate $r_{out}$ differ, $V(t)=V_0+(r_{in}-r_{out})t$; the DE becomes $\dfrac{dA}{dt}+\dfrac{r_{out}}{V(t)}A = r_{in}\cdot c_{in}$ &mdash; linear, not separable, since the coefficient of $A$ now depends on $t$.</li>
+<li><strong>RL circuits:</strong> $L\dfrac{dI}{dt}+RI=V(t)$ &mdash; the exact same linear structure as a mixing problem, with $I$ playing the role of $A$.</li>
+<li><strong>Steady-state behaviour:</strong> as $t\to\infty$, the transient term (multiplying $e^{-kt}$ for some $k>0$) decays to zero, leaving whatever constant/steady term remains &mdash; this is the long-run circuit current or mixing concentration.</li>
+<li><strong>Solution method:</strong> always the same integrating-factor machinery from Week 7 &mdash; the challenge here is correctly setting up $V(t)$ and the outflow term from the word problem, not the algebra of solving once it's set up.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Mixing with Changing Volume &amp; RL Circuits</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+  <div class="section-title"><span class="tag">0</span> Mixing with Changing Volume &amp; RL Circuits</div>
+
+  <div class="prose">
+<p>If inflow rate $r_{in}$ and outflow rate $r_{out}$ differ, the volume at time $t$ is $V(t)=V_0+(r_{in}-r_{out})t$ &mdash; no longer constant. The outflow concentration is $\dfrac{A(t)}{V(t)}$, so the DE becomes linear in $A$ (with a $t$-dependent coefficient), exactly the shape the integrating factor method was built for.</p>
+<p><strong>RL circuits.</strong> By Kirchhoff's voltage law, $L\dfrac{dI}{dt}+RI=V(t)$ &mdash; an equation with the exact same linear structure as mixing, just with different physical labels.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$\frac{dA}{dt}+\frac{r_{out}}{V(t)}A = r_{in}\cdot c_{in}, \qquad L\frac{dI}{dt}+RI=V(t)$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example 1 &mdash; constant volume (reviewed as linear).</strong> A 200L tank starts with 50g salt. Pure water flows in at 5L/min, mixture flows out at 5L/min. Find $A(t)$.</p>
+<p class="step">$\dfrac{dA}{dt}=-\dfrac{A}{40}$; $\mu=e^{t/40}$; $A=Ce^{-t/40}$; $A(0)=50\implies A(t)=50e^{-t/40}$.</p>
+<p><strong>Example 2 &mdash; changing volume, setup only.</strong> A 100L tank starts with pure water. Brine at 3g/L flows in at 4L/min; mixture flows out at 2L/min. Set up the DE for $A(t)$.</p>
+<p class="step">$V(t)=100+2t$. $\dfrac{dA}{dt}=12-\dfrac{2A}{100+2t}$, i.e. $\dfrac{dA}{dt}+\dfrac{2}{100+2t}A=12$ &mdash; linear, ready for the integrating factor.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A 100L tank starts with pure water. Brine at 3g/L flows in at 4L/min; mixture flows out at 2L/min (as in the worked example). Solve the full DE for $A(t)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V(t)=100+2t$. DE: $\dfrac{dA}{dt}+\dfrac{2}{100+2t}A=12$, i.e. $\dfrac{dA}{dt}+\dfrac{1}{50+t}A=12$.</p>
+<p>$\mu=e^{\int\frac{1}{50+t}dt}=e^{\ln(50+t)}=50+t$.</p>
+<p>$\dfrac{d}{dt}\big[(50+t)A\big]=12(50+t) \implies (50+t)A=6(50+t)^2+C$.</p>
+<p>At $t=0,A=0$: $50(0)=6(2500)+C\cdot1 \implies 0=15000+C \implies C=-15000$.</p>
+<p><strong>Answer:</strong> $A(t)=6(50+t)-\dfrac{15000}{50+t}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="why-box">
+  <span class="box-label">Difficulty Ladder</span>
+  <p class="step"><strong>Foundation (Practice 1-10):</strong> direct integrating-factor workflows and standard RL/mixing templates.</p>
+  <p class="step"><strong>Exam challenge (Practice 11-20):</strong> dual-part setup/interpretation questions with stronger modelling judgement.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>An RL circuit has $L=2$ H, $R=10\ \Omega$, connected to a constant voltage source $V=20$ V, with $I(0)=0$. Solve for $I(t)$ and find the steady-state current.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$2\dfrac{dI}{dt}+10I=20 \implies \dfrac{dI}{dt}+5I=10$.</p>
+<p>$\mu=e^{5t}$; $\dfrac{d}{dt}[e^{5t}I]=10e^{5t} \implies e^{5t}I=2e^{5t}+C \implies I=2+Ce^{-5t}$.</p>
+<p>At $t=0,I=0$: $0=2+C \implies C=-2$: $I(t)=2(1-e^{-5t})$.</p>
+<p>As $t\to\infty$, $e^{-5t}\to0$, so $I\to2$ A.</p>
+<p><strong>Answer:</strong> $I(t)=2(1-e^{-5t})$; steady-state current is 2 A.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A 500L tank starts with 100 kg of salt. Brine at 2 kg/L flows in at 5L/min; the mixture flows out at 8L/min. Set up the DE for $A(t)$, noting the tank will empty at some finite time &mdash; find that time.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V(t)=500+(5-8)t=500-3t$. The tank empties when $V=0$: $500-3t=0 \implies t=\dfrac{500}{3}\approx166.7$ min.</p>
+<p>DE: $\dfrac{dA}{dt}=5(2)-8\cdot\dfrac{A}{500-3t}=10-\dfrac{8A}{500-3t}$, valid for $0\le t<\dfrac{500}{3}$.</p>
+<p><strong>Answer:</strong> $\dfrac{dA}{dt}+\dfrac{8}{500-3t}A=10$; the model is only valid up to $t=\dfrac{500}{3}$ min, when the tank empties.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>An RL circuit has $L=4$ H, $R=8\ \Omega$, with a time-varying voltage source $V(t)=16e^{-2t}$, and $I(0)=1$ A. Solve for $I(t)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$4\dfrac{dI}{dt}+8I=16e^{-2t} \implies \dfrac{dI}{dt}+2I=4e^{-2t}$.</p>
+<p>$\mu=e^{2t}$; $\dfrac{d}{dt}[e^{2t}I]=e^{2t}\cdot4e^{-2t}=4 \implies e^{2t}I=4t+C$.</p>
+<p>At $t=0,I=1$: $1=0+C \implies C=1$.</p>
+<p><strong>Answer:</strong> $I(t)=(4t+1)e^{-2t}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A 250L tank starts with 40 kg salt. Brine at 0.5 kg/L flows in at 3L/min; mixture flows out at 5L/min. Find $A(t)$ (the DE will be linear with a shrinking volume).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V(t)=250-2t$. DE: $\dfrac{dA}{dt}=3(0.5)-5\cdot\dfrac{A}{250-2t}=1.5-\dfrac{5A}{250-2t}$.</p>
+<p>Standard form: $\dfrac{dA}{dt}+\dfrac{5}{250-2t}A=1.5$.</p>
+<p>$\mu=e^{\int\frac{5}{250-2t}dt}$. Let $w=250-2t,dw=-2dt$: $\int\dfrac{5}{w}\cdot\left(-\dfrac{dw}{2}\right)=-\dfrac52\ln|w|$, so $\int\dfrac{5}{250-2t}dt=-\dfrac52\ln(250-2t)$ (taking $250-2t>0$).</p>
+<p>$\mu=e^{-\frac52\ln(250-2t)}=(250-2t)^{-5/2}$.</p>
+<p>$\dfrac{d}{dt}\big[(250-2t)^{-5/2}A\big]=1.5(250-2t)^{-5/2}$.</p>
+<p>Integrating the right side (using the same $w$-substitution): $\displaystyle\int1.5(250-2t)^{-5/2}dt = 1.5\cdot\dfrac{(250-2t)^{-3/2}}{3}=0.5(250-2t)^{-3/2}+C$ (signs work out from the chain rule on $w=250-2t$).</p>
+<p>$(250-2t)^{-5/2}A = 0.5(250-2t)^{-3/2}+C \implies A=0.5(250-2t)+C(250-2t)^{5/2}$.</p>
+<p>At $t=0,A=40$: $40=0.5(250)+C(250)^{5/2} \implies 40=125+C(250)^{5/2} \implies C=\dfrac{40-125}{250^{5/2}}=\dfrac{-85}{250^{5/2}}$.</p>
+<p><strong>Answer:</strong> $A(t)=0.5(250-2t)-\dfrac{85}{250^{5/2}}(250-2t)^{5/2}$ (a genuinely involved exam-level setup &mdash; the key skill tested is correct DE setup and integrating-factor mechanics, even when the resulting algebra is heavy).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>An RL circuit has $L=1$ H, $R=4\ \Omega$, $V(t)=e^{-t}$, $I(0)=2$. Solve for $I(t)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{dI}{dt}+4I=e^{-t}$.</p>
+<p>$\mu=e^{4t}$; $\dfrac{d}{dt}[e^{4t}I]=e^{4t}\cdot e^{-t}=e^{3t} \implies e^{4t}I=\dfrac13e^{3t}+C$.</p>
+<p>$I=\dfrac13e^{-t}+Ce^{-4t}$. At $t=0,I=2$: $2=\dfrac13+C \implies C=\dfrac53$.</p>
+<p><strong>Answer:</strong> $I(t)=\dfrac13e^{-t}+\dfrac53e^{-4t}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Explain why the mixing-with-changing-volume DE is linear but generally NOT separable, contrasting it with the constant-volume case, using the specific form of the coefficient of $A$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>In the constant-volume case, $\dfrac{dA}{dt}=(\text{const})-(\text{const})\cdot A$, which can be separated since both sides only involve $A$ and $t$ separately once rearranged &mdash; $\dfrac{dA}{\text{const}-\text{const}\cdot A}=dt$.</p>
+<p>With changing volume, the coefficient of $A$ is $\dfrac{r_{out}}{V(t)}$, a genuine function of $t$ (not a constant) &mdash; the DE is $\dfrac{dA}{dt}+f(t)A=\text{const}$, which is linear (degree 1 in $A$) but the presence of both $A$ and an independently-varying function of $t$ multiplying it means $A$ and $t$ cannot be algebraically separated onto opposite sides of the equation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A capacitor-free RL circuit reaches 90% of its steady-state current after 2 seconds, with $L=5$ H. If $R=10\ \Omega$, verify this is consistent with the circuit's time constant $\tau=L/R$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Time constant: $\tau=L/R=5/10=0.5$ s.</p>
+<p>For $I(t)=I_{ss}(1-e^{-t/\tau})$, reaching 90% means $1-e^{-t/\tau}=0.9 \implies e^{-t/\tau}=0.1 \implies t=\tau\ln10=0.5(2.3026)\approx1.151$ s.</p>
+<p><strong>Answer:</strong> the circuit reaches 90% of steady-state after approximately 1.15 s, not 2 s &mdash; so the stated 2-second observation is <em>not</em> consistent with $\tau=0.5$ s; either the component values or the observation must be re-checked (a good example of using the model to sanity-check reported data).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A tank has $V(t)=100+t$ (inflow exceeds outflow by 1 L/min), with outflow rate 3 L/min and inflow concentration 2 kg/L. Write the full standard-form linear DE for $A(t)$ (do not solve).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Rate in: $(1+3)\times2=8$ kg/min (total inflow rate is outflow $+$ net volume increase $=3+1=4$ L/min... let's use given inflow rate directly: since $V(t)=100+t$ implies $r_{in}-r_{out}=1$ and $r_{out}=3$, so $r_{in}=4$ L/min). Rate in $=4\times2=8$ kg/min. Rate out $=3\cdot\dfrac{A}{100+t}$.</p>
+<p><strong>Answer:</strong> $\dfrac{dA}{dt}+\dfrac{3}{100+t}A=8$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Explain the physical meaning of the steady-state current $I=V/R$ in an RL circuit driven by a constant voltage $V$, in terms of what happens to the inductor's behaviour once the transient has died away.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>An inductor opposes <em>changes</em> in current (via the term $L\,dI/dt$), but once the current has settled into a constant value ($dI/dt=0$), the inductor contributes no voltage drop at all &mdash; the circuit then behaves exactly like a plain resistor connected directly to the voltage source, obeying simple Ohm's law: $V=IR \implies I=V/R$. The inductor's influence is entirely a transient effect, shaping how the current <em>approaches</em> this steady value, not what the steady value itself is.</p>
+    </div>
+  </div>
+</div>
+
+<div class="why-box">
+  <span class="box-label">Exam Challenge Block</span>
+  <p class="step">In this block, always identify the physical meaning of each coefficient before solving (rate in/out, resistance/inductance, or long-run level).</p>
+</div>
+
+<div class="practice-card" data-card><div class="p-head"><span class="p-num">Practice 11</span></div><div class="p-body"><p><strong>(a)</strong> Solve $I'+4I=12$, $I(0)=1$. <strong>(b)</strong> Find the steady-state current and time constant.</p></div><div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div><div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span><p>(a) $I=3+Ce^{-4t}$, $I(0)=1\Rightarrow C=-2$, so $I(t)=3-2e^{-4t}$.</p><p>(b) Steady state $I_\infty=3$ A; time constant $\tau=1/4$.</p></div></div></div>
+<div class="practice-card" data-card><div class="p-head"><span class="p-num">Practice 12</span></div><div class="p-body"><p><strong>(a)</strong> Set up the changing-volume DE for $V_0=80$, $r_{in}=5$, $c_{in}=2$, $r_{out}=3$. <strong>(b)</strong> Write integrating factor only.</p></div><div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div><div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span><p>(a) $V(t)=80+2t$, so $A'+\frac{3}{80+2t}A=10$.</p><p>(b) $\mu(t)=\exp\!\int\frac{3}{80+2t}dt=(80+2t)^{3/2}$.</p></div></div></div>
+<div class="practice-card" data-card><div class="p-head"><span class="p-num">Practice 13</span></div><div class="p-body"><p><strong>(a)</strong> Solve $y'+\frac{2}{t}y=t^3$ for $t&gt;0$. <strong>(b)</strong> Apply $y(1)=0$.</p></div><div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div><div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span><p>$\mu=t^2$, so $(t^2y)'=t^5$.</p><p>$t^2y=t^6/6+C\Rightarrow y=t^4/6+C/t^2$. Using $y(1)=0$: $C=-1/6$.</p><p>Answer: $y=\frac{t^4}{6}-\frac{1}{6t^2}$.</p></div></div></div>
+<div class="practice-card" data-card><div class="p-head"><span class="p-num">Practice 14</span></div><div class="p-body"><p><strong>(a)</strong> Solve $y'-3y=e^{2x}$. <strong>(b)</strong> State transient vs forcing response.</p></div><div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div><div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span><p>$\mu=e^{-3x}$, so $(e^{-3x}y)'=e^{-x}$.</p><p>$e^{-3x}y=-e^{-x}+C\Rightarrow y=-e^{2x}+Ce^{3x}$.</p><p>Transient/homogeneous: $Ce^{3x}$, forcing particular: $-e^{2x}$.</p></div></div></div>
+<div class="practice-card" data-card><div class="p-head"><span class="p-num">Practice 15</span></div><div class="p-body"><p><strong>(a)</strong> RL model $0.5I'+10I=50$. Solve with $I(0)=0$. <strong>(b)</strong> Time to reach 95% steady-state?</p></div><div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div><div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span><p>$I'+20I=100\Rightarrow I=5+Ce^{-20t}$, so $C=-5$: $I=5(1-e^{-20t})$.</p><p>$0.95\cdot5=5(1-e^{-20t})\Rightarrow e^{-20t}=0.05\Rightarrow t=\frac{-\ln0.05}{20}\approx0.150$ s.</p></div></div></div>
+<div class="practice-card" data-card><div class="p-head"><span class="p-num">Practice 16</span></div><div class="p-body"><p><strong>(a)</strong> For $A'+p(t)A=q(t)$ with $p=\frac{4}{100+t}$, find $\mu$. <strong>(b)</strong> If $q=20$, write exact-solution template.</p></div><div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div><div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span><p>(a) $\mu=(100+t)^4$.</p><p>(b) $(\mu A)'=20\mu\Rightarrow A=\mu^{-1}\!\left(\int 20\mu\,dt+C\right)$.</p></div></div></div>
+<div class="practice-card" data-card><div class="p-head"><span class="p-num">Practice 17</span></div><div class="p-body"><p><strong>(a)</strong> Decide if $A'=\frac{A}{50+t}$ is separable, linear, or both. <strong>(b)</strong> Solve generally.</p></div><div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div><div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span><p>Both separable and linear.</p><p>$\frac{dA}{A}=\frac{dt}{50+t}\Rightarrow \ln|A|=\ln|50+t|+C\Rightarrow A=C(50+t)$.</p></div></div></div>
+<div class="practice-card" data-card><div class="p-head"><span class="p-num">Practice 18</span></div><div class="p-body"><p><strong>(a)</strong> Solve $y'+2y=4+e^{-2x}$. <strong>(b)</strong> Apply $y(0)=1$.</p></div><div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div><div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span><p>$\mu=e^{2x}$, so $(e^{2x}y)'=4e^{2x}+1$.</p><p>$e^{2x}y=2e^{2x}+x+C\Rightarrow y=2+xe^{-2x}+Ce^{-2x}$.</p><p>$1=2+C\Rightarrow C=-1$, so $y=2+(x-1)e^{-2x}$.</p></div></div></div>
+<div class="practice-card" data-card><div class="p-head"><span class="p-num">Practice 19</span></div><div class="p-body"><p><strong>(a)</strong> Mixing: $V_0=60$ L, in $=6$ L/min at 5 g/L, out $=4$ L/min, initial salt 30 g. Write solved $A(t)$ form. <strong>(b)</strong> Find long-time concentration trend.</p></div><div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div><div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span><p>$V=60+2t$, DE: $A'+\frac{4}{60+2t}A=30$ i.e. $A'+\frac{2}{30+t}A=30$.</p><p>$\mu=(30+t)^2$, so $(\mu A)'=30(30+t)^2$.</p><p>$A=10(30+t)+\frac{C}{(30+t)^2}$; from $A(0)=30$, $C=-243000$.</p><p>$c(t)=A/V\to5$ g/L (inflow concentration).</p></div></div></div>
+<div class="practice-card" data-card><div class="p-head"><span class="p-num">Practice 20</span></div><div class="p-body"><p><strong>(a)</strong> Explain in one sentence why unequal flow rates usually break separability in mixing models. <strong>(b)</strong> Name the resulting DE class.</p></div><div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div><div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span><p>(a) Outflow term uses $A/V(t)$ and $V(t)$ depends on $t$, so coefficient of $A$ is time-dependent and cannot be isolated as pure $h(A)$ product.</p><p>(b) First-order linear DE.</p></div></div></div>
+
+</section>
+
+</main>
+
+<footer>MATH142 Engineering Mathematics 2 &middot; Week 8 (Phase 2: Differential Equations) &middot; In-Session Exam 1 sits at the end of this week (covers Phase 1 only)<br>
+  <a href="MATH142_Week7_SeparableDE_IntegratingFactor.html">Week 7</a> &nbsp;|&nbsp;
+  <strong>Week 8</strong> &nbsp;|&nbsp;
+  <a href="MATH142_Week9_SecondOrderDE_SHM.html">Week 9</a>
+</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>
