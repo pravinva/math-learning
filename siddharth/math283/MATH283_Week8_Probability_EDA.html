@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Probability Rules, Venn/Tree Diagrams &amp; Exploratory Data Analysis</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH283 &middot; Advanced Engineering Mathematics &amp; Statistics &middot; Week 8 (Part B: Statistics)</div>
+  <h1>Probability Rules, Venn/Tree Diagrams &amp; Exploratory Data Analysis</h1>
+  <p>Part B begins &mdash; Statistics, worth the other 50% of the final mark. This week: the basic rules of probability and how to organise multi-stage random experiments with Venn and tree diagrams, then a shift to real data: summarising and visualising a data set both graphically and numerically before any formal inference is attempted. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 80 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this week's toolkit</span>
+  <ul>
+<li><strong>Addition rule:</strong> $P(A\cup B)=P(A)+P(B)-P(A\cap B)$; if mutually exclusive, $P(A\cap B)=0$.</li>
+<li><strong>Complement rule:</strong> $P(A')=1-P(A)$.</li>
+<li><strong>Conditional probability:</strong> $P(A|B)=\dfrac{P(A\cap B)}{P(B)}$; multiplication rule $P(A\cap B)=P(A|B)P(B)$.</li>
+<li><strong>Independence:</strong> $A,B$ independent $\iff P(A\cap B)=P(A)P(B) \iff P(A|B)=P(A)$.</li>
+<li><strong>Bayes' theorem:</strong> $P(A|B)=\dfrac{P(B|A)P(A)}{P(B)}$.</li>
+<li><strong>Numerical summaries:</strong> mean $\bar x=\dfrac{\sum x_i}{n}$; sample variance $s^2=\dfrac{\sum(x_i-\bar x)^2}{n-1}$; median (middle value, sorted); IQR $=Q_3-Q_1$.</li>
+<li><strong>Graphical techniques:</strong> histograms (shape/spread), boxplots (five-number summary: min, $Q_1$, median, $Q_3$, max; outliers beyond $1.5\times\text{IQR}$ from the box), stem-and-leaf plots.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Probability Rules &amp; Venn Diagrams</a></li>
+<li><a href="#sec1">Tree Diagrams &amp; Conditional Probability</a></li>
+<li><a href="#sec2">Exploratory Data Analysis &mdash; Graphical Techniques</a></li>
+<li><a href="#sec3">Exploratory Data Analysis &mdash; Numerical Summaries</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+  <div class="section-title"><span class="tag">0</span> Probability Rules &amp; Venn Diagrams</div>
+
+  <div class="prose">
+<p>Probability rules formalise how to combine the likelihoods of related events. A Venn diagram makes the addition rule visually obvious: adding $P(A)$ and $P(B)$ double-counts their overlap, $P(A\cap B)$, which must be subtracted back out.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$P(A\cup B)=P(A)+P(B)-P(A\cap B), \qquad P(A')=1-P(A)$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example.</strong> In a class, $P(\text{likes maths})=0.6$, $P(\text{likes physics})=0.5$, $P(\text{likes both})=0.3$. Find $P(\text{likes at least one})$ and $P(\text{likes neither})$.</p>
+<p class="step">$P(M\cup P)=0.6+0.5-0.3=0.8$.</p>
+<p class="step">$P(\text{neither})=1-0.8=0.2$.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>If $P(A)=0.4$, $P(B)=0.3$, and $A,B$ are mutually exclusive, find $P(A\cup B)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Mutually exclusive $\implies P(A\cap B)=0$: $P(A\cup B)=0.4+0.3-0=0.7$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>If $P(A\cup B)=0.75$, $P(A)=0.5$, $P(B)=0.4$, find $P(A\cap B)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$0.75=0.5+0.4-P(A\cap B) \implies P(A\cap B)=0.9-0.75=0.15$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A component fails due to defect $A$ with probability 0.05, defect $B$ with probability 0.03, and both defects with probability 0.01. Find the probability it fails due to at least one defect.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(A\cup B)=0.05+0.03-0.01=0.07$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>For events $A,B$ with $P(A)=0.6,P(B)=0.5,P(A\cap B)=0.3$, verify whether $A$ and $B$ are independent.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Independence requires $P(A\cap B)=P(A)P(B)$: $P(A)P(B)=0.6\times0.5=0.3$.</p>
+<p><strong>Answer:</strong> since $P(A\cap B)=0.3=P(A)P(B)$, $A$ and $B$ ARE independent.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>In a survey, 70% of respondents own a car, 40% own a bike, and 20% own both. Find the probability a randomly chosen respondent owns neither.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(\text{car}\cup\text{bike})=0.7+0.4-0.2=0.9$.</p>
+<p>$P(\text{neither})=1-0.9=0.1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>A die is rolled once. Let $A$ = "roll is even" and $B$ = "roll is greater than 3". Find $P(A\cup B)$ directly by listing outcomes, and verify using the addition rule.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\{2,4,6\}$, $B=\{4,5,6\}$, $A\cap B=\{4,6\}$.</p>
+<p>Direct: $A\cup B=\{2,4,5,6\}$, so $P(A\cup B)=4/6=2/3$.</p>
+<p>Formula: $P(A)+P(B)-P(A\cap B)=\tfrac36+\tfrac36-\tfrac26=\tfrac46=\tfrac23$. Match. &#10003;</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>In a factory, 3 machines A, B, C produce items with defect probabilities 0.02, 0.03, 0.05 respectively (assume independent machines). Find the probability that at least one of the three machines produces a defect on a given check (each machine checked once).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(\text{no defect})=P(A')P(B')P(C')=(0.98)(0.97)(0.95)=0.9031$ (approx).</p>
+<p><strong>Answer:</strong> $P(\text{at least one defect})=1-0.9031=0.0969$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>For three mutually exclusive and exhaustive events $A_1,A_2,A_3$ with $P(A_1)=0.2,P(A_2)=0.5$, find $P(A_3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Exhaustive means $P(A_1)+P(A_2)+P(A_3)=1$: $P(A_3)=1-0.2-0.5=0.3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Draw the logic (in words) for finding $P(A\cup B\cup C)$ for three general events using the inclusion-exclusion principle, stating the full formula.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Answer:</strong> $$P(A\cup B\cup C)=P(A)+P(B)+P(C)-P(A\cap B)-P(A\cap C)-P(B\cap C)+P(A\cap B\cap C)$$</p>
+<p>Logic: adding all three individually double-counts every pairwise overlap once too many, so those are subtracted; but this subtracts the triple-overlap region three times (once in each pairwise subtraction) when it should only be removed twice net &mdash; adding it back once restores the correct count.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A quality control test has $P(\text{pass})=0.85$. If 4 independent items are tested, find the probability that all 4 pass, and the probability that at least one fails.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(\text{all 4 pass})=0.85^4\approx0.522$.</p>
+<p>$P(\text{at least one fails})=1-0.522=0.478$.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+  <div class="section-title"><span class="tag">1</span> Tree Diagrams &amp; Conditional Probability</div>
+
+  <div class="prose">
+<p>A tree diagram is the natural tool for multi-stage random experiments &mdash; each branch's probability is conditional on everything that happened at the branches before it, and multiplying along a path gives the probability of that whole sequence of outcomes. Bayes' theorem lets you "reverse" the direction of a conditional probability &mdash; going from $P(\text{effect}|\text{cause})$ (often easy to state directly) to $P(\text{cause}|\text{effect})$ (often what you actually want to know).</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$P(A|B)=\frac{P(A\cap B)}{P(B)}, \qquad P(A|B)=\frac{P(B|A)P(A)}{P(B)} \ \text{(Bayes' theorem)}$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Two factories supply a part: Factory 1 supplies 60% (defect rate 2%), Factory 2 supplies 40% (defect rate 5%). If a randomly selected part is defective, find the probability it came from Factory 2.</p>
+<p class="step">$P(\text{defect})=P(F_1)P(\text{def}|F_1)+P(F_2)P(\text{def}|F_2)=(0.6)(0.02)+(0.4)(0.05)=0.012+0.02=0.032$.</p>
+<p class="step">$P(F_2|\text{def})=\dfrac{(0.4)(0.05)}{0.032}=\dfrac{0.02}{0.032}=0.625$.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A bag has 5 red and 3 blue balls. Two are drawn without replacement. Find $P(\text{both red})$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(\text{1st red})=5/8$. $P(\text{2nd red}|\text{1st red})=4/7$ (one red removed).</p>
+<p>$P(\text{both red})=\dfrac58\times\dfrac47=\dfrac{20}{56}=\dfrac{5}{14}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>For the same bag (5 red, 3 blue), find $P(\text{2nd ball is red})$ (unconditional &mdash; the 1st ball's colour is unknown).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Condition on the first draw: $P(\text{2nd red})=P(\text{1st red})P(\text{2nd red}|\text{1st red})+P(\text{1st blue})P(\text{2nd red}|\text{1st blue})$.</p>
+<p>$=\dfrac58\times\dfrac47+\dfrac38\times\dfrac57=\dfrac{20}{56}+\dfrac{15}{56}=\dfrac{35}{56}=\dfrac58$.</p>
+<p><strong>Answer:</strong> $\dfrac58$ &mdash; interestingly, the same as $P(\text{1st red})$; by symmetry, every position in the sequence has the same marginal probability of being red.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A test for a disease is 95% accurate (correctly identifies both diseased and healthy people 95% of the time). The disease affects 1% of the population. Find $P(\text{disease}|\text{positive test})$ using Bayes' theorem.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(D)=0.01,P(D')=0.99$. $P(+|D)=0.95,P(+|D')=0.05$.</p>
+<p>$P(+)=P(D)P(+|D)+P(D')P(+|D')=(0.01)(0.95)+(0.99)(0.05)=0.0095+0.0495=0.059$.</p>
+<p>$P(D|+)=\dfrac{0.0095}{0.059}\approx0.161$.</p>
+<p><strong>Answer:</strong> only about 16.1%, despite the test being "95% accurate" &mdash; a classic and important illustration of how a low base rate (1% prevalence) dominates the result.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Three urns: Urn 1 has 2 red/3 blue, Urn 2 has 4 red/1 blue, Urn 3 has 1 red/4 blue. An urn is chosen at random (equally likely), then a ball is drawn. Find $P(\text{red})$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(\text{red})=\dfrac13\left(\dfrac25\right)+\dfrac13\left(\dfrac45\right)+\dfrac13\left(\dfrac15\right)=\dfrac13\left(\dfrac25+\dfrac45+\dfrac15\right)=\dfrac13\times\dfrac75=\dfrac{7}{15}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>For the three-urn setup above, if a red ball is drawn, find $P(\text{Urn 2}|\text{red})$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(\text{Urn 2}\cap\text{red})=\dfrac13\times\dfrac45=\dfrac{4}{15}$.</p>
+<p>$P(\text{Urn 2}|\text{red})=\dfrac{4/15}{7/15}=\dfrac47$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A component passes an initial test with probability 0.9. Given it passes, it passes a second (independent, harder) test with probability 0.7. Given it fails the first test, it passes the second test with probability 0.2. Find the overall probability it passes the second test.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(\text{pass 2nd})=P(\text{pass 1st})P(\text{pass 2nd}|\text{pass 1st})+P(\text{fail 1st})P(\text{pass 2nd}|\text{fail 1st})$.</p>
+<p>$=(0.9)(0.7)+(0.1)(0.2)=0.63+0.02=0.65$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>For the component-testing scenario above, if it passed the second test, find the probability it also passed the first test.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(\text{pass 1st}\cap\text{pass 2nd})=0.63$ (from above). $P(\text{pass 2nd})=0.65$.</p>
+<p>$P(\text{pass 1st}|\text{pass 2nd})=\dfrac{0.63}{0.65}\approx0.969$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Explain, using the disease-testing example above, why a highly accurate test can still give a low $P(\text{disease}|\text{positive})$ when the disease is rare, in terms of the relative sizes of true positives and false positives.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Even though the test correctly flags 95% of the (relatively few) actually-diseased people, it also incorrectly flags 5% of the (vastly more numerous) healthy people as false positives. With a 1% disease prevalence, the healthy population is about 99 times larger than the diseased population &mdash; so even a small 5% false-positive rate applied to that huge healthy group produces more false positives in absolute terms than the true positives from the small diseased group. This is exactly why the calculated probability came out so much lower than the test's stated "95% accuracy" might naively suggest.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Two coins are flipped: one fair, one biased with $P(\text{heads})=0.8$. A coin is chosen at random and flipped twice, showing heads both times. Find the probability the biased coin was chosen.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(\text{HH}|\text{fair})=0.5^2=0.25$. $P(\text{HH}|\text{biased})=0.8^2=0.64$.</p>
+<p>$P(\text{HH})=0.5(0.25)+0.5(0.64)=0.125+0.32=0.445$.</p>
+<p>$P(\text{biased}|\text{HH})=\dfrac{0.5\times0.64}{0.445}=\dfrac{0.32}{0.445}\approx0.719$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Explain the general structure of Bayes' theorem in words: what does the numerator represent, and what does the denominator represent, in the context of the disease-testing example?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The numerator, $P(B|A)P(A)$, represents the probability of the specific joint scenario actually occurring &mdash; in the disease example, the probability of being diseased AND testing positive, i.e. a true positive.</p>
+<p>The denominator, $P(B)$, represents the total probability of the observed evidence occurring at all, summed over every possible way it could have arisen &mdash; in the disease example, the total probability of testing positive, whether from a true positive (diseased, correctly flagged) or a false positive (healthy, incorrectly flagged). Bayes' theorem is really just "what fraction of all positive results are true positives," which is exactly the conditional probability being asked for.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+  <div class="section-title"><span class="tag">2</span> Exploratory Data Analysis &mdash; Graphical Techniques</div>
+
+  <div class="prose">
+<p>Before any formal statistical test, always look at the data. A histogram reveals the overall shape (symmetric, skewed, bimodal); a boxplot summarises the five-number summary and flags potential outliers at a glance; a stem-and-leaf plot preserves every individual data value while still showing the distribution's shape.</p>
+<p><strong>Boxplot outlier rule.</strong> A point is flagged as a potential outlier if it lies more than $1.5\times\text{IQR}$ beyond $Q_1$ or $Q_3$.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$\text{IQR}=Q_3-Q_1, \qquad \text{outlier if } x<Q_1-1.5\,\text{IQR} \text{ or } x>Q_3+1.5\,\text{IQR}$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A data set has $Q_1=20,Q_3=35$. Find the IQR and the outlier fences.</p>
+<p class="step">IQR $=35-20=15$. Lower fence: $20-1.5(15)=20-22.5=-2.5$. Upper fence: $35+1.5(15)=35+22.5=57.5$.</p>
+<p class="step">Any value below $-2.5$ or above $57.5$ would be flagged as a potential outlier.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>A data set has $Q_1=10,Q_3=18$. Find the IQR and both outlier fences.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>IQR $=18-10=8$. Lower fence: $10-1.5(8)=10-12=-2$. Upper fence: $18+1.5(8)=18+12=30$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>A data set has median 50, $Q_1=42,Q_3=60$, min 30, max 95. Is the value 95 a potential outlier?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>IQR $=60-42=18$. Upper fence: $60+1.5(18)=60+27=87$.</p>
+<p><strong>Answer:</strong> since $95>87$, yes, 95 is flagged as a potential outlier.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Describe (in words) the difference in shape a histogram would show for right-skewed data compared to left-skewed data.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Right-skewed (positively skewed):</strong> the bulk of the data is concentrated on the left, with a long tail stretching out to the right (toward higher values) &mdash; e.g. income data, where most people earn moderate amounts but a few earn very high amounts.</p>
+<p><strong>Left-skewed (negatively skewed):</strong> the bulk of the data is concentrated on the right, with a long tail stretching out to the left (toward lower values) &mdash; e.g. exam scores where most students do well but a few score very low.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>A boxplot shows the median line positioned much closer to $Q_1$ than to $Q_3$ within the box. What does this suggest about the skewness of the middle 50% of the data?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>If the median is closer to $Q_1$, the lower half of the middle 50% (between $Q_1$ and the median) is compressed into a smaller range than the upper half (between the median and $Q_3$) &mdash; suggesting the data within this central range is right-skewed (more spread out toward higher values).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>A stem-and-leaf plot has stems $1,2,3$ (representing tens) with leaves: Stem 1: 2,5,8; Stem 2: 0,1,3,3,7; Stem 3: 4. List all the actual data values and find the median.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Data values: $12,15,18,20,21,23,23,27,34$ (9 values total).</p>
+<p><strong>Median</strong> (5th value when sorted, since $n=9$): $21$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>For the data set $4,7,9,12,15,18,22,29,35$ (already sorted, $n=9$), find $Q_1$, the median, and $Q_3$ using the standard method (median splits data in half; $Q_1,Q_3$ are medians of each half).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Median (5th value): $15$.</p>
+<p>Lower half (excluding median): $4,7,9,12$ &mdash; $Q_1$ = average of 2nd and 3rd = $(7+9)/2=8$.</p>
+<p>Upper half: $18,22,29,35$ &mdash; $Q_3$ = average of 2nd and 3rd = $(22+29)/2=25.5$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Using the data set from the previous question ($Q_1=8,Q_3=25.5$), find the IQR and check whether the minimum value (4) is a potential outlier.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>IQR $=25.5-8=17.5$. Lower fence: $8-1.5(17.5)=8-26.25=-18.25$.</p>
+<p><strong>Answer:</strong> since $4>-18.25$, the minimum value 4 is NOT flagged as an outlier.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Explain why a boxplot can hide the fact that a data set is bimodal (has two separate clusters/peaks), while a histogram would reveal it clearly.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A boxplot only displays five summary numbers (min, $Q_1$, median, $Q_3$, max) &mdash; it has no way to show the internal density or clustering pattern of the data between these markers. Two very differently-shaped underlying distributions (e.g. one genuinely bimodal, one uniformly spread) could easily produce the exact same five-number summary, and hence the exact same-looking boxplot. A histogram, by contrast, directly shows the frequency of data within many small bins across the range, so two separate peaks (bimodality) would appear as two distinct humps &mdash; a pattern the boxplot has no mechanism to reveal.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>A company's daily sales data has mean \$5000 and median \$4200. What does the relationship between the mean and median suggest about the skewness of the sales distribution?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since the mean (\$5000) is noticeably higher than the median (\$4200), the distribution is likely <strong>right-skewed</strong> &mdash; a few days with unusually high sales pull the mean upward, while the median (less sensitive to extreme values) stays closer to the "typical" day's sales.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>Two data sets have the same median and IQR, but Data Set A's histogram is symmetric and unimodal, while Data Set B's histogram is bimodal. Explain why relying only on the five-number summary (as shown in a boxplot) could mislead someone comparing these two data sets.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>If both data sets share identical five-number summaries, their boxplots would look completely identical &mdash; visually suggesting the two data sets have the same underlying distribution shape. In reality, Data Set B has two separate clusters of values (perhaps representing two distinct subgroups within the data), a structurally very different situation from Data Set A's single, smooth, symmetric cluster. Someone relying only on the boxplot summary would completely miss this crucial difference in the data's underlying structure, potentially leading to incorrect conclusions (e.g. treating Set B as a single homogeneous group when it may actually represent two distinct populations that should be analysed separately).</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+  <div class="section-title"><span class="tag">3</span> Exploratory Data Analysis &mdash; Numerical Summaries</div>
+
+  <div class="prose">
+<p>Numerical summaries condense a whole data set into a handful of representative numbers: measures of centre (mean, median) and measures of spread (variance, standard deviation, IQR). Each measure has strengths and weaknesses &mdash; the mean uses every data point but is sensitive to outliers; the median ignores exact values but is robust to them.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$\bar x=\frac{\sum x_i}{n}, \qquad s^2=\frac{\sum(x_i-\bar x)^2}{n-1}=\frac{\sum x_i^2-n\bar x^2}{n-1}, \qquad s=\sqrt{s^2}$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Find the mean and sample variance of $2,4,6,8,10$.</p>
+<p class="step">$\bar x=\dfrac{2+4+6+8+10}{5}=6$.</p>
+<p class="step">$\sum(x_i-\bar x)^2=16+4+0+4+16=40$. $s^2=\dfrac{40}{4}=10$; $s=\sqrt{10}\approx3.162$.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Find the mean and sample variance of $3,5,7,9,11,13$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\bar x=\dfrac{3+5+7+9+11+13}{6}=\dfrac{48}{6}=8$.</p>
+<p>Deviations squared: $25,9,1,1,9,25$; sum $=70$. $s^2=\dfrac{70}{5}=14$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Use the computational formula $s^2=\dfrac{\sum x_i^2-n\bar x^2}{n-1}$ to verify the variance of $2,4,6,8,10$ from the worked example.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sum x_i^2=4+16+36+64+100=220$. $n\bar x^2=5(36)=180$.</p>
+<p>$s^2=\dfrac{220-180}{4}=\dfrac{40}{4}=10$. Matches the worked example. &#10003;</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>A sample of 10 measurements has $\sum x_i=150$ and $\sum x_i^2=2400$. Find the sample mean and variance.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\bar x=\dfrac{150}{10}=15$.</p>
+<p>$s^2=\dfrac{2400-10(15^2)}{9}=\dfrac{2400-2250}{9}=\dfrac{150}{9}\approx16.67$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>A data set of 8 values has mean 20 and variance 25. If every value is multiplied by 3, find the new mean and variance.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Multiplying every value by a constant $c$: new mean $=c\times\text{old mean}=3(20)=60$.</p>
+<p>New variance $=c^2\times\text{old variance}=9(25)=225$ (variance scales by the square of the constant, since it involves squared deviations).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>A data set has mean 50 and variance 16. If a constant 10 is added to every value, find the new mean and variance.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>New mean $=50+10=60$ (shifts by the constant).</p>
+<p>New variance $=16$ (unchanged &mdash; adding a constant shifts every value equally, so the spread/deviations from the mean don't change at all).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>Explain why the sample variance formula divides by $n-1$ rather than $n$, in terms of "degrees of freedom."</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Computing $s^2$ requires first estimating the population mean using the sample mean $\bar x$ &mdash; but $\bar x$ is itself calculated from the same $n$ data points, using up one "degree of freedom." Once $\bar x$ is fixed, only $n-1$ of the $n$ deviations $(x_i-\bar x)$ are actually free to vary independently (the last one is automatically determined, since all deviations must sum to exactly zero). Dividing by $n-1$ (rather than $n$) corrects for this loss of one degree of freedom, and results in an unbiased estimator of the true population variance &mdash; dividing by $n$ instead would systematically underestimate the population variance on average.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>Two data sets have the same mean but Data Set A has standard deviation 2 while Data Set B has standard deviation 8. Explain what this difference tells you about the two data sets, using a real-world interpretation (e.g. exam scores or measurements).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Both data sets are centred at the same average value, but Data Set A's values are tightly clustered close to that mean (low spread/variability), while Data Set B's values are much more spread out, with individual observations potentially far from the mean in either direction.</p>
+<p><strong>Real-world example:</strong> if these represent exam scores, Data Set A might describe a class where most students performed very similarly (consistently around the average), while Data Set B describes a class with a much wider range of performance &mdash; some students far below average, some far above, even though both classes have the identical overall average score.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>A sample has $n=5$ values: $10, 12, x, 16, 18$, with a known sample mean of $14$. Find the missing value $x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\bar x=14 \implies \sum x_i=5(14)=70$.</p>
+<p>$10+12+x+16+18=70 \implies 56+x=70 \implies x=14$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>A researcher reports the mean of a data set but not the standard deviation. Explain why this is insufficient information to fully describe the data, giving a concrete example of two very different data sets that could share the same mean.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The mean alone describes only the "centre" of the data, saying nothing about how spread out or clustered the values are around that centre &mdash; two data sets can have identical means while looking completely different in every other respect.</p>
+<p><strong>Example:</strong> the data set $\{9,10,11\}$ has mean $10$ with very little spread, while the data set $\{0,10,20\}$ also has mean $10$ but is far more spread out. A decision-maker relying only on the reported mean (say, average product lifespan) would have no way to distinguish a product line with highly consistent lifespans from one with wildly variable (some failing very early, some lasting very long) lifespans &mdash; a potentially critical difference for quality control or warranty planning.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>A sample of 6 resistor values (in ohms) is: $98, 102, 99, 101, 100, 100$. Find the sample mean, sample variance, and sample standard deviation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\bar x=\dfrac{98+102+99+101+100+100}{6}=\dfrac{600}{6}=100$.</p>
+<p>Deviations squared: $4,4,1,1,0,0$; sum $=10$. $s^2=\dfrac{10}{5}=2$.</p>
+<p>$s=\sqrt2\approx1.414$ ohms.</p>
+    </div>
+  </div>
+</div>
+
+<div class="why-box">
+  <span class="box-label">Exam Challenge Extension</span>
+  <p><strong>Purpose:</strong> harder multi-concept exam-style questions with method selection and clear reasoning.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>A discrete variable has pmf p(x)=k(x+1), x=0,1,2,3. Find k, E[X], Var(X).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Normalize to find k, then compute E[X]=sum x p(x), E[X^2]=sum x^2 p(x), Var=E[X^2]-E[X]^2.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>Two events satisfy P(A)=0.62, P(B)=0.48, P(A∩B)=0.30. Compute P(A|B), P(B|A), and test independence.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use conditional formulas. Independence requires P(A∩B)=P(A)P(B).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>Dataset: 9, 12, 13, 15, 18, 21, 24, 60. Compute mean, median, IQR, and comment on whether mean or median is better for center.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sort data, compute quartiles and IQR, note 60 is outlier so median/IQR are more robust.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>For joint density f(x,y)=c(x+y) on 0<x<1, 0<y<1, find c and P(X+Y<1).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Find c from double integral over unit square equals 1; then integrate over triangle x+y<1.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 45</span></div>
+  <div class="p-body"><p>A box contains 5 red and 7 blue balls. Two drawn without replacement. Let X=#red. Find pmf of X and E[X].</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Hypergeometric with N=12, K=5, n=2. Compute P(X=0,1,2), then E[X]=nK/N.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 46</span></div>
+  <div class="p-body"><p>Find covariance and correlation when E[X]=4, E[Y]=6, E[XY]=29, Var(X)=5, Var(Y)=9.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Cov(X,Y)=E[XY]-E[X]E[Y]. Correlation is Cov/(sqrt(VarX VarY)).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 47</span></div>
+  <div class="p-body"><p>A random variable has CDF F(x)=0 for x<0, F(x)=x^2/4 for 0<=x<=2, and 1 for x>2. Find PDF, median, and P(0.5<X<1.5).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Differentiate CDF on support for PDF, solve F(m)=0.5 for median, and use CDF differences for interval probability.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 48</span></div>
+  <div class="p-body"><p>A quality-control process has outcomes A, B, C with probabilities 0.5, 0.3, 0.2. For 6 independent items, find the probability that exactly 3 are A, 2 are B, and 1 is C.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use multinomial: P = 6!/(3!2!1!) (0.5)^3 (0.3)^2 (0.2).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 49</span></div>
+  <div class="p-body"><p>A discrete variable has pmf p(x)=k(x+1), x=0,1,2,3. Find k, E[X], Var(X).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Normalize to find k, then compute E[X]=sum x p(x), E[X^2]=sum x^2 p(x), Var=E[X^2]-E[X]^2.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 50</span></div>
+  <div class="p-body"><p>Two events satisfy P(A)=0.62, P(B)=0.48, P(A∩B)=0.30. Compute P(A|B), P(B|A), and test independence.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use conditional formulas. Independence requires P(A∩B)=P(A)P(B).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 51</span></div>
+  <div class="p-body"><p>Dataset: 9, 12, 13, 15, 18, 21, 24, 60. Compute mean, median, IQR, and comment on whether mean or median is better for center.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sort data, compute quartiles and IQR, note 60 is outlier so median/IQR are more robust.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 52</span></div>
+  <div class="p-body"><p>For joint density f(x,y)=c(x+y) on 0<x<1, 0<y<1, find c and P(X+Y<1).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Find c from double integral over unit square equals 1; then integrate over triangle x+y<1.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 53</span></div>
+  <div class="p-body"><p>A box contains 5 red and 7 blue balls. Two drawn without replacement. Let X=#red. Find pmf of X and E[X].</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Hypergeometric with N=12, K=5, n=2. Compute P(X=0,1,2), then E[X]=nK/N.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 54</span></div>
+  <div class="p-body"><p>Find covariance and correlation when E[X]=4, E[Y]=6, E[XY]=29, Var(X)=5, Var(Y)=9.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Cov(X,Y)=E[XY]-E[X]E[Y]. Correlation is Cov/(sqrt(VarX VarY)).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 55</span></div>
+  <div class="p-body"><p>A random variable has CDF F(x)=0 for x<0, F(x)=x^2/4 for 0<=x<=2, and 1 for x>2. Find PDF, median, and P(0.5<X<1.5).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Differentiate CDF on support for PDF, solve F(m)=0.5 for median, and use CDF differences for interval probability.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 56</span></div>
+  <div class="p-body"><p>A quality-control process has outcomes A, B, C with probabilities 0.5, 0.3, 0.2. For 6 independent items, find the probability that exactly 3 are A, 2 are B, and 1 is C.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use multinomial: P = 6!/(3!2!1!) (0.5)^3 (0.3)^2 (0.2).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 57</span></div>
+  <div class="p-body"><p>A discrete variable has pmf p(x)=k(x+1), x=0,1,2,3. Find k, E[X], Var(X).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Normalize to find k, then compute E[X]=sum x p(x), E[X^2]=sum x^2 p(x), Var=E[X^2]-E[X]^2.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 58</span></div>
+  <div class="p-body"><p>Two events satisfy P(A)=0.62, P(B)=0.48, P(A∩B)=0.30. Compute P(A|B), P(B|A), and test independence.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use conditional formulas. Independence requires P(A∩B)=P(A)P(B).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 59</span></div>
+  <div class="p-body"><p>Dataset: 9, 12, 13, 15, 18, 21, 24, 60. Compute mean, median, IQR, and comment on whether mean or median is better for center.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sort data, compute quartiles and IQR, note 60 is outlier so median/IQR are more robust.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 60</span></div>
+  <div class="p-body"><p>For joint density f(x,y)=c(x+y) on 0<x<1, 0<y<1, find c and P(X+Y<1).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Find c from double integral over unit square equals 1; then integrate over triangle x+y<1.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 61</span></div>
+  <div class="p-body"><p>A box contains 5 red and 7 blue balls. Two drawn without replacement. Let X=#red. Find pmf of X and E[X].</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Hypergeometric with N=12, K=5, n=2. Compute P(X=0,1,2), then E[X]=nK/N.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 62</span></div>
+  <div class="p-body"><p>Find covariance and correlation when E[X]=4, E[Y]=6, E[XY]=29, Var(X)=5, Var(Y)=9.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Cov(X,Y)=E[XY]-E[X]E[Y]. Correlation is Cov/(sqrt(VarX VarY)).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 63</span></div>
+  <div class="p-body"><p>A random variable has CDF F(x)=0 for x<0, F(x)=x^2/4 for 0<=x<=2, and 1 for x>2. Find PDF, median, and P(0.5<X<1.5).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Differentiate CDF on support for PDF, solve F(m)=0.5 for median, and use CDF differences for interval probability.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 64</span></div>
+  <div class="p-body"><p>A quality-control process has outcomes A, B, C with probabilities 0.5, 0.3, 0.2. For 6 independent items, find the probability that exactly 3 are A, 2 are B, and 1 is C.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use multinomial: P = 6!/(3!2!1!) (0.5)^3 (0.3)^2 (0.2).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 65</span></div>
+  <div class="p-body"><p>A discrete variable has pmf p(x)=k(x+1), x=0,1,2,3. Find k, E[X], Var(X).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Normalize to find k, then compute E[X]=sum x p(x), E[X^2]=sum x^2 p(x), Var=E[X^2]-E[X]^2.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 66</span></div>
+  <div class="p-body"><p>Two events satisfy P(A)=0.62, P(B)=0.48, P(A∩B)=0.30. Compute P(A|B), P(B|A), and test independence.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use conditional formulas. Independence requires P(A∩B)=P(A)P(B).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 67</span></div>
+  <div class="p-body"><p>Dataset: 9, 12, 13, 15, 18, 21, 24, 60. Compute mean, median, IQR, and comment on whether mean or median is better for center.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sort data, compute quartiles and IQR, note 60 is outlier so median/IQR are more robust.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 68</span></div>
+  <div class="p-body"><p>For joint density f(x,y)=c(x+y) on 0<x<1, 0<y<1, find c and P(X+Y<1).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Find c from double integral over unit square equals 1; then integrate over triangle x+y<1.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 69</span></div>
+  <div class="p-body"><p>A box contains 5 red and 7 blue balls. Two drawn without replacement. Let X=#red. Find pmf of X and E[X].</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Hypergeometric with N=12, K=5, n=2. Compute P(X=0,1,2), then E[X]=nK/N.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 70</span></div>
+  <div class="p-body"><p>Find covariance and correlation when E[X]=4, E[Y]=6, E[XY]=29, Var(X)=5, Var(Y)=9.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Cov(X,Y)=E[XY]-E[X]E[Y]. Correlation is Cov/(sqrt(VarX VarY)).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 71</span></div>
+  <div class="p-body"><p>A random variable has CDF F(x)=0 for x<0, F(x)=x^2/4 for 0<=x<=2, and 1 for x>2. Find PDF, median, and P(0.5<X<1.5).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Differentiate CDF on support for PDF, solve F(m)=0.5 for median, and use CDF differences for interval probability.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 72</span></div>
+  <div class="p-body"><p>A quality-control process has outcomes A, B, C with probabilities 0.5, 0.3, 0.2. For 6 independent items, find the probability that exactly 3 are A, 2 are B, and 1 is C.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use multinomial: P = 6!/(3!2!1!) (0.5)^3 (0.3)^2 (0.2).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 73</span></div>
+  <div class="p-body"><p>A discrete variable has pmf p(x)=k(x+1), x=0,1,2,3. Find k, E[X], Var(X).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Normalize to find k, then compute E[X]=sum x p(x), E[X^2]=sum x^2 p(x), Var=E[X^2]-E[X]^2.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 74</span></div>
+  <div class="p-body"><p>Two events satisfy P(A)=0.62, P(B)=0.48, P(A∩B)=0.30. Compute P(A|B), P(B|A), and test independence.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use conditional formulas. Independence requires P(A∩B)=P(A)P(B).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 75</span></div>
+  <div class="p-body"><p>Dataset: 9, 12, 13, 15, 18, 21, 24, 60. Compute mean, median, IQR, and comment on whether mean or median is better for center.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sort data, compute quartiles and IQR, note 60 is outlier so median/IQR are more robust.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 76</span></div>
+  <div class="p-body"><p>For joint density f(x,y)=c(x+y) on 0<x<1, 0<y<1, find c and P(X+Y<1).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Find c from double integral over unit square equals 1; then integrate over triangle x+y<1.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 77</span></div>
+  <div class="p-body"><p>A box contains 5 red and 7 blue balls. Two drawn without replacement. Let X=#red. Find pmf of X and E[X].</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Hypergeometric with N=12, K=5, n=2. Compute P(X=0,1,2), then E[X]=nK/N.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 78</span></div>
+  <div class="p-body"><p>Find covariance and correlation when E[X]=4, E[Y]=6, E[XY]=29, Var(X)=5, Var(Y)=9.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Cov(X,Y)=E[XY]-E[X]E[Y]. Correlation is Cov/(sqrt(VarX VarY)).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 79</span></div>
+  <div class="p-body"><p>A random variable has CDF F(x)=0 for x<0, F(x)=x^2/4 for 0<=x<=2, and 1 for x>2. Find PDF, median, and P(0.5<X<1.5).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Differentiate CDF on support for PDF, solve F(m)=0.5 for median, and use CDF differences for interval probability.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 80</span></div>
+  <div class="p-body"><p>A quality-control process has outcomes A, B, C with probabilities 0.5, 0.3, 0.2. For 6 independent items, find the probability that exactly 3 are A, 2 are B, and 1 is C.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use multinomial: P = 6!/(3!2!1!) (0.5)^3 (0.3)^2 (0.2).</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>MATH283 Advanced Engineering Mathematics &amp; Statistics &middot; Week 8 (Part B: Statistics) &middot; Part B begins</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>
