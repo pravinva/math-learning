@@ -34,6 +34,8 @@ window.MathJax = {
   .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
   .prose p{margin:12px 0;}
   .prose strong{color:var(--navy);}
+  .prose ul, .prose ol{ margin:10px 0 10px 22px; }
+  .prose li{ margin:6px 0; }
   .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
   .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
   .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
@@ -43,6 +45,11 @@ window.MathJax = {
   .example-box .box-label, .why-box .box-label{color:var(--navy);}
   .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
   .example-box .step{margin:10px 0 10px 14px;}
+  .concept-diagram{ display:block; margin:16px auto; background:#fff; border:1px solid var(--line); border-radius:8px; max-width:100%; height:auto; }
+  .derive-step{ margin:10px 0 10px 4px; font-size:15.5px; line-height:1.65; }
+  .callout{ margin:14px 0; padding:12px 16px; background:#f8fafc; border:1px solid var(--line); border-radius:6px; font-size:15px; line-height:1.6; }
+  .callout strong{ color:var(--navy); }
+  .subh{ font-size:17px; font-weight:700; color:var(--navy); margin:22px 0 8px; }
   .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
   .practice-card.solved{ border-left-color:var(--red); }
   .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
@@ -67,7 +74,7 @@ window.MathJax = {
 <header>
   <div class="eyebrow">MATH141 · Linear Algebra and Vectors · Integrated Extension</div>
   <h1>3D Analytic Geometry (Combined Study Lesson)</h1>
-  <p>A full consolidated lesson for studying 3D line-plane geometry as one coherent system: line equations, plane equations, intersections, distances, angles, and geometric classification. This is a fresh integrated set (not copied from weekly pages) with worked examples and 12 solved practice items per subtopic.</p>
+  <p>Learn 3D lines and planes from scratch: what a parameter really means, why a normal describes a plane, how intersections and distances follow from those ideas. Practice problems sit after each block once the story is clear.</p>
   <div class="progress-wrap">
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-label" id="progressLabel">0 / 48 practice solutions revealed</div>
@@ -87,14 +94,93 @@ window.MathJax = {
 <main>
 <section class="topic" id="sec0">
   <div class="section-title"><span class="tag">A</span> 3D lines: forms, checks, and classification</div>
+
   <div class="prose">
-    <p>Every 3D line should be readable in three ways: geometric point + direction, algebraic parametric equations, and symmetric form. Exam speed comes from moving between these forms quickly, then using dot and cross products to classify relationships.</p>
+    <p>In the plane (\(xy\)), a line is easy to picture: one equation like \(y=mx+c\) is enough. In 3D space there is an extra dimension, and a single equation \(ax+by+cz=d\) actually describes a <strong>plane</strong>, not a line. So a line in 3D needs a different description. The cleanest idea is geometric:</p>
+    <p><strong>Pick a point you know is on the line, and pick a direction the line points.</strong> Every other point on the line is reached by walking along that direction from the known point &mdash; forwards or backwards, any distance.</p>
   </div>
+
+  <div class="subh">1. What &ldquo;parametric&rdquo; means</div>
+  <div class="prose">
+    <p>A <strong>parameter</strong> is just a real number that labels positions along the line, like a clock reading for &ldquo;how far you have walked.&rdquo; Call it \(t\).</p>
+    <ul>
+      <li>When \(t=0\), you are exactly at the known point \(A\).</li>
+      <li>When \(t=1\), you have walked exactly one copy of the direction vector \(\mathbf{d}\) from \(A\).</li>
+      <li>When \(t=2\), two copies; when \(t=-1\), one copy in the opposite direction.</li>
+    </ul>
+    <p>So if \(\mathbf{a}\) is the position vector of \(A\) and \(\mathbf{d}\) is the direction, the position vector of a general point \(P\) on the line is</p>
+    \[
+      \mathbf{r}=\mathbf{a}+t\mathbf{d},\qquad t\in\mathbb{R}.
+    \]
+    <p>That is the <strong>vector equation</strong> of the line. It is not a different object from the parametric equations &mdash; it is the same statement written with vectors instead of three separate coordinates.</p>
+  </div>
+
+  <svg class="concept-diagram" viewBox="0 0 560 240" aria-label="Parameter t along a line">
+    <defs>
+      <marker id="arr-n" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1B2431"/></marker>
+      <marker id="arr-r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#FF3621"/></marker>
+      <marker id="arr-b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#185FA5"/></marker>
+    </defs>
+    <line x1="40" y1="180" x2="520" y2="70" stroke="#c8d2de" stroke-width="2" stroke-dasharray="5 4"/>
+    <circle cx="160" cy="152" r="6" fill="#1B2431"/>
+    <text x="140" y="178" font-size="14" font-family="Barlow,sans-serif">A (t=0)</text>
+    <line x1="160" y1="152" x2="250" y2="132" stroke="#185FA5" stroke-width="3" marker-end="url(#arr-b)"/>
+    <text x="190" y="122" font-size="13" fill="#185FA5" font-family="Barlow,sans-serif">d</text>
+    <circle cx="340" cy="112" r="6" fill="#FF3621"/>
+    <text x="348" y="108" font-size="14" fill="#FF3621" font-family="Barlow,sans-serif">P = a + t d</text>
+    <line x1="160" y1="152" x2="340" y2="112" stroke="#FF3621" stroke-width="2.5" marker-end="url(#arr-r)"/>
+    <text x="230" y="155" font-size="13" fill="#FF3621" font-family="Barlow,sans-serif">t·d</text>
+    <text x="50" y="40" font-size="15" font-family="Barlow,sans-serif" font-weight="600">Changing t slides P along the same straight track</text>
+  </svg>
+
+  <div class="why-box">
+    <span class="box-label">Why introduce a parameter at all?</span>
+    <p>Because a line is one-dimensional inside three-dimensional space. You need exactly <strong>one free number</strong> to specify where you are on it. The parameter \(t\) is that free number. Without it, you would be stuck trying to force three coordinates \(x,y,z\) to satisfy somehow &ldquo;being on a line&rdquo; with no organised way to generate those points.</p>
+  </div>
+
+  <div class="subh">2. From vector form to parametric equations</div>
+  <div class="prose">
+    <p>Write \(\mathbf{a}=(x_0,y_0,z_0)\) and \(\mathbf{d}=(a,b,c)\). Then \(\mathbf{r}=(x,y,z)\) expands component by component:</p>
+    \[
+      x=x_0+at,\qquad y=y_0+bt,\qquad z=z_0+ct.
+    \]
+    <p>These three are the <strong>parametric equations</strong>. They are not three independent stories &mdash; they are locked together by the <em>same</em> \(t\). If you change \(t\), all three coordinates update in lockstep, which is exactly what keeps you on the line.</p>
+    <p>Exam tip: given a vector equation, reading off parametric form is immediate. Going the other way, the constants are a point on the line and the coefficients of \(t\) are the direction.</p>
+  </div>
+
+  <div class="subh">3. Symmetric form &mdash; and why it exists</div>
+  <div class="prose">
+    <p>If none of \(a,b,c\) is zero, solve each parametric equation for \(t\):</p>
+    \[
+      t=\frac{x-x_0}{a}=\frac{y-y_0}{b}=\frac{z-z_0}{c}.
+    \]
+    <p>That common value of \(t\) is the <strong>symmetric form</strong> (sometimes called two-point / Cartesian form of a line). It says: the fractional &ldquo;how far along each axis, relative to the direction components&rdquo; must match.</p>
+  </div>
+  <div class="why-box">
+    <span class="box-label">Why bother with symmetric form?</span>
+    <p>It hides the parameter. Sometimes exam questions give a line that way and ask for a direction vector &mdash; you just read the denominators \((a,b,c)\) and a point from the numerators. It is also a compact way to write &ldquo;these three ratios are equal,&rdquo; which is useful when checking whether a given point lies on the line (plug in \(x,y,z\) and see if the three fractions agree).</p>
+    <p>If a direction component is zero &mdash; say \(a=0\) &mdash; that coordinate never changes: \(x=x_0\) always. You cannot divide by zero, so you write the constant equation separately and keep the other two fractions equal. That is not a special case of geometry; it is just honesty about division.</p>
+  </div>
+
   <div class="key-box">
-    <span class="box-label">Core toolkit</span>
-    <p>\(\mathbf{r}=\mathbf{a}+t\mathbf{d}\), parametric \(x=x_0+at,\ y=y_0+bt,\ z=z_0+ct\), symmetric \(\dfrac{x-x_0}{a}=\dfrac{y-y_0}{b}=\dfrac{z-z_0}{c}\).</p>
-    <p>Parallel lines: \(\mathbf{d}_1 \parallel \mathbf{d}_2\). Perpendicular directions: \(\mathbf{d}_1\cdot\mathbf{d}_2=0\). Intersecting lines: solve simultaneous parameters and get one consistent point.</p>
+    <span class="box-label">The three forms side by side</span>
+    <p><strong>Vector:</strong> \(\mathbf{r}=\mathbf{a}+t\mathbf{d}\)</p>
+    <p><strong>Parametric:</strong> \(x=x_0+at,\ y=y_0+bt,\ z=z_0+ct\)</p>
+    <p><strong>Symmetric</strong> (if \(a,b,c\neq0\)): \(\dfrac{x-x_0}{a}=\dfrac{y-y_0}{b}=\dfrac{z-z_0}{c}\)</p>
+    <p>They describe the same set of points. Fluency is being able to convert in either direction without thinking twice.</p>
   </div>
+
+  <div class="subh">4. Classifying two lines in 3D</div>
+  <div class="prose">
+    <p>In 2D, two distinct lines either intersect or are parallel. In 3D there is a third possibility: <strong>skew</strong> lines &mdash; not parallel, yet never meet, because they live in different &ldquo;layers&rdquo; of space.</p>
+    <p>Checklist:</p>
+    <ol>
+      <li><strong>Parallel?</strong> Directions \(\mathbf{d}_1,\mathbf{d}_2\) are scalar multiples. If yes, either they are the <em>same</em> line (any point of one lies on the other) or distinct parallel lines.</li>
+      <li><strong>Perpendicular directions?</strong> \(\mathbf{d}_1\cdot\mathbf{d}_2=0\) (optional side check; lines can be skew and still have perpendicular directions).</li>
+      <li><strong>Intersect?</strong> If not parallel, set \(\mathbf{a}_1+t\mathbf{d}_1=\mathbf{a}_2+s\mathbf{d}_2\) and solve the three component equations for \(t,s\). One consistent pair \(\Rightarrow\) they meet at that point. Inconsistent \(\Rightarrow\) skew.</li>
+    </ol>
+  </div>
+
   <div class="example-box">
     <span class="box-label">Worked example</span>
     <p>Line \(L_1:\mathbf{r}=(1,2,-1)+t(2,-1,3)\), line \(L_2:\mathbf{r}=(5,0,5)+s(-4,2,-6)\).</p>
@@ -127,14 +213,76 @@ window.MathJax = {
 
 <section class="topic" id="sec1">
   <div class="section-title"><span class="tag">B</span> Planes: forms, normals, and angle relations</div>
+
   <div class="prose">
-    <p>For planes, the normal vector is king. It controls equation form, parallel/perpendicular tests, and angle calculations with other planes and lines.</p>
+    <p>A plane is a flat 2D sheet sitting in 3D space. You could describe it with a point plus <em>two</em> independent directions lying in the sheet (parametric form \(\mathbf{r}=\mathbf{a}+s\mathbf{u}+t\mathbf{v}\)). That works, but exams almost always use a different packaging: a point plus a <strong>normal vector</strong>.</p>
   </div>
+
+  <div class="subh">1. Why a normal is the right descriptor</div>
+  <div class="prose">
+    <p>There are infinitely many directions inside a plane. Listing them all is hopeless. Instead, notice that every in-plane direction is <em>perpendicular</em> to one fixed nonzero vector \(\mathbf{n}\) &mdash; the normal, sticking straight out of the sheet.</p>
+    <p>So fix a point \(A\) on the plane with position \(\mathbf{a}\). A point \(P\) with position \(\mathbf{r}\) lies on the plane if and only if the connecting vector \(\overrightarrow{AP}=\mathbf{r}-\mathbf{a}\) is perpendicular to \(\mathbf{n}\):</p>
+    \[
+      \mathbf{n}\cdot(\mathbf{r}-\mathbf{a})=0.
+    \]
+    <p>That single scalar equation is one linear constraint on \((x,y,z)\). One constraint cuts space from 3D down to 2D &mdash; exactly a plane. That is why the normal description is so apt: it encodes the whole flatness condition in one clean equation.</p>
+  </div>
+
+  <svg class="concept-diagram" viewBox="0 0 560 260" aria-label="Normal to a plane">
+    <defs>
+      <marker id="bn" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#FF3621"/></marker>
+      <marker id="bu" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#185FA5"/></marker>
+      <marker id="bv" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2f8f5b"/></marker>
+    </defs>
+    <polygon points="80,200 300,230 500,130 280,100" fill="#e8f1fb" stroke="#185FA5" stroke-width="2"/>
+    <text x="340" y="165" font-size="14" fill="#185FA5" font-family="Barlow,sans-serif">plane</text>
+    <circle cx="280" cy="165" r="5" fill="#1B2431"/>
+    <text x="288" y="185" font-size="14" font-family="Barlow,sans-serif">A</text>
+    <line x1="280" y1="165" x2="280" y2="50" stroke="#FF3621" stroke-width="3" marker-end="url(#bn)"/>
+    <text x="288" y="70" font-size="15" fill="#FF3621" font-family="Barlow,sans-serif">n (normal)</text>
+    <line x1="280" y1="165" x2="400" y2="190" stroke="#185FA5" stroke-width="2.5" marker-end="url(#bu)"/>
+    <text x="370" y="210" font-size="13" fill="#185FA5" font-family="Barlow,sans-serif">u in plane</text>
+    <line x1="280" y1="165" x2="200" y2="120" stroke="#2f8f5b" stroke-width="2.5" marker-end="url(#bv)"/>
+    <text x="130" y="115" font-size="13" fill="#2f8f5b" font-family="Barlow,sans-serif">v in plane</text>
+    <text x="60" y="40" font-size="14" font-family="Barlow,sans-serif">n · u = 0 and n · v = 0 ⇒ n · (any in-plane vector) = 0</text>
+  </svg>
+
+  <div class="subh">2. Cartesian form</div>
+  <div class="prose">
+    <p>With \(\mathbf{n}=(a,b,c)\) and \(A=(x_0,y_0,z_0)\), expand the dot product:</p>
+    \[
+      a(x-x_0)+b(y-y_0)+c(z-z_0)=0
+      \quad\Rightarrow\quad
+      ax+by+cz=d,
+    \]
+    <p>where \(d=\mathbf{n}\cdot\mathbf{a}\). The coefficients of \(x,y,z\) <em>are</em> the normal. So from \(2x-y+3z=8\) you immediately read \(\mathbf{n}=(2,-1,3)\).</p>
+  </div>
+
+  <div class="subh">3. Building a plane from three points</div>
+  <div class="prose">
+    <p>Given non-collinear \(A,B,C\), both \(\overrightarrow{AB}\) and \(\overrightarrow{AC}\) lie in the plane. Their cross product</p>
+    \[
+      \mathbf{n}=\overrightarrow{AB}\times\overrightarrow{AC}
+    \]
+    <p>is automatically perpendicular to both, hence a normal. Then use \(A\) and \(\mathbf{n}\) in the point-normal equation. (If the cross product is \(\mathbf{0}\), the points are collinear and do not determine a unique plane.)</p>
+  </div>
+
+  <div class="subh">4. Angles and parallelism via normals</div>
+  <div class="prose">
+    <p>The angle between two planes equals the angle between their normals (tilting a plane tilts its normal by the same amount). By convention we take the acute angle:</p>
+    \[
+      \cos\theta=\frac{|\mathbf{n}_1\cdot\mathbf{n}_2|}{|\mathbf{n}_1||\mathbf{n}_2|}.
+    \]
+    <p>Parallel planes \(\Leftrightarrow\) parallel normals. Perpendicular planes \(\Leftrightarrow\) \(\mathbf{n}_1\cdot\mathbf{n}_2=0\).</p>
+    <p>A line with direction \(\mathbf{d}\) is parallel to a plane (never meets it, or lies in it) precisely when \(\mathbf{d}\) is perpendicular to the normal: \(\mathbf{d}\cdot\mathbf{n}=0\). The line is perpendicular to the plane when \(\mathbf{d}\) is parallel to \(\mathbf{n}\).</p>
+  </div>
+
   <div class="key-box">
     <span class="box-label">Core toolkit</span>
-    <p>General plane: \(ax+by+cz=d\), normal \(\mathbf{n}=(a,b,c)\). Through point \(P_0(x_0,y_0,z_0)\): \(a(x-x_0)+b(y-y_0)+c(z-z_0)=0\).</p>
+    <p>General plane: \(ax+by+cz=d\), normal \(\mathbf{n}=(a,b,c)\). Through point \(P_0\): \(a(x-x_0)+b(y-y_0)+c(z-z_0)=0\).</p>
     <p>Angle between planes from normals: \(\cos\theta=\dfrac{|\mathbf{n}_1\cdot\mathbf{n}_2|}{|\mathbf{n}_1||\mathbf{n}_2|}\). Line parallel to plane iff \(\mathbf{d}\cdot\mathbf{n}=0\).</p>
   </div>
+
   <div class="example-box">
     <span class="box-label">Worked example</span>
     <p>Find plane through \(A(1,0,2)\) with normal \((2,-1,3)\).</p>
@@ -158,13 +306,55 @@ window.MathJax = {
 
 <section class="topic" id="sec2">
   <div class="section-title"><span class="tag">C</span> Intersections and systems in 3D</div>
+
   <div class="prose">
-    <p>This is where line and plane algebra become one system: line-plane intersection, intersection line of two planes, and consistency tests using parameter equations.</p>
+    <p>Once lines and planes have equations, asking &ldquo;where do they meet?&rdquo; is just algebra. The geometry tells you <em>what kind</em> of answer to expect; the algebra finds the actual points.</p>
   </div>
+
+  <div class="subh">1. Line meeting a plane</div>
+  <div class="prose">
+    <p>A generic line hits a plane in exactly one point. Why? The line has one free parameter \(t\); the plane imposes one equation. One unknown, one constraint &mdash; typically one solution.</p>
+    <p><strong>Method:</strong> write the line parametrically, substitute \(x(t),y(t),z(t)\) into the plane equation, solve for \(t\), then plug back to get the point.</p>
+    <p>Special cases (worth recognising before you grind algebra):</p>
+    <ul>
+      <li>If \(\mathbf{d}\cdot\mathbf{n}=0\) and a point of the line satisfies the plane, the whole line lies <em>in</em> the plane (infinitely many intersections).</li>
+      <li>If \(\mathbf{d}\cdot\mathbf{n}=0\) but no point of the line satisfies the plane, the line is parallel to the plane and never meets it.</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <strong>Picture:</strong> \(\mathbf{d}\cdot\mathbf{n}=0\) means the line&rsquo;s direction is flat relative to the plane (orthogonal to the normal), so the line never &ldquo;dives into&rdquo; the sheet. Whether it already sits on the sheet decides &ldquo;contained&rdquo; vs &ldquo;misses forever.&rdquo;
+  </div>
+
+  <div class="subh">2. Two planes meeting</div>
+  <div class="prose">
+    <p>Two distinct non-parallel planes intersect in a <strong>line</strong>. Both normals are perpendicular to that intersection line, so the line&rsquo;s direction must be perpendicular to both normals:</p>
+    \[
+      \mathbf{d}=\mathbf{n}_1\times\mathbf{n}_2.
+    \]
+    <p>Then find any one shared point (set one free variable, solve the two plane equations) and write \(\mathbf{r}=\mathbf{a}+t\mathbf{d}\).</p>
+    <p>If the normals are parallel, the planes are parallel: either identical (same equation up to scale) or distinct with no intersection.</p>
+  </div>
+
+  <svg class="concept-diagram" viewBox="0 0 560 220" aria-label="Two planes intersect in a line">
+    <polygon points="40,180 260,200 280,60 60,40" fill="#dbeafe" stroke="#185FA5" stroke-width="2" fill-opacity="0.55"/>
+    <polygon points="200,200 520,170 500,30 180,60" fill="#fecaca" stroke="#FF3621" stroke-width="2" fill-opacity="0.45"/>
+    <line x1="220" y1="180" x2="240" y2="50" stroke="#1B2431" stroke-width="3.5"/>
+    <text x="248" y="100" font-size="14" font-family="Barlow,sans-serif" font-weight="600">intersection line</text>
+    <text x="70" y="30" font-size="13" fill="#185FA5" font-family="Barlow,sans-serif">plane 1</text>
+    <text x="430" y="30" font-size="13" fill="#FF3621" font-family="Barlow,sans-serif">plane 2</text>
+  </svg>
+
+  <div class="subh">3. Three planes / linear systems</div>
+  <div class="prose">
+    <p>Three plane equations are a \(3\times3\) linear system. Geometrically you may get a unique point (three sheets meet at a corner), a whole line (two of the planes coincide or are dependent), nothing (inconsistent), or a whole plane (all three are the same). The algebraic symptoms &mdash; unique solution, free variable, or contradiction &mdash; match those pictures.</p>
+  </div>
+
   <div class="why-box">
-    <span class="box-label">Workflow</span>
+    <span class="box-label">Workflow summary</span>
     <p>Line with plane: substitute parametric line into plane and solve one parameter.</p>
-    <p>Plane with plane: normals give direction of intersection line by cross product \(\mathbf{d}=\mathbf{n}_1\times\mathbf{n}_2\), then find one shared point.</p>
+    <p>Plane with plane: direction \(\mathbf{d}=\mathbf{n}_1\times\mathbf{n}_2\), then find one shared point.</p>
+    <p>Always pause to check parallelism (\(\mathbf{d}\cdot\mathbf{n}=0\) or parallel normals) before declaring &ldquo;one intersection point.&rdquo;</p>
   </div>
 </section>
 
@@ -183,14 +373,68 @@ window.MathJax = {
 
 <section class="topic" id="sec3">
   <div class="section-title"><span class="tag">D</span> Distances and angles in full 3D</div>
+
   <div class="prose">
-    <p>This is where vector geometry becomes measurement: point-line distance, point-plane distance, line-plane angle, and shortest distance between skew lines.</p>
+    <p>Distances in 3D are almost always &ldquo;drop a perpendicular.&rdquo; The formulas look different for point-line, point-plane, and skew lines, but they share one geometric engine: project a connecting vector onto the unique direction that is orthogonal to the object you are measuring against.</p>
   </div>
+
+  <div class="subh">1. Point to plane</div>
+  <div class="prose">
+    <p>The shortest path from a point \(P\) to a plane is along the normal. If the plane is \(ax+by+cz+d=0\) (careful with the sign of the constant), then</p>
+    \[
+      \mathrm{dist}=\frac{|ax_0+by_0+cz_0+d|}{\sqrt{a^2+b^2+c^2}}.
+    \]
+    <p><strong>Why:</strong> the numerator is \(|\mathbf{n}\cdot\overrightarrow{QP}|\) for a point \(Q\) on the plane (up to scaling of the equation), and dividing by \(|\mathbf{n}|\) extracts the component along the unit normal &mdash; exactly the perpendicular height.</p>
+  </div>
+
+  <div class="subh">2. Point to line</div>
+  <div class="prose">
+    <p>For a line through \(A\) with direction \(\mathbf{d}\), and an external point \(P\),</p>
+    \[
+      \mathrm{dist}=\frac{|\overrightarrow{AP}\times\mathbf{d}|}{|\mathbf{d}|}.
+    \]
+    <p><strong>Why:</strong> \(|\overrightarrow{AP}\times\mathbf{d}|\) is the area of the parallelogram spanned by \(\overrightarrow{AP}\) and \(\mathbf{d}\). Area \(=\) base \(\times\) height, with base \(|\mathbf{d}|\) and height equal to the distance from \(P\) to the line. Divide to solve for the height.</p>
+  </div>
+
+  <svg class="concept-diagram" viewBox="0 0 520 230" aria-label="Point to line distance">
+    <defs>
+      <marker id="dn" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#185FA5"/></marker>
+      <marker id="dr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#FF3621"/></marker>
+    </defs>
+    <line x1="50" y1="180" x2="480" y2="100" stroke="#64748b" stroke-width="2.5"/>
+    <circle cx="140" cy="163" r="5" fill="#1B2431"/><text x="120" y="190" font-size="13" font-family="Barlow,sans-serif">A</text>
+    <circle cx="300" cy="55" r="5" fill="#FF3621"/><text x="310" y="50" font-size="13" fill="#FF3621" font-family="Barlow,sans-serif">P</text>
+    <circle cx="340" cy="128" r="4" fill="#64748b"/><text x="348" y="120" font-size="12" font-family="Barlow,sans-serif">foot</text>
+    <line x1="140" y1="163" x2="300" y2="55" stroke="#FF3621" stroke-width="2" marker-end="url(#dr)"/>
+    <text x="180" y="95" font-size="12" fill="#FF3621" font-family="Barlow,sans-serif">AP</text>
+    <line x1="140" y1="163" x2="240" y2="142" stroke="#185FA5" stroke-width="2.5" marker-end="url(#dn)"/>
+    <text x="180" y="155" font-size="12" fill="#185FA5" font-family="Barlow,sans-serif">d</text>
+    <line x1="300" y1="55" x2="340" y2="128" stroke="#2f8f5b" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="350" y="90" font-size="13" fill="#2f8f5b" font-family="Barlow,sans-serif">h = dist</text>
+    <text x="50" y="35" font-size="14" font-family="Barlow,sans-serif">|AP × d| = |d| · h</text>
+  </svg>
+
+  <div class="subh">3. Skew lines</div>
+  <div class="prose">
+    <p>Two skew lines have a unique common perpendicular. Its direction is \(\mathbf{d}_1\times\mathbf{d}_2\). The shortest distance is the component of \(\overrightarrow{A_1A_2}\) along that direction:</p>
+    \[
+      \mathrm{dist}=\frac{\big|\overrightarrow{A_1A_2}\cdot(\mathbf{d}_1\times\mathbf{d}_2)\big|}{|\mathbf{d}_1\times\mathbf{d}_2|}.
+    \]
+    <p>This is the same &ldquo;volume of parallelepiped \(\div\) base area \(=\) height&rdquo; idea as the scalar triple product. If the lines actually intersect, the numerator is zero.</p>
+  </div>
+
+  <div class="subh">4. Angles</div>
+  <div class="prose">
+    <p><strong>Two lines:</strong> use \(\cos\theta=\dfrac{|\mathbf{d}_1\cdot\mathbf{d}_2|}{|\mathbf{d}_1||\mathbf{d}_2|}\) for the acute angle between directions.</p>
+    <p><strong>Line and plane:</strong> if \(\phi\) is the angle between the line and the <em>normal</em>, then the angle \(\alpha\) between the line and the plane satisfies \(\sin\alpha=\dfrac{|\mathbf{d}\cdot\mathbf{n}|}{|\mathbf{d}||\mathbf{n}|}\) (so a line parallel to the plane has \(\alpha=0\); a line along the normal has \(\alpha=90^\circ\)).</p>
+    <p><strong>Two planes:</strong> reduce to the angle between normals, as in Section B.</p>
+  </div>
+
   <div class="key-box">
-    <span class="box-label">Distance formulas</span>
-    <p>Point-plane distance from \((x_0,y_0,z_0)\) to \(ax+by+cz+d=0\): \(\dfrac{|ax_0+by_0+cz_0+d|}{\sqrt{a^2+b^2+c^2}}\).</p>
-    <p>Point-line distance for line through \(A\) direction \(\mathbf{d}\): \(\dfrac{\| \overrightarrow{AP}\times \mathbf{d}\|}{\|\mathbf{d}\|}\).</p>
-    <p>Skew-line distance: \(\dfrac{|(\overrightarrow{A_1A_2})\cdot(\mathbf{d}_1\times\mathbf{d}_2)|}{\|\mathbf{d}_1\times\mathbf{d}_2\|}\).</p>
+    <span class="box-label">Distance formulas (keep these cold)</span>
+    <p>Point-plane: \(\dfrac{|ax_0+by_0+cz_0+d|}{\sqrt{a^2+b^2+c^2}}\) for \(ax+by+cz+d=0\).</p>
+    <p>Point-line: \(\dfrac{\| \overrightarrow{AP}\times \mathbf{d}\|}{\|\mathbf{d}\|}\).</p>
+    <p>Skew-line: \(\dfrac{|(\overrightarrow{A_1A_2})\cdot(\mathbf{d}_1\times\mathbf{d}_2)|}{\|\mathbf{d}_1\times\mathbf{d}_2\|}\).</p>
   </div>
 </section>
 
