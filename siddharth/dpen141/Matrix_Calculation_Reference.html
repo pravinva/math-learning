@@ -242,7 +242,7 @@
 <header>
   <div class="eyebrow">DPEN141 · Matrix Sense</div>
   <h1>Matrix Calculation Reference</h1>
-  <p>Drill sheet for the calculation moves you need cold: determinants, Gauss, inverses, Cramer, eigenvalues/vectors, and diagonalisation. One worked example each, then a practice problem with the solution hidden.</p>
+  <p>Drill sheet for the calculation moves you need cold: summation &amp; Kronecker delta, determinants, Gauss, inverses, Cramer, eigenvalues/vectors, and diagonalisation. One worked example each, then a practice problem with the solution hidden.</p>
 </header>
 
 <div class="howto">
@@ -252,6 +252,10 @@
 <nav class="toc">
   <div class="toc-title">Jump to</div>
   <a href="#quick">Quick sheet</a>
+  <a href="#sum">Summation</a>
+  <a href="#dbl">Double sums</a>
+  <a href="#delta">Kronecker δ</a>
+  <a href="#sift">δ sifting</a>
   <a href="#det2">Det 2×2</a>
   <a href="#det3">Det 3×3</a>
   <a href="#gauss">Gauss / RREF</a>
@@ -268,6 +272,10 @@
 <section class="topic" id="quick">
   <div class="section-title"><span class="tag">Cheat</span> Quick formula strip</div>
   <div class="quick-strip">
+    <div class="quick-card"><strong>Σ formulas</strong>$\sum k=\frac{n(n+1)}{2}$, $\sum k^2=\frac{n(n+1)(2n+1)}{6}$, $\sum k^3=\bigl(\frac{n(n+1)}{2}\bigr)^2$</div>
+    <div class="quick-card"><strong>Double sum</strong>Inside-out; separates if $a_{ij}=f(i)g(j)$.</div>
+    <div class="quick-card"><strong>Kronecker δ</strong>$\delta_{ij}=1$ if $i=j$, else $0$. $I_{ij}=\delta_{ij}$.</div>
+    <div class="quick-card"><strong>δ sifting</strong>$\sum_i\delta_{ij}a_i=a_j$; $\sum_i\sum_j\delta_{ij}a_{ij}=\sum_i a_{ii}$</div>
     <div class="quick-card"><strong>Det 2×2</strong>$ad-bc$ for $\begin{pmatrix}a&b\\c&d\end{pmatrix}$</div>
     <div class="quick-card"><strong>Det 3×3</strong>Expand along a row/column (cofactors), or Sarrus for practice.</div>
     <div class="quick-card"><strong>Inverse 2×2</strong>$\dfrac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}$</div>
@@ -276,6 +284,116 @@
     <div class="quick-card"><strong>Eigenvectors</strong>$(A-\lambda I)\mathbf{v}=\mathbf{0}$, $\mathbf{v}\neq\mathbf{0}$</div>
     <div class="quick-card"><strong>Diagonalise</strong>$A=PDP^{-1}$ with $D=\mathrm{diag}(\lambda_i)$, columns of $P$ = eigenvectors</div>
     <div class="quick-card"><strong>Gauss</strong>$[A|\mathbf{b}]\xrightarrow{\text{row ops}}[I|\mathbf{x}]$ or REF then back-sub</div>
+  </div>
+</section>
+
+<!-- SUMMATION -->
+<section class="topic" id="sum">
+  <div class="section-title"><span class="tag">0a</span> Summation formulas</div>
+  <div class="formula-box">
+    <span class="box-label">Formulas (sums from $k=1$ to $n$)</span>
+    $$\sum_{k=1}^{n}c=nc,\qquad
+    \sum_{k=1}^{n}k=\dfrac{n(n+1)}{2},\qquad
+    \sum_{k=1}^{n}k^2=\dfrac{n(n+1)(2n+1)}{6},\qquad
+    \sum_{k=1}^{n}k^3=\left(\dfrac{n(n+1)}{2}\right)^2.$$
+    Linearity: $\sum(af(k)+bg(k))=a\sum f(k)+b\sum g(k)$. Expand polynomials first, then split.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\displaystyle\sum_{k=1}^{10}(2k^2+3k)$.</p>
+    <p class="step"><span class="step-num">01</span>$=2\sum k^2+3\sum k=2\cdot\dfrac{10\cdot11\cdot21}{6}+3\cdot\dfrac{10\cdot11}{2}$.</p>
+    <p class="step"><span class="step-num">02</span>$=2\cdot385+3\cdot55=770+165=935$.</p>
+    <div class="answer">Answer: $935$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Evaluate $\displaystyle\sum_{k=1}^{5}(k+1)^2$ by expanding, then using the formulas.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$(k+1)^2=k^2+2k+1$. So $\sum(k^2+2k+1)=\sum k^2+2\sum k+\sum 1=\dfrac{5\cdot6\cdot11}{6}+2\cdot\dfrac{5\cdot6}{2}+5\cdot1=55+30+5=90$.</p>
+      <div class="answer">Answer: $90$</div>
+    </div>
+  </div>
+</section>
+
+<!-- DOUBLE SUMS -->
+<section class="topic" id="dbl">
+  <div class="section-title"><span class="tag">0b</span> Double summation</div>
+  <div class="formula-box">
+    <span class="box-label">Method</span>
+    $\displaystyle\sum_{i=1}^{m}\sum_{j=1}^{n}a_{ij}$: for each fixed $i$, sum over $j$, then sum those totals over $i$. Order of $\Sigma$ can be swapped for finite sums.
+    <p style="margin:8px 0 0;">Separates when $a_{ij}=f(i)g(j)$:
+    $$\sum_i\sum_j f(i)g(j)=\Bigl(\sum_i f(i)\Bigr)\Bigl(\sum_j g(j)\Bigr).$$</p>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Compute $\displaystyle\sum_{i=1}^{2}\sum_{j=1}^{3}(i+j)$.</p>
+    <p class="step"><span class="step-num">01</span>Inner ($i=1$): $(1+1)+(1+2)+(1+3)=2+3+4=9$.</p>
+    <p class="step"><span class="step-num">02</span>Inner ($i=2$): $(2+1)+(2+2)+(2+3)=3+4+5=12$.</p>
+    <p class="step"><span class="step-num">03</span>Outer: $9+12=21$. (Or: $\sum_i\sum_j i+\sum_i\sum_j j=3\sum_i i+2\sum_j j=3(1+2)+2(1+2+3)=9+12=21$.)</p>
+    <div class="answer">Answer: $21$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Evaluate $\displaystyle\sum_{i=1}^{3}\sum_{j=1}^{2}ij$ (use separation).</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$ij$ factors: $\bigl(\sum_{i=1}^{3}i\bigr)\bigl(\sum_{j=1}^{2}j\bigr)=(1+2+3)(1+2)=6\cdot3=18$.</p>
+      <div class="answer">Answer: $18$</div>
+    </div>
+  </div>
+</section>
+
+<!-- KRONECKER -->
+<section class="topic" id="delta">
+  <div class="section-title"><span class="tag">0c</span> Kronecker delta</div>
+  <div class="formula-box">
+    <span class="box-label">Definition</span>
+    $$\delta_{ij}=\begin{cases}1&amp;\text{if }i=j,\\0&amp;\text{if }i\neq j.\end{cases}$$
+    Identity matrix: $I_{ij}=\delta_{ij}$. Symmetry: $\delta_{ij}=\delta_{ji}$.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\delta_{22}$, $\delta_{13}$, and $\displaystyle\sum_{i=1}^{3}\sum_{j=1}^{3}\delta_{ij}$.</p>
+    <p class="step"><span class="step-num">01</span>$\delta_{22}=1$ (equal indices). $\delta_{13}=0$ (unequal).</p>
+    <p class="step"><span class="step-num">02</span>Double sum of $\delta_{ij}$ over a $3\times3$ grid = number of diagonal $1$s $=3$.</p>
+    <div class="answer">Answer: $1$, $0$, and $3$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>For $A=\begin{pmatrix}2&amp;3&amp;1\\4&amp;5&amp;6\\7&amp;8&amp;9\end{pmatrix}$, compute $\displaystyle\sum_{i=1}^{3}\sum_{j=1}^{3}A_{ij}\delta_{ij}$.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$\delta_{ij}$ kills off-diagonal terms: sum reduces to $A_{11}+A_{22}+A_{33}=2+5+9=16$ (the trace).</p>
+      <div class="answer">Answer: $16$</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIFTING -->
+<section class="topic" id="sift">
+  <div class="section-title"><span class="tag">0d</span> Delta sifting / contraction</div>
+  <div class="formula-box">
+    <span class="box-label">Key identities</span>
+    $$\sum_{i}\delta_{ij}a_i=a_j,\qquad
+    \sum_{i}\sum_{j}\delta_{ij}a_ia_j=\sum_{i}a_i^2,\qquad
+    \sum_{j}\delta_{ij}A_{jk}=A_{ik}\quad(IA=A).$$
+    The delta “picks” the matching index and deletes every other term.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $\mathbf{a}=(3,5,7)$. Find $\displaystyle\sum_{i=1}^{3}\delta_{i2}a_i$.</p>
+    <p class="step"><span class="step-num">01</span>Only $i=2$ survives: $\delta_{12}a_1+\delta_{22}a_2+\delta_{32}a_3=0+5+0=5=a_2$.</p>
+    <div class="answer">Answer: $5$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Compute $\displaystyle\sum_{i=1}^{2}\sum_{j=1}^{2}\delta_{ij}a_ia_j$ for $a_1=2$, $a_2=-3$.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>Collapses to $\sum_i a_i^2=2^2+(-3)^2=4+9=13$.</p>
+      <div class="answer">Answer: $13$</div>
+    </div>
   </div>
 </section>
 
