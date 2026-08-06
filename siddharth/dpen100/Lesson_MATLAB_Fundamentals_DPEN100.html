@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: MATLAB Fundamentals (DPEN100)</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:26px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+  .prose code{
+    font-family:'Roboto Mono',monospace;
+    background:#eef1f6;
+    padding:1px 6px;
+    border-radius:4px;
+    font-size:0.92em;
+    color:var(--navy);
+  }
+
+  pre.code-block{
+    font-family:'Roboto Mono',monospace;
+    background:var(--navy);
+    color:#e6ecf5;
+    padding:14px 16px;
+    border-radius:6px;
+    font-size:13.5px;
+    line-height:1.6;
+    overflow-x:auto;
+    margin:14px 0;
+  }
+  pre.code-block .cmt{ color:#8fa3c2; }
+  pre.code-block .out{ color:#8fe0a0; }
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+  .key-box code, .example-box code, .why-box code{
+    font-family:'Roboto Mono',monospace; background:#fff; border:1px solid var(--line);
+    padding:1px 6px; border-radius:4px; font-size:0.92em; color:var(--navy);
+  }
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .practice-card.explore{ border-left-color:var(--green); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; flex-wrap:wrap; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-tag{
+    font-family:'Roboto Mono',monospace; font-size:10.5px; letter-spacing:0.05em;
+    color:#fff; background:var(--green); border-radius:4px; padding:2px 8px;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+  .p-body code{
+    font-family:'Roboto Mono',monospace; background:#eef1f6; padding:1px 6px; border-radius:4px; font-size:0.92em; color:var(--navy);
+  }
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .practice-card.explore .solution-inner .label{ color:var(--green); }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+  .solution-inner code{
+    font-family:'Roboto Mono',monospace; background:#eef1f6; padding:1px 6px; border-radius:4px; font-size:0.92em; color:var(--navy);
+  }
+  .solution-inner pre.code-block{ margin:10px 0; }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">DPEN100 &middot; MATLAB Fundamentals &middot; Mining &amp; Mechanical Engineering</div>
+  <h1>MATLAB Fundamentals</h1>
+  <p>MATLAB thinks in vectors and matrices from the very first line, which is exactly why it exists, most engineering problems are naturally arrays of numbers (a set of samples, a mesh of stress points, a time series), not single values. This lesson covers the full first-course toolkit, variables through custom functions, with every example built around production data, assay results, and equipment specs, the same material from the Excel lessons, now expressed as code instead of spreadsheet cells. Solutions stay hidden until you click. Problems marked <span class="p-tag">EXPLORE</span> are open-ended, worth actually opening MATLAB for.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 68 practice items revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Why MATLAB for an engineer?</a></li>
+    <li><a href="#sec1">The environment &amp; variables</a></li>
+    <li><a href="#sec2">Vectors: creating and indexing</a></li>
+    <li><a href="#sec3">Matrices: creation and operations</a></li>
+    <li><a href="#sec4">Element-wise vs. matrix operations</a></li>
+    <li><a href="#sec5">Built-in functions &amp; vectorization</a></li>
+    <li><a href="#sec6">Plotting basics</a></li>
+    <li><a href="#sec7">Control flow: if / elseif / else</a></li>
+    <li><a href="#sec8">Loops: for and while</a></li>
+    <li><a href="#sec9">Writing your own functions</a></li>
+    <li><a href="#sec10">Explore: engineer &amp; data scientist</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Why MATLAB for an engineer?</div>
+  <div class="prose">
+    <p>You've already seen two versions of the same core idea: a cell reference in Excel that updates automatically, and a formula that operates on a whole range at once (<code>=SUM(B2:B6)</code>). MATLAB is that idea taken to its logical extreme. In MATLAB, a vector of 500 assay results and a single number are handled by the exact same syntax, most functions just work on the whole array at once, no dragging a fill handle, no filling a formula down a column. This is called <strong>vectorization</strong>, and it's the single biggest mental shift this lesson is built around.</p>
+    <p>The name itself is short for "Matrix Laboratory," and that's not a marketing name, matrices are genuinely the native data type. A stress field across a mesh, a set of drill hole coordinates, a time series of production data, all of these are naturally matrices, and MATLAB was built from day one to make working with them as close to writing the underlying mathematics as possible.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> The environment &amp; variables</div>
+  <div class="prose">
+    <p>MATLAB code is typed either directly into the <strong>Command Window</strong> (executed immediately, line by line) or saved as a <strong>script</strong> (a <code>.m</code> file that runs a whole sequence of commands at once). Variables are created simply by assigning a value, no separate declaration step required, and MATLAB keeps track of every variable you've created in the <strong>Workspace</strong>.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Assignment: <code>variable_name = value</code>. A line ending in a <strong>semicolon</strong> <code>;</code> suppresses the output display; without one, MATLAB echoes the result immediately. If you type an expression with no variable name at all, MATLAB stores it automatically in a variable called <code>ans</code>.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Predict what appears in the Command Window after each of these three lines runs in sequence.</p>
+    <pre class="code-block">tonnes = 1250;
+rate = 3.20
+cost = tonnes * rate</pre>
+    <p class="step">Line 1 ends in a semicolon: <code>tonnes</code> is created (value 1250) but nothing is displayed.</p>
+    <p class="step">Line 2 has no semicolon: MATLAB displays <span class="out">rate = 3.2000</span>.</p>
+    <p>Line 3 has no semicolon: MATLAB computes $1250\times3.20=4000$ and displays <span class="out">cost = 4000</span>.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>What does <code>x = 5;</code> display in the Command Window? What does <code>x = 5</code> (no semicolon) display?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>With the semicolon: nothing is displayed, the variable is still created silently. Without it: <span class="out">x = 5</span> is echoed to the screen.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>You type <code>3 + 7</code> directly into the Command Window with no variable name and no semicolon. What is displayed, and what variable now holds the value 10?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><span class="out">ans = 10</span> is displayed, and the variable <code>ans</code> now holds 10, MATLAB's default catch-all for any unnamed result.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Predict the output of the following three lines, run in sequence:</p>
+  <pre class="code-block">depth = 850;
+hours = 6;
+rate = depth / hours</pre></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Lines 1 and 2 display nothing (semicolons). Line 3 displays <span class="out">rate = 141.6667</span> ($850\div6\approx141.67$).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Why would a script with 40 lines of calculations, almost all ending in semicolons, be considered good practice, rather than a script that displays every intermediate result?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Displaying every single intermediate value floods the Command Window with output that's mostly irrelevant noise, the real answers the person running the script actually cares about get buried among dozens of intermediate steps. Reserving un-suppressed output (no semicolon) for genuinely final, meaningful results, and suppressing every intermediate calculation, keeps the output readable and makes the script's actual conclusions easy to spot at a glance, the same underlying discipline as choosing what to display versus what to compute silently in a spreadsheet.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Explain the difference between typing commands directly into the Command Window versus saving them in a script (<code>.m</code> file), and when you'd prefer each.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Command Window entries execute immediately, one line at a time, and disappear once the session ends unless separately saved, useful for quick, throwaway checks (like a single unit conversion). A script is a saved file that runs an entire sequence reliably and repeatably, exactly what you want for any calculation you'll need to re-run, hand to someone else, or revisit later, the direct MATLAB equivalent of the "formulas, not hardcoded numbers" habit from the Excel lessons: a script is a reproducible record of exactly how a result was reached, not a one-off answer.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>MATLAB variable names are case-sensitive. What happens if a script creates <code>Grade = 2.4</code> on one line, then later tries to use <code>grade</code> (lowercase) in a calculation?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>MATLAB treats <code>Grade</code> and <code>grade</code> as two completely different variables, since capitalisation matters. Referencing <code>grade</code> when only <code>Grade</code> was ever created produces an "undefined variable" error, MATLAB has no idea a lowercase <code>grade</code> was ever meant to refer to the same thing. This is a genuinely common source of frustrating errors for anyone coming from a case-insensitive tool, worth building the habit of a single, consistent capitalisation style from the start.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>The <code>Workspace</code> panel currently shows two variables: <code>tonnes = 1250</code> and <code>cost = 4000</code>. What does the Workspace panel actually represent, and how is it similar to a set of cells in an Excel worksheet?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The Workspace is a live list of every variable currently defined in the session, its name, its current value, and its size/type, similar in spirit to glancing across a row of Excel cells and seeing what's stored in each one. The key difference: a MATLAB variable has no fixed "address" the way a cell does, it's referenced purely by name, and it exists only in memory during the session (or until explicitly saved), whereas an Excel cell's value persists as part of the saved file the moment you type it in.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Vectors: creating and indexing</div>
+  <div class="prose">
+    <p>A <strong>vector</strong> is a one-dimensional list of numbers, MATLAB's equivalent of a single row or column in a spreadsheet. Vectors can be typed out directly, or generated with the <strong>colon operator</strong>, which is MATLAB's version of the fill-series technique from Excel, just written as code instead of dragged with a mouse.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Direct entry: <code>v = [2, 4, 6, 8]</code> (row vector, comma or space separated). Colon operator: <code>start:step:end</code>, e.g.\ <code>1:2:10</code> produces <code>[1 3 5 7 9]</code>. Indexing uses parentheses and is <strong>1-indexed</strong> (the first element is index 1, not 0): <code>v(1)</code> is the first element. The keyword <code>end</code> refers to the last index.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A vector of drill hole depths (metres) is defined as <code>depths = [12, 18, 25, 31, 40]</code>. Find the 3rd depth, the last depth, and the depths from index 2 through 4.</p>
+    <pre class="code-block">depths = [12, 18, 25, 31, 40];
+depths(3)      <span class="cmt">% 3rd element</span>
+depths(end)    <span class="cmt">% last element</span>
+depths(2:4)    <span class="cmt">% elements 2 through 4</span></pre>
+    <p class="step"><code>depths(3)</code>: the 3rd depth listed is <span class="out">25</span>.</p>
+    <p class="step"><code>depths(end)</code>: the last depth is <span class="out">40</span>, without needing to know or hardcode that there are 5 elements.</p>
+    <p><code>depths(2:4)</code>: a sub-vector, <span class="out">[18 25 31]</span>.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Write the colon expression that generates <code>[0 5 10 15 20 25]</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>0:5:25</code></p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Predict the result of <code>10:-2:2</code> (note the negative step).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>[10 8 6 4 2]</code>, a negative step counts downward instead of up, exactly the same "step size" idea as Excel's two-seed-cell fill, just written explicitly instead of inferred from two example values.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>For <code>grades = [0.8, 1.2, 0.4, 2.1, 0.6]</code>, what does <code>grades(4)</code> return? What does <code>grades(1)</code> return?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>grades(4)</code> = <span class="out">2.1</span> (the 4th value listed). <code>grades(1)</code> = <span class="out">0.8</span> (the 1st value, remember MATLAB indexing starts at 1, not 0).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Using the same <code>grades</code> vector, write an expression for the last two elements without knowing in advance how many elements the vector has.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>grades(end-1:end)</code>, returning <span class="out">[2.1 0.6]</span>. <code>end-1</code> is the second-to-last index, <code>end</code> is the last, exactly the trick that makes this work regardless of the vector's actual length, useful when a vector's size might change as a script runs.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>A student writes <code>depths(0)</code> expecting the first depth. What happens, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>MATLAB throws an index error, something like "Index must be a positive integer or logical." MATLAB vectors are 1-indexed, index 0 simply doesn't exist, unlike some other programming languages (Python among them) where the first element is index 0. This is one of the most common early mistakes for anyone who's coded in a 0-indexed language before, worth deliberately remembering as a MATLAB-specific rule.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Write a colon expression to generate the shift numbers 1 through 10 (step size 1, the default when no step is specified).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>1:10</code>, when the middle "step" value is omitted, MATLAB defaults to a step of 1, producing <span class="out">[1 2 3 4 5 6 7 8 9 10]</span>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Explain why <code>depths(end)</code> is genuinely better practice than writing <code>depths(5)</code> directly, even in a script where you happen to know the vector currently has exactly 5 elements.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Exactly the "cell reference, not hardcoded number" principle from the Excel lessons, applied to code: <code>depths(5)</code> silently breaks (or worse, silently returns the wrong element) the moment the vector's length changes, one more drill hole added, one removed, without any visible warning that the hardcoded index is now wrong. <code>depths(end)</code> always correctly refers to whatever the last element currently is, regardless of how the vector's size changes elsewhere in the script, the code stays correct automatically instead of needing to be manually updated every time the data changes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Matrices: creation and operations</div>
+  <div class="prose">
+    <p>A <strong>matrix</strong> is simply a two-dimensional grid of numbers, rows and columns, exactly like a range of cells in Excel. Rows are separated by semicolons inside the square brackets, and elements within a row by commas or spaces. Indexing takes two arguments, <code>(row, column)</code>.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><code>A = [row1; row2; row3]</code>, each row itself a comma/space-separated list of values. <code>size(A)</code> returns <code>[rows, columns]</code>. Indexing: <code>A(r,c)</code> for a single element, <code>A(r,:)</code> for an entire row, <code>A(:,c)</code> for an entire column, the colon alone means "every index in this dimension."</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A small matrix of two blast hole readings (rows) with three measurements each (columns: depth, powder factor, hole diameter) is defined as <code>A = [2, 4, 6; 1, 3, 5]</code>. Find its size, the element in row 2 column 3, its second column, and its first row.</p>
+    <pre class="code-block">A = [2, 4, 6; 1, 3, 5];
+size(A)     <span class="cmt">% rows and columns</span>
+A(2,3)      <span class="cmt">% row 2, column 3</span>
+A(:,2)      <span class="cmt">% entire column 2</span>
+A(1,:)      <span class="cmt">% entire row 1</span></pre>
+    <p class="step"><code>size(A)</code>: <span class="out">[2 3]</span>, 2 rows, 3 columns.</p>
+    <p class="step"><code>A(2,3)</code>: row 2, column 3 &rarr; <span class="out">5</span>.</p>
+    <p><code>A(:,2)</code>: <span class="out">[4; 3]</span> (a column vector). $\ $ <code>A(1,:)</code>: <span class="out">[2 4 6]</span> (a row vector).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>For <code>B = [10, 20; 30, 40; 50, 60]</code>, what does <code>size(B)</code> return?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>[3 2]</code>, three rows (separated by the two semicolons), two columns.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Using the same B, what does <code>B(3,1)</code> return?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Row 3, column 1: <span class="out">50</span>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Using the same B, write the expression for its second column, and state the result.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>B(:,2)</code> &rarr; <span class="out">[20; 40; 60]</span>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>What do <code>zeros(2,3)</code> and <code>ones(3,3)</code> each produce? Why are these useful as a starting point in a script, rather than always typing out every matrix element by hand?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>zeros(2,3)</code> produces a $2\times3$ matrix entirely of zeros. <code>ones(3,3)</code> produces a $3\times3$ matrix entirely of ones. These are commonly used to pre-allocate a matrix of the correct size before filling it in with a loop (Section 8), which is significantly faster and less error-prone than letting a matrix grow one element at a time, MATLAB has to reserve memory for the array upfront, and pre-allocating avoids the overhead and potential inefficiency of repeatedly resizing it as new values get added.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>For <code>A = [2, 4, 6; 1, 3, 5]</code> (the worked example's matrix), write an expression for the sub-matrix consisting of both rows but only columns 1 and 2.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>A(:,1:2)</code> &rarr; <span class="out">[2 4; 1 3]</span>, combining the "entire dimension" colon idea with a range, exactly the same colon-operator thinking from Section 2, now applied inside one dimension of a 2D index.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Explain the conceptual link between a MATLAB matrix and a rectangular range of cells in Excel (e.g.\ <code>B3:D5</code>), and one genuine difference between them.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Both are fundamentally rectangular grids of numbers indexed by row and column, and both support extracting an entire row or column at once (Excel's <code>B:B</code> entire-column selection versus MATLAB's <code>A(:,2)</code>). The genuine difference: an Excel range lives inside a visible worksheet with cell addresses tied to a fixed screen position, while a MATLAB matrix is a named, purely numerical object with no inherent visual position at all, it's manipulated entirely through its name and index, which is part of why the same matrix can be reshaped, resized, or fed directly into a mathematical operation far more fluidly than a spreadsheet range typically can.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Write the MATLAB matrix literal for a $2\times2$ identity-like table of stress test results: row 1 = [245.2, 248.1], row 2 = [243.9, 250.3].</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>results = [245.2, 248.1; 243.9, 250.3];</code></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Element-wise vs. matrix operations</div>
+  <div class="prose">
+    <p>This is the single trickiest, most important distinction in early MATLAB, and it has no real equivalent in Excel. <code>*</code> means genuine matrix multiplication (the row-times-column rule from Matrix Fundamentals). <code>.*</code> (with a dot) means <strong>element-wise</strong> multiplication, multiply each entry by its corresponding entry in the same position, no row-column rule involved at all. The same distinction applies to <code>/</code> vs.\ <code>./</code> and <code>^</code> vs.\ <code>.^</code>.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><code>A*B</code>: matrix multiplication, requires matching inner dimensions, exactly the rule from the linear algebra lessons. <code>A.*B</code>: element-wise, requires matching (or compatible) size, multiplies entry-by-entry in the same position. <code>v.^2</code>: squares every element of vector <code>v</code> individually, very different from <code>v^2</code>, which for a non-square-shaped array is usually not even defined.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let <code>B = [1, 0; 2, 1]</code> and <code>C = [3, 1; 0, 2]</code>. Compute <code>B*C</code> and <code>B.*C</code>, and explain why they're different.</p>
+    <pre class="code-block">B = [1, 0; 2, 1];
+C = [3, 1; 0, 2];
+B*C
+B.*C</pre>
+    <p class="step"><code>B*C</code> (matrix multiplication, row-times-column, exactly as in Matrix Fundamentals): $$\begin{pmatrix}1&0\\2&1\end{pmatrix}\begin{pmatrix}3&1\\0&2\end{pmatrix} = \begin{pmatrix}3&1\\6&4\end{pmatrix}$$</p>
+    <p class="step"><code>B.*C</code> (element-wise, position-by-position): $$\begin{pmatrix}1\times3&0\times1\\2\times0&1\times2\end{pmatrix} = \begin{pmatrix}3&0\\0&2\end{pmatrix}$$</p>
+    <p>Two genuinely different results from the same two matrices, purely because of one dot. This is exactly the "matrix as transformation, columns as basis images" versus "just multiply the grids together" distinction from the linear algebra track, now showing up as two completely different operators in code.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>For vectors <code>v = [2, 4, 6]</code> and <code>w = [1, 2, 3]</code>, compute <code>v.*w</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$[2\times1,\ 4\times2,\ 6\times3] = $ <span class="out">[2 8 18]</span>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Using the same v, compute <code>v.^2</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><span class="out">[4 16 36]</span>, each element squared individually.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>A haul truck payload vector <code>payload = [220, 227, 100]</code> (tonnes) and a cycles vector <code>cycles = [14, 12, 20]</code> represent three trucks' shift data. Write the element-wise expression for total tonnes hauled per truck, and explain why this must be <code>.*</code> and not <code>*</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>payload .* cycles</code> &rarr; <span class="out">[3080 2724 2000]</span>, each truck's own payload multiplied by its own cycle count, position-by-position. Plain <code>*</code> would attempt genuine matrix multiplication between two $1\times3$ row vectors, which isn't even a legal operation (their inner dimensions, 3 and 3, don't satisfy the matrix-multiplication size rule for two row vectors of the same orientation), MATLAB would throw a dimension-mismatch error rather than silently giving a wrong answer, at least alerting you something's wrong, unlike some of the subtler Excel gotchas from earlier lessons.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Let <code>A = [2, 0; 0, 3]</code> and <code>x = [1; 1]</code> (a column vector). Compute <code>A*x</code> using genuine matrix multiplication, and explain what this represents geometrically.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\begin{pmatrix}2&0\\0&3\end{pmatrix}\begin{pmatrix}1\\1\end{pmatrix} = \begin{pmatrix}2\\3\end{pmatrix}$$</p>
+      <p>This is exactly the scaling transformation from the Matrices as Transformations lesson, $A$ is a diagonal scaling matrix, and <code>A*x</code> stretches the vector $x$ by 2 along one axis and 3 along the other, the same geometric operation, now expressed as a single line of MATLAB code instead of hand computation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>A student writes <code>C = A*B</code> where A is $2\times3$ and B is $2\times2$, and gets a dimension-mismatch error. Explain why, using the matrix multiplication rule from linear algebra.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Matrix multiplication $A\times B$ requires the number of <em>columns</em> in $A$ to equal the number of <em>rows</em> in $B$. Here $A$ is $2\times3$ (3 columns) and $B$ is $2\times2$ (2 rows), $3\neq2$, so the multiplication is genuinely undefined, not just a MATLAB quirk, this is the exact same dimension-matching rule from Matrix Fundamentals, MATLAB is simply enforcing real linear algebra rather than inventing an arbitrary restriction.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>For scalars (single numbers, not vectors or matrices), does it matter whether you write <code>3*4</code> or <code>3.*4</code>?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No, both give <span class="out">12</span>. For two plain single numbers, there's no "row-times-column" versus "position-by-position" distinction to make, a $1\times1$ "matrix" multiplied by another $1\times1$ "matrix" collapses to the same thing as ordinary multiplication either way. The dot only starts to matter, and matters a great deal, the moment you're working with vectors or matrices with more than one element.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Given <code>grades = [0.8, 1.2, 0.4, 2.1, 0.6]</code> and a fixed conversion factor <code>oz_per_gt = 0.0292</code>, write the expression to convert every grade to oz/ton at once, without a loop.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>grades_oz = grades * oz_per_gt;</code> (or equivalently <code>grades .* oz_per_gt</code>, since multiplying a vector by a single scalar is unambiguous either way, no genuine matrix-multiplication interpretation competes with it here). This single line converts every element of the vector in one shot, exactly the vectorization idea from Section 0 made concrete: no loop, no fill handle, the whole array transformed at once.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> Built-in functions &amp; vectorization</div>
+  <div class="prose">
+    <p>MATLAB's built-in functions, <code>sum</code>, <code>mean</code>, <code>max</code>, <code>min</code>, <code>sqrt</code>, and hundreds more, are the direct equivalent of Excel's SUM/AVERAGE/MIN/MAX, but with one crucial extra ability: most of them automatically apply to <em>every element</em> of a vector or matrix at once, exactly the vectorization idea introduced in Section 0.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><code>sum(v)</code>, <code>mean(v)</code>, <code>max(v)</code>, <code>min(v)</code> summarise an entire vector into a single number. <code>sqrt(v)</code>, <code>abs(v)</code>, and most ordinary math functions instead return a <em>vector</em of the same size, applying the function to every element individually, no <code>.sqrt</code> or dot syntax needed for this category, since there's no possible "matrix version" of square root to confuse it with.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Five shift tonnages are stored as <code>tonnes = [1250, 1180, 1340, 1290, 1205]</code>. Find the total, the average, the minimum, and the maximum in one line each.</p>
+    <pre class="code-block">tonnes = [1250, 1180, 1340, 1290, 1205];
+sum(tonnes)
+mean(tonnes)
+min(tonnes)
+max(tonnes)</pre>
+    <p class="step"><code>sum(tonnes)</code>: <span class="out">6265</span>. $\ $ <code>mean(tonnes)</code>: <span class="out">1253</span>.</p>
+    <p><code>min(tonnes)</code>: <span class="out">1180</span> (weakest shift). $\ $ <code>max(tonnes)</code>: <span class="out">1340</span> (strongest shift). Exactly the same four questions, and the same four numbers, as the SUM/AVERAGE/MIN/MAX worked example from the Excel functions lesson, now one line of code instead of four separate cell formulas.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>For <code>readings = [4, 9, 16, 25]</code>, what does <code>sqrt(readings)</code> return?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><span class="out">[2 3 4 5]</span>, the square root applied to each element individually, a vector in, a vector of the same size out.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>Six stress test readings (MPa): <code>stress = [245.2, 248.1, 243.9, 250.3, 246.7, 244.5]</code>. Write the one-line expression for the range (max minus min), and evaluate it.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>max(stress) - min(stress)</code> &rarr; $250.3-243.9=$ <span class="out">6.4</span>. Notice this combines two function calls and a subtraction into a single expression, exactly the kind of composability that becomes second nature once vectorized thinking clicks.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>For a matrix <code>A = [2, 4, 6; 1, 3, 5]</code>, what does <code>sum(A)</code> return? (Hint: applying a summary function to a matrix, rather than a vector, defaults to operating down each column.)</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><span class="out">[3 7 11]</span>, one sum per column ($2+1=3$, $4+3=7$, $6+5=11$), not a single overall total. This is a genuinely important default to know: most MATLAB summary functions treat a matrix as "a collection of column vectors" unless told otherwise, to sum every single element regardless of row or column, you'd need <code>sum(A(:))</code>, which first collapses the whole matrix into one long column vector before summing.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Explain, using the shift-tonnage worked example, why computing all four summary statistics (sum, mean, min, max) with four separate loops, rather than the four built-in functions, would be considered poor MATLAB style.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Beyond simply being more code to write and more places for a bug to hide, hand-written loops for operations MATLAB already provides natively are typically slower, MATLAB's built-in functions are internally optimised in ways a simple loop rarely matches, and, just as importantly, reading <code>mean(tonnes)</code> instantly communicates intent to anyone reviewing the code, while a five-line loop accumulating a running total and dividing by a counter requires the reader to trace through the logic to figure out what it's even computing. The general principle worth internalising here: reach for a built-in vectorized function before writing a loop, loops are for genuinely sequential or conditional logic (Sections 7 and 8), not for operations that already have a direct one-line equivalent.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>What does <code>length(v)</code> return for a vector <code>v</code>? How is this different from <code>size(v)</code> for a genuine row or column vector?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>length(v)</code> returns a single number, the count of elements in the vector (equivalent to Excel's <code>COUNT</code>). <code>size(v)</code> instead returns both dimensions as a two-element result, e.g.\ <code>[1 5]</code> for a 5-element row vector, <code>length</code> is really just a convenience shortcut for "the larger of the two dimensions," most useful specifically when you already know you're dealing with a plain vector rather than a genuine 2D matrix.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>Ten gold assay results (g/t) are stored in a vector <code>assays</code>. Write a one-line expression to find how many of them exceed the average grade (hint: this needs a logical comparison combined with <code>sum</code>, since MATLAB treats TRUE as 1 and FALSE as 0 when summed).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>sum(assays > mean(assays))</code></p>
+      <p><code>assays > mean(assays)</code> produces a vector of 10 logical values (1s and 0s) marking which entries exceed the average; <code>sum(...)</code> then counts how many 1s there are, a genuinely elegant one-liner that avoids writing an explicit loop or a full IF-based classification for what's really just a counting question.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>Given the density values <code>density = [1.6, 2.1, 2.8, 2.4]</code> and a matching volumes vector <code>volumes = [8000, 5500, 12500, 3000]</code> (BCM), write a one-line expression that computes tonnes for all four rock types at once, and states the total tonnage across all of them.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>tonnes = volumes .* density;</code> gives <span class="out">[12800 11550 35000 7200]</span> (element-wise, matching Practice 24's logic). <code>sum(tonnes)</code> gives the grand total: $12800+11550+35000+7200=$ <span class="out">66550</span> tonnes. Two chained one-liners doing the entire job a VLOOKUP-plus-SUM combination handled across a whole column in the Excel lesson.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Plotting basics</div>
+  <div class="prose">
+    <p>MATLAB's plotting is built directly on top of vectors, exactly the reason vectors were covered first: give <code>plot</code> two vectors of matching length ($x$-values and $y$-values), and it draws the curve connecting them.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><code>plot(x, y)</code> draws a line through the points $(x_1,y_1), (x_2,y_2), \dots$. <code>xlabel</code>, <code>ylabel</code>, and <code>title</code> add text labels. <code>grid on</code> adds gridlines. <code>hold on</code> lets a second <code>plot</code> command add to the same figure instead of replacing it, essential for comparing two series on one chart.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Plot monthly tonnage for a pit across 4 months, with proper axis labels and a title.</p>
+    <pre class="code-block">months = 1:4;
+tonnes = [8200, 8840, 8280, 8380];
+plot(months, tonnes)
+xlabel('Month')
+ylabel('Tonnes')
+title('Monthly Production')
+grid on</pre>
+    <p class="step"><code>months = 1:4</code> generates the $x$-axis values using the colon operator from Section 2, exactly the same tool, now feeding a chart instead of just being displayed as a list.</p>
+    <p>The result is a line chart with 4 points connected in sequence, labelled axes, a title, and gridlines, directly comparable to the line chart from the Excel Quick Analysis lesson, built from two vectors instead of two selected columns.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>Write the MATLAB code to plot <code>x = [0, 1, 2, 3, 4]</code> against <code>y = [0, 1, 4, 9, 16]</code> (i.e.\ $y=x^2$), with axis labels "x" and "y squared."</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <pre class="code-block">x = [0, 1, 2, 3, 4];
+y = [0, 1, 4, 9, 16];
+plot(x, y)
+xlabel('x')
+ylabel('y squared')</pre>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>You have two trucks' cumulative tonnage over 5 shifts and want both lines on the same chart for comparison. What command, sitting between the two <code>plot</code> calls, makes the second plot add to the figure instead of erasing the first?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>hold on</code>, placed after the first <code>plot(...)</code> call and before the second. Without it, the second <code>plot</code> command would clear the figure and draw only the new line, exactly analogous to Excel's "series in a chart" idea, except here each series is added with its own explicit command rather than selected as part of one range.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>Two vectors <code>x = [1, 2, 3]</code> and <code>y = [10, 20]</code> are passed to <code>plot(x, y)</code>. What happens, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>MATLAB throws a dimension-mismatch error: <code>plot</code> needs $x$ and $y$ to be the same length, since every point plotted needs both an $x$-coordinate and a matching $y$-coordinate. Here $x$ has 3 elements and $y$ has 2, there's no sensible way to pair them up one-to-one, exactly the same underlying "sizes must match" discipline as Practice 24's element-wise multiplication.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>Beyond just looking nicer, give one genuine engineering reason <code>xlabel</code>, <code>ylabel</code>, and <code>title</code> should never be skipped on a chart that will be shared with anyone else.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>An unlabelled chart forces the reader to guess what the axes represent and what units are in play, a line climbing from 8 to 9 could be tonnes in thousands, cost in dollars, or grade in g/t, with genuinely different implications for each. In engineering specifically, mislabelled or unlabelled axes can lead directly to a wrong decision being made from a chart that looked correct but was actually being misread, exactly the same data-literacy concern raised about chart-type selection in the Excel charts lesson, applied here to axis labelling instead.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Open MATLAB and plot 12 months of made-up production data as a line chart, with a second, flat "target" line (the same value repeated 12 times) overlaid using <code>hold on</code>, and a legend distinguishing the two lines using <code>legend('Actual','Target')</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Suggested structure</span>
+      <pre class="code-block">months = 1:12;
+actual = [820, 880, 790, 910, 860, 870, 900, 850, 920, 880, 890, 910];
+target = 870 * ones(1,12);
+plot(months, actual)
+hold on
+plot(months, target)
+xlabel('Month')
+ylabel('Tonnes')
+title('Actual vs Target Production')
+legend('Actual','Target')</pre>
+      <p>Notice <code>ones(1,12)</code> from Practice 18's key idea is exactly what generates the flat target line here, a genuinely practical use for a function that otherwise looks purely abstract.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> Control flow: if / elseif / else</div>
+  <div class="prose">
+    <p>MATLAB's <code>if</code> statement is the direct code equivalent of Excel's <code>IF</code> function, and it's the same underlying logic, test a condition, branch accordingly, just written as a multi-line block instead of a single cell formula.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <pre class="code-block">if condition
+    <span class="cmt">% runs if condition is true</span>
+elseif other_condition
+    <span class="cmt">% runs if condition false, other_condition true</span>
+else
+    <span class="cmt">% runs if none of the above are true</span>
+end</pre>
+    <p>Every <code>if</code> block must close with <code>end</code>. Conditions use the same comparison operators as Excel: <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>==</code> (equal to, note the double equals, a single <code>=</code> is assignment, not comparison), <code>~=</code> (not equal to).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Classify a single grade value into the same four tiers as the earlier nested-IF Excel lesson: High ($\ge2.0$), Medium ($\ge0.8$), Low ($\ge0.3$), Waste (below 0.3). Write this as a MATLAB if/elseif/else block, and trace it for <code>grade = 1.1</code>.</p>
+    <pre class="code-block">grade = 1.1;
+if grade >= 2.0
+    category = 'High';
+elseif grade >= 0.8
+    category = 'Medium';
+elseif grade >= 0.3
+    category = 'Low';
+else
+    category = 'Waste';
+end</pre>
+    <p class="step">$1.1\ge2.0$? No, skip to the next branch.</p>
+    <p class="step">$1.1\ge0.8$? Yes, MATLAB sets <code>category = 'Medium'</code> and immediately skips every remaining <code>elseif</code>/<code>else</code>, exactly like Excel's nested IF, only the first true branch runs.</p>
+    <p><span class="out">category = Medium</span>, matching Section 2 of the Excel IF/VLOOKUP lesson's worked example exactly, same logic, same answer, different syntax.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>Using the worked example's classification block, trace through <code>grade = 2.5</code> and state the final value of <code>category</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$2.5\ge2.0$: true immediately, the first branch. <span class="out">category = High</span>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>Write an if/else block (just two branches, no elseif needed) that sets <code>status = 'Overdue'</code> if a variable <code>hours_since_service</code> exceeds 500, <code>status = 'OK'</code> otherwise.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <pre class="code-block">if hours_since_service > 500
+    status = 'Overdue';
+else
+    status = 'OK';
+end</pre>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>A student writes <code>if grade = 0.5</code> (a single equals sign) instead of <code>if grade == 0.5</code>. What happens?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>This produces a syntax error, MATLAB doesn't allow assignment (<code>=</code>) inside an <code>if</code> condition at all, it specifically requires a comparison (<code>==</code>). This is actually a helpful safety feature: some other languages allow this and it silently does something unintended (assigning rather than comparing), MATLAB refuses outright rather than letting a single missing equals sign quietly change the meaning of the code. Still worth deliberately remembering: <code>=</code> assigns, <code>==</code> compares, a mix-up that even experienced programmers make from time to time.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>Write a MATLAB if/elseif/else block for rock hardness by UCS (B3): Very Hard ($\ge200$), Hard ($\ge100$), Medium ($\ge50$), Soft (below 50), the same classification from the Excel nested-IF lesson.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <pre class="code-block">if ucs >= 200
+    hardness = 'Very Hard';
+elseif ucs >= 100
+    hardness = 'Hard';
+elseif ucs >= 50
+    hardness = 'Medium';
+else
+    hardness = 'Soft';
+end</pre>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 45</span></div>
+  <div class="p-body"><p>A student writes the hardness classification (Practice 44) with the thresholds in the wrong order, checking <code>ucs >= 50</code> first. Explain, using the exact same reasoning as the Excel nested-IF lesson, what goes wrong for a genuinely Very Hard sample (UCS = 250).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$250\ge50$ is checked first and is true, so MATLAB immediately assigns <code>hardness = 'Medium'</code> and skips every remaining <code>elseif</code>, the exact same ordering trap as the Excel nested-IF lesson (Practice 12 there), the underlying bug is identical, only the syntax carrying it has changed. Whether you're writing a spreadsheet formula or a code block, an if/elseif chain must always check the <em>tightest</em> or most extreme condition first, working down to the loosest, or a value that qualifies for multiple branches gets caught by the wrong one.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 46</span></div>
+  <div class="p-body"><p>Write an if statement using <code>&amp;&amp;</code> (logical AND) that sets <code>flag = 'Check'</code> only if a blast powder factor <code>pf</code> is both below 0.3 <em>and</em> the rock type <code>strcmp(rocktype,'Fresh_Rock')</code> is true, otherwise <code>flag = 'OK'</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <pre class="code-block">if pf < 0.3 && strcmp(rocktype,'Fresh_Rock')
+    flag = 'Check';
+else
+    flag = 'OK';
+end</pre>
+      <p><code>&amp;&amp;</code> requires <em>both</em> conditions to be true simultaneously for the overall condition to hold, exactly the same role Excel's <code>AND()</code> function plays inside an <code>IF</code>. Note <code>strcmp</code> is needed for comparing text strings, MATLAB doesn't treat <code>==</code> on strings the same simple way it treats it on numbers.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 47</span></div>
+  <div class="p-body"><p>Write a one-line vectorized alternative to a full if/elseif/else block for the ore/waste (two-category) classification of an entire vector <code>grades</code> at once against a 0.5 g/t cutoff, using MATLAB's <code>strings</code> function or cell array indexing is not required, just describe conceptually what tool from Section 5 would let you avoid writing a loop over every element.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The comparison <code>grades >= 0.5</code> alone already produces a full vector of logical 1s and 0s (ore/not-ore) for the entire dataset at once, precisely the vectorized comparison idea from Practice 34. A full if/elseif/else block is only strictly necessary when you need genuinely different <em>text labels</em> (like "Ore"/"Waste" strings) rather than just a true/false flag; for a simple two-way numeric or logical classification across an entire vector, the comparison operator alone already does the classifying, with no loop and no if statement required at all, the vectorized-thinking payoff Section 0 promised, now concretely realised.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec8">
+  <div class="section-title"><span class="tag">8</span> Loops: for and while</div>
+  <div class="prose">
+    <p>A <strong>loop</strong> repeats a block of code, once per element of a vector (<code>for</code>), or until a condition stops being true (<code>while</code>). Loops are genuinely necessary when each iteration depends on a running value from the previous one (a cumulative total, searching for the first match), the cases vectorization alone can't cleanly replace.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <pre class="code-block">for i = 1:n
+    <span class="cmt">% runs once with i=1, once with i=2, ... once with i=n</span>
+end
+
+while condition
+    <span class="cmt">% runs repeatedly as long as condition stays true</span>
+end</pre>
+    <p>A <code>for</code> loop runs a known, fixed number of times. A <code>while</code> loop runs an unknown number of times, until its condition becomes false, useful when you're searching for something rather than processing every element regardless.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Five shift tonnages: <code>shift_tonnes = [1250, 1180, 1340, 1290, 1205]</code>. Use a <code>for</code> loop to build a cumulative-total vector (running total after each shift), and a <code>while</code> loop to find the first shift (by number) that exceeds 1300 tonnes.</p>
+    <pre class="code-block">shift_tonnes = [1250, 1180, 1340, 1290, 1205];
+cum = zeros(1,5);
+total = 0;
+for i = 1:5
+    total = total + shift_tonnes(i);
+    cum(i) = total;
+end</pre>
+    <p class="step">Iteration 1: <code>total = 0+1250 = 1250</code>, <code>cum(1)=1250</code>. Iteration 2: <code>total=1250+1180=2430</code>, <code>cum(2)=2430</code>. Continuing: <code>cum = [1250 2430 3770 5060 6265]</code>.</p>
+    <pre class="code-block">i = 1;
+found = 0;
+while i <= 5 && found == 0
+    if shift_tonnes(i) > 1300
+        found = i;
+    end
+    i = i + 1;
+end</pre>
+    <p><code>found</code> checks shift 1 (1250, no), shift 2 (1180, no), shift 3 (1340, <strong>yes</strong>), sets <code>found = 3</code> and the loop's own condition (<code>found==0</code>) becomes false on the next check, stopping the search immediately rather than needlessly checking shifts 4 and 5.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 48</span></div>
+  <div class="p-body"><p>How many times does the loop body run for <code>for i = 1:8</code>? For <code>for i = 2:2:10</code>?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>1:8</code>: 8 times ($i=1,2,\dots,8$). <code>2:2:10</code>: 5 times ($i=2,4,6,8,10$), the loop runs once per value the colon expression generates, exactly the same colon-operator counting from Section 2.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 49</span></div>
+  <div class="p-body"><p>Trace through this loop by hand and state the final value of <code>total</code>:</p>
+  <pre class="code-block">values = [3, 7, 2, 9];
+total = 0;
+for i = 1:4
+    total = total + values(i);
+end</pre></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$0+3=3$, $3+7=10$, $10+2=12$, $12+9=21$. Final <span class="out">total = 21</span> (which, worth noting, is exactly what <code>sum(values)</code> alone would have given, this loop is a legitimate but unnecessarily long way to compute a sum, precisely the "reach for the built-in function first" point from Practice 32).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 50</span></div>
+  <div class="p-body"><p>Write a <code>for</code> loop that counts how many of the values in <code>grades = [0.3, 0.7, 0.5, 1.2, 0.2]</code> are classified as "Ore" (grade $\ge0.5$), storing the count in a variable <code>ore_count</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <pre class="code-block">grades = [0.3, 0.7, 0.5, 1.2, 0.2];
+ore_count = 0;
+for i = 1:5
+    if grades(i) >= 0.5
+        ore_count = ore_count + 1;
+    end
+end</pre>
+      <p>Tracing: $0.3$ no, $0.7$ yes ($count=1$), $0.5$ yes ($count=2$), $1.2$ yes ($count=3$), $0.2$ no. Final <span class="out">ore_count = 3</span>. (Worth noticing: <code>sum(grades >= 0.5)</code> from Section 5/7's vectorized comparison idea would give the identical answer in one line, this loop version is shown here specifically to illustrate the mechanics, not because it's the preferred approach in practice.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 51</span></div>
+  <div class="p-body"><p>Explain, using the worked example's while loop, why <code>found == 0</code> was included as part of the while condition, rather than just <code>while i &lt;= 5</code> alone.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Without also checking <code>found == 0</code>, the loop would keep running through every remaining shift even after it already found a match, needlessly continuing to check shifts 4 and 5 after shift 3 was already identified, and worse, <code>found</code> would get overwritten if a later shift also happened to exceed 1300, silently losing the correct "first" match. Combining both conditions with <code>&amp;&amp;</code> makes the loop stop the moment <em>either</em> the vector is exhausted <em>or</em> a match has already been found, exactly the efficient "stop searching once you've found what you needed" behaviour a while loop is meant to provide over a for loop that always runs its full fixed range regardless.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 52</span></div>
+  <div class="p-body"><p>A student writes a while loop that never updates the loop variable inside the loop body. What happens when the script runs?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>An <strong>infinite loop</strong>: since the condition that controls the loop never changes, it stays true forever, and MATLAB keeps re-running the loop body indefinitely, the script never reaches the code after the loop, and typically needs to be manually interrupted (Ctrl+C, or the stop button). This is one of the most common genuine bugs in early while-loop code, worth deliberately double-checking, every while loop needs something inside its own body that eventually makes the condition false, exactly what <code>i = i + 1</code> did in the worked example.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 53</span></div>
+  <div class="p-body"><p>Would you use a <code>for</code> loop or a <code>while</code> loop to process every row of a 200-sample assay dataset, applying the same calculation to each one regardless of its value? Explain your choice.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A <code>for</code> loop: the number of iterations (200, one per row) is known in advance and fixed, exactly the situation <code>for</code> is built for, <code>for i = 1:200</code>. A <code>while</code> loop is the right tool specifically when the stopping point genuinely isn't known ahead of time, searching for a first match (the worked example), or repeating until some computed value converges, neither of which applies to "process every row of a dataset of known size."</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 54</span></div>
+  <div class="p-body"><p>Rewrite the worked example's cumulative-total <code>for</code> loop as a one-line vectorized alternative using MATLAB's built-in <code>cumsum</code> function (look up what it does, or infer it from its name).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>cum = cumsum(shift_tonnes);</code>, giving the identical result, <span class="out">[1250 2430 3770 5060 6265]</span>, in one line. <code>cumsum</code> ("cumulative sum") is exactly the vectorized built-in for the specific pattern the worked example's for loop hand-built, a nice concrete illustration of Practice 32's general point: before writing a loop, it's always worth checking whether MATLAB already has a built-in function for exactly that pattern.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec9">
+  <div class="section-title"><span class="tag">9</span> Writing your own functions</div>
+  <div class="prose">
+    <p>A <strong>function</strong> packages a calculation into a reusable, named block, give it inputs, it returns outputs, and it can be called from anywhere, exactly the role a named Excel function like <code>VLOOKUP</code> plays, except now you're the one defining what the function actually does.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <pre class="code-block">function output = function_name(input1, input2)
+    output = <span class="cmt">% some calculation using input1, input2</span>
+end</pre>
+    <p>Saved either as its own file (<code>function_name.m</code>) or, in current MATLAB, as a <strong>local function</strong> at the bottom of a script file. Once defined, it's called exactly like any built-in function: <code>result = function_name(value1, value2)</code>.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Write a function <code>bcm2tonnes</code> that converts a volume (BCM) to tonnes given a rock type, using the same density table from the Excel VLOOKUP lesson (Oxide 1.6, Transition 2.1, Fresh_Rock 2.8, Waste 2.4). Then call it for 12,500 BCM of Fresh_Rock.</p>
+    <pre class="code-block">function tonnes = bcm2tonnes(bcm, rocktype)
+    if strcmp(rocktype, 'Oxide')
+        density = 1.6;
+    elseif strcmp(rocktype, 'Transition')
+        density = 2.1;
+    elseif strcmp(rocktype, 'Fresh_Rock')
+        density = 2.8;
+    else
+        density = 2.4;
+    end
+    tonnes = bcm * density;
+end</pre>
+    <pre class="code-block">result = bcm2tonnes(12500, 'Fresh_Rock')</pre>
+    <p class="step"><code>rocktype</code> matches <code>'Fresh_Rock'</code>, so <code>density = 2.8</code>.</p>
+    <p><span class="out">result = 35000</span>, exactly matching both the Excel VLOOKUP worked example and the earlier verified value, the same density lookup, now expressed as a genuine reusable function with an if/elseif chain doing the same job VLOOKUP's table search did in Excel.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 55</span></div>
+  <div class="p-body"><p>Using the <code>bcm2tonnes</code> function from the worked example, what does <code>bcm2tonnes(8000, 'Oxide')</code> return?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Oxide density is 1.6: $8000\times1.6=$ <span class="out">12800</span> tonnes, matching the Excel VLOOKUP lesson's Practice 14 exactly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 56</span></div>
+  <div class="p-body"><p>Write a function <code>classify_grade(grade)</code> that returns <code>'Ore'</code> if grade $\ge0.5$, <code>'Waste'</code> otherwise, matching the very first Excel IF worked example.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <pre class="code-block">function category = classify_grade(grade)
+    if grade >= 0.5
+        category = 'Ore';
+    else
+        category = 'Waste';
+    end
+end</pre>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 57</span></div>
+  <div class="p-body"><p>Explain the genuine advantage of packaging the grade classification logic (Practice 56) as a function, rather than just retyping the if/else block every time it's needed in a script.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>If the cutoff grade ever changes (a genuinely common occurrence, cutoff grades shift with commodity prices), a function means the threshold only needs updating in <em>one</em> place, inside the function definition, and every single call to <code>classify_grade</code> throughout the entire script (or across multiple scripts) automatically picks up the new value. Retyping the if/else block in ten different places means finding and correctly updating all ten copies by hand, exactly the same "single source of truth" argument for cell-reference formulas over hardcoded numbers from the very first Excel lesson, now applied to a whole block of logic rather than a single calculation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 58</span></div>
+  <div class="p-body"><p>Write a function <code>stress(force, area)</code> that returns force divided by area, and call it for a force of 4500 N over an area of 0.02 m².</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <pre class="code-block">function s = stress(force, area)
+    s = force / area;
+end</pre>
+      <pre class="code-block">stress(4500, 0.02)</pre>
+      <p><span class="out">ans = 225000</span> Pa, matching the Excel formula lesson's Practice 12 exactly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 59</span></div>
+  <div class="p-body"><p>A function is defined as <code>function y = square_it(x)</code> with body <code>y = x.^2;</code>. Why is <code>.^</code> used here instead of plain <code>^</code>, given the function is meant to work whether <code>x</code> is a single number or an entire vector?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Using <code>.^</code> (element-wise power) means the function squares every individual element if <code>x</code> is a vector, exactly Practice 23's behaviour, while plain <code>^</code> attempts genuine matrix exponentiation, which is only defined for square matrices and means something completely different (repeated matrix multiplication, not elementwise squaring). Writing a function with <code>.^</code> from the start makes it correctly "just work" whether it's called with a single number or an entire vector of grades, exactly the vectorization payoff from Section 0, now built directly into a custom function rather than relying on a built-in one.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 60</span></div>
+  <div class="p-body"><p>Write a function <code>duplicate_check(original, duplicate)</code> that returns <code>'FAIL'</code> if the percentage difference between the two values exceeds 10%, <code>'PASS'</code> otherwise, matching the Excel QAQC worked example.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <pre class="code-block">function result = duplicate_check(original, duplicate)
+    pct_diff = abs(original - duplicate) / original * 100;
+    if pct_diff > 10
+        result = 'FAIL';
+    else
+        result = 'PASS';
+    end
+end</pre>
+      <p>Called as <code>duplicate_check(2.45, 2.78)</code>, this returns <span class="out">FAIL</span>, matching the Excel IF lesson's Practice 4 exactly, $13.47\%>10\%$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec10">
+  <div class="section-title"><span class="tag">10</span> Explore: engineer &amp; data scientist</div>
+  <div class="prose">
+    <p>These closing builds combine everything, vectors, matrices, functions, loops, and conditionals, into small, genuinely realistic engineering scripts. Open MATLAB for these.</p>
+  </div>
+</section>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 61</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build a script that defines a vector of 10 made-up gold grades, uses your <code>classify_grade</code> function (Practice 56) inside a <code>for</code> loop to classify every sample, and counts the total number of "Ore" samples using a running counter.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Suggested structure</span>
+      <pre class="code-block">grades = [0.3, 0.7, 0.5, 1.2, 0.2, 0.9, 0.4, 1.5, 0.1, 0.6];
+ore_count = 0;
+for i = 1:10
+    category = classify_grade(grades(i));
+    if strcmp(category, 'Ore')
+        ore_count = ore_count + 1;
+    end
+end
+ore_count</pre>
+      <p>This combines Section 9's function, Section 8's for loop, and Section 7's string comparison in one script, a small but genuine version of a resource-classification pipeline.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 62</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build the BCM-to-tonnes block model from the Excel lesson (Practice 34 there) entirely in MATLAB: vectors for rock type (as a cell array of strings), volume, then a for loop calling <code>bcm2tonnes</code> for every row, storing results in a pre-allocated output vector, and finishing with <code>sum</code> to get the grand total tonnage.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Suggested structure</span>
+      <pre class="code-block">rocktypes = {'Oxide','Fresh_Rock','Waste','Transition'};
+volumes = [8000, 12500, 3000, 5500];
+tonnes = zeros(1,4);
+for i = 1:4
+    tonnes(i) = bcm2tonnes(volumes(i), rocktypes{i});
+end
+total_tonnes = sum(tonnes)</pre>
+      <p>Note the curly braces <code>{}</code> for indexing into a cell array of strings, different from the round parentheses used for numeric vectors, a small but genuine syntax detail worth getting right. This script is the direct MATLAB equivalent of the Excel block-model EXPLORE build, same logic, same verified numbers (should total 66,550 tonnes if you match these exact volumes), completely different tool.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 63</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build a stress-test QC script: a vector of 10 stress readings, compute mean and standard deviation using <code>mean</code> and <code>std</code> (look up what <code>std</code> does), then flag and count any readings more than 2 standard deviations from the mean, a genuine statistical outlier check, more rigorous than the "more than double the average" rule of thumb from the Excel lesson.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Suggested structure</span>
+      <pre class="code-block">stress = [245.2, 248.1, 243.9, 250.3, 246.7, 244.5, 247.8, 246.1, 245.9, 300.5];
+m = mean(stress);
+s = std(stress);
+outliers = abs(stress - m) > 2*s;
+sum(outliers)</pre>
+      <p><code>std</code> computes the standard deviation, a measure of how spread out the readings are, and <code>abs(stress - m) > 2*s</code> is a fully vectorized comparison (no loop at all) that flags every reading more than two standard deviations away from the mean at once, exactly Section 5's vectorized-comparison idea, now doing genuine statistical QC work rather than a simple threshold check.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 64</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build a small $3\times3$ "stiffness matrix" (any made-up symmetric values), and use MATLAB's built-in <code>eig</code> function to find its eigenvalues. Compare conceptually to the by-hand eigenvalue methods from the Linear Algebra lessons, what would have taken a full worked page by hand for a $3\times3$ matrix?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">What this represents</span>
+      <pre class="code-block">K = [4, 1, 0; 1, 3, 1; 0, 1, 2];
+eig(K)</pre>
+      <p>One line, <code>eig(K)</code>, replaces the entire characteristic-equation-then-solve-the-cubic process from the Eigenvalues and Eigenvectors lesson, for a $3\times3$ matrix, solving that characteristic polynomial by hand is genuinely painful, exactly why numerical software exists. This is worth sitting with for a moment: everything built by hand across the entire Linear Algebra track (matrix multiplication, determinants, eigenvalues) is a single function call away in MATLAB, the hand computation wasn't wasted effort, though, understanding what <code>eig</code> is actually doing underneath is exactly what makes it trustworthy to use, rather than a black box.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 65</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Take the royalty calculator from the Excel VLOOKUP EXPLORE section and rebuild it in MATLAB as a function <code>royalty_rate(grade)</code> using if/elseif branches on the same four brackets (0, 0.5, 1.0, 2.0 g/t &rarr; 1%, 2%, 3%, 4%).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Suggested structure</span>
+      <pre class="code-block">function rate = royalty_rate(grade)
+    if grade >= 2.0
+        rate = 0.04;
+    elseif grade >= 1.0
+        rate = 0.03;
+    elseif grade >= 0.5
+        rate = 0.02;
+    else
+        rate = 0.01;
+    end
+end</pre>
+      <p>Same bracket logic as the Excel approximate-match VLOOKUP, checked highest-to-lowest exactly as Section 7 requires, and testing <code>royalty_rate(1.5)</code> should return <span class="out">0.03</span>, matching the Excel lesson's verified value exactly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 66</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Take your <code>duplicate_check</code> function (Practice 60) and apply it across a full vector of 10 original/duplicate pairs using a for loop, storing "PASS"/"FAIL" results in a cell array, then count the fails, the MATLAB equivalent of the Excel QAQC batch tracker.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Suggested structure</span>
+      <pre class="code-block">originals = [2.45, 1.80, 3.20, 0.95, 2.10, 1.55, 4.00, 2.75, 1.20, 3.60];
+duplicates = [2.78, 1.85, 3.15, 1.30, 2.05, 1.60, 4.50, 2.70, 1.15, 3.55];
+results = cell(1,10);
+fail_count = 0;
+for i = 1:10
+    results{i} = duplicate_check(originals(i), duplicates(i));
+    if strcmp(results{i}, 'FAIL')
+        fail_count = fail_count + 1;
+    end
+end
+fail_count</pre>
+      <p><code>cell(1,10)</code> pre-allocates a cell array (needed here since each result is text, not a plain number, cell arrays hold mixed or non-numeric content the way a plain numeric vector cannot). This script is functionally identical to the Excel PivotTable batch tracker's Count-based Pass/Fail summary, just built from a loop and a function instead of a dragged field in a PivotTable interface.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 67</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Take the equipment cost-per-hour report idea from the Excel EXPLORE section and rebuild the core calculation in MATLAB: a vector of hourly costs and a vector of hours run for 5 trucks, compute total cost per truck (element-wise), then use a <code>for</code> loop with an <code>if</code> statement to flag any truck whose total cost exceeds a budget threshold, printing a message with <code>fprintf</code> for each flagged truck.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Suggested structure</span>
+      <pre class="code-block">hourly_cost = [185, 210, 95, 185, 210];
+hours_run = [140, 155, 200, 90, 175];
+total_cost = hourly_cost .* hours_run;
+budget = 30000;
+for i = 1:5
+    if total_cost(i) > budget
+        fprintf('Truck %d exceeded budget: $%d\n', i, total_cost(i));
+    end
+end</pre>
+      <p><code>fprintf</code> is MATLAB's formatted-print function, <code>%d</code> is a placeholder for an integer value, filled in by the arguments listed after the format string, in order, a genuinely useful tool for producing readable console output from inside a loop rather than silently computing values with no visible trace.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 68</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Reflecting on everything built in Sections 1&ndash;9: pick the one MATLAB habit (vectorization, functions, or careful loop conditions) you think will matter most once you're writing genuinely larger scripts, and explain why in one or two sentences.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">No single right answer, but a strong candidate</span>
+      <p>If forced to pick one: vectorization (Sections 0, 4, 5). It's the habit that makes MATLAB code both dramatically faster to run and dramatically shorter to write and read, once "operate on the whole array at once" becomes the default instinct rather than "loop over every element," entire categories of bugs (off-by-one loop errors, forgotten loop-variable updates, Practice 52's infinite loop) simply stop being possible, because there's no loop there to get wrong in the first place. It's also, not coincidentally, the exact same mental model numpy uses in Python, meaning this one habit, more than any single function or syntax rule, is what actually transfers directly to wherever your engineering computing goes next.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>DPEN100 &middot; MATLAB Fundamentals &middot; Mining &amp; Mechanical Engineering</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice items revealed';
+}
+</script>
+
+</body>
+</html>

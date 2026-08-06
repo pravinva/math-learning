@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mathematics Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f0f4f8;
+  --surf:    #ffffff;
+  --surf2:   #eef2f7;
+  --bord:    #cfd9e6;
+  --text:    #2d3f52;
+  --muted:   #6b8096;
+  --bright:  #1a2b3c;
+  --accent1: #00a972;
+  --accent2: #0097e2;
+  --accent3: #ff3621;
+  --accent4: #ffb830;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.75;
+  min-height: 100vh;
+}
+#prog {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--bord); z-index: 200;
+}
+#prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00a972, #0097e2, #ff3621, #ffb830);
+  width: 0;
+  transition: width .2s;
+}
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 56px 32px 100px;
+}
+
+/* Header */
+.hero {
+  text-align: center;
+  margin-bottom: 72px;
+  padding: 40px 0;
+}
+.hero h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 600;
+  color: var(--bright);
+  letter-spacing: .05em;
+  margin-bottom: 16px;
+}
+.hero-rule {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  margin: 20px auto;
+}
+.hero p {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.7;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* Topics Grid */
+.topics-section {
+  margin-top: 48px;
+}
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+/* Topic Cards */
+.topic-card {
+  background: var(--surf);
+  border: 1px solid var(--bord);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all .3s cubic-bezier(.4, 0, .2, 1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  transform: translateY(20px);
+}
+.topic-card.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.topic-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 20px -2px var(--accent-shadow);
+  transform: translateY(-3px);
+}
+.topic-card.available {
+  --accent: var(--accent1);
+  --accent-shadow: rgba(0, 169, 114, 0.25);
+}
+.topic-card.coming-soon {
+  --accent: var(--muted);
+  --accent-shadow: rgba(107, 128, 150, 0.15);
+  cursor: default;
+  opacity: 0.7;
+}
+.topic-card.coming-soon:hover {
+  transform: translateY(0);
+  border-color: var(--bord);
+}
+
+.card-header {
+  padding: 24px 26px 20px;
+  border-bottom: 1px solid var(--bord);
+  position: relative;
+}
+.card-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 4px 10px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 12px;
+  background: rgba(0, 0, 0, 0.02);
+}
+.card-title {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--bright);
+  letter-spacing: .03em;
+  margin-bottom: 8px;
+}
+.card-subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.card-body {
+  padding: 22px 26px 26px;
+}
+.card-desc {
+  color: var(--text);
+  font-size: 16.5px;
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.meta-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  border: 1px solid var(--bord);
+  color: var(--muted);
+  background: var(--surf2);
+}
+
+/* Coming Soon Cards */
+.coming-soon .card-header {
+  opacity: 0.8;
+}
+.coming-soon .card-body {
+  opacity: 0.7;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 80px;
+  padding-top: 32px;
+  border-top: 1px solid var(--bord);
+}
+.footer-text {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.8;
+}
+.footer-meta {
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .1em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .topics-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero h1 {
+    font-size: 32px;
+  }
+  .wrap {
+    padding: 40px 20px 80px;
+  }
+}
+
+/* Animation delays for staggered appearance */
+.topic-card:nth-child(1) { transition-delay: 0.05s; }
+.topic-card:nth-child(2) { transition-delay: 0.1s; }
+.topic-card:nth-child(3) { transition-delay: 0.15s; }
+.topic-card:nth-child(4) { transition-delay: 0.2s; }
+.topic-card:nth-child(5) { transition-delay: 0.25s; }
+.topic-card:nth-child(6) { transition-delay: 0.3s; }
+</style>
+</head>
+<body>
+<div id="prog"><div id="prog-fill"></div></div>
+
+<div class="wrap">
+  <!-- Hero Section -->
+  <div class="hero">
+    <h1>Mathematics Learning Hub</h1>
+    <div class="hero-rule"></div>
+    <p>
+      Interactive visualizations and comprehensive guides exploring mathematics,
+      computer science, and computational engineering. Each topic is developed from
+      first principles with rigorous definitions, practical examples, and structured roadmaps.
+    </p>
+  </div>
+
+  <!-- Topics Section -->
+  <div class="topics-section">
+    <div class="section-label">Available Topics</div>
+
+    <div class="topics-grid">
+      <!-- K-Theory -->
+      <a href="ktheory.html" class="topic-card available" style="text-decoration: none;">
+        <div class="card-header">
+          <div class="card-badge">Available</div>
+          <div class="card-title">K-Theory</div>
+          <div class="card-subtitle">Algebraic Topology</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            A comprehensive journey from sets and functions through vector bundles
+            to Bott periodicity. Explores how algebraic structures classify
+            topological spaces.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">10 Levels</span>
+            <span class="meta-chip">Historical Context</span>
+            <span class="meta-chip">Interactive</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Vector Bundles -->
+      <a href="vector-bundles.html" class="topic-card available" style="text-decoration: none;">
+        <div class="card-header">
+          <div class="card-badge">Available</div>
+          <div class="card-title">Vector Bundles</div>
+          <div class="card-subtitle">Differential Topology</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Deep exploration of vector spaces varying over topological spaces.
+            Understanding twisting, transition functions, and the Möbius phenomenon
+            from first principles.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">9 Sections</span>
+            <span class="meta-chip">Clutching Construction</span>
+            <span class="meta-chip">Classification Theory</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Partial Differential Equations -->
+      <a href="pde_guide.html" class="topic-card available" style="text-decoration: none;">
+        <div class="card-header">
+          <div class="card-badge">Available</div>
+          <div class="card-title">Partial Differential Equations</div>
+          <div class="card-subtitle">Mathematical Physics</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Comprehensive exploration of PDEs from first principles through modern methods.
+            Heat, wave, and Laplace equations with classification theory, characteristics,
+            and solution techniques.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">8 Chapters</span>
+            <span class="meta-chip">Interactive Simulations</span>
+            <span class="meta-chip">Numerical Methods</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- GPU Kernel Engineering -->
+      <a href="cuda-kernel-study.html" class="topic-card available" style="text-decoration: none;">
+        <div class="card-header">
+          <div class="card-badge">Available</div>
+          <div class="card-title">GPU Kernel Engineering</div>
+          <div class="card-subtitle">High-Performance Computing</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Six-month structured roadmap for mastering CUDA kernel development.
+            From fundamentals through advanced optimization techniques, memory hierarchies,
+            and production-grade kernel engineering.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">6 Month Roadmap</span>
+            <span class="meta-chip">CUDA Programming</span>
+            <span class="meta-chip">Performance Optimization</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Data Compression -->
+      <a href="compression-study-guide.html" class="topic-card available" style="text-decoration: none;">
+        <div class="card-header">
+          <div class="card-badge">Available</div>
+          <div class="card-title">Data Compression</div>
+          <div class="card-subtitle">Information Theory</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Comprehensive exploration of data compression from information theory foundations
+            through practical implementations. Huffman coding, LZ77, dictionary methods,
+            and modern compression algorithms.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">Information Theory</span>
+            <span class="meta-chip">Algorithms</span>
+            <span class="meta-chip">Practical Applications</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Dirichlet Distribution -->
+      <a href="dirichlet.html" class="topic-card available" style="text-decoration: none;">
+        <div class="card-header">
+          <div class="card-badge">Available</div>
+          <div class="card-title">Dirichlet Distribution</div>
+          <div class="card-subtitle">Probability Theory</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Interactive exploration of the Dirichlet distribution and its applications
+            in Bayesian statistics. Visualizations of probability simplexes, concentration
+            parameters, and conjugate priors for multinomial distributions.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">Bayesian Statistics</span>
+            <span class="meta-chip">Interactive Visualizations</span>
+            <span class="meta-chip">Probability Simplex</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Algebraic Number Theory -->
+      <a href="algebraic-number-theory.html" class="topic-card available" style="text-decoration: none;">
+        <div class="card-header">
+          <div class="card-badge">Available</div>
+          <div class="card-title">Algebraic Number Theory</div>
+          <div class="card-subtitle">Number Theory</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Comprehensive journey from Fermat to Langlands exploring the deep connections
+            between algebra and number theory. Prime ideals, class field theory, and
+            modern developments in arithmetic geometry.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">Prime Ideals</span>
+            <span class="meta-chip">Class Field Theory</span>
+            <span class="meta-chip">Langlands Program</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Rudin Chapter 2 -->
+      <a href="rudin_ch2.html" class="topic-card available" style="text-decoration: none;">
+        <div class="card-header">
+          <div class="card-badge">Available</div>
+          <div class="card-title">Rudin Ch. 2: Positive Borel Measures</div>
+          <div class="card-subtitle">Measure Theory</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Interactive guide to the Riesz Representation Theorem from Rudin's Real and Complex Analysis.
+            Step-by-step walkthrough of the proof, covering σ-algebras, positive linear functionals,
+            regularity, and the construction of Lebesgue measure.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">Riesz Theorem</span>
+            <span class="meta-chip">Lebesgue Measure</span>
+            <span class="meta-chip">Interactive Tutor</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- VPC Complete Guide -->
+      <a href="siddharth/vpc_complete_guide.html" class="topic-card available" style="text-decoration: none;">
+        <div class="card-header">
+          <div class="card-badge">Available</div>
+          <div class="card-title">Vieta + Polynomial + Complex</div>
+          <div class="card-subtitle">DPEN022 Companion Guide</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            In-depth interactive study guide for Vieta formulas, polynomial solving,
+            complex numbers, polar form, De Moivre, and roots of unity. Includes a
+            confidence-building beginner path and fully worked step-by-step practice.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">Beginner Path</span>
+            <span class="meta-chip">Worked Solutions</span>
+            <span class="meta-chip">Interactive Lessons</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="section-label" style="margin-top: 56px;">Coming Soon</div>
+
+    <div class="topics-grid">
+      <!-- Category Theory -->
+      <div class="topic-card coming-soon">
+        <div class="card-header">
+          <div class="card-badge">In Development</div>
+          <div class="card-title">Category Theory</div>
+          <div class="card-subtitle">Abstract Algebra</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Functors, natural transformations, and categorical structures.
+            The language of modern mathematics unifying diverse mathematical concepts.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">Functors</span>
+            <span class="meta-chip">Morphisms</span>
+            <span class="meta-chip">Universal Properties</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Algebraic Topology -->
+      <div class="topic-card coming-soon">
+        <div class="card-header">
+          <div class="card-badge">In Development</div>
+          <div class="card-title">Algebraic Topology</div>
+          <div class="card-subtitle">Topology</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Homology and cohomology theories, fundamental groups, and covering spaces.
+            How algebraic invariants distinguish topological spaces.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">Homology</span>
+            <span class="meta-chip">CW Complexes</span>
+            <span class="meta-chip">Homotopy</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Differential Geometry -->
+      <div class="topic-card coming-soon">
+        <div class="card-header">
+          <div class="card-badge">In Development</div>
+          <div class="card-title">Differential Geometry</div>
+          <div class="card-subtitle">Geometry</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Manifolds, tangent spaces, differential forms, and curvature.
+            The geometry of smooth spaces and the calculus that lives on them.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">Manifolds</span>
+            <span class="meta-chip">Tangent Bundles</span>
+            <span class="meta-chip">Curvature</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Abstract Algebra -->
+      <div class="topic-card coming-soon">
+        <div class="card-header">
+          <div class="card-badge">In Development</div>
+          <div class="card-title">Abstract Algebra</div>
+          <div class="card-subtitle">Algebra</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Groups, rings, fields, and modules. The foundational structures
+            underlying symmetry, number theory, and modern cryptography.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">Group Theory</span>
+            <span class="meta-chip">Ring Theory</span>
+            <span class="meta-chip">Galois Theory</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real Analysis -->
+      <div class="topic-card coming-soon">
+        <div class="card-header">
+          <div class="card-badge">In Development</div>
+          <div class="card-title">Real Analysis</div>
+          <div class="card-subtitle">Analysis</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Limits, continuity, differentiation, integration, and measure theory.
+            The rigorous foundations of calculus and modern analysis.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">Metric Spaces</span>
+            <span class="meta-chip">Lebesgue Integration</span>
+            <span class="meta-chip">Measure Theory</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Complex Analysis -->
+      <div class="topic-card coming-soon">
+        <div class="card-header">
+          <div class="card-badge">In Development</div>
+          <div class="card-title">Complex Analysis</div>
+          <div class="card-subtitle">Analysis</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            Holomorphic functions, contour integration, and the Riemann mapping theorem.
+            The elegant theory of functions of a complex variable.
+          </div>
+          <div class="card-meta">
+            <span class="meta-chip">Cauchy's Theorem</span>
+            <span class="meta-chip">Residues</span>
+            <span class="meta-chip">Conformal Maps</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-text">
+      Each exploration is built from first principles, with careful attention to
+      historical development and modern applications.<br>
+      Learning as it should be &mdash; rigorous, intuitive, and interconnected.
+    </div>
+    <div class="footer-meta">
+      MATHEMATICS LEARNING HUB &nbsp;&middot;&nbsp; 2024
+    </div>
+  </div>
+</div>
+
+<script>
+// Progress bar on scroll
+var fill = document.getElementById("prog-fill");
+window.addEventListener("scroll", function() {
+  var pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  fill.style.width = Math.min(pct, 100) + "%";
+});
+
+// Intersection observer for card animations
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("show");
+    }
+  });
+}, {
+  threshold: 0.1,
+  rootMargin: "0px 0px -50px 0px"
+});
+
+document.querySelectorAll(".topic-card").forEach(function(card) {
+  observer.observe(card);
+});
+</script>
+</body>
+</html>

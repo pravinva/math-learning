@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Standard Derivatives — Trig</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Standard Derivatives — Trig</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["BASIC", "Differentiate \\(f(x)=\\sin(x)\\cos(x)\\) using the product rule, then simplify with a double angle identity.", "Product rule gives \\(\\cos^2x-\\sin^2x\\). Answer: \\(\\cos(2x)\\)"], ["INVERSE TRIG", "Differentiate \\(f(x)=\\arcsin(2x)\\).", "Chain rule on the standard arcsin derivative. Answer: \\(\\dfrac{2}{\\sqrt{1-4x^2}}\\)"], ["COMBINATION", "Differentiate \\(f(x)=x\\tan(x)\\).", "Product rule. Answer: \\(\\tan x+x\\sec^2x\\)"], ["ERROR ANALYSIS", "A student differentiates \\(f(x)=\\sec(x)\\) as \\(\\tan(x)\\), confusing two derivative rules. Correct it.", "Correct derivative: \\(\\sec x\\tan x\\)."], ["CONCEPTUAL", "Derive \\(d/dx[\\cot x]\\) from \\(\\cos x/\\sin x\\) using the quotient rule.", "\\(\\dfrac{-\\sin x\\sin x-\\cos x\\cos x}{\\sin^2x}=\\dfrac{-1}{\\sin^2x}\\). Answer: \\(-\\csc^2x\\)"], ["APPLIED", "A Ferris wheel rider's height is \\(h(t)=10+8\\sin(0.5t)\\). Find the vertical velocity at \\(t=\\pi\\).", "\\(h'(t)=4\\cos(0.5t)\\); at \\(t=\\pi\\): \\(4\\cos(\\pi/2)\\). Answer: \\(0\\)"]], [["BASIC", "Differentiate \\(f(x)=\\dfrac{\\sin x}{1+\\cos x}\\), simplifying using a trig identity.", "Quotient rule then simplify using \\(\\sin^2+\\cos^2=1\\). Answer: \\(\\dfrac{1}{1+\\cos x}\\)"], ["INVERSE TRIG", "Differentiate \\(f(x)=\\arctan(x^2)\\).", "Chain rule on the standard arctan derivative. Answer: \\(\\dfrac{2x}{1+x^4}\\)"], ["COMBINATION", "Differentiate \\(f(x)=\\sin^3(x)\\cos(x)\\).", "Product + chain rule. Answer: \\(3\\sin^2x\\cos^2x-\\sin^4x\\)"], ["ERROR ANALYSIS", "A student differentiates \\(f(x)=\\csc(x)\\) and writes \\(-\\csc(x)\\tan(x)\\), mixing it up with the secant rule. Correct it.", "Correct derivative: \\(-\\csc x\\cot x\\)."], ["CONCEPTUAL", "Using right-triangle reasoning, explain why \\(d/dx[\\arcsin x]=1/\\sqrt{1-x^2}\\).", "If \\(y=\\arcsin x\\), then \\(\\sin y=x\\); differentiating implicitly gives \\(\\cos y\\cdot y'=1\\). Since \\(\\cos y=\\sqrt{1-x^2}\\) (from a right triangle with opposite \\(x\\), hypotenuse \\(1\\)), \\(y'=1/\\sqrt{1-x^2}\\)."], ["APPLIED", "The angle of elevation to a rising balloon satisfies \\(\\tan\\theta=h/100\\), with \\(h(t)=5t\\). Find \\(d\\theta/dt\\) when \\(h=100\\) (\\(\\theta=\\pi/4\\)).", "\\(\\sec^2\\theta\\cdot\\theta'=h'/100=0.05\\); \\(\\sec^2(\\pi/4)=2\\). Answer: \\(\\theta'=0.025\\) rad/s"]], [["BASIC", "Differentiate \\(f(x)=\\dfrac{\\cos x}{x^2}\\).", "Quotient rule. Answer: \\(-\\dfrac{x\\sin x+2\\cos x}{x^3}\\)"], ["INVERSE TRIG", "Differentiate \\(f(x)=\\arccos(3x)\\).", "Chain rule on the standard arccos derivative. Answer: \\(-\\dfrac{3}{\\sqrt{1-9x^2}}\\)"], ["COMBINATION", "Differentiate \\(f(x)=e^x\\sin(x)+e^x\\cos(x)\\).", "Product rule on each term, terms cancel neatly. Answer: \\(2e^x\\cos x\\)"], ["ERROR ANALYSIS", "A student claims \\(d/dx[\\tan^2x]=\\sec^2x\\), confusing the derivative with the Pythagorean identity \\(1+\\tan^2x=\\sec^2x\\). Correct it.", "Chain rule gives \\(2\\tan x\\sec^2x\\), not \\(\\sec^2x\\)."], ["CONCEPTUAL", "Explain why the derivatives of \\(\\cos x\\), \\(\\cot x\\), and \\(\\csc x\\) all carry a negative sign, unlike \\(\\sin x\\), \\(\\tan x\\), \\(\\sec x\\).", "The 'co-functions' are essentially phase-shifted or reciprocal versions of the primary functions, and this shift/reciprocal relationship systematically flips the sign of the derivative \u2014 it's a pattern worth memorising as a group rather than deriving each separately."], ["APPLIED", "A pendulum's angle is \\(\\theta(t)=0.2\\cos(3t)\\). Find the angular velocity and its maximum magnitude.", "\\(\\theta'(t)=-0.6\\sin(3t)\\). Answer: maximum magnitude is \\(0.6\\) rad/s"]], [["BASIC", "Differentiate \\(f(x)=\\tan(x)-x\\).", "Standard derivative minus 1. Answer: \\(\\sec^2x-1\\)"], ["INVERSE TRIG", "Differentiate \\(f(x)=x\\arctan(x)\\).", "Product rule. Answer: \\(\\arctan x+\\dfrac{x}{1+x^2}\\)"], ["COMBINATION", "Differentiate \\(f(x)=\\sin(x^2)\\cos(x)\\).", "Product + chain rule. Answer: \\(2x\\cos(x^2)\\cos x-\\sin(x^2)\\sin x\\)"], ["ERROR ANALYSIS", "A student writes \\(d/dx[\\arcsin x+\\arccos x]=2/\\sqrt{1-x^2}\\), forgetting the two derivatives have opposite signs. Correct it.", "Since \\(\\arcsin x+\\arccos x=\\pi/2\\) (a constant), the derivative is \\(0\\); indeed \\(1/\\sqrt{1-x^2}-1/\\sqrt{1-x^2}=0\\)."], ["CONCEPTUAL", "Use the identity \\(\\arcsin x+\\arccos x=\\pi/2\\) to quickly deduce \\(d/dx[\\arccos x]\\) from \\(d/dx[\\arcsin x]\\).", "Since the sum is constant, its derivative is \\(0\\), so \\(d/dx[\\arccos x]=-d/dx[\\arcsin x]=-1/\\sqrt{1-x^2}\\)."], ["APPLIED", "An observer's horizontal distance to a plane is \\(x(t)=500-20t\\), and the elevation angle is \\(\\theta=\\arctan(300/x)\\). Find \\(d\\theta/dt\\) at \\(t=0\\) (\\(x=500\\)).", "Using the chain rule, \\(d\\theta/dx=-300/(x^2+90000)\\); at \\(x=500\\) this is \\(-3/3400\\). Multiply by \\(dx/dt=-20\\). Answer: \\(3/170\\) rad per unit time"]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

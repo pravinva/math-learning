@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN105 — Engineering Design & Sustainability</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<style>
+:root{
+  --navy:#1B3A5C;--navy-lt:#1e4570;--orange:#FF3621;
+  --blue-lt:#E6F1FB;--blue-mid:#185FA5;
+  --amber-lt:#FAEEDA;--amber-dk:#7A4800;
+  --green-lt:#E1F5EE;--green-dk:#0a5c3f;
+  --purple-lt:#F3ECFF;--purple-dk:#6b5aa0;
+  --grey-lt:#F6F5F2;--grey-md:#e8e6e0;
+  --text:#2c2a28;--text-muted:#6b6762;
+  --sidebar-w:260px;--content-max:820px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Crimson Pro',Georgia,serif;background:#fafaf8;color:var(--text);display:flex;min-height:100vh;line-height:1.7}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--navy);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.sidebar-brand{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-brand-title{font-family:'Crimson Pro',Georgia,serif;font-size:17px;font-weight:600;color:white;line-height:1.3}
+.sidebar-brand-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:.04em;font-family:'DM Sans',sans-serif}
+.nav-section{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-section-label{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.3);padding:6px 20px 4px;text-transform:uppercase;font-family:'DM Sans',sans-serif}
+.nav-link{display:flex;align-items:center;gap:10px;padding:8px 20px;color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;transition:all .15s;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
+.nav-link:hover{color:white;background:rgba(255,255,255,.06)}
+.nav-link.active{color:white;background:rgba(255,255,255,.1);border-left:2px solid var(--orange);padding-left:18px}
+.nav-num{font-size:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.5);border-radius:3px;padding:1px 5px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.nav-link.active .nav-num{background:var(--orange);color:white}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
+.topbar{background:white;border-bottom:1px solid var(--grey-md);padding:12px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-breadcrumb{font-size:12px;color:var(--text-muted);font-family:'DM Sans',sans-serif}
+.topbar-breadcrumb span{color:var(--navy);font-weight:500}
+.topbar-btns{display:flex;gap:8px}
+.tb-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--grey-md);background:white;font-size:12px;color:var(--text-muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.tb-btn:hover{border-color:var(--navy);color:var(--navy)}
+
+/* CONTENT */
+.content{max-width:var(--content-max);margin:0 auto;padding:48px 40px 80px}
+.page{display:none}
+.page.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.page-hero{margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid var(--grey-md)}
+.page-hero-label{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--orange);text-transform:uppercase;margin-bottom:6px;font-family:'DM Sans',sans-serif}
+.page-hero-title{font-family:'Crimson Pro',Georgia,serif;font-size:38px;font-weight:600;color:var(--navy);line-height:1.15;margin-bottom:8px}
+.page-hero-sub{font-size:15px;color:var(--text-muted);line-height:1.6;font-family:'DM Sans',sans-serif}
+
+/* TOPIC SECTIONS */
+.topic-section{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:28px 32px;margin-bottom:24px}
+.topic-section h3{font-family:'Crimson Pro',Georgia,serif;font-size:20px;font-weight:600;color:var(--navy);margin:24px 0 12px}
+.topic-section h3:first-child{margin-top:0}
+.topic-section h4{font-family:'DM Sans',sans-serif;font-weight:500;font-size:15px;color:var(--navy);margin:16px 0 8px}
+.topic-section p{font-size:14.5px;line-height:1.7;margin-bottom:10px}
+.topic-section ul,.topic-section ol{padding-left:24px;margin-bottom:12px;font-size:14.5px;line-height:1.7}
+.topic-section li{margin-bottom:6px}
+.topic-section strong{color:var(--navy);font-weight:600}
+.topic-section em{font-style:italic}
+
+/* FORMULA BOX */
+.fbox{background:linear-gradient(135deg,rgba(255,54,33,0.04),rgba(255,54,33,0.01));border:1px solid rgba(255,54,33,0.2);border-radius:8px;padding:16px 20px;margin:12px 0;overflow-x:auto;text-align:center}
+.fbox-label{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);margin-bottom:8px;font-weight:500}
+
+/* EXAMPLE BOX */
+.example-box{background:#fdfcfa;border:1px solid #d4e9d4;border-radius:8px;padding:18px 20px;margin:16px 0}
+.example-label{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.08em;color:#0a7a4a;font-weight:600;text-transform:uppercase;margin-bottom:8px}
+.ex-step{margin:12px 0 6px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;color:var(--green-dk)}
+
+/* PRACTICE PROBLEMS */
+.practice-box{background:#faf8fd;border:1px solid #d4d4e9;border-radius:8px;padding:18px 20px;margin:16px 0}
+.practice-label{font-size:11px;letter-spacing:.08em;color:#6b5aa0;font-weight:600;text-transform:uppercase;margin-bottom:8px;font-family:'DM Sans',sans-serif}
+.practice-box ol{padding-left:20px;font-size:14.5px;line-height:1.7}
+.practice-box li{margin-bottom:10px}
+
+details.answer{margin-top:12px;background:rgba(107,90,160,.05);border-radius:6px;border:1px solid rgba(107,90,160,.2)}
+details.answer summary{font-family:'DM Sans',sans-serif;font-size:12px;padding:8px 14px;cursor:pointer;color:#6b5aa0;letter-spacing:.04em;font-weight:500}
+details.answer .ans-body{padding:12px 16px;border-top:1px solid rgba(107,90,160,.2);font-size:13.5px}
+
+/* CALLOUTS */
+.callout-info{background:var(--blue-lt);border-left:3px solid var(--blue-mid);padding:12px 16px;font-size:13.5px;line-height:1.6;margin:12px 0;border-radius:0 6px 6px 0}
+.callout-info strong{color:var(--blue-mid)}
+
+.callout-warn{background:var(--amber-lt);border-left:3px solid #c07a00;padding:12px 16px;font-size:13.5px;line-height:1.6;margin:12px 0;border-radius:0 6px 6px 0;color:var(--amber-dk)}
+.callout-warn strong{color:#c07a00}
+
+.callout-success{background:var(--green-lt);border-left:3px solid #1a7a5a;padding:12px 16px;font-size:13.5px;line-height:1.6;margin:12px 0;border-radius:0 6px 6px 0;color:var(--green-dk)}
+.callout-success strong{color:#1a7a5a}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+th{font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:.05em;color:white;background:var(--navy);padding:8px 12px;text-align:left;font-weight:500}
+td{padding:8px 12px;border-bottom:1px solid var(--grey-md);line-height:1.6;vertical-align:top}
+tr:nth-child(even) td{background:var(--grey-lt)}
+tr:last-child td{border-bottom:none}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .sidebar{display:none}.main{margin-left:0}.content{padding:24px 18px 60px}
+  .topbar{padding:10px 18px}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">DPEN105 — Engineering Design & Sustainability</div>
+    <div class="sidebar-brand-sub">University of Wollongong · 10 Topic Modules</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Topics</div>
+    <button class="nav-link active" onclick="goTo('t1')"><span class="nav-num">1</span>Sustainability Fundamentals</button>
+    <button class="nav-link" onclick="goTo('t2')"><span class="nav-num">2</span>Life Cycle Assessment</button>
+    <button class="nav-link" onclick="goTo('t3')"><span class="nav-num">3</span>Carbon Footprint</button>
+    <button class="nav-link" onclick="goTo('t4')"><span class="nav-num">4</span>Renewable Energy</button>
+    <button class="nav-link" onclick="goTo('t5')"><span class="nav-num">5</span>Water & Resources</button>
+    <button class="nav-link" onclick="goTo('t6')"><span class="nav-num">6</span>Green Building</button>
+    <button class="nav-link" onclick="goTo('t7')"><span class="nav-num">7</span>Circular Economy</button>
+    <button class="nav-link" onclick="goTo('t8')"><span class="nav-num">8</span>Design for Environment</button>
+    <button class="nav-link" onclick="goTo('t9')"><span class="nav-num">9</span>Economic Sustainability</button>
+    <button class="nav-link" onclick="goTo('t10')"><span class="nav-num">10</span>Case Studies</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">DPEN105 / Engineering Design & Sustainability / <span id="breadcrumbPage">Topic 1</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand All</button>
+    </div>
+  </div>
+  <div class="content">
+
+<!-- ═══════════════════════════════════════
+     TOPIC 1 — SUSTAINABILITY FUNDAMENTALS
+════════════════════════════════════════ -->
+<div class="page active" id="page-t1">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 1 · Week 1</div>
+    <div class="page-hero-title">Sustainability Fundamentals</div>
+    <div class="page-hero-sub">SDGs · triple bottom line · core definitions</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Sustainability Principles</h3>
+    <p>Sustainability is development that meets current needs without compromising the ability of future generations to meet theirs. The <strong>triple bottom line (3BL)</strong> framework balances three dimensions: economic prosperity, social equity, and environmental integrity. The 17 UN Sustainable Development Goals (SDGs) provide a global roadmap for sustainable development across all sectors.</p>
+
+    <div class="fbox">
+      <div class="fbox-label">Triple Bottom Line (TBL)</div>
+      $$\text{Sustainability} = \text{Environment} + \text{Social} + \text{Economic}$$
+    </div>
+
+    <h4>UN SDGs in Engineering</h4>
+    <ul>
+      <li><strong>SDG 6:</strong> Clean water and sanitation</li>
+      <li><strong>SDG 7:</strong> Affordable clean energy</li>
+      <li><strong>SDG 9:</strong> Industry, innovation, infrastructure</li>
+      <li><strong>SDG 12:</strong> Responsible consumption & production</li>
+      <li><strong>SDG 13:</strong> Climate action</li>
+    </ul>
+
+    <h3>Worked Examples</h3>
+    <div class="example-box">
+      <div class="example-label">Example 1: Identifying TBL Impacts</div>
+      <p><strong>Scenario:</strong> A renewable energy company installs solar panels on farmland.</p>
+      <p><span class="ex-step">Environmental:</span> Reduces CO₂ emissions, displaces habitat → net positive if mitigation planned</p>
+      <p><span class="ex-step">Social:</span> Jobs created, but local farmers lose land → requires compensation</p>
+      <p><span class="ex-step">Economic:</span> Lower energy costs long-term, but initial capital investment high</p>
+      <p><strong>Conclusion:</strong> Sustainable if all three pillars addressed holistically.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 2: SDG Alignment</div>
+      <p><strong>Design Challenge:</strong> Improve water access in rural communities.</p>
+      <p><span class="ex-step">Primary SDG:</span> SDG 6 (Clean Water)</p>
+      <p><span class="ex-step">Co-benefits:</span> SDG 1 (No Poverty—income from water services), SDG 5 (Gender Equality—women's time freed)</p>
+      <p><strong>Key insight:</strong> Single interventions can advance multiple SDGs simultaneously.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 3: TBL Trade-off Analysis</div>
+      <p><strong>Scenario:</strong> Factory automation replaces 100 jobs but reduces emissions by 40%.</p>
+      <p>Economic win (efficiency) but social loss (jobs). Solution: reskilling programs, phased transition, profit-sharing →  balance all three pillars.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 4: Measuring Sustainability</div>
+      <p><strong>Company Metrics:</strong> Carbon emissions (kg CO₂e), water usage (m³), waste recycled (%), employee satisfaction (%), local hiring (%).</p>
+      <p>Balanced scorecard across Environment, Social, Economic ensures comprehensive sustainability assessment.</p>
+    </div>
+
+    <h3>Practice Problems</h3>
+    <div class="practice-box">
+      <div class="practice-label">Problems</div>
+      <ol>
+        <li>Explain why "environmental only" sustainability is insufficient. What happens if you optimize only the green pillar?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Short-term success but social inequality (unemployment, poor labor practices) + economic collapse (can't sustain business). TBL is necessary for true durability.</div></details>
+        </li>
+        <li>A product uses 100% recycled materials but requires 10x the energy to produce. Is it sustainable? Justify.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Not inherently sustainable. Must compare full lifecycle energy (LCA) vs virgin material. If renewable energy used, yes; if coal-fired, environmental gain offset. Context matters.</div></details>
+        </li>
+        <li>Which SDG does wastewater treatment support? Name 2 secondary SDGs it advances.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Primary: SDG 6 (Clean Water). Secondary: SDG 3 (Good Health—prevents disease), SDG 14 (Life Below Water—protects ecosystems).</div></details>
+        </li>
+        <li>A sustainable development project has high upfront cost but low long-term cost. How do you justify it economically?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Use Net Present Value (NPV) or payback period analysis. Discount future savings to present value. If NPV positive, investment is economically sound despite initial cost.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 2 — LIFE CYCLE ASSESSMENT
+════════════════════════════════════════ -->
+<div class="page" id="page-t2">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 2 · Week 2</div>
+    <div class="page-hero-title">Life Cycle Assessment</div>
+    <div class="page-hero-sub">ISO 14040 · functional units · impact categories · LCA calculations</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>LCA Framework</h3>
+    <p>Life Cycle Assessment (ISO 14040:2006) quantifies environmental impacts across a product's entire lifecycle: raw material extraction, manufacturing, transport, use, end-of-life. The <strong>functional unit</strong> defines what is being assessed (e.g., "1 kg of packaging" or "1 MJ of energy delivered"). Four phases: goal & scope, inventory analysis, impact assessment, interpretation.</p>
+
+    <div class="fbox">
+      <div class="fbox-label">LCA Impact Formula</div>
+      $$\text{Total Impact} = \sum (\text{Activity Data}_i \times \text{Emission Factor}_i)$$
+    </div>
+
+    <h4>Key Impact Categories</h4>
+    <ul>
+      <li>Global Warming Potential (GWP): kg CO₂-eq</li>
+      <li>Acidification Potential (AP): kg SO₂-eq</li>
+      <li>Eutrophication Potential (EP): kg PO₄-eq</li>
+      <li>Ozone Depletion Potential (ODP): kg CFC-11-eq</li>
+      <li>Photochemical Ozone Creation: kg C₂H₄-eq</li>
+    </ul>
+
+    <h3>Worked Examples</h3>
+    <div class="example-box">
+      <div class="example-label">Example 1: LCA Boundary Definition</div>
+      <p><strong>Product:</strong> Single-use plastic bottle.</p>
+      <p><span class="ex-step">Cradle-to-grave:</span> Extraction → manufacturing → transport → use → landfill.</p>
+      <p><span class="ex-step">Cradle-to-gate:</span> Stops at factory exit (manufacturing + transport to retailer).</p>
+      <p><span class="ex-step">Cradle-to-grave best for policy; cradle-to-gate for producer comparisons.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 2: GWP Calculation</div>
+      <p><strong>Scenario:</strong> Producing 1 kg of aluminum requires 12 kWh electricity. Grid: 0.5 kg CO₂/kWh.</p>
+      <p><span class="ex-step">Calculation:</span> GWP = 12 kWh × 0.5 kg CO₂/kWh = 6 kg CO₂-eq per kg Al</p>
+      <p>Note: Primary aluminum is energy-intensive; recycled aluminum ~5% of impact.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 3: Functional Unit Comparison</div>
+      <p><strong>Question:</strong> Compare glass vs plastic bottles for 1 L of beverage.</p>
+      <p><span class="ex-step">Glass:</span> Heavier (500g), impacts from mining. Reusable → lower per-use impact.</p>
+      <p><span class="ex-step">Plastic:</span> Lighter (30g), fossil fuels. Single-use → higher per-use impact.</p>
+      <p>If glass reused 10x: ~0.2 kg CO₂-eq/use vs plastic ~0.1 kg CO₂-eq. Context (reuse rate) critical.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 4: Hotspot Identification</div>
+      <p><strong>LCA Result for Smartphone:</strong> 40% manufacturing, 55% use phase (electricity), 5% transport.</p>
+      <p><span class="ex-step">Action:</span> Optimize electricity grid (renewable energy) → biggest impact reduction. Secondary: manufacturing efficiency.</p>
+    </div>
+
+    <h3>Practice Problems</h3>
+    <div class="practice-box">
+      <div class="practice-label">Problems</div>
+      <ol>
+        <li>Define a functional unit for a t-shirt. Should it be "1 shirt" or "1 kg clothing" or "clothing service for 5 years"?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Best: "Clothing service for X wears" (functional). Normalizes durability differences. "1 shirt" acceptable for quick comparison but biased toward heavier/durable designs.</div></details>
+        </li>
+        <li>An LCA shows 80% of impact from electricity during manufacturing. The factory switches to 100% renewable. What's the maximum % reduction in total LCA impact?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Maximum ~80% reduction (if electricity was 80% and now 0). Total impact: 20% (other phases) remains. Real-world: ~70% reduction (losses in renewable conversion, transmission).</div></details>
+        </li>
+        <li>Why is recycling not always the environmental winner? Give an example.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Recycling energy can be high. Example: recycling mixed plastic waste uses more energy than virgin plastic for some types. Also: contamination, transport distances increase impact. Case-by-case LCA needed.</div></details>
+        </li>
+        <li>A product's use phase has zero emissions (no electricity). How does this affect LCA interpretation?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Focus shifts to manufacturing, end-of-life. Durability becomes critical—longer life amortizes manufacturing impact. Design for longevity prioritized over efficiency during use.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 3 — CARBON FOOTPRINT
+════════════════════════════════════════ -->
+<div class="page" id="page-t3">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 3 · Week 3</div>
+    <div class="page-hero-title">Carbon Footprint</div>
+    <div class="page-hero-sub">Scope 1/2/3 · CO₂e · GWP · carbon calculations</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Scope Framework (GHG Protocol)</h3>
+    <p>Carbon footprints categorize greenhouse gas emissions by source using the GHG Protocol. <strong>Scope 1:</strong> Direct emissions from owned/controlled sources (e.g., fuel combustion, production). <strong>Scope 2:</strong> Indirect emissions from purchased electricity/steam. <strong>Scope 3:</strong> All other indirect emissions (supply chain, product use, waste). CO₂ equivalent (CO₂e) converts all GHGs to a common metric using Global Warming Potential (GWP).</p>
+
+    <div class="fbox">
+      <div class="fbox-label">CO₂ Equivalent (GWP)</div>
+      $$\text{CO}_2\text{e} = \sum (\text{GHG mass}_i \times \text{GWP}_i)$$
+      <p style="font-size:12px;margin-top:8px">where GWP₁₀₀: CH₄=28, N₂O=265, CO₂=1 (100-year horizon)</p>
+    </div>
+
+    <div class="fbox">
+      <div class="fbox-label">Carbon Footprint Formula</div>
+      $$\text{CF} = \text{Scope 1} + \text{Scope 2} + \text{Scope 3}$$
+    </div>
+
+    <h4>Typical Scope Breakdown (Manufacturer)</h4>
+    <ul>
+      <li>Scope 1: ~10–20% (direct combustion, on-site)</li>
+      <li>Scope 2: ~5–15% (purchased electricity)</li>
+      <li>Scope 3: ~65–85% (supply chain, logistics, customer use)</li>
+    </ul>
+
+    <h3>Worked Examples</h3>
+    <div class="example-box">
+      <div class="example-label">Example 1: Scope Classification</div>
+      <p><strong>Factory emissions sources:</strong></p>
+      <p><span class="ex-step">Scope 1:</span> Natural gas furnace (50 kg CO₂/day), company vehicle (10 kg CO₂/day)</p>
+      <p><span class="ex-step">Scope 2:</span> Grid electricity (200 kWh/day × 0.4 kg CO₂/kWh = 80 kg CO₂/day)</p>
+      <p><span class="ex-step">Scope 3:</span> Supplier emissions (500 kg CO₂/day), customer transport (300 kg CO₂/day)</p>
+      <p><strong>Total daily CF = 60 + 80 + 800 = 940 kg CO₂e</strong></p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 2: GWP Conversion</div>
+      <p><strong>Biogas plant emissions:</strong> 100 kg CH₄, 5 kg N₂O, 500 kg CO₂.</p>
+      <p><span class="ex-step">Calculation:</span> (100 × 28) + (5 × 265) + (500 × 1) = 2,800 + 1,325 + 500 = 4,625 kg CO₂e</p>
+      <p><strong>Methane dominates</strong>—CH₄ abatement is priority mitigation strategy.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 3: Scope Reduction Strategy</div>
+      <p><strong>Company Goal:</strong> Reduce carbon footprint by 50%.</p>
+      <p><span class="ex-step">Baseline:</span> Scope 1 (20%), Scope 2 (30%), Scope 3 (50%).</p>
+      <p><span class="ex-step">Strategy:</span> Switch to renewable energy (Scope 2 → 0), improve logistics (Scope 3 → 25%), efficiency (Scope 1 → 10%).</p>
+      <p><strong>New total: 35% (reduction of 30% from baseline, short of 50% target)</strong></p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 4: Personal Carbon Footprint</div>
+      <p><strong>Annual emissions:</strong> Car (3 kg CO₂/day × 250 days = 750 kg), flights (2,000 km × 0.2 kg CO₂/km = 400 kg), home energy (5 kg CO₂/day × 365 = 1,825 kg).</p>
+      <p><strong>Total: 2,975 kg CO₂e/year (~3 tonnes)</strong>. Global average ~4 tonnes; target for 1.5°C: ~2.3 tonnes → personal changes needed.</p>
+    </div>
+
+    <h3>Practice Problems</h3>
+    <div class="practice-box">
+      <div class="practice-label">Problems</div>
+      <ol>
+        <li>A company's Scope 3 emissions are 10x Scope 1. Should they focus carbon reduction efforts on Scope 1 or Scope 3?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Scope 3, because it's the dominant source. Maximum impact per effort. However, Scope 1 (owned sources) is controllable—hybrid approach: quick wins in Scope 1, systemic changes in Scope 3.</div></details>
+        </li>
+        <li>A factory produces 1,000 tonnes/year, emitting 50 kg CO₂e per tonne. If they switch to renewable electricity, Scope 2 drops from 15,000 to 1,500 kg CO₂e. What % reduction in total if Scope 3 is 80,000 kg CO₂e?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Total before: 50,000 + 15,000 + 80,000 = 145,000 kg CO₂e. After: 50,000 + 1,500 + 80,000 = 131,500 kg CO₂e. Reduction: 13,500/145,000 = 9.3%.</div></details>
+        </li>
+        <li>Why is Scope 3 often the largest carbon footprint for consumer goods companies?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Product use phase dominates (e.g., fuel consumption in cars, electricity in appliances). Supply chain and distribution also significant. Company operations (Scope 1&2) small by comparison.</div></details>
+        </li>
+        <li>Explain the difference between carbon footprint (CF) and life cycle assessment (LCA).
+          <details class="answer"><summary>Answer</summary><div class="ans-body">CF: measures only greenhouse gas emissions (kg CO₂e). LCA: broader, includes multiple impact categories (acidification, eutrophication, etc.). CF is subset of LCA focused on climate.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 4 — RENEWABLE ENERGY
+════════════════════════════════════════ -->
+<div class="page" id="page-t4">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 4 · Week 4</div>
+    <div class="page-hero-title">Renewable Energy</div>
+    <div class="page-hero-sub">Solar PV · wind · energy calculations</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Renewable Energy Basics</h3>
+    <p>Renewable energy sources—solar, wind, hydro, geothermal, biomass—are replenished naturally and produce zero direct emissions. <strong>Solar photovoltaic (PV)</strong> converts sunlight directly to electricity via semiconductors. <strong>Wind energy</strong> uses kinetic energy of air movement. Key metrics: nameplate capacity (kW), capacity factor (%), and energy production (kWh/year). Levelized Cost of Energy (LCOE) compares economics across technologies.</p>
+
+    <div class="fbox">
+      <div class="fbox-label">Solar PV Energy Output</div>
+      $$E = G \times A \times \eta_{\text{PV}} \times \eta_{\text{inv}}$$
+      <p style="font-size:12px;margin-top:8px">where $G$ = solar irradiance (W/m²), $A$ = panel area (m²), $\eta_{\text{PV}}$ = panel efficiency, $\eta_{\text{inv}}$ = inverter efficiency</p>
+    </div>
+
+    <div class="fbox">
+      <div class="fbox-label">Wind Power Output</div>
+      $$P = \frac{1}{2} \rho A v^3 C_p$$
+      <p style="font-size:12px;margin-top:8px">where $\rho$ = air density (1.225 kg/m³), $A$ = rotor sweep area (m²), $v$ = wind speed (m/s), $C_p$ = power coefficient (~0.59 theoretical max)</p>
+    </div>
+
+    <h3>Worked Examples</h3>
+    <div class="example-box">
+      <div class="example-label">Example 1: Solar PV System Design</div>
+      <p><strong>Scenario:</strong> Rooftop system: 20 m² panels, efficiency 20%, average irradiance 5 kWh/m²/day, inverter 95% efficient.</p>
+      <p><span class="ex-step">Daily output:</span> 5 kWh/m²/day × 20 m² × 0.20 × 0.95 = 19 kWh/day</p>
+      <p><span class="ex-step">Annual:</span> 19 × 365 = 6,935 kWh/year</p>
+      <p>Typical household uses ~10–15 MWh/year → covers ~45–70% of demand.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 2: Wind Turbine Power</div>
+      <p><strong>Turbine specs:</strong> Rotor diameter 100 m (area ≈ 7,854 m²), wind speed 12 m/s, $C_p = 0.45$.</p>
+      <p><span class="ex-step">Calculation:</span> $P = 0.5 × 1.225 × 7,854 × 12³ × 0.45 = 3.8$ MW</p>
+      <p>With capacity factor 35% (typical onshore): ~1.33 MW average → 11.7 GWh/year.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 3: LCOE Comparison</div>
+      <p><strong>System costs:</strong> Solar $800/kW, wind $1,600/kW. Lifetimes: 25 years (solar), 20 years (wind).</p>
+      <p><span class="ex-step">Solar LCOE:</span> $0.04–0.06/kWh (high capacity factor regions)</p>
+      <p><span class="ex-step">Wind LCOE:</span> $0.05–0.08/kWh (depends on wind resource)</p>
+      <p>Hybrid systems often optimal—complement seasonal variations.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 4: Energy Storage Requirement</div>
+      <p><strong>Grid scenario:</strong> 40% solar, 30% wind, 30% dispatchable (gas/hydro). Daily solar peak: noon; wind variable.</p>
+      <p><span class="ex-step">Storage needed:</span> ~4–6 hours of battery capacity to smooth supply-demand mismatch.</p>
+      <p>Cost: ~$200/kWh → significant investment, but battery prices falling ~15%/year.</p>
+    </div>
+
+    <h3>Practice Problems</h3>
+    <div class="practice-box">
+      <div class="practice-label">Problems</div>
+      <ol>
+        <li>A solar panel has efficiency 18% and receives 1,000 W/m² (peak conditions). How much energy does a 5 m² panel produce in 6 peak-sun-hours?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Output = 1,000 W/m² × 5 m² × 0.18 × 6 hours = 5,400 Wh = 5.4 kWh. Daily = 5.4 kWh (assuming 6 peak hours equivalent).</div></details>
+        </li>
+        <li>Wind speed doubles. How does power output change (assume $C_p$ constant)?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Power ∝ $v³$. If $v$ doubles: $P_{\text{new}} = (2)³ × P_{\text{old}} = 8 × P_{\text{old}}$. Doubling wind speed increases power 8-fold—wind is exponentially sensitive to speed.</div></details>
+        </li>
+        <li>A 10 MW solar farm has capacity factor 25%. How many households (12 MWh/year each) can it supply?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Annual output: 10 MW × 0.25 × 8,760 hours = 21,900 MWh. Households: 21,900/12 ≈ 1,825 homes. Capacity factor varies by location (15–35% typical).</div></details>
+        </li>
+        <li>Why is battery storage crucial for 100% renewable grids, and what's the limiting factor?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Renewable output intermittent. Storage smooths supply-demand, prevents curtailment. Limiting factor: cost (still ~$200/kWh) and duration (6–24 hour storage needed). Grid-scale solutions: thermal, pumped hydro, green hydrogen.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 5 — WATER & RESOURCES
+════════════════════════════════════════ -->
+<div class="page" id="page-t5">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 5 · Week 5</div>
+    <div class="page-hero-title">Water & Resources</div>
+    <div class="page-hero-sub">Water footprint · resource efficiency</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Water Footprint & Resource Efficiency</h3>
+    <p><strong>Water footprint</strong> measures freshwater consumption across supply chains. Three components: blue water (surface/groundwater), green water (rain), grey water (pollution dilution). <strong>Resource efficiency</strong> minimizes material and energy use per unit output. Circular design principles—reduce, reuse, recycle—extend resource availability and reduce environmental burden.</p>
+
+    <div class="fbox">
+      <div class="fbox-label">Water Footprint</div>
+      $$\text{WF} = \text{Blue WF} + \text{Green WF} + \text{Grey WF} \quad (\text{m}^3/\text{year})$$
+    </div>
+
+    <div class="fbox">
+      <div class="fbox-label">Material Efficiency</div>
+      $$\eta_{\text{mat}} = \frac{\text{Useful material output}}{\text{Total material input}} \times 100\%$$
+    </div>
+
+    <h4>Water Stress by Industry</h4>
+    <ul>
+      <li>Cotton: 10,000 L per kg (highest)</li>
+      <li>Beef: 15,000 L per kg (grazing + feed)</li>
+      <li>Semiconductor: 300 L per kg (processing)</li>
+      <li>Steel: 25 L per kg (cooling)</li>
+    </ul>
+
+    <h3>Worked Examples</h3>
+    <div class="example-box">
+      <div class="example-label">Example 1: Water Footprint Calculation</div>
+      <p><strong>Product:</strong> 1 kg cotton t-shirt → water footprint 10,000 L (blue water) + 5,000 L (green water) + 1,000 L (grey) = 16,000 L.</p>
+      <p><span class="ex-step">Lifetime:</span> 100 wears → 160 L per wear</p>
+      <p><span class="ex-step">Mitigation:</span> Organic cotton (30% lower), recycled content (90% lower), durability (extend life).</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 2: Resource Efficiency in Manufacturing</div>
+      <p><strong>Scenario:</strong> Aluminum casting: 100 kg raw ingot input, 80 kg finished product output. Scrap recycled: 90% reused internally.</p>
+      <p><span class="ex-step">First-pass efficiency:</span> 80% (20 kg waste)</p>
+      <p><span class="ex-step">Effective efficiency:</span> 80% + 18% (recycled scrap) ≈ 98% total material use.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 3: Water Reuse System</div>
+      <p><strong>Factory cooling system:</strong> 1,000 m³/day fresh water used once, discharged.</p>
+      <p><span class="ex-step">Improvement:</span> Closed-loop cooling with 95% recycling → fresh water demand drops to 50 m³/day.</p>
+      <p><span class="ex-step">Annual savings:</span> 346,500 m³ (95% reduction) + 10 million USD (water cost + treatment).</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 4: Critical Materials Risk</div>
+      <p><strong>Supply chain analysis:</strong> Smartphone contains 40+ elements. Rare earths (Y, Nd) concentrated in single region (70% China).</p>
+      <p><span class="ex-step">Risk:</span> Supply disruption, price volatility, mining impacts.</p>
+      <p><span class="ex-step">Strategy:</span> Design for disassembly → recover 90% of rare earths from e-waste → circular supply.</p>
+    </div>
+
+    <h3>Practice Problems</h3>
+    <div class="practice-box">
+      <div class="practice-label">Problems</div>
+      <ol>
+        <li>A textile factory uses 1,000,000 L/day of water. If they implement a 40% reduction strategy, how many days of water savings in a year?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Reduction: 1,000,000 × 0.4 = 400,000 L/day saved. Annual: 400,000 × 365 = 146 million L. Equivalent to ~58 days of original consumption. Translates to ~50 million USD savings (at $0.34/kL).</div></details>
+        </li>
+        <li>Why is blue water (freshwater) more critical to manage than green water (rain)?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Blue water depletes local aquifers/rivers—directly impacts communities. Green water is naturally replenished by rainfall. Grey water pollution reflects local waste treatment. Blue water scarcity is acute in arid regions (Middle East, North Africa, India).</div></details>
+        </li>
+        <li>A product has 95% material efficiency but 50% recycling rate at end-of-life. What's the total effective circular material efficiency?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Complex: depends on recycling quality. If 50% of end-of-life material recovered at 100% purity → 95% × 50% = 47.5% circular rate. But if recycled material degraded, effective rate lower. Design matters: DfD (design for disassembly) improves recovery rates to 80%+.</div></details>
+        </li>
+        <li>List 3 strategies to reduce product water footprint without redesigning the core product.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">1. Sourcing shift (e.g., organic cotton → 30% less water). 2. Supply chain optimization (local sourcing → less water in transport, irrigation). 3. Extend product life (same footprint amortized over more years/uses). 4. Certification (only high-water-efficiency suppliers).</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 6 — GREEN BUILDING
+════════════════════════════════════════ -->
+<div class="page" id="page-t6">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 6 · Week 6</div>
+    <div class="page-hero-title">Green Building</div>
+    <div class="page-hero-sub">LEED/Green Star · embodied energy · passive design</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Green Building Principles</h3>
+    <p><strong>LEED (Leadership in Energy & Environmental Design)</strong> and <strong>Green Star</strong> are certification systems evaluating building sustainability across site, energy, water, materials, and indoor environment. <strong>Embodied energy</strong> is the total energy required to produce building materials (cement, steel, glass). <strong>Operational energy</strong> is energy consumed during building use (heating, cooling, lighting). Passive design minimizes operational needs through orientation, insulation, and natural ventilation.</p>
+
+    <div class="fbox">
+      <div class="fbox-label">Building Carbon Footprint</div>
+      $$\text{Total CF} = \text{Embodied Energy} + \text{Operational Energy (60 years)}$$
+    </div>
+
+    <div class="fbox">
+      <div class="fbox-label">Annual Operational EUI (Energy Use Intensity)</div>
+      $$\text{EUI} = \frac{\text{Annual Energy (kWh)}}{\text{Floor Area (m}^2)} \quad (\text{kWh/m}^2/\text{year})$$
+    </div>
+
+    <h4>Typical Embodied Energy (Materials)</h4>
+    <ul>
+      <li>Concrete: 1–2 MJ/kg</li>
+      <li>Steel: 25–35 MJ/kg (primary); 6–10 MJ/kg (recycled)</li>
+      <li>Glass: 12–15 MJ/kg</li>
+      <li>Wood: 2–5 MJ/kg (renewable advantage)</li>
+    </ul>
+
+    <h3>Worked Examples</h3>
+    <div class="example-box">
+      <div class="example-label">Example 1: Embodied vs Operational Energy</div>
+      <p><strong>Building 1:</strong> High-performance (low operational EUI: 100 kWh/m²/year), high embodied (structural steel → 3,000 MWh total).</p>
+      <p><strong>Building 2:</strong> Standard (operational EUI: 300 kWh/m²/year), low embodied (2,000 MWh).</p>
+      <p><span class="ex-step">Building 1:</span> 10,000 m² × 100 × 60 years = 60,000 MWh operational + 3,000 = 63,000 MWh total</p>
+      <p><span class="ex-step">Building 2:</span> 10,000 m² × 300 × 60 years = 180,000 MWh + 2,000 = 182,000 MWh total</p>
+      <p><strong>Building 1 wins by 3x despite embodied penalty—operational dominates over 60-year lifecycle.</strong></p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 2: LEED Scorecard</div>
+      <p><strong>Project points:</strong> Site (8/26), Water (18/24), Energy (15/33), Materials (12/26), Indoor (8/15).</p>
+      <p><span class="ex-step">Total:</span> 61/100 → LEED Silver (50–60 points)</p>
+      <p><span class="ex-step">Improvement path:</span> Renewable energy (+8 pts) + better insulation (+5 pts) → Gold (80+ possible).</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 3: Passive Design Savings</div>
+      <p><strong>Scenario:</strong> Office building, conventional cooling 150 kW peak load.</p>
+      <p><span class="ex-step">Passive strategies:</span> North-facing glazing (40% reduction), natural ventilation (30% reduction), thermal mass (20% reduction).</p>
+      <p><span class="ex-step">New peak load:</span> 150 × 0.6 × 0.7 × 0.8 = 50 kW. Annual savings: ~200 MWh.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 4: Material Substitution Impact</div>
+      <p><strong>Choice:</strong> 100 m³ of concrete (embodied: 150 MJ/kg) vs timber (3 MJ/kg).</p>
+      <p><span class="ex-step">Concrete:</span> 100 × 2,400 kg/m³ × 1.5 MJ/kg = 360,000 MJ</p>
+      <p><span class="ex-step">Timber:</span> 100 × 600 kg/m³ × 3 MJ/kg = 180,000 MJ</p>
+      <p><strong>Timber: 50% less embodied energy + carbon sequestration → strategic choice.</strong></p>
+    </div>
+
+    <h3>Practice Problems</h3>
+    <div class="practice-box">
+      <div class="practice-label">Problems</div>
+      <ol>
+        <li>A building has embodied energy of 5,000 MWh and operational EUI of 120 kWh/m²/year (10,000 m²). How long until operational energy equals embodied?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Annual operational: 120 × 10,000 = 1,200 MWh/year. Time: 5,000/1,200 ≈ 4.2 years. After 4–5 years, operational dominates lifecycle carbon—emphasizes importance of efficient design.</div></details>
+        </li>
+        <li>Why is wood preferred over concrete in passive/low-carbon buildings, despite higher initial cost?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">1. Embodied energy: 60% lower (3 vs 1.5 MJ/kg). 2. Carbon sequestration: living trees capture CO₂. 3. Thermal mass: wood regulates temperature naturally. 4. Renewable if from certified forests. 5. LCA shows payback in 5–10 years.</div></details>
+        </li>
+        <li>A building reduces operational energy by 50% via renewable energy. Does this guarantee LEED Platinum?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">No. LEED requires minimum scores across 5 categories (site, water, energy, materials, indoor). Renewable energy alone gets ~15 points (max 33). Must score well in other categories: water efficiency, materials sourcing, IAQ. Holistic approach needed.</div></details>
+        </li>
+        <li>Explain why embodied energy matters more for low-energy buildings.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">In conventional buildings (~300 EUI), operational dominates (90%+ of lifecycle). In Passive House (~15 EUI), embodied can be 30–50% of lifecycle. % of embodied carbon increases—material choices now critical. Amortization period longer (50+ years).</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 7 — CIRCULAR ECONOMY
+════════════════════════════════════════ -->
+<div class="page" id="page-t7">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 7 · Week 7</div>
+    <div class="page-hero-title">Circular Economy</div>
+    <div class="page-hero-sub">Waste hierarchy · recycling · circular vs linear</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Circular Economy Framework</h3>
+    <p><strong>Circular economy</strong> contrasts with linear ("take-make-dispose") by designing products for multiple lifecycles: reuse, repair, remanufacture, recycle. <strong>Waste hierarchy</strong> prioritizes: reduce → reuse → recycle → recover → dispose. Circular design considers end-of-life from inception, enabling material recovery and secondary markets. Key metrics: recycling rate (%), average lifespan, material recovery percentage, and cost savings from secondary materials.</p>
+
+    <div class="fbox">
+      <div class="fbox-label">Waste Hierarchy Efficiency</div>
+      $$\text{Resource Efficiency} = \frac{\text{Material recovered (useful)}}{\text{Total material input}} \times 100\%$$
+    </div>
+
+    <div class="fbox">
+      <div class="fbox-label">Recycling Rate</div>
+      $$\text{RR} = \frac{\text{Material recycled}}{\text{Total waste generated}} \times 100\%$$
+    </div>
+
+    <h4>Circular vs Linear Comparison</h4>
+    <table>
+      <tr><th>Aspect</th><th>Linear</th><th>Circular</th></tr>
+      <tr><td>Lifespan</td><td>Single use</td><td>Multiple cycles</td></tr>
+      <tr><td>Material loss</td><td>High (~80%)</td><td>Low (~10%)</td></tr>
+      <tr><td>Cost/unit</td><td>Lower upfront</td><td>Higher upfront, lower total</td></tr>
+      <tr><td>Environmental impact</td><td>High (extraction/waste)</td><td>Low (reuse, no mining)</td></tr>
+    </table>
+
+    <h3>Worked Examples</h3>
+    <div class="example-box">
+      <div class="example-label">Example 1: Waste Hierarchy Application</div>
+      <p><strong>Scenario:</strong> 10,000 kg plastic waste from manufacturing.</p>
+      <p><span class="ex-step">Reduce:</span> 3,000 kg eliminated via process efficiency</p>
+      <p><span class="ex-step">Reuse:</span> 2,000 kg (containers shipped to customers, returned, reused)</p>
+      <p><span class="ex-step">Recycle:</span> 3,500 kg (processed into pellets for new products)</p>
+      <p><span class="ex-step">Recover:</span> 1,000 kg (energy from incineration)</p>
+      <p><span class="ex-step">Dispose:</span> 500 kg (contaminated → landfill)</p>
+      <p><strong>Diversion rate: 95% from landfill (5% disposed).</strong></p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 2: Circular vs Linear Comparison</div>
+      <p><strong>Plastic bottle:</strong> Virgin production 2 kg CO₂/bottle (extraction, refining). Linear: single use → landfill → cost $0.20.</p>
+      <p><strong>Circular design:</strong> 0.5 kg CO₂ (recycled material), 0.2 kg CO₂ (collection/sorting) = 0.7 kg CO₂ total. Recycled bottle → cost $0.30 (higher), but environmental payback 3x lower.</p>
+      <p><span class="ex-step">Incentive:</span> Extended Producer Responsibility (EPR) makes producer pay for end-of-life → circular becomes economically optimal.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 3: Product Design for Circularity</div>
+      <p><strong>Electronics device:</strong> Linear design (glued, soldered) → 10% recycling rate. Circular design (modular, snap-fit) → 85% recycling rate.</p>
+      <p><span class="ex-step">Annual production:</span> 100,000 units, 2 kg/unit → 200,000 kg material/year</p>
+      <p><span class="ex-step">Linear waste to landfill:</span> 180,000 kg/year</p>
+      <p><span class="ex-step">Circular waste to landfill:</span> 30,000 kg/year (75% reduction)</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 4: Secondary Material Economics</div>
+      <p><strong>Cost comparison:</strong> Virgin aluminum $2.50/kg, recycled aluminum $1.50/kg.</p>
+      <p><span class="ex-step">Annual savings:</span> 1,000 tonnes recycled material × $1.00/kg = $1,000,000</p>
+      <p><span class="ex-step">Collection infrastructure cost:</span> $500,000/year (sorting, transport)</p>
+      <p><span class="ex-step">Net savings:</span> $500,000/year + avoided virgin extraction environmental cost (~$2–5/kg equivalent).</p>
+    </div>
+
+    <h3>Practice Problems</h3>
+    <div class="practice-box">
+      <div class="practice-label">Problems</div>
+      <ol>
+        <li>A landfill receives 10,000 tonnes/year from a city. Current recycling rate: 20%. What's the max waste reduction if the city achieves 70% diversion via reduce+reuse+recycle?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Current landfill: 80% × 10,000 = 8,000 tonnes. With 70% diversion: 30% × 10,000 = 3,000 tonnes to landfill. Reduction: 5,000 tonnes/year (63% decrease). Environmental benefits: avoided methane (~2,500 tonnes CO₂e/year).</div></details>
+        </li>
+        <li>Why does recycling plastics sometimes have higher environmental cost than virgin plastic?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Collection, sorting, washing, reprocessing energy-intensive. Contamination reduces quality. If recycled plastic mixed grades (downgrade), value lost. Solution: design for mono-material, source-separation, and high recycling quality. Mechanical recycling profitable only for clean, sorted streams.</div></details>
+        </li>
+        <li>Compare lifecycle costs: linear (single-use) vs circular (reusable) products with 5 uses. Linear: $1/unit, Circular: $10 upfront + $1/refurb.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Linear total: 5 × $1 = $5. Circular total: $10 + 4 × $1 = $14. Circular loses financially, but if environmental cost (carbon, waste) included: avoids ~10 kg CO₂ and 5 kg landfill waste. True cost accounting favors circular if externalities priced.</div></details>
+        </li>
+        <li>A company achieves 95% recycling rate but only 10% of recycled material closes the loop (becomes new products). What's the actual circular rate?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Actual circular rate: 10% (only 10% truly returns to production). 85% recycled but downcycled or exported. Key insight: high recycling ≠ circular economy. Must track closed loops. Solution: Design for closed loops, establish take-back programs, invest in secondary material demand.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 8 — DESIGN FOR ENVIRONMENT
+════════════════════════════════════════ -->
+<div class="page" id="page-t8">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 8 · Week 8</div>
+    <div class="page-hero-title">Design for Environment</div>
+    <div class="page-hero-sub">DfE strategies · eco-design · green chemistry</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Design for Environment (DfE) Principles</h3>
+    <p><strong>DfE</strong> integrates environmental considerations into product design from conception. Key strategies: material selection (low-impact), manufacturing efficiency, transportability (lightweight), durability, and end-of-life recovery. <strong>Green chemistry</strong> principles minimize hazardous substances and waste during production. <strong>Eco-design</strong> balances performance, cost, and environmental footprint through systematic evaluation and trade-off analysis.</p>
+
+    <div class="fbox">
+      <div class="fbox-label">DfE Impact Score</div>
+      $$I_{\text{DfE}} = w_1 \times E_{\text{mat}} + w_2 \times E_{\text{mfg}} + w_3 \times E_{\text{use}} + w_4 \times E_{\text{eol}}$$
+      <p style="font-size:12px;margin-top:8px">Weighted environmental impact across lifecycle phases</p>
+    </div>
+
+    <h4>Green Chemistry Principles (12 Principles)</h4>
+    <ul>
+      <li>Prevent waste rather than treat it</li>
+      <li>Design safer chemicals</li>
+      <li>Use renewable feedstocks</li>
+      <li>Reduce hazardous substances</li>
+      <li>Minimize waste and by-products</li>
+    </ul>
+
+    <h3>Worked Examples</h3>
+    <div class="example-box">
+      <div class="example-label">Example 1: Material Eco-Selection</div>
+      <p><strong>Product:</strong> Smartphone case. Options: (1) Virgin plastic 0.1 kg, 8 MJ/kg. (2) Recycled plastic 0.1 kg, 2 MJ/kg. (3) Bio-based 0.1 kg, 1.5 MJ/kg.</p>
+      <p><span class="ex-step">Option 1:</span> 0.8 MJ embodied energy</p>
+      <p><span class="ex-step">Option 2:</span> 0.2 MJ (75% reduction)</p>
+      <p><span class="ex-step">Option 3:</span> 0.15 MJ (82% reduction) + carbon-neutral if compostable at end</p>
+      <p><strong>Choice:</strong> Bio-based + design for compostability → lowest impact.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 2: Manufacturing Process Optimization</div>
+      <p><strong>Current process:</strong> Injection molding, 20% scrap waste, energy 2 kWh per part.</p>
+      <p><span class="ex-step">Improvements:</span> Optimize mold design (scrap reduction to 5%), closed-loop cooling (energy to 1.5 kWh).</p>
+      <p><span class="ex-step">Annual impact (1M units):</span> Scrap reduction: 150,000 kg plastic saved. Energy: 0.5 million kWh saved (~250 tonnes CO₂).</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 3: Design for Longevity</div>
+      <p><strong>Scenario:</strong> Consumer electronics, original lifespan 3 years, redesigned for 6 years (modular, upgradable).</p>
+      <p><span class="ex-step">Amortized footprint:</span> Original 2 kg CO₂/year of use. Redesigned 3 kg CO₂/year (higher embodied due to modularity), but spread over 6 years = 0.5 kg CO₂/year.</p>
+      <p><span class="ex-step">Per-year impact 75% lower through extended life.</strong></p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 4: Green Chemistry Example—Coating</div>
+      <p><strong>Traditional polyurethane coating:</strong> VOC emissions 0.5 kg/L, hazardous solvents, long cure time (energy input).</p>
+      <p><span class="ex-step">Green alternative:</span> Water-based polyurethane: VOC 0.05 kg/L (90% reduction), non-hazardous, low energy cure.</p>
+      <p><span class="ex-step">Cost premium:</span> +15% material, but worker health benefits, reduced waste treatment cost, regulatory compliance premium.</p>
+    </div>
+
+    <h3>Practice Problems</h3>
+    <div class="practice-box">
+      <div class="practice-label">Problems</div>
+      <ol>
+        <li>A designer must reduce product weight by 20% while maintaining strength. Which DfE strategies apply? List 3.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">1. Material substitution (aluminum → carbon fiber, density 1.6 vs 2.7, -40% weight). 2. Topology optimization (remove non-critical material, FEA-guided). 3. Hollow/lattice structures (cellular design, same strength with 60% weight reduction). 4. Manufacturing precision (tighter tolerances reduce safety factor → lighter design).</div></details>
+        </li>
+        <li>Explain the trade-off: lightweight design (less material) vs durability (more material for strength).
+          <details class="answer"><summary>Answer</summary><div class="ans-body">If lightweight shortens lifespan: amortized impact worse. Example: thin plastic (light, short life) vs thick plastic (heavy, long life). Solution: use superior material (higher strength-to-weight ratio: composites, advanced alloys) to achieve both light + durable. Lifespan dominates long-term impact.</div></details>
+        </li>
+        <li>A chemical process switches from hazardous carcinogenic solvent (cost $2/L) to benign alternative (cost $5/L). ROI calculation for 10,000 L/year usage.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Direct cost: +$30,000/year. Benefits: reduced worker health risk (avoided medical costs ~$50k/year), waste disposal savings (~$20k/year, less hazardous treatment), regulatory compliance (avoided fines ~$100k potential). Net: -$30k cost, +$170k benefits = $140k/year benefit. ROI positive despite price premium.</div></details>
+        </li>
+        <li>Design a smartphone case using 3 DfE principles. Describe material, manufacturing, and end-of-life choices.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Material: Bio-based TPU (compostable). Manufacturing: Injection molding, 95% scrap recycled closed-loop. End-of-life: Take-back program, composting facility, nutrients return to soil. Durability: 2-year lifespan via design for repair (replaceable corners). Cost premium: ~10%, offset by avoided landfill and positive brand perception.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 9 — ECONOMIC SUSTAINABILITY
+════════════════════════════════════════ -->
+<div class="page" id="page-t9">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 9 · Week 9</div>
+    <div class="page-hero-title">Economic Sustainability</div>
+    <div class="page-hero-sub">NPV · payback period · cost-benefit analysis</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Financial Analysis for Sustainable Projects</h3>
+    <p>Sustainable projects often require upfront capital investment with long-term returns. <strong>Net Present Value (NPV)</strong> discounts future cash flows to present-day equivalents, enabling fair comparison across time horizons. <strong>Payback period</strong> is the time to recover initial investment from annual savings. <strong>Cost-benefit analysis</strong> includes non-monetary environmental and social benefits. <strong>Levelized Cost of Energy (LCOE)</strong> normalizes energy cost across different technologies with different capital, operating, and lifespan profiles.</p>
+
+    <div class="fbox">
+      <div class="fbox-label">Net Present Value (NPV)</div>
+      $$\text{NPV} = -C_0 + \sum_{t=1}^{n} \frac{CF_t}{(1+r)^t}$$
+      <p style="font-size:12px;margin-top:8px">where $C_0$ = initial investment, $CF_t$ = annual cash flow, $r$ = discount rate, $t$ = year</p>
+    </div>
+
+    <div class="fbox">
+      <div class="fbox-label">Payback Period</div>
+      $$\text{PBP} = \frac{\text{Initial Investment}}{\text{Annual Savings}} \quad (\text{years})$$
+    </div>
+
+    <h3>Worked Examples</h3>
+    <div class="example-box">
+      <div class="example-label">Example 1: NPV for Solar Investment</div>
+      <p><strong>Solar system:</strong> Capital $50,000, annual savings $8,000, lifespan 25 years, discount rate 5%.</p>
+      <p><span class="ex-step">Year 1:</span> PV = 8,000 / 1.05¹ = $7,619</p>
+      <p><span class="ex-step">Year 2:</span> PV = 8,000 / 1.05² = $7,257</p>
+      <p><span class="ex-step">Sum (Year 1–25):</span> $8,000 × [(1 - (1.05)⁻²⁵) / 0.05] ≈ $139,000</p>
+      <p><span class="ex-step">NPV:</span> -$50,000 + $139,000 = $89,000 → Investment is economically sound.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 2: Payback Period Comparison</div>
+      <p><strong>Energy efficiency retrofit:</strong> Insulation upgrade costs $20,000, saves $5,000/year.</p>
+      <p><span class="ex-step">Payback period:</span> $20,000 / $5,000 = 4 years</p>
+      <p><strong>LED lighting retrofit:</strong> Cost $5,000, saves $1,200/year.</p>
+      <p><span class="ex-step">Payback period:</span> $5,000 / $1,200 ≈ 4.2 years</p>
+      <p><span class="ex-step">Recommendation:</span> Insulation has longer savings tail (30+ years lifespan) → higher NPV despite similar payback. Combined package: 8-year amortization → strong financial case.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 3: Cost-Benefit Analysis (CBA)</div>
+      <p><strong>Project:</strong> Wastewater treatment plant, capital $10M, 20-year life.</p>
+      <p><span class="ex-step">Financial costs:</span> $10M capital + $1M/year operations = $30M total</p>
+      <p><span class="ex-step">Financial benefits:</span> Water sales $500k/year, avoided fines $200k/year → $14M NPV benefit (over 20 years)</p>
+      <p><span class="ex-step">Non-financial benefits:</span> Ecosystem health ($5M), public health ($8M), job creation ($2M) → $15M equivalent value</p>
+      <p><strong>Total B/C ratio: (14 + 15) / 30 = 0.97 → Nearly breakeven without environmental valuation; essential with environmental benefits included.</strong></p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Example 4: LCOE Comparison</div>
+      <p><strong>Energy sources:</strong> Coal plant ($1B capital, 40-year life, 0.05/kWh fuel), Solar ($200M capital, 25-year life, 0.01/kWh operational).</p>
+      <p><span class="ex-step">Coal LCOE:</span> (~$0.08–0.12/kWh typical)</p>
+      <p><span class="ex-step">Solar LCOE:</span> (~$0.04–0.06/kWh typical)</p>
+      <p>Solar cost-competitive despite lower capacity factor (25% vs 85%). Coal's hidden costs (carbon, health) not reflected in LCOE → true cost analysis favors renewable.</p>
+    </div>
+
+    <h3>Practice Problems</h3>
+    <div class="practice-box">
+      <div class="practice-label">Problems</div>
+      <ol>
+        <li>A sustainable product costs $100 (upfront), saves $20/year in water/energy. What's the payback period? Is it worth the investment for 10-year lifespan?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Payback: $100 / $20 = 5 years. Over 10-year lifespan: $100 cost + (10 - 5) × $20 = $100 + $100 = $200 total saved vs $100 invested. ROI: 100%. Yes, worthwhile. Longer lifespan (20+ years) makes it even more attractive.</div></details>
+        </li>
+        <li>If discount rate increases from 3% to 7%, how does NPV of long-term investments change?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Higher discount rate reduces present value of future cash flows. Example: $1,000 in Year 10: at 3% discount ≈ $744; at 7% ≈ $508 (32% lower). Long-term projects (20+ years) are penalized. Implication: if policy wants to incentivize renewables, lower discount rates (through subsidies, tax breaks) help NPV breakeven.</div></details>
+        </li>
+        <li>A company invests $500k in waste reduction (closed-loop process). Payback is 10 years. But competition prices it at 15-year payback. Why choose the 10-year option?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Shorter payback = lower risk, faster capital recovery, higher NPV if lifespan is fixed. 10-year payback leaves 10+ years of pure savings; 15-year payback leaves only 5 years. Also: tech risk lower (proven ROI sooner), regulatory risk lower (compliance guaranteed before tech obsolescence). Financial prudence favors faster payback in uncertain environments.</div></details>
+        </li>
+        <li>Calculate NPV for a green building retrofit: $200k investment, $15k annual savings, 20-year lifespan, 4% discount rate.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">NPV = -200k + 15k × [(1 - (1.04)⁻²⁰) / 0.04] = -200k + 15k × 13.59 = -200k + 203.85k ≈ +$3.85k. Marginally positive (near-breakeven). If discount rate drops to 3%: NPV = -200k + 15k × 14.88 ≈ +$23k (better). Add non-financial benefits (health, carbon): NPV strongly positive.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPIC 10 — CASE STUDIES
+════════════════════════════════════════ -->
+<div class="page" id="page-t10">
+  <div class="page-hero">
+    <div class="page-hero-label">Topic 10 · Week 10</div>
+    <div class="page-hero-title">Case Studies</div>
+    <div class="page-hero-sub">Real examples · design thinking · decision analysis</div>
+  </div>
+
+  <div class="topic-section">
+    <h3>Real-World Sustainability Challenges</h3>
+    <p>Case studies apply theory to practice. This topic examines real projects, analyzing how multi-disciplinary teams balance environmental, social, economic constraints. <strong>Design thinking</strong> (empathy, ideation, prototyping, testing) drives innovation. <strong>Decision-making frameworks</strong> integrate quantitative LCA, cost-benefit, and qualitative stakeholder input. Key learnings: tradeoffs are unavoidable, context-dependency critical, and iterative improvement necessary.</p>
+
+    <div class="fbox">
+      <div class="fbox-label">Sustainability Decision Framework</div>
+      $$\text{Decision Score} = w_E \times S_{\text{env}} + w_S \times S_{\text{social}} + w_E \times S_{\text{econ}}$$
+      <p style="font-size:12px;margin-top:8px">Weighted multi-criteria decision analysis; weights vary by stakeholder</p>
+    </div>
+
+    <h3>Case Study Examples</h3>
+    <div class="example-box">
+      <div class="example-label">Case Study 1: Patagonia Regenerative Organic Cotton</div>
+      <p><strong>Challenge:</strong> Conventional cotton uses 16% of global pesticides, high water (9,000 L/kg), poor labor conditions.</p>
+      <p><span class="ex-step">Solution:</span> Switch to organic cotton (GOTS certified), then regenerative agriculture (soil health focus), fair-trade labor practices.</p>
+      <p><span class="ex-step">Trade-off:</span> Cost +40%, yield -10% initially. Scale reduced short-term, brand premium enabled price increase.</p>
+      <p><span class="ex-step">Outcome:</span> Carbon-negative supply chain (soil sequestration), improved farmer income (+30%), improved brand value. NPV positive after 5 years due to price premium and supply stability.</p>
+      <p><strong>Lesson:</strong> Premium market acceptance for authentic sustainability → business case emerges at scale.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Case Study 2: China's Circular Economy Parks</div>
+      <p><strong>Challenge:</strong> Rapid industrialization, severe pollution, resource depletion. Linear economy model unsustainable.</p>
+      <p><span class="ex-step">Strategy:</span> Design integrated industrial parks where waste from one factory = input for another (symbiosis).</p>
+      <p><span class="ex-step">Example:</span> Shuanghuan Industrial Park (Guitang): Sugar refinery → molasses → ethanol plant → distillery waste → biogas → power generation. Waste: near zero.</p>
+      <p><span class="ex-step">Results:</span> 30% energy reduction, 50% water reduction, $50M savings annually across park.</p>
+      <p><strong>Lesson:</strong> Systems-level thinking (ecosystem approach) unlocks efficiency impossible at company level.</p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Case Study 3: Singapore's Zero-Energy District</div>
+      <p><strong>Challenge:</strong> Urban heating, energy demand 300 MW for district, tropical climate (cooling-dominated).</p>
+      <p><span class="ex-step">Design:</span> Rooftop solar (50 MW), district cooling (waste heat recycling), smart grid (real-time demand response), passive architecture.</p>
+      <p><span class="ex-step">Result:</span> Net-zero annual energy (export surplus 20 GWh some months).</p>
+      <p><span class="ex-step">Cost:</span> Capital +30% vs conventional, payback 8 years. Job creation: 500 FTE (operations, maintenance, smart systems).</p>
+      <p><strong>Lesson:</strong> Integrated design (energy + water + buildings) essential for urban sustainability; economics improve with scale and policy support.</strong></p>
+    </div>
+
+    <div class="example-box">
+      <div class="example-label">Case Study 4: IKEA Circular Supply Chain</div>
+      <p><strong>Challenge:</strong> Growth-driven business model requires massive material throughput; sustainability requires circular loops.</p>
+      <p><span class="ex-step">Initiatives:</span> Design for disassembly (all products), take-back programs, resale/upcycling, material recovery.</p>
+      <p><span class="ex-step">Targets:</span> 100% recycled/renewable materials by 2030, zero waste to landfill by 2030.</p>
+      <p><span class="ex-step">Barriers:</span> Consumer behavior (convenience vs returns), reverse logistics cost, material degradation in multi-cycle loops.</p>
+      <p><span class="ex-step">Outcome:</span> Secondary product line (IKEA Uppskattad) launched, take-back rate now 5% (target 25% by 2030). ROI: collection network provides secondary sales channel, loyalty improvement.</p>
+      <p><strong>Lesson:</strong> Circular business models require systemic change (product design, supply chain, consumer engagement, revenue model). Profitability emerges long-term.</strong></p>
+    </div>
+
+    <h3>Practice Problems</h3>
+    <div class="practice-box">
+      <div class="practice-label">Problems</div>
+      <ol>
+        <li>Analyze the Patagonia case: If organic cotton supply can only meet 50% of demand, how should the company prioritize allocation among product lines?
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Criteria: (1) Highest-impact product (water/pesticide intensive) → prioritize. (2) Brand positioning (premium line) → maximize visibility. (3) Scalability (which supply chains can grow fastest?) → invest. Recommended: Start with high-visibility premium line (e.g., core T-shirts), transition mainstream as supply grows, certify farmers for scale-up. NPV modeling shows payback if price premium sustained.</div></details>
+        </li>
+        <li>The Shuanghuan example shows 30% energy reduction through symbiosis. Identify 2 barriers preventing such parks globally.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">1. Information barriers: Factories don't know waste streams of neighbors → requires park manager as broker. 2. Economic/contractual: Long-term waste agreements risky (supply/price volatility). Solution: Industrial ecology network (shared data platform), government incentives (tax breaks for synergy agreements), risk-sharing contracts. Also cultural: competitors typically avoid cooperation.</div></details>
+        </li>
+        <li>Singapore's district uses "smart grid demand response." Explain how this reduces peak load and why it's critical for renewable integration.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Demand response: shift non-urgent loads (e.g., HVAC, EV charging) to off-peak hours → flatten peak. Peak reduction 20–30% typical. Critical for renewables: solar peaks midday, demand peaks evening (mismatch). Storage or load shifting bridges gap. Without demand response, battery cost prohibitive (4–6 hour storage needed at peak hours). Smart grids (IoT, AI) enable automated response, making renewables economically viable.</div></details>
+        </li>
+        <li>IKEA targets 25% take-back rate by 2030. What pricing/incentive models could accelerate this? Model 2 scenarios and compare NPV.
+          <details class="answer"><summary>Answer</summary><div class="ans-body">Scenario A: $20 credit for returns (cost $15 IKEA, customer value $20). Estimated 15% take-back rate, cost $30M/year. Secondary resale value: $50M/year → NPV +$20M/year. Scenario B: Subscription model (pay-per-year for furniture, auto take-back/refresh). Estimated 40% participation, but cannibalize retail sales. Net: break-even to slightly positive. Hybrid: Bundle credit + subscription for high-value items. Recommend phased: credit first (proven), then subscription pilot in key markets.</div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+<script>
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelector(`button[onclick="goTo('${page}')"]`).classList.add('active');
+  document.getElementById('breadcrumbPage').textContent = 'Topic ' + page.substring(1);
+}
+function expandAll() {
+  document.querySelectorAll('details').forEach(d => d.open = true);
+}
+</script>
+
+</body>
+</html>

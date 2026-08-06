@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Allowable Stress &amp; Axial Loads</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG251 &middot; Mechanics of Solids &middot; Week 2</div>
+  <h1>Allowable Stress &amp; Axial Loads</h1>
+  <p>The stress-strain diagram and Hooke's law, elongation of axially loaded members (single and multi-segment), statically indeterminate axial assemblies solved via compatibility, and thermal stresses in restrained members. This is the toolkit for every axial-loading problem in the subject. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 30 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this block's toolkit</span>
+  <ul>
+<li><strong>Hooke's law:</strong> $\sigma=E\varepsilon$ in the linear-elastic region; $E_{\text{steel}}\approx200$ GPa, $E_{\text{Al}}\approx70$ GPa.</li>
+<li><strong>Axial elongation:</strong> $\delta=PL/(AE)$ per segment; sum segments for multi-part members, integrate for varying $A(x)$ or $P(x)$.</li>
+<li><strong>Statically indeterminate:</strong> equilibrium + compatibility (deformations must match the geometric constraint) &mdash; solve simultaneously.</li>
+<li><strong>Stiffer members attract more load</strong> in an indeterminate assembly, purely from the compatibility requirement.</li>
+<li><strong>Thermal:</strong> free expansion $\delta_T=\alpha L\Delta T$ (no stress); fully restrained $\sigma_T=E\alpha\Delta T$ (no free length change).</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Stress-Strain Relationship &amp; Hooke&rsquo;s Law</a></li>
+<li><a href="#sec1">Elongation of Axially Loaded Members</a></li>
+<li><a href="#sec2">Statically Indeterminate Axial Members</a></li>
+<li><a href="#sec3">Thermal Effects &amp; Thermal Stress</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+<div class="section-title"><span class="tag">0</span> Stress-Strain Relationship &amp; Hooke&rsquo;s Law</div>
+
+<div class="prose">
+<p><strong>Normal strain</strong> $\varepsilon=\dfrac{\delta}{L}$ is the dimensionless ratio of elongation $\delta$ to original length $L$. Plotting stress $\sigma$ against strain $\varepsilon$ for a tension test produces the <strong>stress-strain diagram</strong>, the single most important experimental characterisation of a material.</p>
+<p>In the initial <strong>linear-elastic region</strong>, stress is directly proportional to strain: $\sigma=E\varepsilon$ (<strong>Hooke's law</strong>), where $E$ is the <strong>modulus of elasticity</strong> (Young's modulus), a material property (steel: $\approx200$ GPa; aluminium: $\approx70$ GPa). Beyond the <strong>proportional limit</strong>, the curve departs from linear; beyond the <strong>yield point</strong> $\sigma_Y$, permanent (plastic) deformation remains after unloading.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\varepsilon=\frac{\delta}{L} \qquad \sigma=E\varepsilon \quad \text{(Hooke's law, linear-elastic region)} \qquad E_{\text{steel}}\approx200\ \text{GPa},\ E_{\text{Al}}\approx70\ \text{GPa}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A steel rod ($E=200$ GPa), original length 2 m, stretches 0.6 mm under load. Find the strain and the stress (assuming linear-elastic behaviour).</p>
+<p class="step">$\varepsilon=\dfrac{0.6\times10^{-3}}{2}=3\times10^{-4}$ (dimensionless). $\sigma=E\varepsilon=200\times10^9\times3\times10^{-4}=60\times10^6\ \text{Pa}=60$ MPa.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A bar of length 3 m elongates 1.5 mm under load. Find the normal strain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\varepsilon=1.5\times10^{-3}/3=5\times10^{-4}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>An aluminium rod ($E=70$ GPa) is subjected to a strain of $4\times10^{-4}$. Find the resulting stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma=70\times10^9\times4\times10^{-4}=28\times10^6\ \text{Pa}=28$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A steel wire ($E=200$ GPa), length 5 m, is stressed to 100 MPa. Find the elongation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\varepsilon=\sigma/E=100\times10^6/200\times10^9=5\times10^{-4}$. $\delta=\varepsilon L=5\times10^{-4}\times5=2.5\times10^{-3}\ \text{m}=2.5$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A brass rod ($E=100$ GPa) of diameter 20 mm carries an axial load of 40 kN. If the original length is 1.5 m, find the elongation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\pi(0.01)^2=3.14\times10^{-4}\ \text{m}^2$. $\sigma=40000/3.14\times10^{-4}=127.3$ MPa. $\varepsilon=127.3\times10^6/100\times10^9=1.273\times10^{-3}$. $\delta=1.273\times10^{-3}\times1.5=1.91$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A steel specimen yields at $\sigma_Y=250$ MPa. Find the strain at the onset of yielding, assuming linear-elastic behaviour up to that point ($E=200$ GPa).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\varepsilon_Y=250\times10^6/200\times10^9=1.25\times10^{-3}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Two rods of the same material and length but different cross-sectional areas ($A_1=2A_2$) carry the same axial load $P$. Compare their elongations.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\delta=\dfrac{PL}{AE}$ (from $\delta=\varepsilon L=\frac\sigma EL=\frac{P}{AE}L$), so $\delta\propto1/A$: rod 2 (smaller area) elongates twice as much as rod 1.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A tensile test on a 12 mm diameter, 50 mm gauge-length specimen records a load of 15 kN and an elongation of 0.05 mm at that load. Find the stress, strain, and the modulus of elasticity (assuming linear-elastic behaviour).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=113.1\ \text{mm}^2$. $\sigma=15000/113.1\times10^{-6}=132.6$ MPa. $\varepsilon=0.05/50=1\times10^{-3}$. $E=\sigma/\varepsilon=132.6\ \text{MPa}/10^{-3}=132.6$ GPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Explain, in terms of the stress-strain diagram, the practical difference between the proportional limit and the yield point, and why engineers often use a 0.2% offset method for materials without a sharply defined yield point.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The proportional limit is the stress at which the curve first departs from a straight line (Hooke's law starts to fail slightly); the yield point is the stress at which significant, largely irreversible plastic deformation begins. For many materials (e.g. aluminium alloys) these are close but the transition is gradual rather than a sharp kink, making the true yield point ambiguous to read directly. The 0.2% offset method draws a line parallel to the linear-elastic slope, offset by a strain of 0.002, and defines the yield stress as where this offset line intersects the actual stress-strain curve &mdash; a consistent, repeatable convention despite the gradual transition.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+<div class="section-title"><span class="tag">1</span> Elongation of Axially Loaded Members</div>
+
+<div class="prose">
+<p>Combining $\sigma=P/A$ and $\sigma=E\varepsilon$ with $\varepsilon=\delta/L$ gives the fundamental axial deformation formula: $\delta=\dfrac{PL}{AE}$, valid for a prismatic (constant cross-section) member with constant axial force $P$, within the linear-elastic range.</p>
+<p>For a member made of <strong>several segments</strong> (different $P$, $A$, or $E$ in each), total elongation is the algebraic sum: $\delta=\displaystyle\sum_i\dfrac{P_iL_i}{A_iE_i}$ (sign convention: tension positive, compression negative). For <strong>continuously varying</strong> load or area, use $\delta=\displaystyle\int_0^L\dfrac{P(x)}{A(x)E}\,dx$.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\delta=\frac{PL}{AE} \qquad \delta_{\text{total}}=\sum_i\frac{P_iL_i}{A_iE_i} \qquad \delta=\int_0^L\frac{P(x)}{A(x)E}\,dx \quad \text{(varying section)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A stepped steel bar ($E=200$ GPa) has segment AB (length 1 m, area 500 mm$^2$) carrying 40 kN tension, and segment BC (length 0.8 m, area 300 mm$^2$) carrying 40 kN tension (same load, in series). Find the total elongation.</p>
+<p class="step">$\delta_{AB}=\dfrac{40000\times1}{500\times10^{-6}\times200\times10^9}=4\times10^{-4}\ \text{m}=0.4$ mm.</p>
+<p class="step">$\delta_{BC}=\dfrac{40000\times0.8}{300\times10^{-6}\times200\times10^9}=5.33\times10^{-4}\ \text{m}=0.533$ mm. Total: $\delta=0.4+0.533=0.933$ mm.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A steel bar ($E=200$ GPa), length 2 m, cross-sectional area 400 mm$^2$, carries an axial tensile load of 60 kN. Find the elongation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\delta=\dfrac{60000\times2}{400\times10^{-6}\times200\times10^9}=1.5\times10^{-3}\ \text{m}=1.5$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>An aluminium rod ($E=70$ GPa), length 1.2 m, diameter 25 mm, carries a compressive load of 30 kN. Find the shortening.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=490.9\ \text{mm}^2$. $\delta=\dfrac{30000\times1.2}{490.9\times10^{-6}\times70\times10^9}=1.048\times10^{-3}\ \text{m}=1.05$ mm (shortening).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A composite bar has segment 1 (steel, $E=200$ GPa, $L=1$ m, $A=600\ \text{mm}^2$) and segment 2 (brass, $E=100$ GPa, $L=0.5$ m, $A=600\ \text{mm}^2$), both carrying the same tensile load of 50 kN. Find the total elongation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\delta_1=\dfrac{50000\times1}{600\times10^{-6}\times200\times10^9}=4.17\times10^{-4}$ m. $\delta_2=\dfrac{50000\times0.5}{600\times10^{-6}\times100\times10^9}=4.17\times10^{-4}$ m. Total $=8.33\times10^{-4}\ \text{m}=0.833$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>A bar carries a tensile load of 20 kN over the first metre and a tensile load of 35 kN over the next 1.5 m (constant area 500 mm$^2$, steel $E=200$ GPa). Find the total elongation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\delta_1=\dfrac{20000\times1}{500\times10^{-6}\times200\times10^9}=2\times10^{-4}$ m. $\delta_2=\dfrac{35000\times1.5}{500\times10^{-6}\times200\times10^9}=5.25\times10^{-4}$ m. Total $=7.25\times10^{-4}\ \text{m}=0.725$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A stepped bar has segment AB (tension 30 kN, $L=0.6$ m, $A=400\ \text{mm}^2$) and segment BC (compression 30 kN, $L=0.4$ m, $A=400\ \text{mm}^2$), same material, $E=200$ GPa. Find the net elongation of AC.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\delta_{AB}=+\dfrac{30000\times0.6}{400\times10^{-6}\times200\times10^9}=+2.25\times10^{-4}$ m. $\delta_{BC}=-\dfrac{30000\times0.4}{400\times10^{-6}\times200\times10^9}=-1.5\times10^{-4}$ m. Net $=0.75\times10^{-4}\ \text{m}=0.075$ mm (net elongation).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>A vertical hanging bar of length $L$, cross-sectional area $A$, and unit weight $\gamma$ per unit volume elongates under its own weight. Set up the integral $\delta=\int_0^L\dfrac{P(x)}{AE}dx$ where $P(x)$ is the weight of material below the point at distance $x$ from the top, and evaluate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(x)=\gamma A(L-x)$ (weight of the portion below). $\delta=\int_0^L\dfrac{\gamma A(L-x)}{AE}dx=\dfrac{\gamma}{E}\int_0^L(L-x)dx=\dfrac{\gamma}{E}\cdot\dfrac{L^2}2=\dfrac{\gamma L^2}{2E}$ &mdash; equivalent to half the weight applied at the full length, $\dfrac{(\gamma AL)L}{2AE}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A tapered bar has area varying linearly from $A_0$ at $x=0$ to $2A_0$ at $x=L$, carrying constant tensile load $P$. Set up (do not evaluate) the integral for total elongation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A(x)=A_0\left(1+\dfrac{x}{L}\right)$. $\delta=\displaystyle\int_0^L\dfrac{P}{A_0(1+x/L)E}dx$ (evaluates via the natural log, a standard tapered-bar result).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Explain why the formula $\delta=PL/(AE)$ cannot be applied directly to a bar with continuously varying cross-sectional area without first setting up an integral, using the concept of strain varying along the bar's length.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The simple formula $\delta=PL/(AE)$ assumes a <em>constant</em> stress (and hence constant strain) along the entire length, valid only when $A$ (and $P$) don't change over the member. If $A$ varies with $x$, the stress $\sigma(x)=P/A(x)$ and hence the strain $\varepsilon(x)=\sigma(x)/E$ also vary along the length, so the total elongation must be found by summing (integrating) the infinitesimal elongations $\varepsilon(x)\,dx$ over each thin slice, rather than using a single average value across the whole length.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+<div class="section-title"><span class="tag">2</span> Statically Indeterminate Axial Members</div>
+
+<div class="prose">
+<p>When the number of unknown reactions/internal forces exceeds the number of independent equilibrium equations, the structure is <strong>statically indeterminate</strong> &mdash; equilibrium alone cannot solve it. The extra equation(s) needed come from <strong>compatibility</strong> (geometric constraints on how the parts must deform together, e.g. "total elongation of the assembly must equal zero if both ends are fixed").</p>
+<p><strong>General method:</strong> (1) write equilibrium equation(s) with more unknowns than equations, (2) write a compatibility equation relating the deformations (using $\delta=PL/AE$ for each part), (3) solve the two sets of equations simultaneously for the unknown forces.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\text{Equilibrium (not enough alone)} + \text{Compatibility } (\delta_1+\delta_2=\text{constraint}) \implies \text{solve simultaneously}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A rod is fixed at both ends (A and C) with a point load $P=60$ kN applied at B, where AB $=0.4$ m and BC $=0.6$ m (same material and area throughout, $E,A$ constant). Find the reactions at A and C.</p>
+<p class="step">Equilibrium: $R_A+R_C=P=60$ kN (one equation, two unknowns &mdash; indeterminate).</p>
+<p class="step">Compatibility: total elongation AC $=0$ (both ends fixed). Taking $R_A$ as tension in AB, $R_C$ as tension in BC (with $R_C=P-R_A$, and force in BC $=-R_C$ acting from B towards C... using standard indeterminate-bar method): $\dfrac{R_A(0.4)}{AE}=\dfrac{R_C(0.6)}{AE}\Rightarrow0.4R_A=0.6R_C$. With $R_A+R_C=60$: $R_A=36$ kN, $R_C=24$ kN.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>A rod fixed at both ends, length 1 m, carries a point load $P=100$ kN at the midpoint (uniform $A,E$). Find the reactions at each end.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>By symmetry (equal segment lengths), $R_A=R_C=50$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A rod fixed at both ends has a point load $P=90$ kN applied at a point dividing the rod into segments of 0.3 m and 0.7 m (uniform $A,E$). Find the reaction at the end nearer the load.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Compatibility gives $R_{\text{near}}\cdot0.3=R_{\text{far}}\cdot0.7$ (elongation of each segment equal and opposite), with $R_{\text{near}}+R_{\text{far}}=90$. Solving: $R_{\text{near}}=63$ kN (the reaction at the shorter segment's end is larger, since it deforms less for the same force, carrying proportionally more load).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Two rods (both fixed at their outer ends, connected at a common point B where a load $P=50$ kN is applied) have equal lengths but different areas: rod 1 has area $2A_0$, rod 2 has area $A_0$ (same material). Find the fraction of load carried by rod 1.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Compatibility (equal elongation, equal length, same $E$) requires equal stress-times-nothing... actually for equal $\delta=PL/(AE)$ with equal $L,E$: $P_1/A_1=P_2/A_2\Rightarrow P_1=2P_2$. With $P_1+P_2=50$: $P_1=33.3$ kN (rod 1, the stiffer/larger one, carries twice the load of rod 2).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A steel bolt passes through a copper tube; both are compressed between rigid washers by tightening the nut, inducing an initial force. If the bolt area is $A_b$, tube area $A_t$, both length $L$: state the compatibility condition relating bolt elongation and tube shortening.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since the assembly is rigid at both ends (washers don't separate), the bolt's elongation must equal the tube's shortening in magnitude: $\delta_{\text{bolt}}=\delta_{\text{tube}}$, i.e. $\dfrac{P_bL}{A_bE_b}=\dfrac{P_tL}{A_tE_t}$, combined with equilibrium $P_b=P_t$ (equal and opposite internal forces, since no external load is yet applied &mdash; this is the pretensioning condition).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>A rigid bar is supported by two vertical rods (rod 1 and rod 2, both length $L$, same material $E$, areas $A_1=A_0$ and $A_2=3A_0$) hanging from a fixed ceiling, and carries a load such that both rods stretch by the same amount (rigid bar remains horizontal). Find the ratio $P_1:P_2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Equal elongation $\delta_1=\delta_2$ with equal $L,E$: $P_1/A_1=P_2/A_2\Rightarrow P_1/A_0=P_2/(3A_0)\Rightarrow P_2=3P_1$. Ratio $P_1:P_2=1:3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>A composite column consists of a steel core ($E_s=200$ GPa, area $A_s$) surrounded by a concrete casing ($E_c=25$ GPa, area $A_c$), both the same length, compressed together by a total load $P$ (rigid end plates ensure equal shortening). Derive the ratio $P_s/P_c$ in terms of the areas and moduli.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Equal shortening $\delta_s=\delta_c$ with equal $L$: $\dfrac{P_s}{A_sE_s}=\dfrac{P_c}{A_cE_c}\Rightarrow\dfrac{P_s}{P_c}=\dfrac{A_sE_s}{A_cE_c}$ &mdash; the stiffer material (steel, much higher $E$) carries a disproportionately large share of the total load relative to its area, the fundamental principle behind reinforced-concrete/composite column design.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Explain, conceptually, why in a statically indeterminate axial assembly the stiffer member always attracts a larger share of the total applied load, even if the members have equal cross-sectional area.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>In an indeterminate assembly, compatibility forces all connected members to deform by the same (or a related) amount. Since $\delta=PL/(AE)$, for a given elongation $\delta$, a stiffer member (larger $E$, or larger $A$) requires a larger force $P$ to produce that same deformation. So members with greater stiffness naturally end up carrying more of the total load, purely as a geometric consequence of being forced to deform together &mdash; independent of any "choice" about how load is distributed.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+<div class="section-title"><span class="tag">3</span> Thermal Effects &amp; Thermal Stress</div>
+
+<div class="prose">
+<p>A temperature change $\Delta T$ causes a <strong>free</strong> (unrestrained) member to expand or contract by $\delta_T=\alpha L\Delta T$, where $\alpha$ is the material's <strong>coefficient of thermal expansion</strong> (steel: $\approx12\times10^{-6}\,{}^\circ\text{C}^{-1}$; aluminium: $\approx23\times10^{-6}\,{}^\circ\text{C}^{-1}$). This produces <strong>strain</strong> but <strong>no stress</strong>, since the member is free to move.</p>
+<p>If the member is <strong>restrained</strong> (fully or partially prevented from expanding/contracting, e.g. fixed at both ends), the restraint develops an internal force that would produce an elongation exactly cancelling the free thermal expansion &mdash; this is a compatibility problem exactly like the indeterminate case: $\delta_{\text{mechanical}}+\delta_{\text{thermal}}=\text{total allowed movement (often }0\text{)}$, giving <strong>thermal stress</strong> $\sigma_T=E\alpha\Delta T$ for a bar fully restrained against any length change.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\delta_T=\alpha L\,\Delta T \quad \text{(free expansion, no stress)} \qquad \sigma_T=E\alpha\,\Delta T \quad \text{(fully restrained, no length change allowed)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A steel rod ($E=200$ GPa, $\alpha=12\times10^{-6}\,{}^\circ\text{C}^{-1}$) is fixed rigidly at both ends and heated by $\Delta T=40\,{}^\circ\text{C}$. Find the thermal stress developed.</p>
+<p class="step">$\sigma_T=E\alpha\Delta T=200\times10^9\times12\times10^{-6}\times40=96\times10^6\ \text{Pa}=96$ MPa (compressive, since heating a restrained bar induces compression).</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>A steel rail ($\alpha=12\times10^{-6}\,{}^\circ\text{C}^{-1}$), length 20 m, is free to expand and experiences a temperature rise of 30 &deg;C. Find the free expansion.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\delta_T=12\times10^{-6}\times20\times30=7.2\times10^{-3}\ \text{m}=7.2$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>An aluminium rod ($E=70$ GPa, $\alpha=23\times10^{-6}\,{}^\circ\text{C}^{-1}$), fully restrained at both ends, is cooled by 25 &deg;C. Find the thermal stress and its sense (tension/compression).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_T=70\times10^9\times23\times10^{-6}\times25=40.25\times10^6\ \text{Pa}=40.25$ MPa; cooling a restrained bar induces <strong>tension</strong> (the bar "wants" to shrink but can't).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>A steel bar ($E=200$ GPa, $\alpha=12\times10^{-6}\,{}^\circ\text{C}^{-1}$), fully restrained, must not exceed an allowable stress of 120 MPa. Find the maximum permissible temperature change.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\Delta T_{\max}=\sigma_{\text{allow}}/(E\alpha)=120\times10^6/(200\times10^9\times12\times10^{-6})=50\,{}^\circ\text{C}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>A steel rod, length 2 m, area 300 mm$^2$ ($E=200$ GPa, $\alpha=12\times10^{-6}\,{}^\circ\text{C}^{-1}$), is heated by 60 &deg;C while restrained at both ends. Find the compressive force induced.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_T=200\times10^9\times12\times10^{-6}\times60=144\times10^6\ \text{Pa}=144$ MPa. $P=\sigma_TA=144\times10^6\times300\times10^{-6}=43.2$ kN (compressive).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>A rod is restrained by a gap of 0.5 mm at one end (i.e. it can expand freely by 0.5 mm before contacting the wall). If the free thermal expansion at the given $\Delta T$ would be 2 mm (rod length 3 m, $E=200$ GPa, $\alpha=12\times10^{-6}\,{}^\circ\text{C}^{-1}$), find the stress induced once contact occurs.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Only $2-0.5=1.5$ mm of the expansion is restrained (converted to mechanical compression). Equivalent "restrained" strain $=1.5\times10^{-3}/3=5\times10^{-4}$. $\sigma=E\varepsilon=200\times10^9\times5\times10^{-4}=100\times10^6\ \text{Pa}=100$ MPa (compressive).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>A bimetallic assembly has a steel rod and an aluminium rod of equal length $L$, connected end-to-end and fixed at both outer ends, both experiencing the same $\Delta T$ rise. Explain (without full derivation) why the two rods do NOT develop the same thermal stress despite the same temperature change and same restraint.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The two materials have different coefficients of thermal expansion ($\alpha_{\text{steel}}\ne\alpha_{\text{Al}}$) and different moduli of elasticity ($E_{\text{steel}}\ne E_{\text{Al}}$); the compatibility condition (total elongation of the two-segment assembly $=0$) couples their individual mechanical and thermal strains together through a single shared internal force (equilibrium requires equal and opposite forces at the junction), so the resulting stress in each segment depends on both materials' properties jointly, not simply on each material's own $\sigma_T=E\alpha\Delta T$ formula in isolation (that formula only applies to a single-material bar restrained on its own).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>A steel bar 4 m long is installed with its ends 3 mm apart from rigid supports (i.e. there's a 3 mm gap at one end). If $E=200$ GPa, $\alpha=12\times10^{-6}\,{}^\circ\text{C}^{-1}$, find the temperature rise required to just close the gap, and the temperature rise beyond that needed to induce a stress of 50 MPa.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Gap closes when free expansion $=3$ mm: $\Delta T_1=\delta/(\alpha L)=3\times10^{-3}/(12\times10^{-6}\times4)=62.5\,{}^\circ\text{C}$. Additional $\Delta T_2$ needed for 50 MPa: $\Delta T_2=\sigma/(E\alpha)=50\times10^6/(200\times10^9\times12\times10^{-6})=20.8\,{}^\circ\text{C}$. Total temperature rise $\approx83.3\,{}^\circ\text{C}$.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>ENGG251 Mechanics of Solids &middot; Week 2 &middot; 30 practice problems</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

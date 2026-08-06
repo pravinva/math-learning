@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Product Rule</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Product Rule</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes computational, conceptual, error-analysis, and applied question types — not repeated drills</footer>
+</div>
+
+<script>
+const SETS = [[["BASIC APPLICATION", "Differentiate \\(f(x)=(x^2+1)(x^3-2x)\\).", "Product rule: \\(2x(x^3-2x)+(x^2+1)(3x^2-2)\\)."], ["THREE FACTORS", "Differentiate \\(f(x)=x\\sin(x)\\cos(x)\\).", "Differentiate each factor in turn and sum: \\(\\sin x\\cos x+x\\cos^2x-x\\sin^2x\\), which simplifies to \\(\\tfrac12\\sin(2x)+x\\cos(2x)\\)."], ["ERROR ANALYSIS", "A student differentiates \\(f(x)=x^2e^x\\) as \\(f'(x)=2xe^x\\) (missing a term). Find the error and correct it.", "The product rule needs both terms: \\(f'(x)=2xe^x+x^2e^x=xe^x(x+2)\\)."], ["TANGENT LINE", "Find the tangent line to \\(f(x)=x\\ln(x)\\) at \\(x=1\\).", "\\(f(1)=0\\), \\(f'(x)=\\ln x+1\\), \\(f'(1)=1\\). Answer: \\(y=x-1\\)"], ["CONCEPTUAL", "Using the definition of the derivative, explain why \\((fg)'\\ne f'g'\\) in general.", "The difference quotient for \\(fg\\) requires adding and subtracting a cross term, \\(f(x+h)g(x+h)-f(x)g(x)=f(x+h)[g(x+h)-g(x)]+g(x)[f(x+h)-f(x)]\\), which in the limit gives \\(fg'+f'g\\) \u2014 not the product of the separate derivatives."], ["APPLIED", "Revenue is \\(R(x)=x\\cdot p(x)\\) where \\(p(x)=50-0.2x\\) is price per unit. Find \\(R'(x)\\) and interpret it at \\(x=100\\).", "\\(R(x)=50x-0.2x^2\\), \\(R'(x)=50-0.4x\\). At \\(x=100\\): \\(R'(100)=10\\), meaning revenue rises by about \\$10 for each extra unit sold at that level (marginal revenue)."]], [["BASIC APPLICATION", "Differentiate \\(f(x)=(3x-1)(x^2+4)\\).", "Product rule, then simplify. Answer: \\(9x^2-2x+12\\)"], ["THREE FACTORS", "Differentiate \\(f(x)=x^2e^x\\ln x\\).", "Apply the extended product rule across all three factors. Answer: \\(2xe^x\\ln x+x^2e^x\\ln x+xe^x\\)"], ["ERROR ANALYSIS", "Compare differentiating \\(f(x)=\\sqrt{x}\\cdot x^3\\) by (a) combining exponents first, and (b) the product rule. Do they agree?", "(a) Combine to \\(x^{7/2}\\), derivative \\(\\tfrac72x^{5/2}\\). (b) Product rule gives \\(\\tfrac{1}{2\\sqrt x}x^3+\\sqrt x\\cdot3x^2=\\tfrac72x^{5/2}\\). Yes, both agree \u2014 combining exponents first is just a shortcut when possible."], ["TANGENT LINE", "Find the tangent line to \\(f(x)=x^2\\sin x\\) at \\(x=0\\).", "\\(f(0)=0\\), \\(f'(x)=2x\\sin x+x^2\\cos x\\), \\(f'(0)=0\\). Answer: \\(y=0\\)"], ["CONCEPTUAL", "If \\(f\\) and \\(g\\) are both increasing on an interval, is \\(fg\\) necessarily increasing? Use the product rule to justify.", "Not necessarily \u2014 \\((fg)'=f'g+fg'\\) can be negative if, say, one function is negative; the claim only holds cleanly when \\(f,g>0\\) with \\(f',g'>0\\)."], ["APPLIED", "Bacteria count is \\(N(t)=t^2\\); survival probability is \\(p(t)=e^{-0.1t}\\). Find the rate of change of expected survivors \\(M(t)=N(t)p(t)\\) at \\(t=5\\).", "\\(M'(t)=e^{-0.1t}(2t-0.1t^2)\\). At \\(t=5\\): \\(e^{-0.5}(10-2.5)=7.5e^{-0.5}\\approx4.55\\)."]], [["BASIC APPLICATION", "Differentiate \\(f(x)=(x^2-3x)(2x+5)\\).", "Product rule, then simplify. Answer: \\(6x^2-2x-15\\)"], ["THREE FACTORS", "Differentiate \\(f(x)=(x-1)(x+2)(x-3)\\).", "Expand first (\\(x^3-2x^2-5x+6\\)) or use the extended product rule. Answer: \\(3x^2-4x-5\\)"], ["ERROR ANALYSIS", "A student writes \\(d/dx[e^x\\cos x]=e^x\\cdot(-\\sin x)\\), forgetting a whole term. Correct it.", "The product rule needs both terms: \\(f'(x)=e^x\\cos x-e^x\\sin x=e^x(\\cos x-\\sin x)\\)."], ["TANGENT LINE", "Find the tangent line to \\(f(x)=(x+1)e^x\\) at \\(x=0\\).", "\\(f(0)=1\\), \\(f'(x)=e^x(x+2)\\), \\(f'(0)=2\\). Answer: \\(y=2x+1\\)"], ["CONCEPTUAL", "Show that the product rule reduces to the constant multiple rule when \\(g(x)=c\\) is constant.", "With \\(g'=0\\): \\((fg)'=f'g+fg'=cf'+0=cf'\\), matching the constant multiple rule exactly."], ["APPLIED", "A rectangle has width \\(w(t)=3+t\\) and height \\(h(t)=5-0.5t\\) (cm), both changing with time. Find the rate of change of area at \\(t=2\\).", "\\(A'=w'h+wh'=1(5-0.5t)+(3+t)(-0.5)\\). At \\(t=2\\): \\(4-2.5=1.5\\) cm\\(^2\\)/unit time."]], [["BASIC APPLICATION", "Differentiate \\(f(x)=(4-x^2)(x^3+1)\\).", "Product rule, then simplify. Answer: \\(-5x^4+12x^2-2x\\)"], ["THREE FACTORS", "Differentiate \\(f(x)=xe^x\\sin x\\).", "Apply the extended product rule. Answer: \\(e^x[\\sin x(1+x)+x\\cos x]\\)"], ["ERROR ANALYSIS", "A student differentiates \\(f(x)=x^3\\ln x\\) and writes \\(f'(x)=3x^2(1/x)\\) only. Identify and fix the missing term.", "Missing the \\(\\ln x\\) term: correct answer is \\(f'(x)=3x^2\\ln x+x^2=x^2(3\\ln x+1)\\)."], ["TANGENT LINE", "Find the tangent line to \\(f(x)=x^2\\cos x\\) at \\(x=0\\).", "\\(f(0)=0\\), \\(f'(x)=2x\\cos x-x^2\\sin x\\), \\(f'(0)=0\\). Answer: \\(y=0\\)"], ["CONCEPTUAL", "Using the product rule, derive the derivative of \\(f(x)^2\\) (i.e.\\ \\(f\\cdot f\\)) in terms of \\(f\\) and \\(f'\\).", "Treat as \\(g=f\\): \\((f\\cdot f)'=f'f+ff'=2ff'\\)."], ["APPLIED", "Total cost is \\(C(x)=x\\cdot c(x)\\) with unit cost \\(c(x)=20+0.05x\\). Find marginal cost \\(C'(x)\\) and evaluate at \\(x=200\\).", "\\(C(x)=20x+0.05x^2\\), \\(C'(x)=20+0.1x\\). At \\(x=200\\): \\(C'(200)=40\\)."]]];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of ${SETS.length} · ${SETS[0].length} questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

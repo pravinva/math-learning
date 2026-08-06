@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Numerical Integration: The Trapezoidal Rule &amp; Simpson's Rule</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH142 &middot; Engineering Mathematics 2 &middot; Week 3 (Phase 1: Integration Techniques)</div>
+  <h1>Numerical Integration: The Trapezoidal Rule &amp; Simpson's Rule</h1>
+  <p>Not every integrand has an elementary antiderivative. Numerical integration approximates the area under a curve directly — first with straight-line segments (trapezoids), then with a dramatically more accurate parabola-fitting approach (Simpson's Rule). Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 21 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this week's toolkit</span>
+  <ul>
+<li><strong>Trapezoidal Rule:</strong> $T_n=\dfrac{h}{2}\big[f(x_0)+2f(x_1)+2f(x_2)+\cdots+2f(x_{n-1})+f(x_n)\big]$, $h=\dfrac{b-a}{n}$.</li>
+<li><strong>Trapezoidal error bound:</strong> $|E_T|\le\dfrac{(b-a)h^2}{12}\max|f''(x)|$ &mdash; error $\propto h^2$.</li>
+<li><strong>Simpson's Rule</strong> (requires $n$ even): $S_n=\dfrac{h}{3}\big[f(x_0)+4f(x_1)+2f(x_2)+4f(x_3)+\cdots+4f(x_{n-1})+f(x_n)\big]$.</li>
+<li><strong>Simpson's error bound:</strong> $|E_S|\le\dfrac{(b-a)h^4}{180}\max|f^{(4)}(x)|$ &mdash; error $\propto h^4$, so halving $h$ cuts the error by $16\times$, not just $4\times$.</li>
+<li><strong>Key fact:</strong> Simpson's Rule is <em>exact</em> for any polynomial of degree $\le3$ (its fourth derivative is zero), which is why it usually massively outperforms the trapezoidal rule for the same $n$.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">The Trapezoidal Rule &amp; Error Estimation</a></li>
+<li><a href="#sec1">Simpson's Rule &amp; Error Estimation</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+  <div class="section-title"><span class="tag">0</span> The Trapezoidal Rule &amp; Error Estimation</div>
+
+  <div class="prose">
+<p>Split $[a,b]$ into $n$ equal subintervals of width $h=\dfrac{b-a}{n}$. On each subinterval, approximate the area under the curve by a trapezoid (rather than a rectangle) &mdash; using the straight line connecting $(x_{i-1},f(x_{i-1}))$ and $(x_i,f(x_i))$ as the top edge. A single trapezoid's area is $\dfrac{h}{2}\big(f(x_{i-1})+f(x_i)\big)$.</p>
+<p>Summing over all $n$ trapezoids, each <em>interior</em> function value gets counted twice (once as the right edge of one trapezoid, once as the left edge of the next), while the two endpoints are counted once each &mdash; giving the $1,2,2,\dots,2,1$ coefficient pattern.</p>
+<p><strong>Error.</strong> Since each trapezoid replaces a curved top with a straight line, the error depends on how much the function curves (its second derivative). For a concave-up function, the chord sits above the curve, so the trapezoidal rule systematically <em>overestimates</em> such integrals; for concave-down, it underestimates.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$T_n = \frac{h}{2}\Big[f(x_0)+2f(x_1)+\cdots+2f(x_{n-1})+f(x_n)\Big], \qquad |E_T|\le\frac{(b-a)h^2}{12}\max|f''(x)|$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Estimate $\displaystyle\int_0^2 x^2\,dx$ using $n=4$ trapezoids, and bound the error (given $f''(x)=2$).</p>
+<p class="step">$h=0.5$; $x_0,\dots,x_4=0,0.5,1,1.5,2$; $f$-values: $0,0.25,1,2.25,4$.</p>
+<p class="step">$T_4=\dfrac{0.5}{2}\big[0+2(0.25)+2(1)+2(2.25)+4\big]=0.25(11)=2.75$ (true value $\tfrac83\approx2.667$).</p>
+<p class="step">$|E_T|\le\dfrac{2(0.5)^2(2)}{12}=\dfrac{1}{12}\approx0.083$ (actual error was $2.75-2.667=0.083$ &mdash; matches almost exactly).</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Estimate $\displaystyle\int_0^{\pi} \sin x\,dx$ using the Trapezoidal Rule with $n=6$, and compare with the exact value $2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$h=\pi/6\approx0.5236$; $x_i=0,\pi/6,\pi/3,\pi/2,2\pi/3,5\pi/6,\pi$.</p>
+<p>$f$-values: $0, 0.5, 0.8660, 1, 0.8660, 0.5, 0$.</p>
+<p>$T_6=\dfrac{h}{2}\big[0+2(0.5+0.8660+1+0.8660+0.5)+0\big]=\dfrac{0.5236}{2}\big[2(3.732)\big]=\dfrac{0.5236}{2}(7.464)=1.954$.</p>
+<p><strong>Answer:</strong> $T_6\approx1.954$, slightly below the exact value of $2$ (as expected: $\sin x$ is concave-down on this interval, so the trapezoidal rule underestimates).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A function $f$ has $\max|f''(x)|=8$ on $[1,5]$. Find the minimum number of subintervals $n$ (even count not required here) needed to guarantee the Trapezoidal Rule error is less than $0.001$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$|E_T|\le\dfrac{(b-a)h^2}{12}\max|f''|=\dfrac{4h^2(8)}{12}=\dfrac{32h^2}{12}=\dfrac{8h^2}{3}$.</p>
+<p>Require $\dfrac{8h^2}{3}<0.001 \implies h^2<\dfrac{0.003}{8}=3.75\times10^{-4} \implies h<0.01936$.</p>
+<p>Since $h=(b-a)/n=4/n$: $n>4/0.01936\approx206.6$, so $n=207$ (or round up further for a convenient value).</p>
+<p><strong>Answer:</strong> $n\ge207$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Estimate $\displaystyle\int_1^3 \ln x\,dx$ using $n=4$ trapezoids (to 4 decimal places), and compare with the exact value $3\ln3-2\approx1.2958$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$h=0.5$; $x_i=1,1.5,2,2.5,3$; $f$-values: $0, 0.4055, 0.6931, 0.9163, 1.0986$.</p>
+<p>$T_4=\dfrac{0.5}{2}\big[0+2(0.4055+0.6931+0.9163)+1.0986\big]=0.25\big[2(2.0149)+1.0986\big]=0.25(5.1284)=1.2821$.</p>
+<p><strong>Answer:</strong> $T_4\approx1.2821$, slightly under the exact value $1.2958$ (consistent with $\ln x$ being concave-down, so trapezoidal underestimates).</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+  <div class="section-title"><span class="tag">1</span> Simpson's Rule &amp; Error Estimation</div>
+
+  <div class="prose">
+<p>The trapezoidal rule fits a straight line across each pair of points. Simpson's Rule instead fits a parabola through each set of three consecutive points, using its area as the approximation instead of two trapezoids &mdash; this requires $n$ to be even (so the points pair up completely).</p>
+<p>The parabola-fitting calculation produces the weighting pattern $1,4,2,4,2,\dots,4,1$ &mdash; odd-indexed points get weight $4$, even-indexed interior points get weight $2$.</p>
+<p><strong>Error.</strong> Since Simpson's Rule matches any parabola <em>exactly</em>, the error depends on the <em>fourth</em> derivative rather than the second. Because the error bound uses $h^4$ rather than $h^2$, halving $h$ shrinks the error by a factor of $16$, not just $4$ &mdash; this is why Simpson's Rule usually converges far faster than the trapezoidal rule.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$S_n = \frac{h}{3}\Big[f(x_0)+4f(x_1)+2f(x_2)+4f(x_3)+\cdots+4f(x_{n-1})+f(x_n)\Big], \quad n\text{ even}$$
+$$|E_S|\le\frac{(b-a)h^4}{180}\max|f^{(4)}(x)|$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Estimate $\displaystyle\int_0^2 x^2\,dx$ using Simpson's Rule with $n=4$ (same data as the trapezoidal example).</p>
+<p class="step">$h=0.5$; $f$-values: $0,0.25,1,2.25,4$; weights: $1,4,2,4,1$.</p>
+<p class="step">$S_4=\dfrac{0.5}{3}\big[0+4(0.25)+2(1)+4(2.25)+4\big]=\dfrac{0.5}{3}(16)=\dfrac83$ &mdash; exactly matches the true value, since $x^2$ is itself a parabola (Simpson's Rule is exact for polynomials up to degree 3).</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Estimate $\displaystyle\int_0^{\pi} \sin x\,dx$ using Simpson's Rule with $n=6$ (same nodes as the trapezoidal practice question above), and compare with the exact value $2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$h=\pi/6$; $f$-values: $0, 0.5, 0.8660, 1, 0.8660, 0.5, 0$; weights: $1,4,2,4,2,4,1$.</p>
+<p>$S_6=\dfrac{\pi/6}{3}\big[0+4(0.5)+2(0.8660)+4(1)+2(0.8660)+4(0.5)+0\big]$</p>
+<p>$=\dfrac{\pi}{18}\big[2+1.732+4+1.732+2\big]=\dfrac{\pi}{18}(11.464)=2.0002$.</p>
+<p><strong>Answer:</strong> $S_6\approx2.0002$ &mdash; dramatically closer to the exact value $2$ than the trapezoidal estimate ($1.954$), consistent with Simpson's Rule's much smaller error for the same $n$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A function $f$ satisfies $\max|f^{(4)}(x)|=16$ on $[0,4]$. Compare the Simpson's Rule error bound for $n=4$ against $n=8$, and verify the factor-of-16 improvement.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For $n=4$: $h=1$. $|E_S|\le\dfrac{4(1)^4(16)}{180}=\dfrac{64}{180}=0.3556$.</p>
+<p>For $n=8$: $h=0.5$. $|E_S|\le\dfrac{4(0.5)^4(16)}{180}=\dfrac{4(0.0625)(16)}{180}=\dfrac{4}{180}=0.0222$.</p>
+<p>Ratio: $0.3556/0.0222=16.0$ &mdash; exactly the factor of $16$ predicted, since halving $h$ divides $h^4$ by $2^4=16$.</p>
+<p><strong>Answer:</strong> error bounds are $0.3556$ ($n=4$) and $0.0222$ ($n=8$); ratio $=16$, confirming the $h^4$ scaling.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Estimate $\displaystyle\int_1^3 \ln x\,dx$ using Simpson's Rule with $n=4$ (same nodes as the earlier trapezoidal question), and compare both estimates against the exact value $3\ln3-2\approx1.2958$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$h=0.5$; $f$-values: $0, 0.4055, 0.6931, 0.9163, 1.0986$; weights: $1,4,2,4,1$.</p>
+<p>$S_4=\dfrac{0.5}{3}\big[0+4(0.4055)+2(0.6931)+4(0.9163)+1.0986\big]$</p>
+<p>$=\dfrac{0.5}{3}\big[1.622+1.3862+3.6652+1.0986\big]=\dfrac{0.5}{3}(7.772)=1.2953$.</p>
+<p><strong>Answer:</strong> $S_4\approx1.2953$, compared with the trapezoidal $T_4\approx1.2821$ and exact value $1.2958$ &mdash; Simpson's estimate is roughly $14\times$ closer to the true value than the trapezoidal estimate, despite using the same 5 function evaluations.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Explain why applying Simpson's Rule to $n=5$ subintervals is not directly possible, and describe two valid workarounds.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Simpson's Rule pairs subintervals into groups of two, fitting one parabola across each pair &mdash; this requires the total count $n$ to be even so every subinterval belongs to exactly one pair. With $n=5$ (odd), one subinterval is left over with no partner.</p>
+<p><strong>Workaround 1:</strong> use $n=6$ instead (round up to the nearest even number), recomputing function values at the extra node.</p>
+<p><strong>Workaround 2:</strong> apply Simpson's Rule to the first 4 (even) subintervals, then use the Trapezoidal Rule (or another method) on the single remaining subinterval, combining the two partial results &mdash; a valid but less commonly used hybrid approach.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Use the Trapezoidal Rule with $n=8$ to estimate $\displaystyle\int_0^1 e^{-x^2}\,dx$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$h=0.125$, nodes $x_i=i/8$.</p>
+    <p>Using $f(x)=e^{-x^2}$ values, $T_8\approx0.7462$.</p>
+    <p><strong>Answer:</strong> $T_8\approx0.7462$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Use Simpson's Rule with $n=8$ to estimate $\displaystyle\int_0^1 e^{-x^2}\,dx$, then compare with Practice 8.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Same nodes as Practice 8, Simpson weights $1,4,2,\dots,4,1$.</p>
+    <p>$S_8\approx0.7468$, closer than $T_8$ for same node set.</p>
+    <p><strong>Answer:</strong> $S_8\approx0.7468$ (better than $T_8\approx0.7462$).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Find the smallest even $n$ guaranteeing Simpson error below $10^{-4}$ for $\int_0^2 \ln(1+x)\,dx$, given $\max|f^{(4)}(x)|=\frac{6}{(1+x)^4}\le 6$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$|E_S|\le \dfrac{(b-a)h^4}{180}M=\dfrac{2h^4}{180}\cdot6=\dfrac{h^4}{15}$.</p>
+    <p>Need $h^4/15<10^{-4}\Rightarrow h<0.1968$.</p>
+    <p>$h=2/n$, so $n>10.16$; smallest even $n$ is $12$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Apply Simpson's Rule with $n=4$ to $\displaystyle\int_0^1 \frac{1}{1+x^2}\,dx$ and compare with exact $\arctan(1)=\pi/4$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$h=0.25$, values at $0,0.25,0.5,0.75,1$: $1,0.9412,0.8,0.64,0.5$.</p>
+    <p>$S_4=\frac{0.25}{3}[1+4(0.9412)+2(0.8)+4(0.64)+0.5]\approx0.7854$.</p>
+    <p>Exact is $\pi/4\approx0.7854$; extremely close.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Explain, with one concrete polynomial example, why Simpson's Rule is exact for degree 3 but generally not for degree 4.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Error term contains $f^{(4)}$. For cubic, $f^{(4)}=0$, so error bound is zero.</p>
+    <p>Example: $f(x)=x^3$ gives exact Simpson value. But for $f(x)=x^4$, $f^{(4)}=24\neq0$, so nonzero error generally occurs.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Use Trapezoidal Rule with $n=10$ to estimate $\int_0^2 \frac{1}{1+x}\,dx$, and state whether it over- or underestimates.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>$h=0.2$, compute table values $f(x_i)=1/(1+x_i)$.</p>
+    <p>Numerically $T_{10}\approx1.1029$.</p>
+    <p>Since $f''(x)=2/(1+x)^3>0$ (concave up), trapezoidal overestimates. Exact is $\ln3\approx1.0986$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Use Simpson's Rule with $n=10$ for the same integral in Practice 13 and compare errors.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Using same nodes and Simpson weights gives $S_{10}\approx1.0986$ (to 4 d.p.).</p>
+    <p>Error is far smaller than trapezoidal, consistent with $h^4$ vs $h^2$ scaling.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>An engineer has function values at 7 equally spaced nodes. Which rule (Trapezoidal/Simpson) can be applied directly over the full interval? Justify using subinterval count.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>7 nodes means 6 subintervals. Simpson needs even $n$; here $n=6$ so Simpson applies directly.</p>
+    <p>Trapezoidal always applies too, but Simpson is usually preferred for accuracy at same nodes.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Compute $T_4$ and $S_4$ for $\int_0^2 x^3\,dx$, and comment on exactness.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Exact integral $=4$.</p>
+    <p>$T_4=4.25$ (not exact). $S_4=4.00$ exactly.</p>
+    <p>Confirms Simpson exactness for cubic polynomials.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Given $|E_T|\le \frac{K}{n^2}$ and current trapezoidal error tolerance uses $n=40$, estimate required $n$ to make tolerance 9 times tighter.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Error scales like $1/n^2$. To reduce error by factor 9, multiply $n$ by $\sqrt{9}=3$.</p>
+    <p>Required $n\approx120$.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Given $|E_S|\le \frac{C}{n^4}$ and Simpson currently uses $n=8$, estimate required $n$ to make tolerance 16 times tighter.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Need error factor $16$, so $n$ scales by $16^{1/4}=2$.</p>
+    <p>Required $n=16$ (and still even).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Estimate $\int_0^1 \sqrt{1+x}\,dx$ with $T_6$, then use concavity to state whether the estimate is above or below the exact value.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Using $h=1/6$, computation gives $T_6\approx1.2199$.</p>
+    <p>$f''(x)=-\frac{1}{4}(1+x)^{-3/2}&lt;0$ so concave down; trapezoidal underestimates.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A student applies Simpson with weights $1,2,4,2,\dots,4,1$. Explain the structural mistake and consequence.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Simpson weights must alternate $4,2,4,2,\dots$ on interior nodes starting with $4$ at $x_1$.</p>
+    <p>Swapping the first interior weight breaks the quadratic interpolation derivation and produces a biased estimate.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Challenge: For fixed node count, why is Simpson often preferred over trapezoidal for smooth functions, and when might trapezoidal still be chosen in practice?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Simpson has fourth-order error ($h^4$) versus second-order ($h^2$), so accuracy improves much faster as grid is refined.</p>
+    <p>Trapezoidal may still be chosen for streaming data, odd subinterval counts, simpler implementation, or when function noise makes higher-order fitting less reliable.</p>
+  </div></div>
+</div>
+
+</section>
+
+</main>
+
+<footer>
+  MATH142 Engineering Mathematics 2 &middot; Week 3 (Phase 1: Integration Techniques &amp; Applications)<br>
+  <a href="MATH142_Week1_Integration_Techniques.html">Week 1</a> &nbsp;|&nbsp;
+  <a href="MATH142_Week2_PartialFractions_ImproperIntegrals.html">Week 2</a> &nbsp;|&nbsp;
+  <strong>Week 3</strong> &nbsp;|&nbsp;
+  <a href="MATH142_Week4_PolarCoordinates.html">Week 4</a> &nbsp;|&nbsp;
+  <a href="MATH142_Week5_Areas_Volumes.html">Week 5</a>
+</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

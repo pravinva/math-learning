@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Matrix and Vector Revision Test</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+
+  header h1{
+    margin:0;
+    font-size:28px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+
+  header p{
+    margin:8px 0 0;
+    color:#c3ccdb;
+    font-size:15px;
+  }
+
+  .progress-wrap{
+    max-width:800px;
+    margin:22px auto 0;
+    padding:0 24px;
+  }
+
+  .progress-bar{
+    height:6px;
+    border-radius:3px;
+    background:rgba(255,255,255,0.15);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--red);
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    color:#9fb0c9;
+    margin-top:6px;
+  }
+
+  main{
+    max-width:800px;
+    margin:36px auto 0;
+    padding:0 24px;
+  }
+
+  .section-title{
+    font-size:20px;
+    font-weight:700;
+    margin:38px 0 16px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--navy);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    background:rgba(255,54,33,0.08);
+    border-radius:4px;
+    padding:3px 9px;
+  }
+  .section-title:first-child{margin-top:0;}
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid var(--navy);
+    border-radius:6px;
+    margin-bottom:18px;
+    box-shadow:0 1px 2px rgba(27,36,49,0.05);
+    overflow:hidden;
+  }
+
+  .card.solved{
+    border-left-color:var(--red);
+  }
+
+  .q-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:16px 22px 4px;
+  }
+
+  .q-num{
+    font-family:'Roboto Mono',monospace;
+    font-weight:500;
+    font-size:13px;
+    color:var(--red);
+    background:rgba(255,54,33,0.08);
+    border-radius:4px;
+    padding:2px 8px;
+    flex-shrink:0;
+  }
+
+  .q-body{
+    padding:6px 22px 18px;
+    font-size:15.5px;
+    line-height:1.55;
+  }
+
+  .q-body p{margin:6px 0;}
+  .q-body .sub{margin:4px 0 4px 18px;}
+
+  .toggle-row{
+    padding:0 22px 16px;
+  }
+
+  .toggle-btn{
+    font-family:'Barlow',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    letter-spacing:0.01em;
+    color:var(--navy);
+    background:#fff;
+    border:1.5px solid var(--navy);
+    border-radius:5px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+
+  .toggle-btn:hover{
+    background:var(--navy);
+    color:#fff;
+  }
+
+  .toggle-btn.shown{
+    background:var(--red);
+    border-color:var(--red);
+    color:#fff;
+  }
+  .toggle-btn.shown:hover{
+    background:#e02e1c;
+  }
+
+  .solution{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+    border-top:1px dashed var(--line);
+  }
+
+  .solution.open{
+    max-height:6000px;
+    transition:max-height .7s ease;
+  }
+
+  .solution-inner{
+    padding:16px 22px 20px;
+    background:#fbfcfe;
+    font-size:15px;
+    line-height:1.6;
+  }
+
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:8px;
+    display:block;
+  }
+
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .sub{margin:6px 0 6px 16px;}
+
+  .why-box{
+    margin-top:14px;
+    padding:14px 16px 16px;
+    background:#eef3fb;
+    border:1px solid var(--line);
+    border-left:3px solid var(--navy);
+    border-radius:5px;
+  }
+  .why-box .why-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--navy);
+    display:block;
+    margin-bottom:6px;
+  }
+  .why-box p{margin:6px 0;}
+  .why-box .sub{margin:6px 0 6px 12px;}
+
+  svg.diagram{
+    display:block;
+    margin:14px auto;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+  }
+
+  footer{
+    max-width:800px;
+    margin:10px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">DPEN141 &middot; Matrix and Vector Revision</div>
+  <h1>Matrix and Vector Revision Test</h1>
+  <p>Question-only test page. Use the separate worked-answer key for full solutions.</p>
+</header>
+
+<main>
+
+<div class="section-title"><span class="tag">Part 1</span> Class Questions</div>
+
+<!-- CQ1 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q1</span></div>
+  <div class="q-body">
+    <p>Use elementary row operations to calculate the following determinant:</p>
+    <p>$$\det\begin{pmatrix}2&4&2&6\\0&0&3&3\\1&1&1&1\\2&2&0&2\end{pmatrix}$$</p>
+    <p>What does your answer tell you about the solution to $A\mathbf{x}=\mathbf{b}$ for $\mathbf{b}\in\mathbb{R}^4$?</p>
+  </div>
+  </div>
+  </div>
+</div>
+
+<!-- CQ2 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q2</span></div>
+  <div class="q-body">
+    <p>Define two vectors $\mathbf{u}=(4,2,-3)$ and $\mathbf{v}=(1,-3,-1)$.</p>
+    <p class="sub">(i) Calculate the angle between these vectors.</p>
+    <p class="sub">(ii) Show that these vectors satisfy the Cauchy-Schwarz inequality and the triangle inequality.</p>
+    <p class="sub">(iii) Calculate the unit vectors in the direction of $\mathbf{u}$ and $\mathbf{v}$.</p>
+    <p class="sub">(iv) Calculate $\mathrm{proj}_\mathbf{v}\mathbf{u}$ and $\mathrm{proj}_\mathbf{u}\mathbf{v}$.</p>
+  </div>
+  </div>
+</div>
+
+<!-- CQ3 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q3</span></div>
+  <div class="q-body">
+    <p>Define $\mathbf{v}=(2,4)$. Calculate the projection of $\mathbf{v}$ onto the line joining the origin and the point $(-2,-1)$. Draw your result.</p>
+  </div>
+  </div>
+</div>
+
+<!-- CQ4 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q4</span></div>
+  <div class="q-body">
+    <p>Define two vectors $\mathbf{u}=(2,2,0)$ and $\mathbf{v}=(1,2,4)$.</p>
+    <p class="sub">(a) Find the cross product $\mathbf{w}=\mathbf{u}\times\mathbf{v}$.</p>
+    <p class="sub">(b) Show that $\mathbf{w}$ is perpendicular to both $\mathbf{u}$ and $\mathbf{v}$.</p>
+    <p class="sub">(c) Find the area of the triangle with vertices at $(0,0,0)$, $(2,2,0)$, and $(1,2,4)$.</p>
+  </div>
+  </div>
+</div>
+
+<div class="section-title"><span class="tag">Part 2</span> Additional Problems</div>
+
+<!-- AQ1 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q1</span></div>
+  <div class="q-body">
+    <p>Use elementary row operations, or any other appropriate determinant property, to calculate the following:</p>
+    <p class="sub">(a) $\det\begin{pmatrix}1&4&5&2\\3&0&2&1\\2&2&2&2\\2&2&5&1\end{pmatrix}$</p>
+    <p class="sub">(b) $\det\begin{pmatrix}1&2&3&4\\1&1&3&4\\1&1&1&4\\1&1&1&1\end{pmatrix}$</p>
+    <p class="sub">(c) $\det\begin{pmatrix}5&4&-7&-2\\8&2&-3&-1\\0&1&1&2\\5&4&-7&-2\end{pmatrix}$</p>
+    <p>In each case, what can you say about the solution to $A\mathbf{x}=\mathbf{b}$, where $\mathbf{b}\in\mathbb{R}^4$? What can you say about the solution to $A\mathbf{x}=\mathbf{0}$?</p>
+  </div>
+  </div>
+</div>
+
+<!-- AQ2 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q2</span></div>
+  <div class="q-body">
+    <p>Define two vectors $\mathbf{u}=(5,2,-3,0,1)$ and $\mathbf{v}=(2,7,1,-3,-1)$.</p>
+    <p class="sub">(i) Calculate the angle between these vectors.</p>
+    <p class="sub">(ii) Show that these vectors satisfy the Cauchy-Schwarz inequality and the triangle inequality.</p>
+    <p class="sub">(iii) Calculate the unit vectors in the direction of $\mathbf{u}$ and $\mathbf{v}$.</p>
+    <p class="sub">(iv) Calculate $\mathrm{proj}_\mathbf{v}\mathbf{u}$ and $\mathrm{proj}_\mathbf{u}\mathbf{v}$.</p>
+  </div>
+  </div>
+</div>
+
+<!-- AQ3 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q3</span></div>
+  <div class="q-body">
+    <p>Define two vectors $\mathbf{u}=(1,2,3)$ and $\mathbf{v}=(5,2,-2)$.</p>
+    <p class="sub">(i) Calculate $\mathrm{proj}_\mathbf{u}\mathbf{v}$, or the projection of $\mathbf{v}$ onto $\mathbf{u}$.</p>
+    <p class="sub">(ii) Calculate the unit vector $\hat{\mathbf{u}}$.</p>
+    <p class="sub">(iii) Calculate $\mathrm{proj}_{\hat{\mathbf{u}}}\mathbf{v}$, or the projection of $\mathbf{v}$ onto $\hat{\mathbf{u}}$. What do you find? Does this make sense?</p>
+  </div>
+  </div>
+</div>
+
+<!-- AQ4 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q4</span></div>
+  <div class="q-body">
+    <p>Define two vectors $\mathbf{u}=(4,2)$ and $\mathbf{v}=(1,3)$.</p>
+    <p class="sub">(i) Calculate the component of vector $\mathbf{v}$ in the direction $\mathbf{u}$ (i.e. $\mathrm{proj}_\mathbf{u}\mathbf{v}$).</p>
+    <p class="sub">(ii) Calculate the component of vector $\mathbf{v}$ that is perpendicular to $\mathbf{u}$. <em>Hint: start by finding a vector $\mathbf{w}$ perpendicular to $\mathbf{u}$.</em></p>
+    <p class="sub">(iii) Draw $\mathbf{u}$, $\mathbf{v}$, $\mathbf{w}$, $\mathrm{proj}_\mathbf{u}\mathbf{v}$ and $\mathrm{proj}_\mathbf{w}\mathbf{v}$ on one axis.</p>
+    <p class="sub">(iv) What do you find if you add $\mathrm{proj}_\mathbf{u}\mathbf{v}$ and $\mathrm{proj}_\mathbf{w}\mathbf{v}$?</p>
+  </div>
+  </div>
+</div>
+
+<!-- AQ5 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q5</span></div>
+  <div class="q-body">
+    <p>Define three vectors in $\mathbb{R}^3$: $\mathbf{u}=(2,-1,2)$, $\mathbf{v}=(4,4,4)$, and $\mathbf{w}=(1,1,0)$.</p>
+    <p class="sub">(a) Evaluate $\mathbf{u}\times\mathbf{v}$.</p>
+    <p class="sub">(b) What is the area of the parallelogram that has $\mathbf{u}$ and $\mathbf{v}$ as edges?</p>
+    <p class="sub">(c) What are the two unit vectors perpendicular to this parallelogram?</p>
+    <p class="sub">(d) What is the volume of the parallelepiped that has $\mathbf{u}$, $\mathbf{v}$, and $\mathbf{w}$ as edges? <em>(Bonus: try to sketch the shape.)</em></p>
+  </div>
+  </div>
+</div>
+
+<!-- AQ6 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q6</span></div>
+  <div class="q-body">
+    <p>Define three points in $\mathbb{R}^3$: $(1,1,1)$, $(2,2,2)$, and $(3,1,3)$.</p>
+    <p class="sub">(a) What is the vector $\mathbf{u}$ that joins $(1,1,1)$ and $(2,2,2)$?</p>
+    <p class="sub">(b) What is the vector $\mathbf{v}$ that joins $(1,1,1)$ and $(3,1,3)$?</p>
+    <p class="sub">(c) What is the area of the parallelogram that has these three points as vertices?</p>
+    <p class="sub">(d) What are the two unit vectors perpendicular to this parallelogram?</p>
+  </div>
+  </div>
+</div>
+
+<!-- AQ7 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q7</span></div>
+  <div class="q-body">
+    <p>Prove that for an $n\times n$ matrix $A$ and scalar $k$, $\det(kA) = k^n\det(A)$.</p>
+  </div>
+  </div>
+</div>
+
+<!-- AQ8 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q8</span></div>
+  <div class="q-body">
+    <p>Define a Cartesian coordinate system as having an $x$, $y$, and $z$ plane. Show using a cofactor expansion the cross product of any two vectors in the $x$-$y$ plane lies on the $z$-axis. Explain this geometrically.</p>
+  </div>
+  </div>
+</div>
+
+<!-- AQ9 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q9</span></div>
+  <div class="q-body">
+    <p>Prove that, given three vectors $\mathbf{u}$, $\mathbf{v}$, and $\mathbf{w}$ in $\mathbb{R}^3$,</p>
+    <p>$$\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = \mathbf{v}\cdot(\mathbf{w}\times\mathbf{u}) = \mathbf{w}\cdot(\mathbf{u}\times\mathbf{v}).$$</p>
+    <p>Is it also true that $\mathbf{u}\cdot(\mathbf{v}\times\mathbf{w}) = \mathbf{v}\cdot(\mathbf{u}\times\mathbf{w})$? If not, what does it equal?</p>
+    <p><em>Hint: the scalar triple product is a determinant, so you can apply determinant properties.</em></p>
+  </div>
+  </div>
+</div>
+
+<!-- AQ10 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q10</span></div>
+  <div class="q-body">
+    <p>Prove the Pythagorean identity</p>
+    <p>$$\|\mathbf{u}\times\mathbf{v}\|^2 + (\mathbf{u}\cdot\mathbf{v})^2 = \|\mathbf{u}\|^2\|\mathbf{v}\|^2.$$</p>
+    <p><em>Hint: there is a cross product property in the notes that involves the angle between the vectors.</em></p>
+  </div>
+  </div>
+</div>
+
+<!-- AQ11 -->
+<div class="card" data-card>
+  <div class="q-head"><span class="q-num">Q11</span></div>
+  <div class="q-body">
+    <p>An $n\times n$ matrix $A$ is created such that each row and each column contains a single one, and every other entry is zero. A $4\times4$ example is given by</p>
+    <p>$$A = \begin{pmatrix}0&1&0&0\\0&0&1&0\\1&0&0&0\\0&0&0&1\end{pmatrix}$$</p>
+    <p>In the previous example, the determinant of $A$ is $1$. Show that, no matter where the ones appear, the determinant of $A$ must be either $1$ or $-1$.</p>
+    <p>If, instead of ones, each row and column contains one nonzero element, let $p_i$ denote the nonzero element appearing in row $i$. Show that the determinant of $A$ must be either</p>
+    <p>$$\prod_{j=1}^n p_j \quad\text{or}\quad -\prod_{j=1}^n p_j.$$</p>
+  </div>
+  </div>
+</div>
+
+</main>
+
+<footer>DPEN141 Matrix and Vector Revision Test</footer>
+</body>
+</html>

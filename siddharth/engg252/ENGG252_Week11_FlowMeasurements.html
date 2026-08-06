@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flow Measurements</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG252 &middot; Engineering Fluid Mechanics &middot; Week 11</div>
+  <h1>Flow Measurements</h1>
+  <p>Pitot and Pitot-static tubes for point velocity measurement, Venturi and nozzle meters for flow rate via a smooth constriction, orifice meters and the vena contracta effect, and weirs for open-channel flow measurement including the V-notch weir used in this subject's own laboratory experiment. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 19 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this block's toolkit</span>
+  <ul>
+<li><strong>Pitot-static tube:</strong> $V=\sqrt{2(P_0-P)/\rho}$ &mdash; measures a single point velocity, not total flow rate.</li>
+<li><strong>Venturi/nozzle meters:</strong> $Q=C_dA_2\sqrt{2\Delta P/(\rho[1-(A_2/A_1)^2])}$, $C_d\approx0.95$-$0.99$ (smooth, low loss).</li>
+<li><strong>Orifice meters:</strong> same governing formula, but $C_d\approx0.6$-$0.65$ due to the sharp-edged vena contracta effect.</li>
+<li><strong>Weirs</strong> measure open-channel flow from upstream head alone: rectangular $Q\propto H^{3/2}$; V-notch $Q\propto H^{5/2}$ (more sensitive at low flow).</li>
+<li><strong>Device choice</strong> trades off accuracy, permanent pressure loss, and cost &mdash; Venturi (best accuracy, highest cost) through orifice (cheapest, most loss) to weirs (open-channel only).</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Pitot &amp; Pitot-Static Tubes</a></li>
+<li><a href="#sec1">Venturi &amp; Nozzle Meters</a></li>
+<li><a href="#sec2">Orifice Meters</a></li>
+<li><a href="#sec3">Weirs</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+<div class="section-title"><span class="tag">0</span> Pitot &amp; Pitot-Static Tubes</div>
+
+<div class="prose">
+<p>A <strong>Pitot tube</strong> measures <strong>stagnation pressure</strong> $P_0$ by facing directly into the flow, bringing a small stream of fluid to rest at its tip: $P_0=P+\dfrac12\rho V^2$ (Bernoulli, Week 6). A <strong>Pitot-static tube</strong> combines this with a separate <strong>static pressure</strong> tap (small holes on the side of the probe, parallel to the flow, unaffected by the flow's velocity) in a single instrument, directly measuring the <strong>difference</strong> $P_0-P=\dfrac12\rho V^2$ &mdash; from which velocity is found directly: $V=\sqrt{\dfrac{2(P_0-P)}{\rho}}$.</p>
+<p>This pressure difference is typically measured using a manometer (Week 3) connected between the stagnation and static ports. Pitot-static tubes are widely used for <strong>point</strong> velocity measurements (a single location in the flow, e.g. aircraft airspeed indicators, or traversing across a pipe/duct to map the full velocity profile) rather than for total flow rate directly &mdash; contrast this with the Venturi/orifice/nozzle meters (Sections 1&ndash;2), which measure flow rate directly.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$P_0=P+\frac12\rho V^2 \qquad V=\sqrt{\frac{2(P_0-P)}{\rho}} \qquad \text{(Pitot-static tube, point velocity measurement)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A Pitot-static tube in an airflow ($\rho=1.2\ \text{kg/m}^3$) is connected to a water manometer, reading a column height difference of 15 mm. Find the local air velocity.</p>
+<p class="step">Manometer pressure difference: $\Delta P=\rho_{\text{water}}gh=1000(9.81)(0.015)=147.15\ \text{Pa}$.</p>
+<p class="step">$V=\sqrt{2\Delta P/\rho_{\text{air}}}=\sqrt{2(147.15)/1.2}=\sqrt{245.25}=15.66\ \text{m/s}$.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A Pitot-static tube in water flow measures a pressure difference of 800 Pa. Find the local velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V=\sqrt{2(800)/1000}=\sqrt{1.6}=1.265\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A Pitot-static tube in an airflow ($\rho=1.225\ \text{kg/m}^3$) measures a pressure difference of 250 Pa. Find the local velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V=\sqrt{2(250)/1.225}=\sqrt{408.2}=20.2\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A Pitot-static tube in an airflow is connected to a mercury manometer ($SG=13.6$), reading a column height difference of 5 mm, with air density 1.2 kg/m$^3$. Find the local velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\Delta P=13600(9.81)(0.005)=666.8\ \text{Pa}$. $V=\sqrt{2(666.8)/1.2}=\sqrt{1111.3}=33.3\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A Pitot-static tube is traversed across a pipe's diameter, reading the highest velocity (60 m/s) at the centreline and progressively lower velocities toward the wall. Explain what this traverse is being used to determine, and why a single Pitot reading at one location (e.g. the centreline alone) would NOT give the average velocity needed for a flow-rate calculation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>This traverse (multiple point measurements across the pipe cross-section) is used to map out the actual, non-uniform velocity profile (Week 6, Section 1), from which the true area-averaged velocity $V_{\text{avg}}$ (and hence the total volume flow rate $Q=V_{\text{avg}}A$) can be determined by appropriately integrating/averaging the measured local velocities across the full cross-section. A single reading at the centreline alone would only give the MAXIMUM (centreline) velocity, which (as established in Weeks 6 and 9) is always somewhat larger than the true average velocity &mdash; using it directly in $Q=u_{\max}A$ would systematically overestimate the true flow rate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Explain why the static pressure port on a Pitot-static tube is positioned with small holes ALONG the SIDE of the probe (parallel to the flow direction), rather than facing into the flow like the stagnation port.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The static pressure is defined as the pressure the fluid would have if it were simply flowing past undisturbed, without being brought to rest or otherwise locally accelerated/decelerated by the measuring instrument itself. Positioning small holes along the side of the probe, parallel to the local flow direction, allows the fluid to continue flowing smoothly past these ports without being significantly disturbed or decelerated, so the pressure sensed there closely approximates the true, undisturbed local static pressure &mdash; in contrast to the forward-facing stagnation port, which is deliberately designed to bring the flow to a complete local stop, directly converting its kinetic energy into the elevated stagnation pressure being measured.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+<div class="section-title"><span class="tag">1</span> Venturi &amp; Nozzle Meters</div>
+
+<div class="prose">
+<p>A <strong>Venturi meter</strong> (introduced in Week 6, Section 3) measures total <strong>volume flow rate</strong> (not just a point velocity) from the pressure drop across a smooth, gradual constriction: combining Bernoulli and continuity (Week 6) gives $$Q_{\text{ideal}}=A_2\sqrt{\dfrac{2(P_1-P_2)}{\rho\left[1-(A_2/A_1)^2\right]}}$$ A real Venturi meter has some small friction loss, accounted for by a <strong>discharge coefficient</strong> $C_d$ (typically 0.95&ndash;0.99, very close to 1, reflecting the smooth, low-loss Venturi geometry): $Q_{\text{actual}}=C_dQ_{\text{ideal}}$.</p>
+<p>A <strong>flow nozzle</strong> works on the identical principle (a smooth, contoured constriction, though shorter and simpler to manufacture than a full Venturi, with a somewhat higher permanent pressure loss and correspondingly slightly lower $C_d$, typically 0.95&ndash;0.98) &mdash; both devices use exactly the same governing formula, differing mainly in their specific geometry, manufacturing cost, and permanent pressure-loss characteristics.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$Q_{\text{ideal}}=A_2\sqrt{\frac{2(P_1-P_2)}{\rho\left[1-(A_2/A_1)^2\right]}} \qquad Q_{\text{actual}}=C_dQ_{\text{ideal}} \quad (C_d\approx0.95\text{&ndash;}0.99)$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A Venturi meter (approach diameter 150 mm, throat diameter 75 mm, $C_d=0.97$) measures a pressure drop of 40 kPa in water flow. Find the actual volume flow rate.</p>
+<p class="step">$A_1=\pi(0.075)^2=0.01767\ \text{m}^2$, $A_2=\pi(0.0375)^2=4.418\times10^{-3}\ \text{m}^2$. $A_2/A_1=0.25\Rightarrow(A_2/A_1)^2=0.0625$.</p>
+<p class="step">$Q_{\text{ideal}}=A_2\sqrt{\dfrac{2(40000)}{1000(1-0.0625)}}=4.418\times10^{-3}\sqrt{\dfrac{80000}{937.5}}=4.418\times10^{-3}\sqrt{85.33}=4.418\times10^{-3}(9.238)=0.0408\ \text{m}^3/\text{s}$. $Q_{\text{actual}}=0.97(0.0408)=0.0396\ \text{m}^3/\text{s}=39.6$ L/s.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>A Venturi meter (approach diameter 100 mm, throat diameter 50 mm) measures a pressure drop of 20 kPa in water flow, $C_d=0.98$. Find $Q_{\text{ideal}}$ and $Q_{\text{actual}}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A_1=7.854\times10^{-3}\ \text{m}^2$, $A_2=1.963\times10^{-3}\ \text{m}^2$, $(A_2/A_1)^2=0.0625$. $Q_{\text{ideal}}=1.963\times10^{-3}\sqrt{2(20000)/(1000\times0.9375)}=1.963\times10^{-3}\sqrt{42.67}=1.963\times10^{-3}(6.533)=0.01283\ \text{m}^3/\text{s}$. $Q_{\text{actual}}=0.98(0.01283)=0.01257\ \text{m}^3/\text{s}=12.6$ L/s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A flow nozzle has $C_d=0.96$ and an ideal flow rate calculation of $0.025\ \text{m}^3/\text{s}$. Find the actual flow rate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$Q_{\text{actual}}=0.96(0.025)=0.024\ \text{m}^3/\text{s}=24$ L/s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A Venturi meter measures an actual flow rate of 30 L/s with $C_d=0.97$. Find the ideal (theoretical, frictionless) flow rate the same pressure drop would predict.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$Q_{\text{ideal}}=Q_{\text{actual}}/C_d=30/0.97=30.9$ L/s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Explain why the discharge coefficient $C_d$ for a Venturi meter is always slightly LESS than 1 (i.e. $Q_{\text{actual}}<Q_{\text{ideal}}$), even though a Venturi is specifically designed to be a low-friction-loss device.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The ideal flow rate formula is derived assuming perfectly frictionless (inviscid) flow, exactly satisfying Bernoulli's equation with no energy loss whatsoever between the approach section and the throat. Even a well-designed, smooth Venturi meter still has some small but nonzero viscous friction along its walls and minor internal flow non-idealities (the flow is never perfectly frictionless in reality); this small friction loss means the actual measured pressure drop for a given flow rate is very slightly larger than the ideal (frictionless) theory would predict, which translates to a very slightly LOWER actual flow rate than the ideal formula would suggest for that same measured pressure drop &mdash; hence $C_d$ is always just under 1, even for a well-designed, low-loss instrument.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Explain why a Venturi meter's throat (the narrowest section) is the specific location where pressure is measured for flow-rate determination, rather than measuring pressure at some other arbitrary point along the constriction.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The throat is where the flow reaches its highest velocity (smallest cross-sectional area, by continuity), and correspondingly its lowest pressure (by Bernoulli's equation) &mdash; producing the LARGEST possible pressure difference relative to the approach section, for a given flow rate. A larger pressure difference is easier to measure accurately and with less relative uncertainty (a small absolute measurement error contributes a smaller fractional error to a larger reading), which is exactly why the throat (the point of maximum velocity/minimum pressure) is the standard, optimal measurement location for maximising the accuracy and sensitivity of the flow-rate determination.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+<div class="section-title"><span class="tag">2</span> Orifice Meters</div>
+
+<div class="prose">
+<p>An <strong>orifice meter</strong> is the simplest and cheapest flow-measurement device: a flat plate with a precisely-machined circular hole, inserted into a pipe flow, creating a sharp-edged constriction. Governed by the identical underlying formula as the Venturi/nozzle meters (Section 1), but with a significantly <strong>lower</strong> discharge coefficient (typically $C_d\approx0.6$&ndash;$0.65$) reflecting the much greater energy loss from the abrupt, sharp-edged constriction (as previewed conceptually in Week 10, Section 2's entrance-loss discussion).</p>
+<p>The dominant physical reason for the low $C_d$: flow separates sharply at the orifice's edge, forming a <strong>vena contracta</strong> (a further, additional narrowing of the actual jet downstream of the physical orifice opening, where the true minimum flow area is smaller than the orifice's own geometric area) &mdash; a combination of this jet-contraction effect and genuine frictional/turbulent energy loss together account for the substantially lower discharge coefficient compared to the smoothly contoured Venturi and nozzle meters.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$Q_{\text{actual}}=C_dA_o\sqrt{\frac{2(P_1-P_2)}{\rho\left[1-(A_o/A_1)^2\right]}} \qquad C_{d,\text{orifice}}\approx0.6\text{&ndash;}0.65 \quad \text{(much lower than Venturi/nozzle, due to the vena contracta)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> An orifice meter (pipe diameter 100 mm, orifice diameter 40 mm, $C_d=0.62$) measures a pressure drop of 35 kPa in water flow. Find the actual flow rate.</p>
+<p class="step">$A_1=\pi(0.050)^2=7.854\times10^{-3}\ \text{m}^2$, $A_o=\pi(0.020)^2=1.257\times10^{-3}\ \text{m}^2$. $(A_o/A_1)^2=(0.16)^2=0.0256$.</p>
+<p class="step">$Q_{\text{actual}}=0.62(1.257\times10^{-3})\sqrt{\dfrac{2(35000)}{1000(1-0.0256)}}=7.79\times10^{-4}\sqrt{71.87}=7.79\times10^{-4}(8.478)=6.60\times10^{-3}\ \text{m}^3/\text{s}=6.60$ L/s.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>An orifice meter (pipe diameter 80 mm, orifice diameter 35 mm, $C_d=0.61$) measures a pressure drop of 22 kPa in water. Find the actual flow rate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A_1=5.027\times10^{-3}\ \text{m}^2$, $A_o=9.621\times10^{-4}\ \text{m}^2$. $A_o/A_1=0.1914$, $(A_o/A_1)^2=0.0366$. $Q=0.61(9.621\times10^{-4})\sqrt{2(22000)/(1000\times0.9634)}=5.869\times10^{-4}\sqrt{45.67}=5.869\times10^{-4}(6.758)=3.966\times10^{-3}\ \text{m}^3/\text{s}=3.97$ L/s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Compare, for the same pipe/orifice geometry and pressure drop, the flow rate predicted by an orifice meter ($C_d=0.62$) versus a Venturi meter ($C_d=0.97$) — find the ratio.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $Q\propto C_d$ (all else equal), the ratio is simply $0.62/0.97=0.639$ &mdash; the orifice meter would indicate (and actually pass) substantially less flow than a Venturi meter for the identical measured pressure drop, due to its much greater internal energy loss.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Explain why an orifice meter, despite being significantly less accurate and having a much higher permanent pressure loss than a Venturi meter, remains widely used in industrial practice.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>An orifice meter is dramatically simpler and cheaper to manufacture and install than a Venturi meter (essentially just a flat, drilled plate clamped between pipe flanges, versus a Venturi's precisely contoured, gradually-varying internal geometry), and orifice plates are also easy to remove, inspect, clean, or replace with a different-sized orifice if flow-rate requirements change. For many industrial applications where the higher permanent pressure loss (and correspondingly greater pumping energy cost) is an acceptable trade-off against the much lower capital/installation cost and greater flexibility, the orifice meter remains the most practical and widely used choice, despite Venturi meters offering better accuracy and lower permanent pressure loss.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Explain the physical origin of the "vena contracta" downstream of an orifice plate, and why it means the TRUE minimum flow area is actually smaller than the orifice's own physical (geometric) opening area.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>As fluid approaching the sharp-edged orifice converges toward the opening, its streamlines cannot turn the sharp corner at the orifice's edge instantaneously; instead, the flow continues to converge somewhat further downstream of the physical orifice plate itself before reaching its narrowest point, due to the fluid's own momentum carrying it inward past the edge of the hole. This means the jet's TRUE minimum cross-sectional area (the vena contracta) occurs a short distance downstream of the orifice plate and is smaller than the plate's own drilled opening area &mdash; a purely geometric/inertial flow-contraction effect (distinct from, and in addition to, genuine frictional/turbulent energy losses), both of which combine to give the orifice meter's characteristically low discharge coefficient.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+<div class="section-title"><span class="tag">3</span> Weirs</div>
+
+<div class="prose">
+<p>A <strong>weir</strong> is an obstruction placed across an open channel (e.g. a river, canal, or laboratory flume) over which water flows, with flow rate determined purely from the measured <strong>upstream head</strong> $H$ (depth of water above the weir crest) &mdash; the standard method for measuring flow rate in open-channel (free-surface) systems, as opposed to the closed-pipe devices of Sections 0&ndash;2.</p>
+<p>A <strong>rectangular weir</strong> (full-width, sharp-crested) follows $Q=C_d\dfrac23\sqrt{2g}\,LH^{3/2}$ (where $L$ is the weir's crest width). A <strong>V-notch (triangular) weir</strong> &mdash; particularly well suited to measuring small flow rates with good accuracy and sensitivity, and the specific weir type used in this subject's own laboratory experiment (Week 3's outline: "Head-Discharge Relation for V-notch Weir") &mdash; follows $Q=C_d\dfrac8{15}\sqrt{2g}\,\tan\left(\dfrac\theta2\right)H^{5/2}$, where $\theta$ is the full notch angle. The <strong>much steeper power</strong> ($H^{5/2}$ vs $H^{3/2}$) makes the V-notch weir especially sensitive at low flow rates, since a given percentage change in $Q$ requires a smaller, more easily and precisely measured change in $H$.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$Q_{\text{rectangular}}=C_d\frac23\sqrt{2g}\,LH^{3/2} \qquad Q_{\text{V-notch}}=C_d\frac8{15}\sqrt{2g}\,\tan\left(\frac\theta2\right)H^{5/2}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A $90\,{}^\circ$ V-notch weir ($C_d=0.62$) has an upstream head of $H=0.15$ m. Find the flow rate.</p>
+<p class="step">$\tan(\theta/2)=\tan(45\,{}^\circ)=1.0$.</p>
+<p class="step">$Q=0.62\times\dfrac8{15}\sqrt{2(9.81)}\times1.0\times(0.15)^{5/2}=0.62(0.5333)(4.429)(0.008714)=0.01277\ \text{m}^3/\text{s}=12.8$ L/s.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A rectangular weir ($C_d=0.62$, crest length 0.5 m) has an upstream head of $H=0.2$ m. Find the flow rate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$Q=0.62(2/3)\sqrt{19.62}(0.5)(0.2)^{1.5}=0.62(0.6667)(4.429)(0.5)(0.0894)=0.0817\ \text{m}^3/\text{s}=81.7$ L/s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A $60\,{}^\circ$ V-notch weir ($C_d=0.60$) has an upstream head of $H=0.12$ m. Find the flow rate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tan(30\,{}^\circ)=0.5774$. $Q=0.60(8/15)\sqrt{19.62}(0.5774)(0.12)^{2.5}=0.60(0.5333)(4.429)(0.5774)(0.004988)=0.004072\ \text{m}^3/\text{s}=4.07$ L/s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>For the $90\,{}^\circ$ V-notch weir in the worked example ($C_d=0.62$), find the flow rate if the head increases to $H=0.20$ m, and compare to the original flow rate at $H=0.15$ m by finding the ratio.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$Q\propto H^{2.5}$, so ratio $=(0.20/0.15)^{2.5}=(1.333)^{2.5}=2.055$ &mdash; a 33% increase in head produces roughly a doubling of flow rate, illustrating the strong ($H^{5/2}$) sensitivity of V-notch weirs.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Explain, using the different exponents in each formula ($H^{3/2}$ for rectangular vs $H^{5/2}$ for V-notch), why a V-notch weir is particularly well suited to measuring SMALL flow rates accurately, compared to a rectangular weir.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For a V-notch weir, the flow area available at a given head $H$ shrinks toward zero as $H\to0$ (since the notch itself comes to a point at the bottom), whereas a rectangular weir maintains its full crest width $L$ even for very small $H$. This means that at small flow rates, a V-notch weir requires a comparatively larger, more easily and precisely measurable head $H$ to pass a given (small) flow rate than a rectangular weir would &mdash; directly reflected in the V-notch's steeper $H^{5/2}$ dependence (versus the rectangular weir's more gradual $H^{3/2}$), giving better measurement resolution and accuracy specifically at low flow rates, which is exactly why V-notch weirs are the preferred choice for precise small-flow measurement applications (including the laboratory experiment referenced in this subject's outline).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Explain why weirs are the standard flow-measurement method for OPEN CHANNEL (free-surface) flows, while Venturi meters, orifice meters, and Pitot tubes (Sections 0-2) are used for CLOSED PIPE flows, referencing the fundamental difference in how each device measures flow.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Venturi meters, orifice meters, and Pitot tubes all rely on measuring a PRESSURE difference within an enclosed, fully-flowing pipe (where the fluid completely fills the cross-section and pressure can meaningfully be measured at distinct points using the pipe walls as reference). An open channel flow, by contrast, has a free surface exposed to atmospheric pressure throughout, meaning there is no meaningful internal pressure difference to measure in the same way; a weir instead works by creating a direct, calibrated relationship between the easily-measured upstream water DEPTH (head, a purely geometric/visual quantity, readable even with a simple ruler or gauge) and the resulting flow rate, making it the natural and standard measurement approach specifically suited to free-surface, open-channel flow conditions.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>ENGG252 Engineering Fluid Mechanics &middot; Week 11 &middot; 19 practice problems</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

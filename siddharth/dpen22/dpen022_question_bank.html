@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DPEN022 — Calc1 Question Bank</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC;
+  --grid:#E1DBC8;
+  --ink:#1E2A42;
+  --ink-soft:#4A5570;
+  --accent:#C1440E;
+  --accent-soft:#E8C9B8;
+  --correct:#2F6B4F;
+  --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:Georgia, 'Times New Roman', serif;
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px,
+    var(--paper);
+  color:var(--ink);
+  min-height:100vh;
+}
+.wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px;}
+header{
+  border-bottom:3px solid var(--ink);
+  padding-bottom:14px;
+  margin-bottom:20px;
+}
+header h1{
+  font-size:1.7rem;
+  margin:0 0 4px;
+  letter-spacing:0.5px;
+}
+header .sub{
+  font-family:'Trebuchet MS', sans-serif;
+  color:var(--ink-soft);
+  font-size:0.92rem;
+}
+nav.topics{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:16px;
+}
+nav.topics button{
+  font-family:'Trebuchet MS', sans-serif;
+  font-size:0.82rem;
+  padding:8px 12px;
+  border:1.5px solid var(--ink);
+  background:var(--paper);
+  color:var(--ink);
+  border-radius:3px;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+nav.topics button.active{
+  background:var(--ink);
+  color:var(--paper);
+}
+nav.topics button:hover:not(.active){
+  background:var(--accent-soft);
+}
+.setbar{
+  display:flex;
+  gap:6px;
+  margin-bottom:18px;
+  align-items:center;
+  font-family:'Trebuchet MS', sans-serif;
+}
+.setbar .label{
+  font-size:0.8rem;
+  color:var(--ink-soft);
+  margin-right:6px;
+}
+.setbar button{
+  width:34px;height:34px;
+  border-radius:50%;
+  border:1.5px solid var(--accent);
+  background:var(--paper);
+  color:var(--accent);
+  font-weight:bold;
+  cursor:pointer;
+}
+.setbar button.active{
+  background:var(--accent);
+  color:#fff;
+}
+.progress{
+  font-family:'Trebuchet MS', sans-serif;
+  font-size:0.78rem;
+  color:var(--ink-soft);
+  margin-left:auto;
+}
+.qcard{
+  background:#FFFEFB;
+  border:1px solid var(--grid);
+  border-left:4px solid var(--accent);
+  border-radius:2px;
+  padding:14px 16px;
+  margin-bottom:10px;
+}
+.qcard .qnum{
+  font-family:'Trebuchet MS', sans-serif;
+  font-size:0.72rem;
+  color:var(--accent);
+  font-weight:bold;
+  letter-spacing:1px;
+}
+.qcard .qtext{
+  margin:6px 0 8px;
+  font-size:1.02rem;
+  line-height:1.5;
+}
+.qcard button.reveal{
+  font-family:'Trebuchet MS', sans-serif;
+  font-size:0.76rem;
+  background:none;
+  border:1px solid var(--ink-soft);
+  color:var(--ink-soft);
+  padding:4px 10px;
+  border-radius:12px;
+  cursor:pointer;
+}
+.qcard .answer{
+  display:none;
+  margin-top:10px;
+  padding:10px 12px;
+  background:var(--correct-bg);
+  border-left:3px solid var(--correct);
+  border-radius:2px;
+  font-size:0.95rem;
+  color:#20402d;
+}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{
+  text-align:center;
+  font-family:'Trebuchet MS', sans-serif;
+  font-size:0.78rem;
+  color:var(--ink-soft);
+  margin-top:24px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>DPEN022 Question Bank</h1>
+  <div class="sub">Calculus 1 · Differentiation &amp; Integration · 6 topics · 4 sets · 12 questions each</div>
+</header>
+<nav class="topics" id="topicNav"></nav>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Mixed difficulty within each set · Tap a question to reveal the answer</footer>
+</div>
+
+<script>
+const DATA = {
+"Limits &amp; Definition of Derivative": [
+[
+["Evaluate \\(\\lim_{x\\to 3}\\dfrac{x^2-9}{x-3}\\)","Factor: \\((x-3)(x+3)/(x-3)\\to x+3\\). Answer: \\(6\\)"],
+["Evaluate \\(\\lim_{x\\to 0}\\dfrac{\\sin x}{x}\\)","Standard limit. Answer: \\(1\\)"],
+["Evaluate \\(\\lim_{x\\to 2}\\dfrac{x^2-4}{x-2}\\)","Factor and cancel. Answer: \\(4\\)"],
+["Evaluate \\(\\lim_{x\\to\\infty}\\dfrac{3x^2+2}{x^2-1}\\)","Divide by \\(x^2\\). Answer: \\(3\\)"],
+["Use the definition of the derivative to find \\(f'(3)\\) for \\(f(x)=x^2\\)","\\(\\lim_{h\\to0}\\frac{(3+h)^2-9}{h}=\\lim_{h\\to0}(6+h)\\). Answer: \\(6\\)"],
+["Evaluate \\(\\lim_{x\\to 1}\\dfrac{x^3-1}{x-1}\\)","Factor \\(x^3-1=(x-1)(x^2+x+1)\\). Answer: \\(3\\)"],
+["Evaluate \\(\\lim_{x\\to 0}\\dfrac{1-\\cos x}{x}\\)","Standard limit. Answer: \\(0\\)"],
+["Evaluate \\(\\lim_{x\\to 4}\\dfrac{\\sqrt{x}-2}{x-4}\\)","Multiply by conjugate \\(\\sqrt{x}+2\\). Answer: \\(\\tfrac14\\)"],
+["Evaluate \\(\\lim_{x\\to 0^+}\\dfrac1x\\)","As \\(x\\to0^+\\), \\(1/x\\to\\infty\\). Answer: does not exist (\\(+\\infty\\))"],
+["Evaluate \\(\\lim_{x\\to\\infty}\\dfrac{5x-7}{2x+3}\\)","Divide by \\(x\\). Answer: \\(\\tfrac52\\)"],
+["Use the definition of the derivative to find \\(f'(x)\\) for \\(f(x)=x^2\\)","\\(\\lim_{h\\to0}\\frac{(x+h)^2-x^2}{h}=\\lim_{h\\to0}(2x+h)\\). Answer: \\(2x\\)"],
+["Evaluate \\(\\lim_{x\\to 0}\\dfrac{e^x-1}{x}\\)","Standard limit (derivative of \\(e^x\\) at 0). Answer: \\(1\\)"]
+],
+[
+["Evaluate \\(\\lim_{x\\to 5}\\dfrac{x^2-25}{x-5}\\)","Factor and cancel. Answer: \\(10\\)"],
+["Evaluate \\(\\lim_{x\\to 0}\\dfrac{\\tan x}{x}\\)","Rewrite as \\(\\frac{\\sin x}{x}\\cdot\\frac1{\\cos x}\\). Answer: \\(1\\)"],
+["Evaluate \\(\\lim_{x\\to -2}\\dfrac{x^2-4}{x+2}\\)","Factor: \\((x-2)(x+2)/(x+2)\\to x-2\\). Answer: \\(-4\\)"],
+["Evaluate \\(\\lim_{x\\to\\infty}\\dfrac{4x^3-x}{2x^3+5}\\)","Divide by \\(x^3\\). Answer: \\(2\\)"],
+["Use the definition of the derivative to find \\(f'(x)\\) for \\(f(x)=3x+2\\)","\\(\\lim_{h\\to0}\\frac{3(x+h)+2-(3x+2)}{h}=3\\). Answer: \\(3\\)"],
+["Evaluate \\(\\lim_{x\\to 2}\\dfrac{x^3-8}{x-2}\\)","Factor \\(x^3-8=(x-2)(x^2+2x+4)\\). Answer: \\(12\\)"],
+["Evaluate \\(\\lim_{x\\to 0}\\dfrac{\\sin 3x}{x}\\)","Multiply top and bottom by 3. Answer: \\(3\\)"],
+["Evaluate \\(\\lim_{x\\to 9}\\dfrac{\\sqrt{x}-3}{x-9}\\)","Conjugate trick. Answer: \\(\\tfrac16\\)"],
+["Evaluate \\(\\lim_{x\\to 0^-}\\dfrac1x\\)","As \\(x\\to0^-\\), \\(1/x\\to-\\infty\\). Answer: does not exist (\\(-\\infty\\))"],
+["Evaluate \\(\\lim_{x\\to\\infty}\\dfrac{7x^2+1}{3x^2-x}\\)","Divide by \\(x^2\\). Answer: \\(\\tfrac73\\)"],
+["Is \\(f(x)=|x|\\) differentiable at \\(x=0\\)?","Left derivative \\(=-1\\), right derivative \\(=1\\); they disagree. Answer: no"],
+["Evaluate \\(\\lim_{x\\to 1}\\dfrac{x^2+x-2}{x-1}\\)","Factor: \\((x-1)(x+2)/(x-1)\\to x+2\\). Answer: \\(3\\)"]
+],
+[
+["Evaluate \\(\\lim_{x\\to 0}\\dfrac{\\cos x-1}{x^2}\\)","Standard limit. Answer: \\(-\\tfrac12\\)"],
+["Evaluate \\(\\lim_{x\\to\\infty}\\dfrac{\\sqrt{x^2+1}}{x}\\)","Divide inside root by \\(x^2\\). Answer: \\(1\\)"],
+["Evaluate \\(\\lim_{x\\to 3}\\dfrac{x^2-2x-3}{x-3}\\)","Factor: \\((x-3)(x+1)/(x-3)\\to x+1\\). Answer: \\(4\\)"],
+["Use the definition of the derivative to find \\(f'(x)\\) for \\(f(x)=1/x\\)","\\(\\lim_{h\\to0}\\frac{1/(x+h)-1/x}{h}=\\lim_{h\\to0}\\frac{-1}{x(x+h)}\\). Answer: \\(-1/x^2\\)"],
+["Evaluate \\(\\lim_{x\\to 0}\\dfrac{\\sin 5x}{\\sin 2x}\\)","Rewrite each as \\(\\frac{\\sin kx}{kx}\\cdot kx\\). Answer: \\(\\tfrac52\\)"],
+["Evaluate \\(\\lim_{x\\to -1}\\dfrac{x^3+1}{x+1}\\)","Factor \\(x^3+1=(x+1)(x^2-x+1)\\). Answer: \\(3\\)"],
+["Evaluate \\(\\lim_{x\\to 4}\\dfrac{x-4}{\\sqrt{x}-2}\\)","Factor top as \\((\\sqrt x-2)(\\sqrt x+2)\\). Answer: \\(4\\)"],
+["Evaluate \\(\\lim_{x\\to\\infty}\\dfrac{2x-1}{\\sqrt{x^2+1}}\\)","Divide by \\(x\\). Answer: \\(2\\)"],
+["Is \\(f(x)=x^{1/3}\\) differentiable at \\(x=0\\)?","\\(f'(x)=\\frac13x^{-2/3}\\to\\infty\\) as \\(x\\to0\\) (vertical tangent). Answer: no"],
+["Use the definition of the derivative to evaluate \\(\\lim_{h\\to0}\\dfrac{(2+h)^3-8}{h}\\)","This is \\(f'(2)\\) for \\(f(x)=x^3\\), i.e. \\(3x^2\\) at \\(x=2\\). Answer: \\(12\\)"],
+["Evaluate \\(\\lim_{x\\to 0} x\\sin(1/x)\\)","Squeeze theorem: bounded by \\(|x|\\to0\\). Answer: \\(0\\)"],
+["Evaluate \\(\\lim_{x\\to 2}\\dfrac{1/x-1/2}{x-2}\\)","Combine fractions: \\(\\frac{(2-x)/(2x)}{x-2}=\\frac{-1}{2x}\\). Answer: \\(-\\tfrac14\\)"]
+],
+[
+["Evaluate \\(\\lim_{x\\to 0}\\dfrac{1-\\cos 2x}{x^2}\\)","Standard limit with \\(k=2\\): \\(\\frac{k^2}{2}\\). Answer: \\(2\\)"],
+["Evaluate \\(\\lim_{x\\to\\infty}\\dfrac{x^2-3x}{x-5}\\)","Numerator grows faster than denominator. Answer: does not exist (\\(\\infty\\))"],
+["Evaluate \\(\\lim_{x\\to 6}\\dfrac{x^2-36}{x-6}\\)","Factor and cancel. Answer: \\(12\\)"],
+["Use the definition of the derivative to find \\(f'(x)\\) for \\(f(x)=\\sqrt{x}\\)","Rationalise the difference quotient. Answer: \\(\\dfrac{1}{2\\sqrt x}\\)"],
+["Evaluate \\(\\lim_{x\\to 0}\\dfrac{e^{2x}-1}{x}\\)","Multiply/divide by 2, use standard limit. Answer: \\(2\\)"],
+["Evaluate \\(\\lim_{x\\to 3}\\dfrac{x^3-27}{x^2-9}\\)","Factor both: \\(\\frac{(x-3)(x^2+3x+9)}{(x-3)(x+3)}\\). Answer: \\(\\tfrac{9}{2}\\)"],
+["Evaluate \\(\\lim_{x\\to 0}\\dfrac{\\tan 4x}{\\sin 2x}\\)","Rewrite using standard limits with \\(k=4\\) and \\(k=2\\). Answer: \\(2\\)"],
+["Is \\(f(x)=x^2\\) for \\(x<1\\), \\(f(x)=2x-1\\) for \\(x\\ge1\\) differentiable at \\(x=1\\)?","Both pieces give \\(f'(1)=2\\) and \\(f(1)=1\\) matches. Answer: yes, differentiable"],
+["Evaluate \\(\\lim_{x\\to\\infty}\\dfrac{\\ln x}{x}\\)","Growth of \\(\\ln x\\) is slower than \\(x\\). Answer: \\(0\\)"],
+["Use the definition of the derivative to evaluate \\(\\lim_{h\\to0}\\dfrac{\\sin(\\pi/6+h)-\\sin(\\pi/6)}{h}\\)","This is \\(\\cos(\\pi/6)\\). Answer: \\(\\tfrac{\\sqrt3}{2}\\)"],
+["Evaluate \\(\\lim_{x\\to 0}\\dfrac{\\sqrt{1+x}-1}{x}\\)","Conjugate trick, or recognise as derivative of \\(\\sqrt{1+x}\\) at 0. Answer: \\(\\tfrac12\\)"],
+["Evaluate \\(\\lim_{x\\to 1}\\dfrac{x^4-1}{x-1}\\)","Factor \\(x^4-1=(x-1)(x^3+x^2+x+1)\\). Answer: \\(4\\)"]
+]
+],
+"Power / Product / Quotient / Chain Rule": [
+[
+["Differentiate \\(f(x)=x^5\\)","Power rule. Answer: \\(5x^4\\)"],
+["Differentiate \\(f(x)=3x^4-2x^2+7\\)","Term by term. Answer: \\(12x^3-4x\\)"],
+["Differentiate \\(f(x)=(x^2+1)(x^3-2)\\)","Product rule: \\(2x(x^3-2)+(x^2+1)(3x^2)\\). Answer: \\(5x^4+3x^2-4x\\)"],
+["Differentiate \\(f(x)=\\dfrac{x}{x+1}\\)","Quotient rule. Answer: \\(\\dfrac{1}{(x+1)^2}\\)"],
+["Differentiate \\(f(x)=(2x+3)^5\\)","Chain rule. Answer: \\(10(2x+3)^4\\)"],
+["Differentiate \\(f(x)=\\sqrt{3x^2+1}\\)","Chain rule. Answer: \\(\\dfrac{3x}{\\sqrt{3x^2+1}}\\)"],
+["Differentiate \\(f(x)=(x^2-3)^4(x+1)\\)","Product + chain rule. Answer: \\(4(x^2-3)^3(2x)(x+1)+(x^2-3)^4\\)"],
+["Differentiate \\(f(x)=\\dfrac{x-1}{x^2+2}\\)","Quotient rule. Answer: \\(\\dfrac{-x^2+2x+2}{(x^2+2)^2}\\)"],
+["Find \\(f'(2)\\) for \\(f(x)=\\sqrt{x^3+1}\\)","\\(f'(x)=\\dfrac{3x^2}{2\\sqrt{x^3+1}}\\); at \\(x=2\\): \\(\\dfrac{12}{6}\\). Answer: \\(2\\)"],
+["Differentiate \\(f(x)=x^2\\sqrt{x+1}\\)","Product + chain rule. Answer: \\(2x\\sqrt{x+1}+\\dfrac{x^2}{2\\sqrt{x+1}}\\)"],
+["Differentiate \\(f(x)=\\dfrac{1}{(x^3+2)^2}\\)","Chain rule on negative power. Answer: \\(\\dfrac{-6x^2}{(x^3+2)^3}\\)"],
+["Differentiate \\(f(x)=(2x-1)^3(3x+2)^2\\)","Product + chain rule. Answer: \\(6(2x-1)^2(3x+2)^2+6(2x-1)^3(3x+2)\\)"]
+],
+[
+["Differentiate \\(f(x)=x^7-4x^3\\)","Power rule. Answer: \\(7x^6-12x^2\\)"],
+["Differentiate \\(f(x)=(2x+1)(x^2-3)\\)","Product rule. Answer: \\(6x^2+2x-6\\)"],
+["Differentiate \\(f(x)=\\dfrac{x+1}{x-1}\\)","Quotient rule. Answer: \\(\\dfrac{-2}{(x-1)^2}\\)"],
+["Differentiate \\(f(x)=(5x-2)^4\\)","Chain rule. Answer: \\(20(5x-2)^3\\)"],
+["Differentiate \\(f(x)=\\sqrt{x^2-4}\\)","Chain rule. Answer: \\(\\dfrac{x}{\\sqrt{x^2-4}}\\)"],
+["Differentiate \\(f(x)=x^3(x^2+1)^3\\)","Product + chain rule, then factor. Answer: \\(3x^2(x^2+1)^2(3x^2+1)\\)"],
+["Differentiate \\(f(x)=\\dfrac{3x^2-1}{x+2}\\)","Quotient rule. Answer: \\(\\dfrac{3x^2+12x+1}{(x+2)^2}\\)"],
+["Differentiate \\(f(x)=(x^2+1)^{-3}\\)","Chain rule. Answer: \\(-6x(x^2+1)^{-4}\\)"],
+["Differentiate \\(f(x)=\\sqrt{x}(x+1)\\)","Product rule. Answer: \\(\\dfrac{3x+1}{2\\sqrt{x}}\\)"],
+["Find \\(f'(1)\\) for \\(f(x)=(x^3-2x)^4\\)","\\(f'(x)=4(x^3-2x)^3(3x^2-2)\\); at \\(x=1\\): \\(4(-1)(1)\\). Answer: \\(-4\\)"],
+["Differentiate \\(f(x)=\\dfrac{1}{\\sqrt{x^2+1}}\\)","Chain rule on negative power. Answer: \\(\\dfrac{-x}{(x^2+1)^{3/2}}\\)"],
+["Differentiate \\(f(x)=(x-2)^2(x+3)^3\\)","Product + chain rule. Answer: \\(2(x-2)(x+3)^3+3(x-2)^2(x+3)^2\\)"]
+],
+[
+["Differentiate \\(f(x)=4x^{3/2}\\)","Power rule with fractional exponent. Answer: \\(6x^{1/2}\\)"],
+["Differentiate \\(f(x)=(x^2+2x)(3x-1)\\)","Product rule. Answer: \\(9x^2+10x-2\\)"],
+["Differentiate \\(f(x)=\\dfrac{2x-3}{x^2+1}\\)","Quotient rule. Answer: \\(\\dfrac{-2x^2+6x+2}{(x^2+1)^2}\\)"],
+["Differentiate \\(f(x)=(x^2-3x+1)^3\\)","Chain rule. Answer: \\(3(x^2-3x+1)^2(2x-3)\\)"],
+["Differentiate \\(f(x)=\\sqrt{2x+5}\\)","Chain rule. Answer: \\(\\dfrac{1}{\\sqrt{2x+5}}\\)"],
+["Differentiate \\(f(x)=\\dfrac{x^4}{x-1}\\)","Quotient rule. Answer: \\(\\dfrac{3x^4-4x^3}{(x-1)^2}\\)"],
+["Differentiate \\(f(x)=(x+1)^2\\sqrt{x}\\)","Product + chain rule. Answer: \\(2(x+1)\\sqrt{x}+\\dfrac{(x+1)^2}{2\\sqrt{x}}\\)"],
+["Differentiate \\(f(x)=(5-2x)^6\\)","Chain rule (watch the negative inner derivative). Answer: \\(-12(5-2x)^5\\)"],
+["Differentiate \\(f(x)=\\dfrac{x^2-1}{x^2+1}\\)","Quotient rule, simplifies nicely. Answer: \\(\\dfrac{4x}{(x^2+1)^2}\\)"],
+["Differentiate \\(f(x)=(3x+1)^{1/3}\\)","Chain rule with fractional power. Answer: \\((3x+1)^{-2/3}\\)"],
+["Find \\(f'(1)\\) for \\(f(x)=x^2(2x-1)^4\\)","\\(f'(x)=2x(2x-1)^4+8x^2(2x-1)^3\\); at \\(x=1\\): \\(2+8\\). Answer: \\(10\\)"],
+["Differentiate \\(f(x)=\\dfrac{1}{x^2-4}\\)","Chain rule on negative power. Answer: \\(\\dfrac{-2x}{(x^2-4)^2}\\)"]
+],
+[
+["Differentiate \\(f(x)=x^{-3}+2x^2\\)","Power rule. Answer: \\(-3x^{-4}+4x\\)"],
+["Differentiate \\(f(x)=(x^2-1)(x^2+1)\\)","Expand first, or product rule. Answer: \\(4x^3\\)"],
+["Differentiate \\(f(x)=\\dfrac{x^2+3}{2x-1}\\)","Quotient rule. Answer: \\(\\dfrac{2x^2-2x-6}{(2x-1)^2}\\)"],
+["Differentiate \\(f(x)=(x^3+2x)^{-2}\\)","Chain rule. Answer: \\(-2(x^3+2x)^{-3}(3x^2+2)\\)"],
+["Differentiate \\(f(x)=\\sqrt[3]{x^2+1}\\)","Chain rule with fractional exponent. Answer: \\(\\dfrac{2x}{3(x^2+1)^{2/3}}\\)"],
+["Differentiate \\(f(x)=(x-3)^3(2x+1)^2\\)","Product + chain rule. Answer: \\(3(x-3)^2(2x+1)^2+4(x-3)^3(2x+1)\\)"],
+["Differentiate \\(f(x)=\\dfrac{x^2+1}{\\sqrt{x}}\\)","Rewrite as \\((x^2+1)x^{-1/2}\\) then product rule. Answer: \\(2\\sqrt{x}-\\dfrac{x^2+1}{2x^{3/2}}\\)"],
+["Differentiate \\(f(x)=(3x+2)^{2/3}\\)","Chain rule. Answer: \\(2(3x+2)^{-1/3}\\)"],
+["Differentiate \\(f(x)=\\dfrac{x}{x^2+4}\\)","Quotient rule. Answer: \\(\\dfrac{4-x^2}{(x^2+4)^2}\\)"],
+["Find \\(f'(0)\\) for \\(f(x)=(x^2-2x)^5\\)","\\(f'(x)=5(x^2-2x)^4(2x-2)\\); at \\(x=0\\): \\(5(0)(-2)\\). Answer: \\(0\\)"],
+["Differentiate \\(f(x)=\\dfrac{\\sqrt{x}}{x+1}\\)","Quotient rule. Answer: \\(\\dfrac{\\frac{1}{2\\sqrt x}(x+1)-\\sqrt x}{(x+1)^2}\\)"],
+["Differentiate \\(f(x)=\\dfrac{(x+1)^4}{(x-1)^2}\\)","Product/quotient + chain, then factor. Answer: \\(\\dfrac{2(x+1)^3(x-3)}{(x-1)^3}\\)"]
+]
+],
+"Implicit Differentiation": [
+[
+["Find \\(dy/dx\\) if \\(x^2+y^2=25\\)","Differentiate both sides: \\(2x+2yy'=0\\). Answer: \\(y'=-x/y\\)"],
+["Find \\(dy/dx\\) if \\(xy=6\\)","Product rule: \\(y+xy'=0\\). Answer: \\(y'=-y/x\\)"],
+["Find \\(dy/dx\\) at \\((0,1)\\) for \\(x^2+y^2=1\\)","\\(y'=-x/y\\); at \\((0,1)\\): \\(0/1\\). Answer: \\(0\\)"],
+["Find \\(dy/dx\\) if \\(x^2-y^2=9\\)","Differentiate: \\(2x-2yy'=0\\). Answer: \\(y'=x/y\\)"],
+["Find \\(dy/dx\\) if \\(x^2y+y^2=4\\)","\\(2xy+x^2y'+2yy'=0\\). Answer: \\(y'=\\dfrac{-2xy}{x^2+2y}\\)"],
+["Find \\(dy/dx\\) if \\(y^2=x\\)","Differentiate: \\(2yy'=1\\). Answer: \\(y'=1/(2y)\\)"],
+["Find \\(dy/dx\\) if \\(x^2+4y^2=4\\)","Differentiate: \\(2x+8yy'=0\\). Answer: \\(y'=-x/(4y)\\)"],
+["Find \\(dy/dx\\) if \\(y+xy=x^2\\)","\\(y'+y+xy'=2x\\). Answer: \\(y'=\\dfrac{2x-y}{1+x}\\)"],
+["Find \\(dy/dx\\) if \\(\\sin y = x\\)","\\(\\cos y\\, y'=1\\), and \\(\\cos y=\\sqrt{1-x^2}\\). Answer: \\(y'=1/\\sqrt{1-x^2}\\)"],
+["Find the slope of the tangent to \\(x^2+y^2=25\\) at \\((3,4)\\)","\\(y'=-x/y\\); at \\((3,4)\\): \\(-3/4\\). Answer: \\(-3/4\\)"],
+["Find \\(dy/dx\\) if \\(xy^2=4\\)","\\(y^2+2xyy'=0\\). Answer: \\(y'=-y/(2x)\\)"],
+["Find \\(dy/dx\\) if \\(x^3+y^3=9\\)","\\(3x^2+3y^2y'=0\\). Answer: \\(y'=-x^2/y^2\\)"]
+],
+[
+["Find the slope of the tangent to \\(x^2+y^2=169\\) at \\((5,12)\\)","\\(y'=-x/y\\); at \\((5,12)\\): \\(-5/12\\). Answer: \\(-5/12\\)"],
+["Find \\(dy/dx\\) if \\(x^2y^2=16\\)","\\(2xy^2+2x^2yy'=0\\). Answer: \\(y'=-y/x\\)"],
+["Find \\(dy/dx\\) if \\(3x^2+2y^2=5\\)","Differentiate: \\(6x+4yy'=0\\). Answer: \\(y'=-3x/(2y)\\)"],
+["Find \\(dy/dx\\) if \\(x+y^2=10\\)","Differentiate: \\(1+2yy'=0\\). Answer: \\(y'=-1/(2y)\\)"],
+["Find \\(dy/dx\\) if \\(x^2-xy+y^2=4\\)","\\(2x-y-xy'+2yy'=0\\). Answer: \\(y'=\\dfrac{y-2x}{2y-x}\\)"],
+["Find \\(dy/dx\\) if \\(\\cos y = x\\)","\\(-\\sin y\\,y'=1\\), and \\(\\sin y=\\sqrt{1-x^2}\\). Answer: \\(y'=-1/\\sqrt{1-x^2}\\)"],
+["Find \\(dy/dx\\) if \\(y^3=x^2\\)","\\(3y^2y'=2x\\). Answer: \\(y'=2x/(3y^2)\\)"],
+["Find \\(dy/dx\\) if \\(xy+y^2=7\\)","\\(y+xy'+2yy'=0\\). Answer: \\(y'=-y/(x+2y)\\)"],
+["Find \\(dy/dx\\) if \\(\\dfrac{x^2}{4}+\\dfrac{y^2}{9}=1\\)","Differentiate: \\(x/2+2yy'/9=0\\). Answer: \\(y'=-9x/(4y)\\)"],
+["Find \\(dy/dx\\) if \\(x^2+y^2+2x=0\\)","\\(2x+2yy'+2=0\\). Answer: \\(y'=-(x+1)/y\\)"],
+["Find \\(dy/dx\\) if \\(e^y=x\\)","\\(e^y y'=1\\), and \\(e^y=x\\). Answer: \\(y'=1/x\\)"],
+["Find \\(dy/dx\\) if \\(\\tan y = x\\)","\\(\\sec^2 y\\,y'=1\\), and \\(\\sec^2y=1+x^2\\). Answer: \\(y'=1/(1+x^2)\\)"]
+],
+[
+["Find \\(dy/dx\\) if \\(x^3+y^3=3xy\\)","\\(3x^2+3y^2y'=3y+3xy'\\). Answer: \\(y'=\\dfrac{y-x^2}{y^2-x}\\)"],
+["Find \\(dy/dx\\) if \\(x^2y=1\\)","\\(2xy+x^2y'=0\\). Answer: \\(y'=-2y/x\\)"],
+["Find \\(dy/dx\\) if \\(\\sqrt{x}+\\sqrt{y}=4\\)","\\(\\frac{1}{2\\sqrt x}+\\frac{1}{2\\sqrt y}y'=0\\). Answer: \\(y'=-\\sqrt{y/x}\\)"],
+["Find \\(dy/dx\\) at \\((5,3)\\) for \\(x^2-y^2=16\\)","\\(y'=x/y\\); at \\((5,3)\\): \\(5/3\\). Answer: \\(5/3\\)"],
+["Find \\(dy/dx\\) if \\(y=\\sin(xy)\\)","\\(y'=\\cos(xy)(y+xy')\\). Answer: \\(y'=\\dfrac{y\\cos(xy)}{1-x\\cos(xy)}\\)"],
+["Find \\(dy/dx\\) if \\(y^2+xy=x^2\\)","\\(2yy'+y+xy'=2x\\). Answer: \\(y'=\\dfrac{2x-y}{2y+x}\\)"],
+["Find \\(dy/dx\\) if \\(\\ln y = x^2\\)","\\(y'/y=2x\\). Answer: \\(y'=2xy\\)"],
+["Find \\(dy/dx\\) if \\(x^2+y^2=r^2\\) (constant \\(r\\))","Same as the circle case. Answer: \\(y'=-x/y\\)"],
+["Find \\(dy/dx\\) at \\((0,2)\\) for \\(4x^2+9y^2=36\\)","\\(8x+18yy'=0\\); at \\((0,2)\\): \\(y'=0\\). Answer: \\(0\\)"],
+["Find \\(dy/dx\\) if \\(y^2-x^2=1\\)","\\(2yy'-2x=0\\). Answer: \\(y'=x/y\\)"],
+["Find \\(dy/dx\\) if \\(xy^3=8\\)","\\(y^3+3xy^2y'=0\\). Answer: \\(y'=-y/(3x)\\)"],
+["Find \\(dy/dx\\) if \\(\\sin(x+y)=y\\)","\\(\\cos(x+y)(1+y')=y'\\). Answer: \\(y'=\\dfrac{\\cos(x+y)}{1-\\cos(x+y)}\\)"]
+],
+[
+["Find \\(dy/dx\\) if \\(x^2+2xy+y^2=9\\)","Recognise \\((x+y)^2=9\\); differentiate directly: \\(2(x+y)(1+y')=0\\). Answer: \\(y'=-1\\)"],
+["Find \\(dy/dx\\) if \\(x^3y+y^3x=2\\)","\\(3x^2y+x^3y'+y^3+3xy^2y'=0\\). Answer: \\(y'=\\dfrac{-(3x^2y+y^3)}{x^3+3xy^2}\\)"],
+["Find \\(dy/dx\\) if \\(y=e^{xy}\\)","\\(y'=e^{xy}(y+xy')\\), using \\(y=e^{xy}\\). Answer: \\(y'=\\dfrac{y^2}{1-xy}\\)"],
+["Find \\(dy/dx\\) at \\((2,2)\\) for \\(x^2+y^2=8\\)","\\(y'=-x/y\\); at \\((2,2)\\): \\(-1\\). Answer: \\(-1\\)"],
+["Find \\(dy/dx\\) if \\(x^2y^2-x=5\\)","\\(2xy^2+2x^2yy'-1=0\\). Answer: \\(y'=\\dfrac{1-2xy^2}{2x^2y}\\)"],
+["Find \\(dy/dx\\) if \\(\\arctan y = x\\)","\\(\\dfrac{y'}{1+y^2}=1\\). Answer: \\(y'=1+y^2\\)"],
+["Find \\(dy/dx\\) if \\(y^2=4x\\)","\\(2yy'=4\\). Answer: \\(y'=2/y\\)"],
+["Find \\(dy/dx\\) at \\((2\\sqrt2,1)\\) for \\(x^2-4y^2=4\\)","\\(y'=x/(4y)\\); at that point: \\(2\\sqrt2/4\\). Answer: \\(\\sqrt2/2\\)"],
+["Find \\(dy/dx\\) if \\(xe^y=y\\)","\\(e^y+xe^yy'=y'\\). Answer: \\(y'=\\dfrac{e^y}{1-xe^y}\\)"],
+["Find \\(dy/dx\\) if \\(x^2+xy=10\\)","\\(2x+y+xy'=0\\). Answer: \\(y'=-(2x+y)/x\\)"],
+["Find \\(dy/dx\\) if \\(y^3+3y=x^2\\)","\\(3y^2y'+3y'=2x\\). Answer: \\(y'=\\dfrac{2x}{3y^2+3}\\)"],
+["Find \\(dy/dx\\) if \\(\\cos(xy)=\\tfrac12\\)","\\(-\\sin(xy)(y+xy')=0\\). Answer: \\(y'=-y/x\\)"]
+]
+],
+"Standard Derivatives (trig / exp / ln)": [
+[
+["Differentiate \\(\\sin(3x)\\)","Chain rule. Answer: \\(3\\cos(3x)\\)"],
+["Differentiate \\(\\cos(x^2)\\)","Chain rule. Answer: \\(-2x\\sin(x^2)\\)"],
+["Differentiate \\(e^{5x}\\)","Chain rule. Answer: \\(5e^{5x}\\)"],
+["Differentiate \\(\\ln(2x)\\)","Chain rule (or log law first). Answer: \\(1/x\\)"],
+["Differentiate \\(\\tan x\\)","Standard derivative. Answer: \\(\\sec^2 x\\)"],
+["Differentiate \\(e^{x^2}\\)","Chain rule. Answer: \\(2xe^{x^2}\\)"],
+["Differentiate \\(\\ln(x^2+1)\\)","Chain rule. Answer: \\(\\dfrac{2x}{x^2+1}\\)"],
+["Differentiate \\(\\sin^2 x\\)","Chain rule (or double angle). Answer: \\(2\\sin x\\cos x=\\sin(2x)\\)"],
+["Differentiate \\(xe^x\\)","Product rule. Answer: \\(e^x(x+1)\\)"],
+["Differentiate \\(\\sec x\\)","Standard derivative. Answer: \\(\\sec x\\tan x\\)"],
+["Differentiate \\(\\ln(\\sin x)\\)","Chain rule. Answer: \\(\\cot x\\)"],
+["Differentiate \\(e^{-x}\\cos x\\)","Product rule. Answer: \\(-e^{-x}(\\cos x+\\sin x)\\)"]
+],
+[
+["Differentiate \\(\\cos(4x)\\)","Chain rule. Answer: \\(-4\\sin(4x)\\)"],
+["Differentiate \\(\\sin(x^3)\\)","Chain rule. Answer: \\(3x^2\\cos(x^3)\\)"],
+["Differentiate \\(e^{-2x}\\)","Chain rule. Answer: \\(-2e^{-2x}\\)"],
+["Differentiate \\(\\ln(x^3)\\)","Log law first (\\(3\\ln x\\)) or chain rule. Answer: \\(3/x\\)"],
+["Differentiate \\(\\cot x\\)","Standard derivative. Answer: \\(-\\csc^2 x\\)"],
+["Differentiate \\(2^x\\)","Exponential base rule. Answer: \\(2^x\\ln 2\\)"],
+["Differentiate \\(\\ln(3x+1)\\)","Chain rule. Answer: \\(\\dfrac{3}{3x+1}\\)"],
+["Differentiate \\(\\cos^3 x\\)","Chain rule. Answer: \\(-3\\cos^2x\\sin x\\)"],
+["Differentiate \\(x^2\\ln x\\)","Product rule. Answer: \\(2x\\ln x+x\\)"],
+["Differentiate \\(\\csc x\\)","Standard derivative. Answer: \\(-\\csc x\\cot x\\)"],
+["Differentiate \\(\\tan(\\ln x)\\)","Chain rule. Answer: \\(\\dfrac{\\sec^2(\\ln x)}{x}\\)"],
+["Differentiate \\(e^{\\sin x}\\)","Chain rule. Answer: \\(\\cos x\\, e^{\\sin x}\\)"]
+],
+[
+["Differentiate \\(\\sin x\\cos x\\)","Product rule, simplifies. Answer: \\(\\cos(2x)\\)"],
+["Differentiate \\(\\tan(2x)\\)","Chain rule. Answer: \\(2\\sec^2(2x)\\)"],
+["Differentiate \\(e^x/x\\)","Quotient rule. Answer: \\(\\dfrac{e^x(x-1)}{x^2}\\)"],
+["Differentiate \\(\\ln(\\cos x)\\)","Chain rule. Answer: \\(-\\tan x\\)"],
+["Differentiate \\(x^2\\sin x\\)","Product rule. Answer: \\(2x\\sin x+x^2\\cos x\\)"],
+["Differentiate \\(\\sqrt{e^x}\\)","Rewrite as \\(e^{x/2}\\). Answer: \\(\\tfrac12 e^{x/2}\\)"],
+["Differentiate \\(\\ln(x^2-1)\\)","Chain rule. Answer: \\(\\dfrac{2x}{x^2-1}\\)"],
+["Differentiate \\(e^{2x}\\sin x\\)","Product rule. Answer: \\(e^{2x}(2\\sin x+\\cos x)\\)"],
+["Differentiate \\(\\arcsin x\\)","Standard derivative. Answer: \\(\\dfrac{1}{\\sqrt{1-x^2}}\\)"],
+["Differentiate \\(\\arctan x\\)","Standard derivative. Answer: \\(\\dfrac{1}{1+x^2}\\)"],
+["Differentiate \\(\\dfrac{\\ln x}{x}\\)","Quotient rule. Answer: \\(\\dfrac{1-\\ln x}{x^2}\\)"],
+["Differentiate \\(\\dfrac{\\cos x}{1+\\sin x}\\)","Quotient rule, then use \\(\\sin^2+\\cos^2=1\\) to simplify. Answer: \\(\\dfrac{-1}{1+\\sin x}\\)"]
+],
+[
+["Differentiate \\(\\sin x+\\cos x\\)","Term by term. Answer: \\(\\cos x-\\sin x\\)"],
+["Differentiate \\(e^{3x^2}\\)","Chain rule. Answer: \\(6xe^{3x^2}\\)"],
+["Differentiate \\(\\ln(\\sqrt{x})\\)","Log law first (\\(\\tfrac12\\ln x\\)). Answer: \\(\\dfrac{1}{2x}\\)"],
+["Differentiate \\(x\\ln x-x\\)","Product rule then simplify. Answer: \\(\\ln x\\)"],
+["Differentiate \\(\\sin(2x)\\cos(3x)\\)","Product rule. Answer: \\(2\\cos(2x)\\cos(3x)-3\\sin(2x)\\sin(3x)\\)"],
+["Differentiate \\(\\arccos x\\)","Standard derivative. Answer: \\(\\dfrac{-1}{\\sqrt{1-x^2}}\\)"],
+["Differentiate \\(\\ln(\\ln x)\\)","Chain rule twice. Answer: \\(\\dfrac{1}{x\\ln x}\\)"],
+["Differentiate \\(e^x\\ln x\\)","Product rule. Answer: \\(e^x\\ln x+\\dfrac{e^x}{x}\\)"],
+["Differentiate \\(\\tan^2 x\\)","Chain rule. Answer: \\(2\\tan x\\sec^2 x\\)"],
+["Differentiate \\(x^x\\)","Logarithmic differentiation: \\(\\ln y=x\\ln x\\), then \\(y'/y=\\ln x+1\\). Answer: \\(x^x(\\ln x+1)\\)"],
+["Differentiate \\(\\sec^2 x\\)","Chain rule. Answer: \\(2\\sec^2x\\tan x\\)"],
+["Differentiate \\(\\ln|\\sec x+\\tan x|\\)","Simplifies neatly. Answer: \\(\\sec x\\)"]
+]
+],
+"Antiderivatives &amp; Definite Integrals": [
+[
+["Evaluate \\(\\int x^3\\,dx\\)","Power rule for integrals. Answer: \\(\\dfrac{x^4}{4}+C\\)"],
+["Evaluate \\(\\int (3x^2-2x+5)\\,dx\\)","Term by term. Answer: \\(x^3-x^2+5x+C\\)"],
+["Evaluate \\(\\int \\cos x\\,dx\\)","Standard antiderivative. Answer: \\(\\sin x+C\\)"],
+["Evaluate \\(\\int e^{2x}\\,dx\\)","Reverse chain rule. Answer: \\(\\tfrac12 e^{2x}+C\\)"],
+["Evaluate \\(\\int \\dfrac1x\\,dx\\)","Standard antiderivative. Answer: \\(\\ln|x|+C\\)"],
+["Evaluate \\(\\int \\sec^2 x\\,dx\\)","Standard antiderivative. Answer: \\(\\tan x+C\\)"],
+["Evaluate \\(\\int_0^2 x\\,dx\\)","Antiderivative \\(x^2/2\\), evaluate. Answer: \\(2\\)"],
+["Evaluate \\(\\int_1^3 (2x+1)\\,dx\\)","Antiderivative \\(x^2+x\\), evaluate. Answer: \\(10\\)"],
+["Evaluate \\(\\int_0^{\\pi} \\sin x\\,dx\\)","Antiderivative \\(-\\cos x\\), evaluate. Answer: \\(2\\)"],
+["Evaluate \\(\\int \\sqrt{x}\\,dx\\)","Power rule with fractional exponent. Answer: \\(\\tfrac23 x^{3/2}+C\\)"],
+["Evaluate \\(\\int_0^1 e^x\\,dx\\)","Antiderivative \\(e^x\\), evaluate. Answer: \\(e-1\\)"],
+["Evaluate \\(\\int \\dfrac{1}{x^2}\\,dx\\)","Power rule (negative exponent). Answer: \\(-\\dfrac1x+C\\)"]
+],
+[
+["Evaluate \\(\\int 5x^4\\,dx\\)","Power rule. Answer: \\(x^5+C\\)"],
+["Evaluate \\(\\int (x^2+3x-1)\\,dx\\)","Term by term. Answer: \\(\\tfrac{x^3}{3}+\\tfrac{3x^2}{2}-x+C\\)"],
+["Evaluate \\(\\int \\sin x\\,dx\\)","Standard antiderivative. Answer: \\(-\\cos x+C\\)"],
+["Evaluate \\(\\int e^{-x}\\,dx\\)","Reverse chain rule. Answer: \\(-e^{-x}+C\\)"],
+["Evaluate \\(\\int \\dfrac{3}{x}\\,dx\\)","Constant multiple. Answer: \\(3\\ln|x|+C\\)"],
+["Evaluate \\(\\int_0^{\\pi/2} \\cos x\\,dx\\)","Antiderivative \\(\\sin x\\), evaluate. Answer: \\(1\\)"],
+["Evaluate \\(\\int_1^4 \\sqrt{x}\\,dx\\)","Antiderivative \\(\\tfrac23x^{3/2}\\), evaluate. Answer: \\(\\tfrac{14}{3}\\)"],
+["Evaluate \\(\\int_{-1}^{1} x^2\\,dx\\)","Antiderivative \\(x^3/3\\), evaluate. Answer: \\(\\tfrac23\\)"],
+["Evaluate \\(\\int (2x+3)^4\\,dx\\)","Reverse chain rule (linear inside). Answer: \\(\\tfrac{(2x+3)^5}{10}+C\\)"],
+["Evaluate \\(\\int_0^1 3x^2\\,dx\\)","Antiderivative \\(x^3\\), evaluate. Answer: \\(1\\)"],
+["Evaluate \\(\\int (4x^3-6x)\\,dx\\)","Term by term. Answer: \\(x^4-3x^2+C\\)"],
+["Evaluate \\(\\int_2^5 1\\,dx\\)","Length of interval. Answer: \\(3\\)"]
+],
+[
+["Evaluate \\(\\int (x^{1/2}+x^{-1/2})\\,dx\\)","Power rule term by term. Answer: \\(\\tfrac23x^{3/2}+2x^{1/2}+C\\)"],
+["Evaluate \\(\\int 4e^{4x}\\,dx\\)","Reverse chain rule. Answer: \\(e^{4x}+C\\)"],
+["Evaluate \\(\\int_0^{\\pi/4} \\sec^2 x\\,dx\\)","Antiderivative \\(\\tan x\\), evaluate. Answer: \\(1\\)"],
+["Evaluate \\(\\int (6x^2-4x+2)\\,dx\\)","Term by term. Answer: \\(2x^3-2x^2+2x+C\\)"],
+["Evaluate \\(\\int_1^2 \\dfrac1x\\,dx\\)","Antiderivative \\(\\ln x\\), evaluate. Answer: \\(\\ln 2\\)"],
+["Evaluate \\(\\int \\cos(2x)\\,dx\\)","Reverse chain rule (linear inside). Answer: \\(\\tfrac12\\sin(2x)+C\\)"],
+["Evaluate \\(\\int_0^1 x^3\\,dx\\)","Antiderivative \\(x^4/4\\), evaluate. Answer: \\(\\tfrac14\\)"],
+["Evaluate \\(\\int 3\\sin x\\,dx\\)","Constant multiple. Answer: \\(-3\\cos x+C\\)"],
+["Evaluate \\(\\int_{-2}^{2} 3x\\,dx\\)","Odd function over symmetric interval. Answer: \\(0\\)"],
+["Evaluate \\(\\int \\dfrac{1}{2x}\\,dx\\)","Constant multiple of \\(1/x\\). Answer: \\(\\tfrac12\\ln|x|+C\\)"],
+["Evaluate \\(\\int_0^2 (x^2+1)\\,dx\\)","Antiderivative \\(x^3/3+x\\), evaluate. Answer: \\(\\tfrac{14}{3}\\)"],
+["Evaluate \\(\\int e^{5x}\\,dx\\)","Reverse chain rule. Answer: \\(\\tfrac15 e^{5x}+C\\)"]
+],
+[
+["Evaluate \\(\\int (7x^6-3x^2)\\,dx\\)","Term by term. Answer: \\(x^7-x^3+C\\)"],
+["Evaluate \\(\\int_0^1 2e^{2x}\\,dx\\)","Antiderivative \\(e^{2x}\\), evaluate. Answer: \\(e^2-1\\)"],
+["Evaluate \\(\\int \\sin(3x)\\,dx\\)","Reverse chain rule (linear inside). Answer: \\(-\\tfrac13\\cos(3x)+C\\)"],
+["Evaluate \\(\\int_1^{e} \\dfrac1x\\,dx\\)","Antiderivative \\(\\ln x\\), evaluate. Answer: \\(1\\)"],
+["Evaluate \\(\\int (x-1)^3\\,dx\\)","Reverse chain rule (linear inside). Answer: \\(\\tfrac{(x-1)^4}{4}+C\\)"],
+["Evaluate \\(\\int_0^{\\pi} \\cos x\\,dx\\)","Antiderivative \\(\\sin x\\), evaluate over full range. Answer: \\(0\\)"],
+["Evaluate \\(\\int \\dfrac{1}{\\sqrt x}\\,dx\\)","Power rule with negative fractional exponent. Answer: \\(2\\sqrt x+C\\)"],
+["Evaluate \\(\\int_0^3 (2x-1)\\,dx\\)","Antiderivative \\(x^2-x\\), evaluate. Answer: \\(6\\)"],
+["Evaluate \\(\\int (4x+1)\\,dx\\)","Term by term. Answer: \\(2x^2+x+C\\)"],
+["Evaluate \\(\\int_0^1 x^4\\,dx\\)","Antiderivative \\(x^5/5\\), evaluate. Answer: \\(\\tfrac15\\)"],
+["Evaluate \\(\\int \\dfrac{2}{x^3}\\,dx\\)","Power rule (negative exponent). Answer: \\(-\\dfrac{1}{x^2}+C\\)"],
+["Evaluate \\(\\int_0^{\\pi/2} \\sin x\\,dx\\)","Antiderivative \\(-\\cos x\\), evaluate. Answer: \\(1\\)"]
+]
+],
+"FTC &amp; Area Under Curve": [
+[
+["Find the area under \\(y=x^2\\) from \\(x=0\\) to \\(x=3\\)","\\(\\int_0^3 x^2\\,dx=[x^3/3]_0^3\\). Answer: \\(9\\)"],
+["Use FTC1 to find \\(\\dfrac{d}{dx}\\int_0^x \\sin t\\,dt\\)","Direct application of FTC part 1. Answer: \\(\\sin x\\)"],
+["Find the area under \\(y=2x+1\\) from \\(x=1\\) to \\(x=4\\)","\\(\\int_1^4(2x+1)dx=[x^2+x]_1^4\\). Answer: \\(18\\)"],
+["Find the area between \\(y=x^2\\) and the x-axis from \\(x=-1\\) to \\(x=2\\)","Curve is non-negative throughout: \\(\\int_{-1}^2 x^2dx\\). Answer: \\(3\\)"],
+["Use FTC1 to find \\(\\dfrac{d}{dx}\\int_1^x (t^2+1)\\,dt\\)","Direct application of FTC part 1. Answer: \\(x^2+1\\)"],
+["Find the total area between \\(y=x\\) and the x-axis on \\([-2,2]\\)","Split at 0 and take absolute values: \\(2+2\\). Answer: \\(4\\)"],
+["Find the area under \\(y=e^x\\) from \\(x=0\\) to \\(x=1\\)","\\(\\int_0^1 e^x\\,dx=[e^x]_0^1\\). Answer: \\(e-1\\)"],
+["Use FTC1 to find \\(\\dfrac{d}{dx}\\int_x^5 \\cos t\\,dt\\)","Reversed limits flip the sign. Answer: \\(-\\cos x\\)"],
+["Find the area between \\(y=4-x^2\\) and the x-axis (bounds where curve meets axis)","Roots at \\(x=\\pm2\\): \\(\\int_{-2}^2(4-x^2)dx\\). Answer: \\(\\tfrac{32}{3}\\)"],
+["Evaluate \\(\\int_0^2 |x-1|\\,dx\\)","Split at \\(x=1\\): \\(\\int_0^1(1-x)dx+\\int_1^2(x-1)dx\\). Answer: \\(1\\)"],
+["Find the area under \\(y=1/x\\) from \\(x=1\\) to \\(x=e\\)","\\(\\int_1^e \\tfrac1x dx=[\\ln x]_1^e\\). Answer: \\(1\\)"],
+["Use FTC1 + chain rule to find \\(\\dfrac{d}{dx}\\int_0^{x^2} \\sin t\\,dt\\)","Chain rule: \\(\\sin(x^2)\\cdot 2x\\). Answer: \\(2x\\sin(x^2)\\)"]
+],
+[
+["Find the area under \\(y=x^3\\) from \\(x=0\\) to \\(x=2\\)","\\(\\int_0^2 x^3dx=[x^4/4]_0^2\\). Answer: \\(4\\)"],
+["Use FTC1 to find \\(\\dfrac{d}{dx}\\int_0^x e^t\\,dt\\)","Direct application of FTC part 1. Answer: \\(e^x\\)"],
+["Find the area under \\(y=3-x\\) from \\(x=0\\) to \\(x=3\\)","\\(\\int_0^3(3-x)dx=[3x-x^2/2]_0^3\\). Answer: \\(4.5\\)"],
+["Find the area between \\(y=x^2\\) and \\(y=4\\)","Intersect at \\(x=\\pm2\\): \\(\\int_{-2}^2(4-x^2)dx\\). Answer: \\(\\tfrac{32}{3}\\)"],
+["Use FTC1 to find \\(\\dfrac{d}{dx}\\int_2^x 3t^2\\,dt\\)","Direct application of FTC part 1. Answer: \\(3x^2\\)"],
+["Find the area under \\(y=\\sin x\\) from \\(x=0\\) to \\(x=\\pi\\)","\\(\\int_0^\\pi \\sin x\\,dx=[-\\cos x]_0^\\pi\\). Answer: \\(2\\)"],
+["Evaluate the net signed area \\(\\int_{-1}^1 x^3\\,dx\\)","Odd function on symmetric interval. Answer: \\(0\\)"],
+["Find the area under \\(y=\\cos x\\) from \\(x=0\\) to \\(x=\\pi/2\\)","\\(\\int_0^{\\pi/2}\\cos x\\,dx=[\\sin x]_0^{\\pi/2}\\). Answer: \\(1\\)"],
+["Use FTC1 to find \\(\\dfrac{d}{dx}\\int_x^3 t^2\\,dt\\)","Reversed limits flip the sign. Answer: \\(-x^2\\)"],
+["Find the total area between \\(y=x\\) and the x-axis on \\([0,3]\\)","Curve stays non-negative: \\(\\int_0^3 x\\,dx\\). Answer: \\(4.5\\)"],
+["Find the area under \\(y=1/x^2\\) from \\(x=1\\) to \\(x=2\\)","\\(\\int_1^2 x^{-2}dx=[-1/x]_1^2\\). Answer: \\(\\tfrac12\\)"],
+["Use FTC1 + chain rule to find \\(\\dfrac{d}{dx}\\int_0^{2x} t\\,dt\\)","Chain rule: \\(f(2x)\\cdot2=2x\\cdot2\\). Answer: \\(4x\\)"]
+],
+[
+["Find the area between \\(y=x\\) and \\(y=x^2\\) (their intersection points)","Intersect at \\(x=0,1\\): \\(\\int_0^1(x-x^2)dx\\). Answer: \\(\\tfrac16\\)"],
+["Use FTC1 to find \\(\\dfrac{d}{dx}\\int_1^x \\ln t\\,dt\\)","Direct application of FTC part 1. Answer: \\(\\ln x\\)"],
+["Find the area under \\(y=4x-x^2\\) from \\(x=0\\) to \\(x=4\\)","\\(\\int_0^4(4x-x^2)dx=[2x^2-x^3/3]_0^4\\). Answer: \\(\\tfrac{32}{3}\\)"],
+["Find the area under \\(y=\\sqrt x\\) from \\(x=0\\) to \\(x=4\\)","\\(\\int_0^4 x^{1/2}dx=[\\tfrac23x^{3/2}]_0^4\\). Answer: \\(\\tfrac{16}{3}\\)"],
+["Use FTC1 + chain rule to find \\(\\dfrac{d}{dx}\\int_0^{x^3}\\sin t\\,dt\\)","Chain rule: \\(\\sin(x^3)\\cdot3x^2\\). Answer: \\(3x^2\\sin(x^3)\\)"],
+["Evaluate \\(\\int_0^{2\\pi}\\sin x\\,dx\\)","Full period, net area cancels. Answer: \\(0\\)"],
+["Find the area between \\(y=x^2-4\\) and the x-axis on \\([-2,2]\\)","Curve is below the axis; area \\(=\\left|\\int_{-2}^2(x^2-4)dx\\right|\\). Answer: \\(\\tfrac{32}{3}\\)"],
+["Use symmetry to find \\(\\dfrac{d}{dx}\\int_{-x}^{x} t^2\\,dt\\)","Rewrite as \\(2\\int_0^x t^2dt=\\tfrac{2x^3}{3}\\), differentiate. Answer: \\(2x^2\\)"],
+["Find the total area between \\(y=x^3\\) and the x-axis on \\([-1,1]\\)","Curve crosses zero, so split and take absolute values. Answer: \\(\\tfrac12\\)"],
+["Find the average value of \\(f(x)=x^2\\) on \\([0,3]\\)","\\(\\tfrac13\\int_0^3x^2dx=\\tfrac13(9)\\). Answer: \\(3\\)"],
+["Use FTC1 + chain rule to find \\(\\dfrac{d}{dx}\\int_0^{\\cos x} t\\,dt\\)","Chain rule: \\(f(\\cos x)\\cdot(-\\sin x)=\\cos x\\cdot(-\\sin x)\\). Answer: \\(-\\sin x\\cos x\\)"],
+["Find the area under \\(y=e^{-x}\\) from \\(x=0\\) to \\(x=\\ln 2\\)","\\(\\int_0^{\\ln2}e^{-x}dx=[-e^{-x}]_0^{\\ln2}=1-\\tfrac12\\). Answer: \\(\\tfrac12\\)"]
+],
+[
+["Find the area between \\(y=x+2\\) and \\(y=x^2\\) (their intersection points)","Intersect at \\(x=-1,2\\): \\(\\int_{-1}^2[(x+2)-x^2]dx\\). Answer: \\(4.5\\)"],
+["Use FTC1 to find \\(\\dfrac{d}{dx}\\int_0^x \\sqrt{1+t^2}\\,dt\\)","Direct application of FTC part 1. Answer: \\(\\sqrt{1+x^2}\\)"],
+["Find the area under \\(y=6-2x\\) from \\(x=0\\) to \\(x=3\\)","\\(\\int_0^3(6-2x)dx=[6x-x^2]_0^3\\). Answer: \\(9\\)"],
+["Find the average value of \\(f(x)=\\sin x\\) on \\([0,\\pi]\\)","\\(\\tfrac1\\pi\\int_0^\\pi\\sin x\\,dx=\\tfrac1\\pi(2)\\). Answer: \\(2/\\pi\\)"],
+["Use FTC1 to find \\(\\dfrac{d}{dx}\\int_3^x (2t-1)\\,dt\\)","Direct application of FTC part 1. Answer: \\(2x-1\\)"],
+["Find the area between \\(y=8-x^2\\) and \\(y=x^2\\) (their intersection points)","Intersect at \\(x=\\pm2\\): \\(\\int_{-2}^2(8-2x^2)dx\\). Answer: \\(\\tfrac{64}{3}\\)"],
+["Find the area under \\(y=x^2+1\\) from \\(x=-1\\) to \\(x=1\\)","\\(\\int_{-1}^1(x^2+1)dx=[x^3/3+x]_{-1}^1\\). Answer: \\(\\tfrac{8}{3}\\)"],
+["Use FTC1 + chain rule to find \\(\\dfrac{d}{dx}\\int_0^{\\ln x} e^t\\,dt\\)","Chain rule: \\(e^{\\ln x}\\cdot(1/x)=x\\cdot(1/x)\\). Answer: \\(1\\)"],
+["Find the total area between \\(y=x^3-x\\) and the x-axis on \\([-1,1]\\)","Odd function, two equal symmetric lobes. Answer: \\(\\tfrac12\\)"],
+["Find the area under \\(y=1/(1+x^2)\\) from \\(x=0\\) to \\(x=1\\)","\\(\\int_0^1 \\tfrac{1}{1+x^2}dx=[\\arctan x]_0^1\\). Answer: \\(\\pi/4\\)"],
+["Use the Leibniz rule to find \\(\\dfrac{d}{dx}\\int_x^{2x} t^2\\,dt\\)","\\(\\tfrac{d}{dx}\\big[F(2x)-F(x)\\big]=2(2x)^2-x^2\\). Answer: \\(7x^2\\)"],
+["Find \\(c\\) such that the average value of \\(f(x)=x^2\\) on \\([0,2]\\) equals \\(f(c)\\)","Average \\(=\\tfrac12\\int_0^2x^2dx=\\tfrac43\\); solve \\(c^2=4/3\\) on \\([0,2]\\). Answer: \\(c=2/\\sqrt3\\)"]
+]
+]
+};
+
+const topics = Object.keys(DATA);
+let currentTopic = 0;
+let currentSet = 0;
+
+function render(){
+  const nav = document.getElementById('topicNav');
+  nav.innerHTML = '';
+  topics.forEach((t,i)=>{
+    const b = document.createElement('button');
+    b.textContent = t;
+    if(i===currentTopic) b.classList.add('active');
+    b.onclick = ()=>{ currentTopic=i; currentSet=0; render(); };
+    nav.appendChild(b);
+  });
+
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  DATA[topics[currentTopic]].forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===currentSet) b.classList.add('active');
+    b.onclick = ()=>{ currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `${topics[currentTopic]} · Set ${currentSet+1} of 4 · 12 questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  DATA[topics[currentTopic]][currentSet].forEach((pair,i)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qnum">QUESTION ${i+1}</div>
+      <div class="qtext">${pair[0]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${pair[1]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+
+  if(window.MathJax && MathJax.typesetPromise){
+    MathJax.typesetPromise();
+  }
+}
+render();
+</script>
+</body>
+</html>

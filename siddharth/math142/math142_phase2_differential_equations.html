@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATH142 Phase 2 — Differential Equations</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B3A5C;
+  --navy-lt: #1e4570;
+  --orange: #FF3621;
+  --blue-lt: #E6F1FB;
+  --blue-mid: #185FA5;
+  --amber-lt: #FAEEDA;
+  --amber-dk: #7A4800;
+  --green-lt: #E1F5EE;
+  --green-dk: #0a5c3f;
+  --coral-lt: #FAECE7;
+  --coral-dk: #8a2f1a;
+  --grey-lt: #F6F5F2;
+  --grey-md: #e8e6e0;
+  --grey-dk: #3a3835;
+  --text: #2c2a28;
+  --text-muted: #6b6762;
+  --sidebar-w: 260px;
+  --content-max: 760px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #fafaf8;
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.3;
+}
+.sidebar-brand-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+.progress-wrap {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.progress-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.nav-section {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  padding: 6px 20px 4px;
+  text-transform: uppercase;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-link:hover { color: white; background: rgba(255,255,255,0.06); }
+.nav-link.active { color: white; background: rgba(255,255,255,0.1); border-left: 2px solid var(--orange); padding-left: 18px; }
+.nav-num {
+  font-size: 10px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.nav-link.active .nav-num { background: var(--orange); color: white; }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--grey-md);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-breadcrumb {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.topbar-breadcrumb span {
+  color: var(--navy);
+  font-weight: 500;
+}
+.topbar-btns {
+  display: flex;
+  gap: 8px;
+}
+.tb-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.tb-btn:hover { border-color: var(--navy); color: var(--navy); }
+.tb-btn.primary { background: var(--navy); color: white; border-color: var(--navy); }
+.tb-btn.primary:hover { background: var(--navy-lt); }
+
+.content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+/* ── HERO ── */
+.page-hero {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--grey-md);
+}
+.page-hero-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--orange);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.page-hero-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.page-hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── MOTIVATION BOX ── */
+.motiv {
+  background: var(--blue-lt);
+  border-left: 3px solid var(--blue-mid);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #0d3d73;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.motiv strong { font-weight: 500; }
+
+/* ── DPEN SECTIONS ── */
+.dpen-block {
+  margin-bottom: 12px;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dpen-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+  transition: background 0.15s;
+}
+.dpen-header:hover { background: var(--grey-lt); }
+.dpen-pill {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.pill-d { background: var(--blue-lt); color: var(--blue-mid); }
+.pill-p { background: var(--amber-lt); color: var(--amber-dk); }
+.pill-e { background: var(--green-lt); color: var(--green-dk); }
+.pill-n { background: var(--coral-lt); color: var(--coral-dk); }
+.dpen-header-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+}
+.dpen-chevron {
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.dpen-chevron.open { transform: rotate(90deg); }
+.dpen-body {
+  display: none;
+  padding: 18px 20px 20px;
+  border-top: 1px solid var(--grey-md);
+  background: var(--grey-lt);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+}
+.dpen-body.open { display: block; }
+.dpen-body p { margin-bottom: 10px; }
+.dpen-body p:last-child { margin-bottom: 0; }
+
+/* ── MATH ── */
+.math-block {
+  text-align: center;
+  margin: 14px 0;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  overflow-x: auto;
+}
+.math-inline { font-style: italic; }
+
+/* ── STEPS ── */
+.step-list { margin: 10px 0; }
+.step-item {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+  align-items: flex-start;
+}
+.step-num-badge {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--blue-lt);
+  color: var(--blue-mid);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-text { flex: 1; font-size: 14px; line-height: 1.7; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.callout-warn { background: var(--amber-lt); border-left: 3px solid #EF9F27; color: var(--amber-dk); }
+.callout-info { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout-success { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout strong { font-weight: 500; }
+
+/* ── WORKED EXAMPLES ── */
+.worked {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+.worked-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.answer-box {
+  background: var(--navy);
+  color: white;
+  border-radius: 6px;
+  padding: 9px 14px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.answer-label {
+  font-size: 10px;
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 10px 0;
+}
+.data-table th {
+  background: var(--navy);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+}
+.data-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-md);
+  color: var(--text);
+}
+.data-table tr:nth-child(even) td { background: white; }
+.data-table tr:nth-child(odd) td { background: var(--grey-lt); }
+.data-table th:first-child { border-radius: 6px 0 0 0; }
+.data-table th:last-child { border-radius: 0 6px 0 0; }
+
+/* ── PRACTICE QUESTIONS ── */
+.level-divider {
+  margin: 36px 0 16px;
+  padding: 14px 18px;
+  background: var(--navy);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.level-badge {
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--orange);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.level-info { flex: 1; }
+.level-title { font-size: 15px; font-weight: 500; color: white; }
+.level-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+.q-card {
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.q-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: white;
+  transition: background 0.15s;
+}
+.q-head:hover { background: var(--grey-lt); }
+.q-num {
+  background: var(--navy);
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.q-text { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.5; }
+.q-hint { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 400; }
+.q-arrow { color: var(--text-muted); font-size: 11px; transition: transform 0.2s; margin-top: 4px; flex-shrink: 0; }
+.q-arrow.open { transform: rotate(90deg); }
+.q-body {
+  display: none;
+  background: var(--grey-lt);
+  border-top: 1px solid var(--grey-md);
+  padding: 18px 20px;
+}
+.q-body.open { display: block; }
+.q-attempt {
+  background: white;
+  border: 1px dashed var(--grey-md);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+.sol-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+/* ── HOME PAGE ── */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 24px 0;
+}
+.home-card {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.home-card:hover { border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.home-card-num { font-size: 11px; color: var(--orange); font-weight: 500; margin-bottom: 4px; }
+.home-card-title { font-family: 'Crimson Pro', serif; font-size: 18px; color: var(--navy); margin-bottom: 4px; }
+.home-card-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.home-chain {
+  background: var(--navy);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 24px 0;
+  color: white;
+}
+.home-chain-title { font-size: 12px; letter-spacing: 0.06em; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+.chain-items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chain-item {
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: white;
+}
+.chain-arrow { color: var(--orange); font-size: 14px; }
+.home-tip {
+  background: var(--amber-lt);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--amber-dk);
+  line-height: 1.65;
+  margin-top: 16px;
+}
+
+/* ── UNI BRIDGE (extra block type for this guide) ── */
+.bridge {
+  background: #FFF6E9;
+  border: 1px dashed #E0A23A;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #6b4a10;
+}
+.bridge-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: #b5791a;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* ── PAGE NAV ── */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--grey-md);
+}
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.page-nav-btn:hover { border-color: var(--navy); color: var(--navy); }
+.page-nav-btn.next { background: var(--navy); color: white; border-color: var(--navy); }
+.page-nav-btn.next:hover { background: var(--navy-lt); }
+.page-nav-btn.ghost { visibility: hidden; }
+
+/* ── SCROLLBAR ── */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .content { padding: 24px 20px 60px; }
+  .home-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">MATH142 — Phase 2</div>
+    <div class="sidebar-brand-sub">Differential Equations · Weeks 7&ndash;9</div>
+  </div>
+  <div class="progress-wrap"><div class="progress-label">YOUR PROGRESS</div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+  <div class="nav-section"><div class="nav-section-label">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">&uarr;</span> Start here</button></div>
+  <div class="nav-section"><div class="nav-section-label">Week 7 &ndash; First-Order DEs</div>
+    <button class="nav-link" onclick="goTo('deintro')"><span class="nav-num">W7</span> Introduction to Differential Equations &amp; Separable DEs</button>
+    <button class="nav-link" onclick="goTo('deapp1')"><span class="nav-num">W7</span> Separable DE Applications — Growth, Decay &amp; Mixing</button>
+    <button class="nav-link" onclick="goTo('deint2')"><span class="nav-num">W7</span> First-Order Linear DEs — Integrating Factor Method</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 7&ndash;8 &ndash; Applications &amp; Exam 1</div>
+    <button class="nav-link" onclick="goTo('deapp2')"><span class="nav-num">W8</span> First-Order Linear DE Applications</button>
+    <button class="nav-link" onclick="goTo('exam1')"><span class="nav-num">i</span> In-Session Exam 1</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 9 &ndash; Second-Order DEs</div>
+    <button class="nav-link" onclick="goTo('de2nd')"><span class="nav-num">W9</span> Second-Order DEs — Characteristic Equation &amp; Three Root Cases</button>
+    <button class="nav-link" onclick="goTo('deapp3')"><span class="nav-num">W9</span> Second-Order DE Applications — Simple Harmonic Motion &amp; Initial Value Problems</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Practice</div>
+    <button class="nav-link" onclick="goTo('practice')"><span class="nav-num">&#9998;</span> Practice Questions (60)</button></div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">MATH142 Phase 2 &nbsp;&rsaquo;&nbsp; <span id="breadcrumbPage">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand all</button>
+      <button class="tb-btn primary" onclick="goTo('practice')">Practice &rarr;</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <div class="page active" id="page-home">
+      <div class="page-hero">
+        <div class="page-hero-label">MATH142 &middot; Phase 2 of 4</div>
+        <div class="page-hero-title">Differential Equations,<br>Weeks 7&ndash;9</div>
+        <div class="page-hero-sub">Covers the MATH142 tracker's Weeks 7&ndash;9: first-order differential equations (separable and linear, with applications) and second-order differential equations (constant-coefficient, all three root cases, with SHM applications). In-Session Exam 1 sits at the end of Week 8 &mdash; but it only covers Phase 1 content (Weeks 1&ndash;6), so it's included here purely as a scheduling landmark, not a Phase 2 topic.</div>
+      </div>
+
+      <div class="home-chain">
+        <div class="home-chain-title">THE CHAIN OF IDEAS</div>
+        <div class="chain-items">
+          <div class="chain-item">Introduction to Differential Equations &amp; Separable DEs</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Separable DE Applications — Growth, Decay &amp; Mixing</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">First-Order Linear DEs — Integrating Factor Method</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">First-Order Linear DE Applications</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Second-Order DEs — Characteristic Equation &amp; Three Root Cases</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Second-Order DE Applications — Simple Harmonic Motion &amp; Initial Value Problems</div>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <div class="home-card" onclick="goTo('deintro')">
+          <div class="home-card-num">W7</div>
+          <div class="home-card-title">Introduction to Differential Equations &amp; Separable DEs</div>
+          <div class="home-card-sub">What a DE actually asks, and the simplest technique for solving one</div>
+        </div>
+        <div class="home-card" onclick="goTo('deapp1')">
+          <div class="home-card-num">W7</div>
+          <div class="home-card-title">Separable DE Applications — Growth, Decay &amp; Mixing</div>
+          <div class="home-card-sub">Turning real scenarios into separable equations and solving them</div>
+        </div>
+        <div class="home-card" onclick="goTo('deint2')">
+          <div class="home-card-num">W7</div>
+          <div class="home-card-title">First-Order Linear DEs — Integrating Factor Method</div>
+          <div class="home-card-sub">Solving DEs that can't be separated, by manufacturing a product rule</div>
+        </div>
+        <div class="home-card" onclick="goTo('deapp2')">
+          <div class="home-card-num">W8</div>
+          <div class="home-card-title">First-Order Linear DE Applications</div>
+          <div class="home-card-sub">Mixing problems with changing volume, and other linear-DE scenarios</div>
+        </div>
+        <div class="home-card" onclick="goTo('de2nd')">
+          <div class="home-card-num">W9</div>
+          <div class="home-card-title">Second-Order DEs — Characteristic Equation &amp; Three Root Cases</div>
+          <div class="home-card-sub">Guessing exponential solutions, and what happens for each type of root</div>
+        </div>
+        <div class="home-card" onclick="goTo('deapp3')">
+          <div class="home-card-num">W9</div>
+          <div class="home-card-title">Second-Order DE Applications — Simple Harmonic Motion &amp; Initial Value Problems</div>
+          <div class="home-card-sub">Physical systems that literally are second-order DEs, plus using two conditions to pin down both constants</div>
+        </div>
+        <div class="home-card" onclick="goTo('exam1')">
+          <div class="home-card-num">EXAM</div>
+          <div class="home-card-title">In-Session Exam 1</div>
+          <div class="home-card-sub">Sits at the end of Week 8 &mdash; covers Weeks 1&ndash;6 (Phase 1), not this phase.</div>
+        </div>
+        <div class="home-card" onclick="goTo('practice')">
+          <div class="home-card-num">PRACTICE</div>
+          <div class="home-card-title">Practice Questions</div>
+          <div class="home-card-sub">60 questions, 10 per topic, fully worked.</div>
+        </div>
+      </div>
+
+      <div class="home-tip">
+        <strong>How to use this guide:</strong> Separable DEs and the integrating factor method are two genuinely different techniques for two different shapes of first-order DE &mdash; make sure you can recognise which shape you're looking at before picking a method. Second-order DEs (Week 9) lean on the quadratic formula (Phase 1, Week 1) and complex numbers (from the MATH141 tracker) for the complex-root case.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn ghost">&larr;</button>
+        <button class="page-nav-btn next" onclick="goTo('deintro')">W7: Introduction to Differential Equations &amp; Separable DEs &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-deintro">
+      <div class="page-hero">
+        <div class="page-hero-label">W7</div>
+        <div class="page-hero-title">Introduction to Differential Equations &amp; Separable DEs</div>
+        <div class="page-hero-sub">What a DE actually asks, and the simplest technique for solving one</div>
+      </div>
+      <div class="motiv">Every equation you've solved so far asks for a number. A differential equation asks for something bigger — an entire function — by describing a relationship between that function and its own rate of change.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>What a DE is.</strong> An equation involving a function and one or more of its derivatives, e.g. $\dfrac{dy}{dx}=2x$. A "solution" isn't a number — it's a function $y(x)$ that makes the equation true for every $x$. The <strong>order</strong> of a DE is the highest derivative appearing (first order: just $y'$; second order: up to $y''$).</p>
+  <p><strong>General vs particular solutions.</strong> Just as $\int 2x\,dx=x^2+C$ has a whole family of antiderivatives, a first-order DE typically has a family of solutions differing by one constant — the <strong>general solution</strong>. Supplying one extra piece of information (an <strong>initial condition</strong>, like $y(0)=3$) pins down a single <strong>particular solution</strong> from that family.</p>
+  <p><strong>Separable DEs — the idea.</strong> Some DEs can be algebraically rearranged so every $y$ (and $dy$) sits on one side, and every $x$ (and $dx$) sits on the other:</p>
+  <div class="math-block">\[ \frac{dy}{dx}=g(x)h(y) \ \implies\ \frac{1}{h(y)}\,dy = g(x)\,dx \]</div>
+  <p>Once separated, integrate both sides independently — each side is now an ordinary single-variable integral, exactly the kind you already know how to solve.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \frac{dy}{dx}=g(x)h(y) \ \implies\ \int \frac{1}{h(y)}\,dy = \int g(x)\,dx \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — solve a separable DE</div><p>Solve $\dfrac{dy}{dx}=xy$.</p>
+  <div class="math-block">\[ \frac{1}{y}\,dy = x\,dx \implies \int \frac1y\,dy = \int x\,dx \implies \ln|y| = \frac{x^2}{2}+C_1 \]</div>
+  <div class="math-block">\[ y = e^{x^2/2+C_1} = e^{C_1}e^{x^2/2} = Ce^{x^2/2} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $y=Ce^{x^2/2}$ (general solution)</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — find a particular solution</div><p>Solve $\dfrac{dy}{dx}=xy$ with $y(0)=5$.</p>
+  <p>Using the general solution from Example 1: $y(0)=Ce^0=C=5$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $y=5e^{x^2/2}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Separating variables always produces an implicit relationship first (often with a $\ln$) — solving explicitly for $y$ (as in Example 1) is a separate algebra step afterward, and isn't always possible or necessary depending on what the question asks for.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('home')">&larr; Overview</button>
+        <button class="page-nav-btn next" onclick="goTo('deapp1')">W7: Separable DE Applications — Growth, Decay &amp; Mixing &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-deapp1">
+      <div class="page-hero">
+        <div class="page-hero-label">W7</div>
+        <div class="page-hero-title">Separable DE Applications — Growth, Decay &amp; Mixing</div>
+        <div class="page-hero-sub">Turning real scenarios into separable equations and solving them</div>
+      </div>
+      <div class="motiv">Many physical processes — population growth, radioactive decay, cooling, mixing — share the property that their rate of change depends on their current state, which is exactly what a separable DE describes. The hard part is rarely solving the equation; it's correctly writing down the equation from the words.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Exponential growth/decay.</strong> "Rate of change proportional to current amount" translates directly to $\dfrac{dy}{dt}=ky$, which you already solved in the previous topic: $y=y_0e^{kt}$, where $y_0$ is the initial amount and $k$ the growth ($k>0$) or decay ($k<0$) constant.</p>
+  <p><strong>Newton's Law of Cooling.</strong> "Rate of temperature change proportional to the difference from ambient temperature" translates to $\dfrac{dT}{dt}=-k(T-T_a)$, separable via the substitution-like observation that $T-T_a$ behaves like a single variable.</p>
+  <p><strong>Mixing problems.</strong> A tank with inflow/outflow of a solution: set up a DE for the amount of substance $A(t)$ by balancing rate in minus rate out — $\dfrac{dA}{dt}=(\text{rate in})-(\text{rate out})$, where each rate is typically (concentration) $\times$ (flow rate), and the outflow concentration usually depends on $A(t)$ itself, making the equation separable (or, if the volume changes, linear — see the next topic).</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \frac{dy}{dt}=ky \implies y=y_0e^{kt}, \qquad \frac{dT}{dt}=-k(T-T_a) \implies T=T_a+(T_0-T_a)e^{-kt} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — exponential decay</div><p>A radioactive substance decays at a rate proportional to the amount present, with half-life 10 years. If there are 80g initially, find the amount after 20 years.</p>
+  <p>$y=80e^{kt}$. Half-life: $y(10)=40=80e^{10k}\implies e^{10k}=\tfrac12\implies k=\dfrac{\ln(1/2)}{10}$.</p>
+  <div class="math-block">\[ y(20)=80e^{20k}=80\left(e^{10k}\right)^2=80\left(\frac12\right)^2=20 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $20$g</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — Newton's Law of Cooling</div><p>A cup of coffee at $90°$C is placed in a $20°$C room. After 5 minutes it's $70°$C. Find its temperature after 15 minutes.</p>
+  <p>$T=20+70e^{-kt}$ (since $T_0-T_a=90-20=70$). At $t=5$: $70=20+70e^{-5k}\implies e^{-5k}=\tfrac{50}{70}=\tfrac57$.</p>
+  <div class="math-block">\[ T(15) = 20+70(e^{-5k})^3 = 20+70\left(\frac57\right)^3 \approx 20+25.5 = 45.5°\text{C} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\approx 45.5°$C</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Every one of these application types reduces to the same underlying DE shape ($y'=ky$ or $y'=-k(y-\text{constant})$) — once you recognise which shape a word problem matches, the solving is identical every time; the real skill being tested is the translation from words to equation.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('deintro')">&larr; W7: Introduction to Differential Equations &amp; Separable DEs</button>
+        <button class="page-nav-btn next" onclick="goTo('deint2')">W7: First-Order Linear DEs — Integrating Factor Method &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-deint2">
+      <div class="page-hero">
+        <div class="page-hero-label">W7</div>
+        <div class="page-hero-title">First-Order Linear DEs — Integrating Factor Method</div>
+        <div class="page-hero-sub">Solving DEs that can't be separated, by manufacturing a product rule</div>
+      </div>
+      <div class="motiv">Not every first-order DE separates — $\dfrac{dy}{dx}+y=x$, for instance, has $x$ and $y$ hopelessly tangled together. The integrating factor method takes a completely different approach: multiply the whole equation by a cleverly chosen function so the left side becomes the derivative of a single product, which can then be integrated directly.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Standard form.</strong> Any first-order linear DE can be written as $\dfrac{dy}{dx}+p(x)y=q(x)$ — linear meaning $y$ and $y'$ each appear to the first power only, with no $y\cdot y'$ or similar mixing.</p>
+  <p><strong>Manufacturing the integrating factor.</strong> The goal is to find a function $\mu(x)$ such that multiplying through by $\mu(x)$ makes the left side collapse into $\dfrac{d}{dx}[\mu(x)y]$ — i.e. exactly the product rule, run in reverse. Expanding $\dfrac{d}{dx}[\mu y]=\mu y'+\mu' y$ and comparing to $\mu y'+\mu p(x)y$ (the left side after multiplying through) shows this works exactly when $\mu'=\mu\,p(x)$ — a separable DE for $\mu$ itself! Solving it:</p>
+  <div class="math-block">\[ \mu(x) = e^{\int p(x)\,dx} \]</div>
+  <p><strong>Finishing the solve.</strong> Multiply the whole original equation by this $\mu(x)$; the left side is now guaranteed to be $\dfrac{d}{dx}[\mu y]$, so integrate both sides directly and solve for $y$:</p>
+  <div class="math-block">\[ \mu(x)y = \int \mu(x)q(x)\,dx + C \implies y = \frac{1}{\mu(x)}\left[\int \mu(x)q(x)\,dx + C\right] \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ y'+p(x)y=q(x), \qquad \mu(x)=e^{\int p(x)\,dx}, \qquad y=\frac{1}{\mu(x)}\left[\int \mu(x)q(x)\,dx+C\right] \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — apply the integrating factor method</div><p>Solve $\dfrac{dy}{dx}+y=x$.</p>
+  <p>Here $p(x)=1$, so $\mu(x)=e^{\int 1\,dx}=e^x$.</p>
+  <div class="math-block">\[ \frac{d}{dx}[e^xy] = xe^x \implies e^xy = \int xe^x\,dx \]</div>
+  <p>Using integration by parts (from Phase 1) on the right side: $\int xe^x\,dx=xe^x-e^x+C$.</p>
+  <div class="math-block">\[ e^xy = xe^x-e^x+C \implies y = x-1+Ce^{-x} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $y=x-1+Ce^{-x}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — with an initial condition</div><p>Solve $\dfrac{dy}{dx}+\dfrac{2}{x}y=x$, $y(1)=1$ (for $x>0$).</p>
+  <p>$p(x)=2/x$; $\mu(x)=e^{\int(2/x)dx}=e^{2\ln x}=x^2$.</p>
+  <div class="math-block">\[ \frac{d}{dx}[x^2y]=x^3 \implies x^2y=\frac{x^4}{4}+C \implies y=\frac{x^2}{4}+\frac{C}{x^2} \]</div>
+  <p>At $x=1,y=1$: $1=\tfrac14+C\implies C=\tfrac34$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $y=\dfrac{x^2}{4}+\dfrac{3}{4x^2}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>The DE must be in the exact standard form $y'+p(x)y=q(x)$ (coefficient of $y'$ equal to $1$) before reading off $p(x)$ — if the original equation has a different leading coefficient, divide through by it first.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('deapp1')">&larr; W7: Separable DE Applications — Growth, Decay &amp; Mixing</button>
+        <button class="page-nav-btn next" onclick="goTo('deapp2')">W8: First-Order Linear DE Applications &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-deapp2">
+      <div class="page-hero">
+        <div class="page-hero-label">W8</div>
+        <div class="page-hero-title">First-Order Linear DE Applications</div>
+        <div class="page-hero-sub">Mixing problems with changing volume, and other linear-DE scenarios</div>
+      </div>
+      <div class="motiv">The separable mixing problems from earlier assumed the tank's volume stayed constant. Once inflow and outflow rates differ, the volume — and therefore the outflow concentration's denominator — changes with time, turning the equation genuinely linear rather than separable.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Mixing with changing volume.</strong> If inflow rate $r_{\text{in}}$ and outflow rate $r_{\text{out}}$ differ, the volume at time $t$ is $V(t)=V_0+(r_{\text{in}}-r_{\text{out}})t$ — no longer constant. The outflow concentration is $\dfrac{A(t)}{V(t)}$, so the DE becomes:</p>
+  <div class="math-block">\[ \frac{dA}{dt} = (\text{inflow rate})\cdot(\text{inflow concentration}) - r_{\text{out}}\cdot\frac{A}{V(t)} \]</div>
+  <p>This is linear in $A$ (with a $t$-dependent coefficient from $V(t)$), not separable — exactly the shape the integrating factor method was built for.</p>
+  <p><strong>Other common applications.</strong> Electrical circuits (RL circuits: $L\dfrac{dI}{dt}+RI=V(t)$ — an equation with the exact same linear structure), and any "rate in minus rate proportional to current amount" scenario more generally.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \frac{dA}{dt}+\frac{r_{\text{out}}}{V(t)}A = r_{\text{in}}\cdot c_{\text{in}}, \qquad \text{solve via integrating factor} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — constant-volume mixing (separable, reviewed as a linear DE)</div><p>A 200L tank starts with 50g of salt dissolved. Pure water flows in at 5L/min, and the mixed solution flows out at 5L/min. Find $A(t)$.</p>
+  <p>Volume constant at 200L. $\dfrac{dA}{dt}=0-5\cdot\dfrac{A}{200}=-\dfrac{A}{40}$ — this is both separable and linear with $p(t)=1/40$, $q(t)=0$; $\mu=e^{t/40}$.</p>
+  <div class="math-block">\[ \frac{d}{dt}\left[e^{t/40}A\right]=0 \implies A=Ce^{-t/40} \]</div>
+  <p>At $t=0,A=50$: $C=50$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $A(t)=50e^{-t/40}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — set up a changing-volume mixing problem</div><p>A 100L tank starts with pure water. Brine at 3g/L flows in at 4L/min; the mixed solution flows out at 2L/min. Set up the DE for $A(t)$ (do not solve).</p>
+  <p>Volume: $V(t)=100+(4-2)t=100+2t$. Inflow rate of salt: $4\times3=12$g/min. Outflow rate: $2\cdot\dfrac{A}{100+2t}$.</p>
+  <div class="math-block">\[ \frac{dA}{dt} = 12 - \frac{2A}{100+2t} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\dfrac{dA}{dt}+\dfrac{2}{100+2t}A=12$ — linear, ready for the integrating factor method</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>The hardest part of these problems is almost always setting up $V(t)$ correctly and getting the outflow term right — once the DE is correctly written in standard linear form, solving it is pure mechanics from the previous topic.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('deint2')">&larr; W7: First-Order Linear DEs — Integrating Factor Method</button>
+        <button class="page-nav-btn next" onclick="goTo('exam1')">In-Session Exam 1 &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-exam1">
+      <div class="page-hero">
+        <div class="page-hero-label">End of Week 8</div>
+        <div class="page-hero-title">In-Session Examination 1</div>
+        <div class="page-hero-sub">A scheduling landmark within Phase 2 &mdash; but it examines Phase 1 content only.</div>
+      </div>
+      <div class="motiv">The MATH142 subject outline places In-Session Exam 1 at the end of Week 8, which falls in the middle of the differential equations phase &mdash; but its content is entirely Weeks 1&ndash;6 (Phase 1: Integration Techniques &amp; Applications).</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Exam details, straight from the subject outline</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <table class="data-table">
+            <tr><th>Detail</th><th>Value</th></tr>
+            <tr><td>Timing</td><td>End of Week 8 (Saturday)</td></tr>
+            <tr><td>Duration</td><td>100 minutes</td></tr>
+            <tr><td>Coverage</td><td>All material from Weeks 1&ndash;6 (Phase 1: Integration Techniques &amp; Applications)</td></tr>
+            <tr><td>Weighting</td><td>35% of the final MATH142 mark</td></tr>
+            <tr><td>Summary sheet</td><td>One A4 page, single-sided, permitted</td></tr>
+            <tr><td>Calculator</td><td>Single-line-display only &mdash; no graphics, no alphanumeric keyboard, not programmable</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">How to use this landmark</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="callout callout-info">Revisit the <strong>MATH142 Phase 1: Integration Techniques &amp; Applications</strong> guide and its 130 practice questions before this exam &mdash; that's the entire syllabus this exam draws from. Nothing from this Phase 2 guide (differential equations) is examinable here.</div>
+          <p style="margin-top:10px">Remember: your final examination mark for this half of the course is the <em>best</em> of this In-Session Exam 1 score and Final Exam Part A &mdash; so a strong result here reduces pressure on the Final, but doesn't remove the option to improve it later if needed.</p>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('deapp2')">&larr; W8: First-Order Linear DE Applications</button>
+        <button class="page-nav-btn next" onclick="goTo('de2nd')">W9: Second-Order DEs — Characteristic Equation & Root Cases &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-de2nd">
+      <div class="page-hero">
+        <div class="page-hero-label">W9</div>
+        <div class="page-hero-title">Second-Order DEs — Characteristic Equation &amp; Three Root Cases</div>
+        <div class="page-hero-sub">Guessing exponential solutions, and what happens for each type of root</div>
+      </div>
+      <div class="motiv">A first-order linear DE with constant coefficients had solution $y=Ce^{kt}$. It's natural to guess that a second-order version might also have exponential solutions — and testing that guess turns the entire differential equation into an ordinary algebraic equation.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The guess, and why it works.</strong> For $ay''+by'+cy=0$ (homogeneous, constant coefficients), try $y=e^{rx}$. Then $y'=re^{rx}$, $y''=r^2e^{rx}$, and substituting:</p>
+  <div class="math-block">\[ ar^2e^{rx}+bre^{rx}+ce^{rx}=0 \implies e^{rx}(ar^2+br+c)=0 \]</div>
+  <p>Since $e^{rx}$ is never zero, the guess works exactly when $r$ satisfies the <strong>characteristic equation</strong> $ar^2+br+c=0$ — an ordinary quadratic, solvable with the quadratic formula (from Week 1). Every root $r$ gives one exponential solution $e^{rx}$.</p>
+  <p><strong>Three cases, from the discriminant.</strong></p>
+  <table class="data-table">
+    <tr><th>Discriminant</th><th>Roots</th><th>General solution</th></tr>
+    <tr><td>$b^2-4ac>0$</td><td>Real, distinct: $r_1,r_2$</td><td>$y=C_1e^{r_1x}+C_2e^{r_2x}$</td></tr>
+    <tr><td>$b^2-4ac=0$</td><td>Repeated: $r$</td><td>$y=(C_1+C_2x)e^{rx}$</td></tr>
+    <tr><td>$b^2-4ac<0$</td><td>Complex: $\alpha\pm\beta i$</td><td>$y=e^{\alpha x}(C_1\cos\beta x+C_2\sin\beta x)$</td></tr>
+  </table>
+  <p>The repeated-root case needs an extra factor of $x$ because a single $e^{rx}$ alone isn't "enough" solutions for a second-order equation (which needs two independent building blocks) — $xe^{rx}$ can be verified directly to also solve the equation whenever $r$ is a repeated root. The complex case converts $e^{(\alpha+\beta i)x}$ into real functions using Euler's formula, $e^{i\theta}=\cos\theta+i\sin\theta$.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ ar^2+br+c=0 \quad\text{(characteristic equation, from trying }y=e^{rx}\text{)} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — real, distinct roots</div><p>Solve $y''-3y'+2y=0$.</p>
+  <div class="math-block">\[ r^2-3r+2=0 \implies (r-1)(r-2)=0 \implies r=1,2 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $y=C_1e^x+C_2e^{2x}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — complex roots</div><p>Solve $y''+4y=0$.</p>
+  <div class="math-block">\[ r^2+4=0 \implies r^2=-4 \implies r=\pm2i \]</div>
+  <p>So $\alpha=0$, $\beta=2$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $y=C_1\cos(2x)+C_2\sin(2x)$ (the $e^{\alpha x}=e^0=1$ factor disappears)</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>The characteristic equation is a direct application of complex numbers (Phase 2 of the MATH141 tracker) to a calculus problem — recognising complex conjugate roots and converting them to real sinusoidal solutions via Euler's formula is exactly the kind of cross-topic connection the final exam likes to test.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('deapp2')">&larr; W8: First-Order Linear DE Applications</button>
+        <button class="page-nav-btn next" onclick="goTo('deapp3')">W9: Second-Order DE Applications — Simple Harmonic Motion &amp; Initial Value Problems &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-deapp3">
+      <div class="page-hero">
+        <div class="page-hero-label">W9</div>
+        <div class="page-hero-title">Second-Order DE Applications — Simple Harmonic Motion &amp; Initial Value Problems</div>
+        <div class="page-hero-sub">Physical systems that literally are second-order DEs, plus using two conditions to pin down both constants</div>
+      </div>
+      <div class="motiv">A mass on a spring, obeying Hooke's Law, has acceleration proportional to (negative) displacement — Newton's second law turns that physical statement directly into the complex-root second-order DE from the previous topic, and solving it predicts exactly how the mass oscillates.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Building the SHM equation.</strong> Hooke's Law: restoring force $F=-kx$ (proportional to displacement, opposite direction). Newton's second law: $F=ma=m\dfrac{d^2x}{dt^2}$. Setting these equal:</p>
+  <div class="math-block">\[ m\frac{d^2x}{dt^2} = -kx \implies \frac{d^2x}{dt^2}+\frac{k}{m}x=0 \]</div>
+  <p>This is exactly the complex-root case from the previous topic, with characteristic equation $r^2+\dfrac{k}{m}=0 \implies r=\pm i\sqrt{k/m}$. Writing $\omega=\sqrt{k/m}$ (the natural angular frequency):</p>
+  <div class="math-block">\[ x(t) = C_1\cos(\omega t)+C_2\sin(\omega t) \]</div>
+  <p><strong>Two initial conditions, two constants.</strong> A second-order DE's general solution has two arbitrary constants — so it takes <em>two</em> pieces of information to pin down a particular solution, typically an initial position $x(0)$ and an initial velocity $x'(0)$ (unlike first-order DEs, which needed only one condition).</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \frac{d^2x}{dt^2}+\omega^2x=0, \qquad x(t)=C_1\cos(\omega t)+C_2\sin(\omega t), \qquad \omega=\sqrt{k/m} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — solve an SHM initial value problem</div><p>A mass on a spring satisfies $x''+4x=0$, with $x(0)=3$ and $x'(0)=0$ (released from rest). Find $x(t)$.</p>
+  <p>$\omega=2$: $x(t)=C_1\cos2t+C_2\sin2t$. Differentiate: $x'(t)=-2C_1\sin2t+2C_2\cos2t$.</p>
+  <div class="math-block">\[ x(0)=C_1=3, \qquad x'(0)=2C_2=0 \implies C_2=0 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $x(t)=3\cos(2t)$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — real distinct roots with two initial conditions</div><p>Solve $y''-y'-2y=0$, $y(0)=1$, $y'(0)=5$.</p>
+  <div class="math-block">\[ r^2-r-2=(r-2)(r+1)=0 \implies r=2,-1, \qquad y=C_1e^{2x}+C_2e^{-x} \]</div>
+  <p>$y'=2C_1e^{2x}-C_2e^{-x}$. At $x=0$: $C_1+C_2=1$ and $2C_1-C_2=5$. Adding: $3C_1=6\implies C_1=2$, so $C_2=-1$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $y=2e^{2x}-e^{-x}$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Always differentiate the general solution <em>before</em> applying the second initial condition — a very common error is trying to use $y'(0)$ directly on the undifferentiated general solution.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('de2nd')">&larr; W9: Second-Order DEs — Characteristic Equation &amp; Three Root Cases</button>
+        <button class="page-nav-btn next" onclick="goTo('practice')">Practice Questions &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-practice">
+      <div class="page-hero">
+        <div class="page-hero-label">Mixed Practice</div>
+        <div class="page-hero-title">Practice Questions</div>
+        <div class="page-hero-sub">60 questions — 10 per topic — across all of Phase 2. Attempt each before revealing the answer.</div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W7</div>
+        <div class="level-info">
+          <div class="level-title">Introduction to Differential Equations &amp; Separable DEs</div>
+          <div class="level-sub">What a DE actually asks, and the simplest technique for solving one</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div class="q-text">State the order of the DE $y''+3y'-2y=0$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Second order (highest derivative is $y''$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div class="q-text">Solve $\dfrac{dy}{dx}=2x$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y=x^2+C$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div class="q-text">Solve $\dfrac{dy}{dx}=\dfrac{x}{y}$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y\,dy=x\,dx \implies \dfrac{y^2}{2}=\dfrac{x^2}{2}+C \implies y^2=x^2+C'$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">4</div>
+          <div class="q-text">Solve $\dfrac{dy}{dx}=3y$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac1y dy=3dx \implies \ln|y|=3x+C_1 \implies y=Ce^{3x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">5</div>
+          <div class="q-text">Solve $\dfrac{dy}{dx}=3y$ with $y(0)=2$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y=Ce^{3x}$; $y(0)=C=2 \implies y=2e^{3x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">6</div>
+          <div class="q-text">Solve $\dfrac{dy}{dx}=e^{x-y}$ (hint: rewrite $e^{x-y}=e^xe^{-y}$ first).<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$e^y\,dy=e^x\,dx \implies e^y=e^x+C \implies y=\ln(e^x+C)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">7</div>
+          <div class="q-text">Solve $y\dfrac{dy}{dx}=x^2$ with $y(0)=1$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y\,dy=x^2dx \implies \dfrac{y^2}{2}=\dfrac{x^3}{3}+C$; at $x=0,y=1$: $\tfrac12=C$; $y^2=\tfrac{2x^3}{3}+1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">8</div>
+          <div class="q-text">Verify that $y=Ce^{x^2/2}$ (from Example 1) actually satisfies $y'=xy$ by differentiating it directly.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=Ce^{x^2/2}\cdot x = x\cdot Ce^{x^2/2}=xy$ — confirmed, since $y=Ce^{x^2/2}$ by definition</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">9</div>
+          <div class="q-text">Solve $\dfrac{dy}{dx}=\dfrac{\cos x}{y^2}$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y^2dy=\cos x\,dx \implies \dfrac{y^3}{3}=\sin x+C \implies y=\sqrt[3]{3\sin x+C'}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">10</div>
+          <div class="q-text">Explain why the technique is called 'separable' and what algebraic property of the right-hand side ($g(x)h(y)$) makes separation possible.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The right-hand side factors cleanly into a piece depending only on $x$ and a piece depending only on $y$ — this factorisation is exactly what allows every $y$-term to be moved to one side and every $x$-term to the other via ordinary algebra; if the right-hand side mixed $x$ and $y$ in a way that couldn't be factored this way (e.g. $x+y$), the same separation trick wouldn't work</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W7</div>
+        <div class="level-info">
+          <div class="level-title">Separable DE Applications — Growth, Decay &amp; Mixing</div>
+          <div class="level-sub">Turning real scenarios into separable equations and solving them</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">11</div>
+          <div class="q-text">A population grows at a rate proportional to its size, doubling every 5 years. If it starts at 1000, find the population after 10 years.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Doubling every 5 years means after 10 years (2 doubling periods): $1000\times2^2=4000$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">12</div>
+          <div class="q-text">Set up the DE for a population growing at a rate proportional to its size (do not solve).<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{dP}{dt}=kP$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">13</div>
+          <div class="q-text">A radioactive sample decays from 100g to 25g in 20 years. Find the decay constant $k$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$25=100e^{20k}\implies e^{20k}=\tfrac14\implies k=\dfrac{\ln(1/4)}{20}=\dfrac{-2\ln2}{20}=-\dfrac{\ln2}{10}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">14</div>
+          <div class="q-text">Using the previous answer, find the half-life of the substance.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Half-life $t$ satisfies $e^{kt}=\tfrac12 \implies kt=-\ln2 \implies t=\dfrac{-\ln2}{k}=\dfrac{-\ln2}{-\ln2/10}=10$ years</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">15</div>
+          <div class="q-text">An object at $100°$C is placed in a $25°$C room; after 10 minutes it's $70°$C. Set up the cooling equation and find $k$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$T=25+75e^{-kt}$; at $t=10$: $70=25+75e^{-10k}\implies e^{-10k}=\tfrac{45}{75}=0.6 \implies k=\dfrac{-\ln0.6}{10}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">16</div>
+          <div class="q-text">Using the previous question's setup, find the object's temperature after 20 minutes.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$T(20)=25+75(e^{-10k})^2=25+75(0.6)^2=25+27=52°$C</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">17</div>
+          <div class="q-text">A tank initially contains 100L of pure water. Brine with concentration 2g/L flows in at 3L/min, and the well-mixed solution flows out at the same rate. Set up (do not solve) the DE for the amount of salt $A(t)$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Rate in $=2\times3=6$ g/min; rate out $=\dfrac{A}{100}\times3=\dfrac{3A}{100}$ g/min (volume stays constant at 100L since inflow equals outflow): $\dfrac{dA}{dt}=6-\dfrac{3A}{100}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">18</div>
+          <div class="q-text">Explain why the mixing problem above becomes a linear DE (needing the integrating factor method) rather than a separable one.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The right-hand side $6-\tfrac{3A}{100}$ can actually still be separated here since it only involves $A$ and constants — but in general, if the flow rates in and out differ (so the tank's volume changes with time), the coefficient of $A$ becomes a function of $t$ too, and the equation takes the linear form $A'+p(t)A=q(t)$ that needs the integrating factor method rather than pure separation</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">19</div>
+          <div class="q-text">A bacteria culture grows from 500 to 1500 in 4 hours. Find $k$ and predict the population after 8 hours.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$1500=500e^{4k}\implies e^{4k}=3$; after 8 hours: $500(e^{4k})^2=500(9)=4500$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">20</div>
+          <div class="q-text">Explain, in terms of the sign of $k$, the difference between $y=y_0e^{kt}$ modelling growth versus decay.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$k>0$ makes $e^{kt}$ increase without bound as $t$ grows, modelling growth; $k<0$ makes $e^{kt}\to0$ as $t\to\infty$, modelling decay toward zero — the same formula covers both cases, distinguished purely by the sign of the constant</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W7</div>
+        <div class="level-info">
+          <div class="level-title">First-Order Linear DEs — Integrating Factor Method</div>
+          <div class="level-sub">Solving DEs that can't be separated, by manufacturing a product rule</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">21</div>
+          <div class="q-text">Put $2y'+6y=4x$ into standard form and identify $p(x)$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Divide by 2: $y'+3y=2x$; $p(x)=3$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">22</div>
+          <div class="q-text">Find the integrating factor for $y'+3y=2x$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mu(x)=e^{\int3\,dx}=e^{3x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">23</div>
+          <div class="q-text">Find the integrating factor for $y'+\dfrac{1}{x}y=x^2$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mu(x)=e^{\int(1/x)dx}=e^{\ln x}=x$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">24</div>
+          <div class="q-text">Solve $y'+2y=6$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mu=e^{2x}$; $\dfrac{d}{dx}[e^{2x}y]=6e^{2x} \implies e^{2x}y=3e^{2x}+C \implies y=3+Ce^{-2x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">25</div>
+          <div class="q-text">Solve $y'-y=e^{2x}$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mu=e^{-x}$; $\dfrac{d}{dx}[e^{-x}y]=e^{x} \implies e^{-x}y=e^x+C \implies y=e^{2x}+Ce^x$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">26</div>
+          <div class="q-text">Solve $y'+\dfrac{1}{x}y=x^2$, $x>0$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mu=x$; $\dfrac{d}{dx}[xy]=x^3 \implies xy=\dfrac{x^4}{4}+C \implies y=\dfrac{x^3}{4}+\dfrac{C}{x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">27</div>
+          <div class="q-text">Solve $y'+2xy=x$ (hint: $\mu(x)=e^{x^2}$).<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{d}{dx}[e^{x^2}y]=xe^{x^2} \implies e^{x^2}y=\tfrac12e^{x^2}+C \implies y=\tfrac12+Ce^{-x^2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">28</div>
+          <div class="q-text">Solve $y'+y=e^{-x}$, $y(0)=2$ (note: $q(x)$ matches $\mu(x)^{-1}$, so the right side integrates to a plain $x$, not another exponential).<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mu=e^x$; $\dfrac{d}{dx}[e^xy]=1 \implies e^xy=x+C$; at $x=0,y=2$: $C=2$; $y=(x+2)e^{-x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">29</div>
+          <div class="q-text">Verify the solution $y=x-1+Ce^{-x}$ from Example 1 actually satisfies $y'+y=x$ by differentiating and substituting back.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=1-Ce^{-x}$; $y'+y=(1-Ce^{-x})+(x-1+Ce^{-x})=x$ — confirmed, the $Ce^{-x}$ terms cancel exactly</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">30</div>
+          <div class="q-text">Explain, using the product rule expansion, why $\mu(x)=e^{\int p(x)dx}$ is exactly the function that makes $\mu y'+\mu p(x)y$ collapse into $\frac{d}{dx}[\mu y]$.<div class="q-hint">W7</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Expanding $\frac{d}{dx}[\mu y]=\mu y'+\mu' y$ via the product rule, this matches $\mu y'+\mu p(x) y$ exactly when $\mu'=\mu p(x)$; solving that as a separable DE for $\mu$ gives $\ln\mu=\int p(x)dx$, i.e. $\mu=e^{\int p(x)dx}$ — so the integrating factor isn't an arbitrary trick, it's the unique function forced by wanting the product rule to run in reverse</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W8</div>
+        <div class="level-info">
+          <div class="level-title">First-Order Linear DE Applications</div>
+          <div class="level-sub">Mixing problems with changing volume, and other linear-DE scenarios</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">31</div>
+          <div class="q-text">A 50L tank has 10g of salt dissolved. Pure water flows in and the mixture flows out, both at 2L/min. Find the DE for $A(t)$.<div class="q-hint">W8</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Volume constant at 50L: $\dfrac{dA}{dt}=-\dfrac{2A}{50}=-\dfrac{A}{25}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">32</div>
+          <div class="q-text">Solve the DE from the previous question with $A(0)=10$.<div class="q-hint">W8</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$A=Ce^{-t/25}$; $C=10$: $A(t)=10e^{-t/25}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">33</div>
+          <div class="q-text">Find how long it takes for the salt amount in the previous question to drop to 5g.<div class="q-hint">W8</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$5=10e^{-t/25} \implies e^{-t/25}=\tfrac12 \implies t=25\ln2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">34</div>
+          <div class="q-text">A tank has volume $V(t)=100+t$ (inflow exceeds outflow by 1L/min). If outflow is 3L/min, write the outflow term of the DE for $A(t)$.<div class="q-hint">W8</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{3A}{100+t}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">35</div>
+          <div class="q-text">An RL circuit satisfies $2\dfrac{dI}{dt}+10I=20$. Put this in standard linear form and find $p(t)$.<div class="q-hint">W8</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Divide by 2: $\dfrac{dI}{dt}+5I=10$; $p(t)=5$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">36</div>
+          <div class="q-text">Solve the RL circuit equation from the previous question with $I(0)=0$.<div class="q-hint">W8</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mu=e^{5t}$; $\dfrac{d}{dt}[e^{5t}I]=10e^{5t} \implies e^{5t}I=2e^{5t}+C \implies I=2+Ce^{-5t}$; $I(0)=0\implies C=-2$: $I=2(1-e^{-5t})$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">37</div>
+          <div class="q-text">Explain the physical meaning of $I\to2$ as $t\to\infty$ in the previous question's solution.<div class="q-hint">W8</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>As $t\to\infty$, the transient term $-2e^{-5t}$ decays to zero, leaving the steady-state current $I=2$ — the circuit settles into a constant current once the initial transient behaviour dies away</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">38</div>
+          <div class="q-text">A 200L tank starts with 40g salt. Brine at 1g/L flows in at 5L/min; mixture flows out at 5L/min (constant volume). Set up the full DE with initial condition.<div class="q-hint">W8</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{dA}{dt}=5(1)-5\cdot\dfrac{A}{200}=5-\dfrac{A}{40}$, $A(0)=40$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">39</div>
+          <div class="q-text">Solve the DE from the previous question.<div class="q-hint">W8</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mu=e^{t/40}$; $\dfrac{d}{dt}[e^{t/40}A]=5e^{t/40} \implies e^{t/40}A=200e^{t/40}+C \implies A=200+Ce^{-t/40}$; $A(0)=40\implies C=-160$: $A=200-160e^{-t/40}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">40</div>
+          <div class="q-text">Explain why a mixing problem with equal inflow and outflow rates is always separable, while one with unequal rates is genuinely linear but not separable.<div class="q-hint">W8</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Equal inflow/outflow rates keep the volume $V(t)$ constant, so the outflow term $\frac{r_{\text{out}}}{V}A$ has a constant coefficient — the DE is $\frac{dA}{dt}=\text{const}-\text{const}\cdot A$, which can be separated since both sides only involve $A$ and $t$ separately after rearranging. With unequal rates, $V(t)$ depends on $t$, making the coefficient of $A$ a genuine function of $t$ — the equation is still linear (degree 1 in $A$), but $A$ and $t$ can no longer be algebraically separated onto opposite sides</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W9</div>
+        <div class="level-info">
+          <div class="level-title">Second-Order DEs — Characteristic Equation &amp; Three Root Cases</div>
+          <div class="level-sub">Guessing exponential solutions, and what happens for each type of root</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">41</div>
+          <div class="q-text">Solve $y''-5y'+6y=0$.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r^2-5r+6=0\implies(r-2)(r-3)=0$: $y=C_1e^{2x}+C_2e^{3x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">42</div>
+          <div class="q-text">Solve $y''-4y'+4y=0$ (repeated root case).<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r^2-4r+4=(r-2)^2=0\implies r=2$ (repeated): $y=(C_1+C_2x)e^{2x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">43</div>
+          <div class="q-text">Solve $y''+9y=0$.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r^2+9=0\implies r=\pm3i$: $y=C_1\cos(3x)+C_2\sin(3x)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">44</div>
+          <div class="q-text">Solve $y''-2y'+5y=0$ (complex roots with nonzero real part).<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r=\dfrac{2\pm\sqrt{4-20}}{2}=1\pm2i$: $y=e^x(C_1\cos2x+C_2\sin2x)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">45</div>
+          <div class="q-text">Solve $y''+y'-6y=0$.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r^2+r-6=(r+3)(r-2)=0$: $y=C_1e^{-3x}+C_2e^{2x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">46</div>
+          <div class="q-text">Solve $y''+6y'+9y=0$ (repeated root).<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r^2+6r+9=(r+3)^2=0\implies r=-3$: $y=(C_1+C_2x)e^{-3x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">47</div>
+          <div class="q-text">Solve $4y''+4y'+y=0$.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$4r^2+4r+1=(2r+1)^2=0\implies r=-\tfrac12$: $y=(C_1+C_2x)e^{-x/2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">48</div>
+          <div class="q-text">Solve $y''+2y'+2y=0$.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r=\dfrac{-2\pm\sqrt{4-8}}{2}=-1\pm i$: $y=e^{-x}(C_1\cos x+C_2\sin x)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">49</div>
+          <div class="q-text">Verify that $y=xe^{2x}$ satisfies $y''-4y'+4y=0$ (the repeated-root DE from earlier) by direct substitution.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y'=e^{2x}+2xe^{2x}$; $y''=2e^{2x}+2e^{2x}+4xe^{2x}=4e^{2x}+4xe^{2x}$; substituting: $(4e^{2x}+4xe^{2x})-4(e^{2x}+2xe^{2x})+4(xe^{2x})=4e^{2x}+4xe^{2x}-4e^{2x}-8xe^{2x}+4xe^{2x}=0$ — confirmed</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">50</div>
+          <div class="q-text">Explain, using the discriminant, why the boundary between the 'real distinct roots' and 'complex roots' cases is exactly the repeated-root case.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The discriminant $b^2-4ac$ continuously controls the nature of the roots: positive gives two distinct real roots, negative gives a complex conjugate pair, and the transition point where the discriminant equals exactly zero is precisely where the two real roots merge into one repeated real root — it's the boundary case between the other two, not a separate phenomenon</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W9</div>
+        <div class="level-info">
+          <div class="level-title">Second-Order DE Applications — Simple Harmonic Motion &amp; Initial Value Problems</div>
+          <div class="level-sub">Physical systems that literally are second-order DEs, plus using two conditions to pin down both constants</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">51</div>
+          <div class="q-text">A spring-mass system satisfies $x''+9x=0$, $x(0)=2$, $x'(0)=0$. Find $x(t)$.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\omega=3$: $x=C_1\cos3t+C_2\sin3t$; $x(0)=C_1=2$; $x'(0)=3C_2=0\implies C_2=0$: $x=2\cos3t$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">52</div>
+          <div class="q-text">A spring-mass system satisfies $x''+16x=0$, $x(0)=0$, $x'(0)=8$. Find $x(t)$.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\omega=4$: $x(0)=C_1=0$; $x'(0)=4C_2=8\implies C_2=2$: $x=2\sin4t$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">53</div>
+          <div class="q-text">Solve $y''-y'-6y=0$, $y(0)=2$, $y'(0)=1$.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r^2-r-6=(r-3)(r+2)=0$: $y=C_1e^{3x}+C_2e^{-2x}$; $C_1+C_2=2$, $3C_1-2C_2=1$; solving: $C_1=1,C_2=1$: $y=e^{3x}+e^{-2x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">54</div>
+          <div class="q-text">Solve $y''+2y'+y=0$, $y(0)=1$, $y'(0)=0$ (repeated root).<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$r=-1$ (repeated): $y=(C_1+C_2x)e^{-x}$; $y(0)=C_1=1$; $y'=(C_2-C_1-C_2x)e^{-x}$, $y'(0)=C_2-C_1=0\implies C_2=1$: $y=(1+x)e^{-x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">55</div>
+          <div class="q-text">Solve $y''+y=0$, $y(0)=0$, $y'(0)=1$.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\omega=1$: $y=C_1\cos x+C_2\sin x$; $y(0)=C_1=0$; $y'(0)=C_2=1$: $y=\sin x$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">56</div>
+          <div class="q-text">A mass of 2kg is attached to a spring with $k=8$N/m. Find $\omega$ for the resulting SHM.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\omega=\sqrt{k/m}=\sqrt{8/2}=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">57</div>
+          <div class="q-text">Using the previous question, if the mass starts at $x(0)=0.5$m with zero initial velocity, find $x(t)$.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=0.5\cos(2t)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">58</div>
+          <div class="q-text">Solve $y''-4y=0$, $y(0)=3$, $y'(0)=-2$ (real distinct roots $\pm2$).<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y=C_1e^{2x}+C_2e^{-2x}$; $C_1+C_2=3$, $2C_1-2C_2=-2\implies C_1-C_2=-1$; solving: $C_1=1,C_2=2$: $y=e^{2x}+2e^{-2x}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">59</div>
+          <div class="q-text">Explain why a second-order DE needs exactly two initial conditions, connecting it to the two arbitrary constants in the general solution.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The general solution of a second-order linear DE always contains exactly two independent arbitrary constants ($C_1,C_2$) — matching two unknowns requires two independent equations, which is exactly what two initial conditions (typically $y(0)$ and $y'(0)$) provide; one condition alone would leave one constant undetermined, and three conditions would typically over-determine the system</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">60</div>
+          <div class="q-text">A spring-mass system satisfies $x''+25x=0$ with $x(0)=1$ and $x'(0)=5$. Find $x(t)$ and identify its angular frequency.<div class="q-hint">W9</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\omega=5$: $x(0)=C_1=1$; $x'(0)=5C_2=5\implies C_2=1$: $x=\cos5t+\sin5t$; angular frequency $\omega=5$</p>
+        </div>
+      </div>
+
+      <div class="callout callout-success" style="margin-top:32px">
+        <strong>Phase 2 practice complete!</strong> 60 questions across 6 topics. Remember: In-Session Exam 1 tests Phase 1 content only &mdash; this phase's material (differential equations) is tested in In-Session Exam 2 (Week 13).
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('deapp3')">&larr; W9: Second-Order DE Applications</button>
+        <button class="page-nav-btn next" onclick="goTo('home')">Back to Overview &rarr;</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PAGES = ['home','deintro','deapp1','deint2','deapp2','exam1','de2nd','deapp3','practice'];
+const PAGE_NAMES = {
+  home:'Overview',
+  exam1:'In-Session Exam 1',
+  deintro:'W7. Introduction to Differential Equations &amp; Separable DEs',
+  deapp1:'W7. Separable DE Applications — Growth, Decay &amp; Mixing',
+  deint2:'W7. First-Order Linear DEs — Integrating Factor Method',
+  deapp2:'W8. First-Order Linear DE Applications',
+  de2nd:'W9. Second-Order DEs — Characteristic Equation &amp; Three Root Cases',
+  deapp3:'W9. Second-Order DE Applications — Simple Harmonic Motion &amp; Initial Value Problems',
+  practice:'Practice Questions'
+};
+let visited = new Set(['home']);
+
+function goTo(id) {
+  PAGES.forEach(p => {
+    document.getElementById('page-'+p).classList.remove('active');
+  });
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => {
+    const fn = l.getAttribute('onclick');
+    if (fn && fn.includes("'"+id+"'")) l.classList.add('active');
+  });
+  document.getElementById('breadcrumbPage').textContent = PAGE_NAMES[id] || id;
+  visited.add(id);
+  const pct = Math.round((visited.size / PAGES.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  window.scrollTo(0, 0);
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.getElementById('page-'+id), {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 50);
+}
+
+function toggleDPEN(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.dpen-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function toggleQ(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.q-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function expandAll() {
+  const activePage = document.querySelector('.page.active');
+  activePage.querySelectorAll('.dpen-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.dpen-chevron').classList.add('open');
+  });
+  activePage.querySelectorAll('.q-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.q-arrow').classList.add('open');
+  });
+  setTimeout(() => {
+    if (window.renderMathInElement) renderMathInElement(activePage, {
+      delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+      throwOnError: false
+    });
+  }, 30);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 300);
+});
+</script>
+</body>
+</html>

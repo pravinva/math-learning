@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mohr&rsquo;s Circle of Stress</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG251 &middot; Mechanics of Solids &middot; Week 10</div>
+  <h1>Mohr&rsquo;s Circle of Stress</h1>
+  <p>The plane stress transformation equations, principal stresses and maximum in-plane shear stress, the graphical Mohr's circle construction, and its critical application to combined-loading problems (bending plus torsion, and beyond). This is the framework that ties together every stress type covered so far in the subject. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 25 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this block's toolkit</span>
+  <ul>
+<li><strong>Transformation equations</strong> convert stress components between any two orientations at the same point.</li>
+<li><strong>Principal stresses</strong> $\sigma_{1,2}=\sigma_{\text{avg}}\pm R$ occur where shear is zero; <strong>max shear</strong> $\tau_{\max}=R$ occurs $45\,{}^\circ$ away.</li>
+<li><strong>Mohr's circle:</strong> centre $=\left(\frac{\sigma_x+\sigma_y}2,0\right)$, radius $R=\sqrt{\left(\frac{\sigma_x-\sigma_y}2\right)^2+\tau_{xy}^2}$; physical $\theta\to$ circle $2\theta$, same direction.</li>
+<li><strong>Combined loading:</strong> compute $\sigma_x$ (bending/axial) and $\tau_{xy}$ (shear/torsion) separately, then combine via Mohr's circle for the true peak stress.</li>
+<li><strong>Design implication:</strong> checking individual stress components alone can miss a higher combined principal stress &mdash; the essential setup for Week 13's failure theories.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Plane Stress Transformation Equations</a></li>
+<li><a href="#sec1">Principal Stresses &amp; Maximum Shear Stress</a></li>
+<li><a href="#sec2">Mohr&rsquo;s Circle Construction</a></li>
+<li><a href="#sec3">Mohr&rsquo;s Circle Applications</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+<div class="section-title"><span class="tag">0</span> Plane Stress Transformation Equations</div>
+
+<div class="prose">
+<p>A point in a stressed body generally has normal stresses $\sigma_x,\sigma_y$ and shear stress $\tau_{xy}$ acting on an $x$-$y$ oriented element. Rotating the element by angle $\theta$ (measured counterclockwise from the $x$-axis) reveals <strong>different</strong> stress values on the rotated faces &mdash; the same physical stress state, viewed from a different orientation, given by the <strong>stress transformation equations</strong>.</p>
+<p>$$\sigma_{x'}=\dfrac{\sigma_x+\sigma_y}2+\dfrac{\sigma_x-\sigma_y}2\cos2\theta+\tau_{xy}\sin2\theta \qquad \tau_{x'y'}=-\dfrac{\sigma_x-\sigma_y}2\sin2\theta+\tau_{xy}\cos2\theta$$</p>
+<p>This combines the effects of axial stress (Week 1&ndash;2), bending stress (Week 4), shear stress (Week 8), and torsion (Week 9) into one general framework &mdash; essential wherever a real component experiences more than one type of loading simultaneously (the theme of the final weeks of this subject).</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\sigma_{x'}=\frac{\sigma_x+\sigma_y}2+\frac{\sigma_x-\sigma_y}2\cos2\theta+\tau_{xy}\sin2\theta \qquad \tau_{x'y'}=-\frac{\sigma_x-\sigma_y}2\sin2\theta+\tau_{xy}\cos2\theta$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> At a point, $\sigma_x=80$ MPa, $\sigma_y=20$ MPa, $\tau_{xy}=30$ MPa. Find $\sigma_{x'}$ and $\tau_{x'y'}$ at $\theta=30\,{}^\circ$.</p>
+<p class="step">$\sigma_{x'}=\dfrac{80+20}2+\dfrac{80-20}2\cos60\,{}^\circ+30\sin60\,{}^\circ=50+30(0.5)+30(0.866)=50+15+26.0=91.0$ MPa.</p>
+<p class="step">$\tau_{x'y'}=-\dfrac{80-20}2\sin60\,{}^\circ+30\cos60\,{}^\circ=-30(0.866)+30(0.5)=-26.0+15=-11.0$ MPa.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>At a point, $\sigma_x=60$ MPa, $\sigma_y=0$, $\tau_{xy}=0$ (uniaxial stress). Find $\sigma_{x'}$ at $\theta=45\,{}^\circ$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{x'}=\dfrac{60+0}2+\dfrac{60-0}2\cos90\,{}^\circ+0=30+0=30$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>For the same uniaxial stress state ($\sigma_x=60$ MPa, $\sigma_y=\tau_{xy}=0$), find $\tau_{x'y'}$ at $\theta=45\,{}^\circ$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tau_{x'y'}=-\dfrac{60-0}2\sin90\,{}^\circ+0=-30(1)=-30$ MPa (the classic result: uniaxial tension produces maximum shear stress, equal to half the normal stress, on planes at 45&deg;).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>At a point, $\sigma_x=0,\sigma_y=0,\tau_{xy}=40$ MPa (pure shear). Find $\sigma_{x'}$ at $\theta=45\,{}^\circ$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{x'}=0+0+40\sin90\,{}^\circ=40$ MPa (pure shear at 45&deg; transforms into pure normal stress &mdash; the basis for why brittle materials in torsion often fail along 45&deg; helical planes).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>At a point, $\sigma_x=50$ MPa, $\sigma_y=-20$ MPa, $\tau_{xy}=0$. Find $\sigma_{x'}$ and $\tau_{x'y'}$ at $\theta=0\,{}^\circ$, and verify this simply recovers the original values.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>At $\theta=0$: $\cos0=1,\sin0=0$. $\sigma_{x'}=\dfrac{50-20}2+\dfrac{50+20}2(1)+0=15+35=50$ MPa $=\sigma_x$. &#10003; $\tau_{x'y'}=-\dfrac{70}2(0)+0=0=\tau_{xy}$. &#10003;</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>At a point, $\sigma_x=40$ MPa, $\sigma_y=10$ MPa, $\tau_{xy}=15$ MPa. Find $\sigma_{x'}$ at $\theta=90\,{}^\circ$, and verify it equals $\sigma_y$ (the original y-face stress, since rotating 90&deg; swaps the roles of the x- and y-faces).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>At $\theta=90\,{}^\circ$: $\cos180\,{}^\circ=-1,\sin180\,{}^\circ=0$. $\sigma_{x'}=\dfrac{40+10}2+\dfrac{40-10}2(-1)+15(0)=25-15=10$ MPa $=\sigma_y$. &#10003;</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Explain why $\sigma_x+\sigma_y$ is invariant under rotation (i.e. $\sigma_{x'}+\sigma_{y'}=\sigma_x+\sigma_y$ for any $\theta$), using the transformation equations.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $\sigma_{y'}$ is found by substituting $\theta+90\,{}^\circ$ into the $\sigma_{x'}$ formula, and $\cos(2\theta+180\,{}^\circ)=-\cos2\theta$, the $\cos2\theta$ and $\sin2\theta$ terms exactly cancel when $\sigma_{x'}$ and $\sigma_{y'}$ are added, leaving only $\sigma_{x'}+\sigma_{y'}=\dfrac{\sigma_x+\sigma_y}2+\dfrac{\sigma_x+\sigma_y}2=\sigma_x+\sigma_y$ &mdash; a genuine physical invariant (this sum equals twice the average, or "hydrostatic", stress at the point, which doesn't depend on the arbitrarily chosen orientation of the coordinate axes).</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+<div class="section-title"><span class="tag">1</span> Principal Stresses &amp; Maximum Shear Stress</div>
+
+<div class="prose">
+<p>The <strong>principal stresses</strong> $\sigma_1,\sigma_2$ are the maximum and minimum normal stresses at a point, occurring on the <strong>principal planes</strong> where shear stress is exactly zero: $\sigma_{1,2}=\dfrac{\sigma_x+\sigma_y}2\pm\sqrt{\left(\dfrac{\sigma_x-\sigma_y}2\right)^2+\tau_{xy}^2}$, at orientation angle $\theta_p$ found from $\tan2\theta_p=\dfrac{2\tau_{xy}}{\sigma_x-\sigma_y}$.</p>
+<p>The <strong>maximum in-plane shear stress</strong> occurs on planes rotated exactly $45\,{}^\circ$ from the principal planes: $\tau_{\max}=\sqrt{\left(\dfrac{\sigma_x-\sigma_y}2\right)^2+\tau_{xy}^2}$ (note this is exactly the square-root term from the principal stress formula), with an associated average normal stress $\sigma_{\text{avg}}=\dfrac{\sigma_x+\sigma_y}2$ acting on those same planes.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\sigma_{1,2}=\frac{\sigma_x+\sigma_y}2\pm\sqrt{\left(\frac{\sigma_x-\sigma_y}2\right)^2+\tau_{xy}^2} \qquad \tau_{\max}=\sqrt{\left(\frac{\sigma_x-\sigma_y}2\right)^2+\tau_{xy}^2} \qquad \tan2\theta_p=\frac{2\tau_{xy}}{\sigma_x-\sigma_y}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> At a point, $\sigma_x=80$ MPa, $\sigma_y=20$ MPa, $\tau_{xy}=30$ MPa (same as Section 0). Find the principal stresses and the maximum in-plane shear stress.</p>
+<p class="step">$\sigma_{\text{avg}}=\dfrac{80+20}2=50$ MPa. Radius $=\sqrt{\left(\dfrac{80-20}2\right)^2+30^2}=\sqrt{30^2+30^2}=\sqrt{1800}=42.43$ MPa.</p>
+<p class="step">$\sigma_1=50+42.43=92.43$ MPa. $\sigma_2=50-42.43=7.57$ MPa. $\tau_{\max}=42.43$ MPa.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>At a point, $\sigma_x=100$ MPa, $\sigma_y=40$ MPa, $\tau_{xy}=0$ (no shear, already a principal state). Confirm $\sigma_1,\sigma_2$ using the formula.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{\text{avg}}=70$ MPa. Radius $=\sqrt{30^2+0}=30$ MPa. $\sigma_1=100$ MPa, $\sigma_2=40$ MPa &mdash; correctly recovers the given values, since zero shear means the given axes are already principal.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>At a point, $\sigma_x=0,\sigma_y=0,\tau_{xy}=25$ MPa (pure shear). Find the principal stresses.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{\text{avg}}=0$. Radius $=\sqrt{0+25^2}=25$ MPa. $\sigma_1=25$ MPa, $\sigma_2=-25$ MPa (equal and opposite &mdash; the classic pure-shear result, confirming that pure shear is equivalent to equal biaxial tension/compression at 45&deg;).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>At a point, $\sigma_x=60$ MPa, $\sigma_y=-10$ MPa, $\tau_{xy}=20$ MPa. Find the principal stresses.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{\text{avg}}=25$ MPa. Radius $=\sqrt{35^2+20^2}=\sqrt{1625}=40.31$ MPa. $\sigma_1=65.3$ MPa, $\sigma_2=-15.3$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>For the stress state of the previous question, find the maximum in-plane shear stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tau_{\max}=40.31$ MPa (the same radius value computed above).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>At a point, $\sigma_x=45$ MPa, $\sigma_y=45$ MPa, $\tau_{xy}=15$ MPa (equal biaxial normal stress plus shear). Find the principal stresses.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{\text{avg}}=45$ MPa. Radius $=\sqrt{0^2+15^2}=15$ MPa. $\sigma_1=60$ MPa, $\sigma_2=30$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Find the orientation angle $\theta_p$ of the principal planes for $\sigma_x=80$ MPa, $\sigma_y=20$ MPa, $\tau_{xy}=30$ MPa (same stress state as the worked example).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tan2\theta_p=\dfrac{2(30)}{80-20}=\dfrac{60}{60}=1\Rightarrow2\theta_p=45\,{}^\circ\Rightarrow\theta_p=22.5\,{}^\circ$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Explain why the maximum in-plane shear stress formula $\tau_{\max}=\sqrt{\left(\frac{\sigma_x-\sigma_y}2\right)^2+\tau_{xy}^2}$ is numerically identical to the "radius" term in the principal stress formula, and what this implies about the relationship between the principal-stress planes and the maximum-shear planes.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Both quantities come from the exact same square-root expression in the transformation equations &mdash; the principal stresses are $\sigma_{\text{avg}}\pm(\text{radius})$, while the maximum shear stress is exactly that same radius value. This shared origin reflects that principal planes (zero shear, extreme normal stress) and maximum-shear planes are two different "extremes" of the very same underlying transformation, related geometrically by being oriented exactly 45&deg; apart &mdash; a relationship made fully visually explicit by Mohr's circle, covered next.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+<div class="section-title"><span class="tag">2</span> Mohr&rsquo;s Circle Construction</div>
+
+<div class="prose">
+<p><strong>Mohr's circle</strong> is a graphical representation of the stress transformation equations: plot $\sigma$ on the horizontal axis and $\tau$ on the vertical axis. The stress state $(\sigma_x,\tau_{xy})$ and $(\sigma_y,-\tau_{xy})$ define two points that are <strong>diametrically opposite</strong> on a circle centred at $\left(\dfrac{\sigma_x+\sigma_y}2,0\right)$ with radius $R=\sqrt{\left(\dfrac{\sigma_x-\sigma_y}2\right)^2+\tau_{xy}^2}$ &mdash; exactly the quantities from Section 1.</p>
+<p><strong>Key rule:</strong> a rotation of $\theta$ on the physical element corresponds to a rotation of $2\theta$ on Mohr's circle, in the <strong>same</strong> direction. Reading off the circle: principal stresses are where the circle crosses the $\sigma$-axis ($\tau=0$); maximum shear stress is the top/bottom of the circle (at $\sigma=\sigma_{\text{avg}}$); any other orientation's stresses can be read directly from the corresponding point on the circle, at twice the physical rotation angle.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\text{Centre: } \left(\frac{\sigma_x+\sigma_y}2,0\right) \qquad \text{Radius: } R=\sqrt{\left(\frac{\sigma_x-\sigma_y}2\right)^2+\tau_{xy}^2} \qquad \text{Physical } \theta \leftrightarrow \text{Mohr&rsquo;s circle } 2\theta \ \text{(same sense)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Using the same stress state as before ($\sigma_x=80$ MPa, $\sigma_y=20$ MPa, $\tau_{xy}=30$ MPa), describe the Mohr&rsquo;s circle and locate the principal stress points.</p>
+<p class="step">Centre $=(50,0)$ MPa. Radius $=42.43$ MPa (computed in Section 1). The circle spans from $\sigma=50-42.43=7.57$ to $\sigma=50+42.43=92.43$ MPa along the $\tau=0$ axis &mdash; these are exactly $\sigma_2$ and $\sigma_1$ found algebraically before.</p>
+<p class="step">The point $(\sigma_x,\tau_{xy})=(80,30)$ lies on the circle; rotating from that point to the nearest $\sigma$-axis crossing ($\sigma_1=92.43$ MPa) requires an angle of $2\theta_p=45\,{}^\circ$ on the circle, i.e. $\theta_p=22.5\,{}^\circ$ physically &mdash; matching Section 1&rsquo;s result. &#10003;</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>For $\sigma_x=60$ MPa, $\sigma_y=0$, $\tau_{xy}=0$ (uniaxial), find the centre and radius of Mohr's circle.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Centre $=(30,0)$ MPa. Radius $=\sqrt{30^2+0}=30$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>For $\sigma_x=0,\sigma_y=0,\tau_{xy}=25$ MPa (pure shear), find the centre and radius of Mohr's circle, and confirm it matches the principal stresses found earlier ($\pm25$ MPa).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Centre $=(0,0)$. Radius $=\sqrt{0+25^2}=25$ MPa. Circle spans from $-25$ to $+25$ MPa on the $\sigma$-axis, matching $\sigma_2=-25,\sigma_1=25$ MPa found in Section 1. &#10003;</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A Mohr's circle has centre at $(40,0)$ MPa and radius 25 MPa. Find the principal stresses $\sigma_1,\sigma_2$ and the maximum shear stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_1=40+25=65$ MPa. $\sigma_2=40-25=15$ MPa. $\tau_{\max}=25$ MPa (the radius itself).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>A Mohr's circle has centre $(20,0)$ MPa, radius 35 MPa. If a physical rotation of $\theta=15\,{}^\circ$ is applied, through what angle does the corresponding point move on the circle?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$2\theta=30\,{}^\circ$ on the circle, in the same rotational sense as the physical rotation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Explain why the point representing the $y$-face stresses, $(\sigma_y,-\tau_{xy})$, must be diametrically opposite the $x$-face point $(\sigma_x,\tau_{xy})$ on Mohr's circle, referencing the fact that the $x$- and $y$-faces of a stress element are physically $90\,{}^\circ$ apart.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since the $x$-face and $y$-face are $90\,{}^\circ$ apart on the physical element, and physical rotations map to <em>double</em> the angle on Mohr's circle, these two faces must be separated by $2(90\,{}^\circ)=180\,{}^\circ$ on the circle &mdash; exactly diametrically opposite, which is precisely why the two given stress states can always be used to construct the full circle (a circle is uniquely determined once you know two diametrically opposite points, since together they fix both the centre, at their midpoint, and the radius, as half their separation distance).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>For a stress state where $\sigma_x=\sigma_y$ (equal normal stresses) and $\tau_{xy}\ne0$, describe the resulting Mohr's circle's centre location, and explain what this implies about the principal stress orientation ($\theta_p$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Centre $=\left(\dfrac{\sigma_x+\sigma_y}2,0\right)=(\sigma_x,0)$ since $\sigma_x=\sigma_y$. From $\tan2\theta_p=\dfrac{2\tau_{xy}}{\sigma_x-\sigma_y}$, the denominator is zero, making $2\theta_p=90\,{}^\circ$ exactly (regardless of $\tau_{xy}$'s value, as long as it's nonzero) &mdash; so $\theta_p=45\,{}^\circ$ always, whenever the two normal stresses are equal; this is a useful special case to recognise directly, without needing the full formula.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+<div class="section-title"><span class="tag">3</span> Mohr&rsquo;s Circle Applications</div>
+
+<div class="prose">
+<p>Mohr's circle becomes especially powerful when a component experiences <strong>combined loading</strong> &mdash; e.g. a shaft carrying both bending (producing $\sigma_x$ via the flexure formula, Week 4) and torsion (producing $\tau_{xy}$ via the torsion formula, Week 9) simultaneously. Compute $\sigma_x$ from bending and $\tau_{xy}$ from torsion separately at the critical point (usually the outer surface), then combine them using the stress transformation/Mohr's circle framework to find the true principal stresses and maximum shear stress at that point.</p>
+<p>This combined-loading analysis is the essential bridge to <strong>failure theories</strong> (Week 13): a component might be perfectly safe under bending stress alone or torsional stress alone, but the <em>combined</em> principal stress or maximum shear stress at a critical point could exceed the material's actual strength &mdash; which is exactly why Mohr's circle analysis is a mandatory step before applying any failure criterion to a multi-loaded real-world component.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\text{Combined loading: find }\sigma_x\text{ (bending/axial), }\tau_{xy}\text{ (shear/torsion) at the critical point} \to \text{Mohr&rsquo;s circle} \to \sigma_1,\sigma_2,\tau_{\max}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A solid circular shaft (diameter 50 mm) at its outer surface experiences a bending stress of $\sigma_x=60$ MPa (tension, from a bending moment) and a torsional shear stress of $\tau_{xy}=35$ MPa simultaneously (with $\sigma_y=0$, since there is no stress on the free surface in the other direction). Find the principal stresses.</p>
+<p class="step">$\sigma_{\text{avg}}=\dfrac{60+0}2=30$ MPa. Radius $=\sqrt{30^2+35^2}=\sqrt{900+1225}=\sqrt{2125}=46.10$ MPa.</p>
+<p class="step">$\sigma_1=30+46.10=76.1$ MPa (tension). $\sigma_2=30-46.10=-16.1$ MPa (compression). $\tau_{\max}=46.10$ MPa &mdash; all three exceed either the bending stress or the torsional shear stress alone, illustrating why combined-loading analysis is essential.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A solid shaft, diameter 40 mm, has a bending stress of $\sigma_x=50$ MPa and a torsional shear stress of $\tau_{xy}=30$ MPa at its outer surface ($\sigma_y=0$). Find the principal stresses.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{\text{avg}}=25$ MPa. Radius $=\sqrt{25^2+30^2}=\sqrt{1525}=39.05$ MPa. $\sigma_1=64.1$ MPa, $\sigma_2=-14.1$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>For the same shaft, find the maximum shear stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tau_{\max}=39.05$ MPa (the radius).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>A shaft carries a bending moment producing $\sigma_x=80$ MPa and a torque producing $\tau_{xy}=45$ MPa at the critical outer-surface point ($\sigma_y=0$). If the allowable principal (tensile) stress is 100 MPa, check whether the design is adequate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{\text{avg}}=40$ MPa. Radius $=\sqrt{40^2+45^2}=\sqrt{3625}=60.21$ MPa. $\sigma_1=100.2$ MPa &mdash; marginally exceeds the 100 MPa allowable; the design is (just barely) inadequate and would need a slightly larger shaft diameter.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>A pressure vessel wall element experiences $\sigma_x=60$ MPa (hoop stress), $\sigma_y=30$ MPa (axial stress), and $\tau_{xy}=0$ (no shear on this particular element, a common situation for a thin-walled cylindrical vessel away from any discontinuity). Find the maximum in-plane shear stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tau_{\max}=\sqrt{\left(\dfrac{60-30}2\right)^2+0}=15$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>A component experiences $\sigma_x=-20$ MPa (compression), $\sigma_y=0$, $\tau_{xy}=25$ MPa. Find the principal stresses and comment on whether the maximum tensile principal stress is larger or smaller in magnitude than the applied compressive stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{\text{avg}}=-10$ MPa. Radius $=\sqrt{10^2+25^2}=\sqrt{725}=26.93$ MPa. $\sigma_1=16.9$ MPa (tension), $\sigma_2=-36.9$ MPa (compression) &mdash; the shear stress has actually introduced a <em>tensile</em> principal stress even though the only applied normal stress was compressive, an important and sometimes counter-intuitive result for combined loading, especially relevant for brittle materials weak in tension.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Explain why analysing only $\sigma_x$ (say, from bending alone) without accounting for the simultaneously present $\tau_{xy}$ (from torsion) could lead to an unsafe design, using the combined-loading worked example from this section as illustration.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>In the worked example, the applied bending stress alone was only 60 MPa, yet the true maximum principal stress once torsion was properly combined via Mohr's circle rose to 76.1 MPa &mdash; over 25% higher than the bending stress considered in isolation. A designer checking only the bending stress against an allowable value could therefore significantly underestimate the actual peak stress at that point, potentially certifying a design as safe when it is not; this is precisely why combined-loading (Mohr's circle) analysis is mandatory whenever more than one type of loading acts simultaneously at a critical point.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>ENGG251 Mechanics of Solids &middot; Week 10 &middot; 25 practice problems</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

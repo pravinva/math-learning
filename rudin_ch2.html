@@ -1,0 +1,571 @@
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/barlow@5.0.16/index.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/roboto@5.0.13/index.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#FF3621;
+  --red-light:#FFF3F1;
+  --red-mid:#FFE4E0;
+  --red-dark:#C4250D;
+  --text:#1B1B1B;
+  --text-2:#5A5A5A;
+  --text-3:#9A9A9A;
+  --bg:#FAFAFA;
+  --surface:#FFFFFF;
+  --border:#E8E8E8;
+  --border-2:#D4D4D4;
+  --green:#00875A;
+  --green-light:#F0FBF7;
+  --amber:#E67700;
+  --amber-light:#FFF8EC;
+  --r:8px;
+}
+body{background:var(--bg);font-family:'Roboto',sans-serif;color:var(--text)}
+#app{display:grid;grid-template-columns:216px minmax(0,1fr);min-height:100vh}
+#sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;padding:1.25rem .875rem;background:var(--surface);border-right:1px solid var(--border);flex-shrink:0}
+#sb-brand{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;padding:0 6px}
+#sb-brand svg{flex-shrink:0}
+#sb-title{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);font-family:'Barlow',sans-serif;font-weight:600;padding:0 6px;margin-bottom:.625rem}
+.nl{display:block;padding:5px 8px;font-size:13px;color:var(--text-2);font-family:'Roboto',sans-serif;border-radius:6px;cursor:pointer;margin-bottom:1px;text-decoration:none;transition:background .1s,color .1s}
+.nl:hover{background:#F5F5F5;color:var(--text)}
+.nl.active{background:var(--red-light);color:var(--red);font-weight:500}
+#content{padding:2.25rem 2.75rem 8rem;max-width:760px;background:var(--bg)}
+.sec{margin-bottom:3.5rem;scroll-margin-top:1.5rem}
+h1{font-family:'Barlow',sans-serif;font-size:28px;font-weight:700;line-height:1.25;margin-bottom:.375rem;color:var(--text)}
+.sub{font-size:15px;color:var(--text-2);margin-bottom:1.75rem;line-height:1.55;font-family:'Roboto',sans-serif;font-weight:300}
+h2{font-family:'Barlow',sans-serif;font-size:20px;font-weight:600;margin-bottom:.875rem;color:var(--text)}
+h3{font-family:'Barlow',sans-serif;font-size:15px;font-weight:600;margin-bottom:.625rem;margin-top:1.25rem;color:var(--text)}
+p{font-size:15px;line-height:1.8;color:var(--text);margin-bottom:.875rem;font-family:'Roboto',sans-serif;font-weight:400}
+p:last-child{margin-bottom:0}
+ul{padding-left:1.25rem;margin-bottom:.875rem}
+li{font-size:15px;line-height:1.8;margin-bottom:.2rem;font-family:'Roboto',sans-serif}
+strong{font-weight:500}
+.db{border-left:3px solid var(--red);background:var(--red-light);padding:.75rem 1.125rem;margin:1.25rem 0;border-radius:0 var(--r) var(--r) 0}
+.dl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--red-dark);font-weight:600;font-family:'Barlow',sans-serif;margin-bottom:.375rem}
+.tb{border:1px solid var(--border);border-top:3px solid var(--red);padding:.75rem 1.125rem;margin:1.25rem 0;border-radius:0 0 var(--r) var(--r);background:var(--surface)}
+.tl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--red);font-weight:600;font-family:'Barlow',sans-serif;margin-bottom:.375rem}
+.wb{border-left:3px solid var(--amber);background:var(--amber-light);padding:.75rem 1.125rem;margin:1.25rem 0;border-radius:0 var(--r) var(--r) 0}
+.wl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);font-weight:600;font-family:'Barlow',sans-serif;margin-bottom:.375rem}
+.eb{border:1px solid var(--border);border-radius:var(--r);padding:.75rem 1.125rem;margin:1.25rem 0;background:var(--surface)}
+.el{font-size:11px;color:var(--text-3);margin-bottom:.375rem;font-family:'Barlow',sans-serif;font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+details{border:1px solid var(--border);border-radius:var(--r);margin:.875rem 0;background:var(--surface)}
+details summary{padding:.5rem .875rem;cursor:pointer;font-size:13px;color:var(--text-2);list-style:none;display:flex;align-items:center;gap:6px;user-select:none;font-family:'Roboto',sans-serif}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▶";font-size:9px;transition:transform .2s;flex-shrink:0;color:var(--red)}
+details[open] summary::before{transform:rotate(90deg)}
+details[open] summary{border-bottom:1px solid var(--border);color:var(--text)}
+.db-inner{padding:.875rem;font-size:14px;line-height:1.75;font-family:'Roboto',sans-serif}
+.db-inner p{font-size:14px;margin-bottom:.75rem}
+canvas{border-radius:var(--r);border:1px solid var(--border);display:block;max-width:100%}
+.step-wrap{margin:1.25rem 0}
+.step{display:flex;gap:.875rem;position:relative}
+.sc{display:flex;flex-direction:column;align-items:center}
+.sn{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border-2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--text-3);flex-shrink:0;font-family:'Barlow',sans-serif}
+.sn.act{border-color:var(--red);color:var(--red);background:var(--red-light)}
+.sn.done{border-color:var(--green);color:var(--green);background:var(--green-light)}
+.sv{width:1px;flex:1;background:var(--border);min-height:16px;margin:4px 0}
+.sb2{flex:1;padding-bottom:1.5rem}
+.st{font-size:14px;font-weight:500;line-height:28px;color:var(--text-2);font-family:'Barlow',sans-serif}
+.st.act{color:var(--text)}
+.sdesc{font-size:14px;line-height:1.75;margin-top:.5rem;display:none;font-family:'Roboto',sans-serif}
+.sdesc p{font-size:14px;margin-bottom:.625rem}
+.step.act .sdesc,.step.done .sdesc{display:block}
+.step-nav{display:flex;gap:8px;margin-top:.625rem}
+.step-nav button{font-family:'Barlow',sans-serif;font-weight:500;font-size:13px;padding:5px 14px;border-radius:6px;border:1px solid var(--border-2);background:var(--surface);cursor:pointer;color:var(--text-2)}
+.step-nav button:hover{background:var(--red-light);border-color:var(--red);color:var(--red)}
+.hier-row{display:flex;align-items:center;gap:.75rem;padding:.25rem 0;flex-wrap:wrap}
+.hb{padding:3px 12px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;font-family:'Barlow',sans-serif}
+#chat-box{border:1px solid var(--border);border-radius:var(--r);padding:.875rem;max-height:400px;overflow-y:auto;margin-bottom:10px;min-height:100px;background:var(--surface)}
+.bbl{display:flex;gap:8px;margin-bottom:.625rem;align-items:flex-start}
+.bbl.u{flex-direction:row-reverse}
+.bt{max-width:84%;background:#F5F5F5;padding:.5rem .875rem;border-radius:var(--r);font-size:14px;line-height:1.65;font-family:'Roboto',sans-serif}
+.bbl.a .bt{border:1px solid var(--border);background:var(--surface)}
+.av{width:24px;height:24px;border-radius:50%;background:var(--red-light);border:1px solid var(--red-mid);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;color:var(--red);font-family:'Barlow',sans-serif;font-weight:700}
+.av.u{background:#F0F0F0;border-color:var(--border);color:var(--text-2)}
+.qbs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.75rem}
+.qb{font-size:12px;padding:4px 11px;border:1px solid var(--border-2);border-radius:20px;background:var(--surface);cursor:pointer;color:var(--text-2);font-family:'Roboto',sans-serif;transition:all .1s}
+.qb:hover{border-color:var(--red);background:var(--red-light);color:var(--red)}
+.ci{display:flex;gap:8px}
+.ci input{flex:1;padding:7px 12px;border:1px solid var(--border-2);border-radius:6px;font-size:14px;font-family:'Roboto',sans-serif;background:var(--surface);color:var(--text);outline:none}
+.ci input:focus{border-color:var(--red)}
+.ci button{padding:7px 18px;background:var(--red);color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Barlow',sans-serif;font-weight:600;font-size:13px}
+.ci button:hover{background:var(--red-dark)}
+.prog{height:2.5px;background:var(--border);margin-bottom:2rem;border-radius:2px;overflow:hidden}
+.pf{height:100%;width:0%;background:var(--red);transition:width .3s}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.kd{margin:.625rem 0;display:block}
+code{font-family:monospace;font-size:13px;background:#F5F5F5;padding:1px 5px;border-radius:4px;border:1px solid var(--border)}
+.chip{display:inline-block;background:var(--red-light);color:var(--red-dark);font-size:11px;font-weight:600;font-family:'Barlow',sans-serif;padding:2px 9px;border-radius:20px;letter-spacing:.03em}
+</style>
+
+<h2 class="sr-only">Chapter 2: Positive Borel Measures — an accessible interactive guide to the Riesz Representation Theorem from Rudin's Real and Complex Analysis</h2>
+
+<div id="app">
+<nav id="sidebar">
+  <div id="sb-brand">
+    <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 2L2 10v12l14 8 14-8V10L16 2z" fill="#FF3621"/>
+      <path d="M16 8l-8 4.5v7L16 24l8-4.5v-7L16 8z" fill="#fff" opacity=".9"/>
+    </svg>
+    <span style="font-family:'Barlow',sans-serif;font-weight:700;font-size:14px;color:var(--text)">Rudin Ch. 2</span>
+  </div>
+  <div id="sb-title">Contents</div>
+  <a class="nl active" data-s="s0">Introduction</a>
+  <a class="nl" data-s="s1">Why Borel measures?</a>
+  <a class="nl" data-s="s2">Topology primer</a>
+  <a class="nl" data-s="s3">σ-algebras &amp; Borel sets</a>
+  <a class="nl" data-s="s4">C<sub>c</sub>(X) &amp; functionals</a>
+  <a class="nl" data-s="s5">The big theorem</a>
+  <a class="nl" data-s="s6">Proof — step by step</a>
+  <a class="nl" data-s="s7">Regularity</a>
+  <a class="nl" data-s="s8">The payoff: Lebesgue</a>
+  <a class="nl" data-s="s9">Ask the tutor</a>
+</nav>
+
+<main id="content">
+<div class="prog"><div class="pf" id="pf"></div></div>
+
+<div class="sec" id="s0">
+  <h1>Chapter 2: Positive Borel Measures</h1>
+  <p class="sub">A guided tour of the most notoriously dense chapter in Rudin — with full hand-holding included</p>
+  <p>Chapter 2 of Papa Rudin is where many first-year graduate students hit a wall. The goal is the <strong>Riesz Representation Theorem</strong> — a deep, beautiful result — but Rudin proves it in 12 pages of airtight prose with minimal motivation. Students get lost in a forest of σ-algebras and set constructions without a map.</p>
+  <p>This guide gives you the map first. We build every concept from intuition, then meet the formalism, then see exactly what Rudin is doing and why.</p>
+  <div class="tb">
+    <div class="tl">The punchline (spoiler)</div>
+    <p>Any reasonable "integration machine" on a nice space is secretly just integration against a measure. The theorem finds that measure — and proves it's unique.</p>
+  </div>
+  <p>Here's the journey: topology → measurable sets → the theorem statement → the proof construction → regularity → Lebesgue measure as the payoff.</p>
+</div>
+
+<div class="sec" id="s1">
+  <h2>Why do we need Borel measures?</h2>
+  <p>The story starts with a problem: the Riemann integral you learned in calculus breaks for functions analysts care about.</p>
+  <div class="eb">
+    <div class="el">Example — the Dirichlet function</div>
+    <p>Define <span class="k">f: [0,1] \to \mathbb{R}</span> by <span class="k">f(x) = 1</span> if <span class="k">x \in \mathbb{Q}</span> and <span class="k">f(x) = 0</span> if <span class="k">x \notin \mathbb{Q}</span>.</p>
+    <canvas id="dc" width="580" height="180"></canvas>
+    <p style="margin-top:.625rem;font-size:13px;color:var(--text-2)">Red dots: rationals (f = 1), scattered densely. Baseline: irrationals (f = 0). Every subinterval contains both — upper Riemann sums are always 1, lower sums always 0. The Riemann integral does not exist.</p>
+  </div>
+  <p>Yet intuitively this function should integrate to 0 — the rationals are "tiny." There are countably many rationals but uncountably many irrationals. The irrationals dominate completely.</p>
+  <p>Lebesgue's insight: instead of slicing the domain into intervals, <em>slice the range</em>, and ask how large the set is where <span class="k">f \ge t</span> for each threshold <span class="k">t</span>. To do that, we need a way to assign "size" to sets. That's a <strong>measure</strong>.</p>
+  <div class="db">
+    <div class="dl">The key question Chapter 2 answers</div>
+    <p>Where do measures come from? Answer: from integration machines (positive linear functionals). The Riesz theorem says every reasonable one comes from a unique measure.</p>
+  </div>
+</div>
+
+<div class="sec" id="s2">
+  <h2>Topology primer: the stage we work on</h2>
+  <p>Rudin's theorem applies to <strong>locally compact Hausdorff (LCH) spaces</strong>. Understand these and the proof becomes navigable.</p>
+  <h3>Hausdorff spaces</h3>
+  <div class="db">
+    <div class="dl">Definition — Hausdorff</div>
+    <p>A topological space <span class="k">X</span> is <strong>Hausdorff</strong> if distinct points can be separated by disjoint open sets: for <span class="k">x \ne y</span>, there exist open sets <span class="k">U \ni x</span> and <span class="k">V \ni y</span> with <span class="k">U \cap V = \emptyset</span>.</p>
+  </div>
+  <p>This is a sanity condition. Every metric space is Hausdorff. The real line, <span class="k">\mathbb{R}^n</span>, any manifold — all Hausdorff. It just means points can be told apart by open sets.</p>
+  <h3>Compact sets</h3>
+  <div class="db">
+    <div class="dl">Definition — compact</div>
+    <p>A set <span class="k">K \subset X</span> is <strong>compact</strong> if every open cover of <span class="k">K</span> has a finite subcover. In metric spaces, equivalently: every sequence in <span class="k">K</span> has a subsequence converging to a point in <span class="k">K</span>.</p>
+  </div>
+  <p>Think: "finite in spirit." On <span class="k">\mathbb{R}^n</span>, compact = closed and bounded (Heine–Borel). The interval <span class="k">[0,1]</span> is compact; the real line is not. Compact sets are crucial because continuous functions on them are bounded and integrals over them are finite.</p>
+  <h3>Locally compact spaces</h3>
+  <div class="db">
+    <div class="dl">Definition — locally compact</div>
+    <p>A Hausdorff space <span class="k">X</span> is <strong>locally compact</strong> if every point has a compact neighborhood: for each <span class="k">x \in X</span>, there exists open <span class="k">U \ni x</span> with <span class="k">\overline{U}</span> compact.</p>
+  </div>
+  <p><span class="k">\mathbb{R}^n</span> is locally compact — a small ball around any point has compact closure. But the space of all continuous functions with the sup norm is not locally compact (the unit ball is not compact in infinite dimensions).</p>
+  <div class="eb">
+    <div class="el">Key examples for the theorem</div>
+    <p><span class="k">\mathbb{R}</span>, <span class="k">\mathbb{R}^n</span>, any open subset of <span class="k">\mathbb{R}^n</span>, any compact Hausdorff space — all are LCH. These are the spaces Chapter 2 covers.</p>
+  </div>
+  <details>
+    <summary>Why exactly does the proof need LCH?</summary>
+    <div class="db-inner">
+      <p><strong>Urysohn's lemma:</strong> In an LCH space, given compact <span class="k">K</span> and open <span class="k">V \supset K</span>, there exists a continuous function <span class="k">f</span> with <span class="k">f = 1</span> on <span class="k">K</span>, <span class="k">0 \le f \le 1</span>, and <span class="k">\text{supp}(f) \subset V</span>. This lets us "probe" open sets using functions — which is how we define the measure.</p>
+      <p><strong>Finite inner approximation:</strong> Local compactness means compact subsets fill up any open set from inside, so inner regularity works. Without it, the construction in Step 3 of the proof fails.</p>
+    </div>
+  </details>
+</div>
+
+<div class="sec" id="s3">
+  <h2>σ-Algebras and Borel sets</h2>
+  <p>A measure can't meaningfully assign sizes to every subset (Banach–Tarski shows this leads to paradoxes). We designate a collection of "measurable" sets using a σ-algebra.</p>
+  <div class="db">
+    <div class="dl">Definition — σ-algebra</div>
+    <p>A collection <span class="k">\mathfrak{M}</span> of subsets of <span class="k">X</span> is a <strong>σ-algebra</strong> if: (1) <span class="k">X \in \mathfrak{M}</span>, (2) <span class="k">A \in \mathfrak{M} \Rightarrow A^c \in \mathfrak{M}</span>, and (3) if <span class="k">A_1, A_2, \ldots \in \mathfrak{M}</span> then <span class="k">\bigcup_{n=1}^\infty A_n \in \mathfrak{M}</span>.</p>
+  </div>
+  <p>Think of a σ-algebra as "the universe of sets we've agreed to measure." If we can measure a set, we can measure its complement. If we can measure each piece, we can measure the countable union.</p>
+  <h3>The Borel σ-algebra</h3>
+  <div class="db">
+    <div class="dl">Definition — Borel sets</div>
+    <p>The <strong>Borel σ-algebra</strong> <span class="k">\mathfrak{B}(X)</span> is the smallest σ-algebra on <span class="k">X</span> containing all open sets. Its members are <strong>Borel sets</strong>.</p>
+  </div>
+  <p>Borel sets are everything you can build from open sets using complements and countable unions/intersections. The hierarchy on <span class="k">\mathbb{R}</span>:</p>
+  <div class="eb" style="padding:.875rem 1.125rem">
+    <div class="el">The Borel hierarchy on ℝ</div>
+    <div style="margin-top:.25rem">
+      <div class="hier-row"><span class="hb" style="background:var(--red-light);color:var(--red-dark)">Open sets</span><span style="font-size:13px;color:var(--text-2);font-family:'Roboto',sans-serif">intervals (a,b), finite unions, etc.</span></div>
+      <div style="margin-left:8px;color:var(--text-3);font-size:12px;padding:2px 0;font-family:'Roboto',sans-serif">↓ complements</div>
+      <div class="hier-row"><span class="hb" style="background:#F0FBF7;color:#00613E">Closed sets (F)</span><span style="font-size:13px;color:var(--text-2);font-family:'Roboto',sans-serif">intervals [a,b], single points {x}</span></div>
+      <div style="margin-left:8px;color:var(--text-3);font-size:12px;padding:2px 0;font-family:'Roboto',sans-serif">↓ countable intersections of open sets</div>
+      <div class="hier-row"><span class="hb" style="background:#EDF4FF;color:#1A4A8A">G<sub>δ</sub> sets</span><span style="font-size:13px;color:var(--text-2);font-family:'Roboto',sans-serif">irrationals = ℝ \ ℚ are G<sub>δ</sub></span></div>
+      <div style="margin-left:8px;color:var(--text-3);font-size:12px;padding:2px 0;font-family:'Roboto',sans-serif">↓ countable unions of closed sets</div>
+      <div class="hier-row"><span class="hb" style="background:#FFF8EC;color:#7A4400">F<sub>σ</sub> sets</span><span style="font-size:13px;color:var(--text-2);font-family:'Roboto',sans-serif">ℚ is F<sub>σ</sub> = ⋃<sub>q∈ℚ</sub>{q}</span></div>
+      <div style="margin-left:8px;color:var(--text-3);font-size:12px;padding:2px 0;font-family:'Roboto',sans-serif">↓ iterate transfinitely (G<sub>δσ</sub>, F<sub>σδ</sub>, ...)</div>
+      <div class="hier-row"><span class="hb" style="background:#F5F5F5;color:var(--text);border:1px solid var(--border)">All Borel sets</span><span style="font-size:13px;color:var(--text-2);font-family:'Roboto',sans-serif">the σ-algebra generated by all the above</span></div>
+    </div>
+  </div>
+  <details>
+    <summary>Is every subset of ℝ a Borel set?</summary>
+    <div class="db-inner">
+      <p>No — there are subsets of <span class="k">\mathbb{R}</span> that are not Borel. But constructing such sets requires the axiom of choice in an essential way. Every set you can write down explicitly is almost certainly a Borel set. For the purposes of analysis, Borel sets cover everything you'll ever need to measure.</p>
+    </div>
+  </details>
+</div>
+
+<div class="sec" id="s4">
+  <h2>C<sub>c</sub>(X) and positive linear functionals</h2>
+  <p>Now the setup. Chapter 2 starts not with a measure, but with a linear functional — an integration-like operation on functions — and derives the measure from it.</p>
+  <div class="db">
+    <div class="dl">Definition — C<sub>c</sub>(X)</div>
+    <p><span class="k">C_c(X)</span> is the vector space of all continuous functions <span class="k">f: X \to \mathbb{R}</span> whose <strong>support</strong> <span class="k">\text{supp}(f) = \overline{\{x : f(x) \ne 0\}}</span> is compact. These are continuous functions that vanish outside some bounded region.</p>
+  </div>
+  <p>On <span class="k">\mathbb{R}</span>: functions in <span class="k">C_c(\mathbb{R})</span> are continuous and zero outside some interval <span class="k">[-M, M]</span>. Smooth bump functions are the canonical example.</p>
+  <h3>Two key notations</h3>
+  <p>Rudin uses two shorthand symbols that appear constantly in the proof. Learn these — they're the grammar of the argument.</p>
+  <div class="db">
+    <div class="dl">Notation (crucial)</div>
+    <p><span class="k">f \prec V</span> ("f is below V"): means <span class="k">f \in C_c(X)</span>, <span class="k">0 \le f \le 1</span>, <span class="k">\text{supp}(f) \subset V</span>. The function lives inside the open set <span class="k">V</span>.</p>
+    <p style="margin-top:.5rem"><span class="k">K \prec f</span> ("K is below f"): means <span class="k">f \in C_c(X)</span>, <span class="k">0 \le f \le 1</span>, <span class="k">f \equiv 1</span> on <span class="k">K</span>. The function is at least 1 on the compact set <span class="k">K</span>.</p>
+  </div>
+  <p>These are the "probes." We can't ask the functional <span class="k">\Lambda</span> directly about sets, but we can use <span class="k">f \prec V</span> to probe an open set from inside, and <span class="k">K \prec f</span> to probe a compact set from above.</p>
+  <h3>Positive linear functionals</h3>
+  <div class="db">
+    <div class="dl">Definition — positive linear functional</div>
+    <p><span class="k">\Lambda: C_c(X) \to \mathbb{R}</span> is a <strong>positive linear functional</strong> if it is linear (<span class="k">\Lambda(af+bg) = a\Lambda f + b\Lambda g</span>) and positive (<span class="k">f \ge 0 \Rightarrow \Lambda f \ge 0</span>).</p>
+  </div>
+  <div class="eb">
+    <div class="el">Three examples</div>
+    <p><strong>Standard integral:</strong> <span class="k">\Lambda f = \int_{-\infty}^{\infty} f(x)\, dx</span>. This gives Lebesgue measure — see Section 8.</p>
+    <p style="margin-top:.5rem"><strong>Point evaluation:</strong> <span class="k">\Lambda f = f(x_0)</span> for a fixed <span class="k">x_0</span>. This gives the Dirac delta measure <span class="k">\delta_{x_0}</span>.</p>
+    <p style="margin-top:.5rem"><strong>Weighted integral:</strong> <span class="k">\Lambda f = \int f(x)\, w(x)\, dx</span> for a non-negative function <span class="k">w</span>. This gives the measure <span class="k">d\mu = w\, dx</span>.</p>
+  </div>
+</div>
+
+<div class="sec" id="s5">
+  <h2>The Riesz Representation Theorem</h2>
+  <p>Here it is. The destination of all of Chapter 2.</p>
+  <div class="tb">
+    <div class="tl">Theorem — Riesz Representation (Rudin, Theorem 2.14)</div>
+    <p>Let <span class="k">X</span> be a locally compact Hausdorff space, and let <span class="k">\Lambda</span> be a positive linear functional on <span class="k">C_c(X)</span>.</p>
+    <p style="margin-top:.625rem">Then there exists a unique positive Borel measure <span class="k">\mu</span>, defined on a σ-algebra <span class="k">\mathfrak{M} \supset \mathfrak{B}(X)</span>, such that:</p>
+    <span class="kd">\Lambda f = \int_X f\, d\mu \quad \text{for all } f \in C_c(X)</span>
+    <p>Moreover, <span class="k">\mu</span> is <strong>outer regular</strong> on all <span class="k">E \in \mathfrak{M}</span>, <strong>inner regular</strong> on all open sets and all sets with finite measure, and compact sets have finite measure.</p>
+  </div>
+  <h3>What this actually says</h3>
+  <p>You are handed just a functional — a rule that eats continuous compactly-supported functions and outputs numbers, satisfying linearity and positivity. No measure, no σ-algebra, nothing else given to you.</p>
+  <p>The theorem says: buried inside your functional is a unique measure. The theorem excavates it. Every positive linear functional on <span class="k">C_c(X)</span> is, deep down, integration against some measure.</p>
+  <div class="wb">
+    <div class="wl">Why the proof is hard</div>
+    <p>Rudin must simultaneously construct the σ-algebra and the measure from scratch, using only <span class="k">\Lambda</span>. He defines <span class="k">\mu</span> on open sets first, extends to all sets, identifies which sets are "measurable," verifies this is a σ-algebra and <span class="k">\mu</span> is a measure, then verifies <span class="k">\Lambda f = \int f\, d\mu</span>. Each step depends on the previous. This is what takes 12 pages.</p>
+  </div>
+</div>
+
+<div class="sec" id="s6">
+  <h2>The proof — step by step</h2>
+  <p>Five stages. Each builds on the previous. Walk through at your own pace.</p>
+  <div class="step-wrap" id="stepper"></div>
+</div>
+
+<div class="sec" id="s7">
+  <h2>Regularity</h2>
+  <p>The measure produced by the Riesz theorem is <strong>regular</strong> — it respects the topology of the space. This is what makes it unique and well-behaved.</p>
+  <div class="db">
+    <div class="dl">Definition — outer regular</div>
+    <p>A measure <span class="k">\mu</span> is <strong>outer regular</strong> on <span class="k">E</span> if:</p>
+    <span class="kd">\mu(E) = \inf\{\mu(V) : E \subset V,\, V \text{ open}\}</span>
+    <p>You can squeeze down to <span class="k">E</span> from outside with open sets.</p>
+  </div>
+  <div class="db">
+    <div class="dl">Definition — inner regular</div>
+    <p>A measure <span class="k">\mu</span> is <strong>inner regular</strong> on <span class="k">E</span> if:</p>
+    <span class="kd">\mu(E) = \sup\{\mu(K) : K \subset E,\, K \text{ compact}\}</span>
+    <p>You can fill <span class="k">E</span> up from inside with compact sets, and their measures converge to <span class="k">\mu(E)</span>.</p>
+  </div>
+  <div class="eb">
+    <div class="el">Concrete intuition on ℝ</div>
+    <p><strong>Outer regularity:</strong> For any measurable <span class="k">E \subset \mathbb{R}</span>, find an open set slightly bigger with measure at most <span class="k">\mu(E) + \varepsilon</span>. Think: cover <span class="k">E</span> with an open set by adding tiny intervals around each boundary point.</p>
+    <p style="margin-top:.5rem"><strong>Inner regularity:</strong> For measurable <span class="k">E</span> with finite measure, there's a compact (closed and bounded) subset with measure at least <span class="k">\mu(E) - \varepsilon</span>.</p>
+  </div>
+  <details>
+    <summary>Why does regularity imply uniqueness?</summary>
+    <div class="db-inner">
+      <p>Suppose <span class="k">\mu_1</span> and <span class="k">\mu_2</span> both satisfy <span class="k">\Lambda f = \int f\, d\mu_i</span> and are both regular. For any open <span class="k">V</span>: <span class="k">\mu_i(V) = \sup\{\Lambda f : f \prec V\}</span>, so <span class="k">\mu_1(V) = \mu_2(V)</span> for all open <span class="k">V</span>. By outer regularity, <span class="k">\mu_1(E) = \inf \mu_1(V) = \inf \mu_2(V) = \mu_2(E)</span> for all measurable <span class="k">E</span>. So <span class="k">\mu_1 = \mu_2</span>.</p>
+    </div>
+  </details>
+</div>
+
+<div class="sec" id="s8">
+  <h2>The payoff: Lebesgue measure</h2>
+  <p>The Riesz Representation Theorem is not abstract — it literally constructs Lebesgue measure as a special case.</p>
+  <div class="tb">
+    <div class="tl">Lebesgue measure from the theorem</div>
+    <p>Take <span class="k">X = \mathbb{R}^n</span>. Define the positive linear functional:</p>
+    <span class="kd">\Lambda f = \int_{\mathbb{R}^n} f(x_1, \ldots, x_n)\, dx_1 \cdots dx_n</span>
+    <p>where the right side is the ordinary Riemann integral (well-defined since <span class="k">f \in C_c(\mathbb{R}^n)</span>). The Riesz theorem gives a unique regular Borel measure <span class="k">m</span> on <span class="k">\mathbb{R}^n</span> with <span class="k">\Lambda f = \int f\, dm</span>. This <span class="k">m</span> is <strong>Lebesgue measure</strong>.</p>
+  </div>
+  <p>We defined <span class="k">\Lambda</span> using a Riemann integral on nice functions only. The theorem extended it to a full σ-algebra and measure — giving us Lebesgue measure on all Borel sets, including the Cantor set, the rationals, and every other set you'd want to measure.</p>
+  <div class="eb">
+    <div class="el">Properties that fall out automatically</div>
+    <p><span class="k">m([a,b]) = b-a</span> — intervals have their expected length</p>
+    <p><span class="k">m(\{x\}) = 0</span> — single points have measure zero</p>
+    <p><span class="k">m(\mathbb{Q}) = 0</span> — the rationals have measure zero (so the Dirichlet function integrates to 0!)</p>
+    <p><span class="k">m(E+t) = m(E)</span> — translation invariance</p>
+    <p><span class="k">m</span> is the unique translation-invariant regular Borel measure with <span class="k">m([0,1]) = 1</span></p>
+  </div>
+  <div class="wb">
+    <div class="wl">The full picture</div>
+    <p>Chapter 3 uses this Lebesgue measure to build the <span class="k">L^p</span> spaces. Chapter 4 uses <span class="k">L^p</span> to prove foundational Hilbert space results. The entire rest of Rudin rests on what Chapter 2 built.</p>
+  </div>
+</div>
+
+<div class="sec" id="s9">
+  <h2>Ask the tutor</h2>
+  <p>Stuck on any concept? Ask below — the tutor knows the full chapter.</p>
+  <div class="qbs" id="qbs">
+    <button class="qb" onclick="askQ('Why does the proof define μ on open sets first, before all other sets?')">Why start with open sets?</button>
+    <button class="qb" onclick="askQ('Can you explain the set M_F in Rudin\'s proof? What is the intuition for that definition?')">What is M_F?</button>
+    <button class="qb" onclick="askQ('How exactly does Urysohn\'s lemma get used in the proof of the Riesz Representation Theorem?')">Urysohn\'s lemma?</button>
+    <button class="qb" onclick="askQ('Give me a concrete example of a G-delta set that is not open and not closed.')">G-delta example?</button>
+    <button class="qb" onclick="askQ('Why do we need countable additivity? What goes wrong with just finite additivity?')">Why countable additivity?</button>
+    <button class="qb" onclick="askQ('What is the partition of unity argument in Step 5 of the proof? Walk me through it.')">Step 5 details?</button>
+  </div>
+  <div id="chat-box"></div>
+  <div class="ci">
+    <input type="text" id="ci" placeholder="Ask anything about Chapter 2..." onkeydown="if(event.key==='Enter')sendMsg()">
+    <button onclick="sendMsg()">Ask ↗</button>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script>
+const mac={'\\R':'\\mathbb{R}','\\Q':'\\mathbb{Q}','\\N':'\\mathbb{N}','\\C':'\\mathbb{C}'};
+function km(tex,disp){try{return katex.renderToString(tex,{throwOnError:false,macros:mac,displayMode:!!disp});}catch(e){return tex;}}
+function renderAll(){
+  document.querySelectorAll('.k').forEach(el=>{try{katex.render(el.textContent,el,{throwOnError:false,macros:mac,displayMode:false});}catch(e){}});
+  document.querySelectorAll('.kd').forEach(el=>{try{katex.render(el.textContent,el,{throwOnError:false,macros:mac,displayMode:true});}catch(e){}});
+}
+function waitForKatex(cb){
+  if(typeof katex!=='undefined'){cb();}else{setTimeout(()=>waitForKatex(cb),50);}
+}
+
+function drawDirichlet(){
+  const cv=document.getElementById('dc');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  const PAD_L=52,PAD_R=16,PAD_T=16,PAD_B=16;
+  const plotW=W-PAD_L-PAD_R,plotH=H-PAD_T-PAD_B;
+  const y1=PAD_T+plotH*0.18;
+  const y0=PAD_T+plotH*0.82;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,W,H);
+
+  ctx.fillStyle='#FFF3F1';
+  ctx.fillRect(PAD_L,PAD_T,plotW,plotH*0.36);
+  ctx.fillStyle='#F8F8F8';
+  ctx.fillRect(PAD_L,PAD_T+plotH*0.36,plotW,plotH*0.64);
+
+  ctx.strokeStyle='#D0D0D0';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(PAD_L,y1);ctx.lineTo(PAD_L+plotW,y1);
+  ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(PAD_L,y0);ctx.lineTo(PAD_L+plotW,y0);ctx.stroke();
+
+  ctx.strokeStyle='#BBBBBB';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(PAD_L,PAD_T);ctx.lineTo(PAD_L,PAD_T+plotH);ctx.stroke();
+
+  ctx.fillStyle='#1B1B1B';ctx.font='bold 11px sans-serif';ctx.textAlign='right';
+  ctx.fillText('1',PAD_L-7,y1+4);
+  ctx.fillText('0',PAD_L-7,y0+4);
+
+  ctx.fillStyle='#FF3621';
+  [1/6,1/5,1/4,1/3,2/5,1/2,3/5,2/3,3/4,4/5,5/6,1/7,2/7,3/7,4/7,5/7,6/7,
+   1/8,3/8,5/8,7/8,1/9,2/9,4/9,5/9,7/9,8/9,1/10,3/10,7/10,9/10,
+   1/12,5/12,7/12,11/12,0.05,0.15,0.2,0.35,0.45,0.55,0.65,0.75,0.85,0.95,
+   0.03,0.08,0.13,0.18,0.23,0.28,0.37,0.42,0.47,0.52,0.57,0.62,0.68,0.72,0.78,0.83,0.88,0.93,0.97
+  ].forEach(r=>{
+    const x=PAD_L+r*plotW;
+    ctx.beginPath();ctx.arc(x,y1,3,0,Math.PI*2);ctx.fill();
+  });
+
+  ctx.textAlign='left';
+  ctx.fillStyle='#C4250D';ctx.font='bold 12px sans-serif';
+  ctx.fillText('f = 1 on rationals (dense, but measure zero)',PAD_L+8,PAD_T+14);
+  ctx.fillStyle='#5A5A5A';ctx.font='12px sans-serif';
+  ctx.fillText('f = 0 on irrationals (uncountably many — dominate everything)',PAD_L+8,PAD_T+plotH-10);
+
+  ctx.strokeStyle='#FF3621';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(PAD_L+plotW*0.72,y1+6);ctx.lineTo(PAD_L+plotW*0.72,y0-4);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#5A5A5A';ctx.font='11px sans-serif';ctx.textAlign='center';
+  ctx.fillText('Upper sum = 1',PAD_L+plotW*0.86,y1+18);
+  ctx.fillText('Lower sum = 0',PAD_L+plotW*0.86,y0-8);
+}
+
+const STEPS=[
+  {title:'Step 1: define μ on open sets using Λ',body:`<p>For any open set <span class="k">V \\subset X</span>, define:</p>
+<span class="kd">\\mu(V) = \\sup\\{\\Lambda f : f \\prec V\\}</span>
+<p>We probe <span class="k">V</span> with all functions that are continuous, between 0 and 1, and supported inside <span class="k">V</span>. The supremum of what <span class="k">\\Lambda</span> produces on these functions is declared to be the "size" of <span class="k">V</span>.</p>
+<p><strong>Why this makes sense:</strong> If <span class="k">V</span> is large, we can fit larger functions inside it, so <span class="k">\\mu(V)</span> is large. If <span class="k">V = \\emptyset</span>, only <span class="k">f \\equiv 0</span> fits, so <span class="k">\\mu(\\emptyset) = 0</span>. Since <span class="k">\\Lambda</span> is positive, <span class="k">\\mu(V) \\ge 0</span> always.</p>
+<p><strong>Monotonicity:</strong> if <span class="k">V_1 \\subset V_2</span> are open, then <span class="k">\\mu(V_1) \\le \\mu(V_2)</span> — any <span class="k">f \\prec V_1</span> also satisfies <span class="k">f \\prec V_2</span>.</p>
+<p>This is the core creative insight: we've translated a question about sets into a question about functional values on functions.</p>`},
+  {title:'Step 2: extend μ to all subsets of X',body:`<p>We've defined <span class="k">\\mu(V)</span> only for open sets. Extend to all <span class="k">E \\subset X</span>:</p>
+<span class="kd">\\mu(E) = \\inf\\{\\mu(V) : E \\subset V,\\, V \\text{ open}\\}</span>
+<p>Approximate <span class="k">E</span> from outside using open sets and take the infimum. This is the standard <strong>outer measure</strong> construction. Every subset gets a value (possibly <span class="k">+\\infty</span>).</p>
+<p><strong>Consistency check:</strong> For open sets <span class="k">V</span>, this agrees with Step 1 — the infimum is achieved at <span class="k">V</span> itself by monotonicity.</p>
+<p>After this step, <span class="k">\\mu</span> is defined everywhere. The next step identifies which sets are truly measurable.</p>`},
+  {title:'Step 3: identify the measurable sets M',body:`<p>Not all sets behave well under <span class="k">\\mu</span>. We define two classes:</p>
+<p><strong>Finite-measure inner regular sets</strong> <span class="k">(\\mathfrak{M}_F)</span>:</p>
+<span class="kd">\\mathfrak{M}_F = \\{E : \\mu(E) < \\infty \\text{ and } \\mu(E) = \\sup\\{\\mu(K) : K \\subset E,\\, K \\text{ compact}\\}\\}</span>
+<p><strong>The full σ-algebra</strong> <span class="k">\\mathfrak{M}</span>:</p>
+<span class="kd">\\mathfrak{M} = \\{E \\subset X : E \\cap K \\in \\mathfrak{M}_F \\text{ for all compact } K\\}</span>
+<p><strong>Why two levels?</strong> The space <span class="k">X</span> might not be compact — on <span class="k">\\mathbb{R}</span>, the measure of the whole line is <span class="k">+\\infty</span>. We can't require all of <span class="k">X \\in \\mathfrak{M}_F</span>. Instead, we test membership in <span class="k">\\mathfrak{M}</span> by intersecting with compact sets (which have finite measure) and checking those intersections.</p>
+<p>This two-level definition is the subtlest part of the chapter. Sit with it.</p>`},
+  {title:'Step 4: verify M is a σ-algebra and μ is a measure',body:`<p>Now the hard work — verify the axioms. Several sub-steps:</p>
+<p><strong>(a)</strong> Open sets with finite measure are in <span class="k">\\mathfrak{M}_F</span>. Pick <span class="k">f \\prec V</span> with <span class="k">\\Lambda f > \\mu(V) - \\varepsilon</span>. Then <span class="k">K = \\text{supp}(f)</span> is compact inside <span class="k">V</span> with <span class="k">\\mu(K) \\ge \\Lambda f > \\mu(V) - \\varepsilon</span>.</p>
+<p><strong>(b)</strong> All open sets are in <span class="k">\\mathfrak{M}</span>. For open <span class="k">V</span> and compact <span class="k">K</span>, the set <span class="k">V \\cap K</span> has finite measure (bounded by <span class="k">\\mu(K) < \\infty</span>), so <span class="k">V \\cap K \\in \\mathfrak{M}_F</span>.</p>
+<p><strong>(c)</strong> <span class="k">\\mathfrak{M}</span> is closed under complements and countable unions.</p>
+<p><strong>(d)</strong> <span class="k">\\mu</span> is countably additive on disjoint sequences in <span class="k">\\mathfrak{M}</span>.</p>
+<p>The key tool throughout is <strong>Urysohn's lemma</strong>, which produces continuous functions separating compact sets from open complements. This is where LCH structure does the heavy lifting.</p>`},
+  {title:'Step 5: verify Λf = ∫f dμ',body:`<p>Fix <span class="k">f \\in C_c(X)</span>, let <span class="k">K = \\text{supp}(f)</span>, and suppose <span class="k">f(K) \\subset [a, b]</span>.</p>
+<p><strong>Slice the range:</strong> Choose <span class="k">a = y_0 < y_1 < \\cdots < y_n = b</span> with <span class="k">y_i - y_{i-1} < \\varepsilon</span>. Define:</p>
+<span class="kd">E_i = f^{-1}([y_{i-1}, y_i)) \\cap K</span>
+<p>The <span class="k">E_i</span> are Borel sets that partition <span class="k">K</span>. For each, pick open <span class="k">V_i \\supset E_i</span> with <span class="k">\\mu(V_i) < \\mu(E_i) + \\varepsilon/n</span>.</p>
+<p><strong>Build a partition of unity:</strong> By Urysohn, find <span class="k">h_i \\prec V_i</span> with <span class="k">\\sum_i h_i = 1</span> on <span class="k">K</span>. Then <span class="k">f = \\sum_i h_i f</span>.</p>
+<p><strong>Estimate both sides:</strong> On <span class="k">V_i</span>, the function <span class="k">f</span> differs from <span class="k">y_i</span> by at most <span class="k">\\varepsilon</span>. This gives:</p>
+<span class="kd">|\\Lambda f - \\textstyle\\int f\\, d\\mu| < \\varepsilon(b - a + \\mu(K) + 1)</span>
+<p>Since <span class="k">\\varepsilon > 0</span> was arbitrary, <span class="k">\\Lambda f = \\int f\\, d\\mu</span>. <span style="color:var(--green);font-weight:500;font-family:'Barlow',sans-serif">QED.</span></p>`}
+];
+
+let cur=0;
+
+function buildStepper(){
+  const el=document.getElementById('stepper');
+  el.innerHTML=STEPS.map((s,i)=>`
+    <div class="step ${i===0?'act':''}" id="step${i}">
+      <div class="sc">
+        <div class="sn ${i===0?'act':''}" id="sn${i}">${i+1}</div>
+        ${i<STEPS.length-1?'<div class="sv"></div>':''}
+      </div>
+      <div class="sb2">
+        <div class="st ${i===0?'act':''}">${s.title}</div>
+        <div class="sdesc" id="sd${i}">${s.body}
+          <div class="step-nav">
+            ${i>0?`<button onclick="goStep(${i-1})">← Back</button>`:''}
+            ${i<STEPS.length-1?`<button onclick="goStep(${i+1})">Next step ↓</button>`:'<span style="color:var(--green);font-weight:600;font-family:Barlow,sans-serif;font-size:14px">Proof complete!</span>'}
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+  renderAll();
+}
+
+function goStep(n){
+  cur=n;
+  STEPS.forEach((_,i)=>{
+    const s=document.getElementById('step'+i);
+    const sn=document.getElementById('sn'+i);
+    const st=s.querySelector('.st');
+    const sd=document.getElementById('sd'+i);
+    const done=i<n,act=i===n;
+    s.className='step'+(act?' act':done?' done':'');
+    sn.className='sn'+(act?' act':done?' done':'');
+    st.className='st'+(act||done?' act':'');
+    sd.style.display=(act||done)?'block':'none';
+  });
+  document.getElementById('step'+n).scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+const SYS=`You are an expert mathematics tutor explaining Chapter 2 of Rudin's "Real and Complex Analysis" (Papa Rudin) to a motivated graduate student. The chapter covers Positive Borel Measures and the Riesz Representation Theorem.
+
+Key content: locally compact Hausdorff spaces; Cc(X) (continuous functions with compact support); notation f≺V (supp(f)⊂V, 0≤f≤1) and K≺f (f≡1 on K); positive linear functionals Λ; the Riesz Representation Theorem (Λf=∫f dμ for a unique regular Borel measure μ); the proof (Step 1: μ(V)=sup{Λf:f≺V}; Step 2: outer measure extension; Step 3: define 𝔐_F and 𝔐; Step 4: verify σ-algebra and countable additivity via Urysohn; Step 5: prove Λf=∫f dμ by range slicing + partition of unity); outer and inner regularity; Lebesgue measure as the X=ℝⁿ special case.
+
+Be patient and concrete. Lead with examples from ℝ. Explain intuition before formalism. Keep responses focused. If the student is confused, offer a simpler analogy first.`;
+
+let hist=[];
+
+async function sendMsg(){
+  const inp=document.getElementById('ci');
+  const q=inp.value.trim();
+  if(!q)return;
+  inp.value='';
+  addBubble('u',q);
+  hist.push({role:'user',content:q});
+  const tid=addTyping();
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:SYS,messages:hist})
+    });
+    const d=await res.json();
+    removeT(tid);
+    const txt=d.content?.find(c=>c.type==='text')?.text||'Sorry, try again.';
+    addBubble('a',txt);
+    hist.push({role:'assistant',content:txt});
+  }catch(e){removeT(tid);addBubble('a','Connection error — please try again.');}
+}
+
+function askQ(q){document.getElementById('ci').value=q;document.getElementById('s9').scrollIntoView({behavior:'smooth'});setTimeout(sendMsg,300);}
+
+function addBubble(who,text){
+  const box=document.getElementById('chat-box');
+  const d=document.createElement('div');
+  d.className='bbl '+(who==='u'?'u':'a');
+  const av=document.createElement('div');
+  av.className='av'+(who==='u'?' u':'');
+  av.textContent=who==='u'?'you':'∫';
+  const bt=document.createElement('div');
+  bt.className='bt';
+  bt.textContent=text;
+  if(who==='u'){d.appendChild(bt);d.appendChild(av);}
+  else{d.appendChild(av);d.appendChild(bt);}
+  box.appendChild(d);
+  box.scrollTop=box.scrollHeight;
+}
+let tc=0;
+function addTyping(){
+  const id='t'+(tc++);
+  const box=document.getElementById('chat-box');
+  const d=document.createElement('div');
+  d.id=id;d.className='bbl a';
+  d.innerHTML='<div class="av">∫</div><div class="bt" style="opacity:.5;font-size:13px;font-family:Roboto,sans-serif">Thinking...</div>';
+  box.appendChild(d);box.scrollTop=box.scrollHeight;return id;
+}
+function removeT(id){const el=document.getElementById(id);if(el)el.remove();}
+
+function setupNav(){
+  const links=document.querySelectorAll('.nl');
+  const secs=document.querySelectorAll('.sec');
+  links.forEach(l=>l.addEventListener('click',()=>document.getElementById(l.dataset.s)?.scrollIntoView({behavior:'smooth'})));
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(l=>l.classList.toggle('active',l.dataset.s===e.target.id));
+        const idx=Array.from(secs).indexOf(e.target);
+        document.getElementById('pf').style.width=Math.round((idx+1)/secs.length*100)+'%';
+      }
+    });
+  },{threshold:0.3});
+  secs.forEach(s=>obs.observe(s));
+}
+
+document.addEventListener('DOMContentLoaded',()=>{drawDirichlet();setupNav();});
+waitForKatex(()=>{renderAll();buildStepper();});
+</script>

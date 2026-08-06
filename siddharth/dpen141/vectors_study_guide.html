@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vectors in 3D — Study Guide</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B3A5C;
+  --navy-lt: #1e4570;
+  --orange: #FF3621;
+  --blue-lt: #E6F1FB;
+  --blue-mid: #185FA5;
+  --amber-lt: #FAEEDA;
+  --amber-dk: #7A4800;
+  --green-lt: #E1F5EE;
+  --green-dk: #0a5c3f;
+  --coral-lt: #FAECE7;
+  --coral-dk: #8a2f1a;
+  --grey-lt: #F6F5F2;
+  --grey-md: #e8e6e0;
+  --grey-dk: #3a3835;
+  --text: #2c2a28;
+  --text-muted: #6b6762;
+  --sidebar-w: 260px;
+  --content-max: 760px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #fafaf8;
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.3;
+}
+.sidebar-brand-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+.progress-wrap {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.progress-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.nav-section {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  padding: 6px 20px 4px;
+  text-transform: uppercase;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-link:hover { color: white; background: rgba(255,255,255,0.06); }
+.nav-link.active { color: white; background: rgba(255,255,255,0.1); border-left: 2px solid var(--orange); padding-left: 18px; }
+.nav-num {
+  font-size: 10px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.nav-link.active .nav-num { background: var(--orange); color: white; }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--grey-md);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-breadcrumb {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.topbar-breadcrumb span {
+  color: var(--navy);
+  font-weight: 500;
+}
+.topbar-btns {
+  display: flex;
+  gap: 8px;
+}
+.tb-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.tb-btn:hover { border-color: var(--navy); color: var(--navy); }
+.tb-btn.primary { background: var(--navy); color: white; border-color: var(--navy); }
+.tb-btn.primary:hover { background: var(--navy-lt); }
+
+.content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+/* ── HERO ── */
+.page-hero {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--grey-md);
+}
+.page-hero-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--orange);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.page-hero-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.page-hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── MOTIVATION BOX ── */
+.motiv {
+  background: var(--blue-lt);
+  border-left: 3px solid var(--blue-mid);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #0d3d73;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.motiv strong { font-weight: 500; }
+
+/* ── DPEN SECTIONS ── */
+.dpen-block {
+  margin-bottom: 12px;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dpen-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+  transition: background 0.15s;
+}
+.dpen-header:hover { background: var(--grey-lt); }
+.dpen-pill {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.pill-d { background: var(--blue-lt); color: var(--blue-mid); }
+.pill-p { background: var(--amber-lt); color: var(--amber-dk); }
+.pill-e { background: var(--green-lt); color: var(--green-dk); }
+.pill-n { background: var(--coral-lt); color: var(--coral-dk); }
+.dpen-header-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+}
+.dpen-chevron {
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.dpen-chevron.open { transform: rotate(90deg); }
+.dpen-body {
+  display: none;
+  padding: 18px 20px 20px;
+  border-top: 1px solid var(--grey-md);
+  background: var(--grey-lt);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+}
+.dpen-body.open { display: block; }
+.dpen-body p { margin-bottom: 10px; }
+.dpen-body p:last-child { margin-bottom: 0; }
+
+/* ── MATH ── */
+.math-block {
+  text-align: center;
+  margin: 14px 0;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  overflow-x: auto;
+}
+.math-inline { font-style: italic; }
+
+/* ── STEPS ── */
+.step-list { margin: 10px 0; }
+.step-item {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+  align-items: flex-start;
+}
+.step-num-badge {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--blue-lt);
+  color: var(--blue-mid);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-text { flex: 1; font-size: 14px; line-height: 1.7; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.callout-warn { background: var(--amber-lt); border-left: 3px solid #EF9F27; color: var(--amber-dk); }
+.callout-info { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout-success { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout strong { font-weight: 500; }
+
+/* ── WORKED EXAMPLES ── */
+.worked {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+.worked-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.answer-box {
+  background: var(--navy);
+  color: white;
+  border-radius: 6px;
+  padding: 9px 14px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.answer-label {
+  font-size: 10px;
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 10px 0;
+}
+.data-table th {
+  background: var(--navy);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+}
+.data-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-md);
+  color: var(--text);
+}
+.data-table tr:nth-child(even) td { background: white; }
+.data-table tr:nth-child(odd) td { background: var(--grey-lt); }
+.data-table th:first-child { border-radius: 6px 0 0 0; }
+.data-table th:last-child { border-radius: 0 6px 0 0; }
+
+/* ── PRACTICE QUESTIONS ── */
+.level-divider {
+  margin: 36px 0 16px;
+  padding: 14px 18px;
+  background: var(--navy);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.level-badge {
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--orange);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.level-info { flex: 1; }
+.level-title { font-size: 15px; font-weight: 500; color: white; }
+.level-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+.q-card {
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.q-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: white;
+  transition: background 0.15s;
+}
+.q-head:hover { background: var(--grey-lt); }
+.q-num {
+  background: var(--navy);
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.q-text { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.5; }
+.q-hint { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 400; }
+.q-arrow { color: var(--text-muted); font-size: 11px; transition: transform 0.2s; margin-top: 4px; flex-shrink: 0; }
+.q-arrow.open { transform: rotate(90deg); }
+.q-body {
+  display: none;
+  background: var(--grey-lt);
+  border-top: 1px solid var(--grey-md);
+  padding: 18px 20px;
+}
+.q-body.open { display: block; }
+.q-attempt {
+  background: white;
+  border: 1px dashed var(--grey-md);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+.sol-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+/* ── HOME PAGE ── */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 24px 0;
+}
+.home-card {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.home-card:hover { border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.home-card-num { font-size: 11px; color: var(--orange); font-weight: 500; margin-bottom: 4px; }
+.home-card-title { font-family: 'Crimson Pro', serif; font-size: 18px; color: var(--navy); margin-bottom: 4px; }
+.home-card-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.home-chain {
+  background: var(--navy);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 24px 0;
+  color: white;
+}
+.home-chain-title { font-size: 12px; letter-spacing: 0.06em; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+.chain-items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chain-item {
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: white;
+}
+.chain-arrow { color: var(--orange); font-size: 14px; }
+.home-tip {
+  background: var(--amber-lt);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--amber-dk);
+  line-height: 1.65;
+  margin-top: 16px;
+}
+
+/* ── UNI BRIDGE (extra block type for this guide) ── */
+.bridge {
+  background: #FFF6E9;
+  border: 1px dashed #E0A23A;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #6b4a10;
+}
+.bridge-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: #b5791a;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* ── PAGE NAV ── */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--grey-md);
+}
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.page-nav-btn:hover { border-color: var(--navy); color: var(--navy); }
+.page-nav-btn.next { background: var(--navy); color: white; border-color: var(--navy); }
+.page-nav-btn.next:hover { background: var(--navy-lt); }
+.page-nav-btn.ghost { visibility: hidden; }
+
+/* ── SCROLLBAR ── */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .content { padding: 24px 20px 60px; }
+  .home-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">Vectors in 3D</div>
+    <div class="sidebar-brand-sub">Ext 2 Ch.5 · MATH141/142 Bridge · DPEN Guide</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">YOUR PROGRESS</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">↑</span> Start here</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Vectors &amp; the Dot Product</div>
+    <button class="nav-link" onclick="goTo('coords')"><span class="nav-num">5A</span> Coordinates in 3D</button>
+    <button class="nav-link" onclick="goTo('vectors3d')"><span class="nav-num">5B</span> Vectors in 3D</button>
+    <button class="nav-link" onclick="goTo('dotproduct')"><span class="nav-num">5C</span> The Dot Product</button>
+    <button class="nav-link" onclick="goTo('applications')"><span class="nav-num">5D</span> Angles &amp; Projections</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Proofs, Lines &amp; Planes</div>
+    <button class="nav-link" onclick="goTo('proofs')"><span class="nav-num">5E</span> Vector Proofs</button>
+    <button class="nav-link" onclick="goTo('lines')"><span class="nav-num">5F</span> Vector Line Equation</button>
+    <button class="nav-link" onclick="goTo('planes')"><span class="nav-num">5G</span> Circles, Spheres &amp; Planes</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Practice</div>
+    <button class="nav-link" onclick="goTo('practice')"><span class="nav-num">✎</span> Practice Questions</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">Vectors in 3D &nbsp;›&nbsp; <span id="breadcrumbPage">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand all</button>
+      <button class="tb-btn primary" onclick="goTo('practice')">Practice →</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ HOME ══ -->
+    <div class="page active" id="page-home">
+      <div class="page-hero">
+        <div class="page-hero-label">Extension 2 · Chapter 5</div>
+        <div class="page-hero-title">Vectors in 3D,<br>built from scratch</div>
+        <div class="page-hero-sub">Everything here starts from a question, gets explored numerically, gets proved — and only then gets written as a formula. This guide also bridges each idea into MATH141/MATH142 at UOW, so you can see where it goes next.</div>
+      </div>
+
+      <div class="home-chain">
+        <div class="home-chain-title">THE CHAIN OF IDEAS</div>
+        <div class="chain-items">
+          <div class="chain-item">Coordinates in 3D</div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-item">Vectors &amp; Magnitude</div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-item">Dot Product</div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-item">Angles &amp; Projections</div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-item">Vector Proofs</div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-item">Lines</div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-item">Planes &amp; Spheres</div>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <div class="home-card" onclick="goTo('coords')">
+          <div class="home-card-num">5A</div>
+          <div class="home-card-title">Coordinates in 3D</div>
+          <div class="home-card-sub">Two applications of Pythagoras, chained — nothing more.</div>
+        </div>
+        <div class="home-card" onclick="goTo('vectors3d')">
+          <div class="home-card-num">5B</div>
+          <div class="home-card-title">Vectors in 3D</div>
+          <div class="home-card-sub">Components, magnitude, and unit vectors — the 2D rules, extended.</div>
+        </div>
+        <div class="home-card" onclick="goTo('dotproduct')">
+          <div class="home-card-num">5C</div>
+          <div class="home-card-title">The Dot Product</div>
+          <div class="home-card-sub">Discovered numerically, then proved with the law of cosines.</div>
+        </div>
+        <div class="home-card" onclick="goTo('applications')">
+          <div class="home-card-num">5D</div>
+          <div class="home-card-title">Angles &amp; Projections</div>
+          <div class="home-card-sub">Turning the dot product formula around to find angles and shadows.</div>
+        </div>
+        <div class="home-card" onclick="goTo('proofs')">
+          <div class="home-card-num">5E</div>
+          <div class="home-card-title">Vector Proofs</div>
+          <div class="home-card-sub">A four-step recipe for proving geometric facts with pure algebra.</div>
+        </div>
+        <div class="home-card" onclick="goTo('lines')">
+          <div class="home-card-num">5F</div>
+          <div class="home-card-title">Vector Line Equation</div>
+          <div class="home-card-sub">One point, one direction, one parameter — that's the whole line.</div>
+        </div>
+        <div class="home-card" onclick="goTo('planes')">
+          <div class="home-card-num">5G</div>
+          <div class="home-card-title">Circles, Spheres &amp; Planes</div>
+          <div class="home-card-sub">Translating plain-English definitions directly into vector equations.</div>
+        </div>
+        <div class="home-card" onclick="goTo('practice')">
+          <div class="home-card-num">PRACTICE</div>
+          <div class="home-card-title">Practice Questions</div>
+          <div class="home-card-sub">Mixed questions across all seven sections, fully worked.</div>
+        </div>
+      </div>
+
+      <div class="home-tip">
+        <strong>How to use this guide:</strong> Read each topic in order — later sections lean on earlier ones (5D reuses 5C, 5G reuses 5C, and so on). In every DPEN section, click the header to expand it. Work through examples on paper before revealing the answer. Watch for the amber <strong>Uni Bridge</strong> boxes — they show exactly where this HSC content resurfaces in MATH141/MATH142.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn ghost">←</button>
+        <button class="page-nav-btn next" onclick="goTo('coords')">5A: Coordinates in 3D →</button>
+      </div>
+    </div>
+
+    <!-- ══ 5A COORDINATES ══ -->
+    <div class="page" id="page-coords">
+      <div class="page-hero">
+        <div class="page-hero-label">Section 5A</div>
+        <div class="page-hero-title">Coordinates in Three Dimensions</div>
+        <div class="page-hero-sub">What changes when we add a z-axis to the plane?</div>
+      </div>
+      <div class="motiv">
+        You already know how to find the distance between two points in 2D. The question for this whole chapter is: <strong>what changes — if anything — when we add a third dimension?</strong> The answer, as you'll see, is almost nothing — you just apply the same trick twice.
+      </div>
+
+      <!-- P: build up -->
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: two Pythagoras steps chained together</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Step 1 — recall the 2D case, rebuilt, not quoted.</strong> Take $A(1,2)$ and $B(4,6)$. Draw the right-angled triangle: horizontal leg $4-1=3$, vertical leg $6-2=4$.</p>
+          <div class="math-block">\[ AB = \sqrt{3^2+4^2} = \sqrt{25} = 5 \]</div>
+          <p>The "formula" $d=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$ is just that one Pythagoras step, written down so you don't redraw the triangle each time.</p>
+          <p><strong>Step 2 — what's new about a $z$-axis?</strong> Picture a room: $x$ along the floor to your right, $y$ along the floor ahead, $z$ straight up. To reach $(3,4,12)$ from the origin, first walk to $(3,4,0)$ on the floor — that floor-distance is $\sqrt{3^2+4^2}=5$, from Step 1. Then climb $12$ more, straight up — perpendicular to the floor. That's a <em>second</em> right triangle: legs $5$ and $12$.</p>
+          <div class="math-block">\[ OP = \sqrt{5^2+12^2} = \sqrt{169} = 13 \]</div>
+          <p><strong>Step 3 — spot the pattern.</strong> The floor-distance squared was $3^2+4^2$. The full distance squared was $(\sqrt{3^2+4^2})^2+12^2 = 3^2+4^2+12^2$ — the square root just cancels cleanly. Pythagoras applied twice in a row is one Pythagoras with three legs instead of two.</p>
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Walk the floor distance between the $x$ and $y$ coordinates first.</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Treat that floor-distance as one leg of a new right triangle.</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">The $z$-difference is the other leg — apply Pythagoras once more.</div></div>
+          </div>
+          <div class="callout callout-info">Trigger for this idea: any time you add a dimension perpendicular to the ones you already have, distance just gets one more squared term under the root — never a new rule.</div>
+        </div>
+      </div>
+
+      <!-- D: definition -->
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">Distance formula in 3D, and the coordinate planes</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <p>For $A(x_1,y_1,z_1)$ and $B(x_2,y_2,z_2)$:</p>
+          <div class="math-block">\[ d = \sqrt{(x_2-x_1)^2 + (y_2-y_1)^2 + (z_2-z_1)^2} \]</div>
+          <p>The three coordinate planes — $xy$ (where $z=0$), $xz$ (where $y=0$), $yz$ (where $x=0$) — cut space into eight <strong>octants</strong>, the direct 3D analogue of the four 2D quadrants.</p>
+        </div>
+      </div>
+
+      <!-- E: examples -->
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Two worked examples</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked">
+            <div class="worked-label">Example 1 — straight application</div>
+            <p>Find the distance between $A(1,-2,3)$ and $B(4,0,-1)$.</p>
+            <div class="math-block">\[ AB = \sqrt{(4-1)^2+(0+2)^2+(-1-3)^2} = \sqrt{9+4+16} = \sqrt{29} \]</div>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> $\sqrt{29}$</div>
+          </div>
+          <div class="worked" style="margin-top:12px">
+            <div class="worked-label">Example 2 — proving a right angle, not assuming one</div>
+            <p>Show that the triangle with vertices $O(0,0,0)$, $A(1,2,2)$, $B(2,-2,1)$ is right-angled at $O$.</p>
+            <div class="step-list">
+              <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">$OA = \sqrt{1+4+4}=3$</div></div>
+              <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">$OB = \sqrt{4+4+1}=3$</div></div>
+              <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">$AB = \sqrt{1+16+1}=\sqrt{18}$</div></div>
+              <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Check: $OA^2+OB^2 = 9+9=18=AB^2$ — converse of Pythagoras confirms $90^\circ$ at $O$.</div></div>
+            </div>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> Right-angled at $O$, proved algebraically</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- N: bridge -->
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Uni bridge &amp; things to watch</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge">
+            <div class="bridge-label">Uni Bridge</div>
+            At university this two-Pythagoras trick becomes the <strong>Euclidean norm</strong> of a difference vector: $d(A,B)=\lVert \mathbf{b}-\mathbf{a}\rVert$. The same idea generalises to $\mathbb{R}^n$ for any number of dimensions — the proof is literally induction on the number of perpendicular steps you take. Lecturers write vectors in bold ($\mathbf{a}$) instead of with a squiggle underneath ($a_\sim$) — same object, different convention.
+          </div>
+          <div class="callout callout-warn"><strong>Watch out:</strong> don't try to memorise the distance formula as a separate fact from the 2D version — it's the same Pythagoras idea with one extra term. If you forget the formula, rebuild it from the two-triangle argument.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('home')">← Overview</button>
+        <button class="page-nav-btn next" onclick="goTo('vectors3d')">5B: Vectors in 3D →</button>
+      </div>
+    </div>
+
+    <!-- ══ 5B VECTORS IN 3D ══ -->
+    <div class="page" id="page-vectors3d">
+      <div class="page-hero">
+        <div class="page-hero-label">Section 5B</div>
+        <div class="page-hero-title">Vectors in Three Dimensions</div>
+        <div class="page-hero-sub">A displacement with one more instruction: how far up.</div>
+      </div>
+      <div class="motiv">
+        A vector is a displacement — "3 across, 2 up" in 2D. <strong>What does a displacement look like once you can also move up off the floor?</strong>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: extend components, basis vectors, magnitude, unit vectors</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Step 1 — extend the displacement idea.</strong> Walking from $A(1,0,2)$ to $B(4,3,-1)$: subtract coordinates exactly as in 2D, just with one more slot.</p>
+          <div class="math-block">\[ \overrightarrow{AB} = \begin{pmatrix}4-1\\3-0\\-1-2\end{pmatrix} = \begin{pmatrix}3\\3\\-3\end{pmatrix} \]</div>
+          <p><strong>Step 2 — name the three "pure" directions.</strong> $\mathbf{i}=\begin{pmatrix}1\\0\\0\end{pmatrix}$, $\mathbf{j}=\begin{pmatrix}0\\1\\0\end{pmatrix}$, and now a third: $\mathbf{k}=\begin{pmatrix}0\\0\\1\end{pmatrix}$ for straight up. So $\begin{pmatrix}3\\3\\-3\end{pmatrix}=3\mathbf{i}+3\mathbf{j}-3\mathbf{k}$.</p>
+          <p><strong>Step 3 — magnitude reuses 5A.</strong> The length of a vector is the distance from tail to head — already solved.</p>
+          <div class="math-block">\[ |\mathbf{a}| = \sqrt{3^2+3^2+(-3)^2} = \sqrt{27}=3\sqrt3 \]</div>
+          <p><strong>Step 4 — unit vectors: direction, ignoring how far.</strong> Shrink a vector by its own length. For $\mathbf{u}=\begin{pmatrix}3\\0\\-4\end{pmatrix}$, $|\mathbf{u}|=5$, so dividing every component by $5$ gives $\begin{pmatrix}0.6\\0\\-0.8\end{pmatrix}$ — and checking, $\sqrt{0.36+0+0.64}=1$. That check is what guarantees the recipe always works.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">Component form, magnitude, unit vector</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \mathbf{a} = x\mathbf{i}+y\mathbf{j}+z\mathbf{k} = \begin{pmatrix}x\\y\\z\end{pmatrix}, \qquad |\mathbf{a}|^2 = x^2+y^2+z^2, \qquad \hat{\mathbf{a}} = \frac{\mathbf{a}}{|\mathbf{a}|} \]</div>
+          <p>Addition, subtraction, and scalar multiplication all work component-by-component — no special 3D rule, just one more component to carry along.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Two worked examples</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked">
+            <div class="worked-label">Example 1 — combine and find magnitude</div>
+            <p>Given $\mathbf{a}=\begin{pmatrix}2\\-1\\3\end{pmatrix}$, $\mathbf{b}=\begin{pmatrix}-1\\4\\0\end{pmatrix}$, find $2\mathbf{a}-\mathbf{b}$ and its magnitude.</p>
+            <div class="math-block">\[ 2\mathbf{a}-\mathbf{b} = \begin{pmatrix}4\\-2\\6\end{pmatrix}-\begin{pmatrix}-1\\4\\0\end{pmatrix} = \begin{pmatrix}5\\-6\\6\end{pmatrix}, \qquad |2\mathbf{a}-\mathbf{b}| = \sqrt{25+36+36}=\sqrt{97} \]</div>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> $\begin{pmatrix}5\\-6\\6\end{pmatrix}$, magnitude $\sqrt{97}$</div>
+          </div>
+          <div class="worked" style="margin-top:12px">
+            <div class="worked-label">Example 2 — scale to a target length</div>
+            <p>A vector $\mathbf{v}$ has length $10$ and points the same way as $\begin{pmatrix}1\\2\\2\end{pmatrix}$. Find $\mathbf{v}$.</p>
+            <div class="step-list">
+              <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">$\left|\begin{pmatrix}1\\2\\2\end{pmatrix}\right|=\sqrt{1+4+4}=3$</div></div>
+              <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Unit vector: $\tfrac13\begin{pmatrix}1\\2\\2\end{pmatrix}$</div></div>
+              <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Scale to length 10: $\mathbf{v}=\tfrac{10}{3}\begin{pmatrix}1\\2\\2\end{pmatrix}$</div></div>
+            </div>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> $\mathbf{v}=\begin{pmatrix}10/3\\20/3\\20/3\end{pmatrix}$</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Uni bridge</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge">
+            <div class="bridge-label">Uni Bridge</div>
+            $\mathbb{R}^3$ is your first concrete example of a <strong>vector space</strong> — a set closed under addition and scalar multiplication, satisfying axioms like a zero vector and additive inverses. Everything you just rebuilt by hand ("vectors add tip-to-tail," "$\mathbf{i},\mathbf{j},\mathbf{k}$ build everything else") gets restated as axioms that <em>any</em> vector space must satisfy — even ones whose "vectors" are polynomials or functions.
+          </div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('coords')">← 5A: Coordinates</button>
+        <button class="page-nav-btn next" onclick="goTo('dotproduct')">5C: The Dot Product →</button>
+      </div>
+    </div>
+
+    <!-- ══ 5C DOT PRODUCT ══ -->
+    <div class="page" id="page-dotproduct">
+      <div class="page-hero">
+        <div class="page-hero-label">Section 5C</div>
+        <div class="page-hero-title">The Dot Product</div>
+        <div class="page-hero-sub">An operation that turns two vectors into one number — discovered, then proved.</div>
+      </div>
+      <div class="motiv">
+        So far every operation on vectors gives back another vector. <strong>Is there an operation that combines two vectors into a single number — and what could that number tell us?</strong>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: a numerical experiment, then a proof</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Step 1 — invent an operation and test it.</strong> Multiply matching components, add the results.</p>
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">$\begin{pmatrix}1\\0\end{pmatrix}\cdot\begin{pmatrix}0\\1\end{pmatrix}$ (perpendicular) $=0$</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">$\begin{pmatrix}1\\0\end{pmatrix}\cdot\begin{pmatrix}3\\0\end{pmatrix}$ (same direction) $=3=|\mathbf{a}||\mathbf{b}|$</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">$\begin{pmatrix}1\\0\end{pmatrix}\cdot\begin{pmatrix}-3\\0\end{pmatrix}$ (opposite) $=-3=-|\mathbf{a}||\mathbf{b}|$</div></div>
+            <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">$\begin{pmatrix}1\\1\end{pmatrix}\cdot\begin{pmatrix}1\\0\end{pmatrix}$ ($45^\circ$ apart) $=1=\sqrt2\cos45^\circ$</div></div>
+          </div>
+          <div class="callout callout-info">Pattern: zero when perpendicular, $+|\mathbf{a}||\mathbf{b}|$ when parallel same way, $-|\mathbf{a}||\mathbf{b}|$ when opposite, and in between it seems to track $\cos\theta$.</div>
+          <p><strong>Step 2 — prove the pattern.</strong> Take the triangle formed by $\mathbf{a}$, $\mathbf{b}$, $\mathbf{a}-\mathbf{b}$. The law of cosines gives $|\mathbf{a}-\mathbf{b}|^2=|\mathbf{a}|^2+|\mathbf{b}|^2-2|\mathbf{a}||\mathbf{b}|\cos\theta$. Expanding the left side by components and comparing:</p>
+          <div class="math-block">\[ |\mathbf{a}||\mathbf{b}|\cos\theta = a_1b_1+a_2b_2+a_3b_3 \]</div>
+          <p>Not a guess anymore — proved for every pair of vectors. That's why the dot product has two equivalent definitions.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">Two equivalent definitions, and the properties that fall out for free</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \mathbf{a}\cdot\mathbf{b} = a_1b_1+a_2b_2+a_3b_3 = |\mathbf{a}||\mathbf{b}|\cos\theta \]</div>
+          <table class="data-table">
+            <tr><th>Property</th><th>Statement</th><th>Why</th></tr>
+            <tr><td>Commutative</td><td>$\mathbf{a}\cdot\mathbf{b}=\mathbf{b}\cdot\mathbf{a}$</td><td>real multiplication commutes</td></tr>
+            <tr><td>Distributive</td><td>$\mathbf{a}\cdot(\mathbf{b}+\mathbf{c})=\mathbf{a}\cdot\mathbf{b}+\mathbf{a}\cdot\mathbf{c}$</td><td>real mult. distributes</td></tr>
+            <tr><td>Self dot product</td><td>$\mathbf{a}\cdot\mathbf{a}=|\mathbf{a}|^2$</td><td>same sum as magnitude</td></tr>
+            <tr><td>Perpendicularity test</td><td>$\mathbf{a}\perp\mathbf{b}\iff\mathbf{a}\cdot\mathbf{b}=0$</td><td>$\cos90^\circ=0$</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked">
+            <div class="worked-label">Example 1 — perpendicularity test</div>
+            <p>Are $\mathbf{a}=\begin{pmatrix}2\\-3\\1\end{pmatrix}$ and $\mathbf{b}=\begin{pmatrix}1\\1\\1\end{pmatrix}$ perpendicular?</p>
+            <div class="math-block">\[ \mathbf{a}\cdot\mathbf{b} = 2-3+1 = 0 \]</div>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> Yes — dot product is zero</div>
+          </div>
+          <div class="worked" style="margin-top:12px">
+            <div class="worked-label">Example 2 — verify both definitions agree</div>
+            <p>Check the algebraic and geometric definitions agree for $\mathbf{a}=\begin{pmatrix}1\\0\\0\end{pmatrix}$, $\mathbf{b}=\begin{pmatrix}1\\1\\0\end{pmatrix}$.</p>
+            <div class="step-list">
+              <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Algebraic: $\mathbf{a}\cdot\mathbf{b}=1+0+0=1$</div></div>
+              <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Geometric: $|\mathbf{a}|=1$, $|\mathbf{b}|=\sqrt2$, angle $=45^\circ$</div></div>
+              <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">$1\times\sqrt2\times\cos45^\circ = \sqrt2\times\tfrac{1}{\sqrt2}=1$ — matches</div></div>
+            </div>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> Both give 1 ✓</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Uni bridge &amp; a teaser</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge">
+            <div class="bridge-label">Uni Bridge</div>
+            MATH142 renames this the <strong>inner product</strong>, $\langle\mathbf{a},\mathbf{b}\rangle$, defined on much stranger spaces (function spaces, complex vector spaces) as long as it satisfies the same properties you just derived for free. The perpendicularity test becomes <strong>orthogonality</strong> — the backbone of Fourier series and least-squares fitting.
+          </div>
+          <div class="callout callout-warn"><strong>Teaser:</strong> in 3D there's a <em>second</em> vector product, the cross product $\mathbf{a}\times\mathbf{b}$, returning a vector perpendicular to both — not in the HSC syllabus, but it appears almost immediately in MATH141.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('vectors3d')">← 5B: Vectors in 3D</button>
+        <button class="page-nav-btn next" onclick="goTo('applications')">5D: Angles &amp; Projections →</button>
+      </div>
+    </div>
+
+    <!-- ══ 5D APPLICATIONS ══ -->
+    <div class="page" id="page-applications">
+      <div class="page-hero">
+        <div class="page-hero-label">Section 5D</div>
+        <div class="page-hero-title">Angles &amp; Projections</div>
+        <div class="page-hero-sub">Turning the dot product formula around to extract information.</div>
+      </div>
+      <div class="motiv">
+        Now that the dot product connects algebra to angles, <strong>can we turn the relationship around — use components to find an angle we couldn't otherwise measure?</strong>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: rearrange for angle, then derive the projection formula</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Angle:</strong> from 5C, $\mathbf{a}\cdot\mathbf{b}=|\mathbf{a}||\mathbf{b}|\cos\theta$. Everything except $\theta$ is computable, so just divide:</p>
+          <div class="math-block">\[ \cos\theta = \frac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{a}||\mathbf{b}|} \]</div>
+          <p><strong>Projection:</strong> picture $\mathbf{a}$ and $\mathbf{b}$ tail-to-tail with angle $\theta$. Drop a perpendicular from the head of $\mathbf{a}$ onto the line through $\mathbf{b}$ — the "shadow" length is $|\mathbf{a}|\cos\theta$. Substitute the formula for $\cos\theta$:</p>
+          <div class="math-block">\[ |\mathbf{a}|\cos\theta = |\mathbf{a}|\cdot\frac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{a}||\mathbf{b}|} = \frac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{b}|} \]</div>
+          <p>That's the shadow's <em>length</em>. For the shadow <em>vector</em>, multiply by the unit vector $\hat{\mathbf{b}}=\mathbf{b}/|\mathbf{b}|$:</p>
+          <div class="math-block">\[ \left(\frac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{b}|}\right)\cdot\frac{\mathbf{b}}{|\mathbf{b}|} = \left(\frac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{b}|^2}\right)\mathbf{b} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">Angle formula and vector projection</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \cos\theta = \frac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{a}||\mathbf{b}|}, \qquad \text{proj}_{\mathbf{b}}\mathbf{a} = \left(\frac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{b}|^2}\right)\mathbf{b} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked">
+            <div class="worked-label">Example 1 — find an angle</div>
+            <p>Find the angle between $\mathbf{a}=\begin{pmatrix}1\\1\\0\end{pmatrix}$ and $\mathbf{b}=\begin{pmatrix}0\\1\\1\end{pmatrix}$.</p>
+            <div class="math-block">\[ \mathbf{a}\cdot\mathbf{b}=1,\ |\mathbf{a}|=|\mathbf{b}|=\sqrt2 \implies \cos\theta=\frac12 \implies \theta=60^\circ \]</div>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> $60^\circ$</div>
+          </div>
+          <div class="worked" style="margin-top:12px">
+            <div class="worked-label">Example 2 — sanity-checked projection</div>
+            <p>Project $\mathbf{a}=\begin{pmatrix}3\\4\\0\end{pmatrix}$ onto $\mathbf{b}=\begin{pmatrix}1\\0\\0\end{pmatrix}$.</p>
+            <div class="math-block">\[ \text{proj}_{\mathbf{b}}\mathbf{a} = \frac{3}{1}\begin{pmatrix}1\\0\\0\end{pmatrix} = \begin{pmatrix}3\\0\\0\end{pmatrix} \]</div>
+            <p style="font-size:13px;color:var(--text-muted)">Matches intuition: the shadow of $\mathbf{a}$ onto the $x$-axis is just its $x$-component. ✓</p>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> $\begin{pmatrix}3\\0\\0\end{pmatrix}$</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Uni bridge</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge">
+            <div class="bridge-label">Uni Bridge</div>
+            This exact formula reappears when MATH142 covers <strong>orthogonal projection onto a subspace</strong> — the key step in least-squares regression (fitting the "best" line or plane through noisy data). Knowing how it was derived (drop a perpendicular, use trig, rescale) means you'll recognise the geometry when it's dressed up in matrix notation.
+          </div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('dotproduct')">← 5C: Dot Product</button>
+        <button class="page-nav-btn next" onclick="goTo('proofs')">5E: Vector Proofs →</button>
+      </div>
+    </div>
+
+    <!-- ══ 5E VECTOR PROOFS ══ -->
+    <div class="page" id="page-proofs">
+      <div class="page-hero">
+        <div class="page-hero-label">Section 5E</div>
+        <div class="page-hero-title">Vector Proofs in Geometry</div>
+        <div class="page-hero-sub">Proving geometric facts with pure algebra — no protractor required.</div>
+      </div>
+      <div class="motiv">
+        Could you prove a fact like <strong>"the diagonals of a parallelogram bisect each other"</strong> using only vector algebra — without measuring an angle or drawing an accurate diagram?
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: the four-step recipe, demonstrated live</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Step 1 — set up coordinates that cost nothing.</strong> Pick a convenient origin $O$, a vertex of the parallelogram $OACB$. Let $\overrightarrow{OA}=\mathbf{a}$, $\overrightarrow{OB}=\mathbf{b}$ — arbitrary vectors, which is what makes the proof general.</p>
+          <p><strong>Step 2 — translate "parallelogram" into an equation.</strong> $\overrightarrow{OA}=\overrightarrow{BC}$, so $\overrightarrow{OC}=\overrightarrow{OB}+\overrightarrow{BC}=\mathbf{b}+\mathbf{a}$.</p>
+          <p><strong>Step 3 — find both midpoints and compare.</strong> Midpoint of any segment $PQ$ is $\tfrac12(\mathbf{p}+\mathbf{q})$ — just averaging.</p>
+          <div class="math-block">\[ \text{mid}(OC) = \tfrac12(\mathbf{0}+\mathbf{a}+\mathbf{b}) = \tfrac12(\mathbf{a}+\mathbf{b}), \qquad \text{mid}(AB) = \tfrac12(\mathbf{a}+\mathbf{b}) \]</div>
+          <p><strong>Step 4 — the expressions match</strong> — not approximately, literally, for any $\mathbf{a}$, $\mathbf{b}$ whatsoever.</p>
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Name a convenient origin and a small set of vectors.</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Translate the geometric hypothesis into a vector equation.</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Express what you're comparing in terms of the same vectors.</div></div>
+            <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Show the expressions match.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The result, and the midpoint formula it rests on</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \text{Midpoint of } PQ = \tfrac12(\mathbf{p}+\mathbf{q}) \]</div>
+          <p><strong>Result:</strong> the diagonals of a parallelogram bisect each other — proved for every parallelogram at once. $\blacksquare$</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples using the recipe</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked">
+            <div class="worked-label">Example 1 — midpoint from any point $P$</div>
+            <p>$M$ is the midpoint of $AB$. Show $\overrightarrow{PM}=\tfrac12(\overrightarrow{PA}+\overrightarrow{PB})$ for any point $P$.</p>
+            <p>Let $P$ be the origin: $\overrightarrow{PA}=\mathbf{a}$, $\overrightarrow{PB}=\mathbf{b}$, and by the midpoint formula $\overrightarrow{PM}=\tfrac12(\mathbf{a}+\mathbf{b})=\tfrac12(\overrightarrow{PA}+\overrightarrow{PB})$ directly.</p>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> Proved directly by choosing $P$ as origin</div>
+          </div>
+          <div class="worked" style="margin-top:12px">
+            <div class="worked-label">Example 2 — Varignon's theorem</div>
+            <p>Show the midpoints of the sides of any quadrilateral form a parallelogram.</p>
+            <p>Vertices $\mathbf{a},\mathbf{b},\mathbf{c},\mathbf{d}$; midpoints $P=\tfrac12(\mathbf{a}+\mathbf{b})$, $Q=\tfrac12(\mathbf{b}+\mathbf{c})$, $R=\tfrac12(\mathbf{c}+\mathbf{d})$, $S=\tfrac12(\mathbf{d}+\mathbf{a})$.</p>
+            <div class="math-block">\[ \overrightarrow{PQ}=\tfrac12(\mathbf{c}-\mathbf{a}) = \overrightarrow{SR} \]</div>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> $PQ \parallel SR$ and equal — $PQRS$ is a parallelogram</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Uni bridge</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge">
+            <div class="bridge-label">Uni Bridge</div>
+            This "express everything in a small set of vectors, then manipulate algebraically" approach is exactly the mindset MATH141 wants for proofs about <strong>linear independence</strong> and <strong>span</strong>. Statements like "three vectors in $\mathbb{R}^3$ are linearly dependent" use the same four-step recipe — just with the geometric picture stripped away.
+          </div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('applications')">← 5D: Angles &amp; Projections</button>
+        <button class="page-nav-btn next" onclick="goTo('lines')">5F: Vector Line Equation →</button>
+      </div>
+    </div>
+
+    <!-- ══ 5F LINES ══ -->
+    <div class="page" id="page-lines">
+      <div class="page-hero">
+        <div class="page-hero-label">Section 5F</div>
+        <div class="page-hero-title">The Vector Equation of a Line</div>
+        <div class="page-hero-sub">One point, one direction, one parameter.</div>
+      </div>
+      <div class="motiv">
+        A Cartesian equation like $y=2x+1$ describes a line in 2D. <strong>Is there a vector version — and what would it mean for a vector "equation" to describe an entire infinite line?</strong>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: point plus direction, swept by a parameter</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Step 1 — minimum information for a line.</strong> Standing at a known point, walking in a fixed direction, traces exactly one line. One point plus one direction — nothing more, nothing less.</p>
+          <p><strong>Step 2 — turn it into algebra.</strong> Start at $\mathbf{a}$, direction $\mathbf{b}$. "One $\mathbf{b}$'s worth" $\to\mathbf{a}+\mathbf{b}$. "Two $\mathbf{b}$'s worth" $\to\mathbf{a}+2\mathbf{b}$. In general, "$\lambda$ lots of $\mathbf{b}$":</p>
+          <div class="math-block">\[ \mathbf{r}=\mathbf{a}+\lambda\mathbf{b} \]</div>
+          <p>As $\lambda$ ranges over every real number, this visits every point on the line and nothing else.</p>
+          <p><strong>Step 3 — parallel/perpendicular lines.</strong> A line's direction lives entirely in $\mathbf{b}$ — the point $\mathbf{a}$ only tells you where it sits. So parallel means $\mathbf{b}_1=k\mathbf{b}_2$; perpendicular reuses the 5C test: $\mathbf{b}_1\cdot\mathbf{b}_2=0$.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">Vector equation of a line</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \mathbf{r} = \mathbf{a}+\lambda\mathbf{b}, \qquad \lambda\in\mathbb{R} \]</div>
+          <table class="data-table">
+            <tr><th>Relationship</th><th>Test on $\mathbf{b}_1,\mathbf{b}_2$</th></tr>
+            <tr><td>Parallel</td><td>$\mathbf{b}_1=k\mathbf{b}_2$</td></tr>
+            <tr><td>Perpendicular</td><td>$\mathbf{b}_1\cdot\mathbf{b}_2=0$</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked">
+            <div class="worked-label">Example 1 — write the equation, find a point</div>
+            <p>Line through $A(1,2,-1)$, direction $\mathbf{b}=\begin{pmatrix}2\\-1\\3\end{pmatrix}$. Find the point at $\lambda=2$.</p>
+            <div class="math-block">\[ \mathbf{r}=\begin{pmatrix}1\\2\\-1\end{pmatrix}+\lambda\begin{pmatrix}2\\-1\\3\end{pmatrix}, \qquad \lambda=2 \implies \begin{pmatrix}5\\0\\5\end{pmatrix} \]</div>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> Point $(5,0,5)$</div>
+          </div>
+          <div class="worked" style="margin-top:12px">
+            <div class="worked-label">Example 2 — build a line from two points</div>
+            <p>A line passes through $(2,-1,3)$ and $(5,0,1)$. Build its vector equation.</p>
+            <div class="step-list">
+              <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Direction: $\begin{pmatrix}5\\0\\1\end{pmatrix}-\begin{pmatrix}2\\-1\\3\end{pmatrix}=\begin{pmatrix}3\\1\\-2\end{pmatrix}$</div></div>
+              <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Use first point as $\mathbf{a}$</div></div>
+            </div>
+            <div class="math-block">\[ \mathbf{r} = \begin{pmatrix}2\\-1\\3\end{pmatrix}+\lambda\begin{pmatrix}3\\1\\-2\end{pmatrix} \]</div>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> As above</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Uni bridge &amp; notation shift</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge">
+            <div class="bridge-label">Uni Bridge</div>
+            $\mathbf{r}=\mathbf{a}+\lambda\mathbf{b}$ is your first <strong>parametrisation</strong>. MATH142 generalises this to curves $\mathbf{r}(t)$ that bend, and surfaces $\mathbf{r}(u,v)$ with two parameters — the same "point plus direction, swept by a parameter" reasoning.
+          </div>
+          <div class="callout callout-info">Notation shift to expect: $\mathbf{r}=(1-\lambda)\mathbf{a}+\lambda\mathbf{b}$ is the same line through $A$ and $B$, phrased so $\lambda=0$ gives $A$, $\lambda=1$ gives $B$. Expand it: $\mathbf{a}+\lambda(\mathbf{b}-\mathbf{a})$ — identical to what you derived, direction vector $\mathbf{b}-\mathbf{a}$.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('proofs')">← 5E: Vector Proofs</button>
+        <button class="page-nav-btn next" onclick="goTo('planes')">5G: Circles, Spheres &amp; Planes →</button>
+      </div>
+    </div>
+
+    <!-- ══ 5G PLANES ══ -->
+    <div class="page" id="page-planes">
+      <div class="page-hero">
+        <div class="page-hero-label">Section 5G</div>
+        <div class="page-hero-title">Vector Equations of Circles, Spheres &amp; Planes</div>
+        <div class="page-hero-sub">Turning a plain-English definition directly into an equation.</div>
+      </div>
+      <div class="motiv">
+        A circle is "every point a fixed distance from a centre." <strong>Could that sentence be turned directly into a vector equation</strong>, without ever writing $(x-h)^2+(y-k)^2=r^2$ by hand?
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: translate the defining sentence, literally</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Circles/spheres.</strong> "Every point $\mathbf{v}$ a fixed distance $r$ from centre $\mathbf{c}$" — "distance from $\mathbf{c}$ to $\mathbf{v}$" is $|\mathbf{v}-\mathbf{c}|$. So the whole definition is the sentence with symbols swapped in: $|\mathbf{v}-\mathbf{c}|=r$. Works identically in 2D or 3D.</p>
+          <p><strong>Planes need a different sentence.</strong> "The set of points $\mathbf{v}$ such that the displacement from a known point $A$ to $\mathbf{v}$ is perpendicular to a fixed normal $\mathbf{n}$." If $\mathbf{n}$ sticks straight out of a flat sheet, any in-plane displacement is perpendicular to it. Reuse the 5C perpendicularity test:</p>
+          <div class="math-block">\[ \mathbf{n}\cdot(\mathbf{v}-\mathbf{a}) = 0 \]</div>
+          <p>Expand using the distributive property (free from 5C):</p>
+          <div class="math-block">\[ \mathbf{n}\cdot\mathbf{v} - \mathbf{n}\cdot\mathbf{a} = 0 \implies \mathbf{n}\cdot\mathbf{v} = \mathbf{n}\cdot\mathbf{a} \]</div>
+          <p>The right side is just a number once $\mathbf{n}$, $\mathbf{a}$ are known — a single linear equation in the components of $\mathbf{v}$.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">Sphere and plane equations</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ |\mathbf{v}-\mathbf{c}| = r \qquad\qquad \mathbf{n}\cdot(\mathbf{v}-\mathbf{a}) = 0 \iff \mathbf{n}\cdot\mathbf{v}=\mathbf{n}\cdot\mathbf{a} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked">
+            <div class="worked-label">Example 1 — read off a sphere</div>
+            <p>Describe $\left|\mathbf{v}-\begin{pmatrix}1\\-2\\0\end{pmatrix}\right|=3$.</p>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> Sphere, radius 3, centred at $(1,-2,0)$</div>
+          </div>
+          <div class="worked" style="margin-top:12px">
+            <div class="worked-label">Example 2 — build a plane equation</div>
+            <p>Plane through $A(2,0,-1)$, normal $\mathbf{n}=\begin{pmatrix}1\\3\\-2\end{pmatrix}$.</p>
+            <div class="math-block">\[ \mathbf{n}\cdot\mathbf{a} = 2+0+2 = 4 \implies x+3y-2z=4 \]</div>
+            <div class="answer-box"><span class="answer-label">ANSWER</span> $x+3y-2z=4$</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Uni bridge</span>
+          <span class="dpen-chevron">▶</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge">
+            <div class="bridge-label">Uni Bridge</div>
+            $x+3y-2z=4$ is a single linear equation in three unknowns — stack more and you get a <strong>system of linear equations</strong>, solved by row reduction in MATH141. A plane is the solution set of one equation; two planes generally meet in a line; three generally meet at a point. The normal vector is literally the coefficient vector — not a coincidence, you derived that connection yourself.
+          </div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('lines')">← 5F: Vector Line Equation</button>
+        <button class="page-nav-btn next" onclick="goTo('practice')">Practice Questions →</button>
+      </div>
+    </div>
+
+    <!-- ══ PRACTICE ══ -->
+    <div class="page" id="page-practice">
+      <div class="page-hero">
+        <div class="page-hero-label">Mixed Practice</div>
+        <div class="page-hero-title">Practice Questions</div>
+        <div class="page-hero-sub">30 questions across all seven sections, plus a mixed/challenge tier — attempt each before revealing the answer.</div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">5A–5B</div>
+        <div class="level-info">
+          <div class="level-title">Coordinates &amp; Vectors</div>
+          <div class="level-sub">Distances, magnitudes, unit vectors</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div class="q-text">Find the distance between $P(2,3,-1)$ and $Q(-1,1,2)$.<div class="q-hint">5A</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ PQ = \sqrt{(-1-2)^2+(1-3)^2+(2+1)^2} = \sqrt{9+4+9}=\sqrt{22} \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $\sqrt{22}$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div class="q-text">Find the unit vector in the direction of $\begin{pmatrix}3\\0\\-4\end{pmatrix}$.<div class="q-hint">5B</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ \left|\begin{pmatrix}3\\0\\-4\end{pmatrix}\right|=5 \implies \hat{\mathbf{u}} = \begin{pmatrix}0.6\\0\\-0.8\end{pmatrix} \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $\begin{pmatrix}0.6\\0\\-0.8\end{pmatrix}$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div class="q-text">Find the distance from the origin to the point $(6,-8,0)$.<div class="q-hint">5A</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ d = \sqrt{6^2+(-8)^2+0^2} = \sqrt{36+64} = \sqrt{100}=10 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> 10</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">4</div>
+          <div class="q-text">Given $\mathbf{a}=\begin{pmatrix}1\\-2\\2\end{pmatrix}$ and $\mathbf{b}=\begin{pmatrix}0\\1\\-1\end{pmatrix}$, find $|2\mathbf{a}-3\mathbf{b}|$.<div class="q-hint">5B</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ 2\mathbf{a}-3\mathbf{b} = \begin{pmatrix}2\\-4\\4\end{pmatrix}-\begin{pmatrix}0\\3\\-3\end{pmatrix} = \begin{pmatrix}2\\-7\\7\end{pmatrix}, \qquad |2\mathbf{a}-3\mathbf{b}| = \sqrt{4+49+49}=\sqrt{102} \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $\sqrt{102}$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">5</div>
+          <div class="q-text">Show that the triangle with vertices $O(0,0,0)$, $A(2,-1,2)$, $B(2,2,-1)$ is right-angled at $O$.<div class="q-hint">5A</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$OA=\sqrt{4+1+4}=3$, $OB=\sqrt{4+4+1}=3$, $AB=\sqrt{0+9+9}=\sqrt{18}$.</p>
+          <div class="math-block">\[ OA^2+OB^2 = 9+9=18=AB^2 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Right-angled at $O$ by the converse of Pythagoras</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">6</div>
+          <div class="q-text">A vector is $\mathbf{v}=\begin{pmatrix}4\\-3\\12\end{pmatrix}$. Find $|\mathbf{v}|$ and the unit vector $\hat{\mathbf{v}}$.<div class="q-hint">5B</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ |\mathbf{v}| = \sqrt{16+9+144}=\sqrt{169}=13, \qquad \hat{\mathbf{v}} = \tfrac{1}{13}\begin{pmatrix}4\\-3\\12\end{pmatrix} \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $|\mathbf{v}|=13$, $\hat{\mathbf{v}}=\begin{pmatrix}4/13\\-3/13\\12/13\end{pmatrix}$</div>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">5C–5D</div>
+        <div class="level-info">
+          <div class="level-title">Dot Product &amp; Applications</div>
+          <div class="level-sub">Perpendicularity, angles, projections</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">7</div>
+          <div class="q-text">Find $k$ such that $\begin{pmatrix}k\\2\\-1\end{pmatrix}$ is perpendicular to $\begin{pmatrix}3\\-1\\4\end{pmatrix}$.<div class="q-hint">5C</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ 3k-2-4=0 \implies k=2 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $k=2$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">8</div>
+          <div class="q-text">Find the angle between the diagonal of a unit cube and one of its edges.<div class="q-hint">5D</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Edge $\mathbf{e}=\begin{pmatrix}1\\0\\0\end{pmatrix}$, diagonal $\mathbf{d}=\begin{pmatrix}1\\1\\1\end{pmatrix}$.</p>
+          <div class="math-block">\[ \cos\theta = \frac{1}{\sqrt3} \implies \theta \approx 54.7^\circ \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $\approx 54.7^\circ$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">9</div>
+          <div class="q-text">Find the projection of $\begin{pmatrix}2\\2\\1\end{pmatrix}$ onto $\begin{pmatrix}0\\3\\4\end{pmatrix}$.<div class="q-hint">5D</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ \mathbf{a}\cdot\mathbf{b}=10,\ |\mathbf{b}|^2=25 \implies \text{proj}_{\mathbf{b}}\mathbf{a}=\tfrac{2}{5}\begin{pmatrix}0\\3\\4\end{pmatrix}=\begin{pmatrix}0\\1.2\\1.6\end{pmatrix} \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $\begin{pmatrix}0\\1.2\\1.6\end{pmatrix}$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">10</div>
+          <div class="q-text">Show that $\begin{pmatrix}1\\2\\2\end{pmatrix}$ and $\begin{pmatrix}2\\-2\\1\end{pmatrix}$ are perpendicular, then state the angle between them.<div class="q-hint">5C</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ \begin{pmatrix}1\\2\\2\end{pmatrix}\cdot\begin{pmatrix}2\\-2\\1\end{pmatrix} = 2-4+2=0 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Perpendicular, angle $=90^\circ$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">11</div>
+          <div class="q-text">Given $|\mathbf{a}|=2$, $|\mathbf{b}|=3$, $\mathbf{a}\cdot\mathbf{b}=1$, find $|\mathbf{a}+\mathbf{b}|$.<div class="q-hint">5C — uses $\mathbf{a}\cdot\mathbf{a}=|\mathbf{a}|^2$</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ |\mathbf{a}+\mathbf{b}|^2 = \mathbf{a}\cdot\mathbf{a}+2\mathbf{a}\cdot\mathbf{b}+\mathbf{b}\cdot\mathbf{b} = 4+2(1)+9=15 \implies |\mathbf{a}+\mathbf{b}|=\sqrt{15} \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $\sqrt{15}$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">12</div>
+          <div class="q-text">Find the projection of $\begin{pmatrix}1\\0\\0\end{pmatrix}$ onto $\begin{pmatrix}1\\1\\1\end{pmatrix}$.<div class="q-hint">5D</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ \mathbf{a}\cdot\mathbf{b}=1,\ |\mathbf{b}|^2=3 \implies \text{proj}_{\mathbf{b}}\mathbf{a} = \tfrac13\begin{pmatrix}1\\1\\1\end{pmatrix} \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $\begin{pmatrix}1/3\\1/3\\1/3\end{pmatrix}$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">13</div>
+          <div class="q-text">Find the angle between $\begin{pmatrix}1\\0\\1\end{pmatrix}$ and $\begin{pmatrix}0\\1\\1\end{pmatrix}$, giving your answer to the nearest degree.<div class="q-hint">5D</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ \mathbf{a}\cdot\mathbf{b}=1,\ |\mathbf{a}|=|\mathbf{b}|=\sqrt2 \implies \cos\theta=\tfrac12 \implies \theta=60^\circ \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $60^\circ$</div>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">5E–5F</div>
+        <div class="level-info">
+          <div class="level-title">Proofs &amp; Lines</div>
+          <div class="level-sub">Vector geometry and parametrisation</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">14</div>
+          <div class="q-text">Prove that for any point $P$ and midpoint $M$ of $AB$: $\overrightarrow{PM}=\tfrac12(\overrightarrow{PA}+\overrightarrow{PB})$.<div class="q-hint">5E</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Let $P$ be the origin. Then $\overrightarrow{PA}=\mathbf{a}$, $\overrightarrow{PB}=\mathbf{b}$, and by the midpoint formula $\overrightarrow{PM}=\tfrac12(\mathbf{a}+\mathbf{b})=\tfrac12(\overrightarrow{PA}+\overrightarrow{PB})$.</p>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Proved by choosing $P$ as origin</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">15</div>
+          <div class="q-text">Show that $\mathbf{r}_1=\begin{pmatrix}1\\0\\2\end{pmatrix}+\lambda\begin{pmatrix}1\\-1\\2\end{pmatrix}$ and $\mathbf{r}_2=\begin{pmatrix}0\\3\\1\end{pmatrix}+\mu\begin{pmatrix}3\\-1\\-2\end{pmatrix}$ are perpendicular.<div class="q-hint">5F</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ \begin{pmatrix}1\\-1\\2\end{pmatrix}\cdot\begin{pmatrix}3\\-1\\-2\end{pmatrix} = 3+1-4=0 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Perpendicular — dot product is zero</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">16</div>
+          <div class="q-text">Are the lines with direction vectors $\begin{pmatrix}2\\4\\-6\end{pmatrix}$ and $\begin{pmatrix}1\\2\\-3\end{pmatrix}$ parallel?<div class="q-hint">5F</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ \begin{pmatrix}2\\4\\-6\end{pmatrix} = 2\begin{pmatrix}1\\2\\-3\end{pmatrix} \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Yes — one is a scalar multiple of the other</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">17</div>
+          <div class="q-text">Find the vector equation of the line through $(1,-1,2)$ parallel to $\mathbf{r}=\begin{pmatrix}3\\0\\1\end{pmatrix}+\lambda\begin{pmatrix}2\\-1\\4\end{pmatrix}$.<div class="q-hint">5F</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Parallel lines share a direction vector — only the point changes.</p>
+          <div class="math-block">\[ \mathbf{r} = \begin{pmatrix}1\\-1\\2\end{pmatrix}+\lambda\begin{pmatrix}2\\-1\\4\end{pmatrix} \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> As above</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">18</div>
+          <div class="q-text">A line has vector equation $\mathbf{r}=\begin{pmatrix}2\\1\\-3\end{pmatrix}+\lambda\begin{pmatrix}1\\2\\1\end{pmatrix}$. Find the point where $\lambda=-2$, and describe what walking with negative $\lambda$ means.<div class="q-hint">5F</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ \mathbf{r} = \begin{pmatrix}2\\1\\-3\end{pmatrix}-2\begin{pmatrix}1\\2\\1\end{pmatrix} = \begin{pmatrix}0\\-3\\-5\end{pmatrix} \]</div>
+          <p>Negative $\lambda$ means walking backwards along the direction vector, away from where positive $\lambda$ takes you.</p>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $(0,-3,-5)$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">19</div>
+          <div class="q-text">Use vectors to prove the Midpoint Theorem: in $\triangle OAB$, if $M$ and $N$ are the midpoints of $OA$ and $OB$, then $MN \parallel AB$ and $MN = \tfrac12 AB$.<div class="q-hint">5E</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Let $\overrightarrow{OA}=\mathbf{a}$, $\overrightarrow{OB}=\mathbf{b}$. Then $\overrightarrow{OM}=\tfrac12\mathbf{a}$, $\overrightarrow{ON}=\tfrac12\mathbf{b}$, so</p>
+          <div class="math-block">\[ \overrightarrow{MN} = \overrightarrow{ON}-\overrightarrow{OM} = \tfrac12\mathbf{b}-\tfrac12\mathbf{a} = \tfrac12(\mathbf{b}-\mathbf{a}) = \tfrac12\overrightarrow{AB} \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $\overrightarrow{MN}=\tfrac12\overrightarrow{AB}$ — parallel (scalar multiple) and half the length</div>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">5G</div>
+        <div class="level-info">
+          <div class="level-title">Circles, Spheres &amp; Planes</div>
+          <div class="level-sub">Building equations from definitions</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">20</div>
+          <div class="q-text">Find the equation of the plane through $P(0,1,2)$ perpendicular to $\mathbf{n}=\begin{pmatrix}2\\-1\\1\end{pmatrix}$.<div class="q-hint">5G</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ \mathbf{n}\cdot\mathbf{p}=0-1+2=1 \implies 2x-y+z=1 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $2x-y+z=1$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">21</div>
+          <div class="q-text">Is the point $(1,1,1)$ on the sphere $|\mathbf{v}|=\sqrt3$?<div class="q-hint">5G</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ |(1,1,1)| = \sqrt{1+1+1}=\sqrt3 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Yes — matches the radius exactly</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">22</div>
+          <div class="q-text">Find the equation of the plane through the origin with normal $\mathbf{n}=\begin{pmatrix}1\\1\\1\end{pmatrix}$, and explain why the constant term is zero.<div class="q-hint">5G — Mixed</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Since $\mathbf{a}=\mathbf{0}$, $\mathbf{n}\cdot\mathbf{a}=0$ automatically.</p>
+          <div class="math-block">\[ x+y+z=0 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $x+y+z=0$ — no constant term, since the plane passes through the origin</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">23</div>
+          <div class="q-text">A sphere has equation $\left|\mathbf{v}-\begin{pmatrix}2\\-1\\3\end{pmatrix}\right|=5$. Is the point $(2,-1,8)$ on this sphere?<div class="q-hint">5G</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ \left|\begin{pmatrix}2\\-1\\8\end{pmatrix}-\begin{pmatrix}2\\-1\\3\end{pmatrix}\right| = \left|\begin{pmatrix}0\\0\\5\end{pmatrix}\right| = 5 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Yes — distance from centre equals the radius</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">24</div>
+          <div class="q-text">Is the point $(0,0,0)$ on the plane $2x-y+3z=6$?<div class="q-hint">5G</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ 2(0)-0+3(0) = 0 \neq 6 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> No — the origin does not satisfy the equation</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">25</div>
+          <div class="q-text">Find the equation of the plane parallel to $x+2y-z=5$ that passes through $(1,1,1)$.<div class="q-hint">5G</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Parallel planes share a normal vector, $\mathbf{n}=\begin{pmatrix}1\\2\\-1\end{pmatrix}$ — only the constant changes.</p>
+          <div class="math-block">\[ \mathbf{n}\cdot\mathbf{a}=1+2-1=2 \implies x+2y-z=2 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $x+2y-z=2$</div>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">Mixed</div>
+        <div class="level-info">
+          <div class="level-title">Mixed &amp; Beyond-HSC Challenge</div>
+          <div class="level-sub">Combining sections, and a taste of what MATH141/142 adds</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">26</div>
+          <div class="q-text">Show that the line $\mathbf{r}=\begin{pmatrix}1\\0\\2\end{pmatrix}+\lambda\begin{pmatrix}2\\1\\-1\end{pmatrix}$ lies entirely within the plane $x-2y=1$.<div class="q-hint">5F + 5G</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Two things must hold: the starting point must satisfy the plane equation, and the direction vector must be perpendicular to the normal (so moving along the line never leaves the plane).</p>
+          <div class="math-block">\[ \text{Point: } 1-2(0)=1 \ \checkmark \qquad \text{Direction: } \begin{pmatrix}1\\-2\\0\end{pmatrix}\cdot\begin{pmatrix}2\\1\\-1\end{pmatrix} = 2-2+0=0\ \checkmark \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Both conditions hold — the line lies entirely in the plane</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">27</div>
+          <div class="q-text">Find the shortest distance from the point $(1,2,3)$ to the plane $x+2y+2z=6$. (Hint: reuse the projection idea from 5D.)<div class="q-hint">5D + 5G — Challenge</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The shortest distance from a point to a plane is the length of the projection of the displacement (from any point on the plane) onto the unit normal. This gives the point-to-plane distance formula:</p>
+          <div class="math-block">\[ \text{distance} = \frac{|\mathbf{n}\cdot\mathbf{p} - d|}{|\mathbf{n}|}, \qquad \mathbf{n}=\begin{pmatrix}1\\2\\2\end{pmatrix},\ d=6 \]</div>
+          <div class="math-block">\[ \mathbf{n}\cdot\mathbf{p} = 1+4+6=11, \qquad |\mathbf{n}|=3 \implies \text{distance} = \frac{|11-6|}{3}=\frac{5}{3} \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $\tfrac53$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">28</div>
+          <div class="q-text">Given $|\mathbf{a}|=3$, $|\mathbf{b}|=4$, $\mathbf{a}\cdot\mathbf{b}=6$, find the angle between $\mathbf{a}$ and $\mathbf{b}$, and state whether they are closer to parallel or perpendicular.<div class="q-hint">5C</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ \cos\theta = \frac{6}{3\times4} = \frac12 \implies \theta=60^\circ \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $60^\circ$ — closer to parallel than perpendicular, since it's well under $90^\circ$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">29</div>
+          <div class="q-text">Find $k$ so that the point $(k,2,-1)$ lies on the plane $3x-y+2z=4$.<div class="q-hint">5G</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ 3k-2-2=4 \implies 3k=8 \implies k=\tfrac83 \]</div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $k=\tfrac83$</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">30</div>
+          <div class="q-text">A parallelogram $OACB$ has $O(0,0,0)$, $A(2,1,3)$, $B(1,4,-1)$. Find $C$, then verify numerically that the diagonals bisect each other.<div class="q-hint">5E — full numeric check</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <div class="math-block">\[ C = A+B = \begin{pmatrix}3\\5\\2\end{pmatrix} \]</div>
+          <p>Midpoint of $OC$: $\tfrac12(3,5,2)=(1.5,2.5,1)$. Midpoint of $AB$: $\tfrac12\big((2+1),(1+4),(3-1)\big)=(1.5,2.5,1)$.</p>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> $C=(3,5,2)$ — both midpoints are $(1.5,2.5,1)$, confirming 5E</div>
+        </div>
+      </div>
+
+      <div class="callout callout-success" style="margin-top:32px">
+        <strong>Practice complete!</strong> Revisit any DPEN sections tied to questions you found tricky — each one is tagged with its source section.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('planes')">← 5G: Circles, Spheres &amp; Planes</button>
+        <button class="page-nav-btn next" onclick="goTo('home')">Back to Overview →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PAGES = ['home','coords','vectors3d','dotproduct','applications','proofs','lines','planes','practice'];
+const PAGE_NAMES = {
+  home:'Overview', coords:'5A. Coordinates in 3D', vectors3d:'5B. Vectors in 3D',
+  dotproduct:'5C. The Dot Product', applications:'5D. Angles & Projections',
+  proofs:'5E. Vector Proofs', lines:'5F. Vector Line Equation',
+  planes:'5G. Circles, Spheres & Planes', practice:'Practice Questions'
+};
+let visited = new Set(['home']);
+
+function goTo(id) {
+  PAGES.forEach(p => {
+    document.getElementById('page-'+p).classList.remove('active');
+  });
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => {
+    const fn = l.getAttribute('onclick');
+    if (fn && fn.includes("'"+id+"'")) l.classList.add('active');
+  });
+  document.getElementById('breadcrumbPage').textContent = PAGE_NAMES[id] || id;
+  visited.add(id);
+  const pct = Math.round((visited.size / PAGES.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  window.scrollTo(0, 0);
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.getElementById('page-'+id), {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 50);
+}
+
+function toggleDPEN(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.dpen-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function toggleQ(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.q-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function expandAll() {
+  const activePage = document.querySelector('.page.active');
+  activePage.querySelectorAll('.dpen-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.dpen-chevron').classList.add('open');
+  });
+  activePage.querySelectorAll('.q-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.q-arrow').classList.add('open');
+  });
+  setTimeout(() => {
+    if (window.renderMathInElement) renderMathInElement(activePage, {
+      delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+      throwOnError: false
+    });
+  }, 30);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 300);
+});
+</script>
+</body>
+</html>

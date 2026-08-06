@@ -1,0 +1,3456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATH141 Phase 3 — Vectors &amp; Linear Algebra</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B3A5C;
+  --navy-lt: #1e4570;
+  --orange: #FF3621;
+  --blue-lt: #E6F1FB;
+  --blue-mid: #185FA5;
+  --amber-lt: #FAEEDA;
+  --amber-dk: #7A4800;
+  --green-lt: #E1F5EE;
+  --green-dk: #0a5c3f;
+  --coral-lt: #FAECE7;
+  --coral-dk: #8a2f1a;
+  --grey-lt: #F6F5F2;
+  --grey-md: #e8e6e0;
+  --grey-dk: #3a3835;
+  --text: #2c2a28;
+  --text-muted: #6b6762;
+  --sidebar-w: 260px;
+  --content-max: 760px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #fafaf8;
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.3;
+}
+.sidebar-brand-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+.progress-wrap {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.progress-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.nav-section {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  padding: 6px 20px 4px;
+  text-transform: uppercase;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-link:hover { color: white; background: rgba(255,255,255,0.06); }
+.nav-link.active { color: white; background: rgba(255,255,255,0.1); border-left: 2px solid var(--orange); padding-left: 18px; }
+.nav-num {
+  font-size: 10px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.nav-link.active .nav-num { background: var(--orange); color: white; }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--grey-md);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-breadcrumb {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.topbar-breadcrumb span {
+  color: var(--navy);
+  font-weight: 500;
+}
+.topbar-btns {
+  display: flex;
+  gap: 8px;
+}
+.tb-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.tb-btn:hover { border-color: var(--navy); color: var(--navy); }
+.tb-btn.primary { background: var(--navy); color: white; border-color: var(--navy); }
+.tb-btn.primary:hover { background: var(--navy-lt); }
+
+.content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+/* ── HERO ── */
+.page-hero {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--grey-md);
+}
+.page-hero-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--orange);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.page-hero-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.page-hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── MOTIVATION BOX ── */
+.motiv {
+  background: var(--blue-lt);
+  border-left: 3px solid var(--blue-mid);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #0d3d73;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.motiv strong { font-weight: 500; }
+
+/* ── DPEN SECTIONS ── */
+.dpen-block {
+  margin-bottom: 12px;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dpen-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+  transition: background 0.15s;
+}
+.dpen-header:hover { background: var(--grey-lt); }
+.dpen-pill {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.pill-d { background: var(--blue-lt); color: var(--blue-mid); }
+.pill-p { background: var(--amber-lt); color: var(--amber-dk); }
+.pill-e { background: var(--green-lt); color: var(--green-dk); }
+.pill-n { background: var(--coral-lt); color: var(--coral-dk); }
+.dpen-header-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+}
+.dpen-chevron {
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.dpen-chevron.open { transform: rotate(90deg); }
+.dpen-body {
+  display: none;
+  padding: 18px 20px 20px;
+  border-top: 1px solid var(--grey-md);
+  background: var(--grey-lt);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+}
+.dpen-body.open { display: block; }
+.dpen-body p { margin-bottom: 10px; }
+.dpen-body p:last-child { margin-bottom: 0; }
+
+/* ── MATH ── */
+.math-block {
+  text-align: center;
+  margin: 14px 0;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--grey-md);
+  overflow-x: auto;
+}
+.math-inline { font-style: italic; }
+
+/* ── STEPS ── */
+.step-list { margin: 10px 0; }
+.step-item {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+  align-items: flex-start;
+}
+.step-num-badge {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--blue-lt);
+  color: var(--blue-mid);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-text { flex: 1; font-size: 14px; line-height: 1.7; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.callout-warn { background: var(--amber-lt); border-left: 3px solid #EF9F27; color: var(--amber-dk); }
+.callout-info { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout-success { background: var(--green-lt); border-left: 3px solid #1D9E75; color: var(--green-dk); }
+.callout strong { font-weight: 500; }
+
+/* ── WORKED EXAMPLES ── */
+.worked {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+.worked-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.answer-box {
+  background: var(--navy);
+  color: white;
+  border-radius: 6px;
+  padding: 9px 14px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.answer-label {
+  font-size: 10px;
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 10px 0;
+}
+.data-table th {
+  background: var(--navy);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+}
+.data-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-md);
+  color: var(--text);
+}
+.data-table tr:nth-child(even) td { background: white; }
+.data-table tr:nth-child(odd) td { background: var(--grey-lt); }
+.data-table th:first-child { border-radius: 6px 0 0 0; }
+.data-table th:last-child { border-radius: 0 6px 0 0; }
+
+/* ── PRACTICE QUESTIONS ── */
+.level-divider {
+  margin: 36px 0 16px;
+  padding: 14px 18px;
+  background: var(--navy);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.level-badge {
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--orange);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.level-info { flex: 1; }
+.level-title { font-size: 15px; font-weight: 500; color: white; }
+.level-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+.q-card {
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.q-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: white;
+  transition: background 0.15s;
+}
+.q-head:hover { background: var(--grey-lt); }
+.q-num {
+  background: var(--navy);
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.q-text { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.5; }
+.q-hint { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 400; }
+.q-arrow { color: var(--text-muted); font-size: 11px; transition: transform 0.2s; margin-top: 4px; flex-shrink: 0; }
+.q-arrow.open { transform: rotate(90deg); }
+.q-body {
+  display: none;
+  background: var(--grey-lt);
+  border-top: 1px solid var(--grey-md);
+  padding: 18px 20px;
+}
+.q-body.open { display: block; }
+.q-attempt {
+  background: white;
+  border: 1px dashed var(--grey-md);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+.sol-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+/* ── HOME PAGE ── */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 24px 0;
+}
+.home-card {
+  background: white;
+  border: 1px solid var(--grey-md);
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.home-card:hover { border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.home-card-num { font-size: 11px; color: var(--orange); font-weight: 500; margin-bottom: 4px; }
+.home-card-title { font-family: 'Crimson Pro', serif; font-size: 18px; color: var(--navy); margin-bottom: 4px; }
+.home-card-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.home-chain {
+  background: var(--navy);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 24px 0;
+  color: white;
+}
+.home-chain-title { font-size: 12px; letter-spacing: 0.06em; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+.chain-items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chain-item {
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: white;
+}
+.chain-arrow { color: var(--orange); font-size: 14px; }
+.home-tip {
+  background: var(--amber-lt);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--amber-dk);
+  line-height: 1.65;
+  margin-top: 16px;
+}
+
+/* ── UNI BRIDGE (extra block type for this guide) ── */
+.bridge {
+  background: #FFF6E9;
+  border: 1px dashed #E0A23A;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #6b4a10;
+}
+.bridge-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: #b5791a;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* ── PAGE NAV ── */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--grey-md);
+}
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--grey-md);
+  background: white;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.page-nav-btn:hover { border-color: var(--navy); color: var(--navy); }
+.page-nav-btn.next { background: var(--navy); color: white; border-color: var(--navy); }
+.page-nav-btn.next:hover { background: var(--navy-lt); }
+.page-nav-btn.ghost { visibility: hidden; }
+
+/* ── SCROLLBAR ── */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .content { padding: 24px 20px 60px; }
+  .home-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">MATH141 — Phase 3</div>
+    <div class="sidebar-brand-sub">Vectors &amp; Linear Algebra · Weeks 10&ndash;13 · Sep 23 &ndash; Nov 10</div>
+  </div>
+  <div class="progress-wrap"><div class="progress-label">YOUR PROGRESS</div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+  <div class="nav-section"><div class="nav-section-label">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">&uarr;</span> Start here</button></div>
+  <div class="nav-section"><div class="nav-section-label">Week 10 &ndash; Vectors</div>
+    <button class="nav-link" onclick="goTo('vectorsguide')"><span class="nav-num">i</span> Uses the Vectors in 3D Guide</button>
+    <button class="nav-link" onclick="goTo('dircosines')"><span class="nav-num">W10</span> Direction Cosines & Vector Components</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 11 &ndash; Cross Product, Lines &amp; Planes</div>
+    <button class="nav-link" onclick="goTo('crossdef')"><span class="nav-num">W11</span> Cross Product — Definition, Properties & Right-Hand Rule</button>
+    <button class="nav-link" onclick="goTo('crossgeom')"><span class="nav-num">W11</span> Cross Product — Geometric Interpretation & Applications</button>
+    <button class="nav-link" onclick="goTo('tripleproduct')"><span class="nav-num">W11</span> Scalar Triple Product — Volume of a Parallelepiped</button>
+    <button class="nav-link" onclick="goTo('planeangle')"><span class="nav-num">W11</span> Angle Between Planes & Line-Plane Intersection</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 12 &ndash; Matrices</div>
+    <button class="nav-link" onclick="goTo('matrixdef')"><span class="nav-num">W12</span> Matrices — Definition, Types & Notation</button>
+    <button class="nav-link" onclick="goTo('matrixops')"><span class="nav-num">W12</span> Matrix Addition, Scalar Multiplication & Matrix Multiplication</button>
+    <button class="nav-link" onclick="goTo('inverse')"><span class="nav-num">W12</span> Inverse Matrices — 2×2 Formula & Properties</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Week 13 &ndash; Linear Systems</div>
+    <button class="nav-link" onclick="goTo('linsysrep')"><span class="nav-num">W13</span> Linear Systems — Matrix Representation & Row Operations</button>
+    <button class="nav-link" onclick="goTo('ref')"><span class="nav-num">W13</span> Row Echelon Form & Gaussian Elimination</button>
+    <button class="nav-link" onclick="goTo('rref')"><span class="nav-num">W13</span> Reduced Row Echelon Form & Gauss-Jordan</button>
+    <button class="nav-link" onclick="goTo('determinants')"><span class="nav-num">W13</span> Determinants — 2×2 and 3×3</button>
+    <button class="nav-link" onclick="goTo('cramers')"><span class="nav-num">W13</span> Cramer's Rule</button>
+  </div>
+  <div class="nav-section"><div class="nav-section-label">Practice</div>
+    <button class="nav-link" onclick="goTo('practice')"><span class="nav-num">&#9998;</span> Practice Questions (130)</button></div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">MATH141 Phase 3 &nbsp;&rsaquo;&nbsp; <span id="breadcrumbPage">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand all</button>
+      <button class="tb-btn primary" onclick="goTo('practice')">Practice &rarr;</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <div class="page active" id="page-home">
+      <div class="page-hero">
+        <div class="page-hero-label">MATH141 &middot; Phase 3 of 4</div>
+        <div class="page-hero-title">Vectors &amp; Linear Algebra,<br>Weeks 10&ndash;13</div>
+        <div class="page-hero-sub">Covers the DPEN141 tracker from Sep 23 to Nov 10. Plane/space vectors and the dot product (Week 10) are already covered in full in the <strong>Vectors in 3D</strong> guide (5A&ndash;5D) &mdash; this guide picks up from there: direction cosines, the cross product, planes-from-three-points, and the entire matrices/linear systems syllabus that the Vectors guide doesn't touch.</div>
+      </div>
+
+      <div class="home-chain">
+        <div class="home-chain-title">THE CHAIN OF IDEAS</div>
+        <div class="chain-items">
+          <div class="chain-item">Vectors Guide (5A&ndash;5D)</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Direction Cosines & Vector Components</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Cross Product — Definition, Properties & Right-Hand Rule</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Cross Product — Geometric Interpretation & Applications</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Scalar Triple Product — Volume of a Parallelepiped</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Angle Between Planes & Line-Plane Intersection</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Matrices — Definition, Types & Notation</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Matrix Addition, Scalar Multiplication & Matrix Multiplication</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Inverse Matrices — 2×2 Formula & Properties</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Linear Systems — Matrix Representation & Row Operations</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Row Echelon Form & Gaussian Elimination</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Reduced Row Echelon Form & Gauss-Jordan</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Determinants — 2×2 and 3×3</div>
+          <div class="chain-arrow">&rarr;</div>
+          <div class="chain-item">Cramer's Rule</div>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <div class="home-card" onclick="goTo('vectorsguide')">
+          <div class="home-card-num">W10</div>
+          <div class="home-card-title">Plane &amp; Space Vectors, Dot Product</div>
+          <div class="home-card-sub">Already covered in full in the Vectors in 3D guide (5A&ndash;5D) &mdash; see the pointer page.</div>
+        </div>
+        <div class="home-card" onclick="goTo('dircosines')">
+          <div class="home-card-num">W10</div>
+          <div class="home-card-title">Direction Cosines & Vector Components</div>
+          <div class="home-card-sub">Angles a vector makes with each axis</div>
+        </div>
+        <div class="home-card" onclick="goTo('crossdef')">
+          <div class="home-card-num">W11</div>
+          <div class="home-card-title">Cross Product — Definition, Properties & Right-Hand Rule</div>
+          <div class="home-card-sub">A second vector product — this one returns a vector, not a scalar</div>
+        </div>
+        <div class="home-card" onclick="goTo('crossgeom')">
+          <div class="home-card-num">W11</div>
+          <div class="home-card-title">Cross Product — Geometric Interpretation & Applications</div>
+          <div class="home-card-sub">Area of a parallelogram/triangle, finding normals to planes</div>
+        </div>
+        <div class="home-card" onclick="goTo('tripleproduct')">
+          <div class="home-card-num">W11</div>
+          <div class="home-card-title">Scalar Triple Product — Volume of a Parallelepiped</div>
+          <div class="home-card-sub">Combining dot and cross products to measure 3D volume</div>
+        </div>
+        <div class="home-card" onclick="goTo('planeangle')">
+          <div class="home-card-num">W11</div>
+          <div class="home-card-title">Angle Between Planes & Line-Plane Intersection</div>
+          <div class="home-card-sub">Using normals to compare planes, finding where a line pierces a plane</div>
+        </div>
+        <div class="home-card" onclick="goTo('matrixdef')">
+          <div class="home-card-num">W12</div>
+          <div class="home-card-title">Matrices — Definition, Types & Notation</div>
+          <div class="home-card-sub">Rows, columns, notation, types of matrices, the Kronecker delta</div>
+        </div>
+        <div class="home-card" onclick="goTo('matrixops')">
+          <div class="home-card-num">W12</div>
+          <div class="home-card-title">Matrix Addition, Scalar Multiplication & Matrix Multiplication</div>
+          <div class="home-card-sub">Component-wise operations, and the row-times-column multiplication rule</div>
+        </div>
+        <div class="home-card" onclick="goTo('inverse')">
+          <div class="home-card-num">W12</div>
+          <div class="home-card-title">Inverse Matrices — 2×2 Formula & Properties</div>
+          <div class="home-card-sub">Definition, the 2×2 shortcut, invertibility conditions</div>
+        </div>
+        <div class="home-card" onclick="goTo('linsysrep')">
+          <div class="home-card-num">W13</div>
+          <div class="home-card-title">Linear Systems — Matrix Representation & Row Operations</div>
+          <div class="home-card-sub">Writing systems as Ax=b, elementary row operations, augmented matrices</div>
+        </div>
+        <div class="home-card" onclick="goTo('ref')">
+          <div class="home-card-num">W13</div>
+          <div class="home-card-title">Row Echelon Form & Gaussian Elimination</div>
+          <div class="home-card-sub">Systematic use of row operations to solve systems</div>
+        </div>
+        <div class="home-card" onclick="goTo('rref')">
+          <div class="home-card-num">W13</div>
+          <div class="home-card-title">Reduced Row Echelon Form & Gauss-Jordan</div>
+          <div class="home-card-sub">Taking elimination one step further to read off the solution directly</div>
+        </div>
+        <div class="home-card" onclick="goTo('determinants')">
+          <div class="home-card-num">W13</div>
+          <div class="home-card-title">Determinants — 2×2 and 3×3</div>
+          <div class="home-card-sub">Definition, cofactor expansion, geometric meaning</div>
+        </div>
+        <div class="home-card" onclick="goTo('cramers')">
+          <div class="home-card-num">W13</div>
+          <div class="home-card-title">Cramer's Rule</div>
+          <div class="home-card-sub">Solving linear systems directly using determinants</div>
+        </div>
+        <div class="home-card" onclick="goTo('practice')">
+          <div class="home-card-num">PRACTICE</div>
+          <div class="home-card-title">Practice Questions</div>
+          <div class="home-card-sub">130 questions, 10 per topic, fully worked.</div>
+        </div>
+      </div>
+
+      <div class="home-tip">
+        <strong>How to use this guide:</strong> If Week 10's plane/space vectors and dot product feel shaky, go back to the Vectors in 3D guide (5A&ndash;5D) first &mdash; everything here assumes that's solid. The cross product and scalar triple product (Week 11) lean directly on dot products and projections from that guide. Matrices (Week 12) and linear systems (Week 13) are mostly self-contained, but determinants tie back to the scalar triple product, and the plane-equation and line-equation work from 5F&ndash;5G reappears throughout Week 11.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn ghost">&larr;</button>
+        <button class="page-nav-btn next" onclick="goTo('vectorsguide')">W10: Plane &amp; Space Vectors &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-vectorsguide">
+      <div class="page-hero">
+        <div class="page-hero-label">Week 10</div>
+        <div class="page-hero-title">Plane &amp; Space Vectors, Dot Product</div>
+        <div class="page-hero-sub">Already built &mdash; see the Vectors in 3D guide.</div>
+      </div>
+      <div class="motiv">The DPEN141 tracker's Week 10 content &mdash; plane vector operations, space vectors, position/displacement/unit vectors, the dot product, angle/orthogonality/projections &mdash; is exactly the material already covered, built up from scratch, in the separate <strong>Vectors in 3D</strong> study guide.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Mapping the tracker's Week 10 onto that guide</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <table class="data-table">
+            <tr><th>DPEN141 Tracker (Week 10)</th><th>Vectors in 3D Guide Section</th></tr>
+            <tr><td>Plane vectors: operations, magnitude, direction</td><td>5B &mdash; Vectors in Three Dimensions</td></tr>
+            <tr><td>Space vectors: 3D representation and operations</td><td>5A&ndash;5B &mdash; Coordinates &amp; Vectors in 3D</td></tr>
+            <tr><td>Position vectors, displacement, unit vectors</td><td>5B &mdash; Vectors in Three Dimensions</td></tr>
+            <tr><td>Dot product: definition, properties, geometric interpretation</td><td>5C &mdash; The Dot Product</td></tr>
+            <tr><td>Angle between vectors, orthogonality, projections</td><td>5D &mdash; Angles &amp; Projections</td></tr>
+            <tr><td>Vector components, direction cosines</td><td>New topic in this guide (next page) &mdash; builds directly on 5B/5D</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Practice for this material</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="callout callout-info">The Vectors in 3D guide's own practice page has 30 questions covering exactly this content. This Phase 3 guide's practice page picks up from Direction Cosines onward, so between the two guides every Week 10&ndash;13 topic in the tracker has full worked examples and practice.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('home')">&larr; Overview</button>
+        <button class="page-nav-btn next" onclick="goTo('dircosines')">W10: Direction Cosines &amp; Vector Components &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-dircosines">
+      <div class="page-hero">
+        <div class="page-hero-label">W10</div>
+        <div class="page-hero-title">Direction Cosines & Vector Components</div>
+        <div class="page-hero-sub">Angles a vector makes with each axis</div>
+      </div>
+      <div class="motiv">Plane/space vectors, the dot product, angles, and projections were already built up in the Vectors in 3D guide (5A&ndash;5D) &mdash; this topic adds one new idea the tracker introduces in Week 10: describing a vector's direction purely by the angles it makes with each axis.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The idea.</strong> For a vector $\mathbf{a}=(a_1,a_2,a_3)$, let $\alpha,\beta,\gamma$ be the angles it makes with the $x$, $y$, $z$ axes respectively. Since $\mathbf{i}=(1,0,0)$ is a unit vector along the $x$-axis, the angle-finding formula already built in the Vectors guide (5D) applies directly:</p>
+  <div class="math-block">\[ \cos\alpha = \frac{\mathbf{a}\cdot\mathbf{i}}{|\mathbf{a}||\mathbf{i}|} = \frac{a_1}{|\mathbf{a}|} \]</div>
+  <p>and identically $\cos\beta=\dfrac{a_2}{|\mathbf{a}|}$, $\cos\gamma=\dfrac{a_3}{|\mathbf{a}|}$ — nothing new is being derived here, just the 5D angle formula applied three times, once per axis.</p>
+  <p><strong>Why they satisfy a Pythagoras-like identity.</strong> $\cos^2\alpha+\cos^2\beta+\cos^2\gamma = \dfrac{a_1^2+a_2^2+a_3^2}{|\mathbf{a}|^2}=\dfrac{|\mathbf{a}|^2}{|\mathbf{a}|^2}=1$ — the direction cosines are literally just the components of the unit vector $\hat{\mathbf{a}}$ from the Vectors guide (5B), so of course they satisfy this identity.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \cos\alpha=\frac{a_1}{|\mathbf{a}|}, \quad \cos\beta=\frac{a_2}{|\mathbf{a}|}, \quad \cos\gamma=\frac{a_3}{|\mathbf{a}|}, \qquad \cos^2\alpha+\cos^2\beta+\cos^2\gamma=1 \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — find direction cosines</div><p>Find the direction cosines of $\mathbf{a}=(2,-1,2)$.</p>
+  <div class="math-block">\[ |\mathbf{a}|=\sqrt{4+1+4}=3, \qquad \cos\alpha=\frac23,\ \cos\beta=-\frac13,\ \cos\gamma=\frac23 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\left(\tfrac23,-\tfrac13,\tfrac23\right)$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — verify the identity</div><p>Check $\cos^2\alpha+\cos^2\beta+\cos^2\gamma=1$ for Example 1.</p>
+  <div class="math-block">\[ \left(\frac23\right)^2+\left(-\frac13\right)^2+\left(\frac23\right)^2 = \frac49+\frac19+\frac49=\frac99=1 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Confirmed</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Direction cosines are literally the same three numbers as the unit vector $\hat{\mathbf{a}}$ from the Vectors guide — if you already know how to normalise a vector, you already know how to find direction cosines; it's the same computation with a new name attached.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('vectorsguide')">&larr; W10: Plane & Space Vectors</button>
+        <button class="page-nav-btn next" onclick="goTo('crossdef')">W11: Cross Product — Definition, Properties & Right-Hand Rule &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-crossdef">
+      <div class="page-hero">
+        <div class="page-hero-label">W11</div>
+        <div class="page-hero-title">Cross Product — Definition, Properties & Right-Hand Rule</div>
+        <div class="page-hero-sub">A second vector product — this one returns a vector, not a scalar</div>
+      </div>
+      <div class="motiv">The dot product measures "how aligned" two vectors are and returns a number. Sometimes what you actually need is a brand new vector perpendicular to both originals — direction and all — and that's exactly what the cross product supplies.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Motivating question.</strong> Given two non-parallel vectors $\mathbf{a},\mathbf{b}$, is there a systematic way to produce a third vector perpendicular to both? In 2D this makes no sense (there's no unique perpendicular direction), but in 3D, the plane containing $\mathbf{a}$ and $\mathbf{b}$ has exactly two perpendicular directions (opposite to each other) — the cross product picks one of them by a fixed convention.</p>
+  <p><strong>The formula, and where it comes from.</strong> Built directly from the requirement "perpendicular to both $\mathbf{a}$ and $\mathbf{b}$" — i.e. $(\mathbf{a}\times\mathbf{b})\cdot\mathbf{a}=0$ and $(\mathbf{a}\times\mathbf{b})\cdot\mathbf{b}=0$ simultaneously. Solving those two equations for the unknown vector's components produces:</p>
+  <div class="math-block">\[ \mathbf{a}\times\mathbf{b} = \begin{pmatrix}a_2b_3-a_3b_2\\a_3b_1-a_1b_3\\a_1b_2-a_2b_1\end{pmatrix} \]</div>
+  <p><strong>Right-hand rule.</strong> Point your right-hand fingers along $\mathbf{a}$, curl them toward $\mathbf{b}$; your thumb points along $\mathbf{a}\times\mathbf{b}$ — this resolves the "which of the two perpendicular directions" ambiguity from the motivating question.</p>
+  <p><strong>Key properties.</strong> $\mathbf{a}\times\mathbf{b}=-(\mathbf{b}\times\mathbf{a})$ (anti-commutative — swapping order flips the direction), $|\mathbf{a}\times\mathbf{b}|=|\mathbf{a}||\mathbf{b}|\sin\theta$, and $\mathbf{a}\times\mathbf{b}=\mathbf{0}$ exactly when $\mathbf{a}$ and $\mathbf{b}$ are parallel (no unique perpendicular direction exists).</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \mathbf{a}\times\mathbf{b} = \begin{vmatrix}\mathbf{i}&\mathbf{j}&\mathbf{k}\\a_1&a_2&a_3\\b_1&b_2&b_3\end{vmatrix}, \qquad |\mathbf{a}\times\mathbf{b}|=|\mathbf{a}||\mathbf{b}|\sin\theta \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — compute a cross product</div><p>Find $\mathbf{a}\times\mathbf{b}$ for $\mathbf{a}=(1,0,2)$, $\mathbf{b}=(3,1,-1)$.</p>
+  <div class="math-block">\[ \mathbf{a}\times\mathbf{b} = \begin{pmatrix}(0)(-1)-(2)(1)\\(2)(3)-(1)(-1)\\(1)(1)-(0)(3)\end{pmatrix} = \begin{pmatrix}-2\\7\\1\end{pmatrix} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $(-2,7,1)$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — verify perpendicularity</div><p>Confirm the result from Example 1 is perpendicular to both $\mathbf{a}$ and $\mathbf{b}$.</p>
+  <div class="math-block">\[ (-2,7,1)\cdot(1,0,2) = -2+0+2=0, \qquad (-2,7,1)\cdot(3,1,-1)=-6+7-1=0 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Both dot products are zero — confirmed perpendicular to both</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>This is the cross product teased back in the Vectors guide (5C). Note it's genuinely a 3D-only operation — there's no direct 2D analogue, since "perpendicular to a single 2D vector" isn't unique the way "perpendicular to two 3D vectors" is.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('dircosines')">&larr; W10: Direction Cosines & Vector Components</button>
+        <button class="page-nav-btn next" onclick="goTo('crossgeom')">W11: Cross Product — Geometric Interpretation & Applications &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-crossgeom">
+      <div class="page-hero">
+        <div class="page-hero-label">W11</div>
+        <div class="page-hero-title">Cross Product — Geometric Interpretation & Applications</div>
+        <div class="page-hero-sub">Area of a parallelogram/triangle, finding normals to planes</div>
+      </div>
+      <div class="motiv">The formula $|\mathbf{a}\times\mathbf{b}|=|\mathbf{a}||\mathbf{b}|\sin\theta$ isn't just an algebraic curiosity — it's exactly the area formula for a parallelogram with sides $\mathbf{a}$ and $\mathbf{b}$, which unlocks a fast way to compute areas and to find plane normals.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Area connection.</strong> A parallelogram with adjacent sides $\mathbf{a},\mathbf{b}$ and included angle $\theta$ has area (base $\times$ height) $=|\mathbf{a}|\cdot(|\mathbf{b}|\sin\theta) = |\mathbf{a}||\mathbf{b}|\sin\theta$ — precisely $|\mathbf{a}\times\mathbf{b}|$. A triangle with the same two sides is exactly half that parallelogram, so its area is $\tfrac12|\mathbf{a}\times\mathbf{b}|$.</p>
+  <p><strong>Finding a plane's normal.</strong> The Vectors guide (5G) needed a normal vector $\mathbf{n}$ to write a plane's equation, but didn't say how to find one if you're only given three points on the plane. Now you can: take two vectors lying in the plane (e.g. $\overrightarrow{AB}$ and $\overrightarrow{AC}$), and their cross product is automatically perpendicular to both — hence perpendicular to the whole plane.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \text{Area of parallelogram} = |\mathbf{a}\times\mathbf{b}|, \qquad \text{Area of triangle} = \tfrac12|\mathbf{a}\times\mathbf{b}| \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — area of a triangle</div><p>Find the area of the triangle with vertices $A(0,0,0)$, $B(2,0,0)$, $C(0,3,0)$.</p>
+  <div class="math-block">\[ \overrightarrow{AB}=(2,0,0), \ \overrightarrow{AC}=(0,3,0), \qquad \overrightarrow{AB}\times\overrightarrow{AC}=(0,0,6) \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Area $=\tfrac12|(0,0,6)|=3$ (matches $\tfrac12\times2\times3=3$ from basic geometry)</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — find a plane's equation from three points</div><p>Find the equation of the plane through $A(1,0,0)$, $B(0,1,0)$, $C(0,0,1)$.</p>
+  <div class="math-block">\[ \overrightarrow{AB}=(-1,1,0), \ \overrightarrow{AC}=(-1,0,1), \qquad \mathbf{n}=\overrightarrow{AB}\times\overrightarrow{AC}=(1,1,1) \]</div>
+  <p>Using the 5G plane formula $\mathbf{n}\cdot\mathbf{v}=\mathbf{n}\cdot\mathbf{a}$: $\mathbf{n}\cdot\mathbf{a}=1$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $x+y+z=1$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>This example closes a gap that might have bothered you in the Vectors guide's 5G: there, the normal was always just given. Now you know the normal for a plane defined by three points is $\overrightarrow{AB}\times\overrightarrow{AC}$ — every plane-through-three-points problem now reduces to a cross product followed by the 5G recipe.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('crossdef')">&larr; W11: Cross Product — Definition, Properties & Right-Hand Rule</button>
+        <button class="page-nav-btn next" onclick="goTo('tripleproduct')">W11: Scalar Triple Product — Volume of a Parallelepiped &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-tripleproduct">
+      <div class="page-hero">
+        <div class="page-hero-label">W11</div>
+        <div class="page-hero-title">Scalar Triple Product — Volume of a Parallelepiped</div>
+        <div class="page-hero-sub">Combining dot and cross products to measure 3D volume</div>
+      </div>
+      <div class="motiv">A parallelogram's area came from the cross product; extending to three dimensions, a parallelepiped's volume comes from combining the cross product (which finds an area) with the dot product (which projects a third vector onto the direction perpendicular to that area) — exactly "base times height," dressed in vector notation.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Building the formula.</strong> Take a parallelepiped with edges $\mathbf{a},\mathbf{b},\mathbf{c}$ from a common vertex. Volume $=$ (area of base) $\times$ (height). Let the base be the parallelogram spanned by $\mathbf{a},\mathbf{b}$: its area is $|\mathbf{a}\times\mathbf{b}|$, and $\mathbf{a}\times\mathbf{b}$ points perpendicular to that base. The height is exactly the length of the projection of $\mathbf{c}$ onto that perpendicular direction — which the projection formula from the Vectors guide (5D) computes as $\dfrac{|\mathbf{c}\cdot(\mathbf{a}\times\mathbf{b})|}{|\mathbf{a}\times\mathbf{b}|}$.</p>
+  <p>Multiply base area by height and the $|\mathbf{a}\times\mathbf{b}|$ cancels, leaving a strikingly compact result:</p>
+  <div class="math-block">\[ V = \big|\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})\big| \]</div>
+  <p><strong>Coplanarity test.</strong> Three vectors are coplanar (lie in the same plane, i.e. the "parallelepiped" is flattened to zero volume) exactly when $\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})=0$.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \mathbf{a}\cdot(\mathbf{b}\times\mathbf{c}) = \begin{vmatrix}a_1&a_2&a_3\\b_1&b_2&b_3\\c_1&c_2&c_3\end{vmatrix}, \qquad V=\left|\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})\right| \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — volume of a parallelepiped</div><p>Find the volume with edges $\mathbf{a}=(1,0,0)$, $\mathbf{b}=(0,2,0)$, $\mathbf{c}=(0,0,3)$.</p>
+  <div class="math-block">\[ \mathbf{b}\times\mathbf{c}=(6,0,0), \qquad \mathbf{a}\cdot(6,0,0)=6 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $6$ (matches $1\times2\times3$ from a rectangular box, as expected)</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — test for coplanarity</div><p>Are $\mathbf{a}=(1,1,0)$, $\mathbf{b}=(0,1,1)$, $\mathbf{c}=(1,2,1)$ coplanar?</p>
+  <div class="math-block">\[ \mathbf{b}\times\mathbf{c}=(1(1)-1(2),\ 1(1)-0(1),\ 0(2)-1(1)) = (-1,1,-1) \]</div>
+  <div class="math-block">\[ \mathbf{a}\cdot(-1,1,-1)=-1+1+0=0 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Yes — coplanar, since the scalar triple product is zero</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>The determinant form of the scalar triple product is your first hint of what's coming in Week 12&ndash;13: determinants of $3\times3$ matrices are computed with exactly this pattern, and the "zero determinant means degenerate/no unique solution" theme reappears constantly with matrices and linear systems.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('crossgeom')">&larr; W11: Cross Product — Geometric Interpretation & Applications</button>
+        <button class="page-nav-btn next" onclick="goTo('planeangle')">W11: Angle Between Planes & Line-Plane Intersection &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-planeangle">
+      <div class="page-hero">
+        <div class="page-hero-label">W11</div>
+        <div class="page-hero-title">Angle Between Planes & Line-Plane Intersection</div>
+        <div class="page-hero-sub">Using normals to compare planes, finding where a line pierces a plane</div>
+      </div>
+      <div class="motiv">A plane's normal vector fully captures its orientation — so comparing two planes' orientations, or checking where a line meets a plane, both reduce to normal-vector calculations already built in the Vectors guide.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Angle between two planes.</strong> The angle between two planes is defined as the angle between their normal vectors (or its supplement, by convention usually taking the acute angle) — directly reusing the 5D angle formula: $\cos\theta=\dfrac{\mathbf{n}_1\cdot\mathbf{n}_2}{|\mathbf{n}_1||\mathbf{n}_2|}$.</p>
+  <p><strong>Parallel and perpendicular planes.</strong> Planes are parallel exactly when their normals are parallel ($\mathbf{n}_1=k\mathbf{n}_2$); perpendicular exactly when their normals are perpendicular ($\mathbf{n}_1\cdot\mathbf{n}_2=0$) — the same tests from 5F applied to normals instead of direction vectors.</p>
+  <p><strong>Line-plane intersection.</strong> Substitute the line's vector equation $\mathbf{r}=\mathbf{a}+\lambda\mathbf{b}$ (5F) directly into the plane's equation $\mathbf{n}\cdot\mathbf{v}=d$ (5G), and solve for the single unknown $\lambda$ — this gives the specific point where they meet (or reveals no solution/infinitely many if the line is parallel to or lies within the plane).</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \cos\theta=\frac{\mathbf{n}_1\cdot\mathbf{n}_2}{|\mathbf{n}_1||\mathbf{n}_2|}, \qquad \mathbf{n}\cdot(\mathbf{a}+\lambda\mathbf{b})=d \ \implies\ \text{solve for }\lambda \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — angle between two planes</div><p>Find the angle between $x+y+z=1$ and $x-y+2z=3$.</p>
+  <div class="math-block">\[ \mathbf{n}_1=(1,1,1),\ \mathbf{n}_2=(1,-1,2), \qquad \mathbf{n}_1\cdot\mathbf{n}_2=1-1+2=2 \]</div>
+  <div class="math-block">\[ \cos\theta=\frac{2}{\sqrt3\cdot\sqrt6}=\frac{2}{\sqrt{18}}=\frac{2}{3\sqrt2} \implies \theta\approx61.9^\circ \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\approx61.9^\circ$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — line-plane intersection</div><p>Find where $\mathbf{r}=(1,0,1)+\lambda(1,1,-1)$ meets the plane $x+2y+z=6$.</p>
+  <div class="math-block">\[ (1+\lambda)+2(\lambda)+(1-\lambda)=6 \implies 2+2\lambda=6 \implies \lambda=2 \]</div>
+  <div class="math-block">\[ \mathbf{r}=(1,0,1)+2(1,1,-1)=(3,2,-1) \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $(3,2,-1)$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>If substituting the line into the plane equation gives an equation with no $\lambda$ left (a contradiction like $0=5$), the line is parallel to the plane and never meets it; if it gives an identity true for all $\lambda$ (like $0=0$), the entire line lies within the plane.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('tripleproduct')">&larr; W11: Scalar Triple Product — Volume of a Parallelepiped</button>
+        <button class="page-nav-btn next" onclick="goTo('matrixdef')">W12: Matrices — Definition, Types & Notation &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-matrixdef">
+      <div class="page-hero">
+        <div class="page-hero-label">W12</div>
+        <div class="page-hero-title">Matrices — Definition, Types & Notation</div>
+        <div class="page-hero-sub">Rows, columns, notation, types of matrices, the Kronecker delta</div>
+      </div>
+      <div class="motiv">A matrix is simply a rectangular grid of numbers — but the specific vocabulary around its shape, special cases, and index notation is what makes every later rule (addition, multiplication, inverses) precise enough to state without ambiguity.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Notation.</strong> A matrix $A$ with $m$ rows and $n$ columns is "$m\times n$." The entry in row $i$, column $j$ is written $a_{ij}$ — row index always comes first.</p>
+  <p><strong>Special types.</strong> Square ($m=n$), row vector ($1\times n$), column vector ($m\times1$ — literally the same object as the column vectors from the Vectors guide, now given a formal name), zero matrix (all entries $0$), identity matrix $I$ (ones on the diagonal, zeros elsewhere), diagonal matrix (nonzero entries only on the diagonal), symmetric matrix ($a_{ij}=a_{ji}$ for all $i,j$).</p>
+  <p><strong>The Kronecker delta.</strong> $\delta_{ij}=1$ if $i=j$, and $0$ otherwise — a compact way to define the identity matrix: $I_{ij}=\delta_{ij}$.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ A = \begin{pmatrix}a_{11}&a_{12}\\a_{21}&a_{22}\end{pmatrix}, \qquad I=\begin{pmatrix}1&0\\0&1\end{pmatrix}, \qquad \delta_{ij}=\begin{cases}1&i=j\\0&i\ne j\end{cases} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — identify entries and shape</div><p>For $A=\begin{pmatrix}2&-1&0\\3&5&7\end{pmatrix}$, state the shape and find $a_{12}$, $a_{23}$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $2\times3$; $a_{12}=-1$, $a_{23}=7$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — check symmetry</div><p>Is $A=\begin{pmatrix}1&2&3\\2&4&5\\3&5&6\end{pmatrix}$ symmetric?</p>
+  <p>Check $a_{ij}=a_{ji}$ for every off-diagonal pair: $a_{12}=2=a_{21}$, $a_{13}=3=a_{31}$, $a_{23}=5=a_{32}$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Yes, symmetric</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>The column vector notation from the Vectors guide was always secretly matrix notation ($n\times1$) — this topic makes that connection official. Everything you already know about adding/scaling column vectors is a special case of the general matrix rules coming next.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('planeangle')">&larr; W11: Angle Between Planes & Line-Plane Intersection</button>
+        <button class="page-nav-btn next" onclick="goTo('matrixops')">W12: Matrix Addition, Scalar Multiplication & Matrix Multiplication &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-matrixops">
+      <div class="page-hero">
+        <div class="page-hero-label">W12</div>
+        <div class="page-hero-title">Matrix Addition, Scalar Multiplication & Matrix Multiplication</div>
+        <div class="page-hero-sub">Component-wise operations, and the row-times-column multiplication rule</div>
+      </div>
+      <div class="motiv">Addition and scalar multiplication extend the vector rules you already know component-by-component to a full grid. Matrix multiplication looks nothing like that at first — but it's built from a specific real-world need: composing linear transformations, which forces a "row dot column" rule rather than an entry-by-entry one.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Addition and scalar multiplication.</strong> Exactly like vectors: add matching entries, or scale every entry — but only matrices of the <em>same shape</em> can be added.</p>
+  <p><strong>Why multiplication is NOT entry-by-entry.</strong> If matrices represent linear transformations (each row of $A$ is really a set of dot-product instructions), then "apply transformation $A$, then transformation $B$" needs $(AB)$'s entry $(i,j)$ to be the dot product of row $i$ of $A$ with column $j$ of $B$ — this is forced by wanting composition of transformations to correspond to matrix multiplication.</p>
+  <div class="math-block">\[ (AB)_{ij} = \sum_{k} a_{ik}b_{kj} \]</div>
+  <p><strong>Dimension requirement.</strong> For $AB$ to be defined, the number of columns of $A$ must equal the number of rows of $B$ — otherwise there's no way to pair up a "row of $A$" with a "column of $B$" for the dot product.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ (A+B)_{ij}=a_{ij}+b_{ij}, \qquad (kA)_{ij}=k\,a_{ij}, \qquad (AB)_{ij}=\sum_k a_{ik}b_{kj} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — matrix multiplication</div><p>Compute $\begin{pmatrix}1&2\\3&4\end{pmatrix}\begin{pmatrix}5&6\\7&8\end{pmatrix}$.</p>
+  <div class="math-block">\[ \begin{pmatrix}1(5)+2(7)&1(6)+2(8)\\3(5)+4(7)&3(6)+4(8)\end{pmatrix} = \begin{pmatrix}19&22\\43&50\end{pmatrix} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\begin{pmatrix}19&22\\43&50\end{pmatrix}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — check whether AB and BA are both defined</div><p>For $A$ ($2\times3$) and $B$ ($3\times2$), which of $AB$, $BA$ are defined, and what shape is each?</p>
+  <p>$AB$: columns of $A$ (3) match rows of $B$ (3) — defined, shape $2\times2$. $BA$: columns of $B$ (2) match rows of $A$ (2) — also defined, shape $3\times3$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Both defined, but different shapes — $AB\ne BA$ in general, even when both exist</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>Matrix multiplication is <strong>not commutative</strong> — $AB\ne BA$ in general, sometimes not even the same shape. This is the single biggest mindset shift from ordinary number arithmetic; always keep track of the order.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('matrixdef')">&larr; W12: Matrices — Definition, Types & Notation</button>
+        <button class="page-nav-btn next" onclick="goTo('inverse')">W12: Inverse Matrices — 2×2 Formula & Properties &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-inverse">
+      <div class="page-hero">
+        <div class="page-hero-label">W12</div>
+        <div class="page-hero-title">Inverse Matrices — 2×2 Formula & Properties</div>
+        <div class="page-hero-sub">Definition, the 2×2 shortcut, invertibility conditions</div>
+      </div>
+      <div class="motiv">For numbers, "dividing by $a$" really means "multiplying by $a^{-1}$," where $a\cdot a^{-1}=1$. Matrices don't have division, but they do have an analogous idea: a matrix $A^{-1}$ such that $AA^{-1}=A^{-1}A=I$ — provided such a matrix exists at all.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Definition.</strong> $A^{-1}$ is the matrix satisfying $AA^{-1}=A^{-1}A=I$. Only square matrices can have inverses, and even then, not every square matrix does.</p>
+  <p><strong>The $2\times2$ shortcut.</strong> For $A=\begin{pmatrix}a&b\\c&d\end{pmatrix}$, define $\det(A)=ad-bc$ (the determinant — a preview of Week 13). Then:</p>
+  <div class="math-block">\[ A^{-1} = \frac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix} \]</div>
+  <p><strong>Invertibility condition.</strong> $A^{-1}$ exists exactly when $\det(A)=ad-bc\ne0$ — dividing by zero is exactly as forbidden here as it is for ordinary numbers, and this determinant is precisely the thing you'd be dividing by.</p>
+  <p><strong>Key properties.</strong> $(A^{-1})^{-1}=A$, $(AB)^{-1}=B^{-1}A^{-1}$ (note the order reverses — provable by checking $(AB)(B^{-1}A^{-1})=A(BB^{-1})A^{-1}=AIA^{-1}=AA^{-1}=I$).</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ AA^{-1}=A^{-1}A=I, \qquad A^{-1}=\frac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix} \ (\text{for }2\times2) \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — find a 2×2 inverse</div><p>Find the inverse of $A=\begin{pmatrix}2&1\\5&3\end{pmatrix}$.</p>
+  <div class="math-block">\[ \det(A)=2(3)-1(5)=1, \qquad A^{-1}=\frac{1}{1}\begin{pmatrix}3&-1\\-5&2\end{pmatrix} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\begin{pmatrix}3&-1\\-5&2\end{pmatrix}$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — verify the inverse</div><p>Confirm $AA^{-1}=I$ for Example 1.</p>
+  <div class="math-block">\[ \begin{pmatrix}2&1\\5&3\end{pmatrix}\begin{pmatrix}3&-1\\-5&2\end{pmatrix} = \begin{pmatrix}6-5&-2+2\\15-15&-5+6\end{pmatrix} = \begin{pmatrix}1&0\\0&1\end{pmatrix} \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> Confirmed — equals $I$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>The condition $\det(A)\ne0$ for invertibility is the same condition that guarantees a linear system $A\mathbf{x}=\mathbf{b}$ has a unique solution — Week 13 develops both determinants and linear systems in tandem, and this connection is why.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('matrixops')">&larr; W12: Matrix Addition, Scalar Multiplication & Matrix Multiplication</button>
+        <button class="page-nav-btn next" onclick="goTo('linsysrep')">W13: Linear Systems — Matrix Representation & Row Operations &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-linsysrep">
+      <div class="page-hero">
+        <div class="page-hero-label">W13</div>
+        <div class="page-hero-title">Linear Systems — Matrix Representation & Row Operations</div>
+        <div class="page-hero-sub">Writing systems as Ax=b, elementary row operations, augmented matrices</div>
+      </div>
+      <div class="motiv">A system of linear equations is really just several dot-product conditions stacked together — matrix multiplication (Week 12) packages the whole system into a single compact equation, and elementary row operations give a systematic way to simplify that system without changing its solution set.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Matrix representation.</strong> The system $\begin{cases}a_1x+b_1y=c_1\\a_2x+b_2y=c_2\end{cases}$ is exactly the statement $A\mathbf{x}=\mathbf{b}$, where $A=\begin{pmatrix}a_1&b_1\\a_2&b_2\end{pmatrix}$, $\mathbf{x}=\begin{pmatrix}x\\y\end{pmatrix}$, $\mathbf{b}=\begin{pmatrix}c_1\\c_2\end{pmatrix}$ — check this is exactly right by expanding the matrix multiplication and comparing to the original equations.</p>
+  <p><strong>The augmented matrix.</strong> Write $A$ and $\mathbf{b}$ side by side as $[A\,|\,\mathbf{b}]$ — a compact record of the whole system without needing to keep rewriting the variable names.</p>
+  <p><strong>Elementary row operations.</strong> Three moves that are guaranteed not to change the solution set, because each corresponds to a valid algebraic manipulation of the original equations: (1) swap two rows (reorder the equations — doesn't change anything), (2) scale a row by a nonzero constant (multiply an equation by a nonzero number — still true), (3) add a multiple of one row to another (add a true equation to another true equation — still true).</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ A\mathbf{x}=\mathbf{b}, \qquad [A\,|\,\mathbf{b}], \qquad R_i \leftrightarrow R_j,\ \ kR_i,\ \ R_i+kR_j \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — write the matrix form</div><p>Write $\begin{cases}2x+3y=7\\x-y=1\end{cases}$ as $A\mathbf{x}=\mathbf{b}$ and as an augmented matrix.</p>
+  <div class="math-block">\[ \begin{pmatrix}2&3\\1&-1\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}7\\1\end{pmatrix}, \qquad \left[\begin{array}{cc|c}2&3&7\\1&-1&1\end{array}\right] \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> As above</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — apply a row operation</div><p>Apply $R_1 \to R_1-2R_2$ to $\left[\begin{array}{cc|c}2&3&7\\1&-1&1\end{array}\right]$.</p>
+  <div class="math-block">\[ R_1-2R_2 = (2-2(1),\ 3-2(-1),\ 7-2(1)) = (0,5,5) \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $\left[\begin{array}{cc|c}0&5&5\\1&-1&1\end{array}\right]$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Row operations are the mechanical engine behind Gaussian elimination (next topic) — practice applying them cleanly and in a fixed order now, since the next topic is entirely about using them strategically to reach a simplified form.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('inverse')">&larr; W12: Inverse Matrices — 2×2 Formula & Properties</button>
+        <button class="page-nav-btn next" onclick="goTo('ref')">W13: Row Echelon Form & Gaussian Elimination &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-ref">
+      <div class="page-hero">
+        <div class="page-hero-label">W13</div>
+        <div class="page-hero-title">Row Echelon Form & Gaussian Elimination</div>
+        <div class="page-hero-sub">Systematic use of row operations to solve systems</div>
+      </div>
+      <div class="motiv">Row operations alone are just legal moves — Gaussian elimination is the strategy that applies them in a fixed, systematic order to reach a simplified "staircase" shape from which the solution can be read off by simple back-substitution.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Row echelon form (REF).</strong> A matrix is in REF if: all-zero rows are at the bottom, and each row's first nonzero entry (its "pivot") sits strictly to the right of the pivot in the row above — producing a staircase pattern of leading entries.</p>
+  <p><strong>Gaussian elimination — the strategy.</strong> Work column by column, left to right: use row operations to turn every entry <em>below</em> the current pivot into zero, then move to the next column and repeat, only ever using rows below the current one.</p>
+  <p><strong>Back-substitution.</strong> Once in REF, the bottom row usually gives one variable directly; substitute it upward into the row above to find the next variable, and so on, working from the bottom row to the top.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \left[\begin{array}{ccc|c}\ast&\ast&\ast&\ast\\0&\ast&\ast&\ast\\0&0&\ast&\ast\end{array}\right] \quad\text{(staircase pattern of pivots)} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — reduce to REF and back-substitute</div><p>Solve $\begin{cases}x+y+z=6\\2x-y+z=3\\x+2y-z=2\end{cases}$.</p>
+  <div class="math-block">\[ \left[\begin{array}{ccc|c}1&1&1&6\\2&-1&1&3\\1&2&-1&2\end{array}\right] \xrightarrow{R_2-2R_1,\ R_3-R_1} \left[\begin{array}{ccc|c}1&1&1&6\\0&-3&-1&-9\\0&1&-2&-4\end{array}\right] \]</div>
+  <div class="math-block">\[ \xrightarrow{R_3+\tfrac13R_2} \left[\begin{array}{ccc|c}1&1&1&6\\0&-3&-1&-9\\0&0&-\tfrac73&-7\end{array}\right] \]</div>
+  <p>Back-substitute: $-\tfrac73 z=-7\implies z=3$; $-3y-3=-9\implies y=2$; $x+2+3=6\implies x=1$.</p>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $x=1,\ y=2,\ z=3$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Watch out</div>If Gaussian elimination produces a row like $(0,0,0\,|\,5)$ — all zeros on the left, nonzero on the right — that row represents $0=5$, a contradiction, meaning the system has no solution. A row of all zeros (including the right side) instead signals infinitely many solutions.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('linsysrep')">&larr; W13: Linear Systems — Matrix Representation & Row Operations</button>
+        <button class="page-nav-btn next" onclick="goTo('rref')">W13: Reduced Row Echelon Form & Gauss-Jordan &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-rref">
+      <div class="page-hero">
+        <div class="page-hero-label">W13</div>
+        <div class="page-hero-title">Reduced Row Echelon Form & Gauss-Jordan</div>
+        <div class="page-hero-sub">Taking elimination one step further to read off the solution directly</div>
+      </div>
+      <div class="motiv">Row echelon form still requires back-substitution to finish solving a system. Pushing the elimination a little further — clearing entries *above* each pivot too, and scaling every pivot to exactly $1$ — produces a form where the solution can be read off immediately, with no further algebra.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>Reduced row echelon form (RREF).</strong> Row echelon form, with two extra conditions: every pivot equals exactly $1$, and every entry directly above a pivot is also zero (not just below, as in REF).</p>
+  <p><strong>Gauss-Jordan elimination.</strong> The same strategy as Gaussian elimination, but after clearing below each pivot, also clear above it (working from the bottom pivot back up), and scale each pivot row so its pivot becomes $1$.</p>
+  <p><strong>Why RREF is worth the extra work.</strong> Once a system's augmented matrix is in RREF, each row directly states one variable's value (or its relationship to any free variables) — no back-substitution step is needed at all, unlike with plain REF.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \left[\begin{array}{ccc|c}1&0&0&\ast\\0&1&0&\ast\\0&0&1&\ast\end{array}\right] \quad\text{(solution read off directly)} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — continue REF to RREF</div><p>Continue Example 1 from the REF topic: $\left[\begin{array}{ccc|c}1&1&1&6\\0&-3&-1&-9\\0&0&-\tfrac73&-7\end{array}\right]$ to RREF.</p>
+  <p>Scale $R_3$ to make its pivot $1$: $R_3\to-\tfrac37R_3$ gives $(0,0,1\,|\,3)$. Clear above: $R_2\to R_2+R_3$, $R_1\to R_1-R_3$, then scale $R_2$, clear above that pivot too.</p>
+  <div class="math-block">\[ \left[\begin{array}{ccc|c}1&0&0&1\\0&1&0&2\\0&0&1&3\end{array}\right] \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $x=1,y=2,z=3$ — read off directly, matching the back-substitution answer</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>RREF and REF always agree on the final solution — RREF is purely a convenience that trades extra row-operation work for skipping the back-substitution step. On paper under exam time pressure, REF plus quick back-substitution is often faster; RREF is more useful when a computer is doing the arithmetic.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('ref')">&larr; W13: Row Echelon Form & Gaussian Elimination</button>
+        <button class="page-nav-btn next" onclick="goTo('determinants')">W13: Determinants — 2×2 and 3×3 &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-determinants">
+      <div class="page-hero">
+        <div class="page-hero-label">W13</div>
+        <div class="page-hero-title">Determinants — 2×2 and 3×3</div>
+        <div class="page-hero-sub">Definition, cofactor expansion, geometric meaning</div>
+      </div>
+      <div class="motiv">The determinant is a single number computed from a square matrix that answers "does this matrix have an inverse?" — and, not coincidentally, it also measures the volume-scaling factor of the linear transformation the matrix represents, tying directly back to the scalar triple product from Week 11.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>$2\times2$ determinant.</strong> $\det\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc$ — already used as the denominator in the Week 12 inverse formula.</p>
+  <p><strong>$3\times3$ determinant via cofactor expansion.</strong> Expand along the first row, alternating signs:</p>
+  <div class="math-block">\[ \det\begin{pmatrix}a&b&c\\d&e&f\\g&h&i\end{pmatrix} = a(ei-fh) - b(di-fg) + c(dh-eg) \]</div>
+  <p>Each $2\times2$ piece is the determinant of the matrix left after deleting the row and column of the entry you're expanding by ("minor"), and the alternating $+,-,+$ signs come from the checkerboard cofactor pattern.</p>
+  <p><strong>Connection to the scalar triple product.</strong> This is exactly the same computation as $\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})$ from Week 11 — the $3\times3$ determinant of the matrix with rows $\mathbf{a},\mathbf{b},\mathbf{c}$ literally <em>is</em> that scalar triple product.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ \det\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc, \qquad \det(3\times3) = a(ei-fh)-b(di-fg)+c(dh-eg) \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — 2×2 determinant</div><p>Find $\det\begin{pmatrix}4&3\\2&5\end{pmatrix}$.</p>
+  <div class="math-block">\[ 4(5)-3(2)=14 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $14$</div></div>
+  <div class="worked" style="margin-top:12px"><div class="worked-label">Example 2 — 3×3 determinant</div><p>Find $\det\begin{pmatrix}1&2&0\\3&1&1\\0&2&2\end{pmatrix}$.</p>
+  <div class="math-block">\[ 1(1\cdot2-1\cdot2) - 2(3\cdot2-1\cdot0) + 0(\cdots) = 1(0)-2(6)+0 = -12 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $-12$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Uni Bridge</div>Determinants generalise to $n\times n$ matrices with the same cofactor-expansion recipe (recursively, using smaller determinants), and $\det(A)=0$ is the universal test for "no inverse exists" / "linear system doesn't have a unique solution" — the single most important number attached to a square matrix.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('rref')">&larr; W13: Reduced Row Echelon Form & Gauss-Jordan</button>
+        <button class="page-nav-btn next" onclick="goTo('cramers')">W13: Cramer's Rule &rarr;</button>
+      </div>
+    </div>
+    <div class="page" id="page-cramers">
+      <div class="page-hero">
+        <div class="page-hero-label">W13</div>
+        <div class="page-hero-title">Cramer's Rule</div>
+        <div class="page-hero-sub">Solving linear systems directly using determinants</div>
+      </div>
+      <div class="motiv">Gaussian elimination works for any system, but for small systems where you only need one or two of the variables (not the full solution process), Cramer's Rule offers a direct determinant-based formula — built by systematically tracking how each variable's coefficient column affects the overall determinant.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-p">Pattern</span>
+          <span class="dpen-header-title">Build it: where these rules come from</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <p><strong>The rule.</strong> For $A\mathbf{x}=\mathbf{b}$ with $\det(A)\ne0$, each variable $x_i$ is found by replacing the $i$-th column of $A$ with $\mathbf{b}$, taking the determinant of that new matrix, and dividing by $\det(A)$:</p>
+  <div class="math-block">\[ x_i = \frac{\det(A_i)}{\det(A)}, \qquad A_i = A \text{ with column } i \text{ replaced by } \mathbf{b} \]</div>
+  <p><strong>Why it only works when $\det(A)\ne0$.</strong> Exactly the same restriction as matrix inverses (Week 12) — and this is no coincidence: Cramer's Rule is really just an explicit formula for $\mathbf{x}=A^{-1}\mathbf{b}$, worked out entry by entry using cofactor expansions.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-d">Definition</span>
+          <span class="dpen-header-title">The formal statement</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="math-block">\[ x = \frac{\det(A_x)}{\det(A)}, \quad y = \frac{\det(A_y)}{\det(A)} \quad \text{(for a } 2\times2 \text{ system)} \]</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-e">Example</span>
+          <span class="dpen-header-title">Worked examples</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="worked"><div class="worked-label">Example 1 — solve a 2×2 system with Cramer's Rule</div><p>Solve $\begin{cases}2x+3y=8\\x-y=-1\end{cases}$.</p>
+  <div class="math-block">\[ \det(A)=\begin{vmatrix}2&3\\1&-1\end{vmatrix}=-2-3=-5 \]</div>
+  <div class="math-block">\[ x=\frac{\begin{vmatrix}8&3\\-1&-1\end{vmatrix}}{-5}=\frac{-8+3}{-5}=\frac{-5}{-5}=1, \qquad y=\frac{\begin{vmatrix}2&8\\1&-1\end{vmatrix}}{-5}=\frac{-2-8}{-5}=\frac{-10}{-5}=2 \]</div>
+  <div class="answer-box"><span class="answer-label">ANSWER</span> $x=1,\ y=2$</div></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-header" onclick="toggleDPEN(this)">
+          <span class="dpen-pill pill-n">Note</span>
+          <span class="dpen-header-title">Study notes</span>
+          <span class="dpen-chevron">&#9654;</span>
+        </div>
+        <div class="dpen-body">
+          <div class="bridge"><div class="bridge-label">Study tip</div>Cramer's Rule is elegant for $2\times2$ and manageable for $3\times3$ systems, but the number of determinants needed grows fast (four $3\times3$ determinants for a $3\times3$ system) — for larger systems, or systems needing every variable, Gaussian elimination is almost always faster in practice.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('determinants')">&larr; W13: Determinants — 2×2 and 3×3</button>
+        <button class="page-nav-btn next" onclick="goTo('practice')">Practice Questions &rarr;</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-practice">
+      <div class="page-hero">
+        <div class="page-hero-label">Mixed Practice</div>
+        <div class="page-hero-title">Practice Questions</div>
+        <div class="page-hero-sub">130 questions — 10 per topic — across all of Phase 3. Attempt each before revealing the answer.</div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W10</div>
+        <div class="level-info">
+          <div class="level-title">Direction Cosines & Vector Components</div>
+          <div class="level-sub">Angles a vector makes with each axis</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div class="q-text">Find the direction cosines of $\mathbf{a}=(1,2,2)$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$|\mathbf{a}|=3$; $\left(\tfrac13,\tfrac23,\tfrac23\right)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div class="q-text">Find the direction cosines of $\mathbf{a}=(0,3,-4)$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$|\mathbf{a}|=5$; $\left(0,\tfrac35,-\tfrac45\right)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div class="q-text">Find the angle $\alpha$ (to the $x$-axis) for $\mathbf{a}=(1,1,\sqrt2)$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$|\mathbf{a}|=2$; $\cos\alpha=\tfrac12 \implies \alpha=60^\circ$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">4</div>
+          <div class="q-text">A vector has direction cosines $\left(\tfrac12,\tfrac12,x\right)$. Find $x$ (take $x>0$).<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\tfrac14+\tfrac14+x^2=1 \implies x^2=\tfrac12 \implies x=\tfrac{1}{\sqrt2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">5</div>
+          <div class="q-text">Find the direction cosines of $\mathbf{a}=(1,-1,0)$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$|\mathbf{a}|=\sqrt2$; $\left(\tfrac{1}{\sqrt2},-\tfrac{1}{\sqrt2},0\right)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">6</div>
+          <div class="q-text">Find the angle $\gamma$ (to the $z$-axis) for $\mathbf{a}=(0,0,-5)$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\cos\gamma=-1\implies \gamma=180^\circ$ — points directly opposite the $z$-axis</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">7</div>
+          <div class="q-text">Explain why $\gamma=90^\circ$ for any vector lying entirely in the $xy$-plane.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A vector in the $xy$-plane has $z$-component $0$, so $\cos\gamma=0/|\mathbf{a}|=0$, giving $\gamma=90^\circ$ — it makes a right angle with the $z$-axis since it has no component along it</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">8</div>
+          <div class="q-text">Find the direction cosines of $\mathbf{a}=(4,4,7)$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$|\mathbf{a}|=\sqrt{16+16+49}=9$; $\left(\tfrac49,\tfrac49,\tfrac79\right)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">9</div>
+          <div class="q-text">Two vectors have the same direction cosines. What can you conclude about them?<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>They point in exactly the same direction — direction cosines are the components of the unit vector, so identical direction cosines mean identical unit vectors, though the original vectors could have different magnitudes</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">10</div>
+          <div class="q-text">Find a vector of magnitude 10 with direction cosines $\left(\tfrac13,\tfrac23,\tfrac23\right)$.<div class="q-hint">W10</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Scale the unit vector: $10\left(\tfrac13,\tfrac23,\tfrac23\right)=\left(\tfrac{10}{3},\tfrac{20}{3},\tfrac{20}{3}\right)$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W11</div>
+        <div class="level-info">
+          <div class="level-title">Cross Product — Definition, Properties & Right-Hand Rule</div>
+          <div class="level-sub">A second vector product — this one returns a vector, not a scalar</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">11</div>
+          <div class="q-text">Find $\mathbf{i}\times\mathbf{j}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$(1,0,0)\times(0,1,0)=(0,0,1)=\mathbf{k}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">12</div>
+          <div class="q-text">Find $\mathbf{j}\times\mathbf{i}$, using anti-commutativity.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$-(\mathbf{i}\times\mathbf{j})=-\mathbf{k}=(0,0,-1)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">13</div>
+          <div class="q-text">Find $(1,2,0)\times(0,1,1)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\begin{pmatrix}(2)(1)-(0)(1)\\(0)(0)-(1)(1)\\(1)(1)-(2)(0)\end{pmatrix}=(2,-1,1)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">14</div>
+          <div class="q-text">Find $(2,0,0)\times(0,3,0)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$(0\cdot0-0\cdot3,\ 0\cdot0-2\cdot0,\ 2\cdot3-0\cdot0)=(0,0,6)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">15</div>
+          <div class="q-text">Explain why $\mathbf{a}\times\mathbf{a}=\mathbf{0}$ for any vector $\mathbf{a}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A vector is trivially parallel to itself (angle $0$), and $|\mathbf{a}\times\mathbf{a}|=|\mathbf{a}|^2\sin0=0$ — no unique perpendicular direction exists when the two vectors coincide</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">16</div>
+          <div class="q-text">Find $|\mathbf{a}\times\mathbf{b}|$ given $|\mathbf{a}|=3$, $|\mathbf{b}|=4$, and the angle between them is $30^\circ$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$3\times4\times\sin30^\circ=12\times\tfrac12=6$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">17</div>
+          <div class="q-text">Determine whether $\mathbf{a}=(2,4,-2)$ and $\mathbf{b}=(1,2,-1)$ are parallel, using the cross product.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{a}\times\mathbf{b}=(4(-1)-(-2)(2),\ (-2)(1)-2(-1),\ 2(2)-4(1))=(0,0,0)$ — parallel (also visible directly since $\mathbf{a}=2\mathbf{b}$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">18</div>
+          <div class="q-text">Find $\mathbf{k}\times\mathbf{i}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$(0,0,1)\times(1,0,0)=(0,1,0)=\mathbf{j}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">19</div>
+          <div class="q-text">Find $(1,1,1)\times(1,-1,0)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$(1\cdot0-1\cdot(-1),\ 1\cdot1-1\cdot0,\ 1\cdot(-1)-1\cdot1)=(1,1,-2)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">20</div>
+          <div class="q-text">Use the right-hand rule to state the direction of $\mathbf{i}\times\mathbf{k}$ without calculating components, then verify with the formula.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Curling from $\mathbf{i}$ toward $\mathbf{k}$ points the thumb in the $-\mathbf{j}$ direction; formula: $(1,0,0)\times(0,0,1)=(0\cdot1-0\cdot0,\ 0\cdot0-1\cdot1,\ 1\cdot0-0\cdot0)=(0,-1,0)=-\mathbf{j}$ — matches</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W11</div>
+        <div class="level-info">
+          <div class="level-title">Cross Product — Geometric Interpretation & Applications</div>
+          <div class="level-sub">Area of a parallelogram/triangle, finding normals to planes</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">21</div>
+          <div class="q-text">Find the area of the parallelogram with sides $(1,0,0)$ and $(0,1,0)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Cross product $=(0,0,1)$; area $=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">22</div>
+          <div class="q-text">Find the area of the triangle with vertices $O(0,0,0)$, $A(3,0,0)$, $B(0,4,0)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\overrightarrow{OA}\times\overrightarrow{OB}=(0,0,12)$; area $=\tfrac12(12)=6$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">23</div>
+          <div class="q-text">Find the area of the parallelogram with sides $\mathbf{a}=(1,1,0)$ and $\mathbf{b}=(0,1,1)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{a}\times\mathbf{b}=(1,-1,1)$; area $=\sqrt{1+1+1}=\sqrt3$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">24</div>
+          <div class="q-text">Find a normal vector to the plane through $A(1,0,0)$, $B(0,2,0)$, $C(0,0,3)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\overrightarrow{AB}=(-1,2,0)$, $\overrightarrow{AC}=(-1,0,3)$; $\mathbf{n}=\overrightarrow{AB}\times\overrightarrow{AC}=(6,3,2)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">25</div>
+          <div class="q-text">Using the previous answer, find the equation of that plane.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{n}\cdot\mathbf{a}=6(1)+3(0)+2(0)=6$; plane: $6x+3y+2z=6$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">26</div>
+          <div class="q-text">Find the area of the triangle with vertices $A(1,1,1)$, $B(2,3,1)$, $C(3,1,2)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\overrightarrow{AB}=(1,2,0)$, $\overrightarrow{AC}=(2,0,1)$; $\overrightarrow{AB}\times\overrightarrow{AC}=(2,-1,-4)$; area $=\tfrac12\sqrt{4+1+16}=\tfrac{\sqrt{21}}{2}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">27</div>
+          <div class="q-text">Explain why three points $A,B,C$ are collinear exactly when $\overrightarrow{AB}\times\overrightarrow{AC}=\mathbf{0}$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>If the points are collinear, $\overrightarrow{AB}$ and $\overrightarrow{AC}$ are parallel (both lie along the same line), and parallel vectors have zero cross product; conversely a zero cross product forces the angle between them to be $0$ or $\pi$, meaning they lie on the same line through $A$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">28</div>
+          <div class="q-text">Find a normal to the plane through $A(0,0,0)$, $B(1,1,0)$, $C(1,0,1)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\overrightarrow{AB}=(1,1,0)$, $\overrightarrow{AC}=(1,0,1)$; $\mathbf{n}=(1,-1,-1)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">29</div>
+          <div class="q-text">Find the area of the parallelogram with sides $(2,0,1)$ and $(0,3,1)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Cross product $=(0(1)-1(3),\ 1(0)-2(1),\ 2(3)-0(0))=(-3,-2,6)$; area $=\sqrt{9+4+36}=7$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">30</div>
+          <div class="q-text">A triangle has area $5$ and two of its sides are $\mathbf{a}$ and $\mathbf{b}$ with $|\mathbf{a}|=4$, $|\mathbf{b}|=5$. Find $\sin\theta$ between them.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\tfrac12|\mathbf{a}||\mathbf{b}|\sin\theta=5 \implies \tfrac12(20)\sin\theta=5 \implies \sin\theta=\tfrac12$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W11</div>
+        <div class="level-info">
+          <div class="level-title">Scalar Triple Product — Volume of a Parallelepiped</div>
+          <div class="level-sub">Combining dot and cross products to measure 3D volume</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">31</div>
+          <div class="q-text">Find $\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})$ for $\mathbf{a}=(1,0,0)$, $\mathbf{b}=(0,1,0)$, $\mathbf{c}=(0,0,1)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{b}\times\mathbf{c}=(1,0,0)$; $\mathbf{a}\cdot(1,0,0)=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">32</div>
+          <div class="q-text">Find the volume of the parallelepiped with edges $(2,0,0)$, $(0,3,0)$, $(0,0,4)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$24$ (rectangular box volume)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">33</div>
+          <div class="q-text">Find the volume with edges $\mathbf{a}=(1,2,0)$, $\mathbf{b}=(0,1,1)$, $\mathbf{c}=(1,0,1)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{b}\times\mathbf{c}=(1,-1,-1)$; $\mathbf{a}\cdot(1,-1,-1)=1-2+0=-1$; volume $=|-1|=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">34</div>
+          <div class="q-text">Are $\mathbf{a}=(1,0,0)$, $\mathbf{b}=(0,1,0)$, $\mathbf{c}=(1,1,0)$ coplanar? Explain using the triple product.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{b}\times\mathbf{c}=(0,0,1)$; $\mathbf{a}\cdot(0,0,1)=0$ — coplanar (visually obvious too, since all three lie in the $xy$-plane)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">35</div>
+          <div class="q-text">Find the volume with edges $\mathbf{a}=(2,1,1)$, $\mathbf{b}=(1,2,1)$, $\mathbf{c}=(1,1,2)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{b}\times\mathbf{c}=(4-1,1-2,1-2)=(3,-1,-1)$; $\mathbf{a}\cdot(3,-1,-1)=6-1-1=4$; volume $=4$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">36</div>
+          <div class="q-text">Explain why swapping two vectors in a scalar triple product flips its sign but not its absolute value (hence not the volume).<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The cross product is anti-commutative, so swapping two vectors introduces a factor of $-1$ somewhere in the calculation — but since volume uses the absolute value $|\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})|$, that sign flip never changes the reported volume</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">37</div>
+          <div class="q-text">Find $k$ so that $\mathbf{a}=(1,0,k)$, $\mathbf{b}=(0,1,1)$, $\mathbf{c}=(1,1,0)$ are coplanar.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{b}\times\mathbf{c}=(1(0)-1(1),\ 1(1)-0(0),\ 0(1)-1(1))=(-1,1,-1)$; $\mathbf{a}\cdot(-1,1,-1)=-1+0-k=0 \implies k=-1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">38</div>
+          <div class="q-text">Find the volume with edges $\mathbf{a}=(1,1,1)$, $\mathbf{b}=(1,-1,0)$, $\mathbf{c}=(1,0,-1)$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{b}\times\mathbf{c}=((-1)(-1)-0(0),\ 0(1)-1(-1),\ 1(0)-(-1)(1))=(1,1,1)$; $\mathbf{a}\cdot(1,1,1)=3$; volume $=3$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">39</div>
+          <div class="q-text">Given $\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})=12$, find $\mathbf{c}\cdot(\mathbf{a}\times\mathbf{b})$ without recomputing.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Cyclic permutations of the scalar triple product leave it unchanged: $\mathbf{c}\cdot(\mathbf{a}\times\mathbf{b})=\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})=12$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">40</div>
+          <div class="q-text">Find the volume of the tetrahedron (not parallelepiped) with edges $\mathbf{a},\mathbf{b},\mathbf{c}$ from Example 1 ($\mathbf{a}=(1,0,0)$ etc.), given a tetrahedron is $\tfrac16$ of the corresponding parallelepiped.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Parallelepiped volume was $6$; tetrahedron volume $=\tfrac16(6)=1$</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W11</div>
+        <div class="level-info">
+          <div class="level-title">Angle Between Planes & Line-Plane Intersection</div>
+          <div class="level-sub">Using normals to compare planes, finding where a line pierces a plane</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">41</div>
+          <div class="q-text">Find the angle between $x+y=1$ and $y+z=1$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{n}_1=(1,1,0)$, $\mathbf{n}_2=(0,1,1)$; $\cos\theta=\tfrac{1}{2}\implies\theta=60^\circ$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">42</div>
+          <div class="q-text">Are the planes $2x+4y-2z=1$ and $x+2y-z=5$ parallel? Explain.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Normals $(2,4,-2)$ and $(1,2,-1)$: $(2,4,-2)=2(1,2,-1)$ — parallel</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">43</div>
+          <div class="q-text">Are the planes $x+y+z=1$ and $x-y=0$ perpendicular?<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{n}_1\cdot\mathbf{n}_2=(1)(1)+(1)(-1)+(1)(0)=0$ — perpendicular</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">44</div>
+          <div class="q-text">Find where $\mathbf{r}=(0,0,0)+\lambda(1,1,1)$ meets the plane $x+y+z=6$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$3\lambda=6\implies\lambda=2$; point $(2,2,2)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">45</div>
+          <div class="q-text">Find where $\mathbf{r}=(1,1,0)+\lambda(2,-1,1)$ meets $x+y+z=10$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$(1+2\lambda)+(1-\lambda)+\lambda=10 \implies 2+2\lambda=10 \implies \lambda=4$; point $(9,-3,4)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">46</div>
+          <div class="q-text">Show that $\mathbf{r}=(1,0,0)+\lambda(1,1,0)$ is parallel to (and not on) the plane $x+y+z=5$, if it never intersects.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Sub: $(1+\lambda)+\lambda+0=5 \implies 1+2\lambda=5\implies\lambda=2$ — this actually DOES intersect (correction check): the direction vector $(1,1,0)$ has $\mathbf{n}\cdot(1,1,0)=1+1+0=2\ne0$ so it's not parallel; the intersection point is at $\lambda=2$: $(3,2,0)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">47</div>
+          <div class="q-text">Find the acute angle between the planes $2x-y+2z=4$ and $x+2y-2z=1$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\mathbf{n}_1\cdot\mathbf{n}_2=2-2-4=-4$; $|\mathbf{n}_1|=3,|\mathbf{n}_2|=3$; $\cos\theta=-\tfrac49$; acute angle $=\arccos\tfrac49\approx63.6^\circ$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">48</div>
+          <div class="q-text">Determine whether the line $\mathbf{r}=(1,1,1)+\lambda(1,-1,0)$ lies entirely within the plane $x+y=2$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Point check: $1+1=2$ ✓. Direction check: $\mathbf{n}\cdot(1,-1,0)=1-1=0$ ✓ — direction is perpendicular to normal, so the line lies entirely in the plane</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">49</div>
+          <div class="q-text">Find where $\mathbf{r}=(2,0,-1)+\lambda(0,1,1)$ meets $y-z=3$.<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$(0+\lambda)-(-1+\lambda)=3 \implies \lambda+1-\lambda=3 \implies 1=3$ — no solution, the line is parallel to the plane and never meets it</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">50</div>
+          <div class="q-text">Explain, using normal vectors, why two planes are either parallel or intersect in exactly a line (never a single point or nothing else).<div class="q-hint">W11</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Two non-parallel normals span a 2D subspace of directions perpendicular to both — the set of directions lying in both planes is a single line's worth of direction (the cross product of the normals gives that direction), so wherever the planes do meet, they must meet along an entire line, not just a point</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W12</div>
+        <div class="level-info">
+          <div class="level-title">Matrices — Definition, Types & Notation</div>
+          <div class="level-sub">Rows, columns, notation, types of matrices, the Kronecker delta</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">51</div>
+          <div class="q-text">State the shape of $A=\begin{pmatrix}1&2&3\\4&5&6\end{pmatrix}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$2\times3$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">52</div>
+          <div class="q-text">For $A=\begin{pmatrix}1&2\\3&4\\5&6\end{pmatrix}$, find $a_{31}$ and $a_{22}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$a_{31}=5$, $a_{22}=4$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">53</div>
+          <div class="q-text">Write the $3\times3$ identity matrix.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\begin{pmatrix}1&0&0\\0&1&0\\0&0&1\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">54</div>
+          <div class="q-text">Is $A=\begin{pmatrix}0&1\\-1&0\end{pmatrix}$ symmetric?<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>No — $a_{12}=1\ne-1=a_{21}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">55</div>
+          <div class="q-text">Give an example of a $2\times2$ diagonal matrix that is not the identity.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>e.g. $\begin{pmatrix}3&0\\0&5\end{pmatrix}$ (nonzero only on the diagonal, entries not all $1$)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">56</div>
+          <div class="q-text">Evaluate $\delta_{23}$ and $\delta_{33}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\delta_{23}=0$ (indices differ), $\delta_{33}=1$ (indices match)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">57</div>
+          <div class="q-text">Write a $2\times3$ zero matrix.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\begin{pmatrix}0&0&0\\0&0&0\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">58</div>
+          <div class="q-text">Is a $3\times1$ column vector a special case of an $m\times n$ matrix? If so, state $m$ and $n$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Yes — $m=3$, $n=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">59</div>
+          <div class="q-text">For a general $n\times n$ identity matrix, express $I_{ij}$ using the Kronecker delta.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$I_{ij}=\delta_{ij}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">60</div>
+          <div class="q-text">Explain why every diagonal matrix is automatically symmetric.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>A diagonal matrix has $a_{ij}=0$ whenever $i\ne j$ — so for any off-diagonal pair, both $a_{ij}$ and $a_{ji}$ are $0$ and trivially equal; the diagonal entries $a_{ii}=a_{ii}$ trivially too, so the symmetry condition $a_{ij}=a_{ji}$ holds everywhere</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W12</div>
+        <div class="level-info">
+          <div class="level-title">Matrix Addition, Scalar Multiplication & Matrix Multiplication</div>
+          <div class="level-sub">Component-wise operations, and the row-times-column multiplication rule</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">61</div>
+          <div class="q-text">Compute $\begin{pmatrix}1&2\\3&4\end{pmatrix}+\begin{pmatrix}5&0\\1&-1\end{pmatrix}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\begin{pmatrix}6&2\\4&3\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">62</div>
+          <div class="q-text">Compute $3\begin{pmatrix}1&-2\\0&4\end{pmatrix}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\begin{pmatrix}3&-6\\0&12\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">63</div>
+          <div class="q-text">Compute $\begin{pmatrix}2&0\\1&3\end{pmatrix}\begin{pmatrix}1&4\\2&0\end{pmatrix}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\begin{pmatrix}2&8\\7&4\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">64</div>
+          <div class="q-text">Compute $\begin{pmatrix}1&2&3\end{pmatrix}\begin{pmatrix}4\\5\\6\end{pmatrix}$ (row times column).<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$4+10+18=32$ (a $1\times1$ matrix)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">65</div>
+          <div class="q-text">Explain why $\begin{pmatrix}1&2\end{pmatrix}\begin{pmatrix}3&4\end{pmatrix}$ (two row vectors) cannot be multiplied as written.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Columns of the first (2) don't match rows of the second (1) — the shapes $1\times2$ and $1\times2$ don't satisfy the 'columns of first = rows of second' requirement</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">66</div>
+          <div class="q-text">Compute $I\begin{pmatrix}3&5\\1&2\end{pmatrix}$ using the $2\times2$ identity.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Unchanged: $\begin{pmatrix}3&5\\1&2\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">67</div>
+          <div class="q-text">Compute $\begin{pmatrix}0&1\\1&0\end{pmatrix}\begin{pmatrix}2&3\\4&5\end{pmatrix}$ and $\begin{pmatrix}2&3\\4&5\end{pmatrix}\begin{pmatrix}0&1\\1&0\end{pmatrix}$, confirming they differ.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>First: $\begin{pmatrix}4&5\\2&3\end{pmatrix}$ (swaps rows). Second: $\begin{pmatrix}3&2\\5&4\end{pmatrix}$ (swaps columns) — different results, confirming $AB\ne BA$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">68</div>
+          <div class="q-text">Find $A+B$ where $A=\begin{pmatrix}1&0&2\end{pmatrix}$, $B=\begin{pmatrix}-1&3&0\end{pmatrix}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\begin{pmatrix}0&3&2\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">69</div>
+          <div class="q-text">For $A$ ($3\times2$) and $B$ ($2\times5$), state the shape of $AB$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$3\times5$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">70</div>
+          <div class="q-text">Explain in one sentence why the number of columns of $A$ must equal the number of rows of $B$ for $AB$ to be defined, referencing the dot-product definition of matrix multiplication.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Each entry of $AB$ is a dot product between a row of $A$ and a column of $B$, and a dot product only makes sense between two lists of the same length — so the length of each row of $A$ (its number of columns) must match the length of each column of $B$ (its number of rows)</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W12</div>
+        <div class="level-info">
+          <div class="level-title">Inverse Matrices — 2×2 Formula & Properties</div>
+          <div class="level-sub">Definition, the 2×2 shortcut, invertibility conditions</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">71</div>
+          <div class="q-text">Find $\det(A)$ for $A=\begin{pmatrix}3&1\\2&4\end{pmatrix}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$3(4)-1(2)=10$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">72</div>
+          <div class="q-text">Find $A^{-1}$ for $A=\begin{pmatrix}3&1\\2&4\end{pmatrix}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\dfrac{1}{10}\begin{pmatrix}4&-1\\-2&3\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">73</div>
+          <div class="q-text">Is $A=\begin{pmatrix}2&4\\1&2\end{pmatrix}$ invertible? Explain.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det(A)=2(2)-4(1)=0$ — not invertible</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">74</div>
+          <div class="q-text">Find $A^{-1}$ for $A=\begin{pmatrix}1&0\\0&5\end{pmatrix}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det=5$; $A^{-1}=\begin{pmatrix}1&0\\0&1/5\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">75</div>
+          <div class="q-text">Find $A^{-1}$ for $A=\begin{pmatrix}0&1\\-1&0\end{pmatrix}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det=0-(-1)=1$; $A^{-1}=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">76</div>
+          <div class="q-text">Verify $(A^{-1})^{-1}=A$ using $A=\begin{pmatrix}2&1\\1&1\end{pmatrix}$ (find $A^{-1}$, then invert that).<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det(A)=1$; $A^{-1}=\begin{pmatrix}1&-1\\-1&2\end{pmatrix}$; inverting $A^{-1}$: $\det=1$, giving back $\begin{pmatrix}2&1\\1&1\end{pmatrix}=A$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">77</div>
+          <div class="q-text">Find all values of $k$ for which $A=\begin{pmatrix}k&2\\1&k\end{pmatrix}$ is NOT invertible.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det=k^2-2=0 \implies k=\pm\sqrt2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">78</div>
+          <div class="q-text">Given $AB=I$ for square matrices, what can you conclude about $BA$?<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$BA=I$ as well — for square matrices, a one-sided inverse is automatically a two-sided inverse</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">79</div>
+          <div class="q-text">Find $A^{-1}$ for $A=\begin{pmatrix}5&3\\3&2\end{pmatrix}$.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det=10-9=1$; $A^{-1}=\begin{pmatrix}2&-3\\-3&5\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">80</div>
+          <div class="q-text">Explain why $\det(A)=0$ makes the $2\times2$ inverse formula break down, connecting it to ordinary number division.<div class="q-hint">W12</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The formula divides every entry by $\det(A)=ad-bc$ — exactly like dividing by zero for ordinary numbers, this operation is undefined whenever $\det(A)=0$, so no inverse matrix can be produced from that formula (and in fact none exists at all in that case)</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W13</div>
+        <div class="level-info">
+          <div class="level-title">Linear Systems — Matrix Representation & Row Operations</div>
+          <div class="level-sub">Writing systems as Ax=b, elementary row operations, augmented matrices</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">81</div>
+          <div class="q-text">Write $\begin{cases}x+2y=5\\3x-y=1\end{cases}$ as $A\mathbf{x}=\mathbf{b}$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\begin{pmatrix}1&2\\3&-1\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}5\\1\end{pmatrix}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">82</div>
+          <div class="q-text">Write the augmented matrix for $\begin{cases}2x-y+z=3\\x+y-z=0\\3x+2z=5\end{cases}$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\left[\begin{array}{ccc|c}2&-1&1&3\\1&1&-1&0\\3&0&2&5\end{array}\right]$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">83</div>
+          <div class="q-text">Apply $R_1\leftrightarrow R_2$ to $\left[\begin{array}{cc|c}1&2&3\\4&5&6\end{array}\right]$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\left[\begin{array}{cc|c}4&5&6\\1&2&3\end{array}\right]$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">84</div>
+          <div class="q-text">Apply $2R_1$ to $\left[\begin{array}{cc|c}1&3&2\\0&1&4\end{array}\right]$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\left[\begin{array}{cc|c}2&6&4\\0&1&4\end{array}\right]$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">85</div>
+          <div class="q-text">Apply $R_2\to R_2-3R_1$ to $\left[\begin{array}{cc|c}1&1&2\\3&5&8\end{array}\right]$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$R_2-3R_1=(3-3,5-3,8-6)=(0,2,2)$: $\left[\begin{array}{cc|c}1&1&2\\0&2&2\end{array}\right]$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">86</div>
+          <div class="q-text">Explain why swapping two rows of an augmented matrix never changes the solution set.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Each row represents one equation in the system — swapping rows is just listing the same equations in a different order, which has no effect on which $(x,y,\dots)$ values satisfy all of them simultaneously</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">87</div>
+          <div class="q-text">Convert the matrix equation $\begin{pmatrix}1&-1\\2&3\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}4\\1\end{pmatrix}$ back into a system of equations.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\begin{cases}x-y=4\\2x+3y=1\end{cases}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">88</div>
+          <div class="q-text">Apply $R_3\to R_3+2R_1$ to $\left[\begin{array}{ccc|c}1&0&1&2\\0&1&0&3\\-2&1&1&0\end{array}\right]$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$R_3+2R_1=(-2+2,1+0,1+2,0+4)=(0,1,3,4)$: third row becomes $(0,1,3,4)$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">89</div>
+          <div class="q-text">Explain why scaling a row by zero is NOT allowed as an elementary row operation, even though scaling by other constants is.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Scaling by zero would turn a true equation into $0=0$, permanently destroying the information that equation carried — a valid row operation must be reversible (you could scale back by $1/k$ to undo it), and scaling by zero has no such inverse operation</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">90</div>
+          <div class="q-text">Two augmented matrices are related by a sequence of elementary row operations. What can you conclude about their solution sets?<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>They are identical — every elementary row operation preserves the solution set exactly, so any chain of them (in either direction) leaves the set of solutions completely unchanged</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W13</div>
+        <div class="level-info">
+          <div class="level-title">Row Echelon Form & Gaussian Elimination</div>
+          <div class="level-sub">Systematic use of row operations to solve systems</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">91</div>
+          <div class="q-text">Is $\left[\begin{array}{cc|c}1&2&3\\0&1&4\end{array}\right]$ in row echelon form?<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Yes — the pivots ($1$ in row 1, $1$ in row 2) form a valid staircase</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">92</div>
+          <div class="q-text">Is $\left[\begin{array}{cc|c}0&1&2\\1&0&3\end{array}\right]$ in row echelon form? Explain.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>No — the first row's leading entry is in column 2, but the second row's leading entry is in column 1, which is to the left, violating the staircase requirement</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">93</div>
+          <div class="q-text">Reduce $\left[\begin{array}{cc|c}1&2&5\\2&5&12\end{array}\right]$ to REF using $R_2\to R_2-2R_1$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$R_2-2R_1=(0,1,2)$: $\left[\begin{array}{cc|c}1&2&5\\0&1&2\end{array}\right]$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">94</div>
+          <div class="q-text">Solve the system from the previous question by back-substitution.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$y=2$; $x+2(2)=5\implies x=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">95</div>
+          <div class="q-text">Interpret the row $(0,0,0\,|\,4)$ appearing during elimination.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Represents $0=4$ — a contradiction, so the system has no solution</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">96</div>
+          <div class="q-text">Interpret the row $(0,0,0\,|\,0)$ appearing during elimination.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Represents $0=0$ — always true, contributing no new information; typically signals infinitely many solutions (a free variable)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">97</div>
+          <div class="q-text">Reduce $\begin{cases}x+y=4\\2x+2y=8\end{cases}$ to REF and interpret the result.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$R_2-2R_1$ gives $(0,0\,|\,0)$ — infinitely many solutions (the second equation was a multiple of the first, i.e. the same line)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">98</div>
+          <div class="q-text">Solve $\begin{cases}x+2y=8\\3x-y=3\end{cases}$ using Gaussian elimination.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$R_2-3R_1$: $(0,-7\,|\,-21) \implies y=3$; $x+6=8\implies x=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">99</div>
+          <div class="q-text">Solve $\begin{cases}2x+y=5\\4x+3y=13\end{cases}$ using Gaussian elimination.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$R_2-2R_1$: $(0,1\,|\,3)\implies y=3$; $2x+3=5\implies x=1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">100</div>
+          <div class="q-text">Explain why Gaussian elimination always works column-by-column from left to right, rather than in some other order.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Each step is designed to zero out entries below the current pivot using only the current row and rows below it, so working left to right guarantees that once a column's pivot is set, later operations (on columns to the right) never disturb the zeros already created in earlier columns</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W13</div>
+        <div class="level-info">
+          <div class="level-title">Reduced Row Echelon Form & Gauss-Jordan</div>
+          <div class="level-sub">Taking elimination one step further to read off the solution directly</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">101</div>
+          <div class="q-text">Is $\left[\begin{array}{cc|c}1&0&3\\0&1&5\end{array}\right]$ in RREF?<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Yes — pivots are $1$, and each pivot column has zeros elsewhere</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">102</div>
+          <div class="q-text">Is $\left[\begin{array}{cc|c}1&2&3\\0&1&4\end{array}\right]$ in RREF? Explain.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>No — it's in REF, but the entry above the second pivot (the $2$ in row 1) is not zero</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">103</div>
+          <div class="q-text">Convert $\left[\begin{array}{cc|c}1&2&5\\0&1&2\end{array}\right]$ to RREF.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$R_1\to R_1-2R_2$: $\left[\begin{array}{cc|c}1&0&1\\0&1&2\end{array}\right]$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">104</div>
+          <div class="q-text">State the solution directly from $\left[\begin{array}{cc|c}1&0&1\\0&1&2\end{array}\right]$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=1,\ y=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">105</div>
+          <div class="q-text">Convert $\left[\begin{array}{cc|c}2&4&10\\0&1&3\end{array}\right]$ to RREF.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Scale $R_1$ by $\tfrac12$: $(1,2,5)$; then $R_1-2R_2$: $(1,0,-1)$: $\left[\begin{array}{cc|c}1&0&-1\\0&1&3\end{array}\right]$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">106</div>
+          <div class="q-text">State the solution from the previous question.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=-1,\ y=3$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">107</div>
+          <div class="q-text">Reduce $\left[\begin{array}{ccc|c}1&0&2&4\\0&1&-1&1\\0&0&1&2\end{array}\right]$ to RREF.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Clear above the third pivot: $R_1-2R_3$: $(1,0,0,0)$; $R_2+R_3$: $(0,1,0,3)$: $\left[\begin{array}{ccc|c}1&0&0&0\\0&1&0&3\\0&0&1&2\end{array}\right]$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">108</div>
+          <div class="q-text">State the solution from the previous question.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$x=0,\ y=3,\ z=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">109</div>
+          <div class="q-text">Explain the two extra conditions RREF adds on top of REF.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Every pivot must equal exactly $1$ (achieved by scaling), and every entry directly above each pivot must also be zero, not just below (achieved by additional row operations working upward)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">110</div>
+          <div class="q-text">Explain why Gauss-Jordan (to RREF) generally requires more row operations than Gaussian elimination (to REF) for the same system.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Gaussian elimination only needs to clear entries below each pivot to reach a solvable staircase, leaving back-substitution to finish the job; Gauss-Jordan does that same downward clearing AND clears every entry above each pivot too, plus scales every pivot to exactly 1 — strictly more work, done in exchange for not needing back-substitution at all</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W13</div>
+        <div class="level-info">
+          <div class="level-title">Determinants — 2×2 and 3×3</div>
+          <div class="level-sub">Definition, cofactor expansion, geometric meaning</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">111</div>
+          <div class="q-text">Find $\det\begin{pmatrix}2&3\\1&4\end{pmatrix}$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$2(4)-3(1)=5$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">112</div>
+          <div class="q-text">Find $\det\begin{pmatrix}5&2\\10&4\end{pmatrix}$, and explain what the result implies.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$5(4)-2(10)=0$ — the matrix is not invertible (rows are proportional)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">113</div>
+          <div class="q-text">Find $\det\begin{pmatrix}1&0&0\\0&2&0\\0&0&3\end{pmatrix}$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>For a diagonal matrix, the determinant is the product of the diagonal entries: $1\times2\times3=6$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">114</div>
+          <div class="q-text">Find $\det\begin{pmatrix}1&2&3\\0&1&4\\0&0&1\end{pmatrix}$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Upper triangular — determinant is product of diagonal: $1$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">115</div>
+          <div class="q-text">Find $\det\begin{pmatrix}2&0&1\\1&3&0\\0&1&2\end{pmatrix}$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$2(3\cdot2-0\cdot1)-0(\cdots)+1(1\cdot1-3\cdot0)=2(6)+1(1)=13$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">116</div>
+          <div class="q-text">Explain why swapping two rows of a matrix negates its determinant, using the connection to the scalar triple product.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Since the $3\times3$ determinant equals $\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})$ for rows $\mathbf{a},\mathbf{b},\mathbf{c}$, and the cross product is anti-commutative, swapping the roles of two rows introduces exactly one sign flip, just as swapping two vectors in a cross product does</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">117</div>
+          <div class="q-text">Find $\det\begin{pmatrix}3&-1\\6&-2\end{pmatrix}$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$3(-2)-(-1)(6)=-6+6=0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">118</div>
+          <div class="q-text">Find $\det\begin{pmatrix}0&1&2\\1&0&3\\4&-3&8\end{pmatrix}$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$0(0\cdot8-3(-3))-1(1\cdot8-3\cdot4)+2(1(-3)-0\cdot4)=0-1(-4)+2(-3)=4-6=-2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">119</div>
+          <div class="q-text">Explain why a matrix with a full row of zeros always has determinant zero.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Expanding along that zero row, every term in the cofactor expansion is multiplied by a $0$ entry, so every term vanishes and the sum (the determinant) is $0$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">120</div>
+          <div class="q-text">A $3\times3$ matrix has rows that are coplanar vectors (from Week 11's terminology). What is its determinant, and why?<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Zero — a $3\times3$ determinant with rows $\mathbf{a},\mathbf{b},\mathbf{c}$ equals the scalar triple product $\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})$, and coplanar vectors were defined in Week 11 as exactly those with a zero scalar triple product</p>
+        </div>
+      </div>
+
+      <div class="level-divider">
+        <div class="level-badge">W13</div>
+        <div class="level-info">
+          <div class="level-title">Cramer's Rule</div>
+          <div class="level-sub">Solving linear systems directly using determinants</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">121</div>
+          <div class="q-text">Solve $\begin{cases}x+y=5\\x-y=1\end{cases}$ using Cramer's Rule.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det(A)=-1-1=-2$; $x=\dfrac{5(-1)-1(1)}{-2}=\dfrac{-6}{-2}=3$; $y=\dfrac{1(1)-1(5)}{-2}=\dfrac{-4}{-2}=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">122</div>
+          <div class="q-text">Solve $\begin{cases}3x+2y=7\\x+y=3\end{cases}$ using Cramer's Rule.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det(A)=3-2=1$; $x=\dfrac{7-6}{1}=1$; $y=\dfrac{9-7}{1}=2$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">123</div>
+          <div class="q-text">Find $\det(A)$ for the system $\begin{cases}2x-y=4\\4x-2y=8\end{cases}$, and explain what it implies about using Cramer's Rule here.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det(A)=2(-2)-(-1)(4)=-4+4=0$ — Cramer's Rule cannot be applied (the system doesn't have a unique solution; here it's actually infinitely many solutions since the equations are proportional)</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">124</div>
+          <div class="q-text">Solve $\begin{cases}5x+3y=19\\2x-y=1\end{cases}$ using Cramer's Rule.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det(A)=-5-6=-11$; $x=\dfrac{-19-3}{-11}=2$; $y=\dfrac{5-38}{-11}=3$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">125</div>
+          <div class="q-text">Set up (do not fully evaluate) Cramer's Rule for $z$ in $\begin{cases}x+y+z=6\\2x-y+z=3\\x+2y-z=2\end{cases}$.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$z=\dfrac{\det\begin{pmatrix}1&1&6\\2&-1&3\\1&2&2\end{pmatrix}}{\det\begin{pmatrix}1&1&1\\2&-1&1\\1&2&-1\end{pmatrix}}$ — replace the $z$-column (third column) with the right-hand side</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">126</div>
+          <div class="q-text">Solve $\begin{cases}4x+y=9\\2x-3y=-1\end{cases}$ using Cramer's Rule.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det(A)=-12-2=-14$; $x=\dfrac{-27-(-1)}{-14}=\dfrac{-26}{-14}=\dfrac{13}{7}$; $y=\dfrac{-4-18}{-14}=\dfrac{-22}{-14}=\dfrac{11}{7}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">127</div>
+          <div class="q-text">Explain why Cramer's Rule and Gaussian elimination always agree on their answer when both are applicable.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Both methods solve the exact same system $A\mathbf{x}=\mathbf{b}$; a linear system with $\det(A)\ne0$ has a unique solution, so any correct method — elimination or Cramer's Rule — must arrive at that same unique answer</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">128</div>
+          <div class="q-text">Solve $\begin{cases}x-2y=-1\\3x+y=10\end{cases}$ using Cramer's Rule.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>$\det(A)=1+6=7$; $x=\dfrac{-1+20}{7}=\dfrac{19}{7}$; $y=\dfrac{10+3}{7}=\dfrac{13}{7}$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">129</div>
+          <div class="q-text">For a $3\times3$ system, how many $3\times3$ determinants must be computed in total to find all of $x,y,z$ via Cramer's Rule?<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>Four — one for $\det(A)$, plus one more (with a column replaced by $\mathbf{b}$) for each of $x,y,z$</p>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">130</div>
+          <div class="q-text">Explain, referencing the Week 12 inverse formula, why Cramer's Rule is really just $\mathbf{x}=A^{-1}\mathbf{b}$ written out explicitly.<div class="q-hint">W13</div></div>
+          <div class="q-arrow">&#9654;</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">Solution</div>
+          <p>The Week 12 inverse formula divides by $\det(A)$ and involves cofactor-style entries built from $A$; multiplying $A^{-1}\mathbf{b}$ out symbolically produces exactly the ratio of determinants that Cramer's Rule states for each variable — Cramer's Rule is that multiplication pre-computed into a direct formula</p>
+        </div>
+      </div>
+
+      <div class="callout callout-success" style="margin-top:32px">
+        <strong>Phase 3 practice complete!</strong> 130 questions across 13 topics. Combined with the Vectors in 3D guide's 30 questions, that's 160 questions covering every Week 10&ndash;13 topic in the tracker.
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('cramers')">&larr; W13: Cramer's Rule</button>
+        <button class="page-nav-btn next" onclick="goTo('home')">Back to Overview &rarr;</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PAGES = ['home','vectorsguide','dircosines','crossdef','crossgeom','tripleproduct','planeangle','matrixdef','matrixops','inverse','linsysrep','ref','rref','determinants','cramers','practice'];
+const PAGE_NAMES = {
+  home:'Overview',
+  vectorsguide:'W10. Plane & Space Vectors',
+  dircosines:'W10. Direction Cosines & Vector Components',
+  crossdef:'W11. Cross Product — Definition, Properties & Right-Hand Rule',
+  crossgeom:'W11. Cross Product — Geometric Interpretation & Applications',
+  tripleproduct:'W11. Scalar Triple Product — Volume of a Parallelepiped',
+  planeangle:'W11. Angle Between Planes & Line-Plane Intersection',
+  matrixdef:'W12. Matrices — Definition, Types & Notation',
+  matrixops:'W12. Matrix Addition, Scalar Multiplication & Matrix Multiplication',
+  inverse:'W12. Inverse Matrices — 2×2 Formula & Properties',
+  linsysrep:'W13. Linear Systems — Matrix Representation & Row Operations',
+  ref:'W13. Row Echelon Form & Gaussian Elimination',
+  rref:'W13. Reduced Row Echelon Form & Gauss-Jordan',
+  determinants:'W13. Determinants — 2×2 and 3×3',
+  cramers:'W13. Cramer\'s Rule',
+  practice:'Practice Questions'
+};
+let visited = new Set(['home']);
+
+function goTo(id) {
+  PAGES.forEach(p => {
+    document.getElementById('page-'+p).classList.remove('active');
+  });
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => {
+    const fn = l.getAttribute('onclick');
+    if (fn && fn.includes("'"+id+"'")) l.classList.add('active');
+  });
+  document.getElementById('breadcrumbPage').textContent = PAGE_NAMES[id] || id;
+  visited.add(id);
+  const pct = Math.round((visited.size / PAGES.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  window.scrollTo(0, 0);
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.getElementById('page-'+id), {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 50);
+}
+
+function toggleDPEN(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.dpen-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function toggleQ(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.q-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    setTimeout(() => {
+      if (window.renderMathInElement) renderMathInElement(body, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+        throwOnError: false
+      });
+    }, 30);
+  }
+}
+
+function expandAll() {
+  const activePage = document.querySelector('.page.active');
+  activePage.querySelectorAll('.dpen-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.dpen-chevron').classList.add('open');
+  });
+  activePage.querySelectorAll('.q-body:not(.open)').forEach(b => {
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.q-arrow').classList.add('open');
+  });
+  setTimeout(() => {
+    if (window.renderMathInElement) renderMathInElement(activePage, {
+      delimiters: [{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+      throwOnError: false
+    });
+  }, 30);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'\\[', right:'\\]', display:true},
+          {left:'$', right:'$', display:false},
+          {left:'\\(', right:'\\)', display:false}
+        ],
+        throwOnError: false
+      });
+    }
+  }, 300);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Excel Fundamentals for Engineers</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+  .prose code{
+    font-family:'Roboto Mono',monospace;
+    background:#eef1f6;
+    padding:1px 6px;
+    border-radius:4px;
+    font-size:0.92em;
+    color:var(--navy);
+  }
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+  .key-box code, .example-box code, .why-box code{
+    font-family:'Roboto Mono',monospace; background:#fff; border:1px solid var(--line);
+    padding:1px 6px; border-radius:4px; font-size:0.92em; color:var(--navy);
+  }
+
+  table.datatable{
+    width:100%; border-collapse:collapse; font-size:14px; margin:14px 0;
+    font-family:'Roboto Mono',monospace; background:#fff; border:1px solid var(--line); border-radius:6px; overflow:hidden;
+  }
+  table.datatable th{
+    background:var(--navy); color:#fff; font-size:11px; text-transform:uppercase; padding:7px 8px; text-align:center;
+  }
+  table.datatable td{ padding:6px 8px; text-align:center; border-bottom:1px solid var(--line); }
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .practice-card.explore{ border-left-color:var(--green); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; flex-wrap:wrap; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-tag{
+    font-family:'Roboto Mono',monospace; font-size:10.5px; letter-spacing:0.05em;
+    color:#fff; background:var(--green); border-radius:4px; padding:2px 8px;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .practice-card.explore .solution-inner .label{ color:var(--green); }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+  .solution-inner code{
+    font-family:'Roboto Mono',monospace; background:#eef1f6; padding:1px 6px; border-radius:4px; font-size:0.92em; color:var(--navy);
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MS Excel Fundamentals &middot; Mining &amp; Mechanical Engineering</div>
+  <h1>Excel Fundamentals for a Budding Engineer</h1>
+  <p>Every mining and mechanical engineer ends up living in a spreadsheet, production logs, QAQC assay data, cost estimates, equipment run hours. This lesson covers the real fundamentals (workbooks, formulas, functions, formatting, charts) with examples pulled from the kind of data you'll actually be handling, and closes with a bridge toward where this is all heading, tables, structured data, and eventually Python and pandas. Solutions stay hidden until you click. Problems marked <span class="p-tag">EXPLORE</span> are open-ended, worth actually opening Excel for.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 65 practice items revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Why Excel for an engineer?</a></li>
+    <li><a href="#sec1">Workbooks, worksheets, and cell addresses</a></li>
+    <li><a href="#sec2">Entering data and writing formulas</a></li>
+    <li><a href="#sec3">Filling a series</a></li>
+    <li><a href="#sec4">Managing worksheets</a></li>
+    <li><a href="#sec5">Selecting ranges, rows, and columns</a></li>
+    <li><a href="#sec6">Number formatting: the veil over numbers</a></li>
+    <li><a href="#sec7">Functions: SUM, AVERAGE, MIN, MAX &amp; errors</a></li>
+    <li><a href="#sec8">Quick Analysis, tables, and charts</a></li>
+    <li><a href="#sec9">Explore: engineer &amp; data scientist</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Why Excel for an engineer?</div>
+  <div class="prose">
+    <p>Before the fancy stuff, a plain fact: whatever software your future employer eventually adopts, PowerBI, MATLAB, Python, dedicated mine-planning packages, someone is still going to hand you a spreadsheet on your first day. Production tallies, drill-and-blast logs, equipment maintenance schedules, cost breakdowns by pit, QAQC assay batches, almost all of it arrives as, or gets exported to, an Excel file. Being genuinely fast and accurate in Excel isn't a "soft skill," it's the difference between spending an afternoon on a report and spending fifteen minutes on it.</p>
+    <p>There's a second reason this lesson exists, one aimed specifically at where you're headed. Every core Excel idea, a table of rows and columns, a formula that references other cells instead of hardcoded numbers, a function that summarises a range, is the exact same idea you'll meet again in a pandas DataFrame, a numpy array, or a matplotlib chart, just with different syntax. Learning to think in these terms now, cell references instead of typed numbers, structured tables instead of scattered data, makes that later transition far smoother. This lesson closes with that bridge made explicit.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Workbooks, worksheets, and cell addresses</div>
+  <div class="prose">
+    <p>A <strong>workbook</strong> is the file itself, the thing you save and email. Inside it are one or more <strong>worksheets</strong> (tabs), each ruled into a grid of <strong>columns</strong> (lettered A through XFD, 16,384 in total) and <strong>rows</strong> (numbered 1 through 1,048,576). Where a column and row cross is a <strong>cell</strong>, and every cell has an address built from its column letter and row number, e.g. <code>C11</code>.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Cell address = column letter + row number (e.g. <code>B7</code>, <code>AA204</code>). A <strong>range</strong> is a rectangular block of cells written as top-left:bottom-right, e.g. <code>B3:D5</code>. The <strong>active cell</strong> is whichever cell is currently selected and ready to receive typed input.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A production worksheet has drill hole IDs in column A, starting at row 6, and assay grades (g/t gold) in column C. The third drill hole listed is in row 8. What is the cell address of its assay grade?</p>
+    <p class="step">Row 6 is the first drill hole, so row 7 is the second, and row 8 is the third, that matches the stated position directly.</p>
+    <p class="step">The assay grade lives in column C.</p>
+    <p><strong>C8</strong>.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A haul truck log has truck IDs starting in cell A2, one truck per row. What is the cell address of the 6th truck's ID?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Row 2 is truck 1, so truck 6 is row $2+(6-1)=7$: <strong>A7</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>List every cell contained in the range <code>B3:D5</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>B3, C3, D3, B4, C4, D4, B5, C5, D5, a $3\times3$ rectangular block of 9 cells.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Explain the difference between a <em>workbook</em> and a <em>worksheet</em>, using a mine-site example.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A workbook is the entire file, e.g. <code>2024_Production_Report.xlsx</code>. A worksheet is one page (tab) inside it, e.g. that same workbook might have separate worksheets named <em>North_Pit</em>, <em>South_Pit</em>, and <em>Summary</em>, all living inside the one workbook file.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A blank new workbook opens with three worksheet tabs. What are they named by default, and why would you almost always rename them before sharing the file?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>By default: <em>Sheet1</em>, <em>Sheet2</em>, <em>Sheet3</em>. These tell a reader nothing about what's inside them, renaming to something like <em>North_Pit_Jan2024</em> means anyone opening the file (a supervisor, a contractor, future you in six months) can navigate it instantly without opening every tab to guess.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>You're tracking production for three pits (North, South, East) across 12 months. Would you rather structure this as one worksheet per pit (with 12 rows of monthly data each), or one single worksheet with a "Pit" column? Give one genuine advantage of each approach.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Separate worksheets per pit</strong>: easier to hand one pit's data to its specific site supervisor without exposing the others, and formatting/layout can be tailored per pit.</p>
+      <p><strong>One combined worksheet with a "Pit" column</strong>: far easier to sum, filter, chart, or compare <em>across</em> pits (total company-wide tonnage, for instance), since everything lives in one place a single formula or chart can reach. This second structure, "long" data with a category column, is also exactly the shape a pandas DataFrame or a database table expects, worth remembering for Section 9.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>A worksheet can hold up to 1,048,576 rows. At what point would a dataset genuinely start to strain Excel, and what tool would a data scientist reach for instead?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>In practice, Excel gets noticeably sluggish well before hitting the row limit, once a file has hundreds of thousands of rows of live formulas, or several million cells with heavy formatting, recalculation and file size become a real problem. A common threshold engineers actually hit: high-frequency sensor logs (vibration monitoring, drill rig telemetry) can generate that many rows in days, not months. At that point, the standard move is to load the data into <strong>pandas</strong> (Python) instead, which handles millions of rows without breaking a sweat, exactly the tool this lesson is quietly building toward.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>What is the "active cell," and how can you tell which one it is just by looking at the screen?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The active cell is the one currently selected and ready to receive typed input. You can spot it because it's outlined/highlighted on the grid, and its column letter and row number are both highlighted in the column and row headers too, so you can confirm the address at a glance without needing to click into the cell first.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Entering data and writing formulas</div>
+  <div class="prose">
+    <p>Text and numbers get typed straight into a cell. A <strong>formula</strong> is different: it always starts with an equals sign <code>=</code>, and instead of typing a computed number yourself, you tell Excel <em>which cells</em> to combine and how. This single habit, referencing cells instead of typing final numbers, is the entire reason spreadsheets are useful rather than just fancy notepads.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>A formula begins with <code>=</code>, and uses cell references combined with operators: <code>+</code> (add), <code>-</code> (subtract), <code>*</code> (multiply), <code>/</code> (divide). For example, <code>=B2*C2</code> multiplies whatever is currently in B2 by whatever is currently in C2, and updates automatically if either value later changes.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Cell B2 holds tonnes hauled (2,450), cell C2 holds cost per tonne ($3.20). Write a formula in D2 for total haulage cost, and explain why <code>=2450*3.20</code> typed directly would be a worse choice.</p>
+    <p class="step">$$\texttt{D2: =B2*C2}$$</p>
+    <p class="step">This computes $2450\times3.20 = \$7840.00$, exactly as typing the numbers directly would, on this one occasion.</p>
+    <p>The difference shows up next week, when the tonnage or rate changes: with <code>=B2*C2</code>, editing B2 or C2 updates D2 automatically. With <code>=2450*3.20</code> hardcoded, D2 is silently wrong the moment either input changes, and nothing on screen warns you, the formula still "works," it's just answering last week's question.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Tonnes are in B2, rate per tonne in C2. Write the formula for total cost in D2.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=B2*C2</code></p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Budgeted cost is in B5, actual cost in C5. Write a formula in D5 for the variance (actual minus budget), and note whether a positive result means over- or under-budget.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=C5-B5</code>. A positive result means actual exceeded budget, i.e.\ over-budget; a negative result means under-budget.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Cell B10 contains 850 (metres drilled), cell C10 contains 6 (hours). A formula in D10 reads <code>=B10/C10</code>. What value appears in D10, and what does it represent?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$850\div6\approx141.67$. This represents the drilling rate, roughly 141.67 metres per hour.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A haul truck's payload is 220 tonnes, entered in B3, and it completes 14 cycles in a shift, entered in C3. Write a formula for total tonnes hauled that shift, and compute the result.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=B3*C3</code>, giving $220\times14=3080$ tonnes.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Mechanical: a component experiences a force of 4500 N (in B2) over a cross-sectional area of 0.02 m² (in C2). Write a formula for stress (force &divide; area) in D2, and compute the result in Pa.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=B2/C2</code>, giving $4500\div0.02 = 225{,}000$ Pa (225 kPa).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Explain, in engineering terms, why "hardcoding" a computed number directly into a cell (rather than a formula referencing the inputs) is considered bad practice, even if it gives the right answer today.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A hardcoded number severs the link between the result and the inputs that produced it. If an input later changes, a corrected assay result, a revised cost rate, a hardcoded downstream cell won't update, and nothing visually flags the discrepancy, you get a wrong number that looks completely normal. This is exactly the same principle behind reproducibility in data science: a script that recomputes results from raw data every time is trustworthy in a way that a spreadsheet full of typed-in final numbers never can be, because the entire calculation chain is visible and automatically re-runs when anything upstream changes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Filling a series</div>
+  <div class="prose">
+    <p>A <strong>series</strong> is a sequence of ordered entries in adjacent cells, drill hole IDs, shift numbers, dates. The <strong>fill handle</strong> (the small square at the bottom-right corner of a selected cell) lets Excel continue a pattern automatically once it can see the first one or two entries, saving both time and the transcription errors that come with typing long sequences by hand.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Type the first entry (or first two, if a step size needs to be established), select it, then drag the fill handle across or down. Excel recognises common patterns automatically: numbers, dates, days of the week, months, and any two-cell arithmetic sequence.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Cell A1 contains <code>DH-001</code> (a drill hole ID). Dragging the fill handle down to A5, what appears in A2 through A5?</p>
+    <p class="step">Excel recognises the trailing number in the text and increments it by 1 each row, leaving the text prefix unchanged.</p>
+    <p>A2: <code>DH-002</code>, A3: <code>DH-003</code>, A4: <code>DH-004</code>, A5: <code>DH-005</code>.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Cell A1 contains <code>Q1</code>. Predict A2, A3, A4 after dragging the fill handle.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>Q2</code>, <code>Q3</code>, <code>Q4</code> (Excel recognises the quarter pattern and cycles it, similar to how it handles days and months).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Cell A1 contains <code>Monday</code>. Predict A2 through A4.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>Tuesday</code>, <code>Wednesday</code>, <code>Thursday</code>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Cell A1 contains <code>5</code> and A2 contains <code>10</code>. Both are selected together and the fill handle is dragged to A5. Predict A3, A4, A5.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Selecting <em>both</em> seed cells tells Excel the step size: $10-5=5$. So A3=<code>15</code>, A4=<code>20</code>, A5=<code>25</code>. (Note: dragging from just A1=<code>5</code> alone would instead just copy <code>5</code> repeatedly, or increment by 1 depending on version, this is exactly why selecting two seed cells matters whenever the step size isn't 1.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>You need a column labelled <code>Shift 1</code> through <code>Shift 10</code> for a fortnightly roster. Describe how you'd generate this with the fill handle rather than typing all ten.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Type <code>Shift 1</code> into the first cell, select it, then drag the fill handle down through 10 rows. Excel recognises the trailing number and increments it each row, producing <code>Shift 2</code>, <code>Shift 3</code>, ... <code>Shift 10</code> automatically, exactly the same mechanism as the drill hole ID worked example.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A1 contains <code>1-Jan</code>, A2 contains <code>8-Jan</code> (both selected together, then filled down). Predict A3, A4, A5.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Step size is 7 days (weekly): <code>15-Jan</code>, <code>22-Jan</code>, <code>29-Jan</code>, a useful pattern for weekly production or inspection reports.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Beyond just saving time, give one QAQC-specific reason filling a series is better than manually typing 200 sequential sample IDs by hand.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Manual typing of a long sequential list is a genuine source of transcription error, a skipped number, a duplicated number, a typo, any of which can misalign a sample ID against its lab result and quietly corrupt an entire QAQC dataset. A filled series is generated mechanically from a known starting point and step size, so it's guaranteed internally consistent, there's no possibility of a human slip partway through 200 rows.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Managing worksheets</div>
+  <div class="prose">
+    <p>Once a workbook has more than one worksheet, being able to insert, delete, rename, copy, colour-code, group, and freeze them becomes genuinely important for keeping a large reporting file navigable.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><strong>Rename</strong>: double-click the tab, type the new name. <strong>Copy/Move</strong>: right-click the tab &rarr; Move or Copy. <strong>Group</strong>: click the first tab, Shift+click the last, to apply the same formatting change to every grouped sheet at once. <strong>Freeze Panes</strong>: locks rows/columns in place so headers stay visible while scrolling through long data.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>You have a 500-row equipment maintenance log, with headers (Equipment ID, Hours, Last Service, Status) in row 4. You click in cell A5, then apply Freeze Panes. What stays visible when you scroll down?</p>
+    <p class="step">Freeze Panes locks everything <em>above and to the left</em> of the currently selected cell.</p>
+    <p>Since A5 is selected, rows 1 through 4 (including the header row) freeze in place, and no columns freeze (since A5 is in column A, there's nothing to its left). Scrolling down 400 rows still shows the header row 4 pinned at the top, exactly what makes a long log usable.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>State the two steps to rename a worksheet tab.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Double-click the tab name (this places it into edit mode), then type the new name and press Enter.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>You have 12 monthly worksheets, all with an identical layout, and you want to bold and colour the header row on every single one without repeating the formatting 12 times. What Excel feature is built exactly for this?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Grouping worksheets.</strong> Click the first tab, hold Shift, click the last tab, to select all 12 at once, then any formatting or text change applied to one sheet in the group is applied identically to all of them simultaneously. Remember to ungroup afterward (click any tab outside the group), or further edits will keep applying to every sheet, not just the one you're looking at.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>What happens if you delete a worksheet that contains data, and why does Excel treat this differently from deleting the contents of a single cell?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Excel asks for confirmation before deleting a worksheet that contains data, because worksheet deletion is <strong>permanent and cannot be undone</strong>, unlike almost everything else in Excel. Deleting a single cell's contents can be reversed with Undo (Ctrl+Z); deleting an entire worksheet cannot, once confirmed, that data is gone. Always save the workbook before deleting worksheets, precisely so a backup exists if the deletion turns out to be a mistake.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Freeze Panes is applied with the active cell at C4. Which rows and columns freeze?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Rows 1&ndash;3 freeze (everything above row 4), and column A and B freeze (everything to the left of column C). This is the standard setup for a spreadsheet with both a header row <em>and</em> a label column (e.g.\ dates down column A, categories across row 4) that both need to stay visible while scrolling in either direction.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Explain the difference between <em>moving</em> a worksheet to another workbook and <em>copying</em> it, and give a mine-site scenario where you'd specifically want to copy rather than move.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Moving removes the worksheet entirely from the original workbook and places it in the destination workbook; copying leaves the original untouched and places a duplicate in the destination. You'd copy, never move, if you needed to send a contractor <em>their</em> pit's data as a standalone file while keeping the full multi-pit master workbook intact on your own machine, moving would strip that pit's data out of your master file entirely, which is almost never what you actually want.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Propose a worksheet tab colour-coding scheme for a workbook tracking 5 pits, where each pit's status is either "Active," "On Hold," or "Closed." Open Excel and try applying it to a few dummy tabs.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">One reasonable approach</span>
+      <p>Green tabs for Active pits, yellow/orange for On Hold, red or grey for Closed, an at-a-glance visual status board without needing to open a single tab. There's no single correct scheme here, the point is that tab colour is a genuinely useful signal, not just decoration, and it costs nothing to set up (right-click tab &rarr; Tab colour, exactly as covered in the source manual's Changing Worksheet Tab Colours section).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> Selecting ranges, rows, and columns</div>
+  <div class="prose">
+    <p>Almost every Excel operation, formatting, charting, applying a formula, starts with selecting the right cells first. Getting comfortable with the different selection techniques (click-drag, Shift-click, Ctrl-click, clicking a row/column header) saves real time once you're working with genuinely large datasets.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><strong>Contiguous range</strong>: click the first cell, hold <strong>Shift</strong>, click the last cell (or click-drag). <strong>Non-adjacent cells/ranges</strong>: hold <strong>Ctrl</strong> while clicking each one. <strong>Entire row/column</strong>: click the row number or column letter header directly.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>You want to chart two non-adjacent columns: Month (column A) and Tonnage (column D), skipping B and C entirely. How do you select just those two columns together?</p>
+    <p class="step">Click the column A header to select the entire column.</p>
+    <p class="step">Hold <strong>Ctrl</strong>, then click the column D header.</p>
+    <p>Both columns A and D are now selected together, with B and C excluded, exactly what a chart needs when the data you want plotted isn't sitting in adjacent columns.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Describe two different ways to select the range A1:E1.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(1) Click A1, hold Shift, click E1. (2) Click A1, hold the left mouse button, and drag across to E1 before releasing.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Describe how to select columns B and D together, without selecting column C.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Click the column B header, hold Ctrl, then click the column D header. Ctrl-click adds a non-adjacent selection without disturbing what's already selected.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>You accidentally select entire column C (instead of just the data range within it) and apply bold formatting. What, precisely, just happened to the worksheet, and why is this worth being careful about?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Every cell in column C, all 1,048,576 of them, all the way down, is now bold, not just the handful of rows that actually contain data. This usually causes no visible problem immediately (empty bold cells look the same as empty normal cells), but it can bloat the file size, and it can cause confusing behaviour later if you ever reference "the last used cell" in that column, since Excel may now think the column extends much further than your actual data does. Selecting the specific data range, rather than the whole column, avoids this entirely.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>Give two separate methods for selecting an entire row 5.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(1) Click directly on the row 5 header (the number "5" at the left edge). (2) Click any cell in row 5, then press Shift+Space (Home+Shift in some references, but Shift+Space is the standard entire-row shortcut).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>You have a 200-row assay dataset and need to select the entire "Grade_ppm" column of actual data quickly, without dragging the mouse the whole way down. Describe a fast keyboard-based technique.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Click the first data cell in the column, then press <strong>Ctrl+Shift+End</strong> (or Ctrl+Shift+Down Arrow) to extend the selection to the last used cell in that column/direction in one keystroke, instead of dragging or scrolling manually through 200 rows. This kind of shortcut is what actually separates someone comfortable in Excel from someone who technically knows the menus, worth practising deliberately.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Why do most Excel functions (SUM, AVERAGE, and the like, covered in Section 7) require a rectangular, contiguous range as their argument, rather than accepting an arbitrary scattered selection of cells?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A rectangular range (like B6:B8) can be described compactly with just two cell addresses, top-left and bottom-right, which is why range notation exists in the first place. A genuinely scattered, non-rectangular selection has no such compact description, so functions instead handle that case by accepting a comma-separated list of individual ranges as separate arguments (e.g.\ <code>=SUM(B6:B8,B11:B13)</code>, exactly as the source manual's AVERAGE example does), rather than trying to invent notation for an arbitrary shape.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Number formatting: the veil over numbers</div>
+  <div class="prose">
+    <p>Every number in Excel has two separate things going on: the <strong>underlying value</strong> actually stored in the cell, and the <strong>display format</strong> that decides how it's shown on screen. Formatting never changes the real stored value, it only changes the "veil" placed over it, and forgetting this distinction is a classic source of reporting errors.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>A cell storing <code>0.02</code> can be <em>displayed</em> as <code>2%</code> (Percentage format), or a cell storing <code>44104</code> can be displayed as <code>30-Sep-2020</code> (Date format), the underlying number never actually changes, only its on-screen appearance does.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>An ore grade is stored as the decimal value <code>0.0034</code>. Formatted as a percentage, what does the cell display?</p>
+    <p class="step">Percentage format multiplies the stored value by 100 and appends a % sign, purely for display.</p>
+    <p><code>0.34%</code>. The stored value is still exactly <code>0.0034</code>, that's what any formula referencing this cell will use in its calculation, regardless of how it's displayed.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>A cell stores the value 12889.95. Formatted as currency, what does it display as?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>$12,889.95</code> (or the equivalent in whatever currency symbol is configured, e.g.\ €12,889.95), with the thousands separator and two decimal places added automatically by the format.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>A cell displays <code>1,250</code> after applying "0 decimal places" formatting to an underlying value of <code>1249.7</code>. If a formula elsewhere sums this cell along with others, does it use 1,250 or 1249.7 in the actual calculation?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>1249.7</strong>, the true stored value, not the rounded display. This is a genuinely common gotcha: individually rounded-looking cells can sum to a total that doesn't match what you'd get by adding up the displayed (rounded) numbers by hand, because Excel is always calculating from the real underlying values, never from what's shown on screen. If a report absolutely must have displayed figures add up exactly, the values need to be genuinely rounded with a function (like ROUND), not just display-formatted.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>The date serial number 44104 is formatted as a Short Date. What does it display as, and what does that serial number actually represent internally?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Displays as <code>30-Sep-2020</code>. Internally, Excel stores every date as a plain number counting days from a fixed starting point (January 1, 1900), so date arithmetic, "how many days between these two dates," "what's 30 days after this date," is just ordinary subtraction and addition under the hood.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>Why would an engineer deliberately restrict a reported value to 2 or 3 decimal places, even when Excel is internally storing many more?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Significant figures: reporting a stress value as <code>245.847291 MPa</code> falsely implies a precision the measurement instrument never actually delivered, most gauges and assays simply aren't accurate to six decimal places, so displaying that many digits is misleading rather than more informative. Formatting the display to match the genuine precision of the underlying measurement (e.g.\ <code>245.8 MPa</code>) communicates honestly what's actually known, while the full-precision value can still be kept stored underneath for accurate downstream calculations.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>What's the practical difference between Currency format and Accounting format for the same underlying number?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Both display a currency symbol and thousands separator, but Accounting format aligns the currency symbols and decimal points consistently down an entire column (making a column of dollar figures easy to scan and compare at a glance), and typically displays negative values in parentheses rather than with a minus sign, the layout convention traditionally used in financial statements.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>A cost report shows five line items, each individually rounded to whole dollars for display, and a total at the bottom. A colleague notices the displayed total doesn't exactly equal the sum of the five displayed (rounded) line items. Is this necessarily an error? Explain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Not necessarily an error, this is a direct, entirely expected consequence of Practice 33's rounding behaviour. The total is computed from the true underlying (unrounded) values, while each line item is independently rounded only for display; those two processes can legitimately produce a small mismatch (often called a "rounding residual"). It's worth flagging in a report footnote when it happens (so a reader doesn't mistake it for an actual arithmetic mistake), but the fix isn't to "correct" the total, it's to understand that displayed rounding and true summation are two separate operations that don't have to reconcile perfectly.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> Functions: SUM, AVERAGE, MIN, MAX &amp; errors</div>
+  <div class="prose">
+    <p><strong>Functions</strong> are pre-built formulas for common operations, add a range, average a range, find the extremes. They're written as <code>=NAME(arguments)</code>, and they save you from typing out long chains of <code>+</code> signs by hand (imagine adding 200 cells one at a time). Function names are not case-sensitive.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><code>=SUM(range)</code> adds every value in the range. <code>=AVERAGE(range)</code> finds the arithmetic mean. <code>=MIN(range)</code> and <code>=MAX(range)</code> find the smallest and largest values. All four accept either a single contiguous range or a comma-separated list of several ranges.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Five shift tonnages are entered in B2:B6: 1250, 1180, 1340, 1290, 1205. Find the total, the average, the minimum, and the maximum shift.</p>
+    <p class="step"><code>=SUM(B2:B6)</code>: $1250+1180+1340+1290+1205 = 6265$ tonnes total.</p>
+    <p class="step"><code>=AVERAGE(B2:B6)</code>: $6265\div5 = 1253$ tonnes average.</p>
+    <p class="step"><code>=MIN(B2:B6)</code>: $1180$ (the weakest shift). $\ $ <code>=MAX(B2:B6)</code>: $1340$ (the strongest shift).</p>
+    <p>Four different questions about the same five numbers, each answered with one short function rather than five separate manual calculations.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>Compute <code>=SUM(B1:B4)</code> by hand, given B1=340, B2=275, B3=410, B4=198.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$340+275+410+198 = 1223$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>Using the same four values (340, 275, 410, 198), compute <code>=AVERAGE(B1:B4)</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$1223\div4 = 305.75$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>Using the same four values, state <code>=MIN(B1:B4)</code> and <code>=MAX(B1:B4)</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>MIN = 198, MAX = 410.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>Six stress test readings (MPa) are recorded: 245.2, 248.1, 243.9, 250.3, 246.7, 244.5. Compute the average, and the range (max minus min), a common QC check for measurement consistency.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sum $=245.2+248.1+243.9+250.3+246.7+244.5=1478.7$. Average $=1478.7\div6\approx246.45$ MPa.</p>
+      <p>Max $=250.3$, Min $=243.9$, Range $=250.3-243.9=6.4$ MPa. A tight range like this suggests consistent, well-controlled testing; a wide range would flag a measurement or process problem worth investigating.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>A formula <code>=B5/B6</code> displays <code>#DIV/0!</code>. What does this error mean, and what's the most likely cause?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Excel is being asked to divide by zero, mathematically undefined. Most likely cause: cell B6 (the divisor) is empty or genuinely contains 0, e.g.\ a "hours operated" cell that hasn't been filled in yet, feeding into an "output per hour" calculation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>A formula typed as <code>=AVG(B3:B7)</code> displays <code>#NAME?</code>. What's gone wrong?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>AVG</code> is not a real Excel function, the correct function name is <code>AVERAGE</code>. Excel found text in the formula it couldn't match to any legitimate function or named range, and flags it with <code>#NAME?</code>, exactly the <code>=SOME(...)</code> vs.\ <code>=SUM(...)</code> typo the source manual itself warns about.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>A cell displays a row of hash symbols, <code>########</code>, instead of a number. Is this an error in the formula? What's actually wrong, and how do you fix it?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No, the formula and its result are perfectly fine, this isn't a calculation error at all. The column is simply too narrow to display the full number, Excel refuses to show a truncated or misleading version of a number, so it shows hash marks instead. Fix: widen the column (drag the column border, or double-click it to auto-fit).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 45</span></div>
+  <div class="p-body"><p>Cell B3 contains the word "three" (text) instead of the number 3. A formula <code>=B2/B3</code> displays <code>#VALUE!</code>. Explain what this error means and how it differs from <code>#DIV/0!</code>.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>#VALUE!</code> means the formula encountered something that isn't a usable number where a number was expected, here, text ("three") sitting where the divisor should be. This is a different failure from <code>#DIV/0!</code>: dividing by zero is a valid number that just produces an undefined result, while dividing by text isn't even a valid arithmetic operation to attempt in the first place. The fix is to enter an actual numeric value (3, not "three") into B3.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec8">
+  <div class="section-title"><span class="tag">8</span> Quick Analysis, tables, and charts</div>
+  <div class="prose">
+    <p>Raw numbers in a grid rarely communicate a trend as fast as a well-chosen chart does. Excel's Quick Analysis tool (the small icon that appears at the corner of a selected range) offers instant previews of formatting, totals, and chart types, but the real skill is knowing <em>which</em> chart type actually fits the question you're asking.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><strong>Column/Bar</strong>: compare values across categories. <strong>Line</strong>: show a trend over time. <strong>Pie</strong>: show proportion of a whole (only when the parts genuinely sum to 100%). <strong>Scatter (XY)</strong>: show the relationship between two numeric variables. A chart can live <strong>embedded</strong> in a worksheet (alongside the data) or on its own <strong>chart sheet</strong> (for a cleaner, full-page view when printing or presenting).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>You have monthly tonnage figures for a pit across a full year, and separately, a cost breakdown (fuel, labour, maintenance, other) for one specific month. Which chart type suits each, and why would swapping them be a mistake?</p>
+    <p class="step">Monthly tonnage over a year is a <strong>trend over time</strong>, a <strong>line chart</strong> fits, the eye reads the slope and direction instantly.</p>
+    <p class="step">The cost breakdown for one month is a <strong>proportion of a whole</strong> (fuel + labour + maintenance + other = 100% of that month's cost), a <strong>pie chart</strong> fits.</p>
+    <p>Swapping them would actively mislead a reader: a pie chart of 12 months of tonnage implies those 12 figures are parts of one whole (they're not, they're a sequence over time, and a pie chart hides the order entirely), while a line chart of four cost categories with no time axis implies a trend where none exists.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 46</span></div>
+  <div class="p-body"><p>You have weekly ore tonnage figures for the last 26 weeks. What chart type is most appropriate, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A <strong>line chart</strong>. Weekly figures over time are a trend, and a line chart makes the direction (rising, falling, plateauing) and any seasonal pattern immediately visible in a way a table of 26 numbers never could.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 47</span></div>
+  <div class="p-body"><p>You have total operating cost for one quarter, broken into four categories that sum to 100% of spend. What chart type fits?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A <strong>pie chart</strong>, exactly because these four categories are genuine parts of one whole, the classic case a pie chart is built for.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 48</span></div>
+  <div class="p-body"><p>You suspect older haul trucks (by age in years) tend to have more unplanned downtime (hours per month). You have both figures for 30 trucks. What chart type would reveal whether a relationship exists?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A <strong>scatter (XY) chart</strong>, with truck age on one axis and downtime hours on the other. Each truck becomes a single point, and if a genuine relationship exists, the points will visibly trend upward (or downward) rather than scattering randomly, exactly the tool for investigating a relationship between two numeric variables, which neither a column, line, nor pie chart is designed to show.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 49</span></div>
+  <div class="p-body"><p>Explain the difference between an embedded chart and a chart sheet, and when you'd prefer each.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>An <strong>embedded chart</strong> sits on top of a worksheet, alongside its source data, useful when you want the chart and the numbers visible together (e.g.\ a monthly report where both matter). A <strong>chart sheet</strong> gives the chart its own dedicated tab with no data cluttering the view, useful when the chart itself is the deliverable, printing a single clean chart for a presentation slide or a stand-alone summary page, rather than a working report.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 50</span></div>
+  <div class="p-body"><p>What does converting a plain range of data into an official Excel <strong>Table</strong> add, beyond what an ordinary range already has?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A Table adds automatic filter buttons on every header, banded row shading for easier reading, and, critically, it automatically expands to include new rows appended at the bottom (a formula or chart referencing the table keeps working correctly as data grows, without needing the range manually re-selected). It also enables structured references (naming columns instead of just cell addresses), a small taste of the column-based thinking that a pandas DataFrame formalises much further.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 51</span></div>
+  <div class="p-body"><p>Explain, with a concrete example, why using a pie chart for a genuinely time-based dataset (like 12 months of production) can actively mislead a reader, rather than just being a slightly worse choice.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A pie chart strips out ordering entirely, the twelve slices could be arranged in any sequence around the circle with no visual consequence, so a genuine trend (steadily rising production through the year, say) becomes completely invisible; the reader sees only twelve unordered proportions of an annual total. Worse, a pie chart implicitly frames the twelve months as competing "shares" of one fixed pie, which isn't really the right mental model for a sequence of independent monthly totals at all. This is a real, not just stylistic, distortion of what the data is actually saying, exactly why chart-type selection is a data-literacy skill, not a cosmetic one.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 52</span></div>
+  <div class="p-body"><p>An Excel Table has columns Equipment_ID, Hours_Run, and Last_Service_Date. In one sentence, describe the pandas equivalent of this structure, and what the column names would become.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>This Table is directly equivalent to a pandas <strong>DataFrame</strong> with three columns, and the column names (<code>Equipment_ID</code>, <code>Hours_Run</code>, <code>Last_Service_Date</code>) would become the DataFrame's column labels exactly as written, referenced in Python as <code>df['Hours_Run']</code> the same way you'd click a column header in Excel, the underlying idea, rows are records and columns are variables, is genuinely identical across both tools.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 53</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Sketch (on paper or in Excel) a 3-chart monthly dashboard for a single pit: what three charts would you include, and what would each one need to show to actually be useful to a site manager glancing at it for 30 seconds?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">One reasonable approach</span>
+      <p>(1) A <strong>line chart</strong> of daily or weekly tonnage against a target line, the fastest way to see if the pit is tracking on plan. (2) A <strong>pie chart</strong> of cost breakdown by category for the month, where the money is actually going. (3) A <strong>column chart</strong> comparing this month's key figures against last month's, immediate context for whether things are improving or slipping. The real design principle: each chart should answer one specific question a manager actually has, not just "chart everything available," a dashboard with too many charts is often less useful than one with three well-chosen ones.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec9">
+  <div class="section-title"><span class="tag">9</span> Explore: engineer &amp; data scientist</div>
+  <div class="prose">
+    <p>Everything above is the genuine Excel fundamentals. This closing section is deliberately open-ended, mini-projects worth actually building, and a look at where these same ideas lead once a dataset outgrows a spreadsheet.</p>
+  </div>
+</section>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 54</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build a haul truck cycle-time tracker: columns for Truck ID, Load Time (min), Haul Time (min), Dump Time (min), Return Time (min), and a formula column for Total Cycle Time. Add 8 rows of made-up data, then use SUM, AVERAGE, MIN, and MAX to summarise fleet performance.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Suggested structure</span>
+      <p>Total Cycle Time formula: <code>=SUM(B2:E2)</code> (adding the four stage times for that row), filled down for all 8 trucks. Below the table: <code>=AVERAGE()</code> of the cycle-time column for the fleet average, <code>=MIN()</code> and <code>=MAX()</code> to flag the fastest and slowest truck, worth investigating why the slowest one is lagging. This is a genuinely realistic first spreadsheet for a junior mining engineer to be handed on day one.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 55</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build a 10-sample assay dataset (made-up gold grades in g/t) and compute the average grade with AVERAGE. Manually scan for any result more than double the average, a crude first pass at flagging a potential outlier. What Excel function (not covered in this lesson) would let you automate that flagging instead of scanning by eye?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Where to go next</span>
+      <p>The <code>IF</code> function: something like <code>=IF(B2>2*AVERAGE($B$2:$B$11),"CHECK","")</code> would automatically label any sample more than double the average as "CHECK," directly in the worksheet, no manual scanning required. <code>IF</code>, along with lookups like <code>VLOOKUP</code>/<code>XLOOKUP</code> and PivotTables, is the natural next skill after this lesson, all genuinely common in real QAQC and production workbooks, and worth deliberately seeking out once these fundamentals are solid.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 56</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build a cost-per-tonne comparison across three hypothetical mining methods (open pit, underground, in-situ leach): pick made-up total cost and total tonnes for each, compute cost per tonne with a formula, then chart the three methods on a column chart.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Suggested structure</span>
+      <p>Columns: Method, Total_Cost, Total_Tonnes, and Cost_Per_Tonne with formula <code>=B2/C2</code> filled down for all three methods. A column chart (not pie, since these are independent per-method figures being compared, not parts of one whole, exactly Section 8's distinction) with Method on the category axis and Cost_Per_Tonne as the value makes the comparison immediate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 57</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Use the fill series technique to generate survey chainage labels: <code>0+000</code>, <code>0+020</code>, <code>0+040</code>, ... up to <code>0+200</code> (20 m intervals), a common civil/mining survey convention. Does Excel's built-in series recognition handle this pattern automatically, or would you need to type the first two entries to establish the step?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Chainage notation like <code>0+020</code> isn't one of Excel's automatically-recognised built-in series (unlike days, months, or a simple trailing number), so the reliable approach is to type the first <em>two</em> entries (<code>0+000</code> and <code>0+020</code>) as plain text, select both, and drag the fill handle, letting Excel infer the pattern from the two-cell step exactly as in Practice 16 and 18. If it doesn't pick up the numeric pattern correctly (chainage text can trip up the auto-detection), typing the values as genuine numbers first and formatting the display afterward is a more reliable fallback.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 58</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Imagine your 8-truck cycle-time table from Practice 54 as a CSV file loaded into Python with <code>pandas.read_csv()</code>. What would <code>df.describe()</code> return, and how does that compare to what you computed by hand with SUM/AVERAGE/MIN/MAX?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">The bridge to data science</span>
+      <p><code>df.describe()</code> returns, for every numeric column at once, exactly the summary statistics you've been computing one function at a time in Excel: count, mean (AVERAGE), min, max, standard deviation, and the quartiles, all in a single command, for every column simultaneously, rather than one <code>=AVERAGE()</code> formula per column typed by hand. This is the genuine payoff of the habits built in this lesson: cell references instead of hardcoded numbers, structured tables instead of scattered data, summarising with a named function instead of manual arithmetic, every one of those habits transfers directly, the syntax changes but the thinking doesn't.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 59</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Propose a self-study roadmap: three Excel features not covered in this lesson that would be immediately useful for mining/mechanical engineering work, in the order you'd learn them.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">A reasonable roadmap</span>
+      <p><strong>1. IF (and nested IF / IFS)</strong>: conditional logic, flagging QC failures, categorising equipment status, the natural next step after this lesson's plain functions. <strong>2. VLOOKUP / XLOOKUP</strong>: pulling a matching value from a lookup table, e.g.\ looking up a truck's specifications from its ID, essential once data lives across multiple related tables rather than one flat sheet. <strong>3. PivotTables</strong>: summarising a large flat dataset (like 12 months of every pit's daily production) into an interactive cross-tab report in a few clicks, genuinely the single highest-leverage Excel skill for anyone handling real production data, and the closest Excel gets to a pandas <code>groupby()</code>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 60</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build a small equipment maintenance log (10 rows: Equipment_ID, Hours_Run, Last_Service_Date, Status). Apply Freeze Panes so the header stays visible, convert the range to a Table, and add a Column chart of Hours_Run by Equipment_ID.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">What this exercise ties together</span>
+      <p>This single small workbook uses six separate skills from this lesson at once: worksheet navigation (Section 1), formula-driven data entry (Section 2), Freeze Panes (Section 4), range selection (Section 5), date formatting (Section 6), and charting (Section 8), genuinely representative of what a real first-week engineering spreadsheet looks like, not an artificially isolated exercise. If it feels like a lot to hold together at once, that's exactly the point, it's worth building slowly, one column and one feature at a time, rather than all in one sitting.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 61</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Take any dataset you're already working with for DPEN022 or another subject (even a small one), and deliberately rebuild it using only formulas that reference other cells, no hardcoded computed numbers anywhere. What broke, or what did you have to think differently about, compared to how you'd normally build a spreadsheet?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">What this is really testing</span>
+      <p>There's no single expected answer here, the value is entirely in the exercise itself. Most people discover at least one spot where they'd normally just type a final number (a rounded total, a "quick" calculation done in their head first), and rebuilding it as a genuine formula forces a small but real shift in habit, exactly the discipline discussed in Practice 13, made concrete on real data rather than a made-up example.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 62</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Using Quick Analysis's colour-scale conditional formatting (Section 8's neighbouring tool, covered in the source manual but not this lesson directly), apply a red-to-green colour scale to a column of 15 made-up equipment downtime hours. What does the resulting pattern tell you at a glance that the raw numbers didn't?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">What to expect</span>
+      <p>The colour scale instantly highlights which pieces of equipment are the worst downtime offenders (deep red) versus the most reliable (deep green), without requiring you to read and compare 15 individual numbers in sequence. This is conditional formatting doing the same fundamental job a chart does, turning numbers into an instantly-readable visual pattern, just applied directly on top of a table rather than as a separate chart object.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 63</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Print preview a worksheet containing both data and an embedded chart. Compare what appears when you print the whole worksheet versus when you select only the chart first and then print. When would each be the right choice for a real report?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">What to expect</span>
+      <p>Printing the whole worksheet includes both the data table and the chart on the page (or spread across several, depending on size), useful for an internal working report where a colleague might want to check the underlying numbers. Selecting just the chart before printing produces a clean, chart-only page, better suited for a client-facing summary or a presentation slide where the raw data would be clutter rather than useful context.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 64</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build the same tiny dataset two ways: once as an ordinary range, once converted to a Table (Section 8). Add two new rows of data at the bottom of each. What's different about how any charts or formulas referencing the original range behave?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">What to expect</span>
+      <p>A chart or SUM formula built from an ordinary range typically does <em>not</em> automatically extend to include the two new rows, it keeps referencing the original fixed range unless manually updated. A chart or formula built from a Table <em>does</em> automatically extend, since the Table itself grows to include new rows appended directly below it, and anything referencing the Table grows with it. This single difference is why Tables are worth the extra thirty seconds of setup on any dataset that's going to keep growing over time, exactly the situation a production log or an assay database is always in.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 65</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Looking back across all 9 sections, pick the one Excel habit from this lesson you think will save you the most time or the most embarrassment over your degree and early career. Write one sentence on why.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">No single right answer, but a strong candidate</span>
+      <p>If forced to pick one: formulas that reference cells instead of hardcoded numbers (Section 2, revisited in Practice 13 and 61). It's the single habit that determines whether a spreadsheet is trustworthy six months from now, whether a mistake gets caught immediately or silently propagates through a report, and whether updating one input actually updates everything downstream or leaves a scattered mess of stale numbers, genuinely the difference between a spreadsheet you can trust and one you can't.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>MS Excel Fundamentals &middot; Mining &amp; Mechanical Engineering</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice items revealed';
+}
+</script>
+
+</body>
+</html>

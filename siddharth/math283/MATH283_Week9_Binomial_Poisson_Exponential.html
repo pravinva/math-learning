@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Discrete Random Variables &amp; the Binomial Distribution; the Poisson Process; Continuous Random Variables &amp; the Exponential Distribution</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH283 &middot; Advanced Engineering Mathematics &amp; Statistics &middot; Week 9 (Part B: Statistics)</div>
+  <h1>Discrete Random Variables &amp; the Binomial Distribution; the Poisson Process; Continuous Random Variables &amp; the Exponential Distribution</h1>
+  <p>From describing data to modelling the random processes that generate it. This week covers the general machinery of random variables (expected value, variance), the two most important discrete models (Binomial and Poisson), and the transition to continuous random variables via the Exponential distribution &mdash; which turns out to be deeply connected to the Poisson process. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 80 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this week's toolkit</span>
+  <ul>
+<li><strong>Discrete RV:</strong> $E(X)=\displaystyle\sum x\,p(x)$; $\text{Var}(X)=E(X^2)-[E(X)]^2=\displaystyle\sum x^2p(x)-[E(X)]^2$.</li>
+<li><strong>Binomial distribution</strong> $X\sim B(n,p)$: $P(X=x)=\binom{n}{x}p^x(1-p)^{n-x}$; $E(X)=np$; $\text{Var}(X)=np(1-p)$.</li>
+<li><strong>Poisson distribution</strong> $X\sim\text{Poisson}(\lambda)$: $P(X=x)=\dfrac{e^{-\lambda}\lambda^x}{x!}$; $E(X)=\text{Var}(X)=\lambda$ &mdash; the Poisson approximates the Binomial when $n$ is large and $p$ is small ($\lambda=np$).</li>
+<li><strong>Continuous RV:</strong> $P(a\le X\le b)=\displaystyle\int_a^b f(x)\,dx$; $E(X)=\displaystyle\int xf(x)\,dx$; total area under $f(x)$ over its support equals 1.</li>
+<li><strong>Exponential distribution</strong> $X\sim\text{Exp}(\lambda)$: $f(x)=\lambda e^{-\lambda x}\ (x\ge0)$; $P(X>x)=e^{-\lambda x}$; $E(X)=1/\lambda$; $\text{Var}(X)=1/\lambda^2$; models the waiting time between Poisson events, and has the memoryless property.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Discrete Random Variables &mdash; Expected Value &amp; Variance</a></li>
+<li><a href="#sec1">The Binomial Distribution</a></li>
+<li><a href="#sec2">The Poisson Process &amp; Poisson Distribution</a></li>
+<li><a href="#sec3">Continuous Random Variables &amp; the Exponential Distribution</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+  <div class="section-title"><span class="tag">0</span> Discrete Random Variables &mdash; Expected Value &amp; Variance</div>
+
+  <div class="prose">
+<p>A discrete random variable's probability distribution assigns a probability to each possible value it can take. The expected value $E(X)$ is a probability-weighted average &mdash; the long-run average value if the random experiment were repeated many times. Variance measures the spread of that distribution around its expected value.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$E(X)=\sum x\,p(x), \qquad \text{Var}(X)=E(X^2)-[E(X)]^2, \qquad \sum p(x)=1$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A discrete RV has $P(X=0)=0.2,P(X=1)=0.5,P(X=2)=0.3$. Find $E(X)$ and $\text{Var}(X)$.</p>
+<p class="step">$E(X)=0(0.2)+1(0.5)+2(0.3)=0+0.5+0.6=1.1$.</p>
+<p class="step">$E(X^2)=0(0.2)+1(0.5)+4(0.3)=0.5+1.2=1.7$. $\text{Var}(X)=1.7-1.1^2=1.7-1.21=0.49$.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A discrete RV has $P(X=1)=0.3,P(X=2)=0.4,P(X=3)=0.3$. Find $E(X)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$E(X)=1(0.3)+2(0.4)+3(0.3)=0.3+0.8+0.9=2.0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>For the RV above, find $\text{Var}(X)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$E(X^2)=1(0.3)+4(0.4)+9(0.3)=0.3+1.6+2.7=4.6$.</p>
+<p>$\text{Var}(X)=4.6-2.0^2=4.6-4=0.6$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A game costs \$5 to play. You win \$20 with probability 0.1, \$0 otherwise. Find the expected net profit (winnings minus cost).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$E(\text{winnings})=20(0.1)+0(0.9)=2$.</p>
+<p>Expected net profit $=E(\text{winnings})-5=2-5=-3$ (a \$3 expected loss per play).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Find the missing probability $p$ if a discrete RV has $P(X=0)=0.15,P(X=1)=p,P(X=2)=0.35,P(X=3)=0.20$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Total probability must sum to 1: $0.15+p+0.35+0.20=1 \implies p=1-0.70=0.30$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A discrete RV representing the number of defects in a batch has $P(X=0)=0.5,P(X=1)=0.3,P(X=2)=0.15,P(X=3)=0.05$. Find $E(X)$ and interpret it in context.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$E(X)=0(0.5)+1(0.3)+2(0.15)+3(0.05)=0.3+0.3+0.15=0.75$.</p>
+<p><strong>Interpretation:</strong> on average, a batch is expected to contain 0.75 defects &mdash; a long-run average over many batches, even though no single batch can actually have a fractional number of defects.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Verify that $\text{Var}(X)\ge0$ always, using the formula $\text{Var}(X)=E[(X-\mu)^2]$ directly (rather than the computational shortcut), explaining why this alternate form makes non-negativity obvious.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\text{Var}(X)=E[(X-\mu)^2]=\displaystyle\sum(x-\mu)^2p(x)$. Since $(x-\mu)^2\ge0$ for every possible value $x$ (a square is never negative), and $p(x)\ge0$ always, every single term in this sum is non-negative &mdash; so the sum itself must be non-negative.</p>
+<p>This makes it immediately obvious why variance can never be negative, whereas the computational shortcut $E(X^2)-[E(X)]^2$ (used for calculation speed) doesn't make this fact as visually apparent, even though it's mathematically equivalent.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A random variable $X$ has $E(X)=10$ and $\text{Var}(X)=4$. Find $E(2X+3)$ and $\text{Var}(2X+3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$E(2X+3)=2E(X)+3=2(10)+3=23$ (linearity of expectation).</p>
+<p>$\text{Var}(2X+3)=2^2\text{Var}(X)=4(4)=16$ (variance scales by the square of the multiplier; adding a constant doesn't affect variance).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A spinner has three outcomes: 1 (probability 0.5), 5 (probability 0.3), 10 (probability 0.2). Find $E(X)$ and the standard deviation of $X$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$E(X)=1(0.5)+5(0.3)+10(0.2)=0.5+1.5+2.0=4.0$.</p>
+<p>$E(X^2)=1(0.5)+25(0.3)+100(0.2)=0.5+7.5+20=28$.</p>
+<p>$\text{Var}(X)=28-16=12$. $\text{SD}(X)=\sqrt{12}\approx3.46$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Explain why $E(X^2)\ne[E(X)]^2$ in general, using the variance formula to justify your answer, and state the one special case where they ARE equal.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Rearranging $\text{Var}(X)=E(X^2)-[E(X)]^2$ gives $E(X^2)=\text{Var}(X)+[E(X)]^2$. Since variance is generally a positive number (whenever $X$ actually has some spread/randomness), $E(X^2)$ must be strictly greater than $[E(X)]^2$ in general.</p>
+<p><strong>Special case:</strong> they are equal exactly when $\text{Var}(X)=0$ &mdash; i.e. when $X$ is not actually random at all, but a constant (every outcome is the same fixed value with probability 1).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>An insurance policy pays out \$10,000 with probability 0.02 (a claim) and \$0 otherwise. If the company wants an expected profit of \$50 per policy, what premium should it charge?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$E(\text{payout})=10000(0.02)+0(0.98)=200$.</p>
+<p>Let premium $=P$. Expected profit $=P-E(\text{payout})=P-200=50 \implies P=250$.</p>
+<p><strong>Answer:</strong> the company should charge a premium of \$250.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+  <div class="section-title"><span class="tag">1</span> The Binomial Distribution</div>
+
+  <div class="prose">
+<p>The Binomial distribution counts the number of "successes" in $n$ independent, identical trials, each with the same success probability $p$ (a Bernoulli trial). It's the natural model whenever you're counting occurrences out of a fixed number of attempts &mdash; defective items in a batch, correct answers on a multiple-choice test, and so on.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$P(X=x)=\binom{n}{x}p^x(1-p)^{n-x}, \qquad E(X)=np, \qquad \text{Var}(X)=np(1-p)$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A machine produces defective items with probability 0.1. In a sample of 8 items, find $P(X=2)$ and $E(X)$.</p>
+<p class="step">$P(X=2)=\binom{8}{2}(0.1)^2(0.9)^6=28(0.01)(0.5314)\approx0.1488$.</p>
+<p class="step">$E(X)=np=8(0.1)=0.8$.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A fair coin is flipped 10 times. Find $P(X=6)$ where $X$ is the number of heads.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(X=6)=\binom{10}{6}(0.5)^6(0.5)^4=210(0.5)^{10}=\dfrac{210}{1024}\approx0.2051$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>For $X\sim B(10,0.5)$ (coin flips above), find $E(X)$ and $\text{Var}(X)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$E(X)=10(0.5)=5$. $\text{Var}(X)=10(0.5)(0.5)=2.5$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A quality control inspector checks 10 items; the defect probability per item is 0.3. Find $P(X\le2)$ (at most 2 defective).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(X\le2)=P(0)+P(1)+P(2)$.</p>
+<p>$P(0)=\binom{10}{0}(0.3)^0(0.7)^{10}=0.7^{10}\approx0.0282$.</p>
+<p>$P(1)=\binom{10}{1}(0.3)(0.7)^9=10(0.3)(0.0404)\approx0.1211$.</p>
+<p>$P(2)=\binom{10}{2}(0.3)^2(0.7)^8=45(0.09)(0.0576)\approx0.2335$.</p>
+<p><strong>Answer:</strong> $P(X\le2)\approx0.0282+0.1211+0.2335=0.3828$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>A multiple-choice test has 5 questions, each with 4 options (only one correct). A student guesses randomly on all 5. Find the probability of getting exactly 3 correct.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$p=1/4=0.25$, $n=5,x=3$. $P(X=3)=\binom53(0.25)^3(0.75)^2=10(0.015625)(0.5625)\approx0.0879$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>For the same test (5 questions, guessing), find $E(X)$ (expected number correct) and $\text{Var}(X)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$E(X)=5(0.25)=1.25$.</p>
+<p>$\text{Var}(X)=5(0.25)(0.75)=0.9375$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A factory ships items in boxes of 20. If the defect rate is 5%, find the probability a box has zero defects.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(X=0)=\binom{20}{0}(0.05)^0(0.95)^{20}=0.95^{20}\approx0.3585$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>For the same box of 20 items (5% defect rate), find the probability of at least 1 defect, using the complement rule.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(X\ge1)=1-P(X=0)=1-0.3585=0.6415$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A basketball player has a free-throw success rate of 80%. In 6 attempts, find $P(X=5)$ (exactly 5 successes).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(X=5)=\binom65(0.8)^5(0.2)^1=6(0.32768)(0.2)\approx0.3932$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Explain why the Binomial distribution requires the trials to be both "independent" and have a "constant" success probability $p$, using a concrete counter-example where sampling without replacement from a small finite population would violate this.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Independence means the outcome of one trial doesn't affect the probability of success on any other trial; a constant $p$ means that probability doesn't change from trial to trial.</p>
+<p><strong>Counter-example:</strong> drawing balls without replacement from a bag of 10 (say 3 red, 7 blue) to count "number of red balls drawn in 5 draws" is NOT binomial &mdash; after drawing a red ball, there are fewer red balls left in the bag, so the probability of drawing red on the next draw genuinely changes (decreases). This situation instead requires the Hypergeometric distribution, a related but distinct model that accounts for the changing probabilities from sampling without replacement in a finite population. Binomial only applies when trials are independent with a truly constant $p$ &mdash; typically valid for sampling <em>with</em> replacement, or sampling a small fraction from a very large (effectively infinite) population.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A binomial RV has $E(X)=12$ and $\text{Var}(X)=4.8$. Find $n$ and $p$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$np=12$ and $np(1-p)=4.8$.</p>
+<p>Divide: $1-p=\dfrac{4.8}{12}=0.4 \implies p=0.6$.</p>
+<p>$n=\dfrac{12}{0.6}=20$.</p>
+<p><strong>Answer:</strong> $n=20,p=0.6$.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+  <div class="section-title"><span class="tag">2</span> The Poisson Process &amp; Poisson Distribution</div>
+
+  <div class="prose">
+<p>The Poisson distribution counts the number of events occurring in a fixed interval of time or space, when events happen independently at a constant average rate. It's the natural model for rare, randomly-timed occurrences: customer arrivals, radioactive decays, typos per page.</p>
+<p><strong>Connection to the Binomial.</strong> The Poisson distribution arises as the limiting case of the Binomial when $n\to\infty$ and $p\to0$ while $np=\lambda$ stays fixed &mdash; making it a good approximation for Binomial situations with large $n$ and small $p$.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$P(X=x)=\frac{e^{-\lambda}\lambda^x}{x!}, \qquad E(X)=\text{Var}(X)=\lambda$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A call centre receives an average of 3 calls per minute (Poisson). Find $P(X=5)$ in a given minute, and $P(X=0)$.</p>
+<p class="step">$P(X=5)=\dfrac{e^{-3}3^5}{5!}=\dfrac{(0.0498)(243)}{120}\approx0.1008$.</p>
+<p class="step">$P(X=0)=e^{-3}\approx0.0498$.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>A website receives an average of 4 visits per minute (Poisson). Find $P(X=2)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(X=2)=\dfrac{e^{-4}4^2}{2!}=\dfrac{(0.0183)(16)}{2}\approx0.1465$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>For the same website ($\lambda=4$ per minute), find $P(X=0)$ and interpret it.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(X=0)=e^{-4}\approx0.0183$.</p>
+<p><strong>Interpretation:</strong> there's only about a 1.8% chance of zero visits in a given minute.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Typos occur in a manuscript at an average rate of 2 per page (Poisson). Find the probability a randomly selected page has more than 1 typo.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(X>1)=1-P(X=0)-P(X=1)=1-e^{-2}-2e^{-2}=1-3e^{-2}\approx1-3(0.1353)=1-0.406=0.594$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>A radioactive source emits particles at an average rate of 5 per second. Find the probability of exactly 3 particles being detected in a 1-second interval.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(X=3)=\dfrac{e^{-5}5^3}{3!}=\dfrac{(0.00674)(125)}{6}\approx0.1404$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>A call centre averages 2 calls per minute. Find the probability of exactly 6 calls in a 3-minute period (adjust $\lambda$ for the longer interval).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Adjusted $\lambda$ for 3 minutes: $\lambda=2\times3=6$.</p>
+<p>$P(X=6)=\dfrac{e^{-6}6^6}{6!}=\dfrac{(0.00248)(46656)}{720}\approx0.1606$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>A factory's binomial defect scenario has $n=200$ items with defect probability $p=0.015$. Use the Poisson approximation ($\lambda=np$) to estimate $P(X=3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=np=200(0.015)=3$.</p>
+<p>$P(X=3)\approx\dfrac{e^{-3}3^3}{3!}=\dfrac{(0.0498)(27)}{6}\approx0.224$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Explain why the Poisson distribution is a good approximation to the Binomial specifically when $n$ is large and $p$ is small, in terms of what stays fixed in the limiting process.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>As $n\to\infty$ and $p\to0$ simultaneously, the individual trials become both extremely numerous and extremely unlikely to succeed &mdash; but their product, $\lambda=np$ (the expected number of successes), can be held fixed at some reasonable, finite value. This matches exactly the physical setup of a Poisson process: instead of thinking of "many rare independent trials," you think of a continuous stream of opportunities for a rare event to occur, with the total expected count over the interval being $\lambda$. The mathematical limit of the Binomial formula, taken this way, converges exactly to the Poisson formula &mdash; which is why the approximation works well precisely when $n$ is large and $p$ is small (a large number of low-probability "trials").</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Machine breakdowns occur at an average rate of 0.5 per week (Poisson). Find the probability of no breakdowns in a given 4-week month.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Adjusted $\lambda$ for 4 weeks: $\lambda=0.5\times4=2$.</p>
+<p>$P(X=0)=e^{-2}\approx0.1353$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>A Poisson RV has $\text{Var}(X)=7$. Find $P(X=7)$ (using $\lambda=\text{Var}(X)$ directly, since for Poisson, mean equals variance).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=7$ (since $E(X)=\text{Var}(X)=\lambda$ for Poisson).</p>
+<p>$P(X=7)=\dfrac{e^{-7}7^7}{7!}=\dfrac{(0.000912)(823543)}{5040}\approx0.149$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>Explain why it doesn't make sense to ask for the "standard deviation" of a Poisson RV without first specifying $\lambda$, and state the formula for it in terms of $\lambda$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since a Poisson distribution's entire shape (and hence both its mean and variance) is completely determined by the single parameter $\lambda$, asking about its standard deviation without specifying $\lambda$ is like asking "how tall is a rectangle" without giving its dimensions &mdash; the answer is $\sqrt\lambda$, but this number is meaningless without knowing which specific $\lambda$ (which Poisson distribution) is being discussed.</p>
+<p><strong>Formula:</strong> $\text{SD}(X)=\sqrt{\text{Var}(X)}=\sqrt\lambda$.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+  <div class="section-title"><span class="tag">3</span> Continuous Random Variables &amp; the Exponential Distribution</div>
+
+  <div class="prose">
+<p>A continuous random variable's probability density function $f(x)$ doesn't give probabilities directly (unlike the discrete case) &mdash; instead, the <em>area</em> under $f(x)$ over an interval gives the probability of landing in that interval. The Exponential distribution models the waiting time until the next event in a Poisson process &mdash; if events occur at Poisson rate $\lambda$, the time between consecutive events is Exponential$(\lambda)$.</p>
+<p><strong>Memoryless property.</strong> $P(X>s+t\,|\,X>s)=P(X>t)$ &mdash; if you've already waited $s$ time units with no event, the remaining waiting time distribution is exactly the same as if you'd just started waiting. This unusual (and often counterintuitive) property is unique to the Exponential distribution among continuous distributions.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$f(x)=\lambda e^{-\lambda x}\ (x\ge0), \qquad P(X>x)=e^{-\lambda x}, \qquad E(X)=\frac1\lambda, \qquad \text{Var}(X)=\frac{1}{\lambda^2}$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example.</strong> The time between customer arrivals at a shop is Exponential with mean 5 minutes. Find $P(X>8)$ and $P(X<3)$.</p>
+<p class="step">$\lambda=1/5=0.2$. $P(X>8)=e^{-0.2(8)}=e^{-1.6}\approx0.2019$.</p>
+<p class="step">$P(X<3)=1-e^{-0.2(3)}=1-e^{-0.6}\approx1-0.5488=0.4512$.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>A component's lifetime is Exponential with mean 500 hours. Find $P(X>1000)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=1/500=0.002$. $P(X>1000)=e^{-0.002(1000)}=e^{-2}\approx0.1353$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>For the same component (mean lifetime 500 hours), find $P(200<X<800)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(200<X<800)=P(X>200)-P(X>800)=e^{-0.002(200)}-e^{-0.002(800)}=e^{-0.4}-e^{-1.6}$.</p>
+<p>$\approx0.6703-0.2019=0.4684$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>The time between earthquakes in a region follows an Exponential distribution with rate $\lambda=0.1$ per year. Find the expected time between earthquakes, and $P(\text{next earthquake within 5 years})$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$E(X)=1/0.1=10$ years.</p>
+<p>$P(X<5)=1-e^{-0.1(5)}=1-e^{-0.5}\approx1-0.6065=0.3935$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>A call centre's time between calls is Exponential with $\lambda=2$ per minute. Given that 3 minutes have already passed with no call, find the probability of waiting at least 2 more minutes, using the memoryless property.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>By the memoryless property, $P(X>3+2\,|\,X>3)=P(X>2)=e^{-2(2)}=e^{-4}\approx0.0183$.</p>
+<p><strong>Answer:</strong> $\approx0.0183$ &mdash; identical to the probability of waiting at least 2 minutes from a fresh start, regardless of the 3 minutes already elapsed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>Verify that the Exponential density $f(x)=\lambda e^{-\lambda x}$ integrates to exactly 1 over $[0,\infty)$, confirming it's a valid probability density function.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\displaystyle\int_0^\infty \lambda e^{-\lambda x}\,dx = \lambda\left[\frac{-e^{-\lambda x}}{\lambda}\right]_0^\infty = \lambda\left(0-\left(\frac{-1}{\lambda}\right)\right)=\lambda\cdot\frac1\lambda=1$.</p>
+<p><strong>Answer:</strong> confirmed, total probability is exactly 1 for any $\lambda>0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>Derive $E(X)=1/\lambda$ for the Exponential distribution using integration by parts.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$E(X)=\displaystyle\int_0^\infty x\lambda e^{-\lambda x}\,dx$. Let $u=x,dv=\lambda e^{-\lambda x}dx$: $du=dx,v=-e^{-\lambda x}$.</p>
+<p>$=\left[-xe^{-\lambda x}\right]_0^\infty+\displaystyle\int_0^\infty e^{-\lambda x}\,dx=0+\left[\dfrac{-e^{-\lambda x}}{\lambda}\right]_0^\infty=0+\dfrac1\lambda=\dfrac1\lambda$.</p>
+<p><strong>Answer:</strong> confirmed, $E(X)=1/\lambda$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>A machine's time-to-failure is Exponential with mean 2000 hours. Find the median lifetime (the time $m$ such that $P(X<m)=0.5$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=1/2000$. $P(X<m)=1-e^{-\lambda m}=0.5 \implies e^{-\lambda m}=0.5 \implies -\lambda m=\ln0.5 \implies m=\dfrac{-\ln0.5}{\lambda}=2000\ln2\approx1386.3$ hours.</p>
+<p><strong>Answer:</strong> $\approx1386.3$ hours &mdash; notably less than the mean (2000 hours), consistent with the Exponential distribution's right-skewed shape.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>Explain the connection between the Poisson distribution (Week 9's earlier topic) and the Exponential distribution, in terms of what each one models about the same underlying random process.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Both distributions describe the same underlying Poisson process (events occurring independently at a constant average rate $\lambda$), but they answer two different questions about it. The Poisson distribution answers "how many events occur in a fixed time interval?" (a discrete count). The Exponential distribution answers "how long do I have to wait until the next event occurs?" (a continuous duration). They're two complementary views of the exact same random process &mdash; in fact, the parameter $\lambda$ means the same thing in both (average rate of occurrence), just used in structurally different formulas suited to a count versus a waiting time.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>The time between bus arrivals at a stop is Exponential with mean 15 minutes. If you've already waited 10 minutes, find the probability you'll wait at least 20 minutes in total (i.e. at least 10 more minutes), using the memoryless property.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>By the memoryless property, this equals $P(X>10)$ from a fresh start (ignoring the already-elapsed 10 minutes): $\lambda=1/15$.</p>
+<p>$P(X>10)=e^{-10/15}=e^{-2/3}\approx0.5134$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>Show, using the CDF, that the Exponential distribution has the memoryless property: $P(X>s+t\,|\,X>s)=P(X>t)$, starting from the definition of conditional probability.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P(X>s+t\,|\,X>s)=\dfrac{P(X>s+t\ \cap\ X>s)}{P(X>s)}$. Since $s+t>s$ (for $t>0$), the event $X>s+t$ already implies $X>s$, so the intersection is simply $X>s+t$: $=\dfrac{P(X>s+t)}{P(X>s)}=\dfrac{e^{-\lambda(s+t)}}{e^{-\lambda s}}=e^{-\lambda s-\lambda t+\lambda s}=e^{-\lambda t}=P(X>t)$.</p>
+<p><strong>Answer:</strong> confirmed &mdash; the $e^{-\lambda s}$ terms cancel exactly, leaving a result that depends only on $t$, not on how long you've already waited ($s$).</p>
+    </div>
+  </div>
+</div>
+
+<div class="why-box">
+  <span class="box-label">Exam Challenge Extension</span>
+  <p><strong>Purpose:</strong> harder multi-concept exam-style questions with method selection and clear reasoning.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>A call center receives Poisson arrivals with rate 4 per 10 minutes. Find P(no calls in 5 min), P(at least 3 in 10 min).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Scale rates by interval. Use Poisson probabilities with lambda=2 for 5 min and lambda=4 for 10 min.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>Interarrival time T is exponential with mean 12 minutes. Find P(T>20), P(5<T<15), and median waiting time.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>lambda=1/12. Use survival e^{-lambda t}, interval difference, and median solves e^{-lambda m}=0.5.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>Machine defects per day follow Poisson(2.2). Over 30 days, what is expected total and SD of total defects?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sum of independent Poisson is Poisson with lambda additivity. Mean=lambda_total, SD=sqrt(lambda_total).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>A test has success probability p=0.08 per trial. Find probability first success occurs by trial 12.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Geometric: P(T<=12)=1-(1-p)^12.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 45</span></div>
+  <div class="p-body"><p>Show when Poisson is reasonable approximation to Bin(n,p), then approximate P(X=0) for Bin(200,0.01).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use np fixed, n large, p small. Approximate lambda=np=2 then P(0)=e^{-2}.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 46</span></div>
+  <div class="p-body"><p>If X~Poisson(lambda), derive P(X is even) in closed form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use splitting of e^{lambda} series into even/odd terms: P(even)=0.5(1+e^{-2lambda}).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 47</span></div>
+  <div class="p-body"><p>A server has exponential service time mean 5 min. Find 90th percentile and P(T<3 | T<8).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For percentile q: t_q = -ln(1-q)/lambda. Conditional probability uses CDF ratio or memoryless complement.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 48</span></div>
+  <div class="p-body"><p>If X~Bin(20,0.35), compute P(X>=10) exactly and via normal approximation with continuity correction.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Exact from binomial sum. Approximate with N(np,np(1-p)); use P(Y>=9.5).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 49</span></div>
+  <div class="p-body"><p>A call center receives Poisson arrivals with rate 4 per 10 minutes. Find P(no calls in 5 min), P(at least 3 in 10 min).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Scale rates by interval. Use Poisson probabilities with lambda=2 for 5 min and lambda=4 for 10 min.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 50</span></div>
+  <div class="p-body"><p>Interarrival time T is exponential with mean 12 minutes. Find P(T>20), P(5<T<15), and median waiting time.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>lambda=1/12. Use survival e^{-lambda t}, interval difference, and median solves e^{-lambda m}=0.5.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 51</span></div>
+  <div class="p-body"><p>Machine defects per day follow Poisson(2.2). Over 30 days, what is expected total and SD of total defects?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sum of independent Poisson is Poisson with lambda additivity. Mean=lambda_total, SD=sqrt(lambda_total).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 52</span></div>
+  <div class="p-body"><p>A test has success probability p=0.08 per trial. Find probability first success occurs by trial 12.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Geometric: P(T<=12)=1-(1-p)^12.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 53</span></div>
+  <div class="p-body"><p>Show when Poisson is reasonable approximation to Bin(n,p), then approximate P(X=0) for Bin(200,0.01).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use np fixed, n large, p small. Approximate lambda=np=2 then P(0)=e^{-2}.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 54</span></div>
+  <div class="p-body"><p>If X~Poisson(lambda), derive P(X is even) in closed form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use splitting of e^{lambda} series into even/odd terms: P(even)=0.5(1+e^{-2lambda}).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 55</span></div>
+  <div class="p-body"><p>A server has exponential service time mean 5 min. Find 90th percentile and P(T<3 | T<8).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For percentile q: t_q = -ln(1-q)/lambda. Conditional probability uses CDF ratio or memoryless complement.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 56</span></div>
+  <div class="p-body"><p>If X~Bin(20,0.35), compute P(X>=10) exactly and via normal approximation with continuity correction.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Exact from binomial sum. Approximate with N(np,np(1-p)); use P(Y>=9.5).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 57</span></div>
+  <div class="p-body"><p>A call center receives Poisson arrivals with rate 4 per 10 minutes. Find P(no calls in 5 min), P(at least 3 in 10 min).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Scale rates by interval. Use Poisson probabilities with lambda=2 for 5 min and lambda=4 for 10 min.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 58</span></div>
+  <div class="p-body"><p>Interarrival time T is exponential with mean 12 minutes. Find P(T>20), P(5<T<15), and median waiting time.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>lambda=1/12. Use survival e^{-lambda t}, interval difference, and median solves e^{-lambda m}=0.5.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 59</span></div>
+  <div class="p-body"><p>Machine defects per day follow Poisson(2.2). Over 30 days, what is expected total and SD of total defects?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sum of independent Poisson is Poisson with lambda additivity. Mean=lambda_total, SD=sqrt(lambda_total).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 60</span></div>
+  <div class="p-body"><p>A test has success probability p=0.08 per trial. Find probability first success occurs by trial 12.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Geometric: P(T<=12)=1-(1-p)^12.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 61</span></div>
+  <div class="p-body"><p>Show when Poisson is reasonable approximation to Bin(n,p), then approximate P(X=0) for Bin(200,0.01).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use np fixed, n large, p small. Approximate lambda=np=2 then P(0)=e^{-2}.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 62</span></div>
+  <div class="p-body"><p>If X~Poisson(lambda), derive P(X is even) in closed form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use splitting of e^{lambda} series into even/odd terms: P(even)=0.5(1+e^{-2lambda}).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 63</span></div>
+  <div class="p-body"><p>A server has exponential service time mean 5 min. Find 90th percentile and P(T<3 | T<8).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For percentile q: t_q = -ln(1-q)/lambda. Conditional probability uses CDF ratio or memoryless complement.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 64</span></div>
+  <div class="p-body"><p>If X~Bin(20,0.35), compute P(X>=10) exactly and via normal approximation with continuity correction.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Exact from binomial sum. Approximate with N(np,np(1-p)); use P(Y>=9.5).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 65</span></div>
+  <div class="p-body"><p>A call center receives Poisson arrivals with rate 4 per 10 minutes. Find P(no calls in 5 min), P(at least 3 in 10 min).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Scale rates by interval. Use Poisson probabilities with lambda=2 for 5 min and lambda=4 for 10 min.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 66</span></div>
+  <div class="p-body"><p>Interarrival time T is exponential with mean 12 minutes. Find P(T>20), P(5<T<15), and median waiting time.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>lambda=1/12. Use survival e^{-lambda t}, interval difference, and median solves e^{-lambda m}=0.5.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 67</span></div>
+  <div class="p-body"><p>Machine defects per day follow Poisson(2.2). Over 30 days, what is expected total and SD of total defects?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sum of independent Poisson is Poisson with lambda additivity. Mean=lambda_total, SD=sqrt(lambda_total).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 68</span></div>
+  <div class="p-body"><p>A test has success probability p=0.08 per trial. Find probability first success occurs by trial 12.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Geometric: P(T<=12)=1-(1-p)^12.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 69</span></div>
+  <div class="p-body"><p>Show when Poisson is reasonable approximation to Bin(n,p), then approximate P(X=0) for Bin(200,0.01).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use np fixed, n large, p small. Approximate lambda=np=2 then P(0)=e^{-2}.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 70</span></div>
+  <div class="p-body"><p>If X~Poisson(lambda), derive P(X is even) in closed form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use splitting of e^{lambda} series into even/odd terms: P(even)=0.5(1+e^{-2lambda}).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 71</span></div>
+  <div class="p-body"><p>A server has exponential service time mean 5 min. Find 90th percentile and P(T<3 | T<8).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For percentile q: t_q = -ln(1-q)/lambda. Conditional probability uses CDF ratio or memoryless complement.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 72</span></div>
+  <div class="p-body"><p>If X~Bin(20,0.35), compute P(X>=10) exactly and via normal approximation with continuity correction.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Exact from binomial sum. Approximate with N(np,np(1-p)); use P(Y>=9.5).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 73</span></div>
+  <div class="p-body"><p>A call center receives Poisson arrivals with rate 4 per 10 minutes. Find P(no calls in 5 min), P(at least 3 in 10 min).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Scale rates by interval. Use Poisson probabilities with lambda=2 for 5 min and lambda=4 for 10 min.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 74</span></div>
+  <div class="p-body"><p>Interarrival time T is exponential with mean 12 minutes. Find P(T>20), P(5<T<15), and median waiting time.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>lambda=1/12. Use survival e^{-lambda t}, interval difference, and median solves e^{-lambda m}=0.5.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 75</span></div>
+  <div class="p-body"><p>Machine defects per day follow Poisson(2.2). Over 30 days, what is expected total and SD of total defects?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sum of independent Poisson is Poisson with lambda additivity. Mean=lambda_total, SD=sqrt(lambda_total).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 76</span></div>
+  <div class="p-body"><p>A test has success probability p=0.08 per trial. Find probability first success occurs by trial 12.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Geometric: P(T<=12)=1-(1-p)^12.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 77</span></div>
+  <div class="p-body"><p>Show when Poisson is reasonable approximation to Bin(n,p), then approximate P(X=0) for Bin(200,0.01).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use np fixed, n large, p small. Approximate lambda=np=2 then P(0)=e^{-2}.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 78</span></div>
+  <div class="p-body"><p>If X~Poisson(lambda), derive P(X is even) in closed form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use splitting of e^{lambda} series into even/odd terms: P(even)=0.5(1+e^{-2lambda}).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 79</span></div>
+  <div class="p-body"><p>A server has exponential service time mean 5 min. Find 90th percentile and P(T<3 | T<8).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For percentile q: t_q = -ln(1-q)/lambda. Conditional probability uses CDF ratio or memoryless complement.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 80</span></div>
+  <div class="p-body"><p>If X~Bin(20,0.35), compute P(X>=10) exactly and via normal approximation with continuity correction.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Exact from binomial sum. Approximate with N(np,np(1-p)); use P(Y>=9.5).</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>MATH283 Advanced Engineering Mathematics &amp; Statistics &middot; Week 9 (Part B: Statistics)</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

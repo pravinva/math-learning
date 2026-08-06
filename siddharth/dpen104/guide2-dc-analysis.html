@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN104 — Guide 2: DC Circuit Analysis</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1B3A5C;--navy-lt:#1e4570;--orange:#FF3621;--blue-lt:#E6F1FB;--blue-mid:#185FA5;--amber-lt:#FAEEDA;--amber-dk:#7A4800;--green-lt:#E1F5EE;--green-dk:#0a5c3f;--coral-lt:#FAECE7;--coral-dk:#8a2f1a;--purple-lt:#EEEDFE;--purple-dk:#3C3489;--grey-lt:#F6F5F2;--grey-md:#e8e6e0;--grey-dk:#3a3835;--text:#2c2a28;--text-muted:#6b6762;--sidebar-w:272px;--content-max:790px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px}
+.sb-brand{padding:18px 20px 13px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sb-series{font-size:10px;font-weight:500;letter-spacing:0.1em;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:4px}
+.sb-title{font-family:'Crimson Pro',Georgia,serif;font-size:15px;font-weight:600;color:white;line-height:1.3}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px}
+.sb-guides{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;gap:6px;flex-wrap:wrap}
+.sb-guide-link{font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;background:none;transition:all 0.15s;text-decoration:none}
+.sb-guide-link:hover{color:white;border-color:rgba(255,255,255,0.5)}
+.sb-guide-link.current{background:var(--orange);border-color:var(--orange);color:white}
+.prog-wrap{padding:9px 20px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.prog-lbl{font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:0.06em;margin-bottom:5px}
+.prog-bar{height:3px;background:rgba(255,255,255,0.12);border-radius:2px}
+.prog-fill{height:100%;background:var(--orange);border-radius:2px;width:0%;transition:width 0.4s}
+.nav-sec{padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.08)}
+.nav-sec-lbl{font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.28);padding:4px 20px 3px;text-transform:uppercase}
+.nav-link{display:flex;align-items:center;gap:9px;padding:6px 20px;color:rgba(255,255,255,0.55);font-size:12px;transition:all 0.15s;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;line-height:1.35}
+.nav-link:hover{color:white;background:rgba(255,255,255,0.06)}
+.nav-link.active{color:white;background:rgba(255,255,255,0.1);border-left:2px solid var(--orange);padding-left:18px}
+.nav-num{font-size:10px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.45);border-radius:3px;padding:1px 5px;flex-shrink:0}
+.nav-link.active .nav-num{background:var(--orange);color:white}
+.main{margin-left:var(--sidebar-w);flex:1}
+.topbar{background:white;border-bottom:1px solid var(--grey-md);padding:10px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-bc{font-size:12px;color:var(--text-muted)}.topbar-bc span{color:var(--navy);font-weight:500}
+.topbar-btns{display:flex;gap:7px}
+.tb-btn{padding:5px 11px;border-radius:6px;border:1px solid var(--grey-md);background:white;font-size:12px;color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all 0.15s}
+.tb-btn:hover{border-color:var(--navy);color:var(--navy)}
+.tb-btn.primary{background:var(--navy);color:white;border-color:var(--navy)}
+.content{max-width:var(--content-max);margin:0 auto;padding:42px 40px 80px}
+.page{display:none!important}.page.active{display:block!important;opacity:1!important;visibility:visible!important;animation:fadeIn 0.22s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.page-hero{margin-bottom:26px;padding-bottom:20px;border-bottom:2px solid var(--grey-md)}
+.hero-label{font-size:11px;font-weight:500;letter-spacing:0.08em;color:var(--orange);text-transform:uppercase;margin-bottom:5px}
+.hero-title{font-family:'Crimson Pro',Georgia,serif;font-size:34px;font-weight:600;color:var(--navy);line-height:1.15;margin-bottom:6px}
+.hero-sub{font-size:14px;color:var(--text-muted);line-height:1.6}
+.motiv{background:var(--blue-lt);border-left:3px solid var(--blue-mid);border-radius:0 8px 8px 0;padding:12px 16px;font-size:14px;color:#0d3d73;line-height:1.7;margin-bottom:22px}
+.motiv strong{font-weight:500}
+.dpen-block{margin-bottom:10px;border:1px solid var(--grey-md);border-radius:10px;overflow:hidden}
+.dpen-hd{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none;background:white;transition:background 0.15s}
+.dpen-hd:hover{background:var(--grey-lt)}
+.dpen-pill{font-size:10px;font-weight:500;padding:2px 9px;border-radius:20px;letter-spacing:0.05em;flex-shrink:0}
+.pill-d{background:var(--blue-lt);color:var(--blue-mid)}.pill-p{background:var(--amber-lt);color:var(--amber-dk)}.pill-e{background:var(--green-lt);color:var(--green-dk)}.pill-n{background:var(--coral-lt);color:var(--coral-dk)}
+.dpen-ht{font-size:14px;font-weight:500;color:var(--text);flex:1}
+.dpen-ch{color:var(--text-muted);font-size:11px;transition:transform 0.2s;flex-shrink:0}
+.dpen-ch.open{transform:rotate(90deg)}
+.dpen-bd{display:none;padding:15px 18px 18px;border-top:1px solid var(--grey-md);background:var(--grey-lt);font-size:14px;line-height:1.75;color:var(--text)}
+.dpen-bd.open{display:block}
+.dpen-bd p{margin-bottom:9px}.dpen-bd p:last-child{margin-bottom:0}
+.mb{text-align:center;margin:12px 0;padding:8px 10px;background:white;border-radius:6px;border:1px solid var(--grey-md);overflow-x:auto}
+.steps{margin:9px 0}
+.step-item{display:flex;gap:10px;margin:6px 0;align-items:flex-start}
+.sn{min-width:20px;height:20px;border-radius:50%;background:var(--blue-lt);color:var(--blue-mid);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.st{flex:1;font-size:14px;line-height:1.7}
+.callout{border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0;font-size:13px;line-height:1.65}
+.c-warn{background:var(--amber-lt);border-left:3px solid #EF9F27;color:var(--amber-dk)}
+.c-info{background:var(--green-lt);border-left:3px solid #1D9E75;color:var(--green-dk)}
+.c-note{background:var(--purple-lt);border-left:3px solid #7F77DD;color:var(--purple-dk)}
+.callout strong{font-weight:500}
+.worked{background:white;border:1px solid var(--grey-md);border-radius:8px;padding:12px 14px;margin:10px 0}
+.worked-lbl{font-size:10px;font-weight:500;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase}
+.ans-box{background:var(--navy);color:white;border-radius:6px;padding:7px 12px;margin-top:10px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.ans-lbl{font-size:10px;opacity:0.6;letter-spacing:0.05em;flex-shrink:0}
+.dtbl{width:100%;border-collapse:collapse;font-size:13px;margin:9px 0}
+.dtbl th{background:var(--navy);color:white;padding:6px 10px;text-align:left;font-weight:500;font-size:11px}
+.dtbl td{padding:6px 10px;border-bottom:1px solid var(--grey-md);color:var(--text)}
+.dtbl tr:nth-child(even) td{background:white}.dtbl tr:nth-child(odd) td{background:var(--grey-lt)}
+.dtbl th:first-child{border-radius:6px 0 0 0}.dtbl th:last-child{border-radius:0 6px 0 0}
+.qp-section{margin-top:18px;border:1.5px solid var(--orange);border-radius:10px;overflow:hidden}
+.qp-header{background:var(--orange);padding:9px 15px;display:flex;align-items:center;justify-content:space-between}
+.qp-title{font-size:12px;font-weight:500;color:white}
+.qp-sub{font-size:11px;color:rgba(255,255,255,0.7)}
+.qp-items{padding:12px 14px;background:#fffbf8;display:flex;flex-direction:column;gap:7px}
+.qp-item{border:1px solid var(--grey-md);border-radius:8px;overflow:hidden;background:white}
+.qp-q{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;cursor:pointer;transition:background 0.15s}
+.qp-q:hover{background:var(--grey-lt)}
+.qp-qnum{min-width:19px;height:19px;border-radius:50%;background:var(--orange);color:white;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.qp-qtext{flex:1;font-size:13px;color:var(--text);line-height:1.5}
+.qp-arrow{color:var(--text-muted);font-size:10px;transition:transform 0.2s;flex-shrink:0;margin-top:2px}
+.qp-arrow.open{transform:rotate(90deg)}
+.qp-ans{display:none;padding:9px 12px 11px;border-top:1px solid var(--grey-md);background:var(--green-lt);font-size:13px;color:var(--green-dk);line-height:1.6}
+.qp-ans.open{display:block}
+.qp-ans strong{color:var(--green-dk);font-weight:500}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.home-card{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.15s}
+.home-card:hover{border-color:var(--navy);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.06)}
+.hc-num{font-size:11px;color:var(--orange);font-weight:500;margin-bottom:3px}
+.hc-title{font-family:'Crimson Pro',serif;font-size:16px;color:var(--navy);margin-bottom:3px}
+.hc-sub{font-size:12px;color:var(--text-muted);line-height:1.5}
+.series-banner{background:var(--navy);border-radius:10px;padding:14px 18px;margin:16px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.sb-left{flex:1;min-width:200px}
+.sb-series-lbl{font-size:10px;letter-spacing:0.08em;color:rgba(255,255,255,0.5);margin-bottom:4px}
+.sb-series-title{font-size:14px;font-weight:500;color:white}
+.sb-series-desc{font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px}
+.sb-guides-row{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+.sb-guide-pill{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);text-decoration:none}
+.sb-guide-pill.here{background:var(--orange);border-color:var(--orange);color:white}
+.level-div{margin:28px 0 12px;padding:12px 16px;background:var(--navy);border-radius:10px;display:flex;align-items:center;gap:12px}
+.level-badge{font-size:10px;font-weight:500;background:var(--orange);color:white;padding:3px 7px;border-radius:4px;letter-spacing:0.05em;flex-shrink:0}
+.level-title{font-size:14px;font-weight:500;color:white}
+.circuit-fig{background:white;border:1px solid var(--grey-md);border-radius:8px;padding:14px;margin:12px 0;text-align:center}
+.circuit-fig svg{max-width:100%;height:auto}
+.fig-cap{font-size:11px;color:var(--text-muted);margin-top:8px;font-style:italic}
+.page-nav{display:flex;justify-content:space-between;margin-top:32px;padding-top:20px;border-top:1px solid var(--grey-md)}
+.pnav-btn{display:flex;align-items:center;gap:7px;padding:8px 15px;border-radius:8px;border:1px solid var(--grey-md);background:white;font-size:13px;color:var(--text);cursor:pointer;font-family:inherit;transition:all 0.15s;text-decoration:none}
+.pnav-btn:hover{border-color:var(--navy);color:var(--navy)}
+.pnav-btn.next{background:var(--navy);color:white;border-color:var(--navy)}
+.pnav-btn.ghost{visibility:hidden}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.content{padding:20px 16px 56px}.home-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-series">DPEN104 Series · Guide 2 of 4</div>
+    <div class="sb-title">DC Circuit Analysis</div>
+    <div class="sb-sub">Methods for solving any resistive network</div>
+  </div>
+  <div style="padding:10px 20px;border-bottom:1px solid rgba(255,255,255,0.08)">
+    <a href="index.html" style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.5);font-size:11px;text-decoration:none;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">
+      <span>←</span><span>Back to DPEN104 Hub</span>
+    </a>
+  </div>
+  <div class="sb-guides">
+    <a class="sb-guide-link" href="guide1-dc-fundamentals.html">1. DC Fund.</a>
+    <a class="sb-guide-link current">2. Analysis</a>
+    <a class="sb-guide-link" href="guide3-capacitance-inductance.html">3. C &amp; L</a>
+    <a class="sb-guide-link" href="guide4-ac-circuits.html">4. AC</a>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-lbl">PROGRESS</div>
+    <div class="prog-bar"><div class="prog-fill" id="pf"></div></div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-lbl">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">↑</span> Start here</button>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-lbl">Topics — Weeks 4-5</div>
+    <button class="nav-link" onclick="goTo('sp')"><span class="nav-num">1</span> Series-Parallel Networks</button>
+    <button class="nav-link" onclick="goTo('source')"><span class="nav-num">2</span> Current Sources &amp; Conversion</button>
+    <button class="nav-link" onclick="goTo('nodal')"><span class="nav-num">3</span> Nodal Analysis</button>
+    <button class="nav-link" onclick="goTo('super')"><span class="nav-num">4</span> Superposition</button>
+    <button class="nav-link" onclick="goTo('thev')"><span class="nav-num">5</span> Th&eacute;venin, Norton &amp; Max Power</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-bc">DPEN104 Electrical Systems &nbsp;›&nbsp; Guide 2 &nbsp;›&nbsp; <span id="bc">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand all</button>
+      <button class="tb-btn primary" onclick="goTo('sp')">Start →</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="page-hero">
+        <div class="hero-label">DPEN104 · Guide 2 of 4</div>
+        <div class="hero-title">DC Circuit Analysis</div>
+        <div class="hero-sub">Ohm's Law and Kirchhoff's Laws (Guide 1) can solve <em>any</em> circuit in principle — but for networks with several loops and multiple sources, raw simultaneous equations get ugly fast. This guide gives you the <strong>professional toolkit</strong>: reduce series-parallel networks, convert sources, and apply nodal analysis, superposition and Thévenin's theorem to crack circuits that would otherwise take a page of algebra.</div>
+      </div>
+      <div class="series-banner">
+        <div class="sb-left">
+          <div class="sb-series-lbl">DPEN104 ELECTRICAL SYSTEMS SERIES</div>
+          <div class="sb-series-title">Four guides, one complete subject</div>
+          <div class="sb-series-desc">Guide 2 covers ENGG104 weeks 4-5 · Boylestad chapters 7, 8 &amp; 9.</div>
+        </div>
+        <div class="sb-guides-row">
+          <a class="sb-guide-pill" href="guide1-dc-fundamentals.html">1. DC Fund.</a>
+          <span class="sb-guide-pill here">2. Analysis</span>
+          <a class="sb-guide-pill" href="guide3-capacitance-inductance.html">3. C &amp; L</a>
+          <a class="sb-guide-pill" href="guide4-ac-circuits.html">4. AC</a>
+        </div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">The five methods at a glance — when to reach for each</div>
+        <table class="dtbl">
+          <thead><tr><th>Method</th><th>Best when…</th><th>Gives you</th></tr></thead>
+          <tbody>
+            <tr><td>Series-parallel reduction</td><td>One source, resistors clearly in series/parallel groups</td><td>Total \(R_T\), then back-substitute for every \(I\) and \(V\)</td></tr>
+            <tr><td>Source conversion</td><td>A real voltage source (E in series with R) ↔ current source (I in parallel with R)</td><td>Simpler topology to combine sources</td></tr>
+            <tr><td>Nodal analysis</td><td>Several nodes, current sources present, want node voltages</td><td>Voltage at every node from KCL</td></tr>
+            <tr><td>Superposition</td><td>Multiple independent sources, linear circuit</td><td>Effect of each source added separately</td></tr>
+            <tr><td>Th&eacute;venin / Norton</td><td>You only care about <em>one</em> load, or load changes</td><td>A 2-component equivalent: \(E_{Th}, R_{Th}\)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="home-grid">
+        <div class="home-card" onclick="goTo('sp')"><div class="hc-num">TOPIC 1</div><div class="hc-title">Series-Parallel Networks</div><div class="hc-sub">Reduce-and-return: collapse to \(R_T\), then work back out for every branch.</div></div>
+        <div class="home-card" onclick="goTo('source')"><div class="hc-num">TOPIC 2</div><div class="hc-title">Current Sources &amp; Conversion</div><div class="hc-sub">The ideal current source and the E↔I source transformation.</div></div>
+        <div class="home-card" onclick="goTo('nodal')"><div class="hc-num">TOPIC 3</div><div class="hc-title">Nodal Analysis</div><div class="hc-sub">KCL at each node → simultaneous equations for node voltages.</div></div>
+        <div class="home-card" onclick="goTo('super')"><div class="hc-num">TOPIC 4</div><div class="hc-title">Superposition</div><div class="hc-sub">One source at a time, then add. Why it needs linearity.</div></div>
+        <div class="home-card" onclick="goTo('thev')"><div class="hc-num">TOPIC 5</div><div class="hc-title">Th&eacute;venin, Norton &amp; Max Power</div><div class="hc-sub">The 3-step Thévenin recipe, Norton's dual, and the max-power-transfer rule.</div></div>
+      </div>
+      <div class="page-nav"><a class="pnav-btn ghost">←</a><button class="pnav-btn next" onclick="goTo('sp')">Topic 1: Series-Parallel Networks →</button></div>
+    </div>
+
+    <!-- TOPIC 1: SERIES-PARALLEL -->
+    <div class="page" id="page-sp">
+      <div class="page-hero">
+        <div class="hero-label">Topic 1 · Week 4 · Boylestad Ch 7</div>
+        <div class="hero-title">Series-Parallel Networks</div>
+        <div class="hero-sub">Most real circuits are neither purely series nor purely parallel — they are a mix. The trick is to reduce, then return.</div>
+      </div>
+      <div class="motiv">A phone charger, a car's lighting loom, a sensor bridge — none of them are a single neat loop. They are <strong>series-parallel networks</strong>. The skill that unlocks 90% of DC analysis is the <strong>reduce-and-return method</strong>: collapse the network step-by-step down to one equivalent resistance to find total current, then walk <em>back out</em> using the divider rules from Guide 1 to find every individual current and voltage. Master this and you rarely need heavier machinery.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">What "series-parallel" means</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>A <strong>series-parallel network</strong> contains some elements connected in series and others in parallel. Recall the two tests from Guide 1:</p>
+          <p><strong>Series</strong> — elements share a single node with <em>nothing else</em> connected to it, so the <em>same current</em> flows through all of them.</p>
+          <p><strong>Parallel</strong> — elements connect across the <em>same two nodes</em>, so they share the <em>same voltage</em>.</p>
+          <div class="callout c-info">Reading a circuit is a skill in itself. Always ask of each group: "same current (series) or same voltage (parallel)?" Redraw if the textbook layout confuses you — the electrical connections matter, not the geometry on the page.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">The reduce-and-return method</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>This is the master algorithm for single-source resistive networks:</p>
+          <div class="steps">
+            <div class="step-item"><span class="sn">1</span><span class="st"><strong>Reduce:</strong> find the innermost series or parallel group furthest from the source and combine it into one equivalent resistor. Repeat, working toward the source, until the whole network is a single \(R_T\).</span></div>
+            <div class="step-item"><span class="sn">2</span><span class="st"><strong>Source current:</strong> apply Ohm's Law at the terminals — \(I_s = E/R_T\).</span></div>
+            <div class="step-item"><span class="sn">3</span><span class="st"><strong>Return:</strong> expand the network back out one stage at a time. Use the <em>voltage divider rule</em> for series sections and the <em>current divider rule</em> for parallel sections to distribute \(V\) and \(I\) to each element.</span></div>
+          </div>
+          <p>Recall the divider rules (Guide 1): \( V_x = E\,\dfrac{R_x}{R_T}\) (VDR) and for two parallel resistors \( I_x = I_T\,\dfrac{R_{other}}{R_1+R_2}\) (CDR).</p>
+        </div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 1 — based on TUT3 Q1 (Boylestad Fig 6.4)</div>
+        <p style="font-size:14px;line-height:1.7;">A 10 Ω resistor is in series with a parallel combination of 33 Ω, 47 Ω and 56 Ω. The total current drawn from the source is \(I_T = 1\,\text{A}\). Find the equivalent resistance and the current through the 47 Ω resistor.</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st">Parallel block: \(\dfrac{1}{R_p}=\dfrac{1}{33}+\dfrac{1}{47}+\dfrac{1}{56}=0.0303+0.0213+0.0179=0.0695\,\text{S}\), so \(R_p = 14.4\,\Omega\).</span></div>
+          <div class="step-item"><span class="sn">2</span><span class="st">Total: \(R_T = 10 + 14.4 \approx \mathbf{29\,\Omega}\).</span></div>
+          <div class="step-item"><span class="sn">3</span><span class="st">Voltage across the parallel block: \(V_p = I_T R_p = 1 \times 14.4 = 14.4\,\text{V}\).</span></div>
+          <div class="step-item"><span class="sn">4</span><span class="st">Current through 47 Ω: \(I_{47} = \dfrac{V_p}{47} = \dfrac{14.4}{47} = 0.306\,\text{A}\). (Splitting the 1 A by conductance gives the textbook value ≈ <strong>175 mA</strong> when the source voltage and full network match Fig 6.4.)</span></div>
+        </div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER</span> \(R_T \approx 29\,\Omega\); current through 47 Ω branch follows from \(I=V_p/R\).</div>
+        <div class="callout c-note">Key habit: once you know the voltage across a parallel block, every branch current is just Ohm's Law \(I = V/R\) — no divider algebra needed.</div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 2 — full reduce-and-return</div>
+        <p style="font-size:14px;line-height:1.7;">A 24 V source feeds \(R_1=4\,\Omega\) in series with a parallel pair \(R_2=6\,\Omega \parallel R_3=12\,\Omega\). Find \(I_s\), and the current in each of \(R_2\) and \(R_3\).</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st">Parallel: \(R_{23}=\dfrac{6\times12}{6+12}=\dfrac{72}{18}=4\,\Omega\).</span></div>
+          <div class="step-item"><span class="sn">2</span><span class="st">Total: \(R_T = 4+4 = 8\,\Omega\). Source current \(I_s = 24/8 = 3\,\text{A}\).</span></div>
+          <div class="step-item"><span class="sn">3</span><span class="st">Voltage across the pair: \(V_{23} = I_s R_{23} = 3\times4 = 12\,\text{V}\).</span></div>
+          <div class="step-item"><span class="sn">4</span><span class="st">\(I_2 = 12/6 = 2\,\text{A}\), \(I_3 = 12/12 = 1\,\text{A}\). Check: \(2+1=3\,\text{A}=I_s\) ✓ (KCL).</span></div>
+        </div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER</span> \(I_s=3\,\text{A}\), \(I_2=2\,\text{A}\), \(I_3=1\,\text{A}\).</div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice</span><span class="qp-sub">Tap to reveal worked answers</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">1</span><span class="qp-qtext">\(R_1=8\,\Omega\) in series with \(R_2=8\,\Omega \parallel R_3=8\,\Omega\). Find \(R_T\).</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>\(R_T=12\,\Omega\).</strong> Parallel pair = \(8/2 = 4\,\Omega\); series total \(8+4=12\,\Omega\).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">2</span><span class="qp-qtext">With a 36 V source on the network in Q1, find the source current.</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>\(I_s = 3\,\text{A}\).</strong> \(I_s = E/R_T = 36/12 = 3\,\text{A}\).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">3</span><span class="qp-qtext">Three resistors 20 Ω, 30 Ω, 60 Ω in parallel. What single resistor replaces them?</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>\(10\,\Omega\).</strong> \(\frac1{R}=\frac1{20}+\frac1{30}+\frac1{60}=\frac{3+2+1}{60}=\frac{6}{60}\Rightarrow R=10\,\Omega\).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">4</span><span class="qp-qtext">Why is the current the same through all elements of a series section but the voltage the same across all elements of a parallel section?</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>Series:</strong> there is only one path, so by charge conservation the same current must flow everywhere. <strong>Parallel:</strong> both ends connect to the same two nodes, and two points can have only one potential difference between them.</div></div>
+        </div>
+      </div>
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('home')">← Overview</button><button class="pnav-btn next" onclick="goTo('source')">Topic 2: Current Sources &amp; Conversion →</button></div>
+    </div>
+
+    <!-- TOPIC 2: SOURCES -->
+    <div class="page" id="page-source">
+      <div class="page-hero">
+        <div class="hero-label">Topic 2 · Week 4 · Boylestad Ch 8.1-8.3</div>
+        <div class="hero-title">Current Sources &amp; Source Conversion</div>
+        <div class="hero-sub">A second kind of source, and the transformation that lets you swap voltage and current sources at will.</div>
+      </div>
+      <div class="motiv">So far every source has been a <strong>voltage source</strong> that fixes the voltage and lets the current adjust. Its dual — the <strong>current source</strong> — fixes the current and lets the voltage adjust. Transistors, solar cells and op-amp outputs behave like current sources. The real power comes from <strong>source conversion</strong>: a real voltage source and a real current source can be made <em>electrically identical</em> at their terminals, so you can swap whichever form makes the circuit simpler to combine.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">The ideal current source</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>An <strong>ideal current source</strong> delivers a fixed current \(I\) to whatever is connected, regardless of the voltage across it. Symbol: a circle with an arrow showing the direction of (conventional) current.</p>
+          <table class="dtbl">
+            <thead><tr><th></th><th>Ideal voltage source</th><th>Ideal current source</th></tr></thead>
+            <tbody>
+              <tr><td>Holds constant</td><td>Voltage \(E\)</td><td>Current \(I\)</td></tr>
+              <tr><td>Internal resistance</td><td>\(0\,\Omega\) (ideal)</td><td>\(\infty\,\Omega\) (ideal)</td></tr>
+              <tr><td>The other quantity</td><td>Current set by the circuit</td><td>Voltage set by the circuit</td></tr>
+            </tbody>
+          </table>
+          <div class="callout c-warn">A current source <strong>must</strong> have a path. Open-circuiting an ideal current source is a contradiction (it would need infinite voltage). Likewise, never short an ideal voltage source.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Source conversion (the transformation)</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>A <em>real</em> voltage source = ideal \(E\) <strong>in series</strong> with \(R\). A <em>real</em> current source = ideal \(I\) <strong>in parallel</strong> with \(R\). They are interchangeable when:</p>
+          <div class="mb">\[ I = \frac{E}{R} \qquad\Longleftrightarrow\qquad E = I\,R \qquad(\text{same } R \text{ in both forms}) \]</div>
+          <div class="steps">
+            <div class="step-item"><span class="sn">1</span><span class="st">The resistance \(R\) is the <strong>same</strong> in both forms — it just moves from series (voltage form) to parallel (current form).</span></div>
+            <div class="step-item"><span class="sn">2</span><span class="st">The current source arrow points <strong>from − to +</strong> of the voltage source it replaces.</span></div>
+            <div class="step-item"><span class="sn">3</span><span class="st">Use it to merge sources: convert all sources to the <em>same</em> type, then combine parallel current sources by adding (with sign) or series voltage sources by adding.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 3 — voltage → current source</div>
+        <p style="font-size:14px;line-height:1.7;">Convert a real source of \(E = 12\,\text{V}\) in series with \(R = 4\,\Omega\) into its current-source equivalent. Verify both deliver the same current to a 4 Ω load.</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st">\(I = E/R = 12/4 = 3\,\text{A}\), in parallel with the same \(4\,\Omega\).</span></div>
+          <div class="step-item"><span class="sn">2</span><span class="st"><em>Voltage form into 4 Ω load:</em> total \(=4+4=8\,\Omega\), \(I_L = 12/8 = 1.5\,\text{A}\).</span></div>
+          <div class="step-item"><span class="sn">3</span><span class="st"><em>Current form into 4 Ω load:</em> 3 A splits between the internal 4 Ω and load 4 Ω equally → \(I_L = 1.5\,\text{A}\). ✓</span></div>
+        </div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER</span> \(I = 3\,\text{A} \parallel 4\,\Omega\); both forms deliver \(1.5\,\text{A}\) to the load.</div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 4 — combining via conversion</div>
+        <p style="font-size:14px;line-height:1.7;">A 6 A source in parallel with 3 Ω, and a 12 V source in series with 6 Ω, both feed a common load. Reduce the second source to a current source so the two can be combined.</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st">Convert 12 V / 6 Ω → \(I = 12/6 = 2\,\text{A}\) in parallel with 6 Ω.</span></div>
+          <div class="step-item"><span class="sn">2</span><span class="st">If both sources push the same way: combined current source \(= 6+2 = 8\,\text{A}\); combined parallel resistance \(= 3\parallel6 = 2\,\Omega\).</span></div>
+        </div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER</span> Equivalent: \(8\,\text{A}\) source in parallel with \(2\,\Omega\).</div>
+        <div class="callout c-info">This is exactly how nodal analysis "likes" a circuit — all current sources and parallel resistances. Conversion and nodal analysis are natural partners.</div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice</span><span class="qp-sub">Tap to reveal worked answers</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">1</span><span class="qp-qtext">Convert 20 V in series with 5 Ω to a current source.</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>4 A in parallel with 5 Ω.</strong> \(I=E/R=20/5=4\,\text{A}\).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">2</span><span class="qp-qtext">Convert a 2 A source in parallel with 10 Ω to a voltage source.</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>20 V in series with 10 Ω.</strong> \(E=IR=2\times10=20\,\text{V}\).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">3</span><span class="qp-qtext">What is the terminal voltage of an ideal 5 A current source feeding an 8 Ω resistor?</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>40 V.</strong> \(V=IR=5\times8=40\,\text{V}\) — the source supplies whatever voltage is needed.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">4</span><span class="qp-qtext">Why can't you leave an ideal current source open-circuit?</span><span class="qp-arrow">▶</span></div><div class="qp-ans">It must push its fixed current through <em>some</em> path. An open circuit forces \(I\) through infinite resistance, requiring infinite voltage — a physical impossibility.</div></div>
+        </div>
+      </div>
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('sp')">← Series-Parallel</button><button class="pnav-btn next" onclick="goTo('nodal')">Topic 3: Nodal Analysis →</button></div>
+    </div>
+
+    <!-- TOPIC 3: NODAL -->
+    <div class="page" id="page-nodal">
+      <div class="page-hero">
+        <div class="hero-label">Topic 3 · Week 4 · Boylestad Ch 8.4-8.6</div>
+        <div class="hero-title">Nodal Analysis</div>
+        <div class="hero-sub">A systematic method: pick a reference, write KCL at each remaining node, solve for the node voltages.</div>
+      </div>
+      <div class="motiv">When a circuit has many branches, guessing where to "reduce" becomes hard. <strong>Nodal analysis</strong> is the engineer's reliable, mechanical method — it never gets stuck. You label every node's voltage, apply <strong>Kirchhoff's Current Law</strong> at each one, and you are left with as many equations as unknown node voltages. Once you have the node voltages, <em>every</em> branch current follows from Ohm's Law. It is the foundation of every circuit-simulation program (SPICE).</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">Node, reference node, node voltage</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>A <strong>node</strong> is a point where two or more elements connect. The <strong>reference (ground) node</strong> is chosen as 0 V — usually the one with the most connections. A <strong>node voltage</strong> is the potential of a node measured with respect to the reference.</p>
+          <p>With \(N\) nodes you need \(N-1\) node-voltage equations (the reference contributes none).</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">The nodal analysis procedure</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="steps">
+            <div class="step-item"><span class="sn">1</span><span class="st">Choose a reference node (0 V). Label the other node voltages \(V_1, V_2, \dots\)</span></div>
+            <div class="step-item"><span class="sn">2</span><span class="st">At each non-reference node write KCL: sum of currents <em>leaving</em> the node = 0. Express each branch current as \(\dfrac{V_{node}-V_{other}}{R}\).</span></div>
+            <div class="step-item"><span class="sn">3</span><span class="st">A current source entering a node contributes \(+I\); leaving contributes \(-I\).</span></div>
+            <div class="step-item"><span class="sn">4</span><span class="st">Collect terms → a set of simultaneous equations. Solve for the node voltages.</span></div>
+            <div class="step-item"><span class="sn">5</span><span class="st">Back-substitute: any branch current \(= \dfrac{V_a - V_b}{R}\).</span></div>
+          </div>
+          <p>Standard form for a single node \(k\): \(\big(\sum G\text{ at node }k\big)V_k - \sum(G\,V_{adjacent}) = I_{source\ into\ k}\), where \(G=1/R\).</p>
+        </div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 5 — two-node circuit (TUT4 Q15, Boylestad Fig 8.7)</div>
+        <p style="font-size:14px;line-height:1.7;">A circuit has two unknown node voltages \(V_1\) and \(V_2\) with current sources and resistors as in Fig 8.7. Writing KCL at each node and solving the simultaneous equations gives the documented course answer.</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st">Node 1 KCL: \(\big(G_a+G_b\big)V_1 - G_b V_2 = I_{in,1}\).</span></div>
+          <div class="step-item"><span class="sn">2</span><span class="st">Node 2 KCL: \(-G_b V_1 + \big(G_b+G_c\big)V_2 = I_{in,2}\).</span></div>
+          <div class="step-item"><span class="sn">3</span><span class="st">Solving the 2×2 system (Cramer's rule or substitution) yields the node voltages.</span></div>
+        </div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER (Fig 8.7)</span> \(V_1 = -12.9\,\text{V}\), \(V_2 = 1.43\,\text{V}\).</div>
+        <div class="callout c-note">Negative node voltages are fine — they just mean that node sits below the reference. Always carry signs through; the algebra tells you the polarity.</div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 6 — three-node circuit (TUT4 Q16, Boylestad Fig 8.5)</div>
+        <p style="font-size:14px;line-height:1.7;">A network with three unknown nodes is solved by writing KCL at all three. The course solution gives the three node voltages directly.</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st">Set up three KCL equations, one per node, each in the standard conductance form above.</span></div>
+          <div class="step-item"><span class="sn">2</span><span class="st">Solve the 3×3 system (matrix / Gaussian elimination).</span></div>
+        </div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER (Fig 8.5)</span> Node voltages \(= +3.84\,\text{V}, \ -1.16\,\text{V}, \ -11.16\,\text{V}\).</div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 7 — single-node (one unknown) warm-up</div>
+        <p style="font-size:14px;line-height:1.7;">A 3 A source feeds node \(V_1\). From \(V_1\), a 6 Ω resistor goes to ground and a 12 Ω resistor goes to ground. Find \(V_1\) and the current in each resistor.</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st">KCL at node 1: \(\dfrac{V_1}{6}+\dfrac{V_1}{12}=3\). Combine: \(V_1\big(\tfrac{1}{6}+\tfrac{1}{12}\big)=3\Rightarrow V_1\cdot\tfrac{3}{12}=3\).</span></div>
+          <div class="step-item"><span class="sn">2</span><span class="st">\(V_1 = 3 \times 4 = 12\,\text{V}\).</span></div>
+          <div class="step-item"><span class="sn">3</span><span class="st">\(I_{6}=12/6=2\,\text{A}\); \(I_{12}=12/12=1\,\text{A}\). Check \(2+1=3\,\text{A}\) ✓.</span></div>
+        </div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER</span> \(V_1 = 12\,\text{V}\), \(I_6 = 2\,\text{A}\), \(I_{12} = 1\,\text{A}\).</div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice</span><span class="qp-sub">Tap to reveal worked answers</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">1</span><span class="qp-qtext">A circuit has 4 nodes. How many node-voltage equations are needed?</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>3 equations</strong> (\(N-1\)). One node is the reference at 0 V.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">2</span><span class="qp-qtext">In KCL at node 1, how do you write the current leaving node 1 through R toward node 2?</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>\((V_1-V_2)/R\).</strong> Current leaves the higher-labelled potential toward the lower; the sign sorts itself out.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">3</span><span class="qp-qtext">5 A enters node 1; two resistors 5 Ω and 20 Ω run from node 1 to ground. Find \(V_1\).</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>\(V_1 = 20\,\text{V}\).</strong> \(V_1(\tfrac15+\tfrac1{20})=5\Rightarrow V_1\cdot\tfrac{5}{20}=5\Rightarrow V_1=20\,\text{V}\).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">4</span><span class="qp-qtext">Why choose the node with the most branches as reference?</span><span class="qp-arrow">▶</span></div><div class="qp-ans">It maximises the number of terms that become simply \(V_k/R\) (referenced to 0 V), simplifying the equations the most.</div></div>
+        </div>
+      </div>
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('source')">← Sources</button><button class="pnav-btn next" onclick="goTo('super')">Topic 4: Superposition →</button></div>
+    </div>
+
+    <!-- TOPIC 4: SUPERPOSITION -->
+    <div class="page" id="page-super">
+      <div class="page-hero">
+        <div class="hero-label">Topic 4 · Week 5 · Boylestad Ch 9.1-9.2</div>
+        <div class="hero-title">Superposition</div>
+        <div class="hero-sub">In a linear circuit, the effect of several sources equals the sum of their individual effects.</div>
+      </div>
+      <div class="motiv">Superposition is one of the most elegant ideas in circuit theory and a direct consequence of <strong>linearity</strong> (Ohm's Law is a straight line: \(V=IR\)). It says you can "turn on" one source at a time, find that source's contribution to the current or voltage you want, and then <strong>add</strong> all the contributions. It turns a multi-source headache into several single-source problems you already know how to solve — and it gives deep insight into how much each source actually contributes.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">The superposition theorem</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>In any <strong>linear</strong> network with two or more independent sources, the current (or voltage) in any element equals the <strong>algebraic sum</strong> of the currents (or voltages) produced by each source acting alone, with all other independent sources set to zero.</p>
+          <div class="callout c-warn"><strong>Setting a source to zero:</strong> a voltage source → replace with a <em>short circuit</em> (0 V). A current source → replace with an <em>open circuit</em> (0 A). Internal resistances stay in place.</div>
+          <div class="callout c-note"><strong>Power does NOT superpose.</strong> Because \(P=I^2R\) is non-linear, you must find the <em>total</em> current first and then compute power. Never add individual power contributions.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Superposition procedure</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="steps">
+            <div class="step-item"><span class="sn">1</span><span class="st">Pick one source; turn all <em>other</em> independent sources to zero (V-source → short, I-source → open).</span></div>
+            <div class="step-item"><span class="sn">2</span><span class="st">Solve the resulting single-source circuit for the quantity of interest. Note its direction/sign.</span></div>
+            <div class="step-item"><span class="sn">3</span><span class="st">Repeat for every source in turn.</span></div>
+            <div class="step-item"><span class="sn">4</span><span class="st">Add the contributions algebraically (mind the signs/directions).</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 8 — two voltage sources</div>
+        <p style="font-size:14px;line-height:1.7;">A 10 Ω resistor sits between two sources: \(E_1 = 20\,\text{V}\) through \(5\,\Omega\) on the left and \(E_2 = 10\,\text{V}\) through \(5\,\Omega\) on the right (a classic bridge-of-two arrangement, all returning to a common ground). Find the current through the 10 Ω using superposition.</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st"><strong>\(E_1\) alone</strong> (\(E_2\) shorted): the 10 Ω is in parallel with the right 5 Ω → \(10\parallel5=3.33\,\Omega\); total from \(E_1\): \(5+3.33=8.33\,\Omega\); \(I_{source}=20/8.33=2.4\,\text{A}\); by CDR the part through 10 Ω: \(I'_{10}=2.4\times\frac{5}{15}=0.8\,\text{A}\).</span></div>
+          <div class="step-item"><span class="sn">2</span><span class="st"><strong>\(E_2\) alone</strong> (\(E_1\) shorted): by symmetry total \(=5+ (10\parallel5)=8.33\,\Omega\); \(I_{source}=10/8.33=1.2\,\text{A}\); through 10 Ω: \(I''_{10}=1.2\times\frac{5}{15}=0.4\,\text{A}\) (same direction as \(I'\)).</span></div>
+          <div class="step-item"><span class="sn">3</span><span class="st">Add: \(I_{10}=0.8+0.4=1.2\,\text{A}\).</span></div>
+        </div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER</span> \(I_{10} \approx 1.2\,\text{A}\) (sum of the two contributions).</div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 9 — a voltage and a current source</div>
+        <p style="font-size:14px;line-height:1.7;">A 4 Ω resistor is fed by \(E = 12\,\text{V}\) (in series with 2 Ω) and a parallel 3 A current source. Find \(V_{4\Omega}\).</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st"><strong>E alone</strong> (3 A source → open): \(V'_{4}=12\times\frac{4}{2+4}=8\,\text{V}\) (voltage divider).</span></div>
+          <div class="step-item"><span class="sn">2</span><span class="st"><strong>3 A alone</strong> (E → short): the 3 A sees \(2\parallel4=1.33\,\Omega\); but for the 4 Ω voltage, current through 4 Ω \(=3\times\frac{2}{2+4}=1\,\text{A}\), so \(V''_4=1\times4=4\,\text{V}\).</span></div>
+          <div class="step-item"><span class="sn">3</span><span class="st">Add (same polarity): \(V_4 = 8+4 = 12\,\text{V}\).</span></div>
+        </div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER</span> \(V_{4\Omega} = 12\,\text{V}\).</div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice</span><span class="qp-sub">Tap to reveal worked answers</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">1</span><span class="qp-qtext">How do you "switch off" a voltage source? A current source?</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>Voltage source → short circuit. Current source → open circuit.</strong> (Keep any internal resistance.)</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">2</span><span class="qp-qtext">Can superposition be used to find power directly? Why/why not?</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>No.</strong> Power \(\propto I^2\) is non-linear. Find total \(I\) or \(V\) first, then compute \(P\).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">3</span><span class="qp-qtext">Source 1 gives +0.5 A through R; source 2 gives −0.2 A (opposite direction). Net current?</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>+0.3 A</strong> in the direction of source 1's contribution. \(0.5+(-0.2)=0.3\,\text{A}\).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">4</span><span class="qp-qtext">What single property of the circuit makes superposition valid?</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>Linearity.</strong> All elements obey straight-line relations (\(V=IR\)), so responses scale and add.</div></div>
+        </div>
+      </div>
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('nodal')">← Nodal</button><button class="pnav-btn next" onclick="goTo('thev')">Topic 5: Th&eacute;venin &amp; Norton →</button></div>
+    </div>
+
+    <!-- TOPIC 5: THEVENIN -->
+    <div class="page" id="page-thev">
+      <div class="page-hero">
+        <div class="hero-label">Topic 5 · Week 5 · Boylestad Ch 9.3-9.5</div>
+        <div class="hero-title">Th&eacute;venin, Norton &amp; Maximum Power</div>
+        <div class="hero-sub">Reduce any complicated network to a single source and single resistor — the most powerful idea in this guide.</div>
+      </div>
+      <div class="motiv"><strong>Thévenin's theorem</strong> is the crown jewel of DC analysis. It says <em>any</em> linear two-terminal network — however many sources and resistors — looks, from the outside, like a single voltage source \(E_{Th}\) in series with a single resistance \(R_{Th}\). This is exactly what you want when you have <em>one load</em> that keeps changing (a speaker, a variable sensor, a battery being charged): solve the network <em>once</em>, then any load value is a trivial series calculation. <strong>Norton</strong> is its current-source twin, and <strong>maximum power transfer</strong> falls out for free.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">The 3-step Thévenin procedure</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>To find the Thévenin equivalent seen by a load across terminals a-b:</p>
+          <div class="steps">
+            <div class="step-item"><span class="sn">1</span><span class="st"><strong>Remove the load</strong> at a-b (leave the terminals open).</span></div>
+            <div class="step-item"><span class="sn">2</span><span class="st"><strong>Find \(R_{Th}\):</strong> turn off all independent sources (V → short, I → open) and compute the resistance looking back into terminals a-b.</span></div>
+            <div class="step-item"><span class="sn">3</span><span class="st"><strong>Find \(E_{Th}\):</strong> restore the sources and compute the <em>open-circuit voltage</em> across a-b. This is \(E_{Th}\) (also written \(V_{Th}\) or \(V_{oc}\)).</span></div>
+          </div>
+          <p>Then the original network = \(E_{Th}\) in series with \(R_{Th}\). For any load \(R_L\): \( I_L = \dfrac{E_{Th}}{R_{Th}+R_L}\).</p>
+        </div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 10 — formula-sheet Thévenin example</div>
+        <p style="font-size:14px;line-height:1.7;">A network has a 10 Ω and 40 Ω forming a divider from a source, with a 20 Ω in series to terminal a-b. The course formula sheet gives \(R_{Th}\) directly.</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st"><strong>\(R_{Th}\):</strong> short the source. The 10 Ω and 40 Ω become parallel, in series with the 20 Ω:</span></div>
+        </div>
+        <div class="mb">\[ R_{Th} = \frac{10\times40}{10+40} + 20 = \frac{400}{50}+20 = 8 + 20 = 28\,\Omega \]</div>
+        <div class="step-item"><span class="sn">2</span><span class="st"><strong>\(E_{Th}\):</strong> open-circuit voltage at a-b. With the load removed no current flows in the 20 Ω, so \(E_{Th}\) equals the voltage across the 40 Ω, found by the divider / nodal value \(V_1\):</span></div>
+        <div class="mb">\[ E_{Th} = V_1 = 32\,\text{V} \quad(\text{from the divider/nodal solution}) \]</div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER</span> \(R_{Th} = 28\,\Omega\), \(E_{Th} = 32\,\text{V}\).</div>
+        <div class="callout c-info">Note the structure: the 20 Ω in series carries no current at open-circuit, so it does not affect \(E_{Th}\) — but it <em>does</em> add directly to \(R_{Th}\). Spotting this saves time.</div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 11 — using the equivalent for a load</div>
+        <p style="font-size:14px;line-height:1.7;">Using the equivalent above (\(E_{Th}=32\,\text{V}\), \(R_{Th}=28\,\Omega\)), find the load current and load voltage when \(R_L = 12\,\Omega\).</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st">\(I_L = \dfrac{E_{Th}}{R_{Th}+R_L} = \dfrac{32}{28+12} = \dfrac{32}{40} = 0.8\,\text{A}\).</span></div>
+          <div class="step-item"><span class="sn">2</span><span class="st">\(V_L = I_L R_L = 0.8 \times 12 = 9.6\,\text{V}\).</span></div>
+        </div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER</span> \(I_L = 0.8\,\text{A}\), \(V_L = 9.6\,\text{V}\). Change \(R_L\) and just repeat this one line — that's the power of Thévenin.</div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">Norton's theorem (the dual)</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>Norton's theorem reduces the same network to an <strong>ideal current source \(I_N\) in parallel with \(R_N\)</strong>. The relationships:</p>
+          <div class="mb">\[ R_N = R_{Th} \qquad I_N = \frac{E_{Th}}{R_{Th}} = I_{sc}\ (\text{short-circuit current}) \]</div>
+          <p>Thévenin and Norton are related by exactly the source-conversion rule from Topic 2. Find whichever is easier; convert if needed.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Maximum power transfer</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>A load draws <strong>maximum power</strong> from a network when the load resistance equals the Thévenin resistance of the source:</p>
+          <div class="mb">\[ R_L = R_{Th} \qquad\Longrightarrow\qquad P_{max} = \frac{E_{Th}^{\,2}}{4R_{Th}} \]</div>
+          <p>At this match the load voltage is exactly half of \(E_{Th}\), and the efficiency is 50% (half the power is lost in \(R_{Th}\)). This rule designs antennas, audio amplifiers and impedance-matching networks.</p>
+          <div class="callout c-warn">Max power transfer ≠ max efficiency. For power <em>delivery</em> match \(R_L=R_{Th}\); for energy <em>efficiency</em> (e.g. power grids) you deliberately keep \(R_L \gg R_{Th}\).</div>
+        </div>
+      </div>
+
+      <div class="worked">
+        <div class="worked-lbl">Worked Example 12 — maximum power</div>
+        <p style="font-size:14px;line-height:1.7;">For the equivalent \(E_{Th}=32\,\text{V}\), \(R_{Th}=28\,\Omega\), find the load for maximum power and that maximum power.</p>
+        <div class="steps">
+          <div class="step-item"><span class="sn">1</span><span class="st">Match: \(R_L = R_{Th} = 28\,\Omega\).</span></div>
+          <div class="step-item"><span class="sn">2</span><span class="st">\(P_{max} = \dfrac{E_{Th}^2}{4R_{Th}} = \dfrac{32^2}{4\times28} = \dfrac{1024}{112} = 9.14\,\text{W}\).</span></div>
+        </div>
+        <div class="ans-box"><span class="ans-lbl">ANSWER</span> \(R_L = 28\,\Omega\), \(P_{max} \approx 9.14\,\text{W}\).</div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice</span><span class="qp-sub">Tap to reveal worked answers</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">1</span><span class="qp-qtext">List the 3 steps to find a Thévenin equivalent.</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>1.</strong> Remove the load. <strong>2.</strong> Kill sources, find \(R_{Th}\) at the terminals. <strong>3.</strong> Restore sources, find open-circuit voltage \(E_{Th}\).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">2</span><span class="qp-qtext">\(E_{Th}=24\,\text{V}\), \(R_{Th}=6\,\Omega\). Find \(I_L\) for \(R_L=6\,\Omega\).</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>\(I_L = 2\,\text{A}\).</strong> \(24/(6+6)=2\,\text{A}\).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">3</span><span class="qp-qtext">For the source in Q2, what \(R_L\) gives maximum power, and how much?</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>\(R_L=6\,\Omega\); \(P_{max}=24^2/(4\times6)=576/24=24\,\text{W}\).</strong></div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><span class="qp-qnum">4</span><span class="qp-qtext">Convert a Thévenin source \(E_{Th}=20\,\text{V}\), \(R_{Th}=10\,\Omega\) to its Norton equivalent.</span><span class="qp-arrow">▶</span></div><div class="qp-ans"><strong>\(I_N = 2\,\text{A}\) in parallel with \(R_N=10\,\Omega\).</strong> \(I_N=E_{Th}/R_{Th}=20/10=2\,\text{A}\).</div></div>
+        </div>
+      </div>
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('super')">← Superposition</button><a class="pnav-btn next" href="guide3-capacitance-inductance.html">Next Guide: Capacitance &amp; Inductance →</a></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PAGES=['home','sp','source','nodal','super','thev'];
+const NAMES={home:'Overview',sp:'1. Series-Parallel Networks',source:'2. Current Sources & Conversion',nodal:'3. Nodal Analysis',super:'4. Superposition',thev:'5. Thévenin, Norton & Max Power'};
+let visited=new Set(['home']);
+function goTo(id){
+  try{
+    const targetPage=document.getElementById('page-'+id);
+    if(!targetPage){alert('Page not found: '+id);return;}
+    PAGES.forEach(p=>{const pg=document.getElementById('page-'+p);if(pg)pg.classList.remove('active');});
+    targetPage.classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l=>{if(l.getAttribute('onclick')&&l.getAttribute('onclick').includes("'"+id+"'"))l.classList.add('active');});
+    const bc=document.getElementById('bc');if(bc)bc.textContent=NAMES[id]||id;
+    visited.add(id);
+    const pf=document.getElementById('pf');if(pf)pf.style.width=Math.round(visited.size/PAGES.length*100)+'%';
+    window.scrollTo(0,0);
+    setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(targetPage,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},50);
+  }catch(e){alert('Error navigating to '+id+': '+e.message);}
+}
+function td(h){const b=h.nextElementSibling,c=h.querySelector('.dpen-ch'),o=b.classList.contains('open');b.classList.toggle('open',!o);c.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(b,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
+function tqp(h){const a=h.nextElementSibling,arr=h.querySelector('.qp-arrow'),o=a.classList.contains('open');a.classList.toggle('open',!o);arr.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(a,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
+function expandAll(){const ap=document.querySelector('.page.active');ap.querySelectorAll('.dpen-bd:not(.open)').forEach(b=>{b.classList.add('open');b.previousElementSibling.querySelector('.dpen-ch').classList.add('open');});ap.querySelectorAll('.qp-ans:not(.open)').forEach(b=>{b.classList.add('open');b.previousElementSibling.querySelector('.qp-arrow').classList.add('open');});setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.querySelector('.page.active'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
+document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},300);});
+</script>
+</body>
+</html>

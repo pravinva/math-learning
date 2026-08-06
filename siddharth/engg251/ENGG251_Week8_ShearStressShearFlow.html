@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shear Stress &amp; Shear Flow in Beams</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG251 &middot; Mechanics of Solids &middot; Week 8</div>
+  <h1>Shear Stress &amp; Shear Flow in Beams</h1>
+  <p>The transverse shear stress formula, the first moment of area Q and how to compute it for common sections, the resulting shear stress distributions in rectangular, circular and I-beam sections, and shear flow for designing built-up (fastened/glued/welded) beams. This is the shear-force counterpart to Week 4's bending stress. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 28 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this block's toolkit</span>
+  <ul>
+<li><strong>Shear stress formula:</strong> $\tau=VQ/(Ib)$ &mdash; $V$ from the SFD, $I$ for the whole section, $b$ = width at the point of interest.</li>
+<li><strong>$Q=\bar y'A'$:</strong> first moment of the partial area beyond the point of interest, about the N.A. &mdash; zero at extreme fibres, max at the N.A.</li>
+<li><strong>Rectangle:</strong> $\tau_{\max}=1.5\bar\tau$ at the N.A. (parabolic distribution). <strong>Circle:</strong> $\tau_{\max}=\frac43\bar\tau$.</li>
+<li><strong>I-beams:</strong> the web carries almost all the shear (nearly uniform), the flanges carry almost all the bending &mdash; the reason for the shape.</li>
+<li><strong>Shear flow</strong> $q=VQ/I$ (force/length) sizes fasteners in built-up sections: $F_{\text{fastener}}=q\,s$.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Transverse Shear Stress Formula</a></li>
+<li><a href="#sec1">First Moment of Area, Q</a></li>
+<li><a href="#sec2">Shear Stress Distribution in Common Sections</a></li>
+<li><a href="#sec3">Shear Flow in Built-up Sections</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+<div class="section-title"><span class="tag">0</span> Transverse Shear Stress Formula</div>
+
+<div class="prose">
+<p>Whenever a beam carries a shear force $V$ (i.e. whenever the bending moment is changing along the beam &mdash; recall $dM/dx=V$), <strong>shear stress</strong> also develops across the cross-section, in addition to the bending (normal) stress from Week 4. The <strong>shear stress formula</strong> gives the shear stress at any point a distance from the neutral axis: $\tau=\dfrac{VQ}{Ib}$.</p>
+<p>Here $V$ is the internal shear force at that section (from the SFD, Week 3), $I$ is the moment of inertia of the <em>whole</em> cross-section about the neutral axis (same $I$ as Week 4), $b$ is the <strong>width</strong> of the cross-section at the point where $\tau$ is being found, and $Q$ is the <strong>first moment of area</strong> of the region of the cross-section <em>beyond</em> (farther from the N.A. than) that point &mdash; defined and computed in the next section.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\tau=\frac{VQ}{Ib} \qquad \text{(transverse shear stress, at a given height on the cross-section)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A rectangular beam, $b=100$ mm, $h=200$ mm, carries $V=30$ kN. Find the shear stress at the neutral axis (where $Q$ is largest, so $\tau$ is maximum &mdash; formula for a rectangle at the N.A.: $Q=\dfrac{bh^2}8$).</p>
+<p class="step">$I=\dfrac{bh^3}{12}=\dfrac{0.100(0.200)^3}{12}=6.667\times10^{-5}\ \text{m}^4$. $Q=\dfrac{0.100(0.200)^2}{8}=5\times10^{-4}\ \text{m}^3$.</p>
+<p class="step">$\tau_{\max}=\dfrac{VQ}{Ib}=\dfrac{30000(5\times10^{-4})}{(6.667\times10^{-5})(0.100)}=\dfrac{15}{6.667\times10^{-6}}=2.25\times10^6\ \text{Pa}=2.25$ MPa.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A rectangular beam, $b=80$ mm, $h=160$ mm, carries $V=20$ kN. Find the maximum shear stress at the neutral axis using $Q_{\max}=bh^2/8$ and $I=bh^3/12$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$I=\dfrac{0.080(0.160)^3}{12}=2.731\times10^{-5}\ \text{m}^4$. $Q=\dfrac{0.080(0.160)^2}{8}=2.56\times10^{-4}\ \text{m}^3$. $\tau_{\max}=\dfrac{20000(2.56\times10^{-4})}{2.731\times10^{-5}(0.080)}=2.343\times10^6\ \text{Pa}=2.34$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>For a rectangular section, the maximum shear stress at the neutral axis can also be found directly from $\tau_{\max}=\dfrac{3V}{2A}$ (1.5 times the average shear stress $V/A$). Verify this for the previous question ($A=0.080\times0.160=0.0128\ \text{m}^2$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tau_{\max}=\dfrac{3(20000)}{2(0.0128)}=\dfrac{60000}{0.0256}=2.344\times10^6\ \text{Pa}=2.34$ MPa &mdash; matches the direct $VQ/Ib$ calculation. &#10003;</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A rectangular beam, $b=120$ mm, $h=250$ mm, carries a maximum shear force of $V=45$ kN. Find $\tau_{\max}$ using the shortcut $\tau_{\max}=1.5V/A$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=0.120(0.250)=0.030\ \text{m}^2$. $\tau_{\max}=1.5(45000)/0.030=2.25\times10^6\ \text{Pa}=2.25$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Explain why the shear stress $\tau$ must be exactly zero at the very top and bottom fibres of a beam cross-section (the same locations where bending stress is maximum), using the definition of $Q$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$Q$ is the first moment of the area <em>beyond</em> the point in question, measured from the neutral axis. At the extreme top (or bottom) fibre, there is no area beyond that point (nothing farther out), so $Q=0$ there, making $\tau=VQ/Ib=0$. This is a general beam-theory result: bending stress peaks at the extreme fibres where shear stress vanishes, and shear stress peaks at (or near) the neutral axis where bending stress is zero &mdash; the two stress types are essentially complementary across the depth of the section.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A beam cross-section has $I=5\times10^{-5}\ \text{m}^4$, width $b=0.100$ m at the neutral axis, and carries $V=25$ kN with $Q=4\times10^{-4}\ \text{m}^3$ at the N.A. Find the shear stress there.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tau=\dfrac{25000(4\times10^{-4})}{(5\times10^{-5})(0.100)}=\dfrac{10}{5\times10^{-6}}=2\times10^6\ \text{Pa}=2$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>A circular shaft cross-section, diameter 60 mm, carries $V=8$ kN. Using the standard result $\tau_{\max}=\dfrac{4V}{3A}$ for a solid circular section, find the maximum shear stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\pi(0.030)^2=2.827\times10^{-3}\ \text{m}^2$. $\tau_{\max}=\dfrac{4(8000)}{3(2.827\times10^{-3})}=3.775\times10^6\ \text{Pa}=3.78$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Explain why the shear stress formula $\tau=VQ/Ib$ gives only an <em>average</em> value across the width $b$ at a given height (rather than the exact stress at every point across that width), and why this approximation is most accurate for sections that are narrow (small $b$) relative to their depth.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The derivation of $\tau=VQ/Ib$ assumes the shear stress is uniformly distributed across the width $b$ at any given height &mdash; a simplification, since in reality the shear stress can vary somewhat across the width (particularly near the edges of a wide section). This approximation introduces negligible error for narrow, deep sections (where $b$ is small compared to $h$, so there is little room for stress variation across the width), but becomes progressively less accurate for wide, shallow sections where genuine two-dimensional stress variation across the width becomes significant.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+<div class="section-title"><span class="tag">1</span> First Moment of Area, Q</div>
+
+<div class="prose">
+<p>$Q=\bar y'A'$, where $A'$ is the area of the cross-section <strong>between</strong> the point where $\tau$ is being evaluated and the extreme (outer) fibre, and $\bar y'$ is the distance from the neutral axis to the <strong>centroid</strong> of that partial area $A'$ (not the centroid of the whole section).</p>
+<p>$Q$ is <strong>zero</strong> at the extreme fibres (no area beyond them) and <strong>maximum</strong> at the neutral axis (all of the beam's "far" material is counted), which is exactly why shear stress peaks at the N.A. for typical solid sections. For a rectangle of width $b$, total depth $h$: $Q_{\max}=\dfrac{bh^2}{8}$ (at the N.A.); at a general height $y$ from the N.A.: $Q(y)=\dfrac b2\left(\dfrac{h^2}4-y^2\right)$, giving the characteristic <strong>parabolic</strong> shear stress distribution.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$Q=\bar y'A' \quad \text{(first moment of the partial area beyond the point of interest, about the N.A.)} \qquad Q_{\text{rect,max}}=\frac{bh^2}8$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> For a rectangular section $b=100$ mm, $h=200$ mm, find $Q$ at $y=50$ mm above the neutral axis (i.e. the first moment of the area from $y=50$ mm to $y=100$ mm, the top fibre).</p>
+<p class="step">$A'=b(100-50)\ \text{mm}=0.100(0.050)=5\times10^{-3}\ \text{m}^2$. Centroid of this strip is at $\bar y'=\dfrac{50+100}2=75$ mm from the N.A. $=0.075$ m.</p>
+<p class="step">$Q=\bar y'A'=0.075(5\times10^{-3})=3.75\times10^{-4}\ \text{m}^3$.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>For a rectangular section $b=80$ mm, $h=160$ mm, find $Q$ at $y=40$ mm above the N.A. (i.e. the partial area from $y=40$ mm to $y=80$ mm).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A'=0.080(0.040)=3.2\times10^{-3}\ \text{m}^2$. $\bar y'=(40+80)/2=60$ mm $=0.060$ m. $Q=0.060(3.2\times10^{-3})=1.92\times10^{-4}\ \text{m}^3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>For a rectangular section $b=100$ mm, $h=200$ mm, use $Q_{\max}=bh^2/8$ to verify the value found in the worked example at $y=0$ (the N.A. itself), and confirm it exceeds the $y=50$ mm value found there.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$Q_{\max}=\dfrac{0.100(0.200)^2}8=5\times10^{-4}\ \text{m}^3$, which is indeed larger than the $3.75\times10^{-4}\ \text{m}^3$ found at $y=50$ mm &mdash; confirming $Q$ decreases as you move away from the N.A. toward the extreme fibre.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A T-section has its flange (150 mm &times; 20 mm) located entirely above the neutral axis, with the flange centroid 60 mm above the N.A. Find $Q$ at the level just below the flange (i.e. $A'=$ flange area only).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A'=150(20)=3000\ \text{mm}^2=3\times10^{-3}\ \text{m}^2$. $Q=\bar y'A'=0.060(3\times10^{-3})=1.8\times10^{-4}\ \text{m}^3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>For a circular section of radius $R$, the maximum $Q$ (at the N.A.) is $Q_{\max}=\dfrac{2R^3}3$. Find $Q_{\max}$ for a circular shaft of diameter 50 mm.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$R=0.025$ m. $Q_{\max}=\dfrac{2(0.025)^3}3=1.042\times10^{-5}\ \text{m}^3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Explain why $Q$ must always be computed using the centroid of the <em>partial</em> area beyond the point of interest, rather than the centroid of the whole cross-section, and what would happen (conceptually) if the whole-section centroid were mistakenly used instead.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$Q$ represents the tendency of the partial area (the material on one side of the cut, farther from the N.A.) to slide relative to the rest of the section &mdash; physically, it's the first moment of exactly that piece of material about the N.A., which requires that piece's own centroid location. Using the whole-section centroid (which, by definition of the N.A., is at $y=0$, i.e. right at the neutral axis) would give $\bar y'=0$ regardless of which height you were evaluating, incorrectly predicting $Q=0$ everywhere &mdash; obviously wrong, since it would eliminate all shear stress from the formula entirely.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>For an I-beam with a flange (200 mm &times; 15 mm, flange centroid 92.5 mm from the N.A.) and considering only the flange as the partial area beyond a cut just below it, find $Q$ at that level.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A'=200(15)=3000\ \text{mm}^2=3\times10^{-3}\ \text{m}^2$. $Q=0.0925(3\times10^{-3})=2.775\times10^{-4}\ \text{m}^3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Explain, using the formula $Q(y)=\dfrac b2\left(\dfrac{h^2}4-y^2\right)$ for a rectangle, why the resulting shear stress distribution $\tau(y)=\dfrac{VQ(y)}{Ib}$ is parabolic in $y$ (rather than linear, as the bending stress is).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $Q(y)$ is a quadratic function of $y$ (from the $y^2$ term), and $\tau=VQ/(Ib)$ is directly proportional to $Q$ for a rectangle (constant $I$ and $b$), the shear stress $\tau(y)$ inherits that same quadratic dependence on $y$ &mdash; producing the characteristic parabolic shear stress distribution across the depth of a rectangular beam, in contrast to the linear bending stress distribution $\sigma=-My/I$ from Week 4, which depends on $y$ to only the first power.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+<div class="section-title"><span class="tag">2</span> Shear Stress Distribution in Common Sections</div>
+
+<div class="prose">
+<p>For a <strong>rectangular</strong> section, the shear stress distribution is a smooth parabola, zero at top/bottom, maximum at the N.A., with $\tau_{\max}=1.5\bar\tau$ (where $\bar\tau=V/A$ is the average shear stress) &mdash; the factor 1.5 comes directly from integrating the parabola and comparing to the average.</p>
+<p>For a <strong>circular</strong> solid section, similarly $\tau_{\max}=\dfrac43\bar\tau$ at the N.A. For an <strong>I-beam</strong ('wide-flange') section, the shear stress in the thin web is <strong>nearly uniform</strong> and carries the vast majority of the total shear force (often approximated in practice as $\tau_{\text{web}}\approx V/A_{\text{web}}$), while the shear stress in the flanges is comparatively small &mdash; this is precisely why I-beams are shaped the way they are: flanges resist bending (far from the N.A., Week 4), and the web resists shear (near the N.A.).</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\text{Rectangle: } \tau_{\max}=1.5\,\bar\tau \qquad \text{Circle: } \tau_{\max}=\tfrac43\bar\tau \qquad \text{I-beam: } \tau_{\text{web}}\approx\frac{V}{A_{\text{web}}} \ \text{(approx., nearly uniform)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> An I-beam has a web of thickness 8 mm and depth 250 mm, carrying $V=60$ kN. Estimate the average web shear stress using the approximate method.</p>
+<p class="step">$A_{\text{web}}=0.008\times0.250=2\times10^{-3}\ \text{m}^2$. $\tau_{\text{web}}\approx\dfrac{60000}{2\times10^{-3}}=30\times10^6\ \text{Pa}=30$ MPa.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A rectangular beam has average shear stress $\bar\tau=4$ MPa. Find $\tau_{\max}$ at the N.A.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tau_{\max}=1.5(4)=6$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A circular shaft has average shear stress $\bar\tau=6$ MPa. Find $\tau_{\max}$ at the N.A.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tau_{\max}=\dfrac43(6)=8$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>An I-beam web has thickness 10 mm, depth 300 mm, and carries $V=90$ kN. Estimate the average web shear stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A_{\text{web}}=0.010(0.300)=3\times10^{-3}\ \text{m}^2$. $\tau_{\text{web}}\approx90000/3\times10^{-3}=30\times10^6\ \text{Pa}=30$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A rectangular beam, $b=60$ mm, $h=180$ mm, must not exceed an allowable shear stress of 3.5 MPa. Find the maximum allowable shear force $V$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=0.060(0.180)=0.0108\ \text{m}^2$. $\tau_{\max}=1.5V/A\le3.5\times10^6\Rightarrow V\le\dfrac{3.5\times10^6(0.0108)}{1.5}=25200$ N $=25.2$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Explain why an I-beam is a far more material-efficient shape than a rectangular beam of the same overall depth and area, in terms of how each type of internal stress (bending vs shear) is distributed across the section.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Bending stress is largest at the extreme (outer) fibres and zero at the N.A. (Week 4), so material placed far from the N.A. (the flanges) does the most work resisting bending moment; shear stress, by contrast, is largest near the N.A. and comparatively small elsewhere (Section 0), so a thin web near the N.A. is sufficient to carry most of the shear force efficiently. An I-beam concentrates material exactly where each stress type needs it &mdash; wide flanges far from the N.A. for bending, and a thin web near the N.A. for shear &mdash; achieving much greater bending stiffness and strength per unit weight of material than a solid rectangular section, which "wastes" material near its N.A. resisting relatively little bending stress.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A circular shaft, diameter 45 mm, carries $V=6$ kN. Find $\tau_{\max}$ using $\tau_{\max}=\dfrac{4V}{3A}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\pi(0.0225)^2=1.590\times10^{-3}\ \text{m}^2$. $\tau_{\max}=\dfrac{4(6000)}{3(1.590\times10^{-3})}=5.03\times10^6\ \text{Pa}=5.03$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Compare the maximum shear stress in a rectangular beam ($b=100$ mm, $h=200$ mm) and a circular beam of the same cross-sectional area, both carrying $V=40$ kN. First find the circle's diameter (equal area to the rectangle).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Rectangle area $=0.020\ \text{m}^2$. Circle: $\pi R^2=0.020\Rightarrow R=0.0798$ m, $d=159.6$ mm. Rectangle: $\tau_{\max}=1.5(40000)/0.020=3$ MPa. Circle: $\tau_{\max}=\dfrac43(40000)/0.020=2.67$ MPa &mdash; the circular section has a slightly lower maximum shear stress for the same area and shear force, since its shape factor ($4/3\approx1.33$) is smaller than the rectangle's ($1.5$).</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+<div class="section-title"><span class="tag">3</span> Shear Flow in Built-up Sections</div>
+
+<div class="prose">
+<p><strong>Shear flow</strong> $q=\dfrac{VQ}{I}$ (units: force per unit length, e.g. N/m) is the shear force <em>per unit length</em> along the beam that must be transferred across a particular longitudinal joint or interface &mdash; essential for designing <strong>built-up sections</strong> assembled from separate pieces (e.g. planks nailed/glued together, or plates connected by welds/rivets/bolts to form a larger beam).</p>
+<p>For a <strong>fastener</strong> (nail, bolt, weld) spaced at intervals $s$ along the beam, each fastener must resist the shear flow accumulated over its spacing: $F_{\text{fastener}}=q\cdot s$. Design requires this force not exceed the fastener's allowable shear capacity, giving a <strong>maximum allowable spacing</strong> $s_{\max}=\dfrac{F_{\text{allow}}}{q}$.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$q=\frac{VQ}{I} \quad \text{(shear flow, force/length)} \qquad F_{\text{fastener}}=q\,s \qquad s_{\max}=\frac{F_{\text{allow}}}{q}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A built-up beam has a flange attached to a web by nails. At the flange-web interface, $Q=6\times10^{-4}\ \text{m}^3$, $I=3\times10^{-5}\ \text{m}^4$, and the beam carries $V=25$ kN. If each nail can safely resist 800 N, find the maximum nail spacing.</p>
+<p class="step">$q=\dfrac{VQ}{I}=\dfrac{25000(6\times10^{-4})}{3\times10^{-5}}=500000\ \text{N/m}=500$ kN/m.</p>
+<p class="step">$s_{\max}=\dfrac{F_{\text{allow}}}{q}=\dfrac{800}{500000}=1.6\times10^{-3}\ \text{m}=1.6$ mm &mdash; an impractically small spacing, indicating this design needs either stronger nails, more nails per row, or a different fastening method.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>A built-up beam joint has $Q=4\times10^{-4}\ \text{m}^3$, $I=2.5\times10^{-5}\ \text{m}^4$, and carries $V=18$ kN. Find the shear flow $q$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$q=\dfrac{18000(4\times10^{-4})}{2.5\times10^{-5}}=288000\ \text{N/m}=288$ kN/m.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>For the shear flow found in the previous question, if fasteners are spaced 50 mm apart, find the force each fastener must resist.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F=q\,s=288000(0.050)=14400$ N $=14.4$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>A built-up wood beam is glued at two flange-web joints, each carrying half the total shear flow due to symmetry. If the total shear flow is $q_{\text{total}}=400$ kN/m, find the shear flow at each individual glued joint.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>By symmetry, $q_{\text{each}}=400/2=200$ kN/m.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>A steel plate girder has a shear flow of $q=600$ kN/m at the flange-web weld. If the allowable weld capacity is 300 kN/m of weld length, find the minimum continuous weld length needed per metre of beam (as a fraction, i.e. intermittent weld coverage ratio).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Required coverage fraction $=q/F_{\text{allow per unit length}}=600/300=2$. Since this exceeds 1 (100% continuous coverage), the specified single-pass weld is inadequate even if run continuously; a heavier weld or double-sided welding would be required to meet the demand.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>A built-up beam has bolts spaced at 100 mm along its length, each resisting a shear flow demand corresponding to $V=30$ kN, $Q=5\times10^{-4}\ \text{m}^3$, $I=4\times10^{-5}\ \text{m}^4$. Find the force in each bolt.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$q=\dfrac{30000(5\times10^{-4})}{4\times10^{-5}}=375000\ \text{N/m}$. $F=q\,s=375000(0.100)=37500$ N $=37.5$ kN per bolt.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Explain why shear flow, rather than shear stress directly, is the natural quantity for designing fasteners (nails, bolts, welds) in built-up beams.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A fastener resists a <em>concentrated</em> force at a discrete point (or small area) along the beam's length, not a continuously distributed stress over an area the way a solid, continuous cross-section does. Shear flow $q=VQ/I$ (force per unit length along the beam) directly tells you how much total shear force must be transferred across the joint over any given length of beam, which is exactly the quantity needed to determine the force each individual fastener (covering its own tributary spacing $s$) must resist &mdash; converting the distributed shear-stress concept into the discrete, fastener-force language needed for connection design.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>A box-beam is fabricated by gluing two side plates to a central web at two glued joints (one on each side, sharing the load equally). Total shear flow at the joint level (combined) is 240 kN/m. If the allowable glue shear flow is 80 kN/m per joint, is a single continuous glue line (per side) adequate, or is a wider glued contact area needed?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Each side joint carries half: $240/2=120$ kN/m demand, but the allowable capacity is only 80 kN/m per joint &mdash; inadequate. A wider glued contact area (increasing the allowable shear flow proportionally) or an alternative fastening approach would be needed to meet the 120 kN/m demand at each joint.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>ENGG251 Mechanics of Solids &middot; Week 8 &middot; 28 practice problems</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

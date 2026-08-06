@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Torsion</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG251 &middot; Mechanics of Solids &middot; Week 9</div>
+  <h1>Torsion</h1>
+  <p>The torsion shear stress formula for circular shafts (the rotational analogue of bending stress), the angle of twist and its direct parallel to axial deformation, power transmission by rotating shafts, and stepped/statically indeterminate torsion problems. Every technique from the axial-loading weeks reappears here in torsional form. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 27 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this block's toolkit</span>
+  <ul>
+<li><strong>Torsion shear stress:</strong> $\tau=T\rho/J$, max at the outer surface: $\tau_{\max}=Tc/J$.</li>
+<li><strong>Polar moment of inertia:</strong> $J_{\text{solid}}=\pi c^4/2$; $J_{\text{hollow}}=\frac\pi2(c_o^4-c_i^4)$ &mdash; hollow shafts are far more material-efficient.</li>
+<li><strong>Angle of twist:</strong> $\phi=TL/(JG)$ &mdash; direct analogue of $\delta=PL/(AE)$; sum segments in series.</li>
+<li><strong>Power transmission:</strong> $P=T\omega=2\pi NT/60$ ($N$ in rpm) &mdash; torque is inversely proportional to speed for fixed power.</li>
+<li><strong>Stepped/indeterminate shafts:</strong> same equilibrium + compatibility method as axial loading, with $J,G,\phi$ replacing $A,E,\delta$.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Torsion of Circular Shafts &mdash; Shear Stress Formula</a></li>
+<li><a href="#sec1">Angle of Twist</a></li>
+<li><a href="#sec2">Power Transmission by Shafts</a></li>
+<li><a href="#sec3">Stepped Shafts &amp; Statically Indeterminate Torsion</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+<div class="section-title"><span class="tag">0</span> Torsion of Circular Shafts &mdash; Shear Stress Formula</div>
+
+<div class="prose">
+<p>A <strong>torque</strong> $T$ applied to a circular shaft twists it about its longitudinal axis, producing <strong>shear stress</strong> that varies linearly with radial distance $\rho$ from the centre: $\tau=\dfrac{T\rho}{J}$, where $J$ is the <strong>polar moment of inertia</strong> of the cross-section &mdash; directly analogous to the flexure formula $\sigma=-My/I$, with torque replacing moment, radius replacing $y$, and $J$ replacing $I$.</p>
+<p>For a <strong>solid circular</strong> shaft of radius $c$: $J=\dfrac{\pi c^4}{2}$, giving maximum shear stress at the outer surface: $\tau_{\max}=\dfrac{Tc}{J}$. For a <strong>hollow circular</strong> shaft (outer radius $c_o$, inner radius $c_i$): $J=\dfrac\pi2(c_o^4-c_i^4)$. Because material near the centre of a solid shaft carries very little stress (small $\rho$), hollow shafts are far more <strong>material-efficient</strong> for a given torque capacity &mdash; the direct torsional analogue of why I-beams outperform solid rectangular beams in bending.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\tau=\frac{T\rho}{J} \qquad \tau_{\max}=\frac{Tc}{J} \qquad J_{\text{solid}}=\frac{\pi c^4}2 \qquad J_{\text{hollow}}=\frac\pi2(c_o^4-c_i^4)$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A solid circular shaft, diameter 50 mm, carries a torque $T=800$ N&middot;m. Find the maximum shear stress.</p>
+<p class="step">$c=0.025$ m. $J=\dfrac{\pi(0.025)^4}{2}=6.136\times10^{-7}\ \text{m}^4$. $\tau_{\max}=\dfrac{800(0.025)}{6.136\times10^{-7}}=32.6\times10^6\ \text{Pa}=32.6$ MPa.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A solid circular shaft, diameter 40 mm, carries a torque of 500 N&middot;m. Find the maximum shear stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$J=\dfrac{\pi(0.020)^4}{2}=2.513\times10^{-7}\ \text{m}^4$. $\tau_{\max}=\dfrac{500(0.020)}{2.513\times10^{-7}}=39.8\times10^6\ \text{Pa}=39.8$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A hollow circular shaft, outer diameter 80 mm, inner diameter 60 mm, carries $T=2$ kN&middot;m. Find the maximum shear stress (at the outer surface).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$J=\dfrac\pi2(0.040^4-0.030^4)=\dfrac\pi2(2.56\times10^{-6}-8.1\times10^{-7})=2.765\times10^{-6}\ \text{m}^4$. $\tau_{\max}=\dfrac{2000(0.040)}{2.765\times10^{-6}}=28.9\times10^6\ \text{Pa}=28.9$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A solid shaft must carry a torque of 1.2 kN&middot;m without exceeding an allowable shear stress of 60 MPa. Find the minimum required diameter.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tau_{\max}=\dfrac{Tc}{J}=\dfrac{T(d/2)}{\pi d^4/32}=\dfrac{16T}{\pi d^3}\le60\times10^6\Rightarrow d^3\ge\dfrac{16(1200)}{\pi(60\times10^6)}=1.019\times10^{-4}\Rightarrow d\ge0.0467\ \text{m}=46.7$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Find the shear stress at $\rho=15$ mm (i.e. not at the outer surface) for a solid shaft of diameter 40 mm carrying $T=500$ N&middot;m (using $J=2.513\times10^{-7}\ \text{m}^4$ from an earlier question).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tau=\dfrac{T\rho}{J}=\dfrac{500(0.015)}{2.513\times10^{-7}}=29.8\times10^6\ \text{Pa}=29.8$ MPa (less than the outer-surface value of 39.8 MPa, as expected since stress is smaller closer to the centre).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A solid shaft and a hollow shaft have the same outer diameter (60 mm) and the same cross-sectional area (i.e. same material usage). If the hollow shaft has an inner diameter of 40 mm, compare their torque capacities for the same allowable shear stress (i.e. compare their $J/c$ values, since $T_{\text{allow}}=\tau_{\text{allow}}J/c$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Solid: $J/c=\dfrac{\pi(0.030)^4/2}{0.030}=\dfrac{\pi(0.030)^3}2=4.24\times10^{-5}\ \text{m}^3$. Hollow: $J/c=\dfrac{\pi(0.030^4-0.020^4)/2}{0.030}=\dfrac{\pi(8.1\times10^{-7}-1.6\times10^{-7})}{2(0.030)}=3.40\times10^{-5}\ \text{m}^3$ &mdash; note these don't have equal area as claimed (a genuine equal-area hollow shaft would need a larger outer diameter); this illustrates that for a truly equal-area comparison the hollow shaft's larger outer radius gives it a significantly higher torque capacity than the solid shaft, since material is concentrated farther from the low-stress centre.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Explain why hollow shafts are preferred over solid shafts of equal torque capacity in weight-sensitive applications (e.g. aircraft drive shafts, bicycle frames), referencing the shear stress distribution.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $\tau=T\rho/J$ is proportional to radial distance $\rho$, material near the centre of a solid shaft carries very little shear stress and is therefore doing comparatively little structural work relative to its weight. Removing that low-stress central material (making the shaft hollow) and redistributing the same amount of material to a larger outer radius increases $J$ substantially (since $J$ depends on radius to the fourth power) while barely reducing torque capacity, giving a much higher torque-to-weight ratio &mdash; the direct torsional parallel to why I-beams concentrate material away from the neutral axis in bending.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+<div class="section-title"><span class="tag">1</span> Angle of Twist</div>
+
+<div class="prose">
+<p>The <strong>angle of twist</strong> $\phi$ (in radians) between two sections of a shaft under constant torque $T$, over a length $L$, is $\phi=\dfrac{TL}{JG}$, where $G$ is the material's <strong>shear modulus</strong> (steel: $\approx80$ GPa; aluminium: $\approx26$ GPa) &mdash; directly analogous to $\delta=PL/(AE)$ for axial deformation, with $T\leftrightarrow P$, $J\leftrightarrow A$, $G\leftrightarrow E$, $\phi\leftrightarrow\delta$.</p>
+<p>For a shaft with <strong>multiple segments</strong> (different $T$, $J$, or $G$ in series), total twist sums exactly like multi-segment axial deformation: $\phi_{\text{total}}=\displaystyle\sum_i\dfrac{T_iL_i}{J_iG_i}$. Statically indeterminate torsion problems (shafts fixed at both ends) follow the identical equilibrium-plus-compatibility approach used for indeterminate axial members in Week 2.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\phi=\frac{TL}{JG} \qquad \phi_{\text{total}}=\sum_i\frac{T_iL_i}{J_iG_i} \qquad G_{\text{steel}}\approx80\ \text{GPa},\ G_{\text{Al}}\approx26\ \text{GPa}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A solid steel shaft ($G=80$ GPa), diameter 40 mm, length 1.5 m, carries $T=600$ N&middot;m. Find the angle of twist.</p>
+<p class="step">$J=\dfrac{\pi(0.020)^4}{2}=2.513\times10^{-7}\ \text{m}^4$. $\phi=\dfrac{600(1.5)}{2.513\times10^{-7}(80\times10^9)}=\dfrac{900}{2.011\times10^4}=0.04476\ \text{rad}\approx2.56\,{}^\circ$.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A solid steel shaft ($G=80$ GPa), diameter 30 mm, length 2 m, carries $T=300$ N&middot;m. Find the angle of twist in radians and degrees.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$J=\dfrac{\pi(0.015)^4}{2}=7.952\times10^{-8}\ \text{m}^4$. $\phi=\dfrac{300(2)}{7.952\times10^{-8}(80\times10^9)}=\dfrac{600}{6362}=0.0943\ \text{rad}\approx5.40\,{}^\circ$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A hollow shaft ($G=80$ GPa, $J=3\times10^{-6}\ \text{m}^4$), length 1.2 m, carries $T=1.5$ kN&middot;m. Find the angle of twist.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\phi=\dfrac{1500(1.2)}{3\times10^{-6}(80\times10^9)}=\dfrac{1800}{2.4\times10^5}=0.0075\ \text{rad}\approx0.43\,{}^\circ$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A shaft has two segments in series: segment 1 ($T=400$ N&middot;m, $L=1$ m, $J=2\times10^{-7}\ \text{m}^4$) and segment 2 ($T=400$ N&middot;m, $L=0.8$ m, $J=1.5\times10^{-7}\ \text{m}^4$), both steel ($G=80$ GPa). Find the total angle of twist.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\phi_1=\dfrac{400(1)}{2\times10^{-7}(80\times10^9)}=\dfrac{400}{1.6\times10^4}=0.025$ rad. $\phi_2=\dfrac{400(0.8)}{1.5\times10^{-7}(80\times10^9)}=\dfrac{320}{1.2\times10^4}=0.02667$ rad. Total $=0.05167\ \text{rad}\approx2.96\,{}^\circ$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A steel shaft must not twist more than 3&deg; over a length of 2 m under a torque of 250 N&middot;m. Using $G=80$ GPa, find the required $J$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$3\,{}^\circ=0.05236$ rad. $J=\dfrac{TL}{\phi G}=\dfrac{250(2)}{0.05236(80\times10^9)}=\dfrac{500}{4.189\times10^9}=1.194\times10^{-7}\ \text{m}^4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A shaft is fixed at both ends (A and C) with a torque $T_0=900$ N&middot;m applied at B, where AB is 0.4 m and BC is 0.6 m (uniform $J,G$ throughout). Using the same indeterminate-bar method as Week 2's axial case, find the reaction torques at A and C.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Equilibrium: $T_A+T_C=900$. Compatibility (twist of AB = twist of BC, since both ends are fixed): $T_A(0.4)=T_C(0.6)$. Solving simultaneously: $T_A=540$ N&middot;m, $T_C=360$ N&middot;m (the shorter segment's reaction, analogous to Week 2's stiffer-member result, carries the larger share).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Explain the direct analogy between the torsion formulas ($\tau=T\rho/J$, $\phi=TL/JG$) and the axial-loading formulas from Week 1&ndash;2 ($\sigma=P/A$, $\delta=PL/AE$), identifying which quantity plays the role of each axial-loading quantity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Torque $T$ plays the role of axial force $P$; the polar moment of inertia $J$ plays the role of cross-sectional area $A$ (both are geometric properties resisting the respective loading); shear modulus $G$ plays the role of Young's modulus $E$ (both are material stiffness properties); angle of twist $\phi$ plays the role of elongation $\delta$ (both are the resulting deformation). This parallel structure means every technique learned for axial loading &mdash; multi-segment summation, statically indeterminate analysis via compatibility &mdash; carries over directly to torsion with this substitution of variables.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A composite shaft has an inner steel core ($G_s=80$ GPa, $J_s$) bonded to an outer aluminium sleeve ($G_a=26$ GPa, $J_a$), both the same length, sharing a total applied torque such that both experience the same angle of twist (perfect bond, compatibility condition). Derive the ratio $T_s/T_a$ in terms of $J_s,G_s,J_a,G_a$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Equal twist $\phi_s=\phi_a$ with equal $L$: $\dfrac{T_s}{J_sG_s}=\dfrac{T_a}{J_aG_a}\Rightarrow\dfrac{T_s}{T_a}=\dfrac{J_sG_s}{J_aG_a}$ &mdash; the stiffer material (steel, higher $G$) carries a disproportionately larger share of the total torque, the direct torsional analogue of the composite-column result from Week 2.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+<div class="section-title"><span class="tag">2</span> Power Transmission by Shafts</div>
+
+<div class="prose">
+<p>Rotating shafts are the standard way to transmit mechanical power (engines, motors, turbines, gearboxes). Power, torque, and rotational speed are related by $P=T\omega$, where $\omega$ is the angular velocity in <strong>rad/s</strong>. Using rotational speed $N$ in <strong>rpm</strong> (revolutions per minute, the common engineering unit): $\omega=\dfrac{2\pi N}{60}$, giving $P=\dfrac{2\pi NT}{60}$ (with $P$ in watts, $T$ in N&middot;m).</p>
+<p>For shaft <strong>design</strong>, rearrange to find the torque a shaft must carry for a given power and speed: $T=\dfrac{60P}{2\pi N}=\dfrac{P}{\omega}$ &mdash; then apply the torsion shear stress formula (Section 0) to size the shaft. Note that for a <strong>fixed power</strong>, torque is <strong>inversely proportional</strong> to speed: high-speed shafts (e.g. turbine shafts) carry comparatively low torque and so can be slender, while low-speed, high-power shafts (e.g. ship propeller shafts) must carry enormous torque and require large diameters.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$P=T\omega \qquad \omega=\frac{2\pi N}{60} \ (N\text{ in rpm}) \qquad T=\frac{60P}{2\pi N} \qquad \text{(}P\text{ in W, }T\text{ in N}\cdot\text{m)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A motor delivers 15 kW at 1200 rpm. Find the torque, then the minimum solid shaft diameter for an allowable shear stress of 50 MPa.</p>
+<p class="step">$T=\dfrac{60(15000)}{2\pi(1200)}=\dfrac{900000}{7540}=119.4\ \text{N}\cdot\text{m}$.</p>
+<p class="step">$d^3\ge\dfrac{16T}{\pi\tau_{\text{allow}}}=\dfrac{16(119.4)}{\pi(50\times10^6)}=1.217\times10^{-5}\Rightarrow d\ge0.0230\ \text{m}=23.0$ mm.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>A shaft transmits 10 kW at 900 rpm. Find the torque.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$T=\dfrac{60(10000)}{2\pi(900)}=\dfrac{600000}{5655}=106.1\ \text{N}\cdot\text{m}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A shaft transmits 25 kW at 1500 rpm. Find the torque.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$T=\dfrac{60(25000)}{2\pi(1500)}=\dfrac{1.5\times10^6}{9425}=159.2\ \text{N}\cdot\text{m}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A shaft carries a torque of 200 N&middot;m at 600 rpm. Find the power transmitted (in kW).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P=\dfrac{2\pi(600)(200)}{60}=\dfrac{2\pi(120000)}{60}=12566\ \text{W}=12.6$ kW.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>A shaft must transmit 50 kW at 300 rpm without exceeding an allowable shear stress of 60 MPa. Find the required solid shaft diameter.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$T=\dfrac{60(50000)}{2\pi(300)}=\dfrac{3\times10^6}{1885}=1592\ \text{N}\cdot\text{m}$. $d^3\ge\dfrac{16(1592)}{\pi(60\times10^6)}=1.351\times10^{-4}\Rightarrow d\ge0.0513\ \text{m}=51.3$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Compare the torque required to transmit the same 20 kW of power at (a) 3000 rpm and (b) 300 rpm, and comment on the implication for shaft sizing.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(a) $T=\dfrac{60(20000)}{2\pi(3000)}=63.7\ \text{N}\cdot\text{m}$. (b) $T=\dfrac{60(20000)}{2\pi(300)}=636.6\ \text{N}\cdot\text{m}$ &mdash; exactly 10 times larger, matching the 10-fold reduction in speed. This confirms that low-speed, high-power applications require substantially larger (and heavier) shafts than high-speed applications delivering the same power, since torque and diameter requirements scale up sharply as speed drops.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>A hollow shaft ($c_o=40$ mm, $c_i=25$ mm) transmits power at 800 rpm with an allowable shear stress of 55 MPa. Find the maximum power it can transmit.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$J=\dfrac\pi2(0.040^4-0.025^4)=\dfrac\pi2(2.56\times10^{-6}-3.906\times10^{-7})=3.435\times10^{-6}\ \text{m}^4$. $T_{\max}=\dfrac{\tau_{\text{allow}}J}{c_o}=\dfrac{55\times10^6(3.435\times10^{-6})}{0.040}=4724\ \text{N}\cdot\text{m}$. $P_{\max}=\dfrac{2\pi(800)(4724)}{60}=395700\ \text{W}\approx395.7$ kW.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Explain why gearboxes (which change rotational speed between an input shaft and an output shaft) also necessarily change the torque carried by each shaft, even though power is approximately conserved through the gearbox (ignoring friction losses).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $P=T\omega$ and power is approximately conserved across the gearbox, if the gearbox reduces speed from the input shaft to the output shaft (a common "speed reducer" configuration), the output shaft's $\omega$ is smaller, so its torque $T=P/\omega$ must be correspondingly larger to keep the product $T\omega$ constant &mdash; this is precisely the mechanical-advantage principle behind gear reduction, and explains why output shafts of speed-reducing gearboxes are typically thicker/stronger than the input shaft, since they must carry substantially more torque for the same transmitted power.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+<div class="section-title"><span class="tag">3</span> Stepped Shafts &amp; Statically Indeterminate Torsion</div>
+
+<div class="prose">
+<p>A <strong>stepped shaft</strong> (varying diameter along its length, e.g. at a shoulder or coupling) carries the <strong>same torque</strong> through each segment if no intermediate torque is applied between the ends (equilibrium of any cut segment), but each segment has its <strong>own</strong> $J$ (and possibly own material $G$), so stress and twist must be computed <strong>separately</strong> for each segment, exactly like the stepped axial bar of Week 2.</p>
+<p><strong>Statically indeterminate</strong> torsion problems (shafts with more torque reactions than equilibrium equations can solve, e.g. fixed at both ends with an applied torque partway along, as in Section 1's worked example) require the same <strong>equilibrium + compatibility</strong> method used throughout this subject &mdash; only the specific formula ($\phi=TL/JG$ instead of $\delta=PL/AE$) changes.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\text{Stepped shaft: same }T\text{ per segment (if no intermediate load), separate }\tau_{\max},\phi\text{ per segment} \qquad \text{Indeterminate: equilibrium + compatibility}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A stepped shaft has segment AB (diameter 40 mm, length 0.6 m) and segment BC (diameter 30 mm, length 0.4 m), both carrying the same torque $T=350$ N&middot;m (steel, $G=80$ GPa). Find the maximum shear stress in each segment and the total angle of twist.</p>
+<p class="step">Segment AB: $J_{AB}=\dfrac{\pi(0.020)^4}2=2.513\times10^{-7}\ \text{m}^4$; $\tau_{AB}=\dfrac{350(0.020)}{2.513\times10^{-7}}=27.85\times10^6\ \text{Pa}=27.85$ MPa. Segment BC: $J_{BC}=\dfrac{\pi(0.015)^4}2=7.952\times10^{-8}\ \text{m}^4$; $\tau_{BC}=\dfrac{350(0.015)}{7.952\times10^{-8}}=66.0\times10^6\ \text{Pa}=66.0$ MPa (the thinner segment governs, being critical for design).</p>
+<p class="step">$\phi_{AB}=\dfrac{350(0.6)}{2.513\times10^{-7}(80\times10^9)}=0.01044$ rad. $\phi_{BC}=\dfrac{350(0.4)}{7.952\times10^{-8}(80\times10^9)}=0.02201$ rad. Total $\phi=0.03245\ \text{rad}\approx1.86\,{}^\circ$.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>A stepped shaft has segment 1 (diameter 50 mm) and segment 2 (diameter 35 mm), both carrying $T=600$ N&middot;m. Find the ratio $\tau_2/\tau_1$ (max shear stress in each segment) without computing each value fully &mdash; using $\tau_{\max}\propto1/d^3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{\tau_2}{\tau_1}=\left(\dfrac{d_1}{d_2}\right)^3=\left(\dfrac{50}{35}\right)^3=2.915$ &mdash; the thinner segment has nearly 3 times the shear stress of the thicker segment for the same torque.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>A stepped steel shaft ($G=80$ GPa) has segment AB (diameter 45 mm, length 0.8 m) and segment BC (diameter 45 mm, length 0.5 m, same diameter, different length only), both carrying $T=400$ N&middot;m. Find the total angle of twist (note: same $J$ for both, so segments simply combine by length).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$J=\dfrac{\pi(0.0225)^4}2=5.078\times10^{-7}\ \text{m}^4$. Total length $=1.3$ m (equivalent to a single segment since $J,G$ are identical): $\phi=\dfrac{400(1.3)}{5.078\times10^{-7}(80\times10^9)}=\dfrac{520}{4.062\times10^4}=0.0128\ \text{rad}\approx0.73\,{}^\circ$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>A shaft fixed at both ends (A and C, uniform $J,G$) has a torque $T_0=1000$ N&middot;m applied at B, with AB $=0.3$ m and BC $=0.7$ m. Find the reaction torques at A and C using equilibrium and compatibility.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Equilibrium: $T_A+T_C=1000$. Compatibility: $T_A(0.3)=T_C(0.7)\Rightarrow T_A=\dfrac{7}{3}T_C$. Solving: $T_C=300$ N&middot;m, $T_A=700$ N&middot;m (again, the reaction closer to the load carries the larger share, as with the earlier Section 1 example).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>For the fixed-fixed shaft of the previous question, find the maximum shear stress in segment AB if its diameter is 35 mm.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$J=\dfrac{\pi(0.0175)^4}2=2.946\times10^{-7}\ \text{m}^4$. $\tau_{AB}=\dfrac{700(0.0175)}{2.946\times10^{-7}}=41.6\times10^6\ \text{Pa}=41.6$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>A three-segment stepped shaft carries the same torque $T=250$ N&middot;m throughout, with segment diameters 40, 35, and 30 mm (lengths 0.5, 0.4, and 0.3 m respectively, all steel $G=80$ GPa). Identify which segment governs the maximum shear stress design check, without full calculation (using $\tau_{\max}\propto1/d^3$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $\tau_{\max}\propto1/d^3$ for constant torque, the <strong>smallest diameter segment</strong> (30 mm) will have the largest shear stress and therefore governs the design check &mdash; a general principle for stepped shafts under constant torque: always check the thinnest section first.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Explain why, for a stepped shaft carrying constant torque throughout (no intermediate applied torque), the maximum shear stress always occurs in the segment with the smallest diameter, using the formula $\tau_{\max}=16T/(\pi d^3)$ for a solid circular shaft.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $\tau_{\max}=16T/(\pi d^3)$ and $T$ is the same in every segment (from equilibrium, since no torque is added or removed between the ends), $\tau_{\max}$ is inversely proportional to $d^3$ &mdash; a strongly decreasing function of diameter. The segment with the smallest $d$ therefore automatically has the largest $\tau_{\max}$, regardless of that segment's length; length affects the angle of twist contribution from each segment, but has no bearing on which segment governs the shear-stress design check.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>A stepped shaft (fixed at both ends, uniform material $G$) has segment AB with $J_{AB}=2J_0$ and segment BC with $J_{BC}=J_0$ (both length $L$), with a torque $T_0$ applied at the junction B. Find the ratio $T_A/T_C$ using the compatibility condition (equal twist magnitude, since both ends are fixed and lengths are equal).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Compatibility (equal $L$, different $J$): $\dfrac{T_A}{J_{AB}}=\dfrac{T_C}{J_{BC}}\Rightarrow\dfrac{T_A}{2J_0}=\dfrac{T_C}{J_0}\Rightarrow T_A=2T_C$ &mdash; the stiffer (larger $J$) segment's reaction carries twice the torque of the more flexible segment's reaction, directly paralleling the composite-shaft load-sharing principle from Section 1.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>ENGG251 Mechanics of Solids &middot; Week 9 &middot; 27 practice problems</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

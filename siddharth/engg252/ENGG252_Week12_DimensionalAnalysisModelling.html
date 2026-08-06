@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dimensional Analysis &amp; Modelling</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG252 &middot; Engineering Fluid Mechanics &middot; Week 12</div>
+  <h1>Dimensional Analysis &amp; Modelling</h1>
+  <p>Dimensional homogeneity and fundamental dimensions, the Buckingham Pi theorem for reducing variables to dimensionless groups, the common named dimensionless groups (Reynolds, Froude, Weber, Euler, Mach) and what each represents, and similarity/modelling for scaling laboratory models up to full-size prototypes. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 22 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this block's toolkit</span>
+  <ul>
+<li><strong>Fundamental dimensions</strong> $M,L,T$ underlie every fluid-mechanics variable &mdash; dimensional homogeneity is a powerful sanity check.</li>
+<li><strong>Buckingham Pi theorem:</strong> $n$ variables, $k$ dimensions &rarr; $n-k$ independent dimensionless groups &mdash; dramatically fewer experiments needed.</li>
+<li><strong>Key groups:</strong> $Re$ (inertia/viscous), $Fr$ (inertia/gravity, free-surface flows), $We$ (inertia/surface tension), $Eu$ (pressure/inertia), $M$ (velocity/sound speed).</li>
+<li><strong>Similarity</strong> requires geometric, kinematic, AND dynamic (matching dimensionless groups) similarity between model and prototype.</li>
+<li><strong>Trade-off:</strong> matching every group simultaneously is usually impossible &mdash; choose the dominant group for the phenomenon (Froude for free-surface, Reynolds for submerged/viscous-dominated flows).</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Dimensional Homogeneity &amp; the Method of Repeating Variables</a></li>
+<li><a href="#sec1">The Buckingham Pi Theorem</a></li>
+<li><a href="#sec2">Common Dimensionless Groups</a></li>
+<li><a href="#sec3">Similarity &amp; Modelling</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+<div class="section-title"><span class="tag">0</span> Dimensional Homogeneity &amp; the Method of Repeating Variables</div>
+
+<div class="prose">
+<p>Building on Week 1's introduction to dimensional homogeneity, <strong>dimensional analysis</strong> is a systematic technique for reducing the number of variables needed to describe a physical problem, by grouping the original (dimensional) variables into a smaller number of <strong>dimensionless groups</strong> &mdash; dramatically reducing the number of experiments needed to fully characterise a physical phenomenon, and revealing the underlying physical structure of a problem.</p>
+<p>The <strong>fundamental dimensions</strong> used throughout fluid mechanics are mass $[M]$, length $[L]$, time $[T]$ (and sometimes temperature $[\Theta]$ for compressible/heat-transfer problems). Every fluid-mechanics variable can be expressed in terms of these: e.g. $[\text{velocity}]=LT^{-1}$, $[\text{density}]=ML^{-3}$, $[\text{viscosity}]=ML^{-1}T^{-1}$, $[\text{force}]=MLT^{-2}$ &mdash; the starting point for the Buckingham Pi theorem (Section 1).</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$[M],[L],[T] \ \text{(fundamental dimensions)} \qquad [V]=LT^{-1} \quad [\rho]=ML^{-3} \quad [\mu]=ML^{-1}T^{-1} \quad [F]=MLT^{-2}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Find the dimensions of kinematic viscosity $\nu=\mu/\rho$.</p>
+<p class="step">$[\nu]=\dfrac{[\mu]}{[\rho]}=\dfrac{ML^{-1}T^{-1}}{ML^{-3}}=L^2T^{-1}$ &mdash; matching the known SI units of m$^2$/s for kinematic viscosity. &#10003;</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Find the dimensions of pressure $P$ (force per unit area).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$[P]=[F]/[L^2]=MLT^{-2}/L^2=ML^{-1}T^{-2}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Find the dimensions of volume flow rate $Q$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$[Q]=[L^3]/[T]=L^3T^{-1}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Find the dimensions of surface tension $\sigma_s$ (force per unit length, from Week 2).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$[\sigma_s]=[F]/[L]=MLT^{-2}/L=MT^{-2}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Find the dimensions of specific weight $\gamma$ (weight per unit volume, from Week 1).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$[\gamma]=[F]/[L^3]=MLT^{-2}/L^3=ML^{-2}T^{-2}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Verify that the Reynolds number $Re=\rho VD/\mu$ (Week 9) is genuinely dimensionless, by substituting the dimensions of each variable.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$[Re]=\dfrac{[\rho][V][D]}{[\mu]}=\dfrac{(ML^{-3})(LT^{-1})(L)}{ML^{-1}T^{-1}}=\dfrac{ML^{-1}T^{-1}}{ML^{-1}T^{-1}}=1$ (dimensionless). &#10003;</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Verify that the Darcy friction factor $f$ (Weeks 9-10), defined via $h_L=f(L/D)(V^2/2g)$, is dimensionless by checking that $f$ itself must have no dimensions for the equation to be dimensionally homogeneous.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$[h_L]=L$ (a head, in metres). $[(L/D)]=1$ (dimensionless, a ratio of two lengths). $[V^2/2g]=(LT^{-1})^2/(LT^{-2})=L^2T^{-2}/(LT^{-2})=L$ (also a length/head). So $[h_L]=[f]\times1\times L\Rightarrow L=[f]\times L\Rightarrow[f]=1$ (dimensionless), confirming $f$ must indeed be dimensionless for the Darcy-Weisbach equation to be dimensionally homogeneous.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+<div class="section-title"><span class="tag">1</span> The Buckingham Pi Theorem</div>
+
+<div class="prose">
+<p>The <strong>Buckingham Pi theorem</strong> states: if a physical problem involves $n$ dimensional variables, and these variables can be fully described using $k$ fundamental dimensions ($M,L,T$, etc.), then the problem can be expressed using exactly $n-k$ <strong>independent dimensionless groups</strong> (traditionally denoted $\Pi_1,\Pi_2,\dots$) &mdash; a dramatic reduction from, say, needing to test every combination of 6 separate dimensional variables individually, down to characterising the relationship between perhaps only 2 or 3 dimensionless groups.</p>
+<p><strong>Standard procedure</strong>: (1) list all $n$ relevant dimensional variables; (2) identify $k$, the number of fundamental dimensions involved; (3) choose $k$ <strong>repeating variables</strong> (typically including a length scale, a velocity scale, and a density or viscosity, chosen to collectively include all $k$ fundamental dimensions among them, and NOT forming a dimensionless group themselves); (4) combine each remaining (non-repeating) variable with the repeating variables to form each $\Pi$ group, solving for the exponents that make each combination dimensionless.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\text{Number of dimensionless groups} = n-k \qquad n=\text{number of variables}, \quad k=\text{number of fundamental dimensions}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A problem involves pressure drop $\Delta P$, pipe diameter $D$, velocity $V$, density $\rho$, and viscosity $\mu$ (i.e. $n=5$ variables). Using $M,L,T$ ($k=3$), how many dimensionless groups does the Buckingham Pi theorem predict?</p>
+<p class="step">Number of dimensionless groups $=n-k=5-3=2$.</p>
+<p class="step">This matches the known result for pipe flow: one group is the friction-factor-related pressure coefficient $\Delta P/(\rho V^2)$ (or a closely related form), and the other is the Reynolds number $Re=\rho VD/\mu$ &mdash; exactly the two-variable relationship ($f$ vs $Re$, at fixed $\varepsilon/D$) that underlies the Moody chart (Week 10).</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A problem involves drag force $F$, velocity $V$, density $\rho$, and a length scale $L$ (i.e. $n=4$ variables), using $M,L,T$ ($k=3$). How many dimensionless groups does the theorem predict?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$n-k=4-3=1$ &mdash; a single dimensionless group, which turns out to be the drag coefficient $C_D=F/(\rho V^2L^2)$ (or an equivalent form).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A problem involves 6 dimensional variables and requires 3 fundamental dimensions. How many dimensionless groups result?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$6-3=3$ dimensionless groups.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A capillary rise problem involves height $h$, surface tension $\sigma_s$, density $\rho$, gravitational acceleration $g$, and tube radius $R$ (i.e. $n=5$ variables, $M,L,T$, $k=3$). How many dimensionless groups result?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$5-3=2$ dimensionless groups.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Explain why choosing 'good' repeating variables (Step 3 of the procedure) is important, specifically why the chosen set must collectively include all $k$ fundamental dimensions, and must NOT themselves be combinable into a dimensionless group.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The repeating variables serve as the fundamental 'building blocks' used to make every other variable dimensionless; if they don't collectively span all $k$ fundamental dimensions, it becomes impossible to cancel out every dimension when forming each $\Pi$ group (some dimension would be left unaccounted for). If the repeating variables themselves could be combined into a dimensionless group, they would not be dimensionally independent of each other, meaning they couldn't serve as a complete, non-redundant basis for expressing every other variable's dimensions &mdash; leading to an inconsistent or incomplete set of resulting $\Pi$ groups.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Explain the main PRACTICAL benefit of reducing, say, a 5-variable problem to just 2 dimensionless groups, in terms of the number of experiments required to fully characterise the phenomenon.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Characterising a relationship between 5 independent dimensional variables directly would require systematically varying each variable independently while holding the others fixed &mdash; an enormous, often practically infeasible number of experiments (e.g. testing even just 10 values of each of 5 variables independently would require $10^5=100{,}000$ experiments). Reducing the same problem to a relationship between just 2 dimensionless groups means only a single experimental curve (one dimensionless group plotted against the other) needs to be determined, requiring perhaps only 10-20 well-chosen experimental data points to fully characterise the same underlying physical relationship &mdash; a dramatic, often orders-of-magnitude reduction in required experimental effort, which is precisely the theorem's main practical value.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+<div class="section-title"><span class="tag">2</span> Common Dimensionless Groups</div>
+
+<div class="prose">
+<p>Certain dimensionless groups recur so frequently across fluid mechanics that they have standard names, each representing the ratio of two competing physical effects. <strong>Reynolds number</strong> $Re=\rho VL/\mu$ (inertia/viscous forces, Week 9) &mdash; the single most important group in this subject, governing laminar/turbulent transition and viscous-flow behaviour generally. <strong>Froude number</strong> $Fr=V/\sqrt{gL}$ (inertia/gravity forces) &mdash; governs free-surface (open-channel) flows and wave phenomena, e.g. determining whether an open-channel flow is subcritical or supercritical.</p>
+<p><strong>Weber number</strong> $We=\rho V^2L/\sigma_s$ (inertia/surface-tension forces) &mdash; important for droplet formation, atomisation, and other small-scale free-surface phenomena. <strong>Euler number</strong> $Eu=\Delta P/(\rho V^2)$ (pressure/inertia forces) &mdash; the general form underlying pressure-coefficient and friction-factor-type quantities seen throughout Weeks 6&ndash;11. <strong>Mach number</strong> $M=V/c$ (velocity/speed-of-sound, i.e. inertia/compressibility effects) &mdash; governs compressible flow behaviour (largely beyond this subject's scope, but essential context for why the incompressible-flow assumption used throughout this subject is a reasonable one for typical liquid-flow and low-speed gas-flow problems).</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$Re=\frac{\rho VL}{\mu} \quad Fr=\frac{V}{\sqrt{gL}} \quad We=\frac{\rho V^2L}{\sigma_s} \quad Eu=\frac{\Delta P}{\rho V^2} \quad M=\frac Vc$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Water flows in an open channel at $V=2$ m/s, depth $L=0.5$ m. Find the Froude number and determine whether the flow is subcritical ($Fr<1$) or supercritical ($Fr>1$).</p>
+<p class="step">$Fr=\dfrac{V}{\sqrt{gL}}=\dfrac2{\sqrt{9.81(0.5)}}=\dfrac2{2.215}=0.903$.</p>
+<p class="step">$Fr<1$: subcritical flow (relatively slow, deep flow, where gravity effects dominate over inertia &mdash; small disturbances can propagate both upstream and downstream, the more common condition in most natural rivers and canals).</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Find the Froude number for open-channel flow at $V=4$ m/s, depth 0.8 m, and classify as subcritical or supercritical.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$Fr=4/\sqrt{9.81(0.8)}=4/2.802=1.428>1$: supercritical.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A small water droplet, diameter 2 mm, moves at 3 m/s relative to surrounding air. Using water's surface tension $\sigma_s=0.0728\ \text{N/m}$ and $\rho_{\text{water}}=1000\ \text{kg/m}^3$, find the Weber number.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$We=\rho V^2L/\sigma_s=1000(9)(0.002)/0.0728=18/0.0728=247.3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>A pressure drop of 5 kPa occurs in a flow with density 1000 kg/m$^3$ and velocity 3 m/s. Find the Euler number.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$Eu=\Delta P/(\rho V^2)=5000/(1000\times9)=0.556$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A high-speed gas flow has velocity 100 m/s, and the local speed of sound is 340 m/s. Find the Mach number, and state whether the flow can reasonably be treated as incompressible (a common rule of thumb: $M<0.3$ is considered acceptably incompressible).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$M=100/340=0.294<0.3$ &mdash; just within the commonly used threshold for treating the flow as approximately incompressible, consistent with the incompressible-flow assumption used throughout the rest of this subject.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Explain the physical significance of the Froude number, in terms of the two competing physical effects (forces) it represents, and why it is the key parameter governing whether a surface wave can travel upstream against a current.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The Froude number represents the ratio of inertial forces (associated with the flow's own momentum, driving it downstream) to gravitational forces (associated with the restoring/wave-propagation tendency of a free surface under gravity). When $Fr<1$ (subcritical), gravitational/wave effects are strong enough relative to the flow's inertia that a surface disturbance (wave) can propagate upstream against the current, in addition to downstream. When $Fr>1$ (supercritical), the flow's own downstream inertia overwhelms the wave's ability to propagate upstream, so all disturbances are swept downstream only &mdash; exactly analogous to the Mach number's role in determining whether disturbances (sound waves) can propagate upstream in a compressible gas flow (subsonic vs supersonic), with the Froude number playing the identical conceptual role for free-surface gravity waves.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Explain why the Weber number becomes particularly important for very SMALL length scales (e.g. small droplets or thin liquid films), but is usually negligible for large-scale flows (e.g. flow in a large river or a large industrial pipe).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The Weber number is the ratio of inertial to surface-tension forces, $We=\rho V^2L/\sigma_s$; since surface tension forces scale with the LENGTH of the interface (roughly proportional to $L$) while inertial forces scale with volume/mass effects (roughly proportional to $L^3$ for a fixed velocity, or more precisely with the $V^2L$ combination seen in the formula), the RELATIVE importance of surface tension compared to inertia grows rapidly as the length scale $L$ shrinks. For small droplets or thin films (small $L$), surface tension effects become comparably important to (or can even dominate) inertial effects, making $We$ a critical parameter; for large-scale flows (large $L$, e.g. rivers or large pipes), inertial effects overwhelmingly dominate surface tension, making $We$ effectively irrelevant to the flow's overall behaviour.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+<div class="section-title"><span class="tag">3</span> Similarity &amp; Modelling</div>
+
+<div class="prose">
+<p><strong>Similarity</strong> between a small-scale physical <strong>model</strong> (tested in a laboratory, e.g. a wind tunnel or water flume) and the full-size <strong>prototype</strong> requires three conditions: <strong>geometric similarity</strong> (identical shape, all linear dimensions scaled by the same ratio), <strong>kinematic similarity</strong> (velocity fields have the same shape, scaled consistently), and <strong>dynamic similarity</strong> (all relevant dimensionless groups, e.g. $Re$, $Fr$, match exactly between model and prototype) &mdash; the last condition, dynamic similarity, is what actually guarantees that measured forces/coefficients on the model can be reliably scaled up to predict the prototype's behaviour.</p>
+<p>In practice, it is often <strong>impossible</strong> to match every relevant dimensionless group simultaneously (e.g. matching both $Re$ and $Fr$ between a small model and a full-size prototype typically requires physically inconsistent, contradictory fluid properties or velocities) &mdash; engineers must then decide which dimensionless group is most physically important for the specific phenomenon being studied (e.g. $Fr$ for free-surface ship-hull wave testing, $Re$ for fully-submerged aerodynamic/pipe-flow testing) and match that group as closely as possible, while accepting some unavoidable, carefully-estimated discrepancy in the other, less critical groups.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\text{Geometric similarity: shape} \qquad \text{Kinematic similarity: velocity field shape} \qquad \text{Dynamic similarity: matching dimensionless groups } (Re,Fr,\dots)$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A 1:20 scale ship-hull model is tested in a towing tank, matching Froude number (the dominant effect for free-surface/wave-making resistance). If the prototype ship travels at 8 m/s, find the required model test velocity for Froude similarity.</p>
+<p class="step">Froude similarity: $Fr_{\text{model}}=Fr_{\text{prototype}}\Rightarrow\dfrac{V_m}{\sqrt{gL_m}}=\dfrac{V_p}{\sqrt{gL_p}}\Rightarrow V_m=V_p\sqrt{\dfrac{L_m}{L_p}}$.</p>
+<p class="step">$V_m=8\sqrt{\dfrac1{20}}=8(0.2236)=1.789\ \text{m/s}$ &mdash; a much lower test velocity than the full-scale ship's speed, exactly as Froude scaling predicts for a smaller model.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A 1:10 scale model of an open channel is tested for Froude similarity. If the model velocity is 0.5 m/s, find the corresponding prototype velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V_p=V_m\sqrt{L_p/L_m}=0.5\sqrt{10}=0.5(3.162)=1.581\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>A 1:5 scale model is tested for Reynolds number similarity, using the SAME fluid as the prototype. Find the required ratio $V_m/V_p$ (using $Re_m=Re_p$ with the same $\rho,\mu$, so $V_mL_m=V_pL_p$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V_mL_m=V_pL_p\Rightarrow V_m/V_p=L_p/L_m=5$ &mdash; the model must be tested at 5 times the prototype's velocity, since it is 5 times smaller in linear dimension (an inverse relationship, unlike the Froude case).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Explain why matching Froude number and matching Reynolds number SIMULTANEOUSLY between a small model and its full-size prototype (using the same fluid in both) is generally impossible, by comparing the required velocity scaling relationships from the two previous questions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Froude similarity requires $V_m/V_p=\sqrt{L_m/L_p}$ (model velocity scales with the SQUARE ROOT of the length ratio), while Reynolds similarity (same fluid) requires $V_m/V_p=L_p/L_m$ (model velocity scales INVERSELY with the length ratio) &mdash; these are two fundamentally different, generally incompatible scaling relationships (except in the trivial case $L_m=L_p$, i.e. full-scale testing). For any genuinely smaller model ($L_m<L_p$), Froude scaling demands a comparatively low test velocity while Reynolds scaling (with the same fluid) demands a very high test velocity, making it physically impossible to satisfy both simultaneously using the same fluid; this is exactly why engineers must choose which similarity criterion is most important for the specific phenomenon being studied.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Explain why Froude similarity is the dominant/chosen criterion for ship-hull model testing (free-surface wave-making resistance), while Reynolds similarity is instead the dominant criterion for fully-submerged submarine or aircraft wind-tunnel testing.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Ship-hull resistance at the water surface is significantly influenced by wave-making (free-surface gravity wave) effects, which are governed primarily by the Froude number (the ratio of inertial to gravitational forces) &mdash; matching $Fr$ ensures the model correctly reproduces the relative wave pattern and wave-making resistance behaviour of the full-size prototype. A fully submerged body (a submarine deep underwater, or an aircraft in flight, away from any free surface) experiences no free-surface wave-making effects at all; its dominant resistance mechanism is instead viscous/pressure drag, governed primarily by the Reynolds number (the ratio of inertial to viscous forces) &mdash; so Reynolds similarity, rather than Froude similarity (which becomes essentially irrelevant with no free surface present), is the appropriate criterion to match for such fully-submerged testing.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>A 1:8 scale model of a spillway (an open-channel, free-surface structure) is tested using Froude similarity, and the measured model flow rate is $0.15\ \text{m}^3/\text{s}$. Using the fact that flow rate scales as $Q_m/Q_p=(L_m/L_p)^{5/2}$ under Froude similarity (a standard derived result, combining the length-squared area scaling with the square-root velocity scaling), find the corresponding prototype flow rate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$Q_p=Q_m(L_p/L_m)^{2.5}=0.15(8)^{2.5}=0.15(181.0)=27.15\ \text{m}^3/\text{s}$.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>ENGG252 Engineering Fluid Mechanics &middot; Week 12 &middot; 22 practice problems</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

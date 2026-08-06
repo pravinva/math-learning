@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Limits — Algebraic Techniques</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#F7F4EC; --grid:#E1DBC8; --ink:#1E2A42; --ink-soft:#4A5570;
+  --accent:#C1440E; --accent-soft:#E8C9B8; --correct:#2F6B4F; --correct-bg:#E4EEE7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px, var(--paper);
+  color:var(--ink);min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
+header h1{font-size:1.6rem;margin:0 0 4px;}
+header .sub{font-family:'Trebuchet MS',sans-serif;color:var(--ink-soft);font-size:0.9rem;}
+.setbar{display:flex;gap:6px;margin-bottom:18px;align-items:center;font-family:'Trebuchet MS',sans-serif;}
+.setbar .label{font-size:0.8rem;color:var(--ink-soft);margin-right:6px;}
+.setbar button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+  background:var(--paper);color:var(--accent);font-weight:bold;cursor:pointer;}
+.setbar button.active{background:var(--accent);color:#fff;}
+.progress{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-left:auto;}
+.qcard{background:#FFFEFB;border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:2px;padding:14px 16px;margin-bottom:10px;}
+.qcard .qtag{font-family:'Trebuchet MS',sans-serif;font-size:0.68rem;color:var(--accent);
+  font-weight:bold;letter-spacing:1px;text-transform:uppercase;}
+.qcard .qtext{margin:6px 0 8px;font-size:1.02rem;line-height:1.55;}
+.qcard button.reveal{font-family:'Trebuchet MS',sans-serif;font-size:0.76rem;background:none;
+  border:1px solid var(--ink-soft);color:var(--ink-soft);padding:4px 10px;border-radius:12px;cursor:pointer;}
+.qcard .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--correct-bg);
+  border-left:3px solid var(--correct);border-radius:2px;font-size:0.95rem;color:#20402d;}
+.qcard .answer.show{display:block;}
+.qcard.answered{border-left-color:var(--correct);}
+footer{text-align:center;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;color:var(--ink-soft);margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Limits — Algebraic Techniques</h1>
+  <div class="sub">DPEN022 Calc1 · 4 sets · 6 questions each · sample topic for review</div>
+</header>
+<div class="setbar" id="setBar"></div>
+<div id="questions"></div>
+<footer>Each set mixes technique types: factoring, rationalising, one-sided/piecewise, trig limits, squeeze theorem, conceptual reasoning, and applied setups</footer>
+</div>
+
+<script>
+const SETS = [
+[
+["FACTORING","Evaluate \\(\\lim_{x\\to 4}\\dfrac{x^2-3x-4}{x-4}\\)","Factor: \\((x-4)(x+1)/(x-4)\\to x+1\\). Answer: \\(5\\)"],
+["CONCEPTUAL","True or false, with justification: if \\(\\lim_{x\\to a} f(x)\\) exists, then \\(f(a)\\) must be defined.","False — a limit describes behaviour <em>near</em> \\(a\\), not <em>at</em> \\(a\\). A function can have a removable discontinuity (a hole) at \\(a\\) and still have a well-defined limit there."],
+["RATIONALISING","Evaluate \\(\\lim_{x\\to 0}\\dfrac{\\sqrt{x+9}-3}{x}\\)","Multiply by the conjugate \\(\\sqrt{x+9}+3\\): numerator becomes \\(x\\), giving \\(\\dfrac{1}{\\sqrt{x+9}+3}\\). Answer: \\(\\tfrac16\\)"],
+["PIECEWISE / ONE-SIDED","Let \\(f(x)=x+1\\) for \\(x<2\\) and \\(f(x)=3x-3\\) for \\(x\\ge2\\). Does \\(\\lim_{x\\to2}f(x)\\) exist?","Left limit: \\(2+1=3\\). Right limit: \\(3(2)-3=3\\). They agree. Answer: yes, the limit is \\(3\\)"],
+["END BEHAVIOUR","Evaluate \\(\\lim_{x\\to\\infty}\\dfrac{5x^3-2x}{x^3+7}\\), explaining your reasoning about degree comparison.","Numerator and denominator have the same degree (3), so the limit is the ratio of leading coefficients. Answer: \\(5\\)"],
+["SQUEEZE THEOREM","Evaluate \\(\\lim_{x\\to 0} x^2\\cos(1/x)\\) using the squeeze theorem.","Since \\(-1\\le\\cos(1/x)\\le1\\), we have \\(-x^2\\le x^2\\cos(1/x)\\le x^2\\). Both bounds \\(\\to0\\). Answer: \\(0\\)"]
+],
+[
+["FACTORING","Evaluate \\(\\lim_{x\\to 2}\\dfrac{x^3-8}{x^2-4}\\)","Factor both: \\(\\dfrac{(x-2)(x^2+2x+4)}{(x-2)(x+2)}\\to\\dfrac{x^2+2x+4}{x+2}\\). Answer: \\(3\\)"],
+["CONCEPTUAL","Explain why \\(\\lim_{x\\to 0}\\sin(1/x)\\) does not exist.","As \\(x\\to0\\), \\(1/x\\to\\pm\\infty\\), so \\(\\sin(1/x)\\) oscillates between \\(-1\\) and \\(1\\) infinitely often, never settling near a single value."],
+["RATIONALISING","Evaluate \\(\\lim_{x\\to\\infty}\\left(\\sqrt{x^2+3x}-x\\right)\\)","Multiply by the conjugate: \\(\\dfrac{3x}{\\sqrt{x^2+3x}+x}\\); divide top and bottom by \\(x\\). Answer: \\(\\tfrac32\\)"],
+["PIECEWISE / ONE-SIDED","Evaluate the one-sided limits of \\(f(x)=|x|/x\\) at \\(x=0\\). Does the two-sided limit exist?","Left limit: \\(-1\\). Right limit: \\(1\\). They disagree. Answer: two-sided limit does not exist"],
+["TRIG","Evaluate \\(\\lim_{x\\to 0}\\dfrac{1-\\cos x}{x\\sin x}\\)","Write as \\(\\dfrac{1-\\cos x}{x^2}\\cdot\\dfrac{x}{\\sin x}\\to\\tfrac12\\cdot1\\). Answer: \\(\\tfrac12\\)"],
+["APPLIED","A population model gives \\(N(t)=500-\\dfrac{300}{t+1}\\). Find \\(\\lim_{t\\to\\infty}N(t)\\) and interpret it.","As \\(t\\to\\infty\\), \\(300/(t+1)\\to0\\). Answer: \\(500\\) — the population approaches a carrying capacity of 500 as time goes on."]
+],
+[
+["FACTORING WITH A PARAMETER","Find \\(k\\) so that \\(\\lim_{x\\to 3}\\dfrac{x^2+kx-3}{x-3}\\) exists as a finite number, then evaluate it.","For the limit to be finite, the numerator must vanish at \\(x=3\\): \\(9+3k-3=0\\Rightarrow k=-2\\). Then the numerator factors as \\((x-3)(x+1)\\). Answer: \\(k=-2\\), limit \\(=4\\)"],
+["CONCEPTUAL","If \\(f\\) is continuous at \\(x=a\\), what can you conclude about \\(\\lim_{x\\to a}f(x)\\)?","Continuity at \\(a\\) means the limit exists <em>and</em> equals the function value there. Answer: \\(\\lim_{x\\to a}f(x)=f(a)\\)"],
+["RATIONALISING","Evaluate \\(\\lim_{x\\to 1}\\dfrac{1-\\sqrt{x}}{1-x}\\)","Factor the denominator as a difference of squares in \\(\\sqrt x\\): \\(1-x=(1-\\sqrt x)(1+\\sqrt x)\\), cancel. Answer: \\(\\tfrac12\\)"],
+["PIECEWISE / INFINITE LIMITS","Examine \\(\\lim_{x\\to2^-}\\dfrac1{x-2}\\) and \\(\\lim_{x\\to2^+}\\dfrac1{x-2}\\). Does the two-sided limit exist?","Left side \\(\\to-\\infty\\), right side \\(\\to+\\infty\\). Answer: no — this is a vertical asymptote at \\(x=2\\), not a removable case"],
+["TRIG","Evaluate \\(\\lim_{x\\to 0}\\dfrac{\\sin(4x)}{\\tan(3x)}\\)","Rewrite \\(\\tan(3x)=\\sin(3x)/\\cos(3x)\\), so the ratio becomes \\(\\dfrac{4x}{3x}\\cdot1\\) in the small-angle limit. Answer: \\(\\tfrac43\\)"],
+["APPLIED — LIMIT DEFINITION","A ball's height is \\(s(t)=4t^2+t\\). Compute \\(\\lim_{h\\to0}\\dfrac{s(2+h)-s(2)}{h}\\) and interpret the result.","Expand: \\(s(2+h)=18+17h+4h^2\\), so the quotient is \\(17+4h\\to17\\). Answer: \\(17\\) — the instantaneous velocity at \\(t=2\\)"]
+],
+[
+["FACTORING","Evaluate \\(\\lim_{x\\to -1}\\dfrac{x^3+1}{x^2-1}\\)","Factor: \\(\\dfrac{(x+1)(x^2-x+1)}{(x-1)(x+1)}\\to\\dfrac{x^2-x+1}{x-1}\\). Answer: \\(-\\tfrac32\\)"],
+["CONCEPTUAL","Give an example of a function with a removable discontinuity at \\(x=2\\), and explain why the limit still exists there.","E.g. \\(f(x)=\\dfrac{x^2-4}{x-2}\\) for \\(x\\ne2\\), with \\(f(2)\\) undefined or set to some other value. The limit as \\(x\\to2\\) is \\(4\\) regardless, since the limit only depends on values near 2, not at 2."],
+["RATIONALISING","Evaluate \\(\\lim_{x\\to 0}\\dfrac{\\sqrt{1+x}-\\sqrt{1-x}}{x}\\)","Multiply by the conjugate \\(\\sqrt{1+x}+\\sqrt{1-x}\\): numerator becomes \\(2x\\). Answer: \\(1\\)"],
+["END BEHAVIOUR WITH ABSOLUTE VALUE","Evaluate \\(\\lim_{x\\to\\infty}\\dfrac{\\sqrt{9x^2+1}}{3x+2}\\)","For \\(x>0\\), \\(\\sqrt{9x^2+1}=x\\sqrt{9+1/x^2}\\). Divide top and bottom by \\(x\\). Answer: \\(1\\)"],
+["TRIG","Evaluate \\(\\lim_{x\\to0}\\dfrac{\\sin x}{x+x^2}\\)","Write as \\(\\dfrac{\\sin x}{x}\\cdot\\dfrac{1}{1+x}\\to1\\cdot1\\). Answer: \\(1\\)"],
+["CONCEPTUAL — VERTICAL ASYMPTOTE","Without formal epsilon-delta language, explain why \\(\\lim_{x\\to 2}\\dfrac{1}{x-2}\\) does not exist.","As \\(x\\to2\\), the denominator shrinks toward \\(0\\) while the numerator stays fixed at \\(1\\), so the fraction grows without bound — and it grows toward \\(+\\infty\\) from one side and \\(-\\infty\\) from the other, so no single finite value is approached."]
+]
+];
+
+function render(){
+  const setBar = document.getElementById('setBar');
+  setBar.innerHTML = '<span class="label">Set</span>';
+  SETS.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    if(i===window.currentSet) b.classList.add('active');
+    b.onclick = ()=>{ window.currentSet=i; render(); };
+    setBar.appendChild(b);
+  });
+  const prog = document.createElement('span');
+  prog.className='progress';
+  prog.textContent = `Set ${window.currentSet+1} of 4 · 6 questions`;
+  setBar.appendChild(prog);
+
+  const qDiv = document.getElementById('questions');
+  qDiv.innerHTML = '';
+  SETS[window.currentSet].forEach((triple)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qtag">${triple[0]}</div>
+      <div class="qtext">${triple[1]}</div>
+      <button class="reveal">Show answer</button>
+      <div class="answer">${triple[2]}</div>
+    `;
+    const btn = card.querySelector('.reveal');
+    const ans = card.querySelector('.answer');
+    btn.onclick = ()=>{
+      ans.classList.toggle('show');
+      card.classList.toggle('answered', ans.classList.contains('show'));
+      btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+    };
+    qDiv.appendChild(card);
+  });
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+window.currentSet = 0;
+render();
+</script>
+</body>
+</html>

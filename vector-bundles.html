@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vector Bundles: Understanding the Twist</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f0f4f8;
+  --surf:    #ffffff;
+  --surf2:   #eef2f7;
+  --bord:    #cfd9e6;
+  --text:    #2d3f52;
+  --muted:   #6b8096;
+  --bright:  #1a2b3c;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.75;
+  min-height: 100vh;
+}
+#prog { position:fixed;top:0;left:0;right:0;height:3px;background:var(--bord);z-index:200; }
+#prog-fill { height:100%;background:linear-gradient(90deg,#00a972,#0097e2,#ff3621,#ffb830);width:0;transition:width .2s; }
+.wrap { max-width:860px;margin:0 auto;padding:56px 24px 100px; }
+.back-link {
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;
+  color:var(--muted);text-decoration:none;margin-bottom:32px;display:inline-block;
+  transition:color .2s;
+}
+.back-link:hover { color:var(--bright); }
+.back-link::before { content:'← ';font-weight:500; }
+.hdr { text-align:center;margin-bottom:52px; }
+.hdr h1 { font-family:'Cinzel',serif;font-size:clamp(24px,4.5vw,44px);font-weight:600;color:var(--bright);letter-spacing:.05em; }
+.hdr p { color:var(--muted);font-style:italic;margin-top:10px;font-size:17px; }
+.hdr-rule { width:60px;height:1px;background:var(--bord);margin:16px auto; }
+.layout { display:flex;gap:28px;align-items:flex-start; }
+.tower { width:172px;flex-shrink:0;position:sticky;top:28px; }
+.tower-label { font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;padding-left:4px; }
+.tnav { display:flex;flex-direction:column;gap:1px; }
+.ti {
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  padding:7px 10px;border-left:2px solid var(--bord);
+  color:var(--muted);cursor:pointer;transition:all .2s;line-height:1.3;user-select:none;
+}
+.ti:hover { color:var(--bright);border-left-color:var(--muted); }
+.ti.active { color:var(--bright); }
+.cards { flex:1;min-width:0; }
+.cw { margin-bottom:6px;opacity:0;transform:translateY(14px);transition:opacity .4s,transform .4s; }
+.cw.show { opacity:1;transform:none; }
+.conn { width:2px;height:18px;background:var(--bord);margin:0 0 0 20px; }
+.card {
+  border:1px solid var(--bord);border-radius:6px;background:var(--surf);
+  overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.07);
+}
+.card:hover { border-color:var(--ac); }
+.card.open  { border-color:var(--ac);box-shadow:0 2px 20px -4px var(--ac-shadow); }
+.card-head { display:flex;align-items:center;gap:12px;padding:15px 18px;user-select:none; }
+.bdg {
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;
+  border:1px solid var(--ac);color:var(--ac);padding:3px 7px;border-radius:2px;
+  white-space:nowrap;flex-shrink:0;
+}
+.ctitle { font-family:'Cinzel',serif;font-size:15px;color:var(--bright);letter-spacing:.03em;flex:1; }
+.csub { font-style:italic;font-size:13px;color:var(--muted);flex-shrink:0; }
+.chev { color:var(--muted);font-size:11px;transition:transform .3s;flex-shrink:0; }
+.card.open .chev { transform:rotate(180deg); }
+.card-body { max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1); }
+.card-body.open { max-height:8000px; }
+.card-inner { border-top:1px solid var(--bord);padding:20px 20px 26px; }
+.sec { margin-top:16px; }
+.sec:first-child { margin-top:0; }
+.slabel { font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:7px; }
+.prose { color:var(--text);font-size:16.5px;line-height:1.8;margin-top:12px; }
+.prose em { font-style:italic;color:var(--bright); }
+.prose strong { font-weight:600;color:var(--ac); }
+.bsec-heading {
+  font-family:'Cinzel',serif;font-size:13px;letter-spacing:.04em;
+  color:var(--ac);margin-top:22px;margin-bottom:2px;
+  border-bottom:1px solid var(--bord);padding-bottom:6px;
+}
+.fbox {
+  background:#f7f9fc;border-left:3px solid var(--ac);border-radius:0 4px 4px 0;
+  padding:12px 15px;margin-top:10px;font-family:'EB Garamond',serif;
+  font-style:italic;font-size:16px;color:var(--bright);line-height:1.9;white-space:pre-wrap;
+}
+.ex {
+  background:#f7f9fc;border:1px dashed var(--bord);border-radius:4px;
+  padding:11px 15px;margin-top:9px;font-size:15px;color:var(--muted);white-space:pre-wrap;
+}
+.exl { display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--ac);margin-bottom:5px; }
+.ins {
+  border-radius:4px;padding:12px 15px;margin-top:11px;
+  font-size:15.5px;font-style:italic;
+  background:var(--ac-faint);border:1px solid var(--ac-mid);color:var(--text);
+}
+.ins::before { content:"✦ ";color:var(--ac);font-style:normal; }
+.diagram {
+  background:var(--surf2);border:1px solid var(--bord);border-radius:4px;
+  padding:20px;margin-top:12px;text-align:center;
+}
+.diagram-title {
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;
+  color:var(--ac);text-transform:uppercase;margin-bottom:12px;
+}
+.footer { text-align:center;color:var(--muted);font-style:italic;font-size:15px;margin-top:52px;padding-top:26px;border-top:1px solid var(--bord); }
+@media(max-width:620px){ .tower{display:none;} .csub{display:none;} }
+</style>
+</head>
+<body>
+<div id="prog"><div id="prog-fill"></div></div>
+<div class="wrap">
+  <a href="index.html" class="back-link">Back to Mathematics Hub</a>
+  <div class="hdr">
+    <h1>Vector Bundles: Understanding the Twist</h1>
+    <div class="hdr-rule"></div>
+    <p>A deep exploration of how vector spaces vary continuously over topological spaces, and why some bundles twist while others don't.</p>
+  </div>
+  <div class="layout">
+    <div class="tower">
+      <div class="tower-label">Sections</div>
+      <div class="tnav" id="tnav"></div>
+    </div>
+    <div class="cards" id="cards"></div>
+  </div>
+  <div class="footer">
+    Every twist, every transition function, every global obstruction &mdash;<br>
+    the geometry of bundles revealed from first principles.
+  </div>
+</div>
+<script>
+var SECTIONS = [
+  {
+    badge:"INTUITION", title:"Why Vector Bundles?", sub:"the problem they solve", color:"#00a972",
+    body:[
+      {t:"h", s:"The fundamental question"},
+      {t:"p", s:"Imagine you're walking around a circle. At each point on your journey, you're given a one-dimensional vector space &mdash; a line. As you walk continuously, these lines should also vary continuously. When you complete the circle and return to your starting point, you expect the line you're holding to be the same as when you started."},
+      {t:"p", s:"But here's the twist (quite literally): <strong>it doesn't have to be</strong>. You could walk around the circle and return with your line <em>flipped</em> &mdash; pointing in the opposite direction. This is exactly what happens in the Möbius strip: a line bundle over the circle that twists by 180 degrees."},
+      {t:"p", s:"Vector bundles are the mathematical framework that makes this precise. They let us study families of vector spaces that vary continuously over a base space, and they capture the subtle ways these families can be globally twisted even though they look completely standard when examined locally."},
+      {t:"h", s:"Why we need them"},
+      {t:"p", s:"In differential geometry, every smooth manifold M has a <strong>tangent bundle</strong> TM: at each point p, we attach the tangent space T_pM. To do calculus on manifolds, we need a framework for these varying families of vector spaces."},
+      {t:"p", s:"In physics, gauge theories describe particles (electrons, photons, quarks) as sections of vector bundles. The electromagnetic field is a connection on a complex line bundle. The standard model of particle physics lives on a rank-4 vector bundle over spacetime."},
+      {t:"p", s:"In topology, vector bundles provide computable invariants. K-theory &mdash; the Grothendieck group of vector bundles &mdash; is one of the most powerful tools in algebraic topology."},
+      {t:"i", s:"The key insight: a bundle is determined by how its local pieces are glued together. The gluing data is encoded in transition functions, and these functions measure exactly how much twisting occurs."}
+    ]
+  },
+  {
+    badge:"PHENOMENON", title:"The Möbius Strip", sub:"twisting made visible", color:"#0097e2",
+    body:[
+      {t:"h", s:"The canonical example of twisting"},
+      {t:"p", s:"Take a strip of paper. Give it a half-twist (180 degrees) and glue the ends together. You've just created a Möbius strip &mdash; the most famous example of a non-trivial vector bundle."},
+      {t:"p", s:"Topologically, the Möbius strip is a <strong>line bundle over S¹</strong> (the circle). At each point on the circle, the fiber is a vertical line segment. As you walk around the circle, these line segments twist continuously. After one full rotation, the fiber has rotated 180 degrees."},
+      {t:"h", s:"Local vs Global"},
+      {t:"p", s:"Here's what makes this subtle: <strong>locally</strong>, the Möbius strip looks exactly like a cylinder. If you zoom in to any small patch, you see a rectangle &mdash; a product of an interval with a line segment. There's no local invariant that distinguishes a Möbius strip from a cylinder."},
+      {t:"p", s:"The twist is a <strong>global</strong> phenomenon. It only reveals itself when you try to traverse the entire base space and return to where you started. This is the essence of what vector bundles capture: global topology that is invisible locally."},
+      {t:"h", s:"Why it matters"},
+      {t:"p", s:"The Möbius strip demonstrates that <strong>continuous families of vector spaces can be twisted</strong>. There is no continuous global trivialization: no way to choose a continuous non-vanishing section. If you try to draw a single non-zero vector at each point that varies continuously, you'll find it's impossible &mdash; at some point, the vector must become zero."},
+      {t:"f", s:"Key observation:\nThe cylinder (trivial bundle): S¹ × ℝ¹\nThe Möbius strip (non-trivial bundle): cannot be written as a product\n\nBoth are line bundles over S¹, but they are NOT isomorphic.\nDimension alone does not classify bundles."},
+      {t:"e", l:"DETECTING THE TWIST", s:"How do we detect the twist mathematically? We cannot do it by examining any single fiber or any local neighborhood. We need to look at transition functions &mdash; the data describing how local pieces are glued. For the cylinder, transition functions are all ±1 with even product. For the Möbius strip, they're ±1 with odd product &mdash; the signature of an odd number of flips."},
+      {t:"i", s:"The Möbius strip is rank 1 (one-dimensional fibers). But twisting happens in all ranks. The tangent bundle TS² to the 2-sphere is a rank-2 bundle that is non-trivial: you cannot comb the hair on a sphere. This is the geometric content of the Hairy Ball Theorem."}
+    ]
+  },
+  {
+    badge:"DEFINITION", title:"Formal Structure", sub:"total space, base, projection", color:"#00c4a0",
+    body:[
+      {t:"h", s:"The definition"},
+      {t:"f", s:"A rank-n (real) vector bundle over a space X consists of:\n\n1. A total space E (a topological space)\n2. A continuous surjection π : E → X  (the projection)\n3. For each x ∈ X, the fiber π⁻¹(x) is a real vector space of dimension n\n4. Local triviality: X can be covered by open sets {Uα} such that\n   for each α, there exists a homeomorphism\n   φα : π⁻¹(Uα) ≅ Uα × ℝⁿ\n   that is linear on each fiber and makes the diagram commute."},
+      {t:"p", s:"Let's unpack this carefully. The <strong>total space</strong> E is the union of all fibers. The <strong>base space</strong> X is what we're building the bundle over. The <strong>projection</strong> π sends each point in a fiber back down to its corresponding point in X. Each <strong>fiber</strong> π⁻¹(x) is an n-dimensional vector space."},
+      {t:"h", s:"Local triviality is the key condition"},
+      {t:"p", s:"The condition that seems innocuous but contains all the depth is <strong>local triviality</strong>. It says that if you restrict attention to a small enough open set Uα in the base space, the bundle over Uα looks like a product: Uα × ℝⁿ."},
+      {t:"p", s:"The homeomorphism φα : π⁻¹(Uα) ≅ Uα × ℝⁿ must satisfy two conditions: it's a homeomorphism (continuous bijection with continuous inverse), and it's <strong>linear on fibers</strong>. This means for each fixed x ∈ Uα, the restriction φα|_fiber : π⁻¹(x) → {x} × ℝⁿ ≅ ℝⁿ is a linear isomorphism of vector spaces."},
+      {t:"h", s:"What this means geometrically"},
+      {t:"p", s:"Local triviality says: <em>locally, every vector bundle is trivial</em>. If you zoom in close enough, every bundle looks like a product of the base with a vector space. The twisting, the global topology, the non-triviality &mdash; all of that emerges from how the local pieces are glued together along their overlaps."},
+      {t:"e", l:"TRIVIAL BUNDLE", s:"The simplest vector bundle is the trivial bundle: E = X × ℝⁿ with π(x,v) = x. Every fiber is just ℝⁿ, and there's no twisting whatsoever. This is globally a product. The cylinder S¹ × ℝ¹ is the trivial line bundle over the circle."},
+      {t:"e", l:"NON-TRIVIAL BUNDLE", s:"The Möbius strip is a line bundle E over S¹ that cannot be written as S¹ × ℝ¹. It satisfies all the axioms: E is a space, π : E → S¹ is a projection, each fiber is ℝ¹, and local triviality holds (cover S¹ by two open arcs, and over each arc the bundle is trivial). But globally, it twists."},
+      {t:"i", s:"The remarkable fact: whether a bundle is trivial or not is a global topological property that cannot be detected by examining it locally. This is why transition functions &mdash; which record the gluing data &mdash; are essential."}
+    ]
+  },
+  {
+    badge:"CORE", title:"Transition Functions", sub:"the gluing data", color:"#ff6b35",
+    body:[
+      {t:"h", s:"How local pieces are glued"},
+      {t:"p", s:"Suppose we have a vector bundle E over X, and we've covered X by open sets {Uα}. Over each Uα, we have a local trivialization φα : π⁻¹(Uα) ≅ Uα × ℝⁿ. On the overlap Uα ∩ Uβ, we have <strong>two</strong> trivializations, and they might not agree."},
+      {t:"p", s:"The <strong>transition function</strong> gαβ : Uα ∩ Uβ → GL(n,ℝ) measures the disagreement. For each point x ∈ Uα ∩ Uβ, the value gαβ(x) is the linear transformation relating the two trivializations on the fiber over x."},
+      {t:"f", s:"Transition function definition:\nφβ = (id × gαβ) ∘ φα  on π⁻¹(Uα ∩ Uβ)\n\nMore explicitly: if φα maps a point e in the fiber over x to (x, v) ∈ Uα × ℝⁿ,\nand φβ maps the same point e to (x, w) ∈ Uβ × ℝⁿ, then:\nw = gαβ(x) · v\n\nThe transition function gαβ(x) is an invertible n×n matrix that varies continuously with x."},
+      {t:"h", s:"The cocycle condition"},
+      {t:"p", s:"Transition functions cannot be arbitrary. They must satisfy a consistency condition called the <strong>cocycle condition</strong>: whenever three open sets Uα, Uβ, Uγ overlap, we must have:"},
+      {t:"f", s:"Cocycle condition:\ngαγ(x) = gαβ(x) · gβγ(x)  for all x ∈ Uα ∩ Uβ ∩ Uγ\n\nThis ensures that composing transitions is consistent.\nAlso: gαα(x) = identity for all x ∈ Uα"},
+      {t:"p", s:"The cocycle condition is not optional &mdash; it's forced by the requirement that the trivializations are all compatible. Any collection of functions gαβ : Uα ∩ Uβ → GL(n,ℝ) satisfying the cocycle condition defines a vector bundle (via the clutching construction)."},
+      {t:"h", s:"Transition functions encode twisting"},
+      {t:"p", s:"Here's the key insight: <strong>a bundle is trivial if and only if the transition functions can be trivialized</strong>. More precisely, E ≅ X × ℝⁿ if and only if there exist continuous maps hα : Uα → GL(n,ℝ) such that:"},
+      {t:"f", s:"gαβ(x) = hα(x) · hβ(x)⁻¹  for all x ∈ Uα ∩ Uβ\n\nIn this case, we say the cocycle is a coboundary."},
+      {t:"p", s:"If the transition functions are coboundaries, you can redefine the local trivializations by the change of basis hα, and in the new trivializations all the transition functions become the identity. The bundle becomes trivial."},
+      {t:"e", l:"EXAMPLE: CYLINDER", s:"For the cylinder S¹ × ℝ¹, cover S¹ by two open arcs U and V (each slightly more than a semicircle). On U ∩ V (which has two components), both transition functions gUV and gVU can be taken to be the constant function 1. This is trivially a coboundary: just set hU = 1 and hV = 1."},
+      {t:"e", l:"EXAMPLE: MÖBIUS STRIP", s:"For the Möbius strip, use the same cover. On the two components of U ∩ V, take transition functions gUV = 1 on one component and gUV = -1 on the other. This is NOT a coboundary. There's no continuous choice of hU, hV with values in GL(1,ℝ) = ℝ* = ℝ\\{0} that makes gUV = hU · hV⁻¹. The -1 is the signature of the twist."},
+      {t:"i", s:"Transition functions are the bridge between topology and linear algebra. They live in GL(n), and their homotopy class determines the isomorphism class of the bundle. For bundles over spheres, everything reduces to studying maps Sᵏ → GL(n) &mdash; pure homotopy theory."}
+    ]
+  },
+  {
+    badge:"CONSTRUCTION", title:"Building the Möbius Bundle", sub:"explicit construction", color:"#ff3621",
+    body:[
+      {t:"h", s:"Construction from transition functions"},
+      {t:"p", s:"Let's build the Möbius strip explicitly as a vector bundle over S¹. We'll use the <strong>gluing construction</strong>: specify transition functions, then glue local trivial pieces according to those functions."},
+      {t:"f", s:"Step 1: Cover S¹ by two open arcs\nParametrize S¹ as {e^(iθ) : θ ∈ [0, 2π)} / (identify 0 ≅ 2π)\nU = {e^(iθ) : θ ∈ (-ε, π+ε)}  (slightly more than lower semicircle)\nV = {e^(iθ) : θ ∈ (π-ε, 2π+ε)}  (slightly more than upper semicircle)\nU ∩ V has two components: near θ=0 and near θ=π"},
+      {t:"f", s:"Step 2: Specify transition functions\nOver the component near θ = 0: g_UV(e^(iθ)) = +1 ∈ GL(1,ℝ)\nOver the component near θ = π: g_UV(e^(iθ)) = -1 ∈ GL(1,ℝ)\n\nThe flip from +1 to -1 encodes the half-twist."},
+      {t:"f", s:"Step 3: Build the total space\nStart with (U × ℝ) ⊔ (V × ℝ)  (disjoint union of two trivial bundles)\nGlue along U ∩ V using the transition functions:\n  (x, v) in U × ℝ is identified with (x, g_UV(x) · v) in V × ℝ\n\nThe quotient space is the Möbius strip E.\nThe projection π : E → S¹ is induced by the projections from U × ℝ and V × ℝ."},
+      {t:"p", s:"Let's trace what happens to a fiber as we traverse the circle. Start at θ = 0 with a fiber that we think of as the standard ℝ¹. As we move from θ = 0 to θ = π, we stay in the U chart, and the fiber varies continuously with no twist. At θ = π, we cross into the V chart. The transition function at θ = π is -1, which means the fiber gets flipped. Continuing from θ = π back to θ = 2π = 0, we stay in V, and again the fiber varies continuously. But when we return to θ = 0, we're in the V chart, and the transition from V back to U applies the transition function at θ = 0, which is +1 (no flip). Net result: one flip total."},
+      {t:"h", s:"Why the Möbius strip is non-orientable"},
+      {t:"p", s:"A vector bundle is <strong>orientable</strong> if the transition functions can all be chosen to have positive determinant. For the Möbius strip, the transition function -1 has determinant -1. This cannot be removed by any choice of trivializations. The bundle is inherently non-orientable."},
+      {t:"p", s:"Geometrically, non-orientability means there's no consistent way to choose an orientation for all fibers simultaneously. If you start with a choice of positive direction at one point and transport it continuously around the circle, you return with the opposite orientation."},
+      {t:"e", l:"HIGHER TWISTS", s:"We could instead define transition functions g_UV(e^(iθ)) = +1 near θ = 0 and g_UV(e^(iθ)) = e^(ikθ) for some integer k. This gives a bundle with k half-twists. For k=0, we get the cylinder. For k=1, the Möbius strip. For k=2, we get the cylinder again (two half-twists = one full twist = no net twist). The isomorphism classes of line bundles over S¹ are classified by ℤ/2ℤ: trivial or Möbius."},
+      {t:"i", s:"The gluing construction is universal: every vector bundle can be constructed this way. Specify a cover, specify transition functions satisfying the cocycle condition, glue. Conversely, every bundle determines a cocycle of transition functions (up to coboundary). This is the language in which bundles are classified."}
+    ]
+  },
+  {
+    badge:"GEOMETRY", title:"The Tangent Bundle", sub:"geometry meets topology", color:"#ffb830",
+    body:[
+      {t:"h", s:"The most important example in geometry"},
+      {t:"p", s:"Let M be a smooth manifold (a space that locally looks like ℝⁿ). At each point p ∈ M, there is a <strong>tangent space</strong> TₚM: the space of all tangent vectors at p. This is an n-dimensional real vector space. The collection of all tangent spaces forms the <strong>tangent bundle</strong> TM."},
+      {t:"f", s:"Tangent bundle construction:\nTM = ⊔_{p ∈ M} TₚM  (disjoint union of all tangent spaces)\nπ : TM → M  where π(v) = the point where v is tangent\n\nFor each p, the fiber π⁻¹(p) = TₚM is the tangent space at p.\nTM is naturally a smooth manifold of dimension 2n."},
+      {t:"p", s:"The tangent bundle is <strong>always</strong> a vector bundle: it automatically satisfies local triviality. If U ⊂ M is a coordinate chart with coordinates (x₁, ..., xₙ), then the coordinate basis vectors {∂/∂x₁, ..., ∂/∂xₙ} provide a local trivialization of TM over U."},
+      {t:"h", s:"When is the tangent bundle trivial?"},
+      {t:"p", s:"A manifold M is called <strong>parallelizable</strong> if TM is trivial: TM ≅ M × ℝⁿ. Equivalently, there exist n globally defined vector fields on M that are everywhere linearly independent. This is a very restrictive condition."},
+      {t:"e", l:"PARALLELIZABLE MANIFOLDS", s:"ℝⁿ is parallelizable (the coordinate vector fields ∂/∂x₁, ..., ∂/∂xₙ work globally). The circle S¹ is parallelizable: there's a single non-vanishing tangent vector field (going around the circle). The 3-sphere S³ is parallelizable (via quaternion multiplication). The 7-sphere S⁷ is parallelizable (via octonion multiplication). By a theorem of Adams (using K-theory!), these are the ONLY spheres that are parallelizable."},
+      {t:"e", l:"NON-PARALLELIZABLE: THE 2-SPHERE", s:"The 2-sphere S² is NOT parallelizable. This is the content of the Hairy Ball Theorem: you cannot comb the hair on a sphere. There is no globally defined non-vanishing vector field on S². The tangent bundle TS² is non-trivial."},
+      {t:"h", s:"Detecting non-triviality via characteristic classes"},
+      {t:"p", s:"How do we prove TS² is non-trivial? We use <strong>characteristic classes</strong>: cohomological invariants that detect bundle topology. For TS², the Euler class is non-zero. By the Poincaré-Hopf theorem, the Euler class equals the Euler characteristic χ(S²) = 2. Since this is non-zero, the bundle cannot be trivial."},
+      {t:"f", s:"Euler characteristic and tangent bundle:\nIf TM is trivial, then χ(M) = 0.\nFor S², χ(S²) = 2 ≠ 0, so TS² is non-trivial.\n\nFor S¹, χ(S¹) = 0, consistent with TS¹ being trivial.\nFor the torus T² = S¹ × S¹, χ(T²) = 0, and indeed TT² is trivial."},
+      {t:"h", s:"Transition functions for TS²"},
+      {t:"p", s:"Cover S² by two open sets: the northern hemisphere U (excluding the south pole) and the southern hemisphere V (excluding the north pole). The overlap U ∩ V is homotopy equivalent to the equator S¹. The transition function g_UV : S¹ → GL(2,ℝ) encodes how the tangent frames in U and V are related along the equator. The homotopy class of this map in π₁(GL(2,ℝ)) ≅ ℤ determines the bundle. For TS², this class is non-trivial, detecting the non-triviality of the tangent bundle."},
+      {t:"i", s:"The tangent bundle connects differential geometry and topology. Its triviality or non-triviality constrains the geometry of M. Parallelizable manifolds admit flat metrics. Non-parallelizable manifolds must have curvature. The Gauss-Bonnet theorem relates curvature (geometry) to Euler characteristic (topology) via the tangent bundle."}
+    ]
+  },
+  {
+    badge:"DETECTION", title:"Trivial vs Non-Trivial", sub:"how to tell the difference", color:"#0097e2",
+    body:[
+      {t:"h", s:"The classification problem"},
+      {t:"p", s:"Given a vector bundle E over X, the fundamental question is: <strong>is E trivial?</strong> That is, is E isomorphic to the product bundle X × ℝⁿ? If E is not trivial, what is its isomorphism class? This is the classification problem for vector bundles."},
+      {t:"p", s:"For a bundle to be trivial, there must exist n sections (continuous maps s : X → E with π ∘ s = id) that are everywhere linearly independent. These sections would provide a global trivialization. Conversely, if no such sections exist, the bundle is non-trivial."},
+      {t:"h", s:"Obstructions to triviality"},
+      {t:"p", s:"There are several ways to detect that a bundle is non-trivial:"},
+      {t:"f", s:"Methods to detect non-triviality:\n\n1. Characteristic classes (Stiefel-Whitney, Chern, Euler, Pontryagin)\n   If any characteristic class is non-zero, the bundle is non-trivial.\n\n2. Sections: If there's no nowhere-vanishing section, the bundle may be non-trivial.\n   (Caution: absence of sections doesn't always imply non-triviality)\n\n3. Transition functions: If the transition functions are not coboundaries,\n   the bundle is non-trivial.\n\n4. Homotopy: Two bundles E, F over X are isomorphic iff their classifying\n   maps X → BG are homotopic (where G = GL(n,ℝ) or GL(n,ℂ))."},
+      {t:"h", s:"Characteristic classes in detail"},
+      {t:"p", s:"<strong>Stiefel-Whitney classes</strong> w_i(E) ∈ H^i(X; ℤ/2ℤ) are cohomology classes associated to real vector bundles. The first Stiefel-Whitney class w₁(E) detects orientability: w₁(E) = 0 iff E is orientable. For the Möbius bundle, w₁ ≠ 0, confirming non-triviality."},
+      {t:"p", s:"<strong>Chern classes</strong> c_i(E) ∈ H^(2i)(X; ℤ) are associated to complex vector bundles. The total Chern class c(E) = 1 + c₁(E) + c₂(E) + ... satisfies c(E ⊕ F) = c(E) ∪ c(F). For the tautological line bundle H over ℂℙ¹ ≅ S², we have c₁(H) is the generator of H²(S²; ℤ) ≅ ℤ, proving H is non-trivial."},
+      {t:"p", s:"<strong>Euler class</strong> e(E) ∈ H^n(X; ℤ) is defined for oriented rank-n real vector bundles. It counts (with sign) the zeros of a generic section. For TS², the Euler class equals the Euler characteristic χ(S²) = 2 by the Poincaré-Hopf theorem."},
+      {t:"e", l:"DETECTING THE MÖBIUS STRIP", s:"For the Möbius strip E over S¹:\n- w₁(E) ≠ 0 in H¹(S¹; ℤ/2ℤ) ≅ ℤ/2ℤ (E is non-orientable)\n- E has no nowhere-vanishing section (you cannot draw a continuous non-zero vector field)\n- Transition functions include a -1, which is not a coboundary\nAll three methods confirm: E is non-trivial."},
+      {t:"e", l:"DETECTING NON-TRIVIALITY OF TS²", s:"For TS² (tangent bundle to S²):\n- Euler class e(TS²) = 2 ≠ 0 in H²(S²; ℤ) ≅ ℤ\n- Hairy Ball Theorem: no nowhere-vanishing section exists\n- Transition functions on S¹ have non-trivial homotopy class in π₁(GL(2,ℝ))\nConclusion: TS² is non-trivial."},
+      {t:"h", s:"Stable triviality and K-theory"},
+      {t:"p", s:"Sometimes a bundle E is not trivial, but becomes trivial after adding a trivial bundle: E ⊕ ℝᵏ ≅ X × ℝⁿ⁺ᵏ for some k. We say E is <strong>stably trivial</strong>. For example, TS² ⊕ ℝ¹ ≅ S² × ℝ³ (the normal bundle to S² ⊂ ℝ³ is trivial, so tangent + normal = trivial). In K-theory, stably trivial bundles become zero."},
+      {t:"i", s:"The classification of vector bundles over a space X is equivalent to computing [X, BG], the homotopy classes of maps from X to the classifying space BG. For complex bundles, BG = BU(n). For real bundles, BG = BO(n). Bundle theory is homotopy theory in disguise."}
+    ]
+  },
+  {
+    badge:"CLUTCHING", title:"The Clutching Construction", sub:"bundles from gluing", color:"#00a972",
+    body:[
+      {t:"h", s:"Bundles over spheres"},
+      {t:"p", s:"The clutching construction is a powerful method for building vector bundles over spheres S^n. It reduces bundle classification to homotopy theory: every rank-k vector bundle over S^n is determined by a continuous map S^(n-1) → GL(k), called the <strong>clutching function</strong>."},
+      {t:"f", s:"Clutching construction for bundles over Sⁿ:\n\nStep 1: Decompose Sⁿ = D₊ⁿ ∪ D₋ⁿ\n  (northern hemisphere ∪ southern hemisphere, glued along equator Sⁿ⁻¹)\n\nStep 2: Start with trivial bundles over each hemisphere:\n  E₊ = D₊ⁿ × ℝᵏ  and  E₋ = D₋ⁿ × ℝᵏ\n\nStep 3: Choose a clutching function g : Sⁿ⁻¹ → GL(k,ℝ)\n\nStep 4: Glue E₊ and E₋ along the equator Sⁿ⁻¹ using g:\n  (x, v) ∈ ∂D₊ⁿ × ℝᵏ is identified with (x, g(x) · v) ∈ ∂D₋ⁿ × ℝᵏ\n\nThe quotient is a vector bundle E over Sⁿ."},
+      {t:"p", s:"The key theorem: <strong>isomorphism classes of rank-k vector bundles over S^n correspond bijectively to homotopy classes of maps S^(n-1) → GL(k,ℝ)</strong>. That is, Vect_k(S^n) ≅ π_(n-1)(GL(k,ℝ))."},
+      {t:"h", s:"Examples and computations"},
+      {t:"e", l:"BUNDLES OVER S¹", s:"S¹ = D¹₊ ∪ D¹₋ with equator S⁰ = {two points}. A clutching function is a map S⁰ → GL(1,ℝ) = ℝ* = ℝ \\ {0}. This is two numbers: g(+) and g(-), each nonzero. If both are positive or both negative, the bundle is trivial. If they have opposite sign, we get the Möbius strip. Thus Vect₁(S¹) ≅ π₀(GL(1,ℝ)) ≅ ℤ/2ℤ."},
+      {t:"e", l:"BUNDLES OVER S²", s:"S² = D²₊ ∪ D²₋ with equator S¹. A clutching function is g : S¹ → GL(k,ℝ). The homotopy class is determined by winding number if k=1, or by an element of π₁(GL(k,ℝ)) for general k. For k ≥ 2, π₁(GL(k,ℝ)) ≅ ℤ/2ℤ (orientability). For complex bundles, π₁(GL(k,ℂ)) ≅ 0 for k ≥ 1, so all complex line bundles over S² are determined by their first Chern class c₁ ∈ H²(S²;ℤ) ≅ ℤ."},
+      {t:"e", l:"TANGENT BUNDLE TS² VIA CLUTCHING", s:"TS² can be constructed by clutching. The clutching function g : S¹ → GL(2,ℝ) rotates the fiber by angle θ as you traverse the equator: g(e^(iθ)) = rotation by θ. The winding number is 1, corresponding to the Euler class e(TS²) = 2. This confirms TS² is non-trivial."},
+      {t:"h", s:"Relation to Bott periodicity"},
+      {t:"p", s:"The clutching construction connects directly to Bott periodicity. The homotopy groups π_k(GL(n,ℝ)) stabilize as n → ∞ and exhibit period-8 periodicity. For complex bundles, π_k(GL(n,ℂ)) stabilizes and exhibits period-2 periodicity: π_k(U) = π_(k+2)(U) for the infinite unitary group U."},
+      {t:"p", s:"This is <strong>the geometric origin of Bott periodicity in K-theory</strong>. The K-theory group K⁰(S^k) ≅ π_(k-1)(U) by the clutching construction. Bott's theorem π_k(U) = π_(k+2)(U) immediately implies K⁰(S^k) = K⁰(S^(k+2)), which is the periodicity K^(-n)(X) ≅ K^(-n-2)(X)."},
+      {t:"f", s:"The bridge from bundles to K-theory:\n\nVect_k(Sⁿ) ≅ [Sⁿ, BGL(k)] ≅ [Sⁿ⁻¹, GL(k)] = π_(n-1)(GL(k))\n\nAs k → ∞, π_(n-1)(GL(k)) stabilizes to π_(n-1)(GL) = K̃⁰(Sⁿ)\n\nBott periodicity: π_k(GL) = π_(k+2)(GL)  for complex case (period 2)\n                  π_k(O) = π_(k+8)(O)    for real case (period 8)"},
+      {t:"i", s:"The clutching construction is conceptual magic: it turns a topological problem (classifying bundles) into a homotopy problem (classifying maps to GL(n)). This is the key to computing bundle invariants and proving theorems like Bott periodicity."}
+    ]
+  },
+  {
+    badge:"CLASSIFICATION", title:"Classification Theory", sub:"understanding all bundles", color:"#ff3621",
+    body:[
+      {t:"h", s:"The universal bundle and classifying space"},
+      {t:"p", s:"There is a universal construction that classifies <strong>all</strong> vector bundles over all spaces simultaneously. For each group G (e.g., G = GL(n,ℝ) or GL(n,ℂ)), there exists a space BG called the <strong>classifying space</strong> and a G-bundle EG → BG called the <strong>universal bundle</strong>, with the property that every rank-n vector bundle over any space X is the pullback of the universal bundle along some map X → BG, and two bundles are isomorphic iff their classifying maps are homotopic."},
+      {t:"f", s:"Universal property:\nFor any space X, there is a bijection:\n\n{ rank-n vector bundles over X } / isomorphism\n        ≅\n    [X, BG]  (homotopy classes of maps X → BG)\n\nwhere G = GL(n,ℝ) for real bundles, G = GL(n,ℂ) for complex bundles.\n\nGiven f : X → BG, the bundle over X is f*(EG), the pullback of the universal bundle."},
+      {t:"p", s:"The classifying space BG is characterized (up to homotopy equivalence) by being contractible when you remove the action of G, and by having π_k(BG) = π_(k-1)(G) for all k ≥ 1. For GL(n,ℝ), we can take BG = Gr_n(ℝ^∞), the infinite Grassmannian of n-planes in ℝ^∞."},
+      {t:"h", s:"Examples of classifying spaces"},
+      {t:"e", l:"REAL LINE BUNDLES", s:"For G = GL(1,ℝ) = ℝ* = {±1} × ℝ_{>0}, we have BG = ℝℙ^∞ (infinite-dimensional real projective space). Real line bundles over X are classified by [X, ℝℙ^∞] = H¹(X; ℤ/2ℤ), the first cohomology with ℤ/2ℤ coefficients. This cohomology class is exactly the first Stiefel-Whitney class w₁(E)."},
+      {t:"e", l:"COMPLEX LINE BUNDLES", s:"For G = GL(1,ℂ) = ℂ* = S¹ × ℝ_{>0}, we have BG = ℂℙ^∞ (infinite-dimensional complex projective space). Complex line bundles over X are classified by [X, ℂℙ^∞] = H²(X; ℤ), the second cohomology with integer coefficients. This class is the first Chern class c₁(E)."},
+      {t:"e", l:"ORIENTED RANK-2 BUNDLES", s:"For G = SO(2) = S¹, we have BSO(2) = ℂℙ^∞. Oriented rank-2 real vector bundles are classified by [X, ℂℙ^∞] = H²(X; ℤ). The classifying invariant is the Euler class e(E) ∈ H²(X; ℤ)."},
+      {t:"h", s:"Characteristic classes as obstructions"},
+      {t:"p", s:"Characteristic classes arise naturally from the classifying space perspective. Since EG → BG is a universal bundle, its cohomology H*(BG) consists of <strong>universal characteristic classes</strong>. For any bundle E over X with classifying map f : X → BG, the characteristic classes of E are obtained by pulling back classes from BG:"},
+      {t:"f", s:"c_i(E) = f*(c_i^univ) ∈ H^*(X)\n\nwhere c_i^univ ∈ H^*(BG) are universal classes.\n\nFor G = GL(n,ℂ): H*(BGL(n,ℂ); ℤ) = ℤ[c₁, c₂, ..., c_n]\n  (polynomial algebra on Chern classes)\n\nFor G = GL(n,ℝ): H*(BGL(n,ℝ); ℤ/2ℤ) = ℤ/2ℤ[w₁, w₂, ..., w_n]\n  (polynomial algebra on Stiefel-Whitney classes)"},
+      {t:"p", s:"The vanishing or non-vanishing of characteristic classes detects bundle properties. If E → X is trivial, then its classifying map is nullhomotopic, so all characteristic classes vanish. Conversely, if any characteristic class is non-zero, the bundle is non-trivial."},
+      {t:"h", s:"Stable classification and K-theory"},
+      {t:"p", s:"When we allow stabilization (adding trivial bundles), the classification simplifies dramatically. Define the <strong>stable equivalence</strong> relation: E ~ F if E ⊕ ℝᵏ ≅ F ⊕ ℝᵏ for some k. The set of stable equivalence classes forms a group under direct sum, and this group is K-theory:"},
+      {t:"f", s:"K(X) = Grothendieck group of Vect(X)\n     = {formal differences [E] - [F] of bundles}\n     = {stable equivalence classes of bundles}\n\nK⁰(X) ≅ [X, ℤ × BU]  for complex K-theory\nKO⁰(X) ≅ [X, ℤ × BO] for real K-theory\n\nwhere ℤ × BU is the classifying space for stable complex bundles,\nand ℤ × BO is the classifying space for stable real bundles."},
+      {t:"p", s:"The passage from Vect(X) to K(X) loses information (stable equivalence is coarser than isomorphism) but gains algebraic structure (K(X) is a ring, not just a monoid). K-theory captures the aspects of bundle theory that are stable under adding trivial bundles."},
+      {t:"e", l:"K-THEORY OF SPHERES", s:"For S², we have K⁰(S²) ≅ ℤ ⊕ ℤ: one ℤ from the rank (stable dimension), one ℤ from the stable twist (stable isomorphism class). The generator of the second ℤ is [H] - [ℝ¹], where H is the tautological line bundle over ℂℙ¹ ≅ S². Every stable bundle is a multiple of this generator."},
+      {t:"i", s:"Classification theory unifies the subject. Every bundle comes from a universal bundle via pullback. Every cohomology theory comes from the cohomology of a classifying space. Bundle theory is representation theory, is cohomology theory, is homotopy theory. They are all the same thing viewed from different angles."}
+    ]
+  }
+];
+
+function rgba(hex, a) {
+  var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return "rgba("+r+","+g+","+b+","+a+")";
+}
+function buildBody(blocks) {
+  return blocks.map(function(b) {
+    if (b.t === "h") return '<div class="bsec-heading">'+b.s+'</div>';
+    if (b.t === "p") return '<div class="prose">'+b.s+'</div>';
+    if (b.t === "f") return '<div class="fbox">'+b.s+'</div>';
+    if (b.t === "e") return '<div class="ex"><span class="exl">'+b.l+'</span>'+b.s+'</div>';
+    if (b.t === "i") return '<div class="ins">'+b.s+'</div>';
+    if (b.t === "d") return '<div class="diagram"><div class="diagram-title">'+b.l+'</div>'+b.s+'</div>';
+    return '';
+  }).join("");
+}
+function init() {
+  var tnav = document.getElementById("tnav");
+  var cards = document.getElementById("cards");
+  SECTIONS.forEach(function(sec, i) {
+    var ti = document.createElement("div");
+    ti.className = "ti"; ti.textContent = sec.title; ti.dataset.i = i;
+    ti.addEventListener("click", function() {
+      var cw = document.querySelector(".cw[data-i='"+i+"']");
+      if (cw) { cw.scrollIntoView({behavior:"smooth",block:"center"}); setTimeout(function(){ openCard(i); },350); }
+    });
+    tnav.appendChild(ti);
+    var cw = document.createElement("div");
+    cw.className = "cw"; cw.dataset.i = i;
+    cw.innerHTML =
+      (i > 0 ? '<div class="conn"></div>' : '') +
+      '<div class="card" style="--ac:'+sec.color+';--ac-faint:'+rgba(sec.color,.08)+';--ac-mid:'+rgba(sec.color,.22)+';--ac-shadow:'+rgba(sec.color,.35)+'">' +
+        '<div class="card-head">' +
+          '<span class="bdg">'+sec.badge+'</span>' +
+          '<span class="ctitle">'+sec.title+'</span>' +
+          '<span class="csub">'+sec.sub+'</span>' +
+          '<span class="chev">&#9660;</span>' +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="card-inner">' +
+            buildBody(sec.body) +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    cards.appendChild(cw);
+    var card = cw.querySelector(".card"), body = cw.querySelector(".card-body");
+    card.addEventListener("click", function() {
+      var open = card.classList.contains("open");
+      card.classList.toggle("open", !open); body.classList.toggle("open", !open);
+      document.querySelectorAll(".ti").forEach(function(t,j){ t.classList.toggle("active",!open && j===i); });
+      if (!open) { ti.style.borderLeftColor = sec.color; ti.style.color = sec.color; }
+      else { ti.style.borderLeftColor = ""; ti.style.color = ""; }
+    });
+  });
+  var fill = document.getElementById("prog-fill");
+  window.addEventListener("scroll", function(){
+    var pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    fill.style.width = Math.min(pct,100)+"%";
+  });
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("show"); });
+  },{threshold:0.05});
+  document.querySelectorAll(".cw").forEach(function(el){ obs.observe(el); });
+  setTimeout(function(){ openCard(0); }, 150);
+}
+function openCard(i) {
+  var cw = document.querySelector(".cw[data-i='"+i+"']");
+  if (!cw) return;
+  var card = cw.querySelector(".card"), body = cw.querySelector(".card-body");
+  if (!card.classList.contains("open")) {
+    card.classList.add("open"); body.classList.add("open");
+    var ti = document.querySelector(".ti[data-i='"+i+"']");
+    if (ti) { ti.style.borderLeftColor = SECTIONS[i].color; ti.style.color = SECTIONS[i].color; }
+    document.querySelectorAll(".ti").forEach(function(t,j){ t.classList.toggle("active",j===i); });
+  }
+}
+init();
+</script>
+</body>
+</html>

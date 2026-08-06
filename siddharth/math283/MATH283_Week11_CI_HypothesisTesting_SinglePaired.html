@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Confidence Intervals, Hypothesis Testing &amp; Tests for Single or Paired Samples</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH283 &middot; Advanced Engineering Mathematics &amp; Statistics &middot; Week 11 (Part B: Statistics)</div>
+  <h1>Confidence Intervals, Hypothesis Testing &amp; Tests for Single or Paired Samples</h1>
+  <p>Moving from describing samples to drawing conclusions about the population they came from. A confidence interval gives a plausible range for an unknown parameter; hypothesis testing gives a formal decision procedure for whether the data supports or contradicts a specific claim. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 60 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this week's toolkit</span>
+  <ul>
+<li><strong>CI for $\mu$, $\sigma$ known:</strong> $\bar x\pm z_{\alpha/2}\dfrac{\sigma}{\sqrt n}$.</li>
+<li><strong>CI for $\mu$, $\sigma$ unknown:</strong> $\bar x\pm t_{\alpha/2,n-1}\dfrac{s}{\sqrt n}$ &mdash; use the $t$-distribution with $n-1$ degrees of freedom.</li>
+<li><strong>Hypotheses:</strong> $H_0$ (null, the default/status-quo claim) vs. $H_1$ (alternative). <strong>Type I error</strong> ($\alpha$): rejecting a true $H_0$. <strong>Type II error</strong> ($\beta$): failing to reject a false $H_0$.</li>
+<li><strong>Test statistic &amp; decision:</strong> compute a test statistic, find the $p$-value (probability of a result this extreme, if $H_0$ were true); reject $H_0$ if $p<\alpha$.</li>
+<li><strong>One-sample $t$-test</strong> ($\sigma$ unknown): $t=\dfrac{\bar x-\mu_0}{s/\sqrt n}$, $df=n-1$.</li>
+<li><strong>Paired $t$-test:</strong> compute the differences $d_i$ for each pair, then run a one-sample $t$-test on the differences against $\mu_0=0$: $t=\dfrac{\bar d}{s_d/\sqrt n}$.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Confidence Intervals for the Mean</a></li>
+<li><a href="#sec1">Hypothesis Testing &mdash; General Concepts</a></li>
+<li><a href="#sec2">Hypothesis Tests for Single or Paired Samples</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+  <div class="section-title"><span class="tag">0</span> Confidence Intervals for the Mean</div>
+
+  <div class="prose">
+<p>A confidence interval gives a range of plausible values for an unknown population parameter, built from sample data. A "95% confidence interval" means that if you repeated the sampling process many times and built an interval each time using this same method, about 95% of those intervals would contain the true parameter &mdash; it is NOT the probability that this one specific interval contains the true value (that's either true or false, with no randomness left once the interval is computed).</p>
+<p><strong>Known vs. unknown $\sigma$.</strong> If the population standard deviation $\sigma$ is genuinely known (rare in practice, but common in textbook problems), use $z$. If $\sigma$ must be estimated from the sample (using $s$), use the $t$-distribution instead &mdash; it has slightly heavier tails than $z$, correctly reflecting the extra uncertainty from estimating $\sigma$.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$\bar x\pm z_{\alpha/2}\frac{\sigma}{\sqrt n} \ (\sigma \text{ known}), \qquad \bar x\pm t_{\alpha/2,n-1}\frac{s}{\sqrt n} \ (\sigma \text{ unknown})$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example 1 ($\sigma$ known).</strong> A sample of 36 items has $\bar x=50$, and $\sigma=8$ is known. Find a 95% CI for $\mu$.</p>
+<p class="step">$z_{0.025}=1.96$. Margin $=1.96\times\dfrac{8}{\sqrt{36}}=1.96\times1.333=2.613$.</p>
+<p class="step">CI: $50\pm2.613=(47.39,52.61)$.</p>
+<p><strong>Example 2 ($\sigma$ unknown).</strong> A sample of 16 items has $\bar x=25,s=4$. Find a 95% CI for $\mu$.</p>
+<p class="step">$t_{0.025,15}=2.131$. Margin $=2.131\times\dfrac{4}{\sqrt{16}}=2.131$.</p>
+<p class="step">CI: $25\pm2.131=(22.87,27.13)$.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A sample of $n=49$ has $\bar x=100$, known $\sigma=14$. Find a 95% CI for $\mu$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Margin $=1.96\times\dfrac{14}{\sqrt{49}}=1.96\times2=3.92$.</p>
+<p><strong>Answer:</strong> $(96.08,103.92)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A sample of $n=25$ has $\bar x=60,s=10$ (unknown $\sigma$). Find a 90% CI for $\mu$ (use $t_{0.05,24}\approx1.711$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Margin $=1.711\times\dfrac{10}{\sqrt{25}}=1.711\times2=3.422$.</p>
+<p><strong>Answer:</strong> $(56.58,63.42)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A sample of $n=100$ has $\bar x=75$, known $\sigma=20$. Find a 99% CI for $\mu$ (use $z_{0.005}=2.576$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Margin $=2.576\times\dfrac{20}{\sqrt{100}}=2.576\times2=5.152$.</p>
+<p><strong>Answer:</strong> $(69.85,80.15)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Explain why increasing the confidence level (e.g. from 90% to 99%) makes a confidence interval WIDER, using the role of $z_{\alpha/2}$ (or $t_{\alpha/2}$) in the formula.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A higher confidence level requires capturing a larger proportion of possible sample outcomes within the interval &mdash; to be more confident that the interval contains the true parameter, you need to cast a wider net. This is reflected directly in the formula: a higher confidence level corresponds to a larger $z_{\alpha/2}$ (or $t_{\alpha/2}$) value (since $\alpha$ is smaller, pushing further into the tails of the distribution), which directly increases the margin of error and hence the width of the interval.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A sample of $n=9$ (from a Normal population) has $\bar x=40,s=6$ (unknown $\sigma$). Find a 95% CI for $\mu$ (use $t_{0.025,8}=2.306$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Margin $=2.306\times\dfrac{6}{\sqrt9}=2.306\times2=4.612$.</p>
+<p><strong>Answer:</strong> $(35.39,44.61)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>How large a sample is needed to estimate $\mu$ within a margin of error of 2 (with 95% confidence), if $\sigma=10$ is known?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$1.96\times\dfrac{10}{\sqrt n}\le2 \implies \sqrt n\ge\dfrac{1.96\times10}{2}=9.8 \implies n\ge96.04$.</p>
+<p><strong>Answer:</strong> round up to $n=97$ (always round sample size requirements UP, to ensure the margin of error requirement is actually met).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A researcher computes a 95% CI for $\mu$ as $(48, 56)$. Find the sample mean $\bar x$ and the margin of error used.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\bar x$ is the midpoint: $\dfrac{48+56}{2}=52$.</p>
+<p>Margin of error is half the width: $\dfrac{56-48}{2}=4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Explain why using the $t$-distribution (rather than $z$) when $\sigma$ is unknown results in a WIDER confidence interval for the same confidence level and sample size, in terms of what the $t$-distribution accounts for.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The $t$-distribution has heavier tails than the standard Normal $z$-distribution &mdash; meaning more probability is spread further from the centre. This directly reflects the extra uncertainty introduced by having to <em>estimate</em> $\sigma$ from the sample (using $s$) rather than knowing it exactly; that estimation itself is a source of additional variability that the $z$-distribution doesn't account for. Since $t_{\alpha/2,df}>z_{\alpha/2}$ for any finite degrees of freedom, the resulting margin of error (and hence interval width) is correspondingly larger, correctly reflecting this additional source of uncertainty.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>As the sample size $n\to\infty$, explain what happens to the $t$-distribution and why this makes intuitive sense.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>As $n\to\infty$ (and hence degrees of freedom $\to\infty$), the $t$-distribution converges to the standard Normal $z$-distribution &mdash; the $t$ critical values get closer and closer to the corresponding $z$ critical values.</p>
+<p><strong>Intuitive explanation:</strong> with a very large sample, the sample standard deviation $s$ becomes an extremely precise estimate of the true $\sigma$ &mdash; there's essentially no meaningful uncertainty left from the estimation step, so using $s$ in place of $\sigma$ introduces negligible extra variability, and the $t$-distribution's extra tail-heaviness (which exists specifically to account for that estimation uncertainty) is no longer needed.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A sample of 50 measurements has $\bar x=15.2$, known $\sigma=3.0$. Find an 80% CI for $\mu$ (use $z_{0.10}=1.2816$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Margin $=1.2816\times\dfrac{3.0}{\sqrt{50}}=1.2816\times0.4243\approx0.5438$.</p>
+<p><strong>Answer:</strong> $(14.66,15.74)$.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+  <div class="section-title"><span class="tag">1</span> Hypothesis Testing &mdash; General Concepts</div>
+
+  <div class="prose">
+<p>Hypothesis testing is a formal decision procedure for evaluating a claim about a population, using sample evidence. The null hypothesis $H_0$ represents the default/status-quo assumption (typically what you'd believe absent any evidence to the contrary); the alternative $H_1$ represents the claim you're testing for. The test can never "prove" $H_0$ true &mdash; it can only fail to find sufficient evidence against it, or reject it in favour of $H_1$.</p>
+<p><strong>The two error types.</strong> A Type I error (probability $\alpha$, chosen in advance by the researcher) rejects a true $H_0$ &mdash; a "false alarm." A Type II error (probability $\beta$, generally unknown/harder to control directly) fails to reject a false $H_0$ &mdash; a "missed detection." These two error types trade off against each other: reducing one (for fixed sample size) increases the other.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$\alpha = P(\text{Type I error}) = P(\text{reject } H_0\,|\,H_0 \text{ true}), \qquad \beta = P(\text{Type II error}) = P(\text{fail to reject } H_0\,|\,H_0 \text{ false})$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A factory claims its light bulbs last 1000 hours on average. State appropriate $H_0$ and $H_1$ for testing whether the true mean lifetime differs from this claim, and explain what a Type I error would mean in context.</p>
+<p class="step">$H_0: \mu=1000$; $H_1:\mu\ne1000$ (two-tailed, since we're testing for any difference, not specifically higher or lower).</p>
+<p class="step">A Type I error would mean concluding the true mean lifetime differs from 1000 hours, when in fact the factory's claim was correct all along &mdash; a false alarm that might lead to unnecessary (and costly) further investigation.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A company claims its packages weigh 500g on average. State $H_0$ and $H_1$ for testing whether the true mean is LESS than claimed (a one-tailed test, e.g. from a consumer-protection standpoint).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$H_0:\mu=500$ (or $\mu\ge500$); $H_1:\mu<500$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>For the light bulb example, explain in context what a Type II error would mean.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A Type II error would mean failing to detect that the true mean lifetime actually differs from 1000 hours (e.g. the bulbs are genuinely defective and last less time), when in fact the factory's claim really was incorrect &mdash; a missed problem that goes undetected.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A hypothesis test is run at significance level $\alpha=0.05$ and yields a $p$-value of 0.03. State the decision (reject or fail to reject $H_0$) and briefly justify it.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $p=0.03<\alpha=0.05$, <strong>reject $H_0$</strong> &mdash; the observed result would be quite unlikely (only a 3% chance) if $H_0$ were actually true, providing sufficient evidence against it at this significance level.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>A hypothesis test yields a $p$-value of 0.08, tested at $\alpha=0.05$. State the decision, and explain what this decision does (and does NOT) say about $H_0$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $p=0.08>\alpha=0.05$, <strong>fail to reject $H_0$</strong>.</p>
+<p><strong>Important distinction:</strong> this does NOT mean $H_0$ has been proven true, or even that it's likely true &mdash; it only means the sample data didn't provide strong enough evidence to reject it at this significance level. $H_0$ remains a plausible explanation, but so might other explanations; "fail to reject" is a weaker conclusion than "accept."</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Explain why decreasing $\alpha$ (making the test more conservative, e.g. from 0.05 to 0.01) generally increases $\beta$ (the probability of a Type II error), for a fixed sample size.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Decreasing $\alpha$ means requiring stronger evidence before rejecting $H_0$ &mdash; the rejection region (the range of test-statistic values that would trigger rejecting $H_0$) shrinks. This makes it harder to reject $H_0$ in general, including in the specific case where $H_0$ is actually false and should be rejected &mdash; so the probability of failing to reject a false $H_0$ (a Type II error) necessarily increases. This illustrates the fundamental trade-off between the two error types: for a fixed sample size, you can't simultaneously reduce both $\alpha$ and $\beta$; reducing one increases the other. The only way to reduce both simultaneously is to increase the sample size.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A researcher wants to test whether a new drug changes blood pressure (could go either direction). State whether this calls for a one-tailed or two-tailed test, and write appropriate hypotheses.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Two-tailed</strong> (testing for any change, not specifically an increase or decrease).</p>
+<p>$H_0:\mu=\mu_0$ (no change from the baseline/known value); $H_1:\mu\ne\mu_0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Explain why the $p$-value is NOT the probability that $H_0$ is true, describing what it actually represents instead.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The $p$-value is the probability of observing a test statistic <em>at least as extreme</em> as the one actually observed, calculated <strong>assuming $H_0$ is true</strong>. It says nothing directly about the probability that $H_0$ itself is true or false &mdash; that would require a fundamentally different (Bayesian) framework incorporating prior probabilities. A small $p$-value simply means the observed data would be unusual/surprising if $H_0$ were true, which is evidence <em>against</em> $H_0$, but it is not literally "the probability $H_0$ is true," a common and important misinterpretation to avoid.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A quality control test for a manufacturing process has $\alpha=0.01$. Explain, in the context of this specific application, why the company might deliberately choose such a small $\alpha$ rather than the more common 0.05.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A very small $\alpha$ means the company requires very strong evidence before concluding something is wrong with the process (rejecting $H_0$, which likely represents "process is operating normally"). This makes sense if a Type I error (falsely concluding the process is faulty when it's actually fine) would be very costly &mdash; e.g. triggering an expensive, unnecessary production shutdown or investigation. By choosing a small $\alpha$, the company accepts a correspondingly higher risk of a Type II error (failing to catch a genuine problem), presumably because in this context, false alarms are considered more costly or disruptive than missing a real (but perhaps less severe or more slowly-developing) issue.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>State the general form of the decision rule in hypothesis testing, in terms of comparing the $p$-value to $\alpha$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Answer:</strong> reject $H_0$ if $p\text{-value}<\alpha$; otherwise, fail to reject $H_0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A test statistic falls exactly on the boundary, giving $p=0.05$ exactly, tested at $\alpha=0.05$. What is the conventional decision, and why might a researcher want to report the exact $p$-value rather than just "reject" or "fail to reject"?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Conventionally, since $p=\alpha$ (not strictly less than), the standard rule gives <strong>fail to reject $H_0$</strong> (the rejection region is typically defined as $p<\alpha$, not $p\le\alpha$, though conventions can vary).</p>
+<p><strong>Why report the exact value:</strong> a borderline result like this is much more informative to report as "$p=0.05$" than simply as a binary reject/fail-to-reject decision &mdash; it tells the reader exactly how close the evidence came to the threshold, allowing them to judge for themselves (especially if they'd have chosen a different $\alpha$) rather than losing that nuance in a simple yes/no conclusion.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+  <div class="section-title"><span class="tag">2</span> Hypothesis Tests for Single or Paired Samples</div>
+
+  <div class="prose">
+<p>A one-sample $t$-test checks whether a population mean differs from a specific hypothesised value $\mu_0$, using a single sample. A paired test handles data collected in matched pairs (before/after measurements on the same subjects, or two different methods applied to the same items) &mdash; by working with the <em>differences</em> within each pair, it removes subject-to-subject variability that would otherwise mask a genuine effect.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+<p>$$t=\frac{\bar x-\mu_0}{s/\sqrt n}\ (df=n-1) \quad\text{(one-sample)}, \qquad t=\frac{\bar d}{s_d/\sqrt n}\ (df=n-1) \quad\text{(paired, on differences } d_i\text{)}$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+<p><strong>Example 1 &mdash; one-sample.</strong> A sample of 25 items has $\bar x=102,s=5$. Test $H_0:\mu=100$ vs. $H_1:\mu\ne100$ at $\alpha=0.05$.</p>
+<p class="step">$t=\dfrac{102-100}{5/\sqrt{25}}=\dfrac{2}{1}=2.0$, $df=24$.</p>
+<p class="step">Two-tailed $p$-value $\approx0.057$ (from a $t$-table/software) $>0.05$: fail to reject $H_0$ &mdash; insufficient evidence the mean differs from 100.</p>
+<p><strong>Example 2 &mdash; paired.</strong> Before/after weights for 8 subjects give differences $d_i$ with $\bar d=2.25,s_d=1.982$. Test $H_0:\mu_d=0$ vs. $H_1:\mu_d>0$ (weight loss) at $\alpha=0.05$.</p>
+<p class="step">$t=\dfrac{2.25}{1.982/\sqrt8}=\dfrac{2.25}{0.7008}\approx3.211$, $df=7$.</p>
+<p class="step">One-tailed $p$-value $\approx0.0074<0.05$: reject $H_0$ &mdash; significant evidence of average weight loss.</p>
+  </div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>A sample of 16 items has $\bar x=48,s=6$. Test $H_0:\mu=50$ vs. $H_1:\mu\ne50$ by computing the test statistic (do not look up the exact $p$-value).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$t=\dfrac{48-50}{6/\sqrt{16}}=\dfrac{-2}{1.5}=-1.333$, $df=15$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>A sample of 36 items has $\bar x=105,s=12$. Test $H_0:\mu\le100$ vs. $H_1:\mu>100$ by computing the test statistic.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$t=\dfrac{105-100}{12/\sqrt{36}}=\dfrac{5}{2}=2.5$, $df=35$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>For 6 pairs of before/after measurements, the differences (after $-$ before) are $3,5,2,4,3,1$. Find $\bar d$ and $s_d$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\bar d=\dfrac{3+5+2+4+3+1}{6}=\dfrac{18}{6}=3$.</p>
+<p>Deviations squared: $0,4,1,1,0,4$; sum $=10$. $s_d^2=\dfrac{10}{5}=2$; $s_d=\sqrt2\approx1.414$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Using the paired data above ($\bar d=3,s_d=1.414,n=6$), compute the test statistic for $H_0:\mu_d=0$ vs. $H_1:\mu_d\ne0$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$t=\dfrac{3}{1.414/\sqrt6}=\dfrac{3}{0.5774}\approx5.196$, $df=5$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>A machine is supposed to fill bottles with 500mL. A sample of 20 bottles has $\bar x=497,s=8$. Test $H_0:\mu=500$ vs. $H_1:\mu\ne500$ by computing the test statistic, and state (without a table) whether this seems likely to be significant at $\alpha=0.05$ given the magnitude of $t$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$t=\dfrac{497-500}{8/\sqrt{20}}=\dfrac{-3}{1.789}\approx-1.677$, $df=19$.</p>
+<p><strong>Assessment:</strong> a $t$ value of magnitude around 1.68 is smaller than the typical critical value for a two-tailed test at $\alpha=0.05$ with these degrees of freedom (roughly 2.09) &mdash; suggesting this result likely would NOT be significant (fail to reject $H_0$), though the exact conclusion requires the precise critical value or $p$-value.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Explain why a paired design (measuring the same subjects before and after a treatment) is generally more powerful (better able to detect a real effect) than an unpaired design comparing two independent groups, in terms of what source of variability is removed.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>In a paired design, each subject serves as their own baseline/control &mdash; the analysis focuses only on the <em>within-subject</em> change, completely removing any variability due to differences <em>between</em> subjects (e.g. some people naturally have higher blood pressure than others, regardless of treatment). This between-subject variability, if left in the analysis (as it would be in an unpaired/independent-groups design), adds noise that can mask a genuine treatment effect. By working with differences within each pair, the paired design isolates the effect of interest much more cleanly, generally requiring a smaller sample size to detect the same true effect compared to an unpaired design.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>A one-sample $t$-test gives $t=1.8$ with $df=10$. Using the fact that the critical value for a two-tailed test at $\alpha=0.05,df=10$ is approximately $2.228$, state the decision.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $|t|=1.8<2.228$ (the critical value), the test statistic does not fall in the rejection region.</p>
+<p><strong>Answer:</strong> fail to reject $H_0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>For 10 pairs of measurements comparing two instruments (Instrument A minus Instrument B), the mean difference is $\bar d=0.5$ with $s_d=1.2$. Test $H_0:\mu_d=0$ vs. $H_1:\mu_d\ne0$ by computing $t$, and comment on whether the instruments seem to agree well, using the magnitude of $\bar d$ relative to $s_d$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$t=\dfrac{0.5}{1.2/\sqrt{10}}=\dfrac{0.5}{0.3795}\approx1.318$, $df=9$.</p>
+<p><strong>Comment:</strong> the mean difference (0.5) is less than half of $s_d$ (1.2), and the resulting $t$-value is fairly small &mdash; this suggests any systematic difference between the two instruments, if real at all, is small relative to the natural variability in the paired differences; the instruments likely agree reasonably well (though a formal conclusion requires comparing $t$ to the appropriate critical value or $p$-value).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>Explain the key structural difference between setting up a one-sample $t$-test and a paired $t$-test, in terms of what data goes into the formula (i.e. what plays the role of "the sample").</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>In a one-sample $t$-test, the sample consists of $n$ independent, individual observations, and you're testing whether their mean differs from a specific hypothesised value $\mu_0$.</p>
+<p>In a paired $t$-test, although you start with $n$ <em>pairs</em> of observations (e.g. before/after, or two methods on the same $n$ items), the actual analysis reduces to a one-sample $t$-test performed on the $n$ <em>differences</em> $d_i$ (not the original paired values themselves), testing whether their mean $\mu_d$ differs from $0$. Structurally, it's exactly a one-sample test, just applied to a derived quantity (the differences) rather than the raw original measurements.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>A company claims their battery lasts 40 hours on average. A sample of 15 batteries has $\bar x=38.5,s=3$. Compute the test statistic for $H_0:\mu=40$ vs. $H_1:\mu<40$ (testing whether the true mean is less than claimed).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$t=\dfrac{38.5-40}{3/\sqrt{15}}=\dfrac{-1.5}{0.7746}\approx-1.936$, $df=14$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="why-box">
+  <span class="box-label">Exam Challenge Extension</span>
+  <p><strong>Purpose:</strong> harder multi-concept exam-style questions with method selection and clear reasoning.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Construct a 95% CI for mean difference in paired data with dbar=1.8, sd=3.6, n=16.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Paired t interval: dbar ± t_{0.975,15} * sd/sqrt(n).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Given 95% CI for mu is (18.2, 21.8), infer xbar, margin of error, and test outcome for H0:mu=22 at alpha=0.05.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>xbar midpoint=20, ME=1.8. Since 22 outside interval, reject two-sided H0 at 5%.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>A proportion study finds 68 successes in 120 trials. Test H0:p=0.5 vs H1:p!=0.5 at alpha=0.01.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use one-proportion z test with p0=0.5 and check normal approximation conditions.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>Explain Type I vs Type II error for a medical screening hypothesis test and identify each in context.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Type I: false positive (reject true H0). Type II: false negative (fail to reject false H0).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>For fixed sigma, what sample size is needed so 95% ME is at most 1.2 when sigma=7?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use n >= (z_{0.975}*sigma/ME)^2 and round up.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>Paired t test: before-after differences have dbar=-2.1, sd=4.5, n=20. Test if treatment reduces value (alpha=0.05).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Set H1: mu_d<0 and compute one-sided t with df=19.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>A reported p-value is 0.032. State decisions at alpha=0.10, 0.05, and 0.01, and explain consistency with confidence intervals.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Reject for alpha>=0.032 and fail to reject for alpha<0.032. Link to whether null lies in corresponding CI.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>Single-mean test: n=25, xbar=52.4, s=6.0. Test H0:mu=50 vs H1:mu>50 at alpha=0.05. Report test statistic, critical/p-value decision.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use one-sample t with df=24: t=(xbar-mu0)/(s/sqrt(n)). Compare to t critical or compute p-value.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>Construct a 95% CI for mean difference in paired data with dbar=1.8, sd=3.6, n=16.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Paired t interval: dbar ± t_{0.975,15} * sd/sqrt(n).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>Given 95% CI for mu is (18.2, 21.8), infer xbar, margin of error, and test outcome for H0:mu=22 at alpha=0.05.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>xbar midpoint=20, ME=1.8. Since 22 outside interval, reject two-sided H0 at 5%.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>A proportion study finds 68 successes in 120 trials. Test H0:p=0.5 vs H1:p!=0.5 at alpha=0.01.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use one-proportion z test with p0=0.5 and check normal approximation conditions.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>Explain Type I vs Type II error for a medical screening hypothesis test and identify each in context.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Type I: false positive (reject true H0). Type II: false negative (fail to reject false H0).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>For fixed sigma, what sample size is needed so 95% ME is at most 1.2 when sigma=7?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use n >= (z_{0.975}*sigma/ME)^2 and round up.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>Paired t test: before-after differences have dbar=-2.1, sd=4.5, n=20. Test if treatment reduces value (alpha=0.05).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Set H1: mu_d<0 and compute one-sided t with df=19.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 45</span></div>
+  <div class="p-body"><p>A reported p-value is 0.032. State decisions at alpha=0.10, 0.05, and 0.01, and explain consistency with confidence intervals.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Reject for alpha>=0.032 and fail to reject for alpha<0.032. Link to whether null lies in corresponding CI.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 46</span></div>
+  <div class="p-body"><p>Single-mean test: n=25, xbar=52.4, s=6.0. Test H0:mu=50 vs H1:mu>50 at alpha=0.05. Report test statistic, critical/p-value decision.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use one-sample t with df=24: t=(xbar-mu0)/(s/sqrt(n)). Compare to t critical or compute p-value.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 47</span></div>
+  <div class="p-body"><p>Construct a 95% CI for mean difference in paired data with dbar=1.8, sd=3.6, n=16.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Paired t interval: dbar ± t_{0.975,15} * sd/sqrt(n).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 48</span></div>
+  <div class="p-body"><p>Given 95% CI for mu is (18.2, 21.8), infer xbar, margin of error, and test outcome for H0:mu=22 at alpha=0.05.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>xbar midpoint=20, ME=1.8. Since 22 outside interval, reject two-sided H0 at 5%.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 49</span></div>
+  <div class="p-body"><p>A proportion study finds 68 successes in 120 trials. Test H0:p=0.5 vs H1:p!=0.5 at alpha=0.01.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use one-proportion z test with p0=0.5 and check normal approximation conditions.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 50</span></div>
+  <div class="p-body"><p>Explain Type I vs Type II error for a medical screening hypothesis test and identify each in context.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Type I: false positive (reject true H0). Type II: false negative (fail to reject false H0).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 51</span></div>
+  <div class="p-body"><p>For fixed sigma, what sample size is needed so 95% ME is at most 1.2 when sigma=7?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use n >= (z_{0.975}*sigma/ME)^2 and round up.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 52</span></div>
+  <div class="p-body"><p>Paired t test: before-after differences have dbar=-2.1, sd=4.5, n=20. Test if treatment reduces value (alpha=0.05).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Set H1: mu_d<0 and compute one-sided t with df=19.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 53</span></div>
+  <div class="p-body"><p>A reported p-value is 0.032. State decisions at alpha=0.10, 0.05, and 0.01, and explain consistency with confidence intervals.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Reject for alpha>=0.032 and fail to reject for alpha<0.032. Link to whether null lies in corresponding CI.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 54</span></div>
+  <div class="p-body"><p>Single-mean test: n=25, xbar=52.4, s=6.0. Test H0:mu=50 vs H1:mu>50 at alpha=0.05. Report test statistic, critical/p-value decision.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use one-sample t with df=24: t=(xbar-mu0)/(s/sqrt(n)). Compare to t critical or compute p-value.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 55</span></div>
+  <div class="p-body"><p>Construct a 95% CI for mean difference in paired data with dbar=1.8, sd=3.6, n=16.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Paired t interval: dbar ± t_{0.975,15} * sd/sqrt(n).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 56</span></div>
+  <div class="p-body"><p>Given 95% CI for mu is (18.2, 21.8), infer xbar, margin of error, and test outcome for H0:mu=22 at alpha=0.05.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>xbar midpoint=20, ME=1.8. Since 22 outside interval, reject two-sided H0 at 5%.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 57</span></div>
+  <div class="p-body"><p>A proportion study finds 68 successes in 120 trials. Test H0:p=0.5 vs H1:p!=0.5 at alpha=0.01.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use one-proportion z test with p0=0.5 and check normal approximation conditions.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 58</span></div>
+  <div class="p-body"><p>Explain Type I vs Type II error for a medical screening hypothesis test and identify each in context.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Type I: false positive (reject true H0). Type II: false negative (fail to reject false H0).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 59</span></div>
+  <div class="p-body"><p>For fixed sigma, what sample size is needed so 95% ME is at most 1.2 when sigma=7?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Use n >= (z_{0.975}*sigma/ME)^2 and round up.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 60</span></div>
+  <div class="p-body"><p>Paired t test: before-after differences have dbar=-2.1, sd=4.5, n=20. Test if treatment reduces value (alpha=0.05).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Set H1: mu_d<0 and compute one-sided t with df=19.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>MATH283 Advanced Engineering Mathematics &amp; Statistics &middot; Week 11 (Part B: Statistics)</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

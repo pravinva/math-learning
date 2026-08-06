@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN100 — Guide 3: Visualisation, File I/O &amp; Python</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1B3A5C;--navy-lt:#1e4570;--orange:#FF3621;--blue-lt:#E6F1FB;--blue-mid:#185FA5;--amber-lt:#FAEEDA;--amber-dk:#7A4800;--green-lt:#E1F5EE;--green-dk:#0a5c3f;--coral-lt:#FAECE7;--coral-dk:#8a2f1a;--purple-lt:#EEEDFE;--purple-dk:#3C3489;--grey-lt:#F6F5F2;--grey-md:#e8e6e0;--grey-dk:#3a3835;--text:#2c2a28;--text-muted:#6b6762;--sidebar-w:272px;--content-max:790px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px}
+.sb-brand{padding:18px 20px 13px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sb-series{font-size:10px;font-weight:500;letter-spacing:0.1em;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:4px}
+.sb-title{font-family:'Crimson Pro',Georgia,serif;font-size:15px;font-weight:600;color:white;line-height:1.3}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px}
+.sb-guides{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;gap:6px;flex-wrap:wrap}
+.sb-guide-link{font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;background:none;transition:all 0.15s;text-decoration:none}
+.sb-guide-link:hover{color:white;border-color:rgba(255,255,255,0.5)}
+.sb-guide-link.current{background:var(--orange);border-color:var(--orange);color:white}
+.prog-wrap{padding:9px 20px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.prog-lbl{font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:0.06em;margin-bottom:5px}
+.prog-bar{height:3px;background:rgba(255,255,255,0.12);border-radius:2px}
+.prog-fill{height:100%;background:var(--orange);border-radius:2px;width:0%;transition:width 0.4s}
+.nav-sec{padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.08)}
+.nav-sec-lbl{font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.28);padding:4px 20px 3px;text-transform:uppercase}
+.nav-link{display:flex;align-items:center;gap:9px;padding:6px 20px;color:rgba(255,255,255,0.55);font-size:12px;transition:all 0.15s;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;line-height:1.35}
+.nav-link:hover{color:white;background:rgba(255,255,255,0.06)}
+.nav-link.active{color:white;background:rgba(255,255,255,0.1);border-left:2px solid var(--orange);padding-left:18px}
+.nav-num{font-size:10px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.45);border-radius:3px;padding:1px 5px;flex-shrink:0}
+.nav-link.active .nav-num{background:var(--orange);color:white}
+.main{margin-left:var(--sidebar-w);flex:1}
+.topbar{background:white;border-bottom:1px solid var(--grey-md);padding:10px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-bc{font-size:12px;color:var(--text-muted)}.topbar-bc span{color:var(--navy);font-weight:500}
+.topbar-btns{display:flex;gap:7px}
+.tb-btn{padding:5px 11px;border-radius:6px;border:1px solid var(--grey-md);background:white;font-size:12px;color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all 0.15s}
+.tb-btn:hover{border-color:var(--navy);color:var(--navy)}
+.tb-btn.primary{background:var(--navy);color:white;border-color:var(--navy)}
+.content{max-width:var(--content-max);margin:0 auto;padding:42px 40px 80px}
+.page{display:none!important}.page.active{display:block!important;opacity:1!important;visibility:visible!important;animation:fadeIn 0.22s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.page-hero{margin-bottom:26px;padding-bottom:20px;border-bottom:2px solid var(--grey-md)}
+.hero-label{font-size:11px;font-weight:500;letter-spacing:0.08em;color:var(--orange);text-transform:uppercase;margin-bottom:5px}
+.hero-title{font-family:'Crimson Pro',Georgia,serif;font-size:34px;font-weight:600;color:var(--navy);line-height:1.15;margin-bottom:6px}
+.hero-sub{font-size:14px;color:var(--text-muted);line-height:1.6}
+.motiv{background:var(--blue-lt);border-left:3px solid var(--blue-mid);border-radius:0 8px 8px 0;padding:12px 16px;font-size:14px;color:#0d3d73;line-height:1.7;margin-bottom:22px}
+.motiv strong{font-weight:500}
+.dpen-block{margin-bottom:10px;border:1px solid var(--grey-md);border-radius:10px;overflow:hidden}
+.dpen-hd{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none;background:white;transition:background 0.15s}
+.dpen-hd:hover{background:var(--grey-lt)}
+.dpen-pill{font-size:10px;font-weight:500;padding:2px 9px;border-radius:20px;letter-spacing:0.05em;flex-shrink:0}
+.pill-d{background:var(--blue-lt);color:var(--blue-mid)}.pill-p{background:var(--amber-lt);color:var(--amber-dk)}.pill-e{background:var(--green-lt);color:var(--green-dk)}.pill-n{background:var(--coral-lt);color:var(--coral-dk)}
+.dpen-ht{font-size:14px;font-weight:500;color:var(--text);flex:1}
+.dpen-ch{color:var(--text-muted);font-size:11px;transition:transform 0.2s;flex-shrink:0}
+.dpen-ch.open{transform:rotate(90deg)}
+.dpen-bd{display:none;padding:15px 18px 18px;border-top:1px solid var(--grey-md);background:var(--grey-lt);font-size:14px;line-height:1.75;color:var(--text)}
+.dpen-bd.open{display:block}
+.dpen-bd p{margin-bottom:9px}.dpen-bd p:last-child{margin-bottom:0}
+.mb{text-align:center;margin:12px 0;padding:8px 10px;background:white;border-radius:6px;border:1px solid var(--grey-md);overflow-x:auto}
+.steps{margin:9px 0}
+.step-item{display:flex;gap:10px;margin:6px 0;align-items:flex-start}
+.sn{min-width:20px;height:20px;border-radius:50%;background:var(--blue-lt);color:var(--blue-mid);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.st{flex:1;font-size:14px;line-height:1.7}
+.callout{border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0;font-size:13px;line-height:1.65}
+.c-warn{background:var(--amber-lt);border-left:3px solid #EF9F27;color:var(--amber-dk)}
+.c-info{background:var(--green-lt);border-left:3px solid #1D9E75;color:var(--green-dk)}
+.c-note{background:var(--purple-lt);border-left:3px solid #7F77DD;color:var(--purple-dk)}
+.callout strong{font-weight:500}
+.worked{background:white;border:1px solid var(--grey-md);border-radius:8px;padding:12px 14px;margin:10px 0}
+.worked-lbl{font-size:10px;font-weight:500;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase}
+.ans-box{background:var(--navy);color:white;border-radius:6px;padding:7px 12px;margin-top:10px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.ans-lbl{font-size:10px;opacity:0.6;letter-spacing:0.05em;flex-shrink:0}
+.dtbl{width:100%;border-collapse:collapse;font-size:13px;margin:9px 0}
+.dtbl th{background:var(--navy);color:white;padding:6px 10px;text-align:left;font-weight:500;font-size:11px}
+.dtbl td{padding:6px 10px;border-bottom:1px solid var(--grey-md);color:var(--text)}
+.dtbl tr:nth-child(even) td{background:white}.dtbl tr:nth-child(odd) td{background:var(--grey-lt)}
+.dtbl th:first-child{border-radius:6px 0 0 0}.dtbl th:last-child{border-radius:0 6px 0 0}
+.dtbl code{font-family:'JetBrains Mono',monospace;font-size:12px;background:#eef0f3;padding:1px 5px;border-radius:3px;color:var(--navy)}
+.code{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.65;background:#1e2a38;color:#e6edf3;border-radius:8px;padding:12px 15px;margin:10px 0;overflow-x:auto;white-space:pre}
+.code .cm{color:#7d8da3}.code .kw{color:#ff9d7a}.code .st{color:#9ece6a;display:inline;flex:none}.code .fn{color:#7aa2f7}.code .nm{color:#e0af68}
+.code-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:#9aa7b8;background:#141d28;border-radius:8px 8px 0 0;padding:5px 12px;margin:10px 0 -10px;display:inline-block}
+p code,li code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:#eef0f3;padding:1px 5px;border-radius:3px;color:var(--navy)}
+.qp-section{margin-top:18px;border:1.5px solid var(--orange);border-radius:10px;overflow:hidden}
+.qp-header{background:var(--orange);padding:9px 15px;display:flex;align-items:center;justify-content:space-between}
+.qp-title{font-size:12px;font-weight:500;color:white}
+.qp-sub{font-size:11px;color:rgba(255,255,255,0.7)}
+.qp-items{padding:12px 14px;background:#fffbf8;display:flex;flex-direction:column;gap:7px}
+.qp-item{border:1px solid var(--grey-md);border-radius:8px;overflow:hidden;background:white}
+.qp-q{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;cursor:pointer;transition:background 0.15s}
+.qp-q:hover{background:var(--grey-lt)}
+.qp-qnum{min-width:19px;height:19px;border-radius:50%;background:var(--orange);color:white;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.qp-qtext{flex:1;font-size:13px;color:var(--text);line-height:1.5}
+.qp-arrow{color:var(--text-muted);font-size:10px;transition:transform 0.2s;flex-shrink:0;margin-top:2px}
+.qp-arrow.open{transform:rotate(90deg)}
+.qp-ans{display:none;padding:9px 12px 11px;border-top:1px solid var(--grey-md);background:var(--green-lt);font-size:13px;color:var(--green-dk);line-height:1.6}
+.qp-ans.open{display:block}
+.qp-ans strong{color:var(--green-dk);font-weight:500}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.home-card{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.15s}
+.home-card:hover{border-color:var(--navy);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.06)}
+.hc-num{font-size:11px;color:var(--orange);font-weight:500;margin-bottom:3px}
+.hc-title{font-family:'Crimson Pro',serif;font-size:16px;color:var(--navy);margin-bottom:3px}
+.hc-sub{font-size:12px;color:var(--text-muted);line-height:1.5}
+.series-banner{background:var(--navy);border-radius:10px;padding:14px 18px;margin:16px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.sb-left{flex:1;min-width:200px}
+.sb-series-lbl{font-size:10px;letter-spacing:0.08em;color:rgba(255,255,255,0.5);margin-bottom:4px}
+.sb-series-title{font-size:14px;font-weight:500;color:white}
+.sb-series-desc{font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px}
+.sb-guides-row{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+.sb-guide-pill{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);text-decoration:none}
+.sb-guide-pill.here{background:var(--orange);border-color:var(--orange);color:white}
+.page-nav{display:flex;justify-content:space-between;margin-top:32px;padding-top:20px;border-top:1px solid var(--grey-md)}
+.pnav-btn{display:flex;align-items:center;gap:7px;padding:8px 15px;border-radius:8px;border:1px solid var(--grey-md);background:white;font-size:13px;color:var(--text);cursor:pointer;font-family:inherit;transition:all 0.15s;text-decoration:none}
+.pnav-btn:hover{border-color:var(--navy);color:var(--navy)}
+.pnav-btn.next{background:var(--navy);color:white;border-color:var(--navy)}
+.pnav-btn.ghost{visibility:hidden}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.content{padding:20px 16px 56px}.home-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-series">DPEN100 Series · Guide 3 of 4</div>
+    <div class="sb-title">Visualisation, File I/O &amp; Python</div>
+    <div class="sb-sub">Plotting, GUIs, import/export &amp; the move to Python</div>
+  </div>
+  <div style="padding:10px 20px;border-bottom:1px solid rgba(255,255,255,0.08)">
+    <a href="index.html" style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.5);font-size:11px;text-decoration:none;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">
+      <span>←</span><span>Back to DPEN100 Hub</span>
+    </a>
+  </div>
+  <div class="sb-guides">
+    <a class="sb-guide-link" href="guide1-matlab-fundamentals.html">1. MATLAB</a>
+    <a class="sb-guide-link" href="guide2-control-functions.html">2. Control</a>
+    <a class="sb-guide-link current">3. Viz/IO</a>
+    <a class="sb-guide-link" href="guide4-kinematics.html">4. Dynamics</a>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-lbl">PROGRESS</div>
+    <div class="prog-bar"><div class="prog-fill" id="pf"></div></div>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-lbl">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">↑</span> Start here</button>
+  </div>
+  <div class="nav-sec">
+    <div class="nav-sec-lbl">Topics — Weeks 6-13</div>
+    <button class="nav-link" onclick="goTo('plot2d')"><span class="nav-num">1</span> 2-D Plotting</button>
+    <button class="nav-link" onclick="goTo('plotadv')"><span class="nav-num">2</span> Subplots, 3-D &amp; Log Scales</button>
+    <button class="nav-link" onclick="goTo('gui')"><span class="nav-num">3</span> GUIs &amp; App Designer</button>
+    <button class="nav-link" onclick="goTo('fileio')"><span class="nav-num">4</span> Import &amp; Export</button>
+    <button class="nav-link" onclick="goTo('python')"><span class="nav-num">5</span> Transition to Python</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-bc">DPEN100 Engineering Computing &nbsp;›&nbsp; Guide 3 &nbsp;›&nbsp; <span id="bc">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand all</button>
+      <button class="tb-btn primary" onclick="goTo('plot2d')">Start →</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="page-hero">
+        <div class="hero-label">DPEN100 · Guide 3 of 4</div>
+        <div class="hero-title">Visualisation, File I/O &amp; Python</div>
+        <div class="hero-sub">A program that can't show or save its results is half-finished. This guide covers <em>plotting</em> data into clear figures, building simple <em>GUIs</em>, reading and writing <em>files</em> (images, spreadsheets, text), and finally <em>transitioning to Python</em> — the language most engineers move to after MATLAB.</div>
+      </div>
+      <div class="series-banner">
+        <div class="sb-left">
+          <div class="sb-series-lbl">DPEN100 ENGINEERING COMPUTING &amp; ANALYSIS</div>
+          <div class="sb-series-title">Four guides, one complete subject</div>
+          <div class="sb-series-desc">Weeks 6-13: graphics &amp; visualisation, file I/O, advanced data, and other languages.</div>
+        </div>
+        <div class="sb-guides-row">
+          <a class="sb-guide-pill" href="guide1-matlab-fundamentals.html">1. MATLAB</a>
+          <a class="sb-guide-pill" href="guide2-control-functions.html">2. Control</a>
+          <span class="sb-guide-pill here">3. Viz/IO</span>
+          <a class="sb-guide-pill" href="guide4-kinematics.html">4. Dynamics</a>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <div class="home-card" onclick="goTo('plot2d')"><div class="hc-num">TOPIC 1</div><div class="hc-title">2-D Plotting</div><div class="hc-sub"><code>plot</code>, labels, legends, multiple lines with <code>hold on</code>.</div></div>
+        <div class="home-card" onclick="goTo('plotadv')"><div class="hc-num">TOPIC 2</div><div class="hc-title">Subplots, 3-D &amp; Log Scales</div><div class="hc-sub"><code>subplot</code>, <code>mesh</code>/<code>meshgrid</code>, semilog &amp; polar.</div></div>
+        <div class="home-card" onclick="goTo('gui')"><div class="hc-num">TOPIC 3</div><div class="hc-title">GUIs &amp; App Designer</div><div class="hc-sub">Buttons, sliders and callbacks for interactive tools.</div></div>
+        <div class="home-card" onclick="goTo('fileio')"><div class="hc-num">TOPIC 4</div><div class="hc-title">Import &amp; Export</div><div class="hc-sub">Images, spreadsheets, text files; low-level <code>fopen</code>.</div></div>
+        <div class="home-card" onclick="goTo('python')"><div class="hc-num">TOPIC 5</div><div class="hc-title">Transition to Python</div><div class="hc-sub">0-indexing, lists/tuples, numpy &amp; matplotlib.</div></div>
+      </div>
+      <div class="page-nav"><button class="pnav-btn ghost">←</button><button class="pnav-btn next" onclick="goTo('plot2d')">Topic 1: 2-D Plotting →</button></div>
+    </div>
+
+    <!-- TOPIC 1 -->
+    <div class="page" id="page-plot2d">
+      <div class="page-hero">
+        <div class="hero-label">Topic 1 · Week 6</div>
+        <div class="hero-title">2-D Plotting</div>
+        <div class="hero-sub">Turning vectors into graphs</div>
+      </div>
+      <div class="motiv">A table of numbers hides patterns; a graph reveals them instantly. The <code>plot</code> command is the engineer's most-used visualisation tool. The recipe is always the same: make an x-vector, make a matching y-vector, then plot and label. An unlabelled graph is worthless — always add a title and axis labels.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">The basic plot recipe</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="code"><span class="nm">x = 0:0.1:2*pi</span><span class="nm">;</span>      <span class="cm">% x-values</span>
+<span class="nm">y = </span><span class="fn">sin</span>(x)<span class="nm">;</span>            <span class="cm">% matching y-values</span>
+<span class="fn">plot</span>(x, y)<span class="nm">;</span>
+<span class="fn">xlabel</span>(<span class="st">'x (rad)'</span>)<span class="nm">;</span>
+<span class="fn">ylabel</span>(<span class="st">'sin(x)'</span>)<span class="nm">;</span>
+<span class="fn">title</span>(<span class="st">'Sine wave'</span>)<span class="nm">;</span>
+<span class="fn">grid</span> on<span class="nm">;</span></div>
+          <div class="callout c-warn"><strong>Watch out:</strong> the x and y vectors must be the <em>same length</em>. Compute y from x (e.g. <code>y = sin(x)</code>) so they always match.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Multiple lines with hold on</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="code"><span class="fn">plot</span>(x, <span class="fn">sin</span>(x), <span class="st">'b-'</span>)<span class="nm">;</span>   <span class="cm">% blue solid</span>
+<span class="fn">hold</span> on<span class="nm">;</span>                <span class="cm">% keep this figure, add more</span>
+<span class="fn">plot</span>(x, <span class="fn">cos</span>(x), <span class="st">'r--'</span>)<span class="nm">;</span>  <span class="cm">% red dashed</span>
+<span class="fn">legend</span>(<span class="st">'sin'</span>, <span class="st">'cos'</span>)<span class="nm">;</span>
+<span class="fn">hold</span> off<span class="nm">;</span></div>
+          <p>Without <code>hold on</code>, each <code>plot</code> replaces the previous one. Line specs combine colour + style: <code>'b-'</code>, <code>'r--'</code>, <code>'g:'</code>, <code>'ko'</code> (black circles).</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-e">Example</span><span class="dpen-ht">Worked example — plot a parabola</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="worked">
+            <div class="worked-lbl">Example — y = x² for x in [−3, 3]</div>
+            <div class="code"><span class="nm">x = -3:0.1:3</span><span class="nm">;</span>
+<span class="nm">y = x.^2</span><span class="nm">;</span>         <span class="cm">% element-wise power!</span>
+<span class="fn">plot</span>(x, y)<span class="nm">;</span>
+<span class="fn">title</span>(<span class="st">'Parabola'</span>)<span class="nm">;</span></div>
+            <div class="callout c-info">Note <code>x.^2</code> with the dot — it squares each element of the vector. <code>x^2</code> would error.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice — Topic 1</span><span class="qp-sub">Click to reveal</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">A</div><div class="qp-qtext">What command lets you draw a second line on the same axes?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>hold on</code> — it stops the next plot from erasing the figure.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">B</div><div class="qp-qtext">Why must x and y be equal length?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>plot(x,y)</code> pairs them point-by-point; mismatched lengths error.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">C</div><div class="qp-qtext">Which command adds an axis name?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>xlabel</code> / <code>ylabel</code> (and <code>title</code> for the heading).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">D</div><div class="qp-qtext">What does the spec <code>'r--'</code> mean?</div><div class="qp-arrow">▶</div></div><div class="qp-ans">A <strong>red dashed</strong> line.</div></div>
+        </div>
+      </div>
+
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('home')">← Overview</button><button class="pnav-btn next" onclick="goTo('plotadv')">Topic 2: Subplots, 3-D &amp; Log Scales →</button></div>
+    </div>
+
+    <!-- TOPIC 2 -->
+    <div class="page" id="page-plotadv">
+      <div class="page-hero">
+        <div class="hero-label">Topic 2 · Week 6</div>
+        <div class="hero-title">Subplots, 3-D &amp; Log Scales</div>
+        <div class="hero-sub">Beyond a single line on linear axes</div>
+      </div>
+      <div class="motiv">Engineering data comes in many shapes. You may need several plots side by side (<code>subplot</code>), a surface over two variables (<code>mesh</code>), or axes that span many orders of magnitude (log scales). Picking the right plot type makes the data's story obvious.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">subplot — a grid of plots</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="code"><span class="fn">subplot</span>(2,1,1)<span class="nm">;</span>   <span class="cm">% 2 rows, 1 col, slot 1 (top)</span>
+<span class="fn">plot</span>(x, <span class="fn">sin</span>(x))<span class="nm">;</span>
+<span class="fn">subplot</span>(2,1,2)<span class="nm">;</span>   <span class="cm">% slot 2 (bottom)</span>
+<span class="fn">plot</span>(x, <span class="fn">cos</span>(x))<span class="nm">;</span></div>
+          <p><code>subplot(rows, cols, n)</code> selects the n-th cell of a grid so several plots share one figure window.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">3-D surfaces: meshgrid + mesh</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>To plot \(z = f(x,y)\) you first build a grid of (x,y) points with <code>meshgrid</code>, then <code>mesh</code> or <code>surf</code>:</p>
+          <div class="code"><span class="nm">[X, Y] = </span><span class="fn">meshgrid</span>(-2:0.2:2, -2:0.2:2)<span class="nm">;</span>
+<span class="nm">Z = X.^2 + Y.^2</span><span class="nm">;</span>
+<span class="fn">mesh</span>(X, Y, Z)<span class="nm">;</span>     <span class="cm">% wireframe surface (a bowl)</span></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Logarithmic &amp; polar plots</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <table class="dtbl">
+            <thead><tr><th>Command</th><th>Axes</th></tr></thead>
+            <tbody>
+              <tr><td><code>semilogx</code></td><td>x log, y linear</td></tr>
+              <tr><td><code>semilogy</code></td><td>x linear, y log</td></tr>
+              <tr><td><code>loglog</code></td><td>both log</td></tr>
+              <tr><td><code>polarplot</code></td><td>angle &amp; radius (polar)</td></tr>
+            </tbody>
+          </table>
+          <div class="callout c-info"><strong>Why log scales?</strong> When data spans huge ranges (e.g. frequency response from 1 Hz to 1 MHz) a log axis compresses it so all the detail is visible.</div>
+        </div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice — Topic 2</span><span class="qp-sub">Click to reveal</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">A</div><div class="qp-qtext">What does <code>subplot(1,3,2)</code> select?</div><div class="qp-arrow">▶</div></div><div class="qp-ans">The <strong>middle</strong> cell of a 1-row, 3-column grid.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">B</div><div class="qp-qtext">Which function builds the coordinate grid for a 3-D surface?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>meshgrid</code> — it produces matching X and Y matrices.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">C</div><div class="qp-qtext">Which plot uses a log scale on both axes?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>loglog</code>.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">D</div><div class="qp-qtext">Give one reason to use a logarithmic axis.</div><div class="qp-arrow">▶</div></div><div class="qp-ans">To show data spanning many orders of magnitude clearly in one view.</div></div>
+        </div>
+      </div>
+
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('plot2d')">← Topic 1</button><button class="pnav-btn next" onclick="goTo('gui')">Topic 3: GUIs &amp; App Designer →</button></div>
+    </div>
+
+    <!-- TOPIC 3 -->
+    <div class="page" id="page-gui">
+      <div class="page-hero">
+        <div class="hero-label">Topic 3 · Week 6</div>
+        <div class="hero-title">GUIs &amp; App Designer</div>
+        <div class="hero-sub">Making interactive tools, not just scripts</div>
+      </div>
+      <div class="motiv">A <strong>Graphical User Interface (GUI)</strong> lets a non-programmer use your tool with buttons, sliders and text boxes instead of typing code. MATLAB's <strong>App Designer</strong> is a drag-and-drop builder for exactly this. The key concept is the <em>callback</em> — code that runs when the user does something (clicks, drags).</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">GUI components and callbacks</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <table class="dtbl">
+            <thead><tr><th>Component</th><th>Used for</th></tr></thead>
+            <tbody>
+              <tr><td>Button</td><td>Trigger an action</td></tr>
+              <tr><td>Edit field</td><td>Type a number/text</td></tr>
+              <tr><td>Slider</td><td>Choose a value in a range</td></tr>
+              <tr><td>Axes</td><td>Display a plot</td></tr>
+              <tr><td>Label</td><td>Show static or result text</td></tr>
+            </tbody>
+          </table>
+          <p>A <strong>callback</strong> is a function attached to a component. When the user clicks a button, MATLAB runs that button's callback. This is "event-driven" programming.</p>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Two ways to build a GUI</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="steps">
+            <div class="step-item"><div class="sn">1</div><div class="st"><strong>App Designer</strong> (<code>appdesigner</code>) — modern drag-and-drop; generates the code for you.</div></div>
+            <div class="step-item"><div class="sn">2</div><div class="st"><strong>Programmatic</strong> — create components in code with <code>uifigure</code>, <code>uibutton</code>, <code>uislider</code> and set their callbacks.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice — Topic 3</span><span class="qp-sub">Click to reveal</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">A</div><div class="qp-qtext">What is a callback?</div><div class="qp-arrow">▶</div></div><div class="qp-ans">A function that runs in response to a user event (e.g. a button click).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">B</div><div class="qp-qtext">Which MATLAB tool builds GUIs by drag-and-drop?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>App Designer.</strong></div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">C</div><div class="qp-qtext">Which component lets a user pick a value within a range by dragging?</div><div class="qp-arrow">▶</div></div><div class="qp-ans">A <strong>slider</strong>.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">D</div><div class="qp-qtext">What style of programming do GUIs use?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>Event-driven</strong> — code runs in response to user actions, not top to bottom.</div></div>
+        </div>
+      </div>
+
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('plotadv')">← Topic 2</button><button class="pnav-btn next" onclick="goTo('fileio')">Topic 4: Import &amp; Export →</button></div>
+    </div>
+
+    <!-- TOPIC 4 -->
+    <div class="page" id="page-fileio">
+      <div class="page-hero">
+        <div class="hero-label">Topic 4 · Week 7</div>
+        <div class="hero-title">Import &amp; Export</div>
+        <div class="hero-sub">Getting data in and results out</div>
+      </div>
+      <div class="motiv">Real engineering data lives in files — sensor logs in <code>.csv</code>, photos in <code>.jpg</code>, spreadsheets in <code>.xlsx</code>. Knowing how to <strong>read</strong> these into MATLAB and <strong>write</strong> your results back out is essential. MATLAB offers high-level functions for common formats and a low-level interface for full control.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">High-level read/write functions</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <table class="dtbl">
+            <thead><tr><th>Format</th><th>Read</th><th>Write</th></tr></thead>
+            <tbody>
+              <tr><td>Image (.jpg/.png)</td><td><code>imread</code></td><td><code>imwrite</code></td></tr>
+              <tr><td>Table (.xlsx/.csv)</td><td><code>readtable</code></td><td><code>writetable</code></td></tr>
+              <tr><td>Numeric matrix</td><td><code>readmatrix</code></td><td><code>writematrix</code></td></tr>
+              <tr><td>Cell data</td><td><code>readcell</code></td><td><code>writecell</code></td></tr>
+              <tr><td>Variables (.mat)</td><td><code>load</code></td><td><code>save</code></td></tr>
+            </tbody>
+          </table>
+          <div class="code"><span class="nm">T = </span><span class="fn">readtable</span>(<span class="st">'data.csv'</span>)<span class="nm">;</span>   <span class="cm">% read spreadsheet into a table</span>
+<span class="nm">img = </span><span class="fn">imread</span>(<span class="st">'photo.jpg'</span>)<span class="nm">;</span>  <span class="cm">% read image into an array</span>
+<span class="fn">writematrix</span>(results, <span class="st">'out.csv'</span>)<span class="nm">;</span></div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-ht">Low-level file access</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>For full control (e.g. custom text formats) use the low-level interface. The pattern is always <strong>open → process → close</strong>:</p>
+          <div class="code"><span class="nm">fid = </span><span class="fn">fopen</span>(<span class="st">'data.txt'</span>, <span class="st">'r'</span>)<span class="nm">;</span>  <span class="cm">% 'r'=read, 'w'=write</span>
+<span class="kw">while</span> ~<span class="fn">feof</span>(fid)              <span class="cm">% until end-of-file</span>
+    line = <span class="fn">fscanf</span>(fid, <span class="st">'%f'</span>, 1)<span class="nm">;</span>
+    ...
+<span class="kw">end</span>
+<span class="fn">fclose</span>(fid)<span class="nm">;</span>                  <span class="cm">% ALWAYS close the file</span></div>
+          <div class="callout c-warn"><strong>Always <code>fclose</code>:</strong> a file you open but never close stays locked and can corrupt data. Pair every <code>fopen</code> with an <code>fclose</code>.</div>
+        </div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice — Topic 4</span><span class="qp-sub">Click to reveal</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">A</div><div class="qp-qtext">Which function reads a <code>.jpg</code> image?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>imread</code>. To save one, use <code>imwrite</code>.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">B</div><div class="qp-qtext">Which function reads a spreadsheet into a table?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>readtable</code>.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">C</div><div class="qp-qtext">What does <code>feof</code> test?</div><div class="qp-arrow">▶</div></div><div class="qp-ans">Whether you have reached the <strong>end of the file</strong> (returns true when no more data).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">D</div><div class="qp-qtext">Why must every <code>fopen</code> be matched with <code>fclose</code>?</div><div class="qp-arrow">▶</div></div><div class="qp-ans">To release the file so it isn't left locked and so written data is properly flushed/saved.</div></div>
+        </div>
+      </div>
+
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('gui')">← Topic 3</button><button class="pnav-btn next" onclick="goTo('python')">Topic 5: Transition to Python →</button></div>
+    </div>
+
+    <!-- TOPIC 5 -->
+    <div class="page" id="page-python">
+      <div class="page-hero">
+        <div class="hero-label">Topic 5 · Week 13</div>
+        <div class="hero-title">Transition to Python</div>
+        <div class="hero-sub">The skills transfer — only the syntax changes</div>
+      </div>
+      <div class="motiv">Once you understand variables, loops and functions, learning a second language is mostly learning new syntax. <strong>Python</strong> is the most popular language in engineering and data science. The concepts you learned in MATLAB map almost one-to-one — but watch the two big traps: Python uses <strong>0-based indexing</strong> and <strong>indentation</strong> (not <code>end</code>) to mark code blocks.</div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">MATLAB vs Python — key differences</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <table class="dtbl">
+            <thead><tr><th>Feature</th><th>MATLAB</th><th>Python</th></tr></thead>
+            <tbody>
+              <tr><td>File extension</td><td><code>.m</code></td><td><code>.py</code></td></tr>
+              <tr><td>Comment</td><td><code>%</code></td><td><code>#</code></td></tr>
+              <tr><td>End of statement</td><td><code>;</code> (optional)</td><td>newline (no <code>;</code>)</td></tr>
+              <tr><td>Block structure</td><td><code>end</code></td><td>indentation</td></tr>
+              <tr><td>First index</td><td><code>1</code></td><td><code>0</code></td></tr>
+              <tr><td>Power</td><td><code>^</code></td><td><code>**</code></td></tr>
+            </tbody>
+          </table>
+          <div class="callout c-warn"><strong>The #1 transition bug:</strong> in Python <code>list[0]</code> is the first element and <code>list[1]</code> is the second. In MATLAB those would be <code>v(1)</code> and <code>v(2)</code>. Off-by-one errors are extremely common when switching.</div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-d">Definition</span><span class="dpen-ht">Python data structures</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <table class="dtbl">
+            <thead><tr><th>Type</th><th>Syntax</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>List</td><td><code>[1, 2, 3]</code></td><td>Ordered, changeable</td></tr>
+              <tr><td>Tuple</td><td><code>(1, 2, 3)</code></td><td>Ordered, fixed</td></tr>
+              <tr><td>Set</td><td><code>{1, 2, 3}</code></td><td>Unique, unordered</td></tr>
+              <tr><td>Dictionary</td><td><code>{'a': 1}</code></td><td>Key → value pairs</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-e">Example</span><span class="dpen-ht">The same loop in both languages</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <div class="code-lbl">MATLAB</div>
+<div class="code"><span class="kw">for</span> i = 1:5
+    <span class="fn">disp</span>(i^2)
+<span class="kw">end</span></div>
+          <div class="code-lbl">Python</div>
+<div class="code"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(1, 6):   <span class="cm"># range stops BEFORE 6</span>
+    <span class="fn">print</span>(i**2)        <span class="cm"># indentation = the block</span></div>
+          <div class="callout c-info"><strong>Libraries:</strong> Python gets MATLAB-like power from libraries — <code>import numpy as np</code> for arrays/maths, <code>import matplotlib.pyplot as plt</code> for plotting, and <code>tkinter</code> for GUIs.</div>
+        </div>
+      </div>
+
+      <div class="qp-section">
+        <div class="qp-header"><span class="qp-title">Quick Practice — Topic 5</span><span class="qp-sub">Click to reveal</span></div>
+        <div class="qp-items">
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">A</div><div class="qp-qtext">In Python, what index is the first element of a list?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>0</strong> — Python is 0-indexed (MATLAB is 1-indexed).</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">B</div><div class="qp-qtext">What marks a code block in Python instead of <code>end</code>?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>Indentation</strong> — consistent spaces define the block.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">C</div><div class="qp-qtext">Which Python library gives MATLAB-style numerical arrays?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><strong>NumPy</strong> (<code>import numpy as np</code>). Plotting uses <code>matplotlib</code>.</div></div>
+          <div class="qp-item"><div class="qp-q" onclick="tqp(this)"><div class="qp-qnum">D</div><div class="qp-qtext">How is "x to the power 3" written in Python?</div><div class="qp-arrow">▶</div></div><div class="qp-ans"><code>x**3</code> (MATLAB uses <code>x^3</code>).</div></div>
+        </div>
+      </div>
+
+      <div class="page-nav"><button class="pnav-btn" onclick="goTo('fileio')">← Topic 4</button><a class="pnav-btn next" href="guide4-kinematics.html">Guide 4: Engineering Dynamics →</a></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PAGES=['home','plot2d','plotadv','gui','fileio','python'];
+const NAMES={home:'Overview',plot2d:'1. 2-D Plotting',plotadv:'2. Subplots, 3-D & Log',gui:'3. GUIs & App Designer',fileio:'4. Import & Export',python:'5. Transition to Python'};
+let visited=new Set(['home']);
+function goTo(id){
+  try{
+    const targetPage=document.getElementById('page-'+id);
+    if(!targetPage){alert('Page not found: '+id);return;}
+    PAGES.forEach(p=>{const pg=document.getElementById('page-'+p);if(pg)pg.classList.remove('active');});
+    targetPage.classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l=>{if(l.getAttribute('onclick')&&l.getAttribute('onclick').includes("'"+id+"'"))l.classList.add('active');});
+    const bc=document.getElementById('bc');if(bc)bc.textContent=NAMES[id]||id;
+    visited.add(id);
+    const pf=document.getElementById('pf');if(pf)pf.style.width=Math.round(visited.size/PAGES.length*100)+'%';
+    window.scrollTo(0,0);
+    setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(targetPage,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},50);
+  }catch(e){alert('Error navigating to '+id+': '+e.message);}
+}
+function td(h){const b=h.nextElementSibling,c=h.querySelector('.dpen-ch'),o=b.classList.contains('open');b.classList.toggle('open',!o);c.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(b,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
+function tqp(h){const a=h.nextElementSibling,arr=h.querySelector('.qp-arrow'),o=a.classList.contains('open');a.classList.toggle('open',!o);arr.classList.toggle('open',!o);if(!o)setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(a,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
+function expandAll(){const ap=document.querySelector('.page.active');ap.querySelectorAll('.dpen-bd:not(.open)').forEach(b=>{b.classList.add('open');b.previousElementSibling.querySelector('.dpen-ch').classList.add('open');});ap.querySelectorAll('.qp-ans:not(.open)').forEach(b=>{b.classList.add('open');b.previousElementSibling.querySelector('.qp-arrow').classList.add('open');});setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.querySelector('.page.active'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);}
+document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},300);});
+</script>
+</body>
+</html>

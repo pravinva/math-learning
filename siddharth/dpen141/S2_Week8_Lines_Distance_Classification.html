@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Straight Lines in 3D: Equations, Distance &amp; Classification</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+
+  .exam-diagram-grid{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0 10px;}
+  .exam-diagram{display:block;width:100%;max-width:320px;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff;}
+  .exam-diagram-note{font-size:13px;color:var(--muted);margin:4px 0 8px;}
+  .concept-diagram{display:block;width:100%;max-width:520px;height:auto;margin:14px auto;border:1px solid var(--line);border-radius:8px;background:#fff;}
+  .derive-step{margin:8px 0 8px 14px;font-size:15px;line-height:1.55;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH141 &middot; Strand 2 (Linear Algebra / Vector Geometry) &middot; Lesson 8</div>
+  <h1>Straight Lines in 3D: Equations, Distance &amp; Classification</h1>
+  <p>How to write the equation of a line in 3D three different ways (vector, parametric, symmetric), how to measure the distance from a point to a line using the cross product, and the systematic checklist for classifying how two lines relate &mdash; parallel, perpendicular, intersecting, or the genuinely 3D possibility of skew lines that never meet. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 26 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Direction cosines &amp; the vector equation of a line</a></li>
+<li><a href="#sec1">Distance from a point to a line</a></li>
+<li><a href="#sec2">Parallel, perpendicular, skew, intersecting lines</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Direction Cosines and the Vector Equation of a Line</div>
+  <div class="prose">
+    
+<p>A line in 3D is completely determined by one point on it and one direction vector along it. Every other point on the line is reached by walking a scalar multiple of that direction from the known point.</p>
+
+  </div>
+
+  <svg class="concept-diagram" viewBox="0 0 520 240" aria-label="Vector equation of a line">
+    <defs>
+      <marker id="w8a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/></marker>
+      <marker id="w8b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#0f766e"/></marker>
+    </defs>
+    <line x1="40" y1="190" x2="480" y2="70" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4"/>
+    <circle cx="160" cy="160" r="5" fill="#111827"/>
+    <text x="145" y="185" font-size="14" font-family="serif">A (a)</text>
+    <line x1="160" y1="160" x2="300" y2="125" stroke="#2563eb" stroke-width="3" marker-end="url(#w8a)"/>
+    <text x="210" y="118" font-size="14" fill="#2563eb" font-family="serif">t d</text>
+    <circle cx="300" cy="125" r="5" fill="#dc2626"/>
+    <text x="310" y="120" font-size="14" fill="#dc2626" font-family="serif">P (r = a + t d)</text>
+    <line x1="160" y1="160" x2="220" y2="145" stroke="#0f766e" stroke-width="2.5" marker-end="url(#w8b)"/>
+    <text x="175" y="140" font-size="13" fill="#0f766e" font-family="serif">d</text>
+    <text x="60" y="40" font-size="15" font-family="serif">Line = all points reachable as a + t d</text>
+  </svg>
+  
+  <div class="key-box">
+    <span class="box-label">Derivation</span>
+    
+<p class="derive-step"><strong>1. Geometry.</strong> Fix a point $A$ with position vector $\mathbf{a}$, and a nonzero direction $\mathbf{d}$. Any point $P$ on the line is obtained by starting at $A$ and adding a real multiple of $\mathbf{d}$:</p>
+<p class="derive-step">$$\mathbf{r}=\mathbf{a}+t\mathbf{d},\qquad t\in\mathbb{R}.$$</p>
+<p class="derive-step"><strong>2. Parametric form.</strong> Write $\mathbf{a}=(a_1,a_2,a_3)$ and $\mathbf{d}=(d_1,d_2,d_3)$. Equating components:</p>
+<p class="derive-step">$$x=a_1+td_1,\quad y=a_2+td_2,\quad z=a_3+td_3.$$</p>
+<p class="derive-step"><strong>3. Symmetric form.</strong> If every $d_i\neq0$, solve each equation for $t$ and equate:</p>
+<p class="derive-step">$$\frac{x-a_1}{d_1}=\frac{y-a_2}{d_2}=\frac{z-a_3}{d_3}=t.$$</p>
+<p class="derive-step">If some $d_i=0$, that coordinate is constant (e.g. $d_1=0\Rightarrow x=a_1$), and you omit that fraction.</p>
+
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    
+<p>Find the vector, parametric, and symmetric equations of the line through $A=(1,-2,3)$ in the direction $\mathbf{d}=(2,1,-1)$.</p>
+<p class="step">Vector form: $\mathbf{r} = (1,-2,3)+t(2,1,-1)$.</p>
+<p class="step">Parametric form: $x=1+2t,\ y=-2+t,\ z=3-t$.</p>
+<p>Symmetric form: solve each for $t$ and equate: $\dfrac{x-1}{2}=\dfrac{y+2}{1}=\dfrac{z-3}{-1}$.</p>
+
+  </div>
+
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Find the vector equation of the line through $(2,0,-1)$ with direction $(1,3,2)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{r}=(2,0,-1)+t(1,3,2)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Find the parametric equations of the line through $(0,1,4)$ with direction $(-1,2,0)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x=-t,\ y=1+2t,\ z=4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Find the symmetric equations of the line through $(3,-1,2)$ with direction $(2,-2,4)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dfrac{x-3}{2}=\dfrac{y+1}{-2}=\dfrac{z-2}{4}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Find the vector equation of the line passing through the two points $A=(1,2,3)$ and $B=(4,0,-1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Direction: $\overrightarrow{AB}=(3,-2,-4)$. $\mathbf{r}=(1,2,3)+t(3,-2,-4)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>For the line $x=3-t,\ y=t,\ z=1+2t$, find the direction vector and a point on the line, then find where the line crosses the $xy$-plane (where $z=0$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Direction $(-1,1,2)$; point $(3,0,1)$ (at $t=0$). $z=0 \Rightarrow 1+2t=0 \Rightarrow t=-\tfrac12$. Then $x=3+\tfrac12=\tfrac72$, $y=-\tfrac12$. Crossing point: $\left(\tfrac72,-\tfrac12,0\right)$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Distance from a Point to a Line</div>
+  <div class="prose">
+    
+<p>The shortest path from a point $P$ to a line is the perpendicular dropped onto the line. We derive the cross-product formula from the area of a parallelogram: area $=$ base $\times$ height, so height $=$ area$/$base.</p>
+
+  </div>
+
+  <svg class="concept-diagram" viewBox="0 0 520 260" aria-label="Point to line distance via parallelogram">
+    <defs>
+      <marker id="w8c" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/></marker>
+      <marker id="w8d" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#dc2626"/></marker>
+    </defs>
+    <line x1="50" y1="200" x2="470" y2="120" stroke="#64748b" stroke-width="2.5"/>
+    <circle cx="140" cy="183" r="5" fill="#111827"/><text x="118" y="210" font-size="14" font-family="serif">A</text>
+    <circle cx="340" cy="145" r="4" fill="#64748b"/><text x="345" y="135" font-size="13" font-family="serif">foot F</text>
+    <circle cx="280" cy="55" r="5" fill="#dc2626"/><text x="290" y="48" font-size="14" fill="#dc2626" font-family="serif">P</text>
+    <line x1="140" y1="183" x2="280" y2="55" stroke="#dc2626" stroke-width="2.5" marker-end="url(#w8d)"/>
+    <text x="175" y="100" font-size="13" fill="#dc2626" font-family="serif">AP</text>
+    <line x1="140" y1="183" x2="250" y2="162" stroke="#2563eb" stroke-width="2.5" marker-end="url(#w8c)"/>
+    <text x="185" y="175" font-size="13" fill="#2563eb" font-family="serif">d</text>
+    <line x1="280" y1="55" x2="340" y2="145" stroke="#0f766e" stroke-width="2.5" stroke-dasharray="5 3"/>
+    <text x="355" y="95" font-size="14" fill="#0f766e" font-family="serif">h = dist</text>
+    <polygon points="140,183 250,162 390,34 280,55" fill="#2563eb" fill-opacity="0.08" stroke="#2563eb" stroke-width="1"/>
+    <text x="60" y="40" font-size="14" font-family="serif">|AP × d| = parallelogram area = |d| · h</text>
+  </svg>
+  
+  <div class="key-box">
+    <span class="box-label">Derivation</span>
+    
+<p class="derive-step"><strong>1. Setup.</strong> Line through $A$ with direction $\mathbf{d}$. Point $P$ off the line. Let $\overrightarrow{AP}$ be the vector from $A$ to $P$, and let $h$ be the perpendicular distance from $P$ to the line.</p>
+<p class="derive-step"><strong>2. Parallelogram.</strong> Vectors $\overrightarrow{AP}$ and $\mathbf{d}$ span a parallelogram. Its area is $|\overrightarrow{AP}\times\mathbf{d}|$.</p>
+<p class="derive-step"><strong>3. Area $=$ base $\times$ height.</strong> Taking base $|\mathbf{d}|$ and height $h$ (the distance we want):</p>
+<p class="derive-step">$$|\overrightarrow{AP}\times\mathbf{d}| = |\mathbf{d}|\cdot h.$$</p>
+<p class="derive-step"><strong>4. Solve for $h$.</strong></p>
+<p class="derive-step">$$\boxed{\mathrm{dist}(P,\text{line})=\dfrac{|\overrightarrow{AP}\times\mathbf{d}|}{|\mathbf{d}|}}.$$</p>
+<p class="derive-step">(Equivalently: $|\overrightarrow{AP}\times\hat{\mathbf{d}}|=|\overrightarrow{AP}|\,|\sin\theta|$, which is the component of $\overrightarrow{AP}$ perpendicular to the line.)</p>
+
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    
+<p>Find the distance between the point $P(-2,1,1)$ and the line $x=3-t,\ y=t,\ z=1+2t$.</p>
+<p class="step">Point on line ($t=0$): $A=(3,0,1)$, direction $\mathbf{d}=(-1,1,2)$. $\overrightarrow{AP}=P-A=(-5,1,0)$.</p>
+<p class="step">$\overrightarrow{AP}\times\mathbf{d}$: $\mathbf{i}$: $(1)(2)-(0)(1)=2$. $\mathbf{j}$: $-[(-5)(2)-(0)(-1)]=10$. $\mathbf{k}$: $(-5)(1)-(1)(-1)=-5+1=-4$. Result: $(2,10,-4)$.</p>
+<p class="step">$|\overrightarrow{AP}\times\mathbf{d}|=\sqrt{4+100+16}=\sqrt{120}$. $|\mathbf{d}|=\sqrt{1+1+4}=\sqrt6$.</p>
+<p>Distance $=\dfrac{\sqrt{120}}{\sqrt6}=\sqrt{20}=2\sqrt5$.</p>
+
+  </div>
+
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Find the distance from $P=(0,0,0)$ to the line through $A=(1,1,1)$ with direction $(1,0,0)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\overrightarrow{AP}=(-1,-1,-1)$. $\overrightarrow{AP}\times(1,0,0)$: $\mathbf{i}$: $(-1)(0)-(-1)(0)=0$. $\mathbf{j}$: $-[(-1)(0)-(-1)(1)]=-1$. $\mathbf{k}$: $(-1)(0)-(-1)(1)=1$. Result $(0,-1,1)$, magnitude $\sqrt2$. $|\mathbf{d}|=1$. Distance $=\sqrt2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Find the distance from $P=(2,3,1)$ to the line through $A=(0,0,0)$ with direction $(0,0,1)$ (the $z$-axis).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Intuitively, distance to the $z$-axis is just $\sqrt{x^2+y^2}$ at the point: $\sqrt{4+9}=\sqrt{13}$. (Confirms the formula: $\overrightarrow{AP}=(2,3,1)$, cross with $(0,0,1)$ gives $(3,-2,0)$, magnitude $\sqrt{13}$, and $|\mathbf{d}|=1$.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Explain, without computing anything, why the distance formula $\dfrac{|\overrightarrow{AP}\times\mathbf{d}|}{|\mathbf{d}|}$ gives zero when $P$ lies exactly on the line.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>If $P$ is on the line, $\overrightarrow{AP}$ is itself parallel to $\mathbf{d}$ (both point along the same line), and the cross product of two parallel vectors is always $\mathbf{0}$ &mdash; giving a distance of $0$, as expected.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Parallel, Perpendicular, Skew, and Intersecting Lines</div>
+  <div class="prose">
+    
+<p>In 3D, two lines that aren't parallel don't have to intersect &mdash; they might simply miss each other entirely. That is the new possibility: <strong>skew</strong> lines. The diagram below shows the four relationships side by side.</p>
+
+  </div>
+
+  <div class="exam-diagram-grid" style="justify-content:center;">
+    <svg class="exam-diagram" viewBox="0 0 240 160" aria-label="Parallel lines">
+      <text x="70" y="22" font-size="13" font-family="serif" font-weight="600">Parallel</text>
+      <line x1="30" y1="55" x2="210" y2="55" stroke="#2563eb" stroke-width="3"/>
+      <line x1="30" y1="110" x2="210" y2="110" stroke="#dc2626" stroke-width="3"/>
+      <text x="50" y="145" font-size="11" fill="#64748b">d₁ = λ d₂, never meet</text>
+    </svg>
+    <svg class="exam-diagram" viewBox="0 0 240 160" aria-label="Intersecting lines">
+      <text x="60" y="22" font-size="13" font-family="serif" font-weight="600">Intersecting</text>
+      <line x1="30" y1="130" x2="200" y2="40" stroke="#2563eb" stroke-width="3"/>
+      <line x1="40" y1="40" x2="210" y2="130" stroke="#dc2626" stroke-width="3"/>
+      <circle cx="120" cy="85" r="4" fill="#111827"/>
+      <text x="40" y="145" font-size="11" fill="#64748b">common point exists</text>
+    </svg>
+    <svg class="exam-diagram" viewBox="0 0 240 160" aria-label="Skew lines">
+      <text x="85" y="22" font-size="13" font-family="serif" font-weight="600">Skew</text>
+      <line x1="25" y1="70" x2="215" y2="50" stroke="#2563eb" stroke-width="3"/>
+      <line x1="50" y1="130" x2="190" y2="90" stroke="#dc2626" stroke-width="3"/>
+      <line x1="120" y1="58" x2="120" y2="108" stroke="#0f766e" stroke-width="2" stroke-dasharray="4 3"/>
+      <text x="128" y="90" font-size="11" fill="#0f766e">⊥ gap</text>
+      <text x="25" y="150" font-size="11" fill="#64748b">not parallel, never meet</text>
+    </svg>
+    <svg class="exam-diagram" viewBox="0 0 240 160" aria-label="Perpendicular directions">
+      <text x="45" y="22" font-size="13" font-family="serif" font-weight="600">Perpendicular dirs</text>
+      <line x1="40" y1="90" x2="200" y2="90" stroke="#2563eb" stroke-width="3"/>
+      <line x1="120" y1="40" x2="120" y2="140" stroke="#dc2626" stroke-width="3"/>
+      <rect x="120" y="80" width="12" height="12" fill="none" stroke="#111827" stroke-width="1.5"/>
+      <text x="35" y="150" font-size="11" fill="#64748b">d₁ · d₂ = 0</text>
+    </svg>
+  </div>
+  
+  <div class="key-box">
+    <span class="box-label">Classification checklist (why each test)</span>
+    
+<p class="derive-step"><strong>1. Parallel?</strong> Directions $\mathbf{d}_1,\mathbf{d}_2$ are parallel iff $\mathbf{d}_1=\lambda\mathbf{d}_2$ for some scalar $\lambda$ (equivalently $\mathbf{d}_1\times\mathbf{d}_2=\mathbf{0}$). Parallel lines either coincide or never meet.</p>
+<p class="derive-step"><strong>2. Perpendicular directions?</strong> $\mathbf{d}_1\cdot\mathbf{d}_2=0$. (Directions can be perpendicular even if the lines are skew or parallel-distinct &mdash; check carefully what the question asks.)</p>
+<p class="derive-step"><strong>3. Intersect?</strong> If not parallel, set $\mathbf{a}_1+s\mathbf{d}_1=\mathbf{a}_2+t\mathbf{d}_2$ and solve the three component equations for $s,t$. A consistent pair $(s,t)$ means they meet at that point.</p>
+<p class="derive-step"><strong>4. Skew?</strong> Not parallel <em>and</em> no consistent $(s,t)$ &mdash; the lines miss in 3D space.</p>
+
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    
+<p>Consider $\mathcal{L}_1: \mathbf{r}=(0,1,0)+s(1,1,0)$ and $\mathcal{L}_2: \mathbf{r}=(0,1,1)+t(1,0,1)$. Check whether they are parallel, intersecting, or skew.</p>
+<p class="step">Directions $(1,1,0)$ and $(1,0,1)$: not scalar multiples (ratios $1/1, 1/0$ don't match) &mdash; not parallel.</p>
+<p class="step">Set equal, component by component: $s = t$ (from $x$), $\ 1+s=1$ (from $y$) $\Rightarrow s=0$, $\ 0=1+t$ (from $z$) $\Rightarrow t=-1$.</p>
+<p>From $x$: $s=t$, but we found $s=0$ and $t=-1$ &mdash; inconsistent. No common solution exists, so the lines are <strong>skew</strong>.</p>
+
+  </div>
+
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Determine whether the lines with directions $(2,4,6)$ and $(1,2,3)$ are parallel.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(2,4,6)=2(1,2,3)$: parallel.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Determine whether the lines with directions $(1,2,-1)$ and $(3,-1,1)$ are perpendicular.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Dot product: $1(3)+2(-1)+(-1)(1)=3-2-1=0$. Perpendicular.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Determine whether $\mathcal{L}_1: x=1+t,\ y=2-t,\ z=t$ and $\mathcal{L}_2: x=2+s,\ y=1+s,\ z=1-s$ intersect, and if so, find the point.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Set equal: $1+t=2+s \Rightarrow t-s=1$. $2-t=1+s \Rightarrow -t-s=-1 \Rightarrow t+s=1$. Adding: $2t=2\Rightarrow t=1$, so $s=0$. Check $z$: $t=1$ gives $z=1$; $s=0$ gives $z=1-0=1$. Consistent! Intersection point (using $t=1$ in $\mathcal{L}_1$): $(2,1,1)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Determine whether the lines $\mathcal{L}_1: \mathbf{r}=(1,0,0)+s(1,1,1)$ and $\mathcal{L}_2: \mathbf{r}=(0,1,0)+t(2,2,2)$ are parallel, and if so, whether they're actually the same line.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Directions $(1,1,1)$ and $(2,2,2)=2(1,1,1)$: parallel. Check if $\mathcal{L}_2$'s point $(0,1,0)$ lies on $\mathcal{L}_1$: need $(0,1,0)=(1,0,0)+s(1,1,1)$ for some $s$, i.e. $1+s=0,\ s=1,\ s=0$ &mdash; inconsistent ($s$ can't be both $-1$ and $1$ and $0$). So the lines are parallel but <strong>distinct</strong> (never meeting).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Determine whether $\mathcal{L}_1: \mathbf{r}=(1,2,0)+s(1,0,1)$ and $\mathcal{L}_2: \mathbf{r}=(0,0,3)+t(0,1,1)$ intersect, are parallel, or are skew.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Directions $(1,0,1)$, $(0,1,1)$: not parallel. Equate: $1+s=0 \Rightarrow s=-1$. $2=t \Rightarrow t=2$. Check $z$: $s=-1$ gives $z=0+(-1)=-1$; $t=2$ gives $z=3+2=5$. $-1\ne5$: inconsistent. <strong>Skew</strong>.</p>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- AUTO-ADDED EXAM STYLE EXTENSION -->
+<section class="topic" id="sec-extension">
+  <div class="section-title"><span class="tag">X</span> Advanced Exam-Style Extension Set (Added 13 questions)</div>
+  <div class="prose"><p>These extension questions are aligned to this week’s lesson outcomes, include richer engineering contexts, and use proper LaTeX rendering.</p></div>
+<!-- AUTO-ADDED EXAM DIAGRAMS --><div class="exam-diagram-grid">
+  <svg class="exam-diagram" viewBox="0 0 320 180"><line x1="30" y1="145" x2="300" y2="145" stroke="#94a3b8"/><line x1="30" y1="145" x2="30" y2="25" stroke="#94a3b8"/><line x1="30" y1="145" x2="210" y2="95" stroke="#2563eb" stroke-width="3"/><line x1="30" y1="145" x2="130" y2="45" stroke="#dc2626" stroke-width="3"/><text x="215" y="95">u</text><text x="135" y="45">v</text></svg>
+  <svg class="exam-diagram" viewBox="0 0 320 180"><line x1="40" y1="150" x2="280" y2="60" stroke="#64748b" stroke-width="3"/><line x1="95" y1="130" x2="180" y2="95" stroke="#0f766e" stroke-width="3"/><line x1="95" y1="130" x2="95" y2="90" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,4"/><text x="185" y="94">projection</text></svg>
+</div>
+<p class="exam-diagram-note">Vector extension items now reference projection, angle, line, and plane geometry diagrams.</p>
+
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Find distance from point \(P(2,1,-1)\) to line \(\mathbf r=(1,0,2)+t(2,-1,2)\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Take \(\mathbf a=(1,0,2),\mathbf d=(2,-1,2),\overrightarrow{AP}=(1,1,-3)\).</p><p class="step">Distance \(d=\dfrac{\|\overrightarrow{AP}\times\mathbf d\|}{\|\mathbf d\|}\).</p><p class="step">\(\overrightarrow{AP}\times\mathbf d=(-1,-8,-3)\), so \(d=\dfrac{\sqrt{74}}{3}\).</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Determine whether lines \(\mathbf r=(0,1,2)+t(1,2,-1)\) and \(\mathbf s=(2,0,1)+u(2,4,-2)\) are parallel, identical, or distinct parallel.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Direction vectors satisfy \( (2,4,-2)=2(1,2,-1)\), so lines are parallel/identical.</p><p class="step">Check a point: \((2,0,1)\) is not on \(\mathbf r\) (component equations inconsistent), so distinct parallel lines.</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Find line through \(A(1,-2,0)\), \(B(4,1,6)\), then compute a unit direction vector.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Direction \(\overrightarrow{AB}=(3,3,6)=3(1,1,2)\).</p><p class="step">Line: \(\mathbf r=(1,-2,0)+t(1,1,2)\).</p><p class="step">Unit direction \(=\dfrac{1}{\sqrt6}(1,1,2)\).</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Check if lines \(\mathbf r=(1,2,0)+t(2,-1,1)\), \(\mathbf s=(3,1,1)+u(1,0,2)\) intersect; if yes, find point.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Solve component system: \(1+2t=3+u\), \(2-t=1\), \(t=1+2u\).</p><p class="step">From middle equation \(t=1\). Then first gives \(u=0\), third gives \(1=1\), consistent.</p><p class="step">Intersection point at \(t=1\): \((3,1,1)\).</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>For line \(\mathbf r=(2,-1,3)+t(4,2,-2)\), find its symmetric cartesian form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Parametric equations: \(x=2+4t,\ y=-1+2t,\ z=3-2t\).</p><p class="step">Hence symmetric form \(\dfrac{x-2}{4}=\dfrac{y+1}{2}=\dfrac{3-z}{2}\).</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>A cable follows line \(\mathbf r=(0,0,1)+t(1,2,2)\). Find point on cable closest to origin.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Point is \(\mathbf p(t)=(t,2t,1+2t)\). Minimize \(\|\mathbf p(t)\|^2=t^2+4t^2+(1+2t)^2=9t^2+4t+1\).</p><p class="step">Derivative \(18t+4=0\Rightarrow t=-2/9\).</p><p class="step">Closest point \(=(-2/9,-4/9,5/9)\).</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Find distance from point \(P(2,1,-1)\) to line \(\mathbf r=(1,0,2)+t(2,-1,2)\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Take \(\mathbf a=(1,0,2),\mathbf d=(2,-1,2),\overrightarrow{AP}=(1,1,-3)\).</p><p class="step">Distance \(d=\dfrac{\|\overrightarrow{AP}\times\mathbf d\|}{\|\mathbf d\|}\).</p><p class="step">\(\overrightarrow{AP}\times\mathbf d=(-1,-8,-3)\), so \(d=\dfrac{\sqrt{74}}{3}\).</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Determine whether lines \(\mathbf r=(0,1,2)+t(1,2,-1)\) and \(\mathbf s=(2,0,1)+u(2,4,-2)\) are parallel, identical, or distinct parallel.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Direction vectors satisfy \( (2,4,-2)=2(1,2,-1)\), so lines are parallel/identical.</p><p class="step">Check a point: \((2,0,1)\) is not on \(\mathbf r\) (component equations inconsistent), so distinct parallel lines.</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Find line through \(A(1,-2,0)\), \(B(4,1,6)\), then compute a unit direction vector.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Direction \(\overrightarrow{AB}=(3,3,6)=3(1,1,2)\).</p><p class="step">Line: \(\mathbf r=(1,-2,0)+t(1,1,2)\).</p><p class="step">Unit direction \(=\dfrac{1}{\sqrt6}(1,1,2)\).</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Check if lines \(\mathbf r=(1,2,0)+t(2,-1,1)\), \(\mathbf s=(3,1,1)+u(1,0,2)\) intersect; if yes, find point.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Solve component system: \(1+2t=3+u\), \(2-t=1\), \(t=1+2u\).</p><p class="step">From middle equation \(t=1\). Then first gives \(u=0\), third gives \(1=1\), consistent.</p><p class="step">Intersection point at \(t=1\): \((3,1,1)\).</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>For line \(\mathbf r=(2,-1,3)+t(4,2,-2)\), find its symmetric cartesian form.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Parametric equations: \(x=2+4t,\ y=-1+2t,\ z=3-2t\).</p><p class="step">Hence symmetric form \(\dfrac{x-2}{4}=\dfrac{y+1}{2}=\dfrac{3-z}{2}\).</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>A cable follows line \(\mathbf r=(0,0,1)+t(1,2,2)\). Find point on cable closest to origin.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Point is \(\mathbf p(t)=(t,2t,1+2t)\). Minimize \(\|\mathbf p(t)\|^2=t^2+4t^2+(1+2t)^2=9t^2+4t+1\).</p><p class="step">Derivative \(18t+4=0\Rightarrow t=-2/9\).</p><p class="step">Closest point \(=(-2/9,-4/9,5/9)\).</p>
+    </div>
+  </div>
+</div>
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Find distance from point \(P(2,1,-1)\) to line \(\mathbf r=(1,0,2)+t(2,-1,2)\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">Take \(\mathbf a=(1,0,2),\mathbf d=(2,-1,2),\overrightarrow{AP}=(1,1,-3)\).</p><p class="step">Distance \(d=\dfrac{\|\overrightarrow{AP}\times\mathbf d\|}{\|\mathbf d\|}\).</p><p class="step">\(\overrightarrow{AP}\times\mathbf d=(-1,-8,-3)\), so \(d=\dfrac{\sqrt{74}}{3}\).</p>
+    </div>
+  </div>
+</div>
+
+</section>
+</main>
+
+<footer>MATH141 Foundations of Engineering Mathematics &middot; Strand 2, Lesson 8 (Lectures 15&ndash;16)</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

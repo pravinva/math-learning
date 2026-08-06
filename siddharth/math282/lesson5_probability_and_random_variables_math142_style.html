@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATH282 W8-10 - Probability and Random Variables</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root { --navy:#1B3A5C; --orange:#FF3621; --blue-lt:#E6F1FB; --blue-mid:#185FA5; --grey-lt:#F6F5F2; --grey-md:#e8e6e0; --text:#2c2a28; --text-muted:#6b6762; }
+* { box-sizing:border-box; margin:0; padding:0; } body { font-family:'DM Sans', sans-serif; background:#fafaf8; color:var(--text); line-height:1.75; }
+.main { max-width:860px; margin:0 auto; padding:36px 24px 80px; } .top a { color:var(--blue-mid); text-decoration:none; font-size:13px; }
+.page-hero { margin:16px 0 24px; padding-bottom:20px; border-bottom:2px solid var(--grey-md); } .page-hero-label { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--orange); font-weight:500; } .page-hero-title { font-family:'Crimson Pro', serif; font-size:42px; line-height:1.12; color:var(--navy); margin-top:6px; } .page-hero-sub { font-size:15px; color:var(--text-muted); margin-top:8px; }
+.motiv { background:var(--blue-lt); border-left:3px solid var(--blue-mid); border-radius:0 8px 8px 0; padding:14px 18px; font-size:14px; color:#0d3d73; margin-bottom:22px; }
+.dpen-block { margin-bottom:12px; border:1px solid var(--grey-md); border-radius:10px; overflow:hidden; } .dpen-header { display:flex; align-items:center; gap:12px; padding:12px 16px; cursor:pointer; background:white; } .dpen-header:hover { background:var(--grey-lt); } .dpen-pill { font-size:10px; font-weight:500; padding:3px 10px; border-radius:20px; letter-spacing:.05em; text-transform:uppercase; } .pill-p{ background:#e9f7f2; color:#0b6849; } .pill-d{ background:var(--blue-lt); color:var(--blue-mid); } .pill-e{ background:#fff2ee; color:#a33a20; } .pill-n{ background:#f4f0ff; color:#5c3fa3; } .pill-g{ background:#fff7e8; color:#9a5800; } .dpen-header-title { flex:1; font-size:14px; color:#322f2b; font-weight:500; } .dpen-chevron { color:#8a857f; transition:transform .2s; } .dpen-block.open .dpen-chevron { transform:rotate(90deg); } .dpen-body { display:none; padding:14px 16px 16px; border-top:1px solid var(--grey-md); background:white; } .dpen-block.open .dpen-body { display:block; }
+.math-block { margin:10px 0; padding:10px 12px; background:#f8fbff; border:1px solid #d7e7fb; border-radius:8px; overflow-x:auto; } .worked { border:1px solid #dbe7f5; border-radius:10px; background:#fbfdff; padding:12px; margin-bottom:10px; } .worked-label { font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#4d6f95; font-weight:600; margin-bottom:6px; } .bridge { background:#fff8e7; border-left:3px solid #efb547; border-radius:0 8px 8px 0; padding:10px 12px; font-size:14px; margin:8px 0; } .bridge-label { font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#7a5310; font-weight:700; margin-bottom:4px; }
+.q-card { border:1px solid var(--grey-md); border-radius:10px; margin:10px 0; overflow:hidden; } .q-head { display:flex; align-items:center; gap:10px; background:white; padding:10px 12px; cursor:pointer; } .q-num { width:30px; height:30px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; flex-shrink:0; } .q-text { flex:1; font-size:14px; } .q-arrow { color:#8a857f; transition:transform .2s; } .q-card.open .q-arrow { transform:rotate(90deg); } .q-body { display:none; padding:10px 12px 12px; border-top:1px solid var(--grey-md); background:#fcfcfb; } .q-card.open .q-body { display:block; } .sol-label { font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:#4d6f95; font-weight:700; margin-bottom:4px; }
+</style>
+</head>
+<body>
+<main class="main">
+  <div class="top"><a href="index.html">← Back to MATH282 Index</a></div>
+  <div class="page-hero"><div class="page-hero-label">MATH282 · Week 8-10</div><div class="page-hero-title">Probability, Random Variables, and Distributions</div><div class="page-hero-sub">Detailed tutorial with event algebra, Binomial/Poisson/Normal models, and CLT-based sample mean reasoning.</div></div>
+  <div class="motiv"><strong>Why this matters:</strong> Engineering systems are noisy and uncertain; probability and random-variable models quantify risk and expected behavior instead of guessing.</div>
+
+  <div class="dpen-block open"><div class="dpen-header" onclick="toggleDPEN(this)"><span class="dpen-pill pill-p">Pattern</span><span class="dpen-header-title">Build it: from events to models</span><span class="dpen-chevron">&#9654;</span></div><div class="dpen-body">
+    <p>Start with event relations, then elevate to random variables and distributions.</p>
+    <div class="math-block">\[
+      P(A\cup B)=P(A)+P(B)-P(A\cap B),\quad
+      P(A|B)=\frac{P(A\cap B)}{P(B)}
+    \]</div>
+    <p>Core models:</p>
+    <ul>
+      <li>\(X\sim \text{Bin}(n,p)\): fixed trials, success/failure.</li>
+      <li>\(X\sim \text{Pois}(\lambda)\): count in interval at constant rate.</li>
+      <li>\(X\sim N(\mu,\sigma^2)\): continuous bell model; CLT anchor.</li>
+    </ul>
+  </div></div>
+
+  <div class="dpen-block"><div class="dpen-header" onclick="toggleDPEN(this)"><span class="dpen-pill pill-g">Guided</span><span class="dpen-header-title">Guided routine for selecting distributions</span><span class="dpen-chevron">&#9654;</span></div><div class="dpen-body">
+    <ol>
+      <li>Is there fixed number of trials? If yes, Binomial candidate.</li>
+      <li>Is it count-per-time/space with steady average rate? Poisson candidate.</li>
+      <li>Is variable continuous and approximately symmetric? Normal candidate.</li>
+      <li>For sample means, use CLT if \(n\) is large enough.</li>
+    </ol>
+  </div></div>
+
+  <div class="dpen-block"><div class="dpen-header" onclick="toggleDPEN(this)"><span class="dpen-pill pill-e">Example</span><span class="dpen-header-title">Worked examples</span><span class="dpen-chevron">&#9654;</span></div><div class="dpen-body">
+    <div class="worked"><div class="worked-label">Example 1 — conditional probability</div><p>\(P(A)=0.6,\ P(B)=0.5,\ P(A\cap B)=0.3\Rightarrow P(A|B)=0.6\).</p></div>
+    <div class="worked"><div class="worked-label">Example 2 — Binomial exact</div><p>\(X\sim Bin(10,0.2)\): \(P(X=2)=\binom{10}{2}(0.2)^2(0.8)^8\approx0.302\).</p></div>
+    <div class="worked"><div class="worked-label">Example 3 — Poisson cumulative</div><p>\(X\sim Pois(3)\): \(P(X\le1)=e^{-3}(1+3)\approx0.199\).</p></div>
+    <div class="worked"><div class="worked-label">Example 4 — CLT mean probability</div><p>\(\mu=50,\sigma=12,n=36\): \(P(\bar X>53)=P(Z>1.5)\approx0.0668\).</p></div>
+  </div></div>
+
+  <div class="dpen-block"><div class="dpen-header" onclick="toggleDPEN(this)"><span class="dpen-pill pill-n">Note</span><span class="dpen-header-title">Common mistakes and recovery checks</span><span class="dpen-chevron">&#9654;</span></div><div class="dpen-body">
+    <div class="bridge"><div class="bridge-label">Recovery 1</div>If you wrote Poisson but have fixed \(n\) trials, reconsider Binomial first.</div>
+    <div class="bridge"><div class="bridge-label">Recovery 2</div>CLT standard error is \(\sigma/\sqrt{n}\), not \(\sigma/n\).</div>
+    <div class="bridge"><div class="bridge-label">Recovery 3</div>Every final probability must lie between 0 and 1. If not, re-check arithmetic or model.</div>
+  </div></div>
+
+  <h3 style="margin-top:16px">Practice + Mini Mastery Test</h3>
+  <div class="q-card"><div class="q-head" onclick="toggleQ(this)"><div class="q-num">1</div><div class="q-text">\(P(A)=0.4,P(B)=0.7,P(A\cap B)=0.3\): find \(P(A\cup B)\).</div><div class="q-arrow">&#9654;</div></div><div class="q-body"><div class="sol-label">Answer</div>0.8</div></div>
+  <div class="q-card"><div class="q-head" onclick="toggleQ(this)"><div class="q-num">2</div><div class="q-text">\(X\sim Bin(8,0.25)\): find \(E[X],Var(X)\).</div><div class="q-arrow">&#9654;</div></div><div class="q-body"><div class="sol-label">Answer</div>\(E=2,\ Var=1.5\).</div></div>
+  <div class="q-card"><div class="q-head" onclick="toggleQ(this)"><div class="q-num">3</div><div class="q-text">\(X\sim Pois(4)\): find \(P(X=0)\).</div><div class="q-arrow">&#9654;</div></div><div class="q-body"><div class="sol-label">Answer</div>\(e^{-4}\).</div></div>
+  <div class="q-card"><div class="q-head" onclick="toggleQ(this)"><div class="q-num">4</div><div class="q-text">\(X\sim N(100,15^2)\): find \(P(X&lt;115)\).</div><div class="q-arrow">&#9654;</div></div><div class="q-body"><div class="sol-label">Answer</div>\(P(Z&lt;1)\approx0.8413\).</div></div>
+  <div class="q-card"><div class="q-head" onclick="toggleQ(this)"><div class="q-num">5</div><div class="q-text">For \(n=49,\sigma=14\), find SE of \(\bar X\).</div><div class="q-arrow">&#9654;</div></div><div class="q-body"><div class="sol-label">Answer</div>2.</div></div>
+  <div class="q-card"><div class="q-head" onclick="toggleQ(this)"><div class="q-num">6</div><div class="q-text">State one engineering use for normal approximation.</div><div class="q-arrow">&#9654;</div></div><div class="q-body"><div class="sol-label">Answer</div>Quality control acceptance probability / tolerance compliance checks.</div></div>
+</main>
+<script>
+function toggleDPEN(el){ el.closest('.dpen-block').classList.toggle('open'); }
+function toggleQ(el){ el.closest('.q-card').classList.toggle('open'); }
+document.addEventListener("DOMContentLoaded", function(){ renderMathInElement(document.body,{delimiters:[{left:"\\(",right:"\\)",display:false},{left:"\\[",right:"\\]",display:true}],throwOnError:false});});
+</script>
+</body>
+</html>

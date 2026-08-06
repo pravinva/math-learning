@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Matrix Fundamentals</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+
+  header h1{
+    margin:0;
+    font-size:27px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+
+  header p{
+    margin:8px 0 0;
+    color:#c3ccdb;
+    font-size:15px;
+    max-width:680px;
+  }
+
+  .progress-wrap{
+    max-width:820px;
+    margin:22px auto 0;
+    padding:0 24px;
+  }
+
+  .progress-bar{
+    height:6px;
+    border-radius:3px;
+    background:rgba(255,255,255,0.15);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--red);
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    color:#9fb0c9;
+    margin-top:6px;
+  }
+
+  nav.toc{
+    max-width:820px;
+    margin:26px auto 0;
+    padding:16px 22px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  nav.toc ol{
+    margin:0;
+    padding-left:20px;
+    columns:2;
+    font-size:14px;
+    line-height:1.9;
+  }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{
+    max-width:820px;
+    margin:30px auto 0;
+    padding:0 24px;
+  }
+
+  section.topic{
+    margin-bottom:46px;
+  }
+
+  .section-title{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 6px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--navy);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    background:rgba(255,54,33,0.08);
+    border-radius:4px;
+    padding:3px 9px;
+  }
+
+  .prose{
+    font-size:16px;
+    line-height:1.65;
+    margin:16px 0;
+  }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0;
+    padding:16px 18px 18px;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+  .key-box{
+    background:#fff7f5;
+    border-left:4px solid var(--red);
+  }
+  .example-box{
+    background:#f7f9fc;
+    border-left:4px solid var(--navy);
+  }
+  .why-box{
+    background:var(--blue-box);
+    border-left:4px solid var(--navy);
+  }
+  .box-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid #33415a;
+    border-radius:6px;
+    margin:18px 0;
+    box-shadow:0 1px 2px rgba(27,36,49,0.05);
+    overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+
+  .p-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:14px 20px 4px;
+  }
+  .p-num{
+    font-family:'Roboto Mono',monospace;
+    font-weight:500;
+    font-size:12.5px;
+    color:#33415a;
+    background:#eef1f6;
+    border-radius:4px;
+    padding:2px 8px;
+    flex-shrink:0;
+  }
+  .p-body{
+    padding:4px 20px 16px;
+    font-size:15.5px;
+    line-height:1.55;
+  }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    color:var(--navy);
+    background:#fff;
+    border:1.5px solid var(--navy);
+    border-radius:5px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+    border-top:1px dashed var(--line);
+  }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{
+    padding:14px 20px 18px;
+    background:#fbfcfe;
+    font-size:15px;
+    line-height:1.6;
+  }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:8px;
+    display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  svg.diagram{
+    display:block;
+    margin:14px auto;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+  }
+
+  footer{
+    max-width:820px;
+    margin:10px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Linear Algebra Foundations &middot; Prerequisite</div>
+  <h1>Matrix Fundamentals</h1>
+  <p>This comes <em>before</em> the row-operations lesson. If row operations felt like they assumed you already knew what a matrix was and how to add or multiply them, this is that missing piece: what a matrix actually is, and the handful of operations, addition, scalar multiplication, matrix multiplication, and the transpose, that everything later is built from. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 68 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Why matrices?</a></li>
+    <li><a href="#sec1">What is a matrix?</a></li>
+    <li><a href="#sec2">Equality and special matrices</a></li>
+    <li><a href="#sec3">Addition and subtraction</a></li>
+    <li><a href="#sec4">Scalar multiplication</a></li>
+    <li><a href="#sec5">Matrix multiplication</a></li>
+    <li><a href="#sec6">Properties of matrix multiplication</a></li>
+    <li><a href="#sec7">The transpose</a></li>
+    <li><a href="#sec8">The identity matrix</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Why matrices?</div>
+  <div class="prose">
+    <p>Suppose a small bakery sells three products, bread, cakes, and pastries, at three different markets. You could track this with nine separate numbers, "bread at market 1", "cakes at market 2", and so on, but writing nine separate labelled numbers every time gets tedious fast, especially once you want to add this week's sales to last week's, or scale everything up by 10% for a promotion. A <strong>matrix</strong> is simply a rectangular grid that holds all of those numbers in fixed positions, so that "row 2, column 3" always means the same thing (say, cakes at market 3) without you having to relabel anything.</p>
+    <p>That storage convenience turns out to be only half the story. The other half, and the reason matrices are the central object of an entire branch of mathematics rather than just a bookkeeping trick, is that there is a way to <em>multiply</em> two matrices together that turns out to exactly capture what it means to solve a system of linear equations, or to describe a geometric transformation like a rotation or a scaling. That multiplication rule is the one genuinely new idea in this lesson, everything else is close to arithmetic you already know.</p>
+    <p>By the end of this lesson you will be able to add, scale, and multiply matrices, flip them (the transpose), and recognise a handful of special matrices that show up constantly later on. This is exactly the toolkit the row-operations lesson assumes you already have.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> What is a matrix?</div>
+  <div class="prose">
+    <p>A <strong>matrix</strong> is a rectangular array of numbers, arranged in rows and columns. If a matrix has $m$ rows and $n$ columns, we say it has <strong>dimensions</strong> $m\times n$ (rows first, then columns, always in that order). For example,</p>
+    <p>$$A = \begin{pmatrix}2&5&1\\0&-3&4\end{pmatrix}$$</p>
+    <p>has $2$ rows and $3$ columns, so we say $A$ is a $2\times3$ matrix. Each individual number inside is called an <strong>entry</strong>. We refer to the entry in row $i$, column $j$ as $a_{ij}$ (lowercase, matching the matrix's name). So in the matrix above, $a_{11}=2$, $a_{12}=5$, $a_{23}=4$, and so on. This double-subscript notation is the only genuinely new notation in this whole lesson, and it is worth pausing on until it feels automatic: the first subscript always means "which row," the second always means "which column."</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>A matrix with $m$ rows and $n$ columns is called $m\times n$. The entry in row $i$, column $j$ is written $a_{ij}$. A matrix with only one row ($1\times n$) is called a <strong>row vector</strong>; a matrix with only one column ($m\times1$) is called a <strong>column vector</strong>. These are not a different kind of object, just matrices with one of their dimensions equal to $1$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $B = \begin{pmatrix}4&9&2\\3&5&7\\8&1&6\end{pmatrix}$. State the dimensions of $B$, and find $b_{31}$ and $b_{22}$.</p>
+    <p class="step">$B$ has $3$ rows and $3$ columns, so it is a $3\times3$ matrix (we call a matrix with equal numbers of rows and columns a <strong>square</strong> matrix).</p>
+    <p class="step">$b_{31}$ means row $3$, column $1$: reading down to row 3, across to column 1, gives $b_{31}=8$.</p>
+    <p class="step">$b_{22}$ means row $2$, column $2$: $b_{22}=5$.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>State the dimensions of $A = \begin{pmatrix}3&7\\1&-2\\0&5\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A$ has $3$ rows and $2$ columns, so it is $3\times2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Let $B = \begin{pmatrix}1&0&4&2\\5&3&1&7\end{pmatrix}$. Find $b_{23}$ and state $B$'s dimensions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$B$ is $2\times4$ (2 rows, 4 columns). $b_{23}$ is row 2, column 3: reading along row 2 $(5,3,1,7)$ to the third entry gives $b_{23}=1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Let $C = \begin{pmatrix}4&9&2\\3&5&7\\8&1&6\end{pmatrix}$ (the worked example matrix). Find $c_{13}$ and $c_{32}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$c_{13}$: row 1, column 3 $=2$. $\ c_{32}$: row 3, column 2 $=1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Construct the $2\times3$ matrix $A$ whose entries satisfy $a_{ij} = i - j$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Work entry by entry: row 1 ($i=1$): $a_{11}=1-1=0$, $a_{12}=1-2=-1$, $a_{13}=1-3=-2$. Row 2 ($i=2$): $a_{21}=2-1=1$, $a_{22}=2-2=0$, $a_{23}=2-3=-1$.</p>
+      <p>$$A = \begin{pmatrix}0&-1&-2\\1&0&-1\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Construct the $2\times3$ matrix $B$ whose entries satisfy $b_{ij} = ij$ (the product of the row and column numbers). What do you notice about the rows of the result?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Row 1 ($i=1$): $b_{11}=1,\ b_{12}=2,\ b_{13}=3$. Row 2 ($i=2$): $b_{21}=2,\ b_{22}=4,\ b_{23}=6$.</p>
+      <p>$$B = \begin{pmatrix}1&2&3\\2&4&6\end{pmatrix}$$</p>
+      <p>Row 2 is exactly twice row 1. This is not an accident of this particular rule, and it is worth remembering: it will resurface as an example of a "rank deficient" matrix if you go on to the row-operations lesson.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Is a matrix with dimensions $1\times6$ a row vector or a column vector? What about $6\times1$?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$1\times6$ has $1$ row and $6$ columns, so it is a <strong>row vector</strong>. $\ 6\times1$ has $6$ rows and $1$ column, so it is a <strong>column vector</strong>. It is easy to mix these up, a useful trick is to remember dimensions are always "rows $\times$ columns," so whichever number is not $1$ tells you how long the vector is, and the position of the "$1$" tells you whether it lies flat (row) or stands up (column).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A matrix has $5$ rows and $3$ columns. State its dimensions, and how many total entries it has.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Dimensions: $5\times3$. Total entries: $5\times3=15$, one entry for every combination of a row and a column.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Let $D=\begin{pmatrix}2&0&1\\3&5&-1\\4&2&6\end{pmatrix}$. Is $D$ square? Find $d_{12}$ and $d_{21}$, and confirm they are not the same number, even though the digits "1" and "2" just swap places between the two subscripts.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$D$ has $3$ rows and $3$ columns, so yes, it is square ($3\times3$).</p>
+      <p>$d_{12}$ (row 1, column 2) $=0$. $\ d_{21}$ (row 2, column 1) $=3$. These are different entries, $d_{12}\neq d_{21}$ in general: swapping the two subscripts moves you to a completely different position in the grid (this only fails to matter for <em>symmetric</em> matrices, covered in Section 7).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Equality and special matrices</div>
+  <div class="prose">
+    <p>Two matrices are <strong>equal</strong> exactly when they have the same dimensions <em>and</em> every corresponding entry matches. This sounds almost too obvious to state, but it has real consequences: a $2\times3$ matrix can never equal a $3\times2$ matrix, no matter what numbers fill them in, since they don't even have the same shape. Matrix equality is genuinely a statement about every single entry simultaneously, which is exactly what makes it useful for solving for unknowns: setting two matrices equal to each other gives you one equation per entry, all at once.</p>
+    <p>A handful of specific matrices come up so often they get their own names.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: special matrices</span>
+    <p>A <strong>zero matrix</strong>, written $O$, has every entry equal to $0$. It plays the same role for matrix addition that the number $0$ plays for ordinary addition: $A+O=A$.</p>
+    <p>A <strong>diagonal matrix</strong> is a square matrix whose only nonzero entries (if any) lie on the main diagonal (where row number equals column number, i.e.\ entries $a_{11},a_{22},a_{33},\dots$).</p>
+    <p>The <strong>identity matrix</strong>, written $I$, is a diagonal matrix with every diagonal entry equal to $1$. For example, the $3\times3$ identity is $I_3=\begin{pmatrix}1&0&0\\0&1&0\\0&0&1\end{pmatrix}$. Section 8 is devoted to why this matrix deserves its name.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Find $x$ and $y$ so that $\begin{pmatrix}x&3\\1&y\end{pmatrix} = \begin{pmatrix}5&3\\1&-2\end{pmatrix}$.</p>
+    <p class="step">Matching entries one at a time: top-left gives $x=5$; top-right gives $3=3$ (automatically true, no new information); bottom-left gives $1=1$ (also automatic); bottom-right gives $y=-2$.</p>
+    <p class="step">So $x=5$, $y=-2$.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Find $x$ and $y$ so that $\begin{pmatrix}2x&4\\1&y+1\end{pmatrix} = \begin{pmatrix}10&4\\1&7\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Top-left: $2x=10 \Rightarrow x=5$. Bottom-right: $y+1=7 \Rightarrow y=6$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Find $x$, $y$, $z$, $w$ so that $\begin{pmatrix}x&2y\\z-1&3w\end{pmatrix} = \begin{pmatrix}5&8\\2&-9\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x=5$. $\ 2y=8 \Rightarrow y=4$. $\ z-1=2 \Rightarrow z=3$. $\ 3w=-9 \Rightarrow w=-3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Classify each matrix as a zero matrix, a diagonal matrix, an identity matrix, or none of these (a matrix can fit more than one label): (a) $\begin{pmatrix}0&0\\0&0\end{pmatrix}$ &nbsp; (b) $\begin{pmatrix}3&0\\0&5\end{pmatrix}$ &nbsp; (c) $\begin{pmatrix}1&0\\0&1\end{pmatrix}$ &nbsp; (d) $\begin{pmatrix}1&2\\0&1\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(a) A zero matrix (and technically also a diagonal matrix, since all its off-diagonal entries, which are all of them, are zero).</p>
+      <p>(b) A diagonal matrix (nonzero entries only on the diagonal), but not the identity (diagonal entries are $3$ and $5$, not $1$).</p>
+      <p>(c) The identity matrix $I_2$ (and therefore also a diagonal matrix).</p>
+      <p>(d) None of these: the entry $2$ sits off the diagonal, so it is not diagonal, zero, or the identity.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Can a $2\times3$ matrix ever equal a $3\times2$ matrix? Explain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No, never. Matrix equality requires matching dimensions <em>as well as</em> matching entries. A $2\times3$ matrix has $6$ entries arranged in $2$ rows, while a $3\times2$ matrix has $6$ entries arranged in $3$ rows, different shapes entirely, even if by coincidence they held the same six numbers. Two matrices of different dimensions are simply never comparable for equality.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Write out the $4\times4$ identity matrix $I_4$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$I_4 = \begin{pmatrix}1&0&0&0\\0&1&0&0\\0&0&1&0\\0&0&0&1\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Write out the $2\times3$ zero matrix, and explain in words what property it has with respect to matrix addition.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$O = \begin{pmatrix}0&0&0\\0&0&0\end{pmatrix}$$</p>
+      <p>Adding the zero matrix to any $2\times3$ matrix $A$ leaves $A$ completely unchanged, $A+O=A$, since adding zero to any entry does nothing. This is exactly the role the number $0$ plays in ordinary addition, just applied entrywise.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Find $x$ and $y$ so that $\begin{pmatrix}x+2&5\\0&2y-1\end{pmatrix} = \begin{pmatrix}9&5\\0&5\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$x+2=9 \Rightarrow x=7$. $\ 2y-1=5 \Rightarrow y=3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Is every diagonal matrix also an identity matrix? Is every identity matrix also a diagonal matrix? Explain the difference.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Every identity matrix <em>is</em> a diagonal matrix, since it has nonzero entries only on the diagonal, that is one of the requirements for being diagonal in the first place. But not every diagonal matrix is an identity matrix: a diagonal matrix only needs nonzero entries confined to the diagonal, they can be <em>any</em> numbers there, not necessarily all $1$s. So "identity" is a more specific, stricter category sitting inside the broader category "diagonal."</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Addition and subtraction</div>
+  <div class="prose">
+    <p>Matrix addition works exactly the way you would guess: add the corresponding entries. The only rule to keep in mind is that both matrices need to have <em>exactly</em> the same dimensions, there is no sensible way to add a $2\times3$ matrix to a $3\times2$ one, since there is no natural pairing between their entries. Subtraction works the same way, entry by entry.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>If $A$ and $B$ are both $m\times n$, then $(A+B)_{ij} = a_{ij}+b_{ij}$ and $(A-B)_{ij}=a_{ij}-b_{ij}$, for every position $i,j$. If $A$ and $B$ have different dimensions, $A+B$ is simply <strong>undefined</strong>, not zero, not an error to work around, just not a meaningful operation.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $A=\begin{pmatrix}2&3\\1&4\end{pmatrix}$, $B=\begin{pmatrix}5&-1\\0&2\end{pmatrix}$. Find $A+B$ and $A-B$.</p>
+    <p class="step">$$A+B = \begin{pmatrix}2+5&3-1\\1+0&4+2\end{pmatrix} = \begin{pmatrix}7&2\\1&6\end{pmatrix}$$</p>
+    <p class="step">$$A-B = \begin{pmatrix}2-5&3-(-1)\\1-0&4-2\end{pmatrix} = \begin{pmatrix}-3&4\\1&2\end{pmatrix}$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&0&2\\3&1&1\end{pmatrix}$, $B=\begin{pmatrix}2&2&1\\0&4&3\end{pmatrix}$. Find $A+B$ and $A-B$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$A+B = \begin{pmatrix}3&2&3\\3&5&4\end{pmatrix}, \qquad A-B = \begin{pmatrix}-1&-2&1\\3&-3&-2\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}4&1\\2&3\\0&5\end{pmatrix}$, $B=\begin{pmatrix}1&1\\2&0\\3&3\end{pmatrix}$. Find $A+B$ and $A-B$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$A+B = \begin{pmatrix}5&2\\4&3\\3&8\end{pmatrix}, \qquad A-B = \begin{pmatrix}3&0\\0&3\\-3&2\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Let $A$ be $2\times4$ and $B$ be $4\times2$. Is $A+B$ defined? Explain.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No. Addition requires matching dimensions, and $2\times4 \neq 4\times2$, even though both matrices have the same total number ($8$) of entries. Matching entry <em>count</em> is not enough, the shapes themselves must agree.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}5&2\\1&0\end{pmatrix}$. Find $A+O$ and $A-A$, where $O$ is the $2\times2$ zero matrix.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A+O=A=\begin{pmatrix}5&2\\1&0\end{pmatrix}$, unchanged, as expected from Practice 14.</p>
+      <p>$A-A=\begin{pmatrix}0&0\\0&0\end{pmatrix}=O$: subtracting any matrix from itself always gives the zero matrix, just as $x-x=0$ for ordinary numbers.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}3&-2\\1&5\end{pmatrix}$, $B=\begin{pmatrix}0&4\\-1&2\end{pmatrix}$, $C=\begin{pmatrix}2&2\\3&-3\end{pmatrix}$. Find $A+B-C$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Work entry by entry, adding $A$ and $B$ first, then subtracting $C$: top-left $3+0-2=1$; top-right $-2+4-2=0$; bottom-left $1-1-3=-3$; bottom-right $5+2-(-3)=10$.</p>
+      <p>$$A+B-C = \begin{pmatrix}1&0\\-3&10\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$ and $B=\begin{pmatrix}4&3\\2&1\end{pmatrix}$. Find $A+B$. What do you notice about the result?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$A+B = \begin{pmatrix}5&5\\5&5\end{pmatrix}$$</p>
+      <p>Every entry comes out equal, $5$, because $B$'s entries were deliberately arranged to be $A$'s entries in reverse order, so each pair sums to the same total. Not a general rule, just a feature of how this particular example was built.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}2&0&-1\\3&4&2\end{pmatrix}$ and $B=\begin{pmatrix}-2&1&1\\0&-4&3\end{pmatrix}$. Find $A+B$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$A+B = \begin{pmatrix}0&1&0\\3&0&5\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}6&1\\2&9\end{pmatrix}$. Find the matrix $X$ such that $A+X = O$ (the zero matrix). What do you notice about $X$?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>We need $X$ so that every entry of $A$ plus the corresponding entry of $X$ gives $0$, so $X$ must be $-A$: $X=\begin{pmatrix}-6&-1\\-2&-9\end{pmatrix}$.</p>
+      <p>$X$ is exactly $A$ with every entry negated, this is called the <strong>additive inverse</strong> of $A$, the matrix analogue of "the opposite sign number."</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Let $A$ be $3\times2$ and $B$ be $3\times2$. What are the dimensions of $A+B$?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A+B$ is also $3\times2$: adding two matrices never changes the shape, it only combines the entries within that shape.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Scalar multiplication</div>
+  <div class="prose">
+    <p>Multiplying a matrix by a single number, called a <strong>scalar</strong> to distinguish it from a matrix, means multiplying every entry by that number. This is the operation you were told in the row-operations lesson you could already do, and indeed there is nothing more to it than that. It becomes more interesting once combined with addition, since expressions like $2A-3B$ show up constantly.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$(kA)_{ij} = k\cdot a_{ij} \quad \text{for every entry.}$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $A=\begin{pmatrix}1&2\\3&-1\end{pmatrix}$, $B=\begin{pmatrix}0&1\\2&1\end{pmatrix}$. Find $3A-2B$.</p>
+    <p class="step">$3A = \begin{pmatrix}3&6\\9&-3\end{pmatrix}$, $\ 2B=\begin{pmatrix}0&2\\4&2\end{pmatrix}$.</p>
+    <p class="step">$$3A-2B = \begin{pmatrix}3-0&6-2\\9-4&-3-2\end{pmatrix} = \begin{pmatrix}3&4\\5&-5\end{pmatrix}$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}2&0&1\\1&3&2\end{pmatrix}$, $B=\begin{pmatrix}1&1&0\\0&1&1\end{pmatrix}$. Find $2A+3B$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$2A=\begin{pmatrix}4&0&2\\2&6&4\end{pmatrix}$, $\ 3B=\begin{pmatrix}3&3&0\\0&3&3\end{pmatrix}$.</p>
+      <p>$$2A+3B = \begin{pmatrix}7&3&2\\2&9&7\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}4&-2\\1&3\end{pmatrix}$. Find $-2A$ and $\frac12A$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$-2A = \begin{pmatrix}-8&4\\-2&-6\end{pmatrix}$, $\quad \frac12A = \begin{pmatrix}2&-1\\\frac12&\frac32\end{pmatrix}$.</p>
+      <p>Scalars can be fractions or negative, exactly like multiplying an ordinary number, there is nothing special that breaks here.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&3\\2&0\end{pmatrix}$. Find $0\cdot A$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$0\cdot A = \begin{pmatrix}0&0\\0&0\end{pmatrix} = O$: multiplying any matrix by the scalar $0$ always gives the zero matrix, regardless of what was originally in $A$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}2&1\\0&3\end{pmatrix}$, $B=\begin{pmatrix}1&2\\3&4\end{pmatrix}$, $C=\begin{pmatrix}0&1\\1&0\end{pmatrix}$. Find $A-2B+3C$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$2B=\begin{pmatrix}2&4\\6&8\end{pmatrix}$, $\ 3C=\begin{pmatrix}0&3\\3&0\end{pmatrix}$.</p>
+      <p>Top-left: $2-2+0=0$. Top-right: $1-4+3=0$. Bottom-left: $0-6+3=-3$. Bottom-right: $3-8+0=-5$.</p>
+      <p>$$A-2B+3C = \begin{pmatrix}0&0\\-3&-5\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}3&1\\-2&4\end{pmatrix}$. Find the scalar $k$ such that $kA = \begin{pmatrix}-9&-3\\6&-12\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Compare any entry: top-left gives $3k=-9 \Rightarrow k=-3$. Check against another entry to be sure it is consistent: bottom-right, $4k=-12 \Rightarrow k=-3$ &check;. So $k=-3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2&3\end{pmatrix}$ (a row vector). Find $4A$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$4A = \begin{pmatrix}4&8&12\end{pmatrix}$. Scalar multiplication works exactly the same way for row and column vectors as for any other matrix, since a vector is just a matrix with one dimension equal to $1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}2&-1\\0&3\end{pmatrix}$. Is $2A + 3A$ the same as $5A$? Compute both to check.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$2A=\begin{pmatrix}4&-2\\0&6\end{pmatrix}$, $\ 3A=\begin{pmatrix}6&-3\\0&9\end{pmatrix}$, so $2A+3A = \begin{pmatrix}10&-5\\0&15\end{pmatrix}$.</p>
+      <p>$5A = \begin{pmatrix}10&-5\\0&15\end{pmatrix}$. Yes, they match: scalars combine before or after multiplying, exactly the way $2x+3x=5x$ works for ordinary numbers.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&0\\2&1\end{pmatrix}$, $B=\begin{pmatrix}3&2\\1&0\end{pmatrix}$. Find $\frac12(A+B)$ and compare it with $\frac12A+\frac12B$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A+B=\begin{pmatrix}4&2\\3&1\end{pmatrix}$, so $\frac12(A+B) = \begin{pmatrix}2&1\\\frac32&\frac12\end{pmatrix}$.</p>
+      <p>$\frac12A=\begin{pmatrix}\frac12&0\\1&\frac12\end{pmatrix}$, $\ \frac12B=\begin{pmatrix}\frac32&1\\\frac12&0\end{pmatrix}$, so $\frac12A+\frac12B = \begin{pmatrix}2&1\\\frac32&\frac12\end{pmatrix}$, the same. Scalar multiplication distributes over addition, whether you add first or scale first, you land on the same result.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> Matrix multiplication</div>
+  <div class="prose">
+    <p>Everything so far has been entrywise, add the matching entries, scale each entry. Matrix <strong>multiplication</strong> is not entrywise, and it is worth being upfront about that, since it is the single most common point of confusion when meeting matrices for the first time. You do <em>not</em> multiply matrices by multiplying their corresponding entries together.</p>
+    <p>Instead, here is the motivation. Suppose you want to write the system of equations $2x+3y=8$, $\ x-y=1$ in a compact form. Notice that the left-hand sides can be produced by taking the row $(2,3)$ and combining it with the column $\begin{pmatrix}x\\y\end{pmatrix}$ via "multiply matching entries and add": $2x+3y$. The second equation comes from the row $(1,-1)$ the same way: $1x + (-1)y = x-y$. This "multiply-and-add" pairing of a row with a column is exactly what matrix multiplication is built from, and it is exactly what lets us write the whole system as the single compact equation $A\mathbf{x}=\mathbf{b}$, with $A=\begin{pmatrix}2&3\\1&-1\end{pmatrix}$, $\mathbf{x}=\begin{pmatrix}x\\y\end{pmatrix}$, $\mathbf{b}=\begin{pmatrix}8\\1\end{pmatrix}$, which is exactly the notation the row-operations lesson uses throughout.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: the multiplication rule</span>
+    <p>To multiply $A$ (size $m\times n$) by $B$ (size $n\times p$), the entry in row $i$, column $j$ of the product $AB$ is found by taking row $i$ of $A$, taking column $j$ of $B$, multiplying them entry by entry, and adding up the results:</p>
+    <p>$$(AB)_{ij} = a_{i1}b_{1j}+a_{i2}b_{2j}+\cdots+a_{in}b_{nj}.$$</p>
+    <p>The result $AB$ has dimensions $m\times p$. Crucially, this only makes sense when the number of <strong>columns</strong> of $A$ matches the number of <strong>rows</strong> of $B$, there needs to be exactly one entry of the row to pair with each entry of the column. If those numbers don't match, the product is simply undefined.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$, $B=\begin{pmatrix}5&6\\7&8\end{pmatrix}$. Find $AB$.</p>
+    <p class="step">Both are $2\times2$, so the product is defined and will also be $2\times2$.</p>
+    <p class="step">Entry $(1,1)$: row 1 of $A$ is $(1,2)$, column 1 of $B$ is $\begin{pmatrix}5\\7\end{pmatrix}$: $1(5)+2(7) = 5+14=19$.</p>
+    <p class="step">Entry $(1,2)$: row 1 of $A$ with column 2 of $B$, $\begin{pmatrix}6\\8\end{pmatrix}$: $1(6)+2(8) = 6+16=22$.</p>
+    <p class="step">Entry $(2,1)$: row 2 of $A$, $(3,4)$, with column 1 of $B$: $3(5)+4(7) = 15+28=43$.</p>
+    <p class="step">Entry $(2,2)$: row 2 of $A$ with column 2 of $B$: $3(6)+4(8) = 18+32=50$.</p>
+    <p class="step">$$AB = \begin{pmatrix}19&22\\43&50\end{pmatrix}$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}2&0\\1&3\end{pmatrix}$, $B=\begin{pmatrix}4&1\\2&5\end{pmatrix}$. Find $AB$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">$(1,1)$: $2(4)+0(2)=8$. $\ (1,2)$: $2(1)+0(5)=2$.</p>
+      <p class="step">$(2,1)$: $1(4)+3(2)=10$. $\ (2,2)$: $1(1)+3(5)=16$.</p>
+      <p>$$AB = \begin{pmatrix}8&2\\10&16\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2&3\end{pmatrix}$ ($1\times3$), $B=\begin{pmatrix}4\\5\\6\end{pmatrix}$ ($3\times1$). Find $AB$, and state its dimensions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A$ has $3$ columns and $B$ has $3$ rows, so the product is defined, with dimensions $1\times1$, that is, a single number:</p>
+      <p>$$AB = \big(1(4)+2(5)+3(6)\big) = (32).$$</p>
+      <p>This "row vector times column vector" case is exactly the dot product you may meet later, dressed up as a $1\times1$ matrix.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2\\0&1\\3&4\end{pmatrix}$ ($3\times2$), $B=\begin{pmatrix}2&0\\1&3\end{pmatrix}$ ($2\times2$). Find $AB$, and state its dimensions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A$'s $2$ columns match $B$'s $2$ rows, so $AB$ is defined, with dimensions $3\times2$ (rows of $A$, columns of $B$).</p>
+      <p class="step">Row 1 of $A$ is $(1,2)$: $(1,1)$-entry $=1(2)+2(1)=4$; $(1,2)$-entry $=1(0)+2(3)=6$.</p>
+      <p class="step">Row 2 of $A$ is $(0,1)$: $(2,1)$-entry $=0(2)+1(1)=1$; $(2,2)$-entry $=0(0)+1(3)=3$.</p>
+      <p class="step">Row 3 of $A$ is $(3,4)$: $(3,1)$-entry $=3(2)+4(1)=10$; $(3,2)$-entry $=3(0)+4(3)=12$.</p>
+      <p>$$AB = \begin{pmatrix}4&6\\1&3\\10&12\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&0&2\\3&1&0\end{pmatrix}$ ($2\times3$), $B=\begin{pmatrix}1&2\\0&1\\4&0\end{pmatrix}$ ($3\times2$). Find $AB$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A$'s $3$ columns match $B$'s $3$ rows, so $AB$ is $2\times2$.</p>
+      <p class="step">$(1,1)$: $1(1)+0(0)+2(4)=9$. $\ (1,2)$: $1(2)+0(1)+2(0)=2$.</p>
+      <p class="step">$(2,1)$: $3(1)+1(0)+0(4)=3$. $\ (2,2)$: $3(2)+1(1)+0(0)=7$.</p>
+      <p>$$AB = \begin{pmatrix}9&2\\3&7\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span></div>
+  <div class="p-body"><p>Let $A$ be $2\times3$ and $B$ be $2\times3$. Is $AB$ defined? What about $BA$?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Neither is defined. For $AB$: $A$ has $3$ columns, $B$ has $2$ rows, $3\neq2$, so $AB$ fails. For $BA$: same problem, $B$ has $3$ columns and $A$ has $2$ rows. Two matrices with identical dimensions are not automatically multipliable, unless that shared dimension happens to make columns match rows, which for two matrices of the <em>same</em> non-square shape, it never will.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span></div>
+  <div class="p-body"><p>Let $A$ be $4\times2$ and $B$ be $2\times5$. Is $AB$ defined? If so, what are its dimensions? Is $BA$ defined?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$AB$: $A$'s $2$ columns match $B$'s $2$ rows, so $AB$ is defined, with dimensions $4\times5$ (rows of $A$, columns of $B$).</p>
+      <p>$BA$: $B$'s $5$ columns would need to match $A$'s $4$ rows; $5\neq4$, so $BA$ is <strong>not</strong> defined. This is a good early warning that order matters enormously in matrix multiplication, one order can be perfectly valid while the other is not even defined at all.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}3&-1\\2&4\end{pmatrix}$, $B=\begin{pmatrix}0&2\\5&1\end{pmatrix}$. Find $AB$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">$(1,1)$: $3(0)+(-1)(5)=-5$. $\ (1,2)$: $3(2)+(-1)(1)=5$.</p>
+      <p class="step">$(2,1)$: $2(0)+4(5)=20$. $\ (2,2)$: $2(2)+4(1)=8$.</p>
+      <p>$$AB = \begin{pmatrix}-5&5\\20&8\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2\\3&4\\5&6\end{pmatrix}$ ($3\times2$), $B=\begin{pmatrix}1&0&2\\0&1&3\end{pmatrix}$ ($2\times3$). Find $AB$, and state its dimensions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Dimensions: $3\times3$ (rows of $A$, columns of $B$), since $A$'s $2$ columns match $B$'s $2$ rows.</p>
+      <p class="step">Row 1 $(1,2)$: entries $1(1)+2(0)=1$; $1(0)+2(1)=2$; $1(2)+2(3)=8$.</p>
+      <p class="step">Row 2 $(3,4)$: entries $3(1)+4(0)=3$; $3(0)+4(1)=4$; $3(2)+4(3)=18$.</p>
+      <p class="step">Row 3 $(5,6)$: entries $5(1)+6(0)=5$; $5(0)+6(1)=6$; $5(2)+6(3)=28$.</p>
+      <p>$$AB = \begin{pmatrix}1&2&8\\3&4&18\\5&6&28\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}2&3\end{pmatrix}$ ($1\times2$), $B=\begin{pmatrix}1&4\\2&5\end{pmatrix}$ ($2\times2$). Find $AB$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A$'s $2$ columns match $B$'s $2$ rows, so $AB$ is $1\times2$.</p>
+      <p>$$AB = \big(2(1)+3(2),\ \ 2(4)+3(5)\big) = (8,\ 23).$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>Write the system $3x+y=7$, $\ 2x-5y=1$ in the form $A\mathbf{x}=\mathbf{b}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Following the Section 5 motivation: the coefficients of $x$ and $y$ in each equation become a row of $A$, and the right-hand sides become $\mathbf{b}$:</p>
+      <p>$$A=\begin{pmatrix}3&1\\2&-5\end{pmatrix}, \quad \mathbf{x}=\begin{pmatrix}x\\y\end{pmatrix}, \quad \mathbf{b}=\begin{pmatrix}7\\1\end{pmatrix}, \qquad A\mathbf{x}=\mathbf{b}.$$</p>
+      <p>You can check this expands back out correctly: $A\mathbf{x} = \begin{pmatrix}3x+y\\2x-5y\end{pmatrix}$, and setting this equal to $\mathbf{b}$ gives back exactly the original two equations. This is precisely the compact notation the row-operations lesson uses when it asks about solutions to $A\mathbf{x}=\mathbf{b}$.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Properties of matrix multiplication</div>
+  <div class="prose">
+    <p>Ordinary number multiplication has properties you have relied on your whole life without thinking about them: $3\times5=5\times3$ (commutativity), $2\times(3\times4)=(2\times3)\times4$ (associativity), and $2\times(3+4)=2\times3+2\times4$ (distributivity). Matrix multiplication keeps two of these three properties, but loses the first one, and losing it is important enough to deserve its own worked example before you meet it as a surprise somewhere else.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why matrix multiplication is not commutative</span>
+    <p>Let $A=\begin{pmatrix}1&1\\0&1\end{pmatrix}$, $B=\begin{pmatrix}1&0\\1&1\end{pmatrix}$.</p>
+    <p class="step">$$AB = \begin{pmatrix}1(1)+1(1)&1(0)+1(1)\\0(1)+1(1)&0(0)+1(1)\end{pmatrix} = \begin{pmatrix}2&1\\1&1\end{pmatrix}$$</p>
+    <p class="step">$$BA = \begin{pmatrix}1(1)+0(0)&1(1)+0(1)\\1(1)+1(0)&1(1)+1(1)\end{pmatrix} = \begin{pmatrix}1&1\\1&2\end{pmatrix}$$</p>
+    <p>$AB \neq BA$: these are genuinely different matrices. The underlying reason is baked into the definition itself, $(AB)_{ij}$ pairs row $i$ of $A$ with column $j$ of $B$, while $(BA)_{ij}$ pairs row $i$ of $B$ with column $j$ of $A$, entirely different pairings of entries, with no reason in general to produce the same sums. Because of this, when you write a product of matrices, the order is always meaningful, and you should never silently swap the order of a matrix product the way you might swap two numbers being multiplied.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: what does still hold</span>
+    <p><strong>Associativity</strong>: $A(BC) = (AB)C$, for any matrices where the products are defined. You can group a chain of matrix products however you like without changing the answer.</p>
+    <p><strong>Distributivity</strong>: $A(B+C) = AB+AC$, and $(A+B)C = AC+BC$, matching sizes permitting.</p>
+    <p><strong>Scalars factor out freely</strong>: $k(AB) = (kA)B = A(kB)$, for any scalar $k$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example: checking associativity</span>
+    <p>Let $A=\begin{pmatrix}1&2\\0&1\end{pmatrix}$, $B=\begin{pmatrix}2&0\\1&1\end{pmatrix}$, $C=\begin{pmatrix}1&1\\0&2\end{pmatrix}$. Verify $A(BC)=(AB)C$.</p>
+    <p class="step">$BC = \begin{pmatrix}2(1)+0(0)&2(1)+0(2)\\1(1)+1(0)&1(1)+1(2)\end{pmatrix} = \begin{pmatrix}2&2\\1&3\end{pmatrix}$.</p>
+    <p class="step">$A(BC) = \begin{pmatrix}1(2)+2(1)&1(2)+2(3)\\0(2)+1(1)&0(2)+1(3)\end{pmatrix} = \begin{pmatrix}4&8\\1&3\end{pmatrix}$.</p>
+    <p class="step">$AB = \begin{pmatrix}1(2)+2(1)&1(0)+2(1)\\0(2)+1(1)&0(0)+1(1)\end{pmatrix} = \begin{pmatrix}4&2\\1&1\end{pmatrix}$.</p>
+    <p class="step">$(AB)C = \begin{pmatrix}4(1)+2(0)&4(1)+2(2)\\1(1)+1(0)&1(1)+1(2)\end{pmatrix} = \begin{pmatrix}4&8\\1&3\end{pmatrix}$.</p>
+    <p>Both routes give $\begin{pmatrix}4&8\\1&3\end{pmatrix}$, confirming associativity for this example.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}0&1\\1&0\end{pmatrix}$, $B=\begin{pmatrix}1&2\\3&4\end{pmatrix}$. Compute $AB$ and $BA$, and confirm they differ.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$AB = \begin{pmatrix}0(1)+1(3)&0(2)+1(4)\\1(1)+0(3)&1(2)+0(4)\end{pmatrix} = \begin{pmatrix}3&4\\1&2\end{pmatrix}$.</p>
+      <p>$BA = \begin{pmatrix}1(0)+2(1)&1(1)+2(0)\\3(0)+4(1)&3(1)+4(0)\end{pmatrix} = \begin{pmatrix}2&1\\4&3\end{pmatrix}$.</p>
+      <p>$AB \neq BA$: in fact here $A$ simply swaps the two rows of whatever it multiplies, while $BA$ swaps the two <em>columns</em> of $B$, visibly different operations.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 45</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}2&0\\0&3\end{pmatrix}$, $B=\begin{pmatrix}1&2\\3&4\end{pmatrix}$. Compute $AB$ and $BA$. Are they equal this time?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$AB = \begin{pmatrix}2(1)+0(3)&2(2)+0(4)\\0(1)+3(3)&0(2)+3(4)\end{pmatrix} = \begin{pmatrix}2&4\\9&12\end{pmatrix}$.</p>
+      <p>$BA = \begin{pmatrix}1(2)+2(0)&1(0)+2(3)\\3(2)+4(0)&3(0)+4(3)\end{pmatrix} = \begin{pmatrix}2&6\\6&12\end{pmatrix}$.</p>
+      <p>Still not equal ($4\neq6$ and $9\neq6$), even though $A$ is diagonal here. Diagonal matrices behave better than most (they scale each row or column rather than mixing entries together), but "better" is not the same as "commutative in general," equality of $AB$ and $BA$ is the exception, not the rule.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 46</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$, $B=\begin{pmatrix}2&0\\1&2\end{pmatrix}$. Compute $AB$ and $BA$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$AB = \begin{pmatrix}1(2)+2(1)&1(0)+2(2)\\3(2)+4(1)&3(0)+4(2)\end{pmatrix} = \begin{pmatrix}4&4\\10&8\end{pmatrix}$.</p>
+      <p>$BA = \begin{pmatrix}2(1)+0(3)&2(2)+0(4)\\1(1)+2(3)&1(2)+2(4)\end{pmatrix} = \begin{pmatrix}2&4\\7&10\end{pmatrix}$.</p>
+      <p>Different again: $AB\neq BA$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 47</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&0\\2&1\end{pmatrix}$, $B=\begin{pmatrix}1&1\\1&0\end{pmatrix}$, $C=\begin{pmatrix}0&2\\1&1\end{pmatrix}$. Verify $A(BC) = (AB)C$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">$BC = \begin{pmatrix}1(0)+1(1)&1(2)+1(1)\\1(0)+0(1)&1(2)+0(1)\end{pmatrix} = \begin{pmatrix}1&3\\0&2\end{pmatrix}$.</p>
+      <p class="step">$A(BC) = \begin{pmatrix}1(1)+0(0)&1(3)+0(2)\\2(1)+1(0)&2(3)+1(2)\end{pmatrix} = \begin{pmatrix}1&3\\2&8\end{pmatrix}$.</p>
+      <p class="step">$AB = \begin{pmatrix}1(1)+0(1)&1(1)+0(0)\\2(1)+1(1)&2(1)+1(0)\end{pmatrix} = \begin{pmatrix}1&1\\3&2\end{pmatrix}$.</p>
+      <p class="step">$(AB)C = \begin{pmatrix}1(0)+1(1)&1(2)+1(1)\\3(0)+2(1)&3(2)+2(1)\end{pmatrix} = \begin{pmatrix}1&3\\2&8\end{pmatrix}$.</p>
+      <p>Both give $\begin{pmatrix}1&3\\2&8\end{pmatrix}$: associativity holds, exactly as the theory promises, even though $AB\neq BA$ for these same matrices (order within a product still matters, but regrouping does not).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 48</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2\\3&1\end{pmatrix}$, $B=\begin{pmatrix}2&0\\1&1\end{pmatrix}$, $C=\begin{pmatrix}0&3\\2&1\end{pmatrix}$. Verify $A(B+C)=AB+AC$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">$B+C = \begin{pmatrix}2&3\\3&2\end{pmatrix}$. $\ A(B+C) = \begin{pmatrix}1(2)+2(3)&1(3)+2(2)\\3(2)+1(3)&3(3)+1(2)\end{pmatrix} = \begin{pmatrix}8&7\\9&11\end{pmatrix}$.</p>
+      <p class="step">$AB = \begin{pmatrix}1(2)+2(1)&1(0)+2(1)\\3(2)+1(1)&3(0)+1(1)\end{pmatrix} = \begin{pmatrix}4&2\\7&1\end{pmatrix}$. $\ AC = \begin{pmatrix}1(0)+2(2)&1(3)+2(1)\\3(0)+1(2)&3(3)+1(1)\end{pmatrix} = \begin{pmatrix}4&5\\2&10\end{pmatrix}$.</p>
+      <p class="step">$AB+AC = \begin{pmatrix}8&7\\9&11\end{pmatrix}$, matching $A(B+C)$ exactly. Distributivity holds.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 49</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}2&1\\0&3\end{pmatrix}$, $B=\begin{pmatrix}1&1\\2&0\end{pmatrix}$. Verify that $3(AB) = (3A)B$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$AB = \begin{pmatrix}2(1)+1(2)&2(1)+1(0)\\0(1)+3(2)&0(1)+3(0)\end{pmatrix} = \begin{pmatrix}4&2\\6&0\end{pmatrix}$, so $3(AB) = \begin{pmatrix}12&6\\18&0\end{pmatrix}$.</p>
+      <p>$3A = \begin{pmatrix}6&3\\0&9\end{pmatrix}$, so $(3A)B = \begin{pmatrix}6(1)+3(2)&6(1)+3(0)\\0(1)+9(2)&0(1)+9(0)\end{pmatrix} = \begin{pmatrix}12&6\\18&0\end{pmatrix}$, matching.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 50</span></div>
+  <div class="p-body"><p>If $AB=BA$ happens to hold for two particular matrices $A$ and $B$, does that mean it will hold for <em>any</em> two matrices? Why is Practice 45 an important example to remember?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No. $AB=BA$ can happen for specific, special pairs of matrices (for example, any matrix commutes with the identity matrix, covered in Section 8), but this is the exception, never something to assume by default. Practice 45 is a useful cautionary example because it shows even a "nice-looking" diagonal matrix does not automatically commute with an arbitrary matrix, so there is no shortcut based on how tidy a matrix looks; commutativity has to be checked explicitly whenever it actually matters.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 51</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&1\\0&2\end{pmatrix}$, $B=\begin{pmatrix}3&0\\1&1\end{pmatrix}$, $C=\begin{pmatrix}2&1\\0&1\end{pmatrix}$. Verify $(A+B)C = AC+BC$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">$A+B = \begin{pmatrix}4&1\\1&3\end{pmatrix}$. $\ (A+B)C = \begin{pmatrix}4(2)+1(0)&4(1)+1(1)\\1(2)+3(0)&1(1)+3(1)\end{pmatrix} = \begin{pmatrix}8&5\\2&4\end{pmatrix}$.</p>
+      <p class="step">$AC = \begin{pmatrix}1(2)+1(0)&1(1)+1(1)\\0(2)+2(0)&0(1)+2(1)\end{pmatrix} = \begin{pmatrix}2&2\\0&2\end{pmatrix}$. $\ BC = \begin{pmatrix}3(2)+0(0)&3(1)+0(1)\\1(2)+1(0)&1(1)+1(1)\end{pmatrix} = \begin{pmatrix}6&3\\2&2\end{pmatrix}$.</p>
+      <p class="step">$AC+BC = \begin{pmatrix}8&5\\2&4\end{pmatrix}$, matching $(A+B)C$ exactly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 52</span></div>
+  <div class="p-body"><p>Suppose $A$ is $2\times3$ and $B$ is $3\times2$. Explain why $AB$ and $BA$ are <em>both</em> defined here, yet still generally not equal, in fact they are not even the same <em>size</em>. What are the dimensions of each?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$AB$: $A$'s $3$ columns match $B$'s $3$ rows, giving a $2\times2$ result. $\ BA$: $B$'s $2$ columns match $A$'s $2$ rows, giving a $3\times3$ result.</p>
+      <p>So $AB$ is $2\times2$ while $BA$ is $3\times3$, they cannot possibly be equal, since equality requires matching dimensions in the first place (Practice 12). This is an even more dramatic failure of commutativity than the earlier examples: not only do the entries differ, the two products don't even live in the same shape of matrix.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> The transpose</div>
+  <div class="prose">
+    <p>The <strong>transpose</strong> of a matrix, written $A^T$, is what you get by flipping the matrix across its main diagonal: row $i$ of $A$ becomes column $i$ of $A^T$. If $A$ is $m\times n$, then $A^T$ is $n\times m$, the dimensions swap. This operation shows up constantly, both as a bookkeeping convenience (turning a row vector into a column vector, say) and in genuine theory, such as the definition of a symmetric matrix.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$(A^T)_{ij} = a_{ji}$: the entry in row $i$, column $j$ of $A^T$ is the entry that was in row $j$, column $i$ of $A$. A square matrix $A$ is called <strong>symmetric</strong> when $A^T=A$, that is, when $a_{ij}=a_{ji}$ for every position, the matrix looks the same after being flipped across its diagonal.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $A=\begin{pmatrix}1&2&3\\4&5&6\end{pmatrix}$ ($2\times3$). Find $A^T$.</p>
+    <p class="step">Row 1 of $A$, $(1,2,3)$, becomes column 1 of $A^T$. Row 2 of $A$, $(4,5,6)$, becomes column 2 of $A^T$.</p>
+    <p class="step">$$A^T = \begin{pmatrix}1&4\\2&5\\3&6\end{pmatrix}$$</p>
+    <p>Notice $A$ was $2\times3$ and $A^T$ is $3\times2$, the dimensions swapped, exactly as the rule promises.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why $(AB)^T = B^TA^T$, and not $A^TB^T$</span>
+    <p>It is tempting to guess $(AB)^T = A^TB^T$, matching the order, but this is wrong, and it is worth seeing why. If $A$ is $m\times n$ and $B$ is $n\times p$, then $AB$ is $m\times p$, so $(AB)^T$ is $p\times m$. Now check $A^TB^T$: $A^T$ is $n\times m$ and $B^T$ is $p\times n$, and for $A^TB^T$ to even be defined we would need $A^T$'s columns ($m$) to match $B^T$'s rows ($p$), which has no reason to hold. But $B^TA^T$: $B^T$ is $p\times n$ and $A^T$ is $n\times m$, and $B^T$'s columns ($n$) do match $A^T$'s rows ($n$), giving a well-defined $p\times m$ result, exactly the shape $(AB)^T$ needs. The order has to flip along with the transpose, for reasons that show up already just from checking the dimensions work out.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 53</span></div>
+  <div class="p-body"><p>Find $A^T$ for $A = \begin{pmatrix}2&0\\1&3\\5&-1\end{pmatrix}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A$ is $3\times2$, so $A^T$ is $2\times3$: each row of $A$ becomes a column of $A^T$.</p>
+      <p>$$A^T = \begin{pmatrix}2&1&5\\0&3&-1\end{pmatrix}$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 54</span></div>
+  <div class="p-body"><p>Find $A^T$ for $A=\begin{pmatrix}1&2\\2&4\end{pmatrix}$. Is $A$ symmetric?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$A^T = \begin{pmatrix}1&2\\2&4\end{pmatrix}$$</p>
+      <p>$A^T=A$ here, so yes, $A$ is symmetric: the off-diagonal entries $a_{12}=2$ and $a_{21}=2$ already matched, which is exactly the condition symmetry requires.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 55</span></div>
+  <div class="p-body"><p>Find $A^T$ for $A=\begin{pmatrix}3&1&4\\1&5&9\\4&9&2\end{pmatrix}$. Is $A$ symmetric?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Flipping across the diagonal gives back exactly the same matrix, since $a_{12}=a_{21}=1$, $a_{13}=a_{31}=4$, $a_{23}=a_{32}=9$.</p>
+      <p>$$A^T = \begin{pmatrix}3&1&4\\1&5&9\\4&9&2\end{pmatrix} = A$$</p>
+      <p>Yes, symmetric. Notice the diagonal entries ($3,5,2$) never needed to match anything, they sit on the "fold line" and stay put under a transpose regardless.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 56</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2&0\\0&1&1\end{pmatrix}$. Find $(A^T)^T$, and explain in words why you get what you get without doing the second transpose from scratch.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$(A^T)^T = A = \begin{pmatrix}1&2&0\\0&1&1\end{pmatrix}$.</p>
+      <p>Transposing flips rows into columns; transposing a second time flips them straight back to where they started. In general $(A^T)^T=A$ for any matrix, two flips undo each other, so there is never a need to actually carry out the second transpose by hand once you recognise the pattern.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 57</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$, $B=\begin{pmatrix}0&1\\2&1\end{pmatrix}$. Verify $(A+B)^T = A^T+B^T$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A+B = \begin{pmatrix}1&3\\5&5\end{pmatrix}$, so $(A+B)^T = \begin{pmatrix}1&5\\3&5\end{pmatrix}$.</p>
+      <p>$A^T=\begin{pmatrix}1&3\\2&4\end{pmatrix}$, $\ B^T=\begin{pmatrix}0&2\\1&1\end{pmatrix}$, so $A^T+B^T = \begin{pmatrix}1&5\\3&5\end{pmatrix}$, matching. The transpose of a sum is just the sum of the transposes, no surprises, unlike the product case.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 58</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$, $B=\begin{pmatrix}0&1\\2&1\end{pmatrix}$. Verify $(AB)^T = B^TA^T$ by computing both sides.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">$AB = \begin{pmatrix}1(0)+2(2)&1(1)+2(1)\\3(0)+4(2)&3(1)+4(1)\end{pmatrix} = \begin{pmatrix}4&3\\8&7\end{pmatrix}$, so $(AB)^T = \begin{pmatrix}4&8\\3&7\end{pmatrix}$.</p>
+      <p class="step">$B^T=\begin{pmatrix}0&2\\1&1\end{pmatrix}$, $\ A^T=\begin{pmatrix}1&3\\2&4\end{pmatrix}$.</p>
+      <p class="step">$B^TA^T = \begin{pmatrix}0(1)+2(2)&0(3)+2(4)\\1(1)+1(2)&1(3)+1(4)\end{pmatrix} = \begin{pmatrix}4&8\\3&7\end{pmatrix}$, matching $(AB)^T$ exactly, as the Section 7 "why" box predicted.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 59</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2&0\\0&1&1\end{pmatrix}$ ($2\times3$), $B=\begin{pmatrix}2&1\\0&3\\1&0\end{pmatrix}$ ($3\times2$). Verify $(AB)^T=B^TA^T$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p class="step">$AB = \begin{pmatrix}1(2)+2(0)+0(1)&1(1)+2(3)+0(0)\\0(2)+1(0)+1(1)&0(1)+1(3)+1(0)\end{pmatrix} = \begin{pmatrix}2&7\\1&3\end{pmatrix}$, so $(AB)^T = \begin{pmatrix}2&1\\7&3\end{pmatrix}$.</p>
+      <p class="step">$B^T = \begin{pmatrix}2&0&1\\1&3&0\end{pmatrix}$, $\ A^T=\begin{pmatrix}1&0\\2&1\\0&1\end{pmatrix}$.</p>
+      <p class="step">$B^TA^T = \begin{pmatrix}2(1)+0(2)+1(0)&2(0)+0(1)+1(1)\\1(1)+3(2)+0(0)&1(0)+3(1)+0(1)\end{pmatrix} = \begin{pmatrix}2&1\\7&3\end{pmatrix}$, matching $(AB)^T$ exactly, even though $A$ and $B$ here are not even square.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 60</span></div>
+  <div class="p-body"><p>Let $\mathbf{v}=\begin{pmatrix}2\\-1\\3\end{pmatrix}$ (a $3\times1$ column vector). Find $\mathbf{v}^T$, and then find $\mathbf{v}^T\mathbf{v}$ (a $1\times3$ times a $3\times1$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\mathbf{v}^T = \begin{pmatrix}2&-1&3\end{pmatrix}$, a $1\times3$ row vector.</p>
+      <p>$\mathbf{v}^T\mathbf{v} = 2(2)+(-1)(-1)+3(3) = 4+1+9=14$, a $1\times1$ matrix, that is, just the number $14$.</p>
+      <p>This is worth remembering as a pattern: for any column vector $\mathbf{v}$, $\mathbf{v}^T\mathbf{v}$ always computes the sum of the squares of its entries, exactly the quantity that shows up inside a square root when measuring a vector's length.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec8">
+  <div class="section-title"><span class="tag">8</span> The identity matrix</div>
+  <div class="prose">
+    <p>Section 2 introduced the identity matrix $I$ by its shape, $1$s down the diagonal, $0$s everywhere else, but did not yet explain why it earns the name "identity." The reason is entirely about how it behaves under multiplication: it is the matrix analogue of the number $1$, the one number that leaves anything unchanged when you multiply by it.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>For any $m\times n$ matrix $A$: $\ I_mA = A$ and $AI_n = A$. Multiplying by the (appropriately sized) identity matrix, on either side, always leaves $A$ completely unchanged. This is exactly why the row-operations lesson can talk about "the identity matrix" as a fixed target: reducing a matrix to $I$ via row operations is how you confirm, and later compute, an inverse.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $A=\begin{pmatrix}3&5\\1&2\end{pmatrix}$. Verify $I_2A=A$ and $AI_2=A$.</p>
+    <p class="step">$$I_2A = \begin{pmatrix}1&0\\0&1\end{pmatrix}\begin{pmatrix}3&5\\1&2\end{pmatrix} = \begin{pmatrix}1(3)+0(1)&1(5)+0(2)\\0(3)+1(1)&0(5)+1(2)\end{pmatrix} = \begin{pmatrix}3&5\\1&2\end{pmatrix} = A.$$</p>
+    <p class="step">$$AI_2 = \begin{pmatrix}3&5\\1&2\end{pmatrix}\begin{pmatrix}1&0\\0&1\end{pmatrix} = \begin{pmatrix}3(1)+5(0)&3(0)+5(1)\\1(1)+2(0)&1(0)+2(1)\end{pmatrix} = \begin{pmatrix}3&5\\1&2\end{pmatrix} = A.$$</p>
+    <p>Both directions leave $A$ unchanged, exactly as promised, and notice this is one of the rare cases where order genuinely does not matter: $I_2A = AI_2$, since the identity is specifically built to commute with everything.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 61</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}4&-1\\0&2\end{pmatrix}$. Compute $I_2A$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$I_2A = \begin{pmatrix}1(4)+0(0)&1(-1)+0(2)\\0(4)+1(0)&0(-1)+1(2)\end{pmatrix} = \begin{pmatrix}4&-1\\0&2\end{pmatrix} = A$, unchanged.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 62</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}1&2&3\\4&5&6\end{pmatrix}$ ($2\times3$). Which identity matrix, $I_2$ or $I_3$, makes $AI=A$ a valid, defined product? Which makes $IA=A$ valid?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For $AI=A$: $A$ has $3$ columns, so $I$ needs $3$ rows to make the product defined, meaning $I=I_3$, giving a $2\times3$ result matching $A$.</p>
+      <p>For $IA=A$: $A$ has $2$ rows, so $I$ needs $2$ columns, meaning $I=I_2$, giving a $2\times3$ result matching $A$.</p>
+      <p>The identity matrix used has to match whichever side it sits on, a rectangular matrix needs two <em>different-sized</em> identity matrices, one for each side, unlike the square case where the same $I$ works both ways.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 63</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}2&1&0\\1&3&2\\0&1&1\end{pmatrix}$. Compute $AI_3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$AI_3 = A = \begin{pmatrix}2&1&0\\1&3&2\\0&1&1\end{pmatrix}$, unchanged, without needing to write out the full multiplication: each row of $A$ paired with $I_3$'s columns just picks out that row's own entries back again.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 64</span></div>
+  <div class="p-body"><p>Does $I$ commute with every matrix it can be multiplied with, or only some? Explain using what you know about $I_mA$ and $AI_n$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For a square matrix $A$ ($n\times n$), $I_nA = AI_n = A$: the identity commutes with every square matrix of matching size, this is genuinely special, not something you can say about a general matrix $B$ (recall Practice 45, where a diagonal, but non-identity, matrix still failed to commute). For a non-square matrix, "commuting" does not even make sense to ask, since $I_mA$ and $AI_n$ use identity matrices of two different sizes and are not the same kind of comparison, there is only ever one meaningful identity to multiply on each particular side.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 65</span></div>
+  <div class="p-body"><p>Let $A=\begin{pmatrix}5&2\\1&4\end{pmatrix}$. Find the matrix $2I_2$, and compute $(2I_2)A$. What does multiplying by $2I_2$ accomplish, compared to multiplying by $I_2$?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$2I_2 = \begin{pmatrix}2&0\\0&2\end{pmatrix}$.</p>
+      <p>$(2I_2)A = \begin{pmatrix}2(5)+0(1)&2(2)+0(4)\\0(5)+2(1)&0(2)+2(4)\end{pmatrix} = \begin{pmatrix}10&4\\2&8\end{pmatrix} = 2A$.</p>
+      <p>Multiplying by $I_2$ leaves $A$ unchanged; multiplying by $2I_2$ instead scales every entry of $A$ by $2$, exactly matching ordinary scalar multiplication. This is a preview of a more general fact: multiplying by a diagonal matrix scales rows (or columns) by the corresponding diagonal entries, and $kI$ is the special case where every entry gets scaled by the same amount.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 66</span></div>
+  <div class="p-body"><p>Let $\mathbf{v}=\begin{pmatrix}3\\-2\end{pmatrix}$. Compute $I_2\mathbf{v}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$I_2\mathbf{v} = \begin{pmatrix}1(3)+0(-2)\\0(3)+1(-2)\end{pmatrix} = \begin{pmatrix}3\\-2\end{pmatrix} = \mathbf{v}$, unchanged. The identity leaves vectors alone exactly as it leaves any other matrix alone, a column vector is, after all, just an $n\times1$ matrix.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 67</span></div>
+  <div class="p-body"><p>Is the zero matrix $O$ ever equal to the identity matrix $I$ of the same size? Explain in terms of what each one does under multiplication.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No (except in the degenerate $0\times0$ case, which is not a matrix you would ever actually work with). They behave as near-opposites under multiplication: $OA = O$ for any $A$ (multiplying by the zero matrix destroys all information, collapsing everything to zero), while $IA=A$ preserves $A$ completely. A matrix that did both simultaneously, i.e. equalled both $O$ and $I$, would need every diagonal entry to be both $0$ and $1$ at once, which is impossible for ordinary numbers.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 68</span></div>
+  <div class="p-body"><p>Let $A = \begin{pmatrix}1&0\\0&1\\0&0\end{pmatrix}$ ($3\times2$). Is $A$ the identity matrix? Explain, using the definition of $I$ carefully.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No. $A$ is $3\times2$, not square, and the identity matrix is only ever defined for square matrices ($I_n$ is $n\times n$). $A$ does have $1$s running down what looks like a diagonal and $0$s elsewhere, but without being square there is no well-defined single "main diagonal" running corner to corner, and more importantly $A$ does not satisfy $AB=B$ or $BA=B$ for a general matching matrix $B$ the way a true identity must. It resembles an identity matrix visually but does not behave like one.</p>
+    </div>
+  </div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> With addition, scalar multiplication, matrix multiplication, the transpose, and the identity matrix in hand, you have exactly the toolkit the row-operations lesson assumes on day one. From here, the natural next step is the row-operations lesson itself: the three legal row operations, echelon form, Gaussian elimination, and determinants, all of which are really just this same arithmetic, applied one row at a time, in a carefully chosen order.</p>
+</div>
+
+</main>
+
+<footer>Linear Algebra Foundations &middot; Matrix Fundamentals</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>

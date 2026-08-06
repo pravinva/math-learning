@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Shear Force &amp; Bending Moment Diagrams</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+  :root{ --navy:#1B2431; --red:#c0392b; --green:#2f8f5b; --orange:#c07830; --paper:#ffffff; --grid:#e3e8ef; --line:#c8d2de; --text:#1B2431; --muted:#5b6779; --blue-box:#eef3fb; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Barlow',sans-serif; color:var(--text); background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--paper); padding:0 0 80px 0; }
+  header{ background:var(--navy); color:#fff; padding:36px 24px 30px; border-bottom:6px solid var(--red); }
+  header .eyebrow{ font-family:'Roboto Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:#9fb0c9; margin-bottom:6px; }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:680px; }
+  .progress-wrap{ max-width:860px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+  nav.toc{ max-width:860px; margin:26px auto 0; padding:16px 22px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  nav.toc .toc-title{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+  main{ max-width:860px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+  .section-title{ font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px; border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px; scroll-margin-top:20px; }
+  .section-title .tag{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); background:rgba(192,57,43,0.08); border-radius:4px; padding:3px 9px; }
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{ margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+  .key-box, .example-box, .why-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); }
+  .key-box{ background:#fdf5f3; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:8px; }
+  .key-box .box-label{ color:var(--red); }
+  .example-box .box-label, .why-box .box-label{ color:var(--navy); }
+  .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
+  .example-box .step{ margin:10px 0 10px 14px; }
+  svg.diagram{ display:block; margin:16px auto; background:#fff; border:1px solid var(--line); border-radius:6px; max-width:100%; height:auto; }
+  svg.mini-diagram{ display:block; margin:10px auto 6px; background:#fbfcfe; border:1px solid var(--line); border-radius:6px; max-width:300px; width:100%; height:auto; }
+  .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{ font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a; background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0; }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{ margin:6px 0; }
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{ font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy); background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px; cursor:pointer; transition:background .15s ease,color .15s ease; }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#a5321f; }
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
+  .solution-inner p{ margin:8px 0; }
+  footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">DPEN102 &middot; Week 5</div>
+  <h1>Shear Force &amp; Bending Moment Diagrams</h1>
+  <p>Week 4 found the internal shear \(V\) and moment \(M\) at a single cut. This week builds the full picture: \(V(x)\) and \(M(x)\) at every point along a beam, plotted as the SFD and BMD, so you can see exactly where a beam is most at risk without cutting it a hundred times.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 36 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">Reactions first, then sign convention</a></li>
+    <li><a href="#sec2">Point loads: piecewise shear diagrams</a></li>
+    <li><a href="#sec3">The V&ndash;M relationship &amp; distributed loads</a></li>
+    <li><a href="#sec4">Advanced: combined loading, full SFD/BMD</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Reactions first, then sign convention</div>
+  <div class="prose">
+    <p>Every SFD/BMD problem starts the same way every other statics problem does: find the support reactions first, using \(\Sigma F_y=0\) and \(\Sigma M=0\). Only once those are known can you build \(V(x)\) and \(M(x)\).</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Reading the shear diagram, left to right</span>
+    <p>Starting from the left end, \(V(x)\) is the running total of all upward forces encountered so far. An upward reaction makes \(V\) jump up instantly; a downward point load makes \(V\) drop instantly, by exactly that load's magnitude. If reactions were computed correctly, \(V\) always returns to exactly zero at the right end.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Find the reactions for a beam, span 6&nbsp;m, pin at A, roller at B, with a single 120&nbsp;N load 2&nbsp;m from A.</p>
+    <p class="step">\(\Sigma M_A\): \(R_B(6)-120(2)=0 \Rightarrow R_B=40\text{ N}\).</p>
+    <p class="step">\(\Sigma F_y\): \(R_A=120-40=80\text{ N}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Beam span 5&nbsp;m, pin-roller, single 80&nbsp;N load at \(x=3\text{ m}\). Find \(R_A,R_B\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\Sigma M_A\): \(R_B(5)=80(3)=240 \Rightarrow R_B=48\text{ N}\). \(R_A=32\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Beam span 7&nbsp;m, single 140&nbsp;N load at \(x=4\text{ m}\). Find \(R_A,R_B\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R_B=140(4)/7=80\text{ N}\). \(R_A=60\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Beam span 6&nbsp;m with a UDL \(w=40\text{ N/m}\) over the full length, no point loads. Find \(R_A,R_B\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Total load \(=40(6)=240\text{ N}\), symmetric: \(R_A=R_B=120\text{ N}\).</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Point loads: piecewise shear diagrams</div>
+  <div class="prose">
+    <p>With only point loads (no distributed load), the shear diagram is a series of horizontal steps: constant between loads, jumping instantly at each load or reaction.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>For the beam above (\(L=6\), \(R_A=80\text{ N}\) at \(x=0\), 120&nbsp;N down at \(x=2\), \(R_B=40\text{ N}\) at \(x=6\)), plot \(V(x)\).</p>
+    <p class="step">\(0<x<2\): \(V=80\text{ N}\) (only \(R_A\) so far).</p>
+    <p class="step">At \(x=2\): \(V\) drops by 120: \(V=80-120=-40\text{ N}\).</p>
+    <p class="step">\(2<x<6\): \(V=-40\text{ N}\) constant.</p>
+    <p class="step">At \(x=6\): \(V\) jumps by \(R_B=40\): \(V=-40+40=0\) &check; (closes to zero, confirming the reactions).</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
+    <line x1="30" y1="90" x2="330" y2="90" stroke="#c8d2de" stroke-width="1"/>
+    <line x1="30" y1="20" x2="30" y2="160" stroke="#1B2431" stroke-width="1.5"/>
+    <path d="M 30 50 L 130 50 L 130 130 L 330 130" fill="none" stroke="#c0392b" stroke-width="2.5"/>
+    <line x1="130" y1="50" x2="130" y2="130" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <text x="35" y="45" font-size="12" fill="#c0392b" font-weight="600">V=80N</text>
+    <text x="200" y="150" font-size="12" fill="#c0392b" font-weight="600">V=-40N</text>
+    <text x="115" y="20" font-size="11" fill="#5b6779">x=2m (load)</text>
+    <text x="310" y="105" font-size="11" fill="#5b6779">x=6m</text>
+    <line x1="330" y1="130" x2="330" y2="90" stroke="#c0392b" stroke-width="2.5"/>
+  </svg>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Beam \(L=5\text{ m}\), single 100&nbsp;N load at \(x=2\text{ m}\). Find the reactions and \(V(x)\) in each region.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R_B=100(2)/5=40\text{ N}\), \(R_A=60\text{ N}\). \(0<x<2\): \(V=60\text{ N}\). \(2<x<5\): \(V=60-100=-40\text{ N}\). Check: \(-40+40=0\) &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Beam \(L=8\text{ m}\), single 200&nbsp;N load at \(x=5\text{ m}\). Find the reactions and \(V(x)\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R_B=200(5)/8=125\text{ N}\), \(R_A=75\text{ N}\). \(0<x<5\): \(V=75\text{ N}\). \(5<x<8\): \(V=75-200=-125\text{ N}\). Check: \(-125+125=0\) &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Beam \(L=6\text{ m}\) with two loads: 50&nbsp;N at \(x=2\), 70&nbsp;N at \(x=4\). Find the reactions and \(V(x)\) in all three regions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\Sigma M_A\): \(R_B(6)=50(2)+70(4)=380 \Rightarrow R_B=63.33\text{ N}\), \(R_A=56.67\text{ N}\).</p>
+    <p>\(0<x<2\): \(V=56.67\text{ N}\). \(2<x<4\): \(V=6.67\text{ N}\). \(4<x<6\): \(V=-63.33\text{ N}\). Check at \(x=6\): \(-63.33+63.33=0\) &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A cantilever, fixed at A, length 4&nbsp;m, single 90&nbsp;N load at the free end. Find \(V(x)\) along the span.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Fixed-end reaction \(R_{Ay}=90\text{ N}\) up. \(V=90\text{ N}\) constant for the entire span (only the fixed reaction acts until the tip), dropping to \(0\) right at the free end after the load.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Using Practice 4's beam, explain why the shear diagram must return to exactly zero at the right end if the reactions were computed correctly.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>By the time you reach the far right end, every vertical force on the beam (all loads plus both reactions) has been accounted for in the running total. Since the whole beam is in equilibrium (\(\Sigma F_y=0\)), that running total must sum to exactly zero, a nonzero result flags an arithmetic or reaction error.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> The V&ndash;M relationship &amp; distributed loads</div>
+  <div class="prose">
+    <p>With a distributed load, \(V\) no longer jumps in steps, it slopes smoothly. And moment, in turn, is simply the running area under the shear diagram.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\frac{dV}{dx}=w(x), \qquad \frac{dM}{dx}=V(x), \qquad M(x)=\int V(x)\,dx.$$</p>
+    <p>The maximum (or minimum) moment occurs wherever \(V=0\), since that's exactly where \(M\)'s slope is zero.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A simply-supported beam, \(L=6\text{ m}\), carries a UDL \(w=50\text{ N/m}\) over its full length. Find \(V(x)\), \(M(x)\), and the maximum moment.</p>
+    <p class="step">Total load \(=300\text{ N}\), symmetric: \(R_A=R_B=150\text{ N}\).</p>
+    <p class="step">\(V(x)=R_A-wx=150-50x\). \(V=0\) at \(x=3\text{ m}\) (midspan, as expected by symmetry).</p>
+    <p class="step">\(M(x)=\int V\,dx = 150x-25x^2\) (constant of integration is zero, since \(M=0\) at the simply-supported end).</p>
+    <p class="step">\(M_{max}=M(3)=150(3)-25(9)=450-225=225\text{ N}\cdot\text{m}\).</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg">
+    <line x1="30" y1="60" x2="330" y2="60" stroke="#c8d2de" stroke-width="1"/>
+    <line x1="30" y1="20" x2="30" y2="100" stroke="#1B2431" stroke-width="1.5"/>
+    <line x1="30" y1="20" x2="330" y2="100" stroke="#c0392b" stroke-width="2.5"/>
+    <text x="35" y="35" font-size="12" fill="#c0392b" font-weight="600">V(x): 150 &rarr; -150 (line)</text>
+    <text x="165" y="115" font-size="11" fill="#5b6779">V=0 at x=3m</text>
+    <line x1="30" y1="200" x2="330" y2="200" stroke="#c8d2de" stroke-width="1"/>
+    <line x1="30" y1="130" x2="30" y2="210" stroke="#1B2431" stroke-width="1.5"/>
+    <path d="M 30 200 Q 180 130 330 200" fill="none" stroke="#2f8f5b" stroke-width="2.5"/>
+    <text x="150" y="150" font-size="12" fill="#2f8f5b" font-weight="600">M(x): parabola, M&#8342;&#8341;&#8339;=225N&middot;m</text>
+  </svg>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Beam \(L=4\text{ m}\), UDL \(w=80\text{ N/m}\), simply supported. Find \(R_A,R_B\), \(V(x)\), and \(M_{max}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Total \(=320\text{ N}\), \(R_A=R_B=160\text{ N}\). \(V(x)=160-80x\), zero at \(x=2\). \(M(x)=160x-40x^2\). \(M_{max}=160(2)-40(4)=160\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Beam \(L=10\text{ m}\), UDL \(w=30\text{ N/m}\), simply supported. Find \(M_{max}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(R_A=R_B=150\text{ N}\). \(V(x)=150-30x\), zero at \(x=5\). \(M(x)=150x-15x^2\). \(M_{max}=150(5)-15(25)=375\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>State the general formula for the maximum moment of a simply-supported beam under a full-span UDL, and verify it against Practice 10's answer.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(M_{max}=\dfrac{wL^2}{8}\). For Practice 10: \(\dfrac{30(10)^2}{8}=\dfrac{3000}{8}=375\text{ N}\cdot\text{m}\), matching &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>A cantilever, fixed at A, length 3&nbsp;m, UDL \(w=40\text{ N/m}\) over its full length. Find the reaction force and moment at A.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Total load \(=120\text{ N}\) at the centroid, 1.5&nbsp;m from A. \(R_{Ay}=120\text{ N}\). \(M_A=120(1.5)=180\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>For the worked example beam (\(L=6,\ w=50\text{ N/m}\)), find \(M\) at \(x=1\text{ m}\) and \(x=5\text{ m}\), and confirm the diagram is symmetric about midspan.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(M(1)=150(1)-25(1)=125\text{ N}\cdot\text{m}\). \(M(5)=150(5)-25(25)=750-625=125\text{ N}\cdot\text{m}\). Equal, confirming symmetry &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Explain why, for a simply-supported beam under only a full-span UDL, the maximum bending moment always occurs exactly at midspan.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Since \(dV/dx=-w\) is constant, \(V(x)\) is a straight line, and with \(R_A=R_B\) by symmetry, that line crosses zero exactly at the midpoint. Since \(M\) is maximised wherever \(V=0\), the peak moment sits at midspan.</p>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Advanced: combined loading, full SFD/BMD</div>
+  <div class="prose">
+    <p>Real beams often mix point loads and distributed loads. Build the SFD region by region (each new load type changes the local slope), then build the BMD as the running area underneath it, always finding reactions first.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Beam \(L=6\text{ m}\), pin-roller, with a 100&nbsp;N point load at \(x=2\) <strong>and</strong> a UDL \(w=30\text{ N/m}\) over the full span. Find the reactions, then \(V\) and \(M\) at \(x=4\text{ m}\).</p>
+    <p class="step">UDL total \(=180\text{ N}\) at \(x=3\) (centroid). \(\Sigma M_A\): \(R_B(6)=100(2)+180(3)=740 \Rightarrow R_B=123.33\text{ N}\), \(R_A=156.67\text{ N}\).</p>
+    <p class="step">\(V(4)\): starting from \(R_A\), subtract the UDL up to \(x=4\) and the point load: \(V(4)=156.67-30(4)-100=156.67-120-100=-63.33\text{ N}\).</p>
+    <p class="step">\(M(4)\): take moments of everything left of the cut, about the cut. UDL from 0 to 4 totals \(120\text{ N}\) at its centroid \(x=2\) (2&nbsp;m from the cut):</p>
+    <p class="step">\(M(4)=R_A(4)-100(4-2)-120(2)=626.68-200-240=186.68\text{ N}\cdot\text{m}\).</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>For the worked example beam, find \(V\) and \(M\) at \(x=5\text{ m}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V(5)=156.67-30(5)-100=-93.33\text{ N}\).</p>
+    <p>UDL from 0 to 5 totals \(150\text{ N}\) at centroid \(x=2.5\) (2.5&nbsp;m from the cut): \(M(5)=156.67(5)-100(3)-150(2.5)=783.35-300-375=108.35\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>For the worked example beam, verify that \(V\) returns to zero just after adding \(R_B\) at \(x=6\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(V(6^-)=156.67-30(6)-100=-123.33\text{ N}\). Adding \(R_B=123.33\text{ N}\): \(V(6^+)=-123.33+123.33=0\) &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>A beam \(L=5\text{ m}\) has a UDL \(w=60\text{ N/m}\) over its full span plus a point load 150&nbsp;N at \(x=3\), pin at A, roller at B. Find the reactions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>UDL total \(=300\text{ N}\) at \(x=2.5\). \(\Sigma M_A\): \(R_B(5)=300(2.5)+150(3)=1200 \Rightarrow R_B=240\text{ N}\). \(R_A=300+150-240=210\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Explain why the bending moment diagram for a beam with combined point and distributed loads is generally NOT a single straight line or single parabola across the whole span.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(M\)'s curvature is governed by \(d^2M/dx^2=dV/dx=w(x)\). Where no distributed load acts, \(V\) is constant and \(M\) is a straight line; where a UDL acts, \(V\) changes linearly and \(M\) becomes a parabola. Since \(w(x)\) itself changes from region to region, the shape of \(M(x)\) necessarily changes piecewise too, a different curve type in each region.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Simply supported beam \(L=8\text{ m}\), with a 120&nbsp;N point load at \(x=2\text{ m}\) and an 80&nbsp;N point load at \(x=6\text{ m}\). Find \(R_A,R_B\), then list the constant \(V\) value in each span region.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(\Sigma M_A: R_B(8)=120(2)+80(6)=720\Rightarrow R_B=90\text{ N}\). Then \(R_A=200-90=110\text{ N}\).</p>
+    <p>Shear values: \(0&lt;x&lt;2\): \(V=+110\text{ N}\). After 120&nbsp;N load, \(2&lt;x&lt;6\): \(V=110-120=-10\text{ N}\). After 80&nbsp;N load, \(6&lt;x&lt;8\): \(V=-10-80=-90\text{ N}\). At \(x=8\), add \(R_B=+90\) so \(V\to0\) &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>For Practice 19, compute \(M(2)\), \(M(6)\), and state where the maximum positive moment occurs.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(M(2)=R_A(2)=110(2)=220\text{ N}\cdot\text{m}\).</p>
+    <p>Between 2 and 6, \(V=-10\), so moment decreases linearly by \(10\times4=40\). Hence \(M(6)=220-40=180\text{ N}\cdot\text{m}\).</p>
+    <p>Since \(V\) changes from \(+110\) to \(-10\) at \(x=2\), the sign change happens there; maximum positive moment is at \(x=2\), value \(220\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body">
+    <p>Beam \(L=6\text{ m}\) carries a full-span UDL \(w=30\text{ N/m}\) plus a 90&nbsp;N point load at \(x=4\text{ m}\). Find \(R_A,R_B\) and \(V(3)\).</p>
+    <svg class="mini-diagram" viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="90" x2="300" y2="90" stroke="#1B2431" stroke-width="2"/>
+      <polygon points="35,90 28,102 42,102" fill="#5b6779"/><polygon points="285,90 277,102 293,102" fill="#5b6779"/>
+      <line x1="40" y1="45" x2="280" y2="45" stroke="#2f8f5b" stroke-width="1.5"/>
+      <text x="125" y="38" font-size="11" fill="#2f8f5b">w=30 N/m</text>
+      <line x1="206" y1="50" x2="206" y2="86" stroke="#c0392b" stroke-width="2"/>
+      <polygon points="206,90 202,82 210,82" fill="#c0392b"/>
+      <text x="212" y="60" font-size="11" fill="#c0392b">90 N</text>
+      <text x="12" y="118" font-size="10" fill="#5b6779">A</text><text x="292" y="118" font-size="10" fill="#5b6779">B</text>
+    </svg>
+  </div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>UDL resultant \(=30(6)=180\text{ N}\) at \(x=3\). \(\Sigma M_A: R_B(6)=180(3)+90(4)=900\Rightarrow R_B=150\text{ N}\).</p>
+    <p>\(R_A=180+90-150=120\text{ N}\).</p>
+    <p>\(V(3)=R_A-w(3)=120-90=30\text{ N}\) (point load at \(x=4\) is to the right of the cut, so not included).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>For Practice 21, find the location where \(V=0\) and compute the corresponding \(M_{max}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>For \(0&lt;x&lt;4\): \(V(x)=120-30x\). Set \(V=0\Rightarrow x=4\text{ m}\), exactly where the point load sits.</p>
+    <p>Moment just left of \(x=4\): \(M=R_Ax-\dfrac{wx^2}{2}=120(4)-\dfrac{30(16)}{2}=480-240=240\text{ N}\cdot\text{m}\).</p>
+    <p>Right after \(x=4\), \(V\) drops by 90 to \(-90\), so moment starts decreasing; therefore peak moment is \(M_{max}=240\text{ N}\cdot\text{m}\) at \(x=4\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Simply supported beam \(L=9\text{ m}\) has a triangular load from \(x=0\) to \(x=6\) increasing linearly from 0 to \(60\text{ N/m}\), plus a 90&nbsp;N point load at \(x=8\). Find support reactions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Triangular resultant: \(W_t=\dfrac{1}{2}(6)(60)=180\text{ N}\), acting at \(x=\dfrac{2}{3}(6)=4\text{ m}\) from the zero-intensity end.</p>
+    <p>\(\Sigma M_A: R_B(9)=180(4)+90(8)=1440\Rightarrow R_B=160\text{ N}\).</p>
+    <p>\(R_A=180+90-160=110\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>For Practice 23, compute shear immediately left and right of \(x=8\), and verify closure at \(x=9\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>At \(x=8^-\), all distributed load (180&nbsp;N) has been included: \(V(8^-)=R_A-180=110-180=-70\text{ N}\).</p>
+    <p>Across the 90&nbsp;N downward point load: \(V(8^+)= -70-90=-160\text{ N}\).</p>
+    <p>From 8 to 9 no extra distributed load, so \(V(9^-)= -160\text{ N}\). Add \(R_B=+160\) at the support: \(V(9^+)=0\) &check;.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>A cantilever of length 5&nbsp;m carries a 40&nbsp;N/m UDL over full span and a 100&nbsp;N downward point load at free end. Find fixed-end shear and fixed-end moment.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>UDL resultant \(=40(5)=200\text{ N}\) acting at 2.5&nbsp;m from fixed end.</p>
+    <p>Vertical reaction at fixed end: \(R_{Ay}=200+100=300\text{ N}\) upward.</p>
+    <p>Fixed-end moment balances both loads: \(M_A=200(2.5)+100(5)=500+500=1000\text{ N}\cdot\text{m}\) (hogging sign by convention).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>For Practice 25, derive \(V(x)\) and \(M(x)\) for \(0\le x\le5\) measured from fixed end (internal sign convention from left segment).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Left-segment shear: \(V(x)=R_{Ay}-wx=300-40x\) for \(0\le x&lt;5\). At the tip, downward 100&nbsp;N causes a final drop to zero.</p>
+    <p>Moment by integration: \(M(x)=\int V\,dx = 300x-20x^2+C\).</p>
+    <p>Using fixed-end internal moment \(M(0)=1000\) with hogging sign (negative in sagging-positive convention): \(C=-1000\). So \(M(x)=300x-20x^2-1000\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Simply supported beam \(L=10\text{ m}\): UDL \(w=20\text{ N/m}\) only on left half (0 to 5&nbsp;m). Find \(R_A,R_B\), then \(V(5^-)\) and \(V(5^+)\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Partial UDL resultant \(=20(5)=100\text{ N}\) acting at \(x=2.5\).</p>
+    <p>\(\Sigma M_A: R_B(10)=100(2.5)\Rightarrow R_B=25\text{ N}\), hence \(R_A=75\text{ N}\).</p>
+    <p>\(V(5^-)=R_A-20(5)=75-100=-25\text{ N}\). No point load at \(x=5\), so \(V(5^+)=V(5^-)= -25\text{ N}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>For Practice 27, compute \(M(5)\), \(M(10)\), and explain why \(M\) is linear from \(x=5\) to \(x=10\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(M(5)=R_A(5)-100(5-2.5)=375-250=125\text{ N}\cdot\text{m}\).</p>
+    <p>From 5 to 10, \(w=0\), so \(dV/dx=0\Rightarrow V\) constant (\(-25\text{ N}\)). Hence \(M\) must be linear with slope \(V\).</p>
+    <p>\(M(10)=M(5)+(-25)(5)=125-125=0\), as required at simple support.</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>A 7&nbsp;m beam has reactions already known: \(R_A=95\text{ N}\), \(R_B=105\text{ N}\). Loads are 80&nbsp;N at \(x=1\), 60&nbsp;N at \(x=4\), and 60&nbsp;N at \(x=6\). Build the shear step values and identify any sign-change location.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(0&lt;x&lt;1:\ V=+95\). After first load: \(V=95-80=+15\) for \(1&lt;x&lt;4\).</p>
+    <p>After second load: \(V=15-60=-45\) for \(4&lt;x&lt;6\). After third load: \(V=-45-60=-105\) for \(6&lt;x&lt;7\).</p>
+    <p>Add \(R_B=+105\) at \(x=7\): \(V\to0\). Sign changes from +15 to -45 at \(x=4\), so moment peaks at \(x=4\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>For Practice 29, compute \(M(4)\) by left-area method and \(M(6)\) by shear-area increment.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(M(4)=\) area under \(V\) from 0 to 4 \(=95(1)+15(3)=95+45=140\text{ N}\cdot\text{m}\).</p>
+    <p>From 4 to 6, \(V=-45\) over 2&nbsp;m, so \(\Delta M=-45(2)=-90\).</p>
+    <p>\(M(6)=140-90=50\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Beam \(L=6\text{ m}\), full UDL \(w\), simply supported. Measured shear just left of right support is \(-72\text{ N}\). Determine \(w\), reactions, and \(M_{max}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>For symmetric UDL case, \(V(6^-)=R_A-wL\). Also \(R_A=R_B=\dfrac{wL}{2}\), so \(V(6^-)=\dfrac{wL}{2}-wL=-\dfrac{wL}{2}\).</p>
+    <p>\(-\dfrac{w(6)}{2}=-72\Rightarrow w=24\text{ N/m}\). Total load \(=144\text{ N}\), hence \(R_A=R_B=72\text{ N}\).</p>
+    <p>\(M_{max}=wL^2/8=24(36)/8=108\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>A simply supported beam has \(V(x)=140-35x\) for \(0\le x\le8\). Determine the implied loading type/intensity, reactions, and \(M(x)\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(dV/dx=-35\Rightarrow\) full-span UDL of \(w=35\text{ N/m}\).</p>
+    <p>\(V(0)=R_A=140\text{ N}\). At \(x=8\), \(V(8^-)=140-280=-140\), so \(R_B=140\text{ N}\).</p>
+    <p>\(M(x)=\int(140-35x)\,dx=140x-17.5x^2+C\). For simple support \(M(0)=0\Rightarrow C=0\). Thus \(M(x)=140x-17.5x^2\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>Beam \(L=8\text{ m}\) with \(R_A=70\text{ N}\), \(R_B=110\text{ N}\), point load 60&nbsp;N at \(x=2\), and UDL \(w=15\text{ N/m}\) from \(x=4\) to \(x=8\). Check vertical force equilibrium and then compute \(V(8^-)\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>UDL resultant \(=15(4)=60\text{ N}\). Total downward \(=60+60=120\text{ N}\); total upward \(=70+110=180\text{ N}\). So these reactions are inconsistent by 60&nbsp;N and cannot be correct for this loading.</p>
+    <p>If we still compute running shear left to right with the given numbers: \(V(8^-)=70-60-60=-50\text{ N}\), so it would require \(R_B=50\text{ N}\), not 110&nbsp;N, to close to zero.</p>
+    <p>Conclusion: provided reactions fail the SFD closure test, exactly the diagnostic purpose of checking \(V(8^+)=0\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>A beam has piecewise shear: \(V=+60\) for \(0\le x&lt;2\), \(V=+20\) for \(2\le x&lt;5\), and \(V=-40\) for \(5\le x&lt;7\). Given \(M(0)=0\), compute \(M(2), M(5), M(7)\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>\(M(2)=0+60(2)=120\text{ N}\cdot\text{m}\).</p>
+    <p>\(M(5)=120+20(3)=180\text{ N}\cdot\text{m}\).</p>
+    <p>\(M(7)=180+(-40)(2)=100\text{ N}\cdot\text{m}\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body">
+    <p>A simplified SFD is shown: determine at which station the BMD has a local maximum and estimate the moment change from 0 to 6&nbsp;m.</p>
+    <svg class="mini-diagram" viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg">
+      <line x1="30" y1="85" x2="300" y2="85" stroke="#c8d2de" stroke-width="1"/>
+      <line x1="30" y1="20" x2="30" y2="150" stroke="#1B2431" stroke-width="1.5"/>
+      <path d="M30 45 L120 45 L120 95 L210 95 L210 125 L300 125" fill="none" stroke="#c0392b" stroke-width="2.5"/>
+      <text x="35" y="38" font-size="11" fill="#c0392b">+50</text>
+      <text x="130" y="88" font-size="11" fill="#c0392b">-10</text>
+      <text x="220" y="118" font-size="11" fill="#c0392b">-40</text>
+      <text x="112" y="152" font-size="10" fill="#5b6779">x=2</text>
+      <text x="202" y="152" font-size="10" fill="#5b6779">x=4</text>
+      <text x="292" y="152" font-size="10" fill="#5b6779">x=6</text>
+    </svg>
+  </div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Shear changes sign from positive to negative at \(x=2\), so BMD local maximum is at \(x=2\).</p>
+    <p>Total moment change from 0 to 6 is area under \(V\): \(+50(2)+(-10)(2)+(-40)(2)=100-20-80=0\text{ N}\cdot\text{m}\).</p>
+    <p>So \(M(6)=M(0)\). If simply supported with \(M(0)=0\), this is consistent with \(M(6)=0\).</p>
+  </div></div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span></div>
+  <div class="p-body"><p>Design-check style: a beam's allowable sagging moment is \(210\text{ N}\cdot\text{m}\). From analysis you have \(V(x)=120-30x\) for \(0\le x\le6\). Determine if the beam passes and report utilization ratio \(M_{max}/M_{allow}\).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution><div class="solution-inner"><span class="label">Solution</span>
+    <p>Set \(V=0\): \(120-30x=0\Rightarrow x=4\text{ m}\), so max moment occurs at \(x=4\).</p>
+    <p>\(M(x)=120x-15x^2\) (with \(M(0)=0\)). \(M_{max}=M(4)=480-240=240\text{ N}\cdot\text{m}\).</p>
+    <p>Utilization \(=240/210=1.143\) (114.3%). Since \(M_{max}&gt;M_{allow}\), beam fails this criterion.</p>
+  </div></div>
+</div>
+
+<div class="prose" style="margin-top:36px; padding-top:20px; border-top:1px solid var(--line);">
+  <p><strong>Where to go from here.</strong> The reaction-finding and equilibrium skills here carry straight into Week 6's truss analysis, where the same \(\Sigma M=0\) logic, applied to a cut section instead of a whole beam, solves for individual member forces.</p>
+</div>
+
+</main>
+
+<footer>DPEN102 &middot; Week 5 &middot; Shear Force &amp; Bending Moment Diagrams</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>

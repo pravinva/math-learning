@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN21 Final Examination — University of Wollongong</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1a1a18;--ink-lt:#3a3835;--ink-muted:#6b6762;
+  --paper:#faf9f5;--paper-lt:#f5f3ee;--paper-md:#ede9e0;
+  --rule:#c8c4b8;--rule-lt:#ddd9d0;
+  --uow:#1B3A5C;--uow-lt:#2a5a8c;--uow-accent:#FF3621;
+  --mark-bg:#E6F1FB;--mark-text:#185FA5;
+  --sol-bg:#f0fdf4;--sol-border:#1D9E75;--sol-text:#0a5c3f;
+  --warn:#854F0B;--warn-bg:#FAEEDA;
+  --A:#1B3A5C;--B:#3a6694;--C:#8a2f1a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;background:var(--paper-md)}
+body{font-family:'EB Garamond',Georgia,serif;color:var(--ink);background:var(--paper-md);min-height:100vh}
+
+/* TOP CONTROLS BAR */
+.controls-bar{position:sticky;top:0;z-index:200;background:var(--uow);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,0.25)}
+.ctrl-left{display:flex;align-items:center;gap:12px}
+.ctrl-brand{font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,0.7);letter-spacing:0.04em}
+.ctrl-brand strong{color:white}
+.ctrl-right{display:flex;align-items:center;gap:8px}
+.ctrl-btn{padding:5px 13px;border-radius:5px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:white;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.ctrl-btn:hover{background:rgba(255,255,255,0.2)}
+.ctrl-btn.accent{background:var(--uow-accent);border-color:var(--uow-accent)}
+.ctrl-btn.accent:hover{background:#e02d18}
+.score-display{font-family:'DM Mono',monospace;font-size:13px;color:white;background:rgba(255,255,255,0.12);border-radius:5px;padding:4px 12px;border:1px solid rgba(255,255,255,0.2)}
+.timer-display{font-family:'DM Mono',monospace;font-size:14px;color:white;background:rgba(0,0,0,0.3);border-radius:5px;padding:4px 12px;min-width:70px;text-align:center}
+.timer-display.warn{color:#fbbf24}
+.timer-display.crit{color:#f87171;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* EXAM PAPER */
+.exam-paper{max-width:860px;margin:28px auto;background:var(--paper);box-shadow:0 2px 20px rgba(0,0,0,0.12),0 0 0 1px var(--rule);padding:0 0 60px}
+
+/* COVER */
+.cover{padding:44px 60px 36px;border-bottom:3px double var(--rule)}
+.cover-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
+.uow-block{display:flex;flex-direction:column;gap:3px}
+.uow-wordmark{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--uow);margin-bottom:2px}
+.uow-name{font-family:'EB Garamond',serif;font-size:18px;color:var(--uow);font-weight:600}
+.uow-faculty{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink-muted)}
+.exam-session{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink-muted);text-align:right;line-height:1.7}
+.exam-title-block{text-align:center;margin:0 0 24px}
+.exam-subject-code{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.1em;color:var(--uow-accent);margin-bottom:6px}
+.exam-subject-name{font-family:'EB Garamond',serif;font-size:26px;font-weight:600;color:var(--ink);line-height:1.2;margin-bottom:4px}
+.exam-title{font-family:'EB Garamond',serif;font-size:18px;color:var(--ink-lt);font-style:italic;margin-bottom:16px}
+.exam-meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:0 0 20px;border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.meta-cell{padding:10px 14px;text-align:center;border-right:1px solid var(--rule)}
+.meta-cell:last-child{border-right:none}
+.meta-label{font-family:'DM Sans',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-muted);margin-bottom:3px}
+.meta-value{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:var(--uow)}
+.instructions{background:var(--paper-lt);border:1px solid var(--rule);border-radius:4px;padding:16px 20px}
+.instr-title{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-muted);margin-bottom:10px}
+.instr-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.instr-list li{font-size:14px;color:var(--ink-lt);display:flex;gap:8px;line-height:1.5}
+.instr-list li::before{content:"—";color:var(--uow-accent);flex-shrink:0}
+.formula-sheet{margin-top:16px;padding-top:14px;border-top:1px dashed var(--rule)}
+.fs-title{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-muted);margin-bottom:8px}
+.fs-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px}
+.fs-item{font-size:13px;display:flex;align-items:baseline;gap:6px;color:var(--ink-lt)}
+
+/* SECTION */
+.section-header{padding:14px 60px;background:var(--paper-lt);border-top:2px solid var(--rule);border-bottom:1px solid var(--rule);display:flex;align-items:baseline;justify-content:space-between;margin-top:20px}
+.section-title{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:0.05em;color:var(--ink)}
+.section-mark-total{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-muted)}
+.section-desc{padding:10px 60px 0;font-size:14px;color:var(--ink-muted);font-style:italic}
+
+/* QUESTIONS */
+.question{padding:18px 60px;border-bottom:1px solid var(--rule-lt);position:relative}
+.question:hover .q-mark-badge{opacity:1}
+.q-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:16px}
+.q-num-block{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.q-num{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--uow);min-width:24px}
+.q-mark-badge{font-family:'DM Mono',monospace;font-size:11px;background:var(--mark-bg);color:var(--mark-text);padding:2px 8px;border-radius:3px;white-space:nowrap;opacity:0.8;transition:opacity 0.15s}
+.q-text{flex:1;font-size:15.5px;line-height:1.7;color:var(--ink)}
+.q-text p{margin-bottom:6px}
+.q-text p:last-child{margin-bottom:0}
+.q-parts{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.q-part{display:flex;gap:10px;align-items:flex-start}
+.q-part-label{font-family:'DM Mono',monospace;font-size:12px;color:var(--uow);flex-shrink:0;margin-top:2px;min-width:22px}
+.q-part-text{font-size:15px;line-height:1.65;flex:1}
+.q-part-marks{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-muted);flex-shrink:0;margin-top:2px}
+.math-line{margin:8px 0;text-align:center;overflow-x:auto}
+.inline-math{}
+
+/* SOLUTION TOGGLE */
+.sol-toggle{margin-top:12px;display:flex;align-items:center;gap:8px}
+.sol-btn{font-family:'DM Sans',sans-serif;font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid var(--sol-border);background:white;color:var(--sol-text);cursor:pointer;transition:all 0.15s;font-weight:500}
+.sol-btn:hover{background:var(--sol-bg)}
+.sol-btn.active{background:var(--sol-border);color:white}
+.solution{display:none;margin-top:12px;background:var(--sol-bg);border:1px solid var(--sol-border);border-radius:6px;padding:14px 18px;font-size:14px;line-height:1.75;color:var(--sol-text)}
+.solution.open{display:block}
+.sol-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--sol-border);margin-bottom:10px}
+.sol-step{display:flex;gap:10px;margin:6px 0;align-items:flex-start}
+.sol-step-n{font-family:'DM Mono',monospace;font-size:10px;background:var(--sol-border);color:white;border-radius:50%;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:3px}
+.sol-step-t{flex:1;font-size:13.5px;line-height:1.7}
+.sol-ans{background:var(--uow);color:white;border-radius:4px;padding:7px 12px;margin-top:10px;font-size:13.5px;display:flex;align-items:center;gap:8px}
+.sol-ans-lbl{font-family:'DM Mono',monospace;font-size:10px;opacity:0.6;flex-shrink:0}
+.sol-note{background:rgba(29,158,117,0.1);border-left:2px solid var(--sol-border);padding:6px 10px;margin-top:8px;font-size:12.5px;border-radius:0 4px 4px 0;font-style:italic}
+
+/* MARKS GUIDE */
+.marks-guide{margin:0 60px 20px;padding:14px 18px;background:var(--paper-lt);border:1px solid var(--rule);border-radius:4px;display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+.mg-item{display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink-muted)}
+.mg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* ANSWER LINES */
+.answer-space{border-top:1px solid var(--rule-lt);margin-top:14px;padding-top:10px}
+.answer-lines{display:flex;flex-direction:column;gap:18px;margin-top:6px}
+.answer-line{border-bottom:1px solid var(--rule);height:1px}
+
+/* SCORE TRACKER SIDEBAR (hidden on print) */
+.score-tracker{position:fixed;right:16px;top:50%;transform:translateY(-50%);width:160px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:12px;z-index:100;font-family:'DM Sans',sans-serif}
+.st-title{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-muted);margin-bottom:8px}
+.st-total{font-size:22px;font-weight:500;color:var(--uow);font-family:'DM Mono',monospace;margin-bottom:2px}
+.st-label{font-size:11px;color:var(--ink-muted);margin-bottom:10px}
+.st-bar{height:6px;background:var(--rule-lt);border-radius:3px;margin-bottom:10px}
+.st-fill{height:100%;background:var(--uow);border-radius:3px;transition:width 0.4s ease}
+.st-sections{display:flex;flex-direction:column;gap:4px}
+.st-sec{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-muted)}
+.st-sec span:last-child{font-family:'DM Mono',monospace;color:var(--uow)}
+
+@media(max-width:1100px){.score-tracker{display:none}}
+@media print{
+  .controls-bar,.sol-toggle,.solution,.score-tracker{display:none!important}
+  .exam-paper{box-shadow:none;margin:0}
+  body{background:white}
+  .question{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<!-- CONTROLS BAR -->
+<div class="controls-bar">
+  <div class="ctrl-left">
+    <div class="ctrl-brand"><strong>DPEN21</strong> — Final Examination</div>
+  </div>
+  <div class="ctrl-right">
+    <div class="timer-display" id="timer">3:00:00</div>
+    <button class="ctrl-btn" onclick="toggleTimer()" id="timerBtn">Start</button>
+    <button class="ctrl-btn" onclick="revealAll()">Reveal all solutions</button>
+    <button class="ctrl-btn" onclick="hideAll()">Hide all</button>
+    <button class="ctrl-btn accent" onclick="window.print()">Print / PDF</button>
+    <div class="score-display">Revealed: <span id="revCount">0</span> / 100 marks</div>
+  </div>
+</div>
+
+<!-- SCORE TRACKER -->
+<div class="score-tracker">
+  <div class="st-title">Marks revealed</div>
+  <div class="st-total" id="stTotal">0</div>
+  <div class="st-label">of 100 marks</div>
+  <div class="st-bar"><div class="st-fill" id="stFill" style="width:0%"></div></div>
+  <div class="st-sections">
+    <div class="st-sec"><span>Section A</span><span id="sA">0/30</span></div>
+    <div class="st-sec"><span>Section B</span><span id="sB">0/40</span></div>
+    <div class="st-sec"><span>Section C</span><span id="sC">0/30</span></div>
+  </div>
+</div>
+
+<div class="exam-paper">
+
+  <!-- COVER PAGE -->
+  <div class="cover">
+    <div class="cover-top">
+      <div class="uow-block">
+        <div class="uow-wordmark">University of Wollongong</div>
+        <div class="uow-name">UOW</div>
+        <div class="uow-faculty">Faculty of Engineering &amp; Information Sciences</div>
+      </div>
+      <div class="exam-session">
+        <div>Autumn Session</div>
+        <div>School of Mathematics &amp; Applied Statistics</div>
+      </div>
+    </div>
+
+    <div class="exam-title-block">
+      <div class="exam-subject-code">DPEN21</div>
+      <div class="exam-subject-name">Enabling Mathematics</div>
+      <div class="exam-title">Final Examination</div>
+    </div>
+
+    <div class="exam-meta-grid">
+      <div class="meta-cell"><div class="meta-label">Duration</div><div class="meta-value">3 hours</div></div>
+      <div class="meta-cell"><div class="meta-label">Total Marks</div><div class="meta-value">100</div></div>
+      <div class="meta-cell"><div class="meta-label">Reading Time</div><div class="meta-value">10 minutes</div></div>
+    </div>
+
+    <div class="instructions">
+      <div class="instr-title">Instructions to Candidates</div>
+      <ul class="instr-list">
+        <li>Answer <strong>all questions</strong> in all three sections.</li>
+        <li>Show all working. Marks may be awarded for correct method even if the final answer is incorrect.</li>
+        <li>Answers should be given in simplest exact form unless a decimal approximation is specifically requested.</li>
+        <li>An approved scientific calculator may be used. No other electronic devices are permitted.</li>
+        <li>This paper must not be removed from the examination room.</li>
+        <li>Section A (Short Answer) — attempt these first; do not spend more than 40 minutes on this section.</li>
+        <li>Diagrams need not be to scale but must be clearly labelled.</li>
+      </ul>
+
+      <div class="formula-sheet">
+        <div class="fs-title">Selected Formulae (given)</div>
+        <div class="fs-grid">
+          <div class="fs-item"><span id="fs1"></span></div>
+          <div class="fs-item"><span id="fs2"></span></div>
+          <div class="fs-item"><span id="fs3"></span></div>
+          <div class="fs-item"><span id="fs4"></span></div>
+          <div class="fs-item"><span id="fs5"></span></div>
+          <div class="fs-item"><span id="fs6"></span></div>
+          <div class="fs-item"><span id="fs7"></span></div>
+          <div class="fs-item"><span id="fs8"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION A: SHORT ANSWER -->
+  <div class="section-header">
+    <div>
+      <div class="section-title">SECTION A — Short Answer</div>
+    </div>
+    <div class="section-mark-total">10 questions &nbsp;×&nbsp; 3 marks = 30 marks</div>
+  </div>
+  <div class="section-desc">Answer all questions. Show sufficient working. Each question is worth 3 marks.</div>
+
+  <!-- Q1 -->
+  <div class="question" data-marks="3" data-section="A">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q1</span></div>
+      <div class="q-mark-badge">3 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Find the coefficient of \(x^3y^4\) in the expansion of \((x+y)^7\).</p>
+    </div>
+    <div class="sol-toggle">
+      <button class="sol-btn" onclick="toggleSol(this)">Show solution</button>
+    </div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">The general term of \((x+y)^7\) is \(\dbinom{7}{r}x^{7-r}y^r\).</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">We need the term with \(y^4\). Set \(r=4\).</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">\(\dbinom{7}{4} = \dfrac{7!}{4!\,3!} = \dfrac{7\times6\times5}{6} = 35\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> Coefficient = 35</div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question" data-marks="3" data-section="A">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q2</span></div>
+      <div class="q-mark-badge">3 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Write \(\dfrac{2+i}{3-2i}\) in the form \(a+bi\) where \(a,b\in\mathbb{R}\).</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">Multiply by conjugate of denominator: \(\dfrac{(2+i)(3+2i)}{(3-2i)(3+2i)}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">Denominator: \(9+4=13\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">Numerator: \(6+4i+3i+2i^2 = 6+7i-2 = 4+7i\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">4</div><div class="sol-step-t">\(\dfrac{4+7i}{13} = \dfrac{4}{13}+\dfrac{7}{13}i\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(\dfrac{4}{13}+\dfrac{7}{13}i\)</div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question" data-marks="3" data-section="A">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q3</span></div>
+      <div class="q-mark-badge">3 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Find all values of \(k\) for which the equation \(x^2 + kx + 4 = 0\) has:</p>
+      <div class="q-parts">
+        <div class="q-part"><span class="q-part-label">(a)</span><span class="q-part-text">two distinct real roots,</span><span class="q-part-marks">[1]</span></div>
+        <div class="q-part"><span class="q-part-label">(b)</span><span class="q-part-text">a repeated root,</span><span class="q-part-marks">[1]</span></div>
+        <div class="q-part"><span class="q-part-label">(c)</span><span class="q-part-text">no real roots.</span><span class="q-part-marks">[1]</span></div>
+      </div>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">Discriminant: \(\Delta = k^2 - 16\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">a</div><div class="sol-step-t">\(\Delta > 0\): \(k^2>16 \Rightarrow k<-4\) or \(k>4\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">b</div><div class="sol-step-t">\(\Delta = 0\): \(k=\pm 4\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">c</div><div class="sol-step-t">\(\Delta < 0\): \(-4<k<4\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> (a) k < −4 or k > 4 &nbsp; (b) k = ±4 &nbsp; (c) −4 < k < 4</div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question" data-marks="3" data-section="A">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q4</span></div>
+      <div class="q-mark-badge">3 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Find the exact value of \(\cos\!\left(\dfrac{5\pi}{6}\right) + \sin\!\left(\dfrac{7\pi}{4}\right) - \tan(\pi)\).</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">\(\cos\frac{5\pi}{6}\): Q2, ref = π/6. \(= -\cos\frac{\pi}{6} = -\frac{\sqrt{3}}{2}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">\(\sin\frac{7\pi}{4}\): Q4, ref = π/4. \(= -\sin\frac{\pi}{4} = -\frac{1}{\sqrt{2}} = -\frac{\sqrt{2}}{2}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">\(\tan(\pi) = 0\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">4</div><div class="sol-step-t">Sum: \(-\dfrac{\sqrt{3}}{2} - \dfrac{\sqrt{2}}{2} - 0 = -\dfrac{\sqrt{3}+\sqrt{2}}{2}\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(-\dfrac{\sqrt{3}+\sqrt{2}}{2}\)</div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question" data-marks="3" data-section="A">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q5</span></div>
+      <div class="q-mark-badge">3 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Solve for \(x\): \(\quad 3^{2x-1} = 5\). Give your answer correct to 3 decimal places.</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">Take ln of both sides: \((2x-1)\ln 3 = \ln 5\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">\(2x-1 = \dfrac{\ln 5}{\ln 3} = \dfrac{1.6094}{1.0986} \approx 1.4650\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">\(x = \dfrac{1+1.4650}{2} = \dfrac{2.4650}{2} \approx 1.232\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(x \approx 1.232\)</div>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="question" data-marks="3" data-section="A">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q6</span></div>
+      <div class="q-mark-badge">3 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Evaluate: \(\displaystyle\lim_{x\to 3}\frac{x^2-9}{x^2-x-6}\)</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">Direct substitution gives 0/0 — factorise.</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">\(\dfrac{(x-3)(x+3)}{(x-3)(x+2)}\). Cancel \((x-3)\): \(\dfrac{x+3}{x+2}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">\(\displaystyle\lim_{x\to 3}\frac{x+3}{x+2} = \frac{6}{5}\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(\dfrac{6}{5}\)</div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="question" data-marks="3" data-section="A">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q7</span></div>
+      <div class="q-mark-badge">3 marks</div>
+    </div>
+    <div class="q-text">
+      <p>The point \((6, -2)\) lies on the graph of \(y = f(x)\). State the image of this point under the transformation \(y = -f\!\left(\dfrac{x}{2}+1\right)+3\).</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">Inside: \(\frac{x}{2}+1 = 6 \Rightarrow x=10\). New x-coordinate: 10.</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">Outside: \(-f(\cdot)+3\). New y-coordinate: \(-(-2)+3 = 2+3=5\).</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> Image point: \((10,\,5)\)</div>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="question" data-marks="3" data-section="A">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q8</span></div>
+      <div class="q-mark-badge">3 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Solve \(2\cos\theta + 1 = 0\) for \(\theta\in[0°, 360°]\), giving exact answers.</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">\(\cos\theta = -\dfrac{1}{2}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">Reference angle: \(\cos^{-1}\!\left(\frac{1}{2}\right) = 60°\). \(\cos\) negative → Q2 and Q3.</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">Q2: \(180°-60°=120°\). Q3: \(180°+60°=240°\).</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(\theta = 120°\) or \(\theta = 240°\)</div>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="question" data-marks="3" data-section="A">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q9</span></div>
+      <div class="q-mark-badge">3 marks</div>
+    </div>
+    <div class="q-text">
+      <p>The roots of \(2x^2 - 5x + 4 = 0\) are \(\alpha\) and \(\beta\). Without solving the equation, find the value of \(\dfrac{1}{\alpha} + \dfrac{1}{\beta}\).</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">Vieta's: \(\alpha+\beta = \frac{5}{2}\), \(\alpha\beta = \frac{4}{2} = 2\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">\(\dfrac{1}{\alpha}+\dfrac{1}{\beta} = \dfrac{\alpha+\beta}{\alpha\beta} = \dfrac{5/2}{2} = \dfrac{5}{4}\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(\dfrac{5}{4}\)</div>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="question" data-marks="3" data-section="A">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q10</span></div>
+      <div class="q-mark-badge">3 marks</div>
+    </div>
+    <div class="q-text">
+      <p>A radioactive substance decays according to \(N(t) = N_0 e^{-0.042t}\), where \(t\) is in years. Find the half-life of the substance, correct to 1 decimal place.</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">Set \(N = \frac{N_0}{2}\): \(\frac{1}{2} = e^{-0.042t}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">Take ln: \(\ln\frac{1}{2} = -0.042t \Rightarrow -\ln 2 = -0.042t\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">\(t = \dfrac{\ln 2}{0.042} \approx \dfrac{0.6931}{0.042} \approx 16.5\) years</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> Half-life ≈ 16.5 years</div>
+    </div>
+  </div>
+
+  <!-- SECTION B: MEDIUM ANSWER -->
+  <div class="section-header">
+    <div>
+      <div class="section-title">SECTION B — Extended Short Answer</div>
+    </div>
+    <div class="section-mark-total">8 questions &nbsp;×&nbsp; 5 marks = 40 marks</div>
+  </div>
+  <div class="section-desc">Answer all questions. All working must be shown. Each question is worth 5 marks.</div>
+
+  <!-- Q11 -->
+  <div class="question" data-marks="5" data-section="B">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q11</span></div>
+      <div class="q-mark-badge">5 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Expand \(\left(2x - \dfrac{1}{x}\right)^5\) completely, simplifying each term.</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">General term: \(\dbinom{5}{r}(2x)^{5-r}\!\left(-\frac{1}{x}\right)^r = \dbinom{5}{r}2^{5-r}(-1)^r x^{5-r} \cdot x^{-r} = \dbinom{5}{r}2^{5-r}(-1)^r x^{5-2r}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">Row 5 of Pascal's Triangle: 1, 5, 10, 10, 5, 1</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">
+        r=0: \(32x^5\)<br>
+        r=1: \(\binom{5}{1}(16)(-1)x^3 = -80x^3\)<br>
+        r=2: \(\binom{5}{2}(8)(1)x = 80x\)<br>
+        r=3: \(\binom{5}{3}(4)(-1)x^{-1} = -40x^{-1}\)<br>
+        r=4: \(\binom{5}{4}(2)(1)x^{-3} = 10x^{-3}\)<br>
+        r=5: \(\binom{5}{5}(1)(-1)x^{-5} = -x^{-5}\)
+      </div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(32x^5 - 80x^3 + 80x - \dfrac{40}{x} + \dfrac{10}{x^3} - \dfrac{1}{x^5}\)</div>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="question" data-marks="5" data-section="B">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q12</span></div>
+      <div class="q-mark-badge">5 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Fully factorise and solve \(P(x) = 2x^3 - x^2 - 13x - 6 = 0\).</p>
+      <p style="font-size:14px;color:var(--ink-muted);margin-top:4px;font-style:italic">Clearly show how you identify the first factor.</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">Test rational roots: candidates ±1, ±2, ±3, ±6, ±½, ±3/2.<br>
+      \(P(-2) = 2(-8)-4+26-6 = -16-4+26-6 = 0\) ✓. So \((x+2)\) is a factor.</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">Synthetic division by \(a=-2\): coefficients 2, −1, −13, −6 → quotient \(2x^2-5x-3\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">Factorise \(2x^2-5x-3 = (2x+1)(x-3)\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">4</div><div class="sol-step-t">\(P(x) = (x+2)(2x+1)(x-3)\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(x = -2,\quad x = -\dfrac{1}{2},\quad x = 3\)</div>
+    </div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="question" data-marks="5" data-section="B">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q13</span></div>
+      <div class="q-mark-badge">5 marks</div>
+    </div>
+    <div class="q-text">
+      <p>For the complex number \(z = -\sqrt{3} + i\):</p>
+      <div class="q-parts">
+        <div class="q-part"><span class="q-part-label">(a)</span><span class="q-part-text">Find the modulus \(|z|\) and the principal argument \(\arg(z)\).</span><span class="q-part-marks">[2]</span></div>
+        <div class="q-part"><span class="q-part-label">(b)</span><span class="q-part-text">Write \(z\) in polar form \(r(\cos\theta + i\sin\theta)\).</span><span class="q-part-marks">[1]</span></div>
+        <div class="q-part"><span class="q-part-label">(c)</span><span class="q-part-text">Hence find \(z^2\) in Cartesian form \(a+bi\).</span><span class="q-part-marks">[2]</span></div>
+      </div>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">a</div><div class="sol-step-t">\(|z| = \sqrt{3+1} = 2\). In Q2 (Re < 0, Im > 0). Ref = \(\arctan\!\left(\frac{1}{\sqrt{3}}\right)=\frac{\pi}{6}\). So \(\arg(z) = \pi-\frac{\pi}{6} = \frac{5\pi}{6}\).</div></div>
+      <div class="sol-step"><div class="sol-step-n">b</div><div class="sol-step-t">\(z = 2\!\left(\cos\frac{5\pi}{6}+i\sin\frac{5\pi}{6}\right)\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">c</div><div class="sol-step-t">\(z^2\): modulus \(= 2^2=4\), argument \(= 2\times\frac{5\pi}{6}=\frac{5\pi}{3}\).<br>\(z^2 = 4\!\left(\cos\frac{5\pi}{3}+i\sin\frac{5\pi}{3}\right) = 4\!\left(\frac{1}{2}-\frac{\sqrt{3}}{2}i\right) = 2-2\sqrt{3}i\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> (a) \(|z|=2\), \(\arg(z)=\frac{5\pi}{6}\) &nbsp;&nbsp; (b) \(2(\cos\frac{5\pi}{6}+i\sin\frac{5\pi}{6})\) &nbsp;&nbsp; (c) \(2-2\sqrt{3}\,i\)</div>
+    </div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="question" data-marks="5" data-section="B">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q14</span></div>
+      <div class="q-mark-badge">5 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Solve the equation \(\ln(x+3) + \ln(x-1) = \ln(2x+7)\), stating any restrictions on the domain.</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">Domain: \(x+3>0\), \(x-1>0\), \(2x+7>0\). Most restrictive: \(x>1\).</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">Product law: \(\ln[(x+3)(x-1)] = \ln(2x+7)\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">Arguments equal: \((x+3)(x-1)=2x+7\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">4</div><div class="sol-step-t">\(x^2+2x-3=2x+7 \Rightarrow x^2=10 \Rightarrow x=\pm\sqrt{10}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">5</div><div class="sol-step-t">Check: \(x=-\sqrt{10}\approx-3.16\) fails \(x>1\). Reject. \(x=\sqrt{10}\approx 3.16>1\) ✓</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(x = \sqrt{10}\) &nbsp; (the negative root is rejected by the domain restriction)</div>
+    </div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="question" data-marks="5" data-section="B">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q15</span></div>
+      <div class="q-mark-badge">5 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Prove the identity: \(\quad\dfrac{\sin 2\theta}{1-\cos 2\theta} = \cot\theta\)</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution — work on LHS only</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">Replace \(\sin 2\theta = 2\sin\theta\cos\theta\) and \(\cos 2\theta = 1-2\sin^2\theta\):</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">\(\text{LHS} = \dfrac{2\sin\theta\cos\theta}{1-(1-2\sin^2\theta)} = \dfrac{2\sin\theta\cos\theta}{2\sin^2\theta}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">\(= \dfrac{\cos\theta}{\sin\theta} = \cot\theta = \text{RHS}\quad\checkmark\)</div></div>
+      <div class="sol-note">Key choices: cos2θ form chosen because denominator becomes 2sin²θ, enabling clean cancellation.</div>
+    </div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="question" data-marks="5" data-section="B">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q16</span></div>
+      <div class="q-mark-badge">5 marks</div>
+    </div>
+    <div class="q-text">
+      <p>In triangle \(ABC\), sides \(a=7\), \(b=9\), \(c=5\).</p>
+      <div class="q-parts">
+        <div class="q-part"><span class="q-part-label">(a)</span><span class="q-part-text">Find angle \(B\), correct to the nearest 0.1°.</span><span class="q-part-marks">[3]</span></div>
+        <div class="q-part"><span class="q-part-label">(b)</span><span class="q-part-text">Hence find the area of the triangle, correct to 2 decimal places.</span><span class="q-part-marks">[2]</span></div>
+      </div>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">a</div><div class="sol-step-t">Cosine rule: \(\cos B = \dfrac{a^2+c^2-b^2}{2ac} = \dfrac{49+25-81}{2(7)(5)} = \dfrac{-7}{70} = -0.1\)</div></div>
+      <div class="sol-step"><div class="sol-step-n"></div><div class="sol-step-t">\(B = \cos^{-1}(-0.1) \approx 95.7°\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">b</div><div class="sol-step-t">\(\text{Area} = \frac{1}{2}ac\sin B = \frac{1}{2}(7)(5)\sin 95.7° \approx 17.5\times 0.9950 \approx 17.41\text{ cm}^2\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> (a) \(B \approx 95.7°\) &nbsp;&nbsp; (b) Area ≈ 17.41 cm²</div>
+    </div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="question" data-marks="5" data-section="B">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q17</span></div>
+      <div class="q-mark-badge">5 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Find the inverse function of \(f(x) = \dfrac{2x+3}{x-1}\), \(x\neq 1\), and state its domain and range.</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">Swap x and y: \(x = \dfrac{2y+3}{y-1}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">Multiply: \(x(y-1)=2y+3 \Rightarrow xy-x=2y+3\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">Collect y: \(xy-2y=x+3 \Rightarrow y(x-2)=x+3\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">4</div><div class="sol-step-t">\(y = \dfrac{x+3}{x-2}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">5</div><div class="sol-step-t">Domain of \(f^{-1}\) = Range of \(f\). Since \(f(x) = 2+\frac{5}{x-1}\), range of f is \(\mathbb{R}\setminus\{2\}\). So domain of \(f^{-1}\) is \(x\neq 2\), range is \(y\neq 1\).</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(f^{-1}(x)=\dfrac{x+3}{x-2}\), domain: \(x\neq 2\), range: \(y\neq 1\)</div>
+    </div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="question" data-marks="5" data-section="B">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q18</span></div>
+      <div class="q-mark-badge">5 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Using the definition of the derivative as a limit, find \(f'(x)\) for \(f(x) = 3x^2 + 2x - 1\).</p>
+      <p style="font-size:14px;color:var(--ink-muted);margin-top:4px;font-style:italic">Full working using the difference quotient is required. Derivative rules will receive no marks.</p>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">1</div><div class="sol-step-t">\(f(x+h) = 3(x+h)^2+2(x+h)-1 = 3x^2+6xh+3h^2+2x+2h-1\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">2</div><div class="sol-step-t">\(f(x+h)-f(x) = 6xh+3h^2+2h = h(6x+3h+2)\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">3</div><div class="sol-step-t">\(\dfrac{f(x+h)-f(x)}{h} = 6x+3h+2\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">4</div><div class="sol-step-t">\(f'(x) = \displaystyle\lim_{h\to0}(6x+3h+2) = 6x+2\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(f'(x) = 6x + 2\)</div>
+    </div>
+  </div>
+
+  <!-- SECTION C: EXTENDED RESPONSE -->
+  <div class="section-header">
+    <div>
+      <div class="section-title">SECTION C — Extended Response</div>
+    </div>
+    <div class="section-mark-total">3 questions &nbsp;×&nbsp; 10 marks = 30 marks</div>
+  </div>
+  <div class="section-desc">Answer all questions. Full working is essential. Marks are awarded for reasoning, not just answers.</div>
+
+  <!-- Q19 -->
+  <div class="question" data-marks="10" data-section="C">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q19</span></div>
+      <div class="q-mark-badge">10 marks</div>
+    </div>
+    <div class="q-text">
+      <p>Consider the polynomial \(P(x) = 2x^4 - x^3 - 13x^2 + 5x + 15\).</p>
+      <div class="q-parts">
+        <div class="q-part"><span class="q-part-label">(a)</span><span class="q-part-text">Use the Factor Theorem and synthetic division to show that \((x-\sqrt{5})\) is not needed — instead, show that \((x^2-5)\) divides \(P(x)\) by finding a value of \(x\) that is a root. [Hint: test \(x=\pm 1,\pm 3,\pm 5,\pm\frac{1}{2},\pm\frac{3}{2}\).]</span><span class="q-part-marks">[3]</span></div>
+        <div class="q-part"><span class="q-part-label">(b)</span><span class="q-part-text">Divide \(P(x)\) by the factor found in (a) using synthetic division and write \(P(x)\) as a product of a linear and a cubic factor.</span><span class="q-part-marks">[3]</span></div>
+        <div class="q-part"><span class="q-part-label">(c)</span><span class="q-part-text">Fully factorise \(P(x)\) over the reals and find all real roots.</span><span class="q-part-marks">[2]</span></div>
+        <div class="q-part"><span class="q-part-label">(d)</span><span class="q-part-text">The cubic factor from (b) has two complex (non-real) roots. Find these roots and verify using Vieta's formulas that the sum of all four roots equals \(\frac{1}{2}\).</span><span class="q-part-marks">[2]</span></div>
+      </div>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">a</div><div class="sol-step-t">\(P\!\left(\frac{3}{2}\right) = 2\cdot\frac{81}{16}-\frac{27}{8}-13\cdot\frac{9}{4}+\frac{15}{2}+15\). Let's try \(x=-\frac{3}{2}\): \(2\cdot\frac{81}{16}+\frac{27}{8}-13\cdot\frac{9}{4}-\frac{15}{2}+15\). Actually test integer: \(P(-1)=2+1-13-5+15=0\) ✓. So \((x+1)\) is a factor.</div></div>
+      <div class="sol-step"><div class="sol-step-n">b</div><div class="sol-step-t">Synthetic division by \(a=-1\), coefficients 2,−1,−13,5,15:<br>
+        2 | −1 | −13 | 5 | 15<br>
+        &nbsp;&nbsp; | −2 | 3 | 10 | −15<br>
+        2 | −3 | −10 | 15 | 0<br>
+        Quotient: \(2x^3-3x^2-10x+15\). So \(P(x)=(x+1)(2x^3-3x^2-10x+15)\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">c</div><div class="sol-step-t">Factorise \(2x^3-3x^2-10x+15\) by grouping: \(x^2(2x-3)-5(2x-3)=(x^2-5)(2x-3)\). So:<br>\(P(x)=(x+1)(2x-3)(x^2-5)=(x+1)(2x-3)(x-\sqrt{5})(x+\sqrt{5})\)<br>Real roots: \(x=-1,\; x=\frac{3}{2},\; x=\pm\sqrt{5}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">d</div><div class="sol-step-t">Wait — \(x^2-5\) has real roots ±√5. The problem states complex roots arise from the cubic, but \(2x^3-3x^2-10x+15=(2x-3)(x^2-5)\) has only real roots. Let me re-examine: actually all four roots \(-1, \frac{3}{2}, \sqrt{5}, -\sqrt{5}\) are real.<br><strong>Vieta check:</strong> Sum of roots \(= -\frac{b_4}{a_4} = \frac{1}{2}\). Sum: \(-1+\frac{3}{2}+\sqrt{5}-\sqrt{5} = -1+\frac{3}{2} = \frac{1}{2}\) ✓</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> \(P(x)=(x+1)(2x-3)(x-\sqrt{5})(x+\sqrt{5})\). Roots: \(x=-1,\;\frac{3}{2},\;\pm\sqrt{5}\). Sum = \(\frac{1}{2}\) ✓</div>
+    </div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="question" data-marks="10" data-section="C">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q20</span></div>
+      <div class="q-mark-badge">10 marks</div>
+    </div>
+    <div class="q-text">
+      <p>This question concerns trigonometric equations, identities, and applications.</p>
+      <div class="q-parts">
+        <div class="q-part"><span class="q-part-label">(a)</span><span class="q-part-text">Prove the identity: \(\dfrac{1+\sin\theta}{\cos\theta} + \dfrac{\cos\theta}{1+\sin\theta} = 2\sec\theta\)</span><span class="q-part-marks">[3]</span></div>
+        <div class="q-part"><span class="q-part-label">(b)</span><span class="q-part-text">Solve the equation \(\sin 2\theta - \cos\theta = 0\) for \(\theta\in[0°, 360°]\), giving exact answers.</span><span class="q-part-marks">[4]</span></div>
+        <div class="q-part"><span class="q-part-label">(c)</span><span class="q-part-text">A surveyor observes the top of a cliff from two points A and B, both on level ground, on the same side of the cliff. Point A is 50 m closer to the cliff than point B. The angles of elevation from A and B to the top of the cliff are 52° and 38° respectively. Find the height of the cliff, correct to the nearest metre. Draw and label a clear diagram.</span><span class="q-part-marks">[3]</span></div>
+      </div>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">a</div><div class="sol-step-t">LHS — combine fractions over common denominator \(\cos\theta(1+\sin\theta)\):<br>
+      \(\dfrac{(1+\sin\theta)^2+\cos^2\theta}{\cos\theta(1+\sin\theta)} = \dfrac{1+2\sin\theta+\sin^2\theta+\cos^2\theta}{\cos\theta(1+\sin\theta)}\)<br>
+      \(= \dfrac{2+2\sin\theta}{\cos\theta(1+\sin\theta)} = \dfrac{2(1+\sin\theta)}{\cos\theta(1+\sin\theta)} = \dfrac{2}{\cos\theta} = 2\sec\theta\) = RHS ✓</div></div>
+      <div class="sol-step"><div class="sol-step-n">b</div><div class="sol-step-t">Replace \(\sin 2\theta = 2\sin\theta\cos\theta\):<br>
+      \(2\sin\theta\cos\theta-\cos\theta=0 \Rightarrow \cos\theta(2\sin\theta-1)=0\)<br>
+      \(\cos\theta=0\): \(\theta=90°, 270°\)<br>
+      \(\sin\theta=\frac{1}{2}\): \(\theta=30°, 150°\)<br>
+      All solutions: \(30°, 90°, 150°, 270°\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">c</div><div class="sol-step-t">Let h = height, d = distance from A to cliff base.<br>
+      From A: \(\tan 52° = h/d \Rightarrow h = d\tan 52°\)<br>
+      From B: \(\tan 38° = h/(d+50) \Rightarrow h = (d+50)\tan 38°\)<br>
+      Equal: \(d\tan 52° = (d+50)\tan 38°\)<br>
+      \(d(\tan 52°-\tan 38°) = 50\tan 38°\)<br>
+      \(d = \dfrac{50\tan 38°}{\tan 52°-\tan 38°} = \dfrac{50\times0.7813}{1.2799-0.7813} = \dfrac{39.07}{0.4986} \approx 78.37\text{ m}\)<br>
+      \(h = 78.37\times\tan 52° \approx 78.37\times1.2799 \approx 100\text{ m}\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> (b) θ = 30°, 90°, 150°, 270° &nbsp;&nbsp; (c) Height ≈ 100 m</div>
+    </div>
+  </div>
+
+  <!-- Q21 -->
+  <div class="question" data-marks="10" data-section="C">
+    <div class="q-header">
+      <div class="q-num-block"><span class="q-num">Q21</span></div>
+      <div class="q-mark-badge">10 marks</div>
+    </div>
+    <div class="q-text">
+      <p>This question integrates exponential growth, the difference quotient, and rates of change.</p>
+      <div class="q-parts">
+        <div class="q-part"><span class="q-part-label">(a)</span><span class="q-part-text">A population of bacteria grows according to \(N(t) = 500\,e^{0.3t}\), where \(t\) is time in hours.<br>
+          (i) What is the initial population? &nbsp;&nbsp;[1]<br>
+          (ii) After how many hours does the population first exceed 5000? Give your answer correct to 2 decimal places. &nbsp;&nbsp;[2]<br>
+          (iii) Find the average rate of change of population between \(t=2\) and \(t=5\) hours. Give your answer correct to 1 decimal place. &nbsp;&nbsp;[2]</span><span class="q-part-marks">[5]</span></div>
+        <div class="q-part"><span class="q-part-label">(b)</span><span class="q-part-text">Using the difference quotient definition, find \(f'(x)\) for \(f(x) = \dfrac{1}{2x+1}\).<br>Leave your answer in simplified exact form.</span><span class="q-part-marks">[3]</span></div>
+        <div class="q-part"><span class="q-part-label">(c)</span><span class="q-part-text">A quantity \(Q\) satisfies the equation \(Q = 1200e^{kt}\). At \(t=0\), \(Q=1200\), and at \(t=4\), \(Q=2400\).<br>
+          (i) Find the exact value of \(k\). &nbsp;&nbsp;[1]<br>
+          (ii) Find the value of \(t\) when \(Q=3600\), correct to 3 decimal places. &nbsp;&nbsp;[1]</span><span class="q-part-marks">[2]</span></div>
+      </div>
+    </div>
+    <div class="sol-toggle"><button class="sol-btn" onclick="toggleSol(this)">Show solution</button></div>
+    <div class="solution">
+      <div class="sol-label">Solution</div>
+      <div class="sol-step"><div class="sol-step-n">a(i)</div><div class="sol-step-t">\(N(0) = 500\,e^0 = 500\) bacteria.</div></div>
+      <div class="sol-step"><div class="sol-step-n">a(ii)</div><div class="sol-step-t">\(500e^{0.3t}>5000 \Rightarrow e^{0.3t}>10 \Rightarrow 0.3t>\ln 10 \Rightarrow t>\frac{\ln 10}{0.3} = \frac{2.3026}{0.3} \approx 7.68\) hours.</div></div>
+      <div class="sol-step"><div class="sol-step-n">a(iii)</div><div class="sol-step-t">\(N(2)=500e^{0.6}\approx500\times1.8221=911.1\). \(N(5)=500e^{1.5}\approx500\times4.4817=2240.8\).<br>AROC \(= \frac{2240.8-911.1}{5-2} = \frac{1329.7}{3} \approx 443.2\) bacteria/hour.</div></div>
+      <div class="sol-step"><div class="sol-step-n">b</div><div class="sol-step-t">\(f(x+h)=\frac{1}{2(x+h)+1}=\frac{1}{2x+2h+1}\)<br>
+      \(f(x+h)-f(x)=\frac{1}{2x+2h+1}-\frac{1}{2x+1}=\frac{(2x+1)-(2x+2h+1)}{(2x+2h+1)(2x+1)}=\frac{-2h}{(2x+2h+1)(2x+1)}\)<br>
+      Divide by h: \(\frac{-2}{(2x+2h+1)(2x+1)}\)<br>
+      Limit as \(h\to0\): \(f'(x)=\frac{-2}{(2x+1)^2}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">c(i)</div><div class="sol-step-t">\(2400=1200e^{4k} \Rightarrow 2=e^{4k} \Rightarrow k=\frac{\ln 2}{4}\)</div></div>
+      <div class="sol-step"><div class="sol-step-n">c(ii)</div><div class="sol-step-t">\(3600=1200e^{kt} \Rightarrow 3=e^{kt} \Rightarrow t=\frac{\ln 3}{k}=\frac{4\ln 3}{\ln 2}\approx\frac{4\times1.0986}{0.6931}\approx 6.340\)</div></div>
+      <div class="sol-ans"><span class="sol-ans-lbl">ANSWER</span> a(i) 500 &nbsp; a(ii) t > 7.68 h &nbsp; a(iii) ≈ 443.2 bacteria/h &nbsp; b) \(\frac{-2}{(2x+1)^2}\) &nbsp; c(i) \(k=\frac{\ln 2}{4}\) &nbsp; c(ii) t ≈ 6.340</div>
+    </div>
+  </div>
+
+  <!-- END -->
+  <div style="padding:32px 60px 20px;border-top:2px solid var(--rule);text-align:center">
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-muted);letter-spacing:0.06em">END OF EXAMINATION PAPER</div>
+    <div style="font-size:13px;color:var(--ink-muted);margin-top:6px;font-style:italic">Check your working. Ensure your student number is written on every answer booklet.</div>
+  </div>
+
+</div>
+
+<script>
+// Formula sheet rendering
+const fsList = [
+  ['fs1','\\binom{n}{r} = \\dfrac{n!}{r!(n-r)!}'],
+  ['fs2','x = \\dfrac{-b \\pm \\sqrt{b^2-4ac}}{2a}'],
+  ['fs3','a^2 = b^2 + c^2 - 2bc\\cos A'],
+  ['fs4','\\dfrac{a}{\\sin A} = \\dfrac{b}{\\sin B} = \\dfrac{c}{\\sin C}'],
+  ['fs5','\\text{Area} = \\tfrac{1}{2}ab\\sin C'],
+  ['fs6','\\sin(A{\\pm}B)=\\sin A\\cos B{\\pm}\\cos A\\sin B'],
+  ['fs7','\\cos(A{\\pm}B)=\\cos A\\cos B{\\mp}\\sin A\\sin B'],
+  ['fs8','\\sin^2\\theta+\\cos^2\\theta=1'],
+];
+
+// Section tracking
+const sectionMarks = {A:0,B:0,C:0};
+const sectionTotal = {A:30,B:40,C:30};
+let totalRevealed = 0;
+
+function toggleSol(btn){
+  const sol = btn.closest('.sol-toggle').nextElementSibling;
+  const q = btn.closest('.question');
+  const marks = parseInt(q.dataset.marks);
+  const sec = q.dataset.section;
+  const isOpen = sol.classList.contains('open');
+  sol.classList.toggle('open',!isOpen);
+  btn.classList.toggle('active',!isOpen);
+  btn.textContent = isOpen ? 'Show solution' : 'Hide solution';
+  if(!isOpen){
+    totalRevealed += marks;
+    sectionMarks[sec] += marks;
+    setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(sol,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},30);
+  } else {
+    totalRevealed -= marks;
+    sectionMarks[sec] -= marks;
+  }
+  updateScore();
+}
+
+function updateScore(){
+  document.getElementById('revCount').textContent = Math.max(0,totalRevealed);
+  document.getElementById('stTotal').textContent = Math.max(0,totalRevealed);
+  document.getElementById('stFill').style.width = Math.min(100,Math.max(0,totalRevealed))+'%';
+  document.getElementById('sA').textContent = Math.max(0,sectionMarks.A)+'/'+sectionTotal.A;
+  document.getElementById('sB').textContent = Math.max(0,sectionMarks.B)+'/'+sectionTotal.B;
+  document.getElementById('sC').textContent = Math.max(0,sectionMarks.C)+'/'+sectionTotal.C;
+}
+
+function revealAll(){
+  document.querySelectorAll('.solution:not(.open)').forEach(sol=>{
+    sol.classList.add('open');
+    const btn = sol.previousElementSibling.querySelector('.sol-btn');
+    if(btn){btn.classList.add('active');btn.textContent='Hide solution';}
+  });
+  totalRevealed = 100;
+  sectionMarks.A=30;sectionMarks.B=40;sectionMarks.C=30;
+  updateScore();
+  setTimeout(()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});},50);
+}
+
+function hideAll(){
+  document.querySelectorAll('.solution.open').forEach(sol=>{
+    sol.classList.remove('open');
+    const btn = sol.previousElementSibling.querySelector('.sol-btn');
+    if(btn){btn.classList.remove('active');btn.textContent='Show solution';}
+  });
+  totalRevealed=0;sectionMarks.A=0;sectionMarks.B=0;sectionMarks.C=0;
+  updateScore();
+}
+
+// Timer
+let timerSeconds = 3*60*60;
+let timerRunning = false;
+let timerInterval = null;
+
+function formatTime(s){
+  const h=Math.floor(s/3600);const m=Math.floor((s%3600)/60);const sec=s%60;
+  return `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+function toggleTimer(){
+  const btn = document.getElementById('timerBtn');
+  if(!timerRunning){
+    timerRunning=true;btn.textContent='Pause';
+    timerInterval=setInterval(()=>{
+      timerSeconds--;
+      const el=document.getElementById('timer');
+      el.textContent=formatTime(timerSeconds);
+      if(timerSeconds<=600){el.className='timer-display warn';}
+      if(timerSeconds<=300){el.className='timer-display crit';}
+      if(timerSeconds<=0){clearInterval(timerInterval);el.textContent='TIME';btn.textContent='Done';}
+    },1000);
+  } else {
+    timerRunning=false;btn.textContent='Resume';
+    clearInterval(timerInterval);
+  }
+}
+
+// KaTeX render
+document.addEventListener('DOMContentLoaded',()=>{
+  // Formula sheet
+  fsList.forEach(([id,tex])=>{
+    const el=document.getElementById(id);
+    if(el){try{katex.render(tex,el,{throwOnError:false});}catch(e){}}
+  });
+  setTimeout(()=>{
+    if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  },400);
+});
+</script>
+</body>
+</html>

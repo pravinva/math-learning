@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 2 — Functions Study Guide</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1B3A5C; --navy-lt:#1e4570; --orange:#FF3621;
+  --blue-lt:#E6F1FB; --blue-mid:#185FA5;
+  --amber-lt:#FAEEDA; --amber-dk:#7A4800;
+  --green-lt:#E1F5EE; --green-dk:#0a5c3f;
+  --coral-lt:#FAECE7; --coral-dk:#8a2f1a;
+  --grey-lt:#F6F5F2; --grey-md:#e8e6e0; --grey-dk:#3a3835;
+  --text:#2c2a28; --text-muted:#6b6762;
+  --sidebar-w:260px; --content-max:780px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#fafaf8;color:var(--text);display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--navy);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.sidebar-brand{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-brand-title{font-family:'Crimson Pro',Georgia,serif;font-size:17px;font-weight:600;color:white;line-height:1.3}
+.sidebar-brand-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:.04em}
+.progress-wrap{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.progress-label{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.06em;margin-bottom:6px}
+.progress-bar{height:3px;background:rgba(255,255,255,.12);border-radius:2px}
+.progress-fill{height:100%;background:var(--orange);border-radius:2px;width:0%;transition:width .4s ease}
+.nav-section{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-section-label{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.3);padding:6px 20px 4px;text-transform:uppercase}
+.nav-link{display:flex;align-items:center;gap:10px;padding:8px 20px;color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;transition:all .15s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+.nav-link:hover{color:white;background:rgba(255,255,255,.06)}
+.nav-link.active{color:white;background:rgba(255,255,255,.1);border-left:2px solid var(--orange);padding-left:18px}
+.nav-num{font-size:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.5);border-radius:3px;padding:1px 5px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.nav-link.active .nav-num{background:var(--orange);color:white}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
+.topbar{background:white;border-bottom:1px solid var(--grey-md);padding:12px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-breadcrumb{font-size:12px;color:var(--text-muted)}
+.topbar-breadcrumb span{color:var(--navy);font-weight:500}
+.topbar-btns{display:flex;gap:8px}
+.tb-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--grey-md);background:white;font-size:12px;color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.tb-btn:hover{border-color:var(--navy);color:var(--navy)}
+.tb-btn.primary{background:var(--navy);color:white;border-color:var(--navy)}
+.tb-btn.primary:hover{background:var(--navy-lt)}
+.content{max-width:var(--content-max);margin:0 auto;padding:48px 40px 80px}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* HERO */
+.page-hero{margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid var(--grey-md)}
+.page-hero-label{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--orange);text-transform:uppercase;margin-bottom:6px}
+.page-hero-title{font-family:'Crimson Pro',Georgia,serif;font-size:38px;font-weight:600;color:var(--navy);line-height:1.15;margin-bottom:8px}
+.page-hero-sub{font-size:15px;color:var(--text-muted);line-height:1.6}
+
+/* OVERVIEW CARDS */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.ov-card{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:18px 20px;cursor:pointer;transition:all .15s}
+.ov-card:hover{border-color:var(--navy);box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.ov-card-num{font-size:10px;font-weight:500;letter-spacing:.06em;color:var(--orange);text-transform:uppercase;margin-bottom:4px}
+.ov-card-title{font-family:'Crimson Pro',Georgia,serif;font-size:19px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.ov-card-sub{font-size:12px;color:var(--text-muted);line-height:1.5}
+
+/* THEORY BLOCK */
+.theory-block{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:24px;margin-bottom:20px}
+.theory-title{font-family:'Crimson Pro',Georgia,serif;font-size:20px;font-weight:600;color:var(--navy);margin-bottom:12px}
+.theory-body{font-size:14px;line-height:1.7;color:var(--text)}
+.theory-body p{margin-bottom:10px}
+
+/* MATH BLOCKS */
+.math-block{background:var(--grey-lt);border-left:3px solid var(--navy);padding:14px 18px;border-radius:0 8px 8px 0;margin:14px 0;font-size:15px;overflow-x:auto}
+.formula-row{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
+.formula-pill{background:var(--blue-lt);color:var(--blue-mid);border-radius:6px;padding:8px 14px;font-size:13px;border:1px solid #c5ddf5}
+
+/* DIAGRAM */
+.diagram-wrap{background:white;border:1px solid var(--grey-md);border-radius:10px;padding:20px;margin-bottom:20px}
+.diagram-title{font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:12px;letter-spacing:.04em;text-transform:uppercase}
+.diagram-canvas{display:block;width:100%;max-width:520px;height:260px;border-radius:6px}
+.diagram-controls{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;align-items:center}
+.ctrl-group{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)}
+.ctrl-group input[type=range]{width:90px;accent-color:var(--navy)}
+.ctrl-val{font-weight:500;color:var(--navy);min-width:32px;font-size:12px;font-variant-numeric:tabular-nums}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:12px 16px;font-size:13px;line-height:1.6;margin:12px 0}
+.callout-info{background:var(--blue-lt);border-left:3px solid var(--blue-mid);color:#1a3a5c}
+.callout-warn{background:var(--amber-lt);border-left:3px solid #c07a00;color:var(--amber-dk)}
+.callout-success{background:var(--green-lt);border-left:3px solid #1a7a5a;color:var(--green-dk)}
+
+/* KEY FACTS */
+.key-facts{background:var(--grey-lt);border-radius:10px;padding:18px 20px;margin:14px 0}
+.key-facts-title{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+.key-facts ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.key-facts li{display:flex;gap:8px;font-size:13px;line-height:1.5;align-items:flex-start}
+.key-facts li::before{content:"→";color:var(--orange);flex-shrink:0;margin-top:1px}
+
+/* Q CARDS */
+.q-section-title{font-family:'Crimson Pro',Georgia,serif;font-size:22px;font-weight:600;color:var(--navy);margin:28px 0 14px}
+.q-card{background:white;border:1px solid var(--grey-md);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.q-head{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;cursor:pointer;user-select:none;transition:background .12s}
+.q-head:hover{background:var(--grey-lt)}
+.q-num{background:var(--navy);color:white;border-radius:6px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;margin-top:1px}
+.q-text{font-size:14px;font-weight:500;color:var(--text);line-height:1.5}
+.q-hint{font-size:12px;color:var(--text-muted);margin-top:3px;line-height:1.4}
+.q-arrow{margin-left:auto;color:var(--text-muted);font-size:11px;transition:transform .2s;flex-shrink:0;margin-top:4px}
+.q-arrow.open{transform:rotate(90deg)}
+.q-body{display:none;padding:0 18px 18px;border-top:1px solid var(--grey-md)}
+.q-body.open{display:block;animation:fadeIn .2s ease}
+.sol-label{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);padding:14px 0 8px}
+.step-list{display:flex;flex-direction:column;gap:10px;margin:8px 0}
+.step-item{display:flex;gap:12px;align-items:flex-start}
+.step-num-badge{background:var(--orange);color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;margin-top:1px}
+.step-text{font-size:13px;line-height:1.6;color:var(--text);padding-top:2px}
+.answer-box{background:var(--green-lt);border:1px solid #9dd4c0;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:var(--green-dk);margin-top:12px}
+.answer-label{font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-right:6px;opacity:.7}
+.q-attempt{background:var(--amber-lt);border-radius:6px;padding:10px 14px;font-size:13px;color:var(--amber-dk);margin-top:10px;line-height:1.5}
+
+/* LEVEL DIVIDERS */
+.level-divider{display:flex;align-items:center;gap:14px;margin:24px 0 12px}
+.level-badge{background:var(--navy);color:white;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:500;letter-spacing:.06em;white-space:nowrap}
+.level-info .level-title{font-size:14px;font-weight:500;color:var(--text)}
+.level-info .level-sub{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* PAGE NAV */
+.page-nav{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid var(--grey-md)}
+.page-nav-btn{padding:8px 16px;border-radius:8px;border:1px solid var(--grey-md);background:white;font-size:13px;color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.page-nav-btn:hover{border-color:var(--navy);color:var(--navy)}
+.page-nav-btn.next{background:var(--navy);color:white;border-color:var(--navy)}
+.page-nav-btn.next:hover{background:var(--navy-lt)}
+
+/* TABLE */
+.ref-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+.ref-table th{background:var(--navy);color:white;padding:8px 12px;text-align:left;font-weight:500;font-size:12px}
+.ref-table td{padding:8px 12px;border-bottom:1px solid var(--grey-md);line-height:1.5}
+.ref-table tr:nth-child(even) td{background:var(--grey-lt)}
+
+@media(max-width:700px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .content{padding:24px 18px 60px}
+  .overview-grid{grid-template-columns:1fr}
+  .topbar{padding:10px 18px}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">Chapter 2 — Functions</div>
+    <div class="sidebar-brand-sub">Modern Engineering Mathematics 6e</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">PROGRESS</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">0</span>Chapter Overview</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Function Types</div>
+    <button class="nav-link" onclick="goTo('linear')"><span class="nav-num">2.3a</span>Linear Functions</button>
+    <button class="nav-link" onclick="goTo('quadratic')"><span class="nav-num">2.3b</span>Quadratic Functions</button>
+    <button class="nav-link" onclick="goTo('polynomial')"><span class="nav-num">2.4</span>Polynomial Functions</button>
+    <button class="nav-link" onclick="goTo('rational')"><span class="nav-num">2.5</span>Rational Functions</button>
+    <button class="nav-link" onclick="goTo('circular')"><span class="nav-num">2.6</span>Circular (Trig) Functions</button>
+    <button class="nav-link" onclick="goTo('explog')"><span class="nav-num">2.7a</span>Exponential &amp; Log</button>
+    <button class="nav-link" onclick="goTo('hyperbolic')"><span class="nav-num">2.7b</span>Hyperbolic Functions</button>
+  </div>
+  <div class="nav-section">
+    <button class="nav-link" onclick="goTo('practice')"><span class="nav-num">★</span>Practice Problems</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">Chapter 2 / <span id="breadcrumbPage">Overview</span></div>
+    <div class="topbar-btns">
+      <button class="tb-btn" onclick="expandAll()">Expand All</button>
+      <button class="tb-btn primary" onclick="goTo('practice')">Practice →</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══════════════════════════ HOME ═══════════════════════════ -->
+    <div class="page active" id="page-home">
+      <div class="page-hero">
+        <div class="page-hero-label">Chapter 2 · DPEN010</div>
+        <div class="page-hero-title">Functions</div>
+        <div class="page-hero-sub">A systematic tour of every function family you need to master — from straight lines to hyperbolic identities. Each section pairs theory with an interactive diagram and worked problems.</div>
+      </div>
+      <div class="overview-grid">
+        <div class="ov-card" onclick="goTo('linear')">
+          <div class="ov-card-num">§2.3a</div>
+          <div class="ov-card-title">Linear Functions</div>
+          <div class="ov-card-sub">Slope-intercept form, least-squares fitting, gradient interpretation</div>
+        </div>
+        <div class="ov-card" onclick="goTo('quadratic')">
+          <div class="ov-card-num">§2.3b</div>
+          <div class="ov-card-title">Quadratic Functions</div>
+          <div class="ov-card-sub">Vertex form, discriminant, completing the square, parabola properties</div>
+        </div>
+        <div class="ov-card" onclick="goTo('polynomial')">
+          <div class="ov-card-num">§2.4</div>
+          <div class="ov-card-title">Polynomial Functions</div>
+          <div class="ov-card-sub">Degree n, factorization, synthetic division, roots and multiplicity</div>
+        </div>
+        <div class="ov-card" onclick="goTo('rational')">
+          <div class="ov-card-num">§2.5</div>
+          <div class="ov-card-title">Rational Functions</div>
+          <div class="ov-card-sub">Partial fractions, vertical &amp; horizontal asymptotes, holes</div>
+        </div>
+        <div class="ov-card" onclick="goTo('circular')">
+          <div class="ov-card-num">§2.6</div>
+          <div class="ov-card-title">Circular / Trig Functions</div>
+          <div class="ov-card-sub">sin, cos, tan, amplitude/phase, key identities, inverse trig</div>
+        </div>
+        <div class="ov-card" onclick="goTo('explog')">
+          <div class="ov-card-num">§2.7a</div>
+          <div class="ov-card-title">Exponential &amp; Log</div>
+          <div class="ov-card-sub">e^x, ln x, log laws, growth/decay, change of base</div>
+        </div>
+        <div class="ov-card" onclick="goTo('hyperbolic')">
+          <div class="ov-card-num">§2.7b</div>
+          <div class="ov-card-title">Hyperbolic Functions</div>
+          <div class="ov-card-sub">sinh, cosh, tanh, Osborn's rule, inverse hyperbolics</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ LINEAR ═══════════════════════════ -->
+    <div class="page" id="page-linear">
+      <div class="page-hero">
+        <div class="page-hero-label">§2.3a</div>
+        <div class="page-hero-title">Linear Functions</div>
+        <div class="page-hero-sub">The simplest function: a constant rate of change. Foundation for all further function analysis.</div>
+      </div>
+
+      <div class="theory-block">
+        <div class="theory-title">Definition &amp; Forms</div>
+        <div class="theory-body">
+          <p>A <strong>linear function</strong> has the form \(f(x) = mx + c\), where \(m\) is the gradient (slope) and \(c\) is the \(y\)-intercept. The graph is always a straight line.</p>
+        </div>
+        <div class="math-block">\[ f(x) = mx + c \]</div>
+        <div class="key-facts">
+          <div class="key-facts-title">Key properties</div>
+          <ul>
+            <li>Gradient: \(m = \dfrac{f(x_2)-f(x_1)}{x_2-x_1}\) — constant for any two points</li>
+            <li>\(y\)-intercept at \((0,\,c)\); \(x\)-intercept (root) at \(x = -c/m\)</li>
+            <li>Two-point form: \(y - y_1 = m(x - x_1)\)</li>
+            <li>Parallel lines have equal gradients; perpendicular lines satisfy \(m_1 m_2 = -1\)</li>
+          </ul>
+        </div>
+        <div class="callout callout-info">The <strong>least-squares</strong> best-fit line through data \(\{(x_i,y_i)\}\) uses \(m = \dfrac{n\sum x_i y_i - \sum x_i \sum y_i}{n\sum x_i^2 - (\sum x_i)^2}\), \(\quad c = \bar{y} - m\bar{x}\).</div>
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Interactive — \(f(x)=mx+c\)</div>
+        <canvas class="diagram-canvas" id="canvasLinear" width="520" height="260"></canvas>
+        <div class="diagram-controls">
+          <div class="ctrl-group">Gradient \(m\) <input type="range" id="lm" min="-3" max="3" step="0.1" value="1" oninput="drawLinear()"> <span class="ctrl-val" id="lmv">1.0</span></div>
+          <div class="ctrl-group">Intercept \(c\) <input type="range" id="lc" min="-4" max="4" step="0.5" value="0" oninput="drawLinear()"> <span class="ctrl-val" id="lcv">0.0</span></div>
+        </div>
+      </div>
+
+      <div class="q-section-title">Worked Problems</div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 1</div><div class="level-info"><div class="level-title">Find gradient and intercept</div><div class="level-sub">Direct read-off from equation or two points.</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div><div class="q-text">Find the equation of the line passing through \((1,3)\) and \((4,9)\).</div><div class="q-hint">Compute gradient first, then use point–slope form.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="sol-label">FULL SOLUTION</div>
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Gradient: \(m = \dfrac{9-3}{4-1} = \dfrac{6}{3} = 2\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Use point–slope: \(y - 3 = 2(x-1)\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Simplify: \(y = 2x + 1\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(y = 2x + 1\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 2</div><div class="level-info"><div class="level-title">Perpendicular lines</div><div class="level-sub">Use the \(m_1 m_2 = -1\) relationship.</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div><div class="q-text">A line \(L_1\) has equation \(y = 3x - 2\). Find the equation of \(L_2\), perpendicular to \(L_1\), passing through \((6,1)\).</div><div class="q-hint">\(m_2 = -1/m_1\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Gradient of \(L_1\): \(m_1 = 3\). Perpendicular gradient: \(m_2 = -\frac{1}{3}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(y - 1 = -\frac{1}{3}(x - 6) \;\Rightarrow\; y = -\tfrac{1}{3}x + 3\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(y = -\dfrac{1}{3}x + 3\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 3</div><div class="level-info"><div class="level-title">Least-squares fit</div><div class="level-sub">Apply the regression formulas.</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div><div class="q-text">Data: \((1,2),(2,4),(3,5),(4,4),(5,5)\). Find the least-squares regression line \(y=mx+c\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(n=5,\;\sum x=15,\;\sum y=20,\;\sum x^2=55,\;\sum xy=62\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(m = \dfrac{5(62)-15(20)}{5(55)-15^2} = \dfrac{310-300}{275-225} = \dfrac{10}{50} = 0.2\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(\bar x=3,\;\bar y=4\). \(\quad c = 4 - 0.2(3) = 3.4\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(y = 0.2x + 3.4\)</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('home')">← Overview</button>
+        <button class="page-nav-btn next" onclick="goTo('quadratic')">Quadratic →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ QUADRATIC ═══════════════════════════ -->
+    <div class="page" id="page-quadratic">
+      <div class="page-hero">
+        <div class="page-hero-label">§2.3b</div>
+        <div class="page-hero-title">Quadratic Functions</div>
+        <div class="page-hero-sub">Parabolas, the discriminant, completing the square, and vertex form — the most tested function family.</div>
+      </div>
+
+      <div class="theory-block">
+        <div class="theory-title">Standard, Factored &amp; Vertex Forms</div>
+        <div class="theory-body"><p>All three forms encode the same parabola differently; choose based on what you need to find.</p></div>
+        <div class="formula-row">
+          <div class="formula-pill">\(f(x)=ax^2+bx+c\) — standard</div>
+          <div class="formula-pill">\(f(x)=a(x-p)(x-q)\) — factored</div>
+          <div class="formula-pill">\(f(x)=a(x-h)^2+k\) — vertex \((h,k)\)</div>
+        </div>
+        <div class="key-facts">
+          <div class="key-facts-title">Discriminant \(\Delta = b^2 - 4ac\)</div>
+          <ul>
+            <li>\(\Delta > 0\): two distinct real roots</li>
+            <li>\(\Delta = 0\): one repeated real root (tangent to \(x\)-axis)</li>
+            <li>\(\Delta < 0\): no real roots (complex conjugate pair)</li>
+          </ul>
+        </div>
+        <div class="math-block">\[ \text{Roots: } x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}, \qquad \text{Vertex: } h = -\frac{b}{2a},\quad k = f(h) \]</div>
+        <div class="callout callout-warn">When \(a>0\) the parabola opens upward (minimum at vertex); \(a&lt;0\) opens downward (maximum). Always state which before sketching.</div>
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Interactive — \(f(x)=ax^2+bx+c\)</div>
+        <canvas class="diagram-canvas" id="canvasQuad" width="520" height="260"></canvas>
+        <div class="diagram-controls">
+          <div class="ctrl-group">\(a\) <input type="range" id="qa" min="-2" max="2" step="0.1" value="1" oninput="drawQuad()"> <span class="ctrl-val" id="qav">1.0</span></div>
+          <div class="ctrl-group">\(b\) <input type="range" id="qb" min="-4" max="4" step="0.5" value="0" oninput="drawQuad()"> <span class="ctrl-val" id="qbv">0.0</span></div>
+          <div class="ctrl-group">\(c\) <input type="range" id="qc" min="-4" max="4" step="0.5" value="-1" oninput="drawQuad()"> <span class="ctrl-val" id="qcv">−1.0</span></div>
+        </div>
+      </div>
+
+      <div class="q-section-title">Worked Problems</div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 1</div><div class="level-info"><div class="level-title">Vertex and roots</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div><div class="q-text">For \(f(x) = 2x^2 - 8x + 3\), find the vertex and determine whether it is a minimum or maximum.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(a=2>0\), so the parabola opens upward — vertex is a <em>minimum</em>.</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(h = -\dfrac{b}{2a} = -\dfrac{-8}{4} = 2\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(k = f(2) = 2(4) - 8(2) + 3 = 8 - 16 + 3 = -5\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Minimum at vertex \((2,\,-5)\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 2</div><div class="level-info"><div class="level-title">Discriminant &amp; roots</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div><div class="q-text">Solve \(3x^2 - 5x - 2 = 0\) and classify the roots using the discriminant.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(\Delta = (-5)^2 - 4(3)(-2) = 25 + 24 = 49 > 0\) → two distinct real roots</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(x = \dfrac{5 \pm \sqrt{49}}{6} = \dfrac{5 \pm 7}{6}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(x = \dfrac{12}{6} = 2 \quad\) or \(\quad x = \dfrac{-2}{6} = -\dfrac{1}{3}\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(x = 2\) or \(x = -\dfrac{1}{3}\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 3</div><div class="level-info"><div class="level-title">Complete the square to vertex form</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div><div class="q-text">Write \(f(x) = x^2 + 6x + 2\) in vertex form \(a(x-h)^2+k\). Hence state the minimum value and where it occurs.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Half the \(x\)-coefficient: \((6/2)^2 = 9\). Add and subtract: \(x^2+6x+9-9+2\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(= (x+3)^2 - 7\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Vertex \((-3,-7)\); since \(a=1>0\), minimum value is \(-7\) at \(x=-3\).</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(f(x)=(x+3)^2-7\); minimum \(-7\) at \(x=-3\)</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('linear')">← Linear</button>
+        <button class="page-nav-btn next" onclick="goTo('polynomial')">Polynomial →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ POLYNOMIAL ═══════════════════════════ -->
+    <div class="page" id="page-polynomial">
+      <div class="page-hero">
+        <div class="page-hero-label">§2.4</div>
+        <div class="page-hero-title">Polynomial Functions</div>
+        <div class="page-hero-sub">Degree \(n\) polynomials, the Factor and Remainder Theorems, and synthetic division.</div>
+      </div>
+
+      <div class="theory-block">
+        <div class="theory-title">Key Theorems</div>
+        <div class="theory-body"><p>A polynomial of degree \(n\) has at most \(n\) real roots and exactly \(n\) roots in \(\mathbb{C}\) (counting multiplicity).</p></div>
+        <div class="math-block">\[ P(x) = a_n x^n + a_{n-1}x^{n-1} + \cdots + a_1 x + a_0 \]</div>
+        <div class="key-facts">
+          <div class="key-facts-title">Theorems</div>
+          <ul>
+            <li><strong>Remainder Theorem:</strong> When \(P(x)\) is divided by \((x-a)\), the remainder is \(P(a)\)</li>
+            <li><strong>Factor Theorem:</strong> \((x-a)\) is a factor \(\iff\) \(P(a)=0\)</li>
+            <li><strong>Synthetic division:</strong> efficient way to divide by \((x-a)\) and find \(P(a)\)</li>
+            <li>A root with multiplicity \(k\) → graph touches (even \(k\)) or crosses (odd \(k\)) the \(x\)-axis</li>
+          </ul>
+        </div>
+        <div class="callout callout-info"><strong>Nested (Horner) form</strong> minimises multiplications: \(ax^3+bx^2+cx+d = ((ax+b)x+c)x+d\). Evaluate from inside out.</div>
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Interactive cubic — \(f(x)=x^3+bx^2+cx+d\)</div>
+        <canvas class="diagram-canvas" id="canvasPoly" width="520" height="260"></canvas>
+        <div class="diagram-controls">
+          <div class="ctrl-group">\(b\) <input type="range" id="pb" min="-4" max="4" step="0.5" value="-2" oninput="drawPoly()"> <span class="ctrl-val" id="pbv">−2.0</span></div>
+          <div class="ctrl-group">\(c\) <input type="range" id="pc" min="-4" max="4" step="0.5" value="-1" oninput="drawPoly()"> <span class="ctrl-val" id="pcv">−1.0</span></div>
+          <div class="ctrl-group">\(d\) <input type="range" id="pd" min="-4" max="4" step="0.5" value="2" oninput="drawPoly()"> <span class="ctrl-val" id="pdv">2.0</span></div>
+        </div>
+      </div>
+
+      <div class="q-section-title">Worked Problems</div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 1</div><div class="level-info"><div class="level-title">Remainder theorem</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div><div class="q-text">Find the remainder when \(P(x)=2x^3-3x^2+x-5\) is divided by \((x-2)\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">By the Remainder Theorem, remainder \(= P(2)\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(P(2) = 2(8) - 3(4) + 2 - 5 = 16 - 12 + 2 - 5 = 1\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Remainder \(= 1\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 2</div><div class="level-info"><div class="level-title">Factor theorem + full factorisation</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div><div class="q-text">Show that \((x-1)\) is a factor of \(P(x)=x^3-6x^2+11x-6\) and fully factorise \(P(x)\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(P(1) = 1 - 6 + 11 - 6 = 0\) ✓ so \((x-1)\) is a factor.</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Synthetic division by \((x-1)\): coefficients \(1,-6,11,-6\) → \(1,-5,6,0\). Quotient: \(x^2-5x+6\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Factorise quotient: \(x^2-5x+6 = (x-2)(x-3)\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(P(x)=(x-1)(x-2)(x-3)\); roots \(x=1,2,3\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 3</div><div class="level-info"><div class="level-title">Horner's method</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div><div class="q-text">Evaluate \(P(3)\) for \(P(x)=4x^4-3x^3+2x^2-x+1\) using nested (Horner) multiplication.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Write in nested form: \(((((4)x-3)x+2)x-1)x+1\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">At \(x=3\): \(4\to4(3)-3=9\to9(3)+2=29\to29(3)-1=86\to86(3)+1=259\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(P(3)=259\)</div>
+          <div class="callout callout-info">Horner's method uses only \(n\) multiplications and \(n\) additions for a degree-\(n\) polynomial — much faster than computing each power separately.</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('quadratic')">← Quadratic</button>
+        <button class="page-nav-btn next" onclick="goTo('rational')">Rational →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ RATIONAL ═══════════════════════════ -->
+    <div class="page" id="page-rational">
+      <div class="page-hero">
+        <div class="page-hero-label">§2.5</div>
+        <div class="page-hero-title">Rational Functions</div>
+        <div class="page-hero-sub">Ratios of polynomials — asymptotes, partial fractions, and the hyperbola as the simplest case.</div>
+      </div>
+
+      <div class="theory-block">
+        <div class="theory-title">Form, Asymptotes &amp; Partial Fractions</div>
+        <div class="theory-body"><p>A rational function \(R(x)=P(x)/Q(x)\) has vertical asymptotes where \(Q(x)=0\) (and \(P(x)\neq 0\)), and a horizontal asymptote determined by degree comparison.</p></div>
+        <table class="ref-table">
+          <thead><tr><th>Degrees</th><th>Horizontal asymptote</th></tr></thead>
+          <tbody>
+            <tr><td>\(\deg P < \deg Q\)</td><td>\(y=0\)</td></tr>
+            <tr><td>\(\deg P = \deg Q\)</td><td>\(y = \text{ratio of leading coefficients}\)</td></tr>
+            <tr><td>\(\deg P > \deg Q\)</td><td>No horizontal asymptote (oblique if \(\deg P = \deg Q +1\))</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-info"><strong>Partial fractions</strong> decompose a proper rational function into simpler pieces for integration and inverse Laplace transforms. For distinct linear factors: \(\dfrac{1}{(x-a)(x-b)} = \dfrac{A}{x-a}+\dfrac{B}{x-b}\).</div>
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Interactive — \(f(x)=\dfrac{ax+b}{cx+d}\) (rectangular hyperbola)</div>
+        <canvas class="diagram-canvas" id="canvasRat" width="520" height="260"></canvas>
+        <div class="diagram-controls">
+          <div class="ctrl-group">\(a\) <input type="range" id="ra" min="-3" max="3" step="0.5" value="1" oninput="drawRat()"> <span class="ctrl-val" id="rav">1.0</span></div>
+          <div class="ctrl-group">\(b\) <input type="range" id="rb" min="-4" max="4" step="0.5" value="1" oninput="drawRat()"> <span class="ctrl-val" id="rbv">1.0</span></div>
+          <div class="ctrl-group">\(c\) <input type="range" id="rc" min="-3" max="3" step="0.5" value="1" oninput="drawRat()"> <span class="ctrl-val" id="rcv">1.0</span></div>
+          <div class="ctrl-group">\(d\) <input type="range" id="rd" min="-4" max="4" step="0.5" value="-2" oninput="drawRat()"> <span class="ctrl-val" id="rdv">−2.0</span></div>
+        </div>
+      </div>
+
+      <div class="q-section-title">Worked Problems</div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 1</div><div class="level-info"><div class="level-title">Identify asymptotes</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div><div class="q-text">State the vertical and horizontal asymptotes of \(f(x)=\dfrac{3x+1}{x-2}\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertical: set denominator to zero → \(x=2\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Degrees equal → horizontal asymptote \(= \frac{3}{1} = 3\), i.e. \(y=3\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Vertical \(x=2\), horizontal \(y=3\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 2</div><div class="level-info"><div class="level-title">Partial fractions — distinct linear factors</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div><div class="q-text">Express \(\dfrac{5x-1}{(x+1)(x-2)}\) in partial fractions.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Write \(\dfrac{A}{x+1}+\dfrac{B}{x-2}\). Multiply through: \(5x-1 = A(x-2)+B(x+1)\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Set \(x=2\): \(9=3B\Rightarrow B=3\). Set \(x=-1\): \(-6=-3A\Rightarrow A=2\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(\dfrac{2}{x+1}+\dfrac{3}{x-2}\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 3</div><div class="level-info"><div class="level-title">Repeated factor</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div><div class="q-text">Express \(\dfrac{x^2+1}{(x-1)^2(x+2)}\) in partial fractions.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Form: \(\dfrac{A}{x-1}+\dfrac{B}{(x-1)^2}+\dfrac{C}{x+2}\). Multiply through: \(x^2+1=A(x-1)(x+2)+B(x+2)+C(x-1)^2\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(x=1\): \(2 = B(3)\Rightarrow B=\tfrac{2}{3}\). \(\quad x=-2\): \(5=C(9)\Rightarrow C=\tfrac{5}{9}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Compare \(x^2\) coefficients: \(1=A+C\Rightarrow A = 1-\tfrac{5}{9}=\tfrac{4}{9}\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(\dfrac{4/9}{x-1}+\dfrac{2/3}{(x-1)^2}+\dfrac{5/9}{x+2}\)</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('polynomial')">← Polynomial</button>
+        <button class="page-nav-btn next" onclick="goTo('circular')">Circular →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ CIRCULAR ═══════════════════════════ -->
+    <div class="page" id="page-circular">
+      <div class="page-hero">
+        <div class="page-hero-label">§2.6</div>
+        <div class="page-hero-title">Circular (Trigonometric) Functions</div>
+        <div class="page-hero-sub">Sine, cosine, tangent — periodic functions defined on the unit circle. Identities, amplitude, phase shifts.</div>
+      </div>
+
+      <div class="theory-block">
+        <div class="theory-title">General Form &amp; Key Identities</div>
+        <div class="theory-body"><p>The general sinusoidal function \(f(x)=A\sin(\omega x+\phi)+k\) has amplitude \(|A|\), angular frequency \(\omega\), period \(T=2\pi/\omega\), phase shift \(-\phi/\omega\), and vertical shift \(k\).</p></div>
+        <div class="math-block">\[ A\sin(\omega x+\phi)+k \qquad T = \frac{2\pi}{\omega}, \quad \text{amplitude}=|A| \]</div>
+        <div class="key-facts">
+          <div class="key-facts-title">Essential Identities</div>
+          <ul>
+            <li>Pythagorean: \(\sin^2\theta+\cos^2\theta=1\); \(\;1+\tan^2\theta=\sec^2\theta\)</li>
+            <li>Double angle: \(\sin 2\theta=2\sin\theta\cos\theta\); \(\;\cos 2\theta=\cos^2\theta-\sin^2\theta\)</li>
+            <li>Sum: \(\sin(A\pm B)=\sin A\cos B\pm\cos A\sin B\)</li>
+            <li>Sum to product: \(\sin P+\sin Q=2\sin\tfrac{P+Q}{2}\cos\tfrac{P-Q}{2}\)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Interactive — \(f(x)=A\sin(\omega x+\phi)\)</div>
+        <canvas class="diagram-canvas" id="canvasCirc" width="520" height="260"></canvas>
+        <div class="diagram-controls">
+          <div class="ctrl-group">Amplitude \(A\) <input type="range" id="ca" min="0.2" max="2" step="0.1" value="1" oninput="drawCirc()"> <span class="ctrl-val" id="cav">1.0</span></div>
+          <div class="ctrl-group">Freq \(\omega\) <input type="range" id="cw" min="0.5" max="3" step="0.1" value="1" oninput="drawCirc()"> <span class="ctrl-val" id="cwv">1.0</span></div>
+          <div class="ctrl-group">Phase \(\phi\) <input type="range" id="cp" min="-3.14" max="3.14" step="0.1" value="0" oninput="drawCirc()"> <span class="ctrl-val" id="cpv">0.0</span></div>
+        </div>
+      </div>
+
+      <div class="q-section-title">Worked Problems</div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 1</div><div class="level-info"><div class="level-title">Read amplitude and period</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div><div class="q-text">State the amplitude, period, and phase shift of \(f(x)=3\sin(2x-\pi/4)\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Amplitude: \(|A|=3\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Period: \(T=2\pi/\omega=2\pi/2=\pi\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Phase shift: \(-\phi/\omega = -(-\pi/4)/2 = \pi/8\) to the right</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Amplitude 3, period \(\pi\), phase shift \(\pi/8\) right</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 2</div><div class="level-info"><div class="level-title">Trig identity proof</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div><div class="q-text">Prove that \(\dfrac{\sin 2\theta}{1+\cos 2\theta} = \tan\theta\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Numerator: \(\sin 2\theta = 2\sin\theta\cos\theta\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Denominator: \(1+\cos 2\theta = 1+(2\cos^2\theta-1) = 2\cos^2\theta\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(\dfrac{2\sin\theta\cos\theta}{2\cos^2\theta} = \dfrac{\sin\theta}{\cos\theta} = \tan\theta\) \(\quad\square\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Identity proved. ✓</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 3</div><div class="level-info"><div class="level-title">Express as single sinusoid</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div><div class="q-text">Write \(3\sin x + 4\cos x\) in the form \(R\sin(x+\alpha)\), finding \(R\) and \(\alpha\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Expand: \(R\sin(x+\alpha)=R\sin x\cos\alpha+R\cos x\sin\alpha\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Match: \(R\cos\alpha=3\) and \(R\sin\alpha=4\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(R=\sqrt{3^2+4^2}=5\); \(\;\alpha=\arctan(4/3)\approx 53.1°\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(5\sin(x+\arctan\tfrac{4}{3})\)</div>
+          <div class="callout callout-success">This form immediately gives the maximum value (\(R=5\)) and where it occurs (\(x+\alpha=\pi/2\)).</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('rational')">← Rational</button>
+        <button class="page-nav-btn next" onclick="goTo('explog')">Exponential &amp; Log →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ EXP/LOG ═══════════════════════════ -->
+    <div class="page" id="page-explog">
+      <div class="page-hero">
+        <div class="page-hero-label">§2.7a</div>
+        <div class="page-hero-title">Exponential &amp; Logarithmic Functions</div>
+        <div class="page-hero-sub">The function \(e^x\) and its inverse \(\ln x\) — growth, decay, log laws, and the change-of-base formula.</div>
+      </div>
+
+      <div class="theory-block">
+        <div class="theory-title">Properties &amp; Log Laws</div>
+        <div class="theory-body"><p>\(e^x\) is the unique function equal to its own derivative. \(\ln x\) is its inverse: \(\ln(e^x)=x\) and \(e^{\ln x}=x\) for \(x>0\).</p></div>
+        <div class="key-facts">
+          <div class="key-facts-title">Log Laws (base \(a>0,\,a\neq1\))</div>
+          <ul>
+            <li>\(\log_a(mn)=\log_a m+\log_a n\)</li>
+            <li>\(\log_a(m/n)=\log_a m-\log_a n\)</li>
+            <li>\(\log_a(m^k)=k\log_a m\)</li>
+            <li>Change of base: \(\log_a x = \dfrac{\ln x}{\ln a}\)</li>
+          </ul>
+        </div>
+        <div class="math-block">\[ a^x = e^{x\ln a}, \qquad \text{half-life: } t_{1/2} = \frac{\ln 2}{\lambda} \]</div>
+        <div class="callout callout-warn">Domain of \(\ln x\) is \(x>0\). Always check domain before solving log equations — extraneous solutions occur when back-substitution gives a negative argument.</div>
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Interactive — \(f(x)=Ae^{kx}\)</div>
+        <canvas class="diagram-canvas" id="canvasExp" width="520" height="260"></canvas>
+        <div class="diagram-controls">
+          <div class="ctrl-group">Amplitude \(A\) <input type="range" id="ea" min="-3" max="3" step="0.5" value="1" oninput="drawExp()"> <span class="ctrl-val" id="eav">1.0</span></div>
+          <div class="ctrl-group">Rate \(k\) <input type="range" id="ek" min="-1.5" max="1.5" step="0.1" value="0.5" oninput="drawExp()"> <span class="ctrl-val" id="ekv">0.5</span></div>
+        </div>
+      </div>
+
+      <div class="q-section-title">Worked Problems</div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 1</div><div class="level-info"><div class="level-title">Apply log laws</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div><div class="q-text">Simplify \(\ln\!\left(\dfrac{e^{2x}\,\sqrt{x}}{x^3+1}\right)\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(\ln(e^{2x}) + \ln(\sqrt{x}) - \ln(x^3+1)\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(= 2x + \tfrac{1}{2}\ln x - \ln(x^3+1)\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(2x + \tfrac{1}{2}\ln x - \ln(x^3+1)\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 2</div><div class="level-info"><div class="level-title">Solve exponential equation</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div><div class="q-text">Solve \(5^{2x-1}=3^{x+1}\) for \(x\). Give your answer to 3 s.f.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Take \(\ln\) of both sides: \((2x-1)\ln 5 = (x+1)\ln 3\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Expand: \(2x\ln 5 - \ln 5 = x\ln 3 + \ln 3\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(x(2\ln 5 - \ln 3) = \ln 3 + \ln 5\)</div></div>
+            <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(x = \dfrac{\ln 15}{2\ln 5 - \ln 3} = \dfrac{2.708}{2(1.609)-1.099} = \dfrac{2.708}{2.119} \approx 1.28\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(x \approx 1.28\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 3</div><div class="level-info"><div class="level-title">Exponential decay problem</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div><div class="q-text">A radioactive substance decays according to \(N(t)=N_0 e^{-\lambda t}\). If the half-life is 8 years, find \(\lambda\) and the time for 90% of the substance to decay.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Half-life: \(\tfrac{1}{2}N_0=N_0 e^{-8\lambda}\Rightarrow \ln 2 = 8\lambda \Rightarrow \lambda=\dfrac{\ln 2}{8}\approx 0.0866\text{ yr}^{-1}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">90% decayed means \(N=0.1\,N_0\): \(0.1=e^{-\lambda t}\Rightarrow t=\dfrac{\ln 10}{\lambda}=\dfrac{8\ln 10}{\ln 2}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(t = \dfrac{8 \times 2.303}{0.693} \approx 26.6\text{ years}\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(\lambda \approx 0.0866\text{ yr}^{-1}\); 90% decay in \(\approx 26.6\text{ years}\)</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('circular')">← Circular</button>
+        <button class="page-nav-btn next" onclick="goTo('hyperbolic')">Hyperbolic →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ HYPERBOLIC ═══════════════════════════ -->
+    <div class="page" id="page-hyperbolic">
+      <div class="page-hero">
+        <div class="page-hero-label">§2.7b</div>
+        <div class="page-hero-title">Hyperbolic Functions</div>
+        <div class="page-hero-sub">Built from \(e^x\) but mirroring circular trig. Osborn's rule, catenary, inverse hyperbolics in log form.</div>
+      </div>
+
+      <div class="theory-block">
+        <div class="theory-title">Definitions &amp; Osborn's Rule</div>
+        <div class="theory-body"><p>Hyperbolic functions are defined via exponentials:</p></div>
+        <div class="math-block">\[ \sinh x = \frac{e^x - e^{-x}}{2}, \quad \cosh x = \frac{e^x + e^{-x}}{2}, \quad \tanh x = \frac{\sinh x}{\cosh x} \]</div>
+        <div class="key-facts">
+          <div class="key-facts-title">Key identities (Osborn's rule: replace \(\cos\to\cosh\), \(\sin\to\sinh\), but negate any product of two \(\sinh\))</div>
+          <ul>
+            <li>\(\cosh^2 x - \sinh^2 x = 1\) (compare \(\cos^2+\sin^2=1\))</li>
+            <li>\(\sinh(x\pm y)=\sinh x\cosh y\pm\cosh x\sinh y\)</li>
+            <li>\(\cosh(x\pm y)=\cosh x\cosh y\pm\sinh x\sinh y\)</li>
+            <li>\(\tanh^2 x = 1 - \text{sech}^2 x\)</li>
+          </ul>
+        </div>
+        <div class="callout callout-info"><strong>Inverse hyperbolics in log form:</strong> \(\;\text{arcsinh}\,x = \ln\!\left(x+\sqrt{x^2+1}\right)\), \(\;\text{arccosh}\,x = \ln\!\left(x+\sqrt{x^2-1}\right)\) (\(x\geq1\)), \(\;\text{arctanh}\,x = \tfrac{1}{2}\ln\dfrac{1+x}{1-x}\) (\(|x|<1\)).</div>
+        <div class="math-block">\[ \frac{d}{dx}\sinh x = \cosh x, \quad \frac{d}{dx}\cosh x = \sinh x, \quad \frac{d}{dx}\tanh x = \text{sech}^2 x \]</div>
+        <div class="callout callout-warn">Note the sign: \(d/dx(\cosh x)=+\sinh x\), unlike \(d/dx(\cos x)=-\sin x\). This is the key difference from circular functions.</div>
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Interactive — sinh, cosh, tanh</div>
+        <canvas class="diagram-canvas" id="canvasHyp" width="520" height="260"></canvas>
+        <div class="diagram-controls">
+          <div class="ctrl-group">Show: 
+            <select id="hypFunc" onchange="drawHyp()" style="border:1px solid var(--grey-md);border-radius:5px;padding:3px 8px;font-size:12px;color:var(--navy);font-family:inherit">
+              <option value="sinh">sinh x</option>
+              <option value="cosh" selected>cosh x</option>
+              <option value="tanh">tanh x</option>
+            </select>
+          </div>
+          <div class="ctrl-group">Scale \(a\) <input type="range" id="ha" min="0.5" max="2" step="0.1" value="1" oninput="drawHyp()"> <span class="ctrl-val" id="hav">1.0</span></div>
+        </div>
+      </div>
+
+      <div class="q-section-title">Worked Problems</div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 1</div><div class="level-info"><div class="level-title">Evaluate from definition</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div><div class="q-text">Evaluate \(\sinh(\ln 3)\) and \(\cosh(\ln 3)\) using the exponential definitions.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(e^{\ln 3}=3\), \(e^{-\ln 3}=\tfrac{1}{3}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(\sinh(\ln 3)=\dfrac{3-\tfrac{1}{3}}{2}=\dfrac{8/3}{2}=\dfrac{4}{3}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(\cosh(\ln 3)=\dfrac{3+\tfrac{1}{3}}{2}=\dfrac{10/3}{2}=\dfrac{5}{3}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Check: \(\cosh^2-\sinh^2=\tfrac{25}{9}-\tfrac{16}{9}=1\) ✓</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(\sinh(\ln 3)=\tfrac{4}{3}\), \(\cosh(\ln 3)=\tfrac{5}{3}\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 2</div><div class="level-info"><div class="level-title">Prove identity using Osborn's rule</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div><div class="q-text">Prove that \(\cosh 2x = 2\cosh^2 x - 1\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(\cosh 2x = \cosh(x+x) = \cosh x\cosh x + \sinh x\sinh x = \cosh^2 x + \sinh^2 x\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Use \(\sinh^2 x = \cosh^2 x - 1\): \(\;\cosh^2 x + \cosh^2 x - 1 = 2\cosh^2 x - 1\) \(\square\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Identity proved. ✓</div>
+          <div class="callout callout-info">Compare with \(\cos 2x = 2\cos^2 x - 1\) — same form. Osborn's rule: replace \(\cos\to\cosh\) and negate any product of two sines. \(\sin^2\to-\sinh^2\) so the \(-\) in \(\cos 2x=1-2\sin^2 x\) becomes \(+\) in \(\cosh 2x=1+2\sinh^2 x\).</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">LEVEL 3</div><div class="level-info"><div class="level-title">Inverse hyperbolic in log form</div></div></div>
+
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div><div class="q-text">Solve \(\cosh x = \dfrac{5}{4}\) for \(x\), expressing your answer as a natural log.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(x = \text{arccosh}\,\tfrac{5}{4} = \ln\!\left(\tfrac{5}{4}+\sqrt{(\tfrac{5}{4})^2-1}\right)\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(= \ln\!\left(\tfrac{5}{4}+\sqrt{\tfrac{25}{16}-1}\right)=\ln\!\left(\tfrac{5}{4}+\sqrt{\tfrac{9}{16}}\right)=\ln\!\left(\tfrac{5}{4}+\tfrac{3}{4}\right)\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(= \ln 2\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(x = \ln 2\) (and \(x = -\ln 2\) since \(\cosh\) is even)</div>
+          <div class="callout callout-success">Verify: \(\cosh(\ln 2)=\dfrac{2+\frac{1}{2}}{2}=\dfrac{5}{4}\) ✓</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('explog')">← Exponential &amp; Log</button>
+        <button class="page-nav-btn next" onclick="goTo('practice')">Practice Problems →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ PRACTICE ═══════════════════════════ -->
+    <div class="page" id="page-practice">
+      <div class="page-hero">
+        <div class="page-hero-label">Mixed Practice</div>
+        <div class="page-hero-title">Practice Problems</div>
+        <div class="page-hero-sub">One problem per function type, mixed order. Attempt before expanding the solution.</div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">Q1</div><div class="level-info"><div class="level-title">Linear</div><div class="level-sub">Least squares</div></div></div>
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">1</div>
+          <div><div class="q-text">Three data points \((0,1),(1,3),(2,4)\). Find the least-squares regression line.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(n=3,\;\sum x=3,\;\sum y=8,\;\sum x^2=5,\;\sum xy=0(1)+1(3)+2(4)=11\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(m=\dfrac{3(11)-3(8)}{3(5)-9}=\dfrac{33-24}{15-9}=\dfrac{9}{6}=1.5\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(c=\bar y-m\bar x=\tfrac{8}{3}-1.5(1)=2.667-1.5=1.167\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(y = 1.5x + \tfrac{7}{6}\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">Q2</div><div class="level-info"><div class="level-title">Quadratic</div><div class="level-sub">Range of a quadratic</div></div></div>
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">2</div>
+          <div><div class="q-text">Find the range of \(f(x)=-2x^2+4x+1\). For what \(x\) is the function positive?</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Vertex: \(h=-4/(2\times-2)=1\). \(k=f(1)=-2+4+1=3\). Opens downward (\(a=-2\)), so max is 3.</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Range: \((-\infty,\,3]\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Roots: \(x=\dfrac{-4\pm\sqrt{16+8}}{-4}=\dfrac{-4\pm\sqrt{24}}{-4}=1\mp\dfrac{\sqrt{6}}{2}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">Positive for \(1-\dfrac{\sqrt{6}}{2} < x < 1+\dfrac{\sqrt{6}}{2}\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> Range \((-\infty,3]\). Positive for \(x\in\!\left(1-\tfrac{\sqrt6}{2},\;1+\tfrac{\sqrt6}{2}\right)\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">Q3</div><div class="level-info"><div class="level-title">Polynomial</div><div class="level-sub">Factor theorem application</div></div></div>
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">3</div>
+          <div><div class="q-text">Given \(P(x)=x^3+2x^2-5x-6\), show \((x+1)\) is a factor and fully factorise.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">\(P(-1)=-1+2+5-6=0\) ✓</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">Synthetic division: \(1,2,-5,-6\) by \(-1\) → \(1,1,-6,0\). Quotient: \(x^2+x-6\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(x^2+x-6=(x+3)(x-2)\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \((x+1)(x+3)(x-2)\); roots \(x=-1,-3,2\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">Q4</div><div class="level-info"><div class="level-title">Rational</div><div class="level-sub">Partial fractions</div></div></div>
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">4</div>
+          <div><div class="q-text">Express \(\dfrac{2x^2+3}{(x^2+1)(x-1)}\) in partial fractions.</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Form: \(\dfrac{Ax+B}{x^2+1}+\dfrac{C}{x-1}\). Multiply: \(2x^2+3=(Ax+B)(x-1)+C(x^2+1)\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(x=1\): \(5=2C\Rightarrow C=\tfrac{5}{2}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Compare \(x^2\): \(2=A+C\Rightarrow A=-\tfrac{1}{2}\). Compare constant: \(3=-B+C\Rightarrow B=C-3=\tfrac{-1}{2}\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(\dfrac{-\frac{1}{2}x-\frac{1}{2}}{x^2+1}+\dfrac{\frac{5}{2}}{x-1}\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">Q5</div><div class="level-info"><div class="level-title">Circular</div><div class="level-sub">Solve trig equation</div></div></div>
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">5</div>
+          <div><div class="q-text">Solve \(2\sin^2\theta - \sin\theta - 1 = 0\) for \(\theta \in [0,2\pi)\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Let \(u=\sin\theta\): \(2u^2-u-1=0\Rightarrow(2u+1)(u-1)=0\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(u=1\Rightarrow\sin\theta=1\Rightarrow\theta=\pi/2\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(u=-\tfrac{1}{2}\Rightarrow\theta=\pi+\pi/6=7\pi/6\) and \(\theta=2\pi-\pi/6=11\pi/6\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(\theta = \dfrac{\pi}{2},\;\dfrac{7\pi}{6},\;\dfrac{11\pi}{6}\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">Q6</div><div class="level-info"><div class="level-title">Exponential</div><div class="level-sub">Solve log equation</div></div></div>
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">6</div>
+          <div><div class="q-text">Solve \(\ln(x+3)+\ln(x-1)=\ln(x+7)\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Combine: \(\ln[(x+3)(x-1)]=\ln(x+7)\Rightarrow(x+3)(x-1)=x+7\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(x^2+2x-3=x+7\Rightarrow x^2+x-10=0\Rightarrow x=\dfrac{-1\pm\sqrt{41}}{2}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">Check domains: need \(x+3>0,\,x-1>0,\,x+7>0\Rightarrow x>1\). Only \(x=\dfrac{-1+\sqrt{41}}{2}\approx2.70\) is valid.</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(x = \dfrac{-1+\sqrt{41}}{2}\)</div>
+        </div>
+      </div>
+
+      <div class="level-divider"><div class="level-badge">Q7</div><div class="level-info"><div class="level-title">Hyperbolic</div><div class="level-sub">Solve hyperbolic equation</div></div></div>
+      <div class="q-card">
+        <div class="q-head" onclick="toggleQ(this)">
+          <div class="q-num">7</div>
+          <div><div class="q-text">Solve \(2\cosh^2 x - 5\sinh x - 5 = 0\).</div></div>
+          <div class="q-arrow">▶</div>
+        </div>
+        <div class="q-body">
+          <div class="step-list">
+            <div class="step-item"><div class="step-num-badge">1</div><div class="step-text">Use \(\cosh^2 x = 1+\sinh^2 x\): \(2(1+\sinh^2 x)-5\sinh x-5=0\)</div></div>
+            <div class="step-item"><div class="step-num-badge">2</div><div class="step-text">\(2\sinh^2 x-5\sinh x-3=0\Rightarrow(2\sinh x+1)(\sinh x-3)=0\)</div></div>
+            <div class="step-item"><div class="step-num-badge">3</div><div class="step-text">\(\sinh x=-\tfrac{1}{2}\Rightarrow x=\text{arcsinh}(-\tfrac{1}{2})=\ln(-\tfrac{1}{2}+\sqrt{\tfrac{5}{4}})=\ln\tfrac{\sqrt5-1}{2}\)</div></div>
+            <div class="step-item"><div class="step-num-badge">4</div><div class="step-text">\(\sinh x=3\Rightarrow x=\ln(3+\sqrt{10})\)</div></div>
+          </div>
+          <div class="answer-box"><span class="answer-label">ANSWER</span> \(x=\ln\!\left(\tfrac{\sqrt5-1}{2}\right)\) or \(x=\ln(3+\sqrt{10})\)</div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="goTo('hyperbolic')">← Hyperbolic</button>
+        <button class="page-nav-btn next" onclick="goTo('home')">Back to Overview →</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// ── NAVIGATION ──────────────────────────────────────────────────────
+const PAGES = ['home','linear','quadratic','polynomial','rational','circular','explog','hyperbolic','practice'];
+const PAGE_NAMES = {
+  home:'Overview', linear:'2.3a Linear', quadratic:'2.3b Quadratic',
+  polynomial:'2.4 Polynomial', rational:'2.5 Rational',
+  circular:'2.6 Circular', explog:'2.7a Exp & Log',
+  hyperbolic:'2.7b Hyperbolic', practice:'Practice'
+};
+let visited = new Set(['home']);
+
+function goTo(id) {
+  PAGES.forEach(p => document.getElementById('page-'+p).classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => {
+    l.classList.remove('active');
+    const fn = l.getAttribute('onclick')||'';
+    if (fn.includes("'"+id+"'")) l.classList.add('active');
+  });
+  document.getElementById('breadcrumbPage').textContent = PAGE_NAMES[id]||id;
+  visited.add(id);
+  document.getElementById('progressFill').style.width = Math.round(visited.size/PAGES.length*100)+'%';
+  window.scrollTo(0,0);
+  setTimeout(()=>renderMath(document.getElementById('page-'+id)),60);
+  setTimeout(()=>{ // Draw canvases on the newly shown page
+    if(id==='linear') drawLinear();
+    if(id==='quadratic') drawQuad();
+    if(id==='polynomial') drawPoly();
+    if(id==='rational') drawRat();
+    if(id==='circular') drawCirc();
+    if(id==='explog') drawExp();
+    if(id==='hyperbolic') drawHyp();
+  },80);
+}
+
+function toggleQ(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.q-arrow');
+  const open = body.classList.toggle('open');
+  arrow.classList.toggle('open', open);
+  if (open) setTimeout(()=>renderMath(body),30);
+}
+
+function expandAll() {
+  const pg = document.querySelector('.page.active');
+  pg.querySelectorAll('.q-body:not(.open)').forEach(b=>{
+    b.classList.add('open');
+    b.previousElementSibling.querySelector('.q-arrow').classList.add('open');
+  });
+  setTimeout(()=>renderMath(pg),30);
+}
+
+function renderMath(el) {
+  if (window.renderMathInElement) renderMathInElement(el, {
+    delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],
+    throwOnError:false
+  });
+}
+
+// ── CANVAS HELPERS ──────────────────────────────────────────────────
+function setupCanvas(id) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return null;
+  const dpr = window.devicePixelRatio||1;
+  const rect = canvas.getBoundingClientRect();
+  const W = Math.round(rect.width)||520, H = Math.round(rect.height)||260;
+  canvas.width = W*dpr; canvas.height = H*dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  return {ctx, W, H};
+}
+
+function drawAxes(ctx, W, H, xMin, xMax, yMin, yMax) {
+  const toX = x => (x-xMin)/(xMax-xMin)*W;
+  const toY = y => H - (y-yMin)/(yMax-yMin)*H;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fafaf8';
+  ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='#e8e6e0'; ctx.lineWidth=0.8;
+  for (let v=Math.ceil(xMin);v<=xMax;v++) { ctx.beginPath(); ctx.moveTo(toX(v),0); ctx.lineTo(toX(v),H); ctx.stroke(); }
+  for (let v=Math.ceil(yMin);v<=yMax;v++) { ctx.beginPath(); ctx.moveTo(0,toY(v)); ctx.lineTo(W,toY(v)); ctx.stroke(); }
+  // Axes
+  ctx.strokeStyle='#1B3A5C'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(toX(0),0); ctx.lineTo(toX(0),H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,toY(0)); ctx.lineTo(W,toY(0)); ctx.stroke();
+  return {toX,toY};
+}
+
+function plotFn(ctx, W, toX, toY, xMin, xMax, fn, color) {
+  const steps = W*2;
+  ctx.strokeStyle = color||'#FF3621'; ctx.lineWidth=2.5; ctx.lineJoin='round';
+  ctx.beginPath();
+  let first=true, prev=null;
+  for (let i=0;i<=steps;i++) {
+    const x = xMin + i*(xMax-xMin)/steps;
+    const y = fn(x);
+    if (!isFinite(y)||Math.abs(y)>1e4) { first=true; prev=null; continue; }
+    const px=toX(x), py=toY(y);
+    if (first) { ctx.moveTo(px,py); first=false; }
+    else {
+      if (prev && Math.abs(py-prev)>200) { ctx.moveTo(px,py); }
+      else ctx.lineTo(px,py);
+    }
+    prev=py;
+  }
+  ctx.stroke();
+}
+
+// ── DIAGRAM DRAW FUNCTIONS ──────────────────────────────────────────
+function drawLinear() {
+  const m=parseFloat(document.getElementById('lm').value);
+  const c=parseFloat(document.getElementById('lc').value);
+  document.getElementById('lmv').textContent=m.toFixed(1);
+  document.getElementById('lcv').textContent=c.toFixed(1);
+  const r=setupCanvas('canvasLinear'); if(!r) return;
+  const {ctx,W,H}=r;
+  const {toX,toY}=drawAxes(ctx,W,H,-5,5,-5,5);
+  plotFn(ctx,W,toX,toY,-5,5,x=>m*x+c,'#FF3621');
+  // Mark y-intercept
+  ctx.fillStyle='#1B3A5C'; ctx.beginPath(); ctx.arc(toX(0),toY(c),4,0,Math.PI*2); ctx.fill();
+}
+
+function drawQuad() {
+  const a=parseFloat(document.getElementById('qa').value)||0.01;
+  const b=parseFloat(document.getElementById('qb').value);
+  const c=parseFloat(document.getElementById('qc').value);
+  document.getElementById('qav').textContent=a.toFixed(1);
+  document.getElementById('qbv').textContent=b.toFixed(1);
+  document.getElementById('qcv').textContent=c.toFixed(1);
+  const r=setupCanvas('canvasQuad'); if(!r) return;
+  const {ctx,W,H}=r;
+  const h=-b/(2*a), k=a*h*h+b*h+c;
+  const {toX,toY}=drawAxes(ctx,W,H,-5,5,Math.min(-5,k-1),Math.max(5,k+1));
+  plotFn(ctx,W,toX,toY,-5,5,x=>a*x*x+b*x+c,'#FF3621');
+  ctx.fillStyle='#1B3A5C'; ctx.beginPath(); ctx.arc(toX(h),toY(k),5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#1B3A5C'; ctx.font='11px DM Sans,sans-serif';
+  ctx.fillText(`V(${h.toFixed(1)},${k.toFixed(1)})`,toX(h)+7,toY(k)-6);
+}
+
+function drawPoly() {
+  const b=parseFloat(document.getElementById('pb').value);
+  const c=parseFloat(document.getElementById('pc').value);
+  const d=parseFloat(document.getElementById('pd').value);
+  document.getElementById('pbv').textContent=b.toFixed(1);
+  document.getElementById('pcv').textContent=c.toFixed(1);
+  document.getElementById('pdv').textContent=d.toFixed(1);
+  const r=setupCanvas('canvasPoly'); if(!r) return;
+  const {ctx,W,H}=r;
+  const {toX,toY}=drawAxes(ctx,W,H,-3,3,-6,6);
+  plotFn(ctx,W,toX,toY,-3,3,x=>x*x*x+b*x*x+c*x+d,'#FF3621');
+}
+
+function drawRat() {
+  const a=parseFloat(document.getElementById('ra').value);
+  const b=parseFloat(document.getElementById('rb').value);
+  const c=parseFloat(document.getElementById('rc').value)||0.01;
+  const d=parseFloat(document.getElementById('rd').value);
+  document.getElementById('rav').textContent=a.toFixed(1);
+  document.getElementById('rbv').textContent=b.toFixed(1);
+  document.getElementById('rcv').textContent=c.toFixed(1);
+  document.getElementById('rdv').textContent=d.toFixed(1);
+  const r=setupCanvas('canvasRat'); if(!r) return;
+  const {ctx,W,H}=r;
+  const {toX,toY}=drawAxes(ctx,W,H,-6,6,-5,5);
+  // Vertical asymptote
+  const vA=-d/c;
+  ctx.strokeStyle='#1B3A5C'; ctx.lineWidth=1; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(toX(vA),0); ctx.lineTo(toX(vA),H); ctx.stroke();
+  // Horizontal asymptote
+  const hA=a/c;
+  ctx.beginPath(); ctx.moveTo(0,toY(hA)); ctx.lineTo(W,toY(hA)); ctx.stroke();
+  ctx.setLineDash([]);
+  plotFn(ctx,W,toX,toY,-6,6,x=>{
+    const den=c*x+d; if(Math.abs(den)<0.01) return NaN; return (a*x+b)/den;
+  },'#FF3621');
+}
+
+function drawCirc() {
+  const A=parseFloat(document.getElementById('ca').value);
+  const w=parseFloat(document.getElementById('cw').value);
+  const p=parseFloat(document.getElementById('cp').value);
+  document.getElementById('cav').textContent=A.toFixed(1);
+  document.getElementById('cwv').textContent=w.toFixed(1);
+  document.getElementById('cpv').textContent=p.toFixed(1);
+  const r=setupCanvas('canvasCirc'); if(!r) return;
+  const {ctx,W,H}=r;
+  const {toX,toY}=drawAxes(ctx,W,H,-Math.PI*2,Math.PI*2,-2.5,2.5);
+  // Reference sin
+  plotFn(ctx,W,toX,toY,-Math.PI*2,Math.PI*2,x=>Math.sin(x),'#c5ddf5');
+  plotFn(ctx,W,toX,toY,-Math.PI*2,Math.PI*2,x=>A*Math.sin(w*x+p),'#FF3621');
+  // Period marker
+  const T=2*Math.PI/w;
+  ctx.strokeStyle='#1B3A5C'; ctx.lineWidth=1; ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.moveTo(toX(T),toY(0)-10); ctx.lineTo(toX(T),toY(0)+10); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#1B3A5C'; ctx.font='10px DM Sans,sans-serif';
+  ctx.fillText('T',toX(T)+4,toY(0)-12);
+}
+
+function drawExp() {
+  const A=parseFloat(document.getElementById('ea').value);
+  const k=parseFloat(document.getElementById('ek').value);
+  document.getElementById('eav').textContent=A.toFixed(1);
+  document.getElementById('ekv').textContent=k.toFixed(1);
+  const r=setupCanvas('canvasExp'); if(!r) return;
+  const {ctx,W,H}=r;
+  const {toX,toY}=drawAxes(ctx,W,H,-5,5,-1,6);
+  // Reference e^x
+  plotFn(ctx,W,toX,toY,-5,5,x=>Math.exp(x),'#c5ddf5');
+  plotFn(ctx,W,toX,toY,-5,5,x=>A*Math.exp(k*x),'#FF3621');
+  // Asymptote y=0 already drawn as x-axis
+}
+
+function drawHyp() {
+  const fn=document.getElementById('hypFunc').value;
+  const a=parseFloat(document.getElementById('ha').value);
+  document.getElementById('hav').textContent=a.toFixed(1);
+  const r=setupCanvas('canvasHyp'); if(!r) return;
+  const {ctx,W,H}=r;
+  const {toX,toY}=drawAxes(ctx,W,H,-3,3,-4,4);
+  const funcs={sinh:x=>Math.sinh(a*x), cosh:x=>Math.cosh(a*x), tanh:x=>Math.tanh(a*x)};
+  // Draw reference
+  const refs={sinh:x=>Math.sinh(x), cosh:x=>Math.cosh(x), tanh:x=>Math.tanh(x)};
+  plotFn(ctx,W,toX,toY,-3,3,refs[fn],'#c5ddf5');
+  plotFn(ctx,W,toX,toY,-3,3,funcs[fn],'#FF3621');
+  if(fn==='tanh'){
+    ctx.strokeStyle='#e8e6e0'; ctx.lineWidth=1; ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(0,toY(1));ctx.lineTo(W,toY(1));ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,toY(-1));ctx.lineTo(W,toY(-1));ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+// Init
+document.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>renderMath(document.body),300);
+  drawLinear();
+});
+</script>
+</body>
+</html>

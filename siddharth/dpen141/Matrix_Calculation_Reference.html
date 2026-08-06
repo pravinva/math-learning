@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matrix Calculation Reference — DPEN141</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}]})"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+    --green-bg:#eaf7ef;
+    --amber:#b45309;
+    --amber-bg:#fff7ed;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:26px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:720px; line-height:1.55; }
+
+  .howto{
+    max-width:900px;
+    margin:20px auto 0;
+    padding:14px 20px;
+    background:#fff7f5;
+    border-left:4px solid var(--red);
+    border-radius:6px;
+    font-size:14.5px;
+    line-height:1.6;
+  }
+  .howto strong{ color:var(--navy); }
+
+  nav.toc{
+    max-width:900px;
+    margin:20px auto 0;
+    padding:14px 22px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  nav.toc a{
+    color:var(--navy);
+    text-decoration:none;
+    font-weight:600;
+    font-size:13.5px;
+    margin-right:14px;
+    display:inline-block;
+    margin-bottom:4px;
+  }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:900px; margin:26px auto 0; padding:0 24px; }
+
+  section.topic{ margin-bottom:48px; scroll-margin-top:16px; }
+
+  .section-title{
+    font-size:21px;
+    font-weight:700;
+    margin:0 0 6px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--navy);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    background:rgba(255,54,33,0.08);
+    border-radius:4px;
+    padding:3px 9px;
+  }
+
+  .prose{ font-size:15.5px; line-height:1.6; margin:12px 0; }
+  .prose strong{ color:var(--navy); }
+
+  .formula-box{
+    margin:14px 0;
+    padding:14px 18px;
+    background:var(--blue-box);
+    border-left:4px solid var(--navy);
+    border-radius:6px;
+    font-size:15px;
+    line-height:1.7;
+  }
+  .formula-box .box-label,
+  .example-box .box-label,
+  .practice-box .box-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:6px;
+  }
+  .formula-box .box-label{ color:var(--navy); }
+
+  .example-box{
+    margin:14px 0;
+    padding:14px 18px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-left:4px solid var(--green);
+    border-radius:6px;
+    font-size:15px;
+    line-height:1.65;
+  }
+  .example-box .box-label{ color:var(--green); }
+  .step{ margin:6px 0 6px 0; }
+  .step-num{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    font-weight:700;
+    color:var(--muted);
+    margin-right:4px;
+  }
+  .answer{
+    margin-top:10px;
+    padding:8px 12px;
+    background:var(--green-bg);
+    border-radius:4px;
+    font-weight:600;
+    color:var(--green);
+  }
+
+  .practice-box{
+    margin:14px 0;
+    padding:14px 18px;
+    background:var(--amber-bg);
+    border:1px solid #fdba74;
+    border-left:4px solid var(--amber);
+    border-radius:6px;
+    font-size:15px;
+    line-height:1.65;
+  }
+  .practice-box .box-label{ color:var(--amber); }
+
+  .toggle-btn{
+    font-family:'Barlow',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    margin-top:10px;
+    padding:7px 14px;
+    border-radius:5px;
+    border:1.5px solid var(--amber);
+    background:#fff;
+    color:var(--amber);
+    cursor:pointer;
+  }
+  .toggle-btn:hover{ background:var(--amber); color:#fff; }
+  .hidden-sol{ display:none; margin-top:12px; padding-top:10px; border-top:1px dashed #fdba74; }
+  .hidden-sol.open{ display:block; }
+
+  .quick-strip{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:10px;
+    margin:14px 0 8px;
+  }
+  .quick-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:12px 14px;
+    font-size:13.5px;
+    line-height:1.5;
+  }
+  .quick-card strong{
+    display:block;
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:4px;
+  }
+
+  footer{
+    max-width:900px;
+    margin:10px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'Roboto Mono',monospace;
+  }
+  footer a{ color:var(--navy); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">DPEN141 · Matrix Sense</div>
+  <h1>Matrix Calculation Reference</h1>
+  <p>Drill sheet for the calculation moves you need cold: summation &amp; Kronecker delta, determinants, Gauss, inverses, Cramer, eigenvalues/vectors, and diagonalisation. One worked example each, then a practice problem with the solution hidden.</p>
+</header>
+
+<div class="howto">
+  <strong>How to use this:</strong> Cover the green worked example with your hand, attempt the amber practice first if you can, then study the worked solution. Re-do each practice on paper until you can finish without looking. This is a calculation gym — not a full theory lesson.
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Jump to</div>
+  <a href="#quick">Quick sheet</a>
+  <a href="#sum">Summation</a>
+  <a href="#dbl">Double sums</a>
+  <a href="#delta">Kronecker δ</a>
+  <a href="#sift">δ sifting</a>
+  <a href="#det2">Det 2×2</a>
+  <a href="#det3">Det 3×3</a>
+  <a href="#gauss">Gauss / RREF</a>
+  <a href="#inverse">Inverse</a>
+  <a href="#cramer">Cramer</a>
+  <a href="#eigen">Eigenvalues</a>
+  <a href="#evec">Eigenvectors</a>
+  <a href="#diag">Diagonalise</a>
+</nav>
+
+<main>
+
+<!-- QUICK -->
+<section class="topic" id="quick">
+  <div class="section-title"><span class="tag">Cheat</span> Quick formula strip</div>
+  <div class="quick-strip">
+    <div class="quick-card"><strong>Σ formulas</strong>$\sum k=\frac{n(n+1)}{2}$, $\sum k^2=\frac{n(n+1)(2n+1)}{6}$, $\sum k^3=\bigl(\frac{n(n+1)}{2}\bigr)^2$</div>
+    <div class="quick-card"><strong>Double sum</strong>Inside-out; separates if $a_{ij}=f(i)g(j)$.</div>
+    <div class="quick-card"><strong>Kronecker δ</strong>$\delta_{ij}=1$ if $i=j$, else $0$. $I_{ij}=\delta_{ij}$.</div>
+    <div class="quick-card"><strong>δ sifting</strong>$\sum_i\delta_{ij}a_i=a_j$; $\sum_i\sum_j\delta_{ij}a_{ij}=\sum_i a_{ii}$</div>
+    <div class="quick-card"><strong>Det 2×2</strong>$ad-bc$ for $\begin{pmatrix}a&b\\c&d\end{pmatrix}$</div>
+    <div class="quick-card"><strong>Det 3×3</strong>Expand along a row/column (cofactors), or Sarrus for practice.</div>
+    <div class="quick-card"><strong>Inverse 2×2</strong>$\dfrac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}$</div>
+    <div class="quick-card"><strong>Cramer</strong>$x_i=\det(A_i)/\det(A)$ — replace column $i$ by $\mathbf{b}$.</div>
+    <div class="quick-card"><strong>Eigenvalues</strong>$\det(A-\lambda I)=0$</div>
+    <div class="quick-card"><strong>Eigenvectors</strong>$(A-\lambda I)\mathbf{v}=\mathbf{0}$, $\mathbf{v}\neq\mathbf{0}$</div>
+    <div class="quick-card"><strong>Diagonalise</strong>$A=PDP^{-1}$ with $D=\mathrm{diag}(\lambda_i)$, columns of $P$ = eigenvectors</div>
+    <div class="quick-card"><strong>Gauss</strong>$[A|\mathbf{b}]\xrightarrow{\text{row ops}}[I|\mathbf{x}]$ or REF then back-sub</div>
+  </div>
+</section>
+
+<!-- SUMMATION -->
+<section class="topic" id="sum">
+  <div class="section-title"><span class="tag">0a</span> Summation formulas</div>
+  <div class="formula-box">
+    <span class="box-label">Formulas (sums from $k=1$ to $n$)</span>
+    $$\sum_{k=1}^{n}c=nc,\qquad
+    \sum_{k=1}^{n}k=\dfrac{n(n+1)}{2},\qquad
+    \sum_{k=1}^{n}k^2=\dfrac{n(n+1)(2n+1)}{6},\qquad
+    \sum_{k=1}^{n}k^3=\left(\dfrac{n(n+1)}{2}\right)^2.$$
+    Linearity: $\sum(af(k)+bg(k))=a\sum f(k)+b\sum g(k)$. Expand polynomials first, then split.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\displaystyle\sum_{k=1}^{10}(2k^2+3k)$.</p>
+    <p class="step"><span class="step-num">01</span>$=2\sum k^2+3\sum k=2\cdot\dfrac{10\cdot11\cdot21}{6}+3\cdot\dfrac{10\cdot11}{2}$.</p>
+    <p class="step"><span class="step-num">02</span>$=2\cdot385+3\cdot55=770+165=935$.</p>
+    <div class="answer">Answer: $935$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Evaluate $\displaystyle\sum_{k=1}^{5}(k+1)^2$ by expanding, then using the formulas.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$(k+1)^2=k^2+2k+1$. So $\sum(k^2+2k+1)=\sum k^2+2\sum k+\sum 1=\dfrac{5\cdot6\cdot11}{6}+2\cdot\dfrac{5\cdot6}{2}+5\cdot1=55+30+5=90$.</p>
+      <div class="answer">Answer: $90$</div>
+    </div>
+  </div>
+</section>
+
+<!-- DOUBLE SUMS -->
+<section class="topic" id="dbl">
+  <div class="section-title"><span class="tag">0b</span> Double summation</div>
+  <div class="formula-box">
+    <span class="box-label">Method</span>
+    $\displaystyle\sum_{i=1}^{m}\sum_{j=1}^{n}a_{ij}$: for each fixed $i$, sum over $j$, then sum those totals over $i$. Order of $\Sigma$ can be swapped for finite sums.
+    <p style="margin:8px 0 0;">Separates when $a_{ij}=f(i)g(j)$:
+    $$\sum_i\sum_j f(i)g(j)=\Bigl(\sum_i f(i)\Bigr)\Bigl(\sum_j g(j)\Bigr).$$</p>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Compute $\displaystyle\sum_{i=1}^{2}\sum_{j=1}^{3}(i+j)$.</p>
+    <p class="step"><span class="step-num">01</span>Inner ($i=1$): $(1+1)+(1+2)+(1+3)=2+3+4=9$.</p>
+    <p class="step"><span class="step-num">02</span>Inner ($i=2$): $(2+1)+(2+2)+(2+3)=3+4+5=12$.</p>
+    <p class="step"><span class="step-num">03</span>Outer: $9+12=21$. (Or: $\sum_i\sum_j i+\sum_i\sum_j j=3\sum_i i+2\sum_j j=3(1+2)+2(1+2+3)=9+12=21$.)</p>
+    <div class="answer">Answer: $21$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Evaluate $\displaystyle\sum_{i=1}^{3}\sum_{j=1}^{2}ij$ (use separation).</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$ij$ factors: $\bigl(\sum_{i=1}^{3}i\bigr)\bigl(\sum_{j=1}^{2}j\bigr)=(1+2+3)(1+2)=6\cdot3=18$.</p>
+      <div class="answer">Answer: $18$</div>
+    </div>
+  </div>
+</section>
+
+<!-- KRONECKER -->
+<section class="topic" id="delta">
+  <div class="section-title"><span class="tag">0c</span> Kronecker delta</div>
+  <div class="formula-box">
+    <span class="box-label">Definition</span>
+    $$\delta_{ij}=\begin{cases}1&amp;\text{if }i=j,\\0&amp;\text{if }i\neq j.\end{cases}$$
+    Identity matrix: $I_{ij}=\delta_{ij}$. Symmetry: $\delta_{ij}=\delta_{ji}$.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\delta_{22}$, $\delta_{13}$, and $\displaystyle\sum_{i=1}^{3}\sum_{j=1}^{3}\delta_{ij}$.</p>
+    <p class="step"><span class="step-num">01</span>$\delta_{22}=1$ (equal indices). $\delta_{13}=0$ (unequal).</p>
+    <p class="step"><span class="step-num">02</span>Double sum of $\delta_{ij}$ over a $3\times3$ grid = number of diagonal $1$s $=3$.</p>
+    <div class="answer">Answer: $1$, $0$, and $3$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>For $A=\begin{pmatrix}2&amp;3&amp;1\\4&amp;5&amp;6\\7&amp;8&amp;9\end{pmatrix}$, compute $\displaystyle\sum_{i=1}^{3}\sum_{j=1}^{3}A_{ij}\delta_{ij}$.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$\delta_{ij}$ kills off-diagonal terms: sum reduces to $A_{11}+A_{22}+A_{33}=2+5+9=16$ (the trace).</p>
+      <div class="answer">Answer: $16$</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIFTING -->
+<section class="topic" id="sift">
+  <div class="section-title"><span class="tag">0d</span> Delta sifting / contraction</div>
+  <div class="formula-box">
+    <span class="box-label">Key identities</span>
+    $$\sum_{i}\delta_{ij}a_i=a_j,\qquad
+    \sum_{i}\sum_{j}\delta_{ij}a_ia_j=\sum_{i}a_i^2,\qquad
+    \sum_{j}\delta_{ij}A_{jk}=A_{ik}\quad(IA=A).$$
+    The delta “picks” the matching index and deletes every other term.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Let $\mathbf{a}=(3,5,7)$. Find $\displaystyle\sum_{i=1}^{3}\delta_{i2}a_i$.</p>
+    <p class="step"><span class="step-num">01</span>Only $i=2$ survives: $\delta_{12}a_1+\delta_{22}a_2+\delta_{32}a_3=0+5+0=5=a_2$.</p>
+    <div class="answer">Answer: $5$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Compute $\displaystyle\sum_{i=1}^{2}\sum_{j=1}^{2}\delta_{ij}a_ia_j$ for $a_1=2$, $a_2=-3$.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>Collapses to $\sum_i a_i^2=2^2+(-3)^2=4+9=13$.</p>
+      <div class="answer">Answer: $13$</div>
+    </div>
+  </div>
+</section>
+
+<!-- DET 2x2 -->
+<section class="topic" id="det2">
+  <div class="section-title"><span class="tag">1</span> Determinant — 2×2</div>
+  <div class="formula-box">
+    <span class="box-label">Formula</span>
+    $$\det\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc.$$
+    Singular (no inverse) iff $\det=0$.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Compute $\det\begin{pmatrix}3&5\\2&7\end{pmatrix}$.</p>
+    <p class="step"><span class="step-num">01</span>$ad-bc=3\cdot7-5\cdot2=21-10=11$.</p>
+    <div class="answer">Answer: $11$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Compute $\det\begin{pmatrix}4&-1\\6&2\end{pmatrix}$.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$4\cdot2-(-1)\cdot6=8+6=14$.</p>
+      <div class="answer">Answer: $14$</div>
+    </div>
+  </div>
+</section>
+
+<!-- DET 3x3 -->
+<section class="topic" id="det3">
+  <div class="section-title"><span class="tag">2</span> Determinant — 3×3 (cofactor)</div>
+  <div class="formula-box">
+    <span class="box-label">Method</span>
+    Expand along row 1:
+    $$\det A=a_{11}C_{11}+a_{12}C_{12}+a_{13}C_{13},\quad C_{ij}=(-1)^{i+j}M_{ij}.$$
+    Signs: $\begin{pmatrix}+&-&+\\-&+&-\\+&-&+\end{pmatrix}$. Pick a row/column with zeros if you can.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>$\det\begin{pmatrix}1&2&3\\0&4&5\\1&0&6\end{pmatrix}$.</p>
+    <p class="step"><span class="step-num">01</span>Expand row 1: $1\cdot\det\begin{pmatrix}4&5\\0&6\end{pmatrix}-2\cdot\det\begin{pmatrix}0&5\\1&6\end{pmatrix}+3\cdot\det\begin{pmatrix}0&4\\1&0\end{pmatrix}$.</p>
+    <p class="step"><span class="step-num">02</span>$1(24-0)-2(0-5)+3(0-4)=24+10-12=22$.</p>
+    <div class="answer">Answer: $22$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>$\det\begin{pmatrix}2&0&1\\1&3&0\\0&2&4\end{pmatrix}$.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>Expand row 1: $2\det\begin{pmatrix}3&0\\2&4\end{pmatrix}-0+1\det\begin{pmatrix}1&3\\0&2\end{pmatrix}=2(12-0)+(2-0)=24+2=26$.</p>
+      <div class="answer">Answer: $26$</div>
+    </div>
+  </div>
+</section>
+
+<!-- GAUSS -->
+<section class="topic" id="gauss">
+  <div class="section-title"><span class="tag">3</span> Gaussian elimination (solve $A\mathbf{x}=\mathbf{b}$)</div>
+  <div class="formula-box">
+    <span class="box-label">Method</span>
+    Form augmented matrix $[A|\mathbf{b}]$. Allowed ops: swap rows; scale a row by $k\neq0$; add multiple of one row to another. Get to upper triangular (REF), then back-substitute. Or continue to RREF $[I|\mathbf{x}]$ and read $\mathbf{x}$ off.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Solve $\begin{cases}x+y=5\\2x-y=1\end{cases}$.</p>
+    <p class="step"><span class="step-num">01</span>$\begin{bmatrix}1&1&|&5\\2&-1&|&1\end{bmatrix}$. $R_2\leftarrow R_2-2R_1$: $\begin{bmatrix}1&1&|&5\\0&-3&|&-9\end{bmatrix}$.</p>
+    <p class="step"><span class="step-num">02</span>$R_2\leftarrow R_2/(-3)$: $\begin{bmatrix}1&1&|&5\\0&1&|&3\end{bmatrix}$. Then $R_1\leftarrow R_1-R_2$: $\begin{bmatrix}1&0&|&2\\0&1&|&3\end{bmatrix}$.</p>
+    <div class="answer">Answer: $x=2,\ y=3$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Solve $\begin{cases}2x+y=7\\x-y=2\end{cases}$ by Gauss.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$\begin{bmatrix}2&1&|&7\\1&-1&|&2\end{bmatrix}$. Swap for pivot ease: $\begin{bmatrix}1&-1&|&2\\2&1&|&7\end{bmatrix}$. $R_2\leftarrow R_2-2R_1$: $\begin{bmatrix}1&-1&|&2\\0&3&|&3\end{bmatrix}$. $R_2\leftarrow R_2/3$: $y=1$. Back-sub: $x-1=2\Rightarrow x=3$.</p>
+      <div class="answer">Answer: $x=3,\ y=1$</div>
+    </div>
+  </div>
+</section>
+
+<!-- INVERSE -->
+<section class="topic" id="inverse">
+  <div class="section-title"><span class="tag">4</span> Matrix inverse</div>
+  <div class="formula-box">
+    <span class="box-label">Formulas / method</span>
+    <p><strong>2×2:</strong> if $\det A=ad-bc\neq0$, then
+    $$A^{-1}=\dfrac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}.$$</p>
+    <p><strong>Any $n$:</strong> row-reduce $[A|I]$ to $[I|A^{-1}]$. (Fails iff a zero row appears in the left block — singular.)</p>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example (2×2 formula)</span>
+    <p>$A=\begin{pmatrix}2&1\\5&3\end{pmatrix}$. $\det=6-5=1$.</p>
+    <p class="step"><span class="step-num">01</span>$A^{-1}=\dfrac{1}{1}\begin{pmatrix}3&-1\\-5&2\end{pmatrix}=\begin{pmatrix}3&-1\\-5&2\end{pmatrix}$.</p>
+    <p class="step"><span class="step-num">02</span>Check: $A A^{-1}=\begin{pmatrix}2&1\\5&3\end{pmatrix}\begin{pmatrix}3&-1\\-5&2\end{pmatrix}=\begin{pmatrix}1&0\\0&1\end{pmatrix}$.</p>
+    <div class="answer">Answer: $\begin{pmatrix}3&-1\\-5&2\end{pmatrix}$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Find $A^{-1}$ for $A=\begin{pmatrix}1&2\\3&5\end{pmatrix}$.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$\det=5-6=-1$. $A^{-1}=\dfrac{1}{-1}\begin{pmatrix}5&-2\\-3&1\end{pmatrix}=\begin{pmatrix}-5&2\\3&-1\end{pmatrix}$.</p>
+      <div class="answer">Answer: $\begin{pmatrix}-5&2\\3&-1\end{pmatrix}$</div>
+    </div>
+  </div>
+</section>
+
+<!-- CRAMER -->
+<section class="topic" id="cramer">
+  <div class="section-title"><span class="tag">5</span> Cramer's rule</div>
+  <div class="formula-box">
+    <span class="box-label">Formula</span>
+    For $A\mathbf{x}=\mathbf{b}$ with $\det A\neq0$:
+    $$x_i=\dfrac{\det A_i}{\det A},$$
+    where $A_i$ is $A$ with column $i$ replaced by $\mathbf{b}$. Best for $2\times2$ / small $3\times3$ exam questions.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>$\begin{pmatrix}2&1\\1&3\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}5\\5\end{pmatrix}$.</p>
+    <p class="step"><span class="step-num">01</span>$\det A=6-1=5$.</p>
+    <p class="step"><span class="step-num">02</span>$A_x=\begin{pmatrix}5&1\\5&3\end{pmatrix}$, $\det=15-5=10$ $\Rightarrow x=10/5=2$.</p>
+    <p class="step"><span class="step-num">03</span>$A_y=\begin{pmatrix}2&5\\1&5\end{pmatrix}$, $\det=10-5=5$ $\Rightarrow y=5/5=1$.</p>
+    <div class="answer">Answer: $x=2,\ y=1$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Use Cramer on $\begin{pmatrix}3&1\\2&4\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}7\\10\end{pmatrix}$.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$\det A=12-2=10$. $A_x=\begin{pmatrix}7&1\\10&4\end{pmatrix}$, $\det=28-10=18$ $\Rightarrow x=1.8=\tfrac{9}{5}$. $A_y=\begin{pmatrix}3&7\\2&10\end{pmatrix}$, $\det=30-14=16$ $\Rightarrow y=1.6=\tfrac{8}{5}$.</p>
+      <div class="answer">Answer: $x=\dfrac{9}{5},\ y=\dfrac{8}{5}$</div>
+    </div>
+  </div>
+</section>
+
+<!-- EIGENVALUES -->
+<section class="topic" id="eigen">
+  <div class="section-title"><span class="tag">6</span> Eigenvalues</div>
+  <div class="formula-box">
+    <span class="box-label">Method</span>
+    Solve the characteristic equation
+    $$\det(A-\lambda I)=0.$$
+    Roots $\lambda$ are the eigenvalues. For $2\times2$, expand to a quadratic; factor or use quadratic formula.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>$A=\begin{pmatrix}4&1\\2&3\end{pmatrix}$.</p>
+    <p class="step"><span class="step-num">01</span>$A-\lambda I=\begin{pmatrix}4-\lambda&1\\2&3-\lambda\end{pmatrix}$.</p>
+    <p class="step"><span class="step-num">02</span>$\det=(4-\lambda)(3-\lambda)-2=\lambda^2-7\lambda+10=(\lambda-5)(\lambda-2)$.</p>
+    <div class="answer">Answer: $\lambda=5,\ \lambda=2$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Find eigenvalues of $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$\det\begin{pmatrix}2-\lambda&1\\1&2-\lambda\end{pmatrix}=(2-\lambda)^2-1=\lambda^2-4\lambda+3=(\lambda-3)(\lambda-1)$.</p>
+      <div class="answer">Answer: $\lambda=3,\ \lambda=1$</div>
+    </div>
+  </div>
+</section>
+
+<!-- EIGENVECTORS -->
+<section class="topic" id="evec">
+  <div class="section-title"><span class="tag">7</span> Eigenvectors</div>
+  <div class="formula-box">
+    <span class="box-label">Method</span>
+    For each $\lambda$, solve $(A-\lambda I)\mathbf{v}=\mathbf{0}$. Row-reduce; find a nonzero nullspace vector. Scale to a clean integer vector if possible. (Any nonzero multiple is also an eigenvector.)
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Continue $A=\begin{pmatrix}4&1\\2&3\end{pmatrix}$ with $\lambda=5$ and $\lambda=2$.</p>
+    <p class="step"><span class="step-num">01</span>$\lambda=5$: $A-5I=\begin{pmatrix}-1&1\\2&-2\end{pmatrix}$. Row 2 $= -2\times$ row 1. Equation: $-x+y=0\Rightarrow y=x$. Take $\mathbf{v}_1=\begin{pmatrix}1\\1\end{pmatrix}$.</p>
+    <p class="step"><span class="step-num">02</span>$\lambda=2$: $A-2I=\begin{pmatrix}2&1\\2&1\end{pmatrix}$. Equation: $2x+y=0\Rightarrow y=-2x$. Take $\mathbf{v}_2=\begin{pmatrix}1\\-2\end{pmatrix}$.</p>
+    <div class="answer">Answer: $\mathbf{v}_5=\begin{pmatrix}1\\1\end{pmatrix}$, $\mathbf{v}_2=\begin{pmatrix}1\\-2\end{pmatrix}$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>For $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$, find eigenvectors for $\lambda=3$ and $\lambda=1$.</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>$\lambda=3$: $A-3I=\begin{pmatrix}-1&1\\1&-1\end{pmatrix}\Rightarrow -x+y=0\Rightarrow \mathbf{v}_3=\begin{pmatrix}1\\1\end{pmatrix}$.</p>
+      <p>$\lambda=1$: $A-I=\begin{pmatrix}1&1\\1&1\end{pmatrix}\Rightarrow x+y=0\Rightarrow \mathbf{v}_1=\begin{pmatrix}1\\-1\end{pmatrix}$.</p>
+      <div class="answer">Answer: $\mathbf{v}_3=\begin{pmatrix}1\\1\end{pmatrix}$, $\mathbf{v}_1=\begin{pmatrix}1\\-1\end{pmatrix}$</div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGONALISE -->
+<section class="topic" id="diag">
+  <div class="section-title"><span class="tag">8</span> Diagonalisation</div>
+  <div class="formula-box">
+    <span class="box-label">Method</span>
+    If $A$ has $n$ linearly independent eigenvectors $\mathbf{v}_1,\ldots,\mathbf{v}_n$ with eigenvalues $\lambda_1,\ldots,\lambda_n$:
+    $$P=\begin{bmatrix}\mathbf{v}_1&\cdots&\mathbf{v}_n\end{bmatrix},\quad D=\mathrm{diag}(\lambda_1,\ldots,\lambda_n),\quad A=PDP^{-1}.$$
+    Check: $AP=PD$ (or compute $P^{-1}$ and verify $P^{-1}AP=D$).
+  </div>
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Diagonalise $A=\begin{pmatrix}4&1\\2&3\end{pmatrix}$ using the eigenpairs above.</p>
+    <p class="step"><span class="step-num">01</span>$P=\begin{pmatrix}1&1\\1&-2\end{pmatrix}$, $D=\begin{pmatrix}5&0\\0&2\end{pmatrix}$ (order must match columns).</p>
+    <p class="step"><span class="step-num">02</span>$\det P=-2-1=-3$. $P^{-1}=\dfrac{1}{-3}\begin{pmatrix}-2&-1\\-1&1\end{pmatrix}=\begin{pmatrix}\tfrac{2}{3}&\tfrac{1}{3}\\\tfrac{1}{3}&-\tfrac{1}{3}\end{pmatrix}$.</p>
+    <p class="step"><span class="step-num">03</span>Optional check: $PDP^{-1}$ recovers $A$, or verify $AP=PD$.</p>
+    <div class="answer">Answer: $P=\begin{pmatrix}1&1\\1&-2\end{pmatrix}$, $D=\begin{pmatrix}5&0\\0&2\end{pmatrix}$</div>
+  </div>
+  <div class="practice-box">
+    <span class="box-label">Practice — try first</span>
+    <p>Write $P$ and $D$ for $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$ (use your eigenvectors from §7).</p>
+    <button class="toggle-btn" data-toggle>Show solution</button>
+    <div class="hidden-sol" data-sol>
+      <p>With columns $\mathbf{v}_3,\mathbf{v}_1$: $P=\begin{pmatrix}1&1\\1&-1\end{pmatrix}$, $D=\begin{pmatrix}3&0\\0&1\end{pmatrix}$. ($\det P=-2\neq0$, so diagonalisable.)</p>
+      <div class="answer">Answer: $P=\begin{pmatrix}1&1\\1&-1\end{pmatrix}$, $D=\begin{pmatrix}3&0\\0&1\end{pmatrix}$</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Matrix Calculation Reference · DPEN141 ·
+  <a href="index.html">← Back to DPEN141</a>
+</footer>
+
+<script>
+document.querySelectorAll('[data-toggle]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const sol=btn.parentElement.querySelector('[data-sol]');
+    const open=sol.classList.toggle('open');
+    btn.textContent=open?'Hide solution':'Show solution';
+  });
+});
+</script>
+</body>
+</html>

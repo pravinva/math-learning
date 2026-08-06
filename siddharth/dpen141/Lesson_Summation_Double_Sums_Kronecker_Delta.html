@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: Summation Notation, Double Sums, and the Kronecker Delta</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+
+  header h1{
+    margin:0;
+    font-size:26px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+
+  header p{
+    margin:8px 0 0;
+    color:#c3ccdb;
+    font-size:15px;
+    max-width:680px;
+  }
+
+  .progress-wrap{
+    max-width:820px;
+    margin:22px auto 0;
+    padding:0 24px;
+  }
+
+  .progress-bar{
+    height:6px;
+    border-radius:3px;
+    background:rgba(255,255,255,0.15);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--red);
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    color:#9fb0c9;
+    margin-top:6px;
+  }
+
+  nav.toc{
+    max-width:820px;
+    margin:26px auto 0;
+    padding:16px 22px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  nav.toc ol{
+    margin:0;
+    padding-left:20px;
+    columns:2;
+    font-size:14px;
+    line-height:1.9;
+  }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{
+    max-width:820px;
+    margin:30px auto 0;
+    padding:0 24px;
+  }
+
+  section.topic{
+    margin-bottom:46px;
+  }
+
+  .section-title{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 6px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--navy);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    background:rgba(255,54,33,0.08);
+    border-radius:4px;
+    padding:3px 9px;
+  }
+
+  .prose{
+    font-size:16px;
+    line-height:1.65;
+    margin:16px 0;
+  }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0;
+    padding:16px 18px 18px;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+  .key-box{
+    background:#fff7f5;
+    border-left:4px solid var(--red);
+  }
+  .example-box{
+    background:#f7f9fc;
+    border-left:4px solid var(--navy);
+  }
+  .why-box{
+    background:var(--blue-box);
+    border-left:4px solid var(--navy);
+  }
+  .box-label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid #33415a;
+    border-radius:6px;
+    margin:18px 0;
+    box-shadow:0 1px 2px rgba(27,36,49,0.05);
+    overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+
+  .p-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:14px 20px 4px;
+  }
+  .p-num{
+    font-family:'Roboto Mono',monospace;
+    font-weight:500;
+    font-size:12.5px;
+    color:#33415a;
+    background:#eef1f6;
+    border-radius:4px;
+    padding:2px 8px;
+    flex-shrink:0;
+  }
+  .p-body{
+    padding:4px 20px 16px;
+    font-size:15.5px;
+    line-height:1.55;
+  }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    color:var(--navy);
+    background:#fff;
+    border:1.5px solid var(--navy);
+    border-radius:5px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+    border-top:1px dashed var(--line);
+  }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{
+    padding:14px 20px 18px;
+    background:#fbfcfe;
+    font-size:15px;
+    line-height:1.6;
+  }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:8px;
+    display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  .tutorial-tag{
+    display:inline-block;
+    font-family:'Roboto Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.05em;
+    color:#fff;
+    background:var(--green);
+    border-radius:4px;
+    padding:2px 8px;
+    margin-left:8px;
+  }
+
+  footer{
+    max-width:820px;
+    margin:10px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MATH141 &middot; Fundamentals</div>
+  <h1>Summation Notation, Double Sums, and the Kronecker Delta</h1>
+  <p>A from-scratch lesson on $\Sigma$-notation, nested double sums, and the Kronecker delta $\delta_{ij}$, built specifically to strengthen the exact concepts tested on your Week 2 tutorial sheet, ending with how all three connect directly to matrices, identity matrices, matrix multiplication, and dot products. Solutions stay hidden until you click. Problems marked <span class="tutorial-tag">TUTORIAL</span> mirror a specific tutorial question closely, on purpose, as direct reinforcement.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 47 practice solutions revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec1">Summation ($\Sigma$) notation</a></li>
+    <li><a href="#sec2">Properties of summation</a></li>
+    <li><a href="#sec3">Standard summation formulas</a></li>
+    <li><a href="#sec4">Double summation notation</a></li>
+    <li><a href="#sec5">The Kronecker delta</a></li>
+    <li><a href="#sec6">The delta's sifting property</a></li>
+    <li><a href="#sec7">Delta contraction in double sums</a></li>
+    <li><a href="#sec8">Applications to matrices and vectors</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> Summation ($\Sigma$) notation</div>
+  <div class="prose">
+    <p>Summation notation is just shorthand for writing out a long addition. $\displaystyle\sum_{k=1}^{n}a_k$ means "add up $a_k$ for every whole-number value of $k$ from $1$ to $n$." The letter $k$ is called the <strong>index of summation</strong>, the number below $\Sigma$ is where it starts, and the number above is where it stops (inclusive, both ends included).</p>
+    <p>The single most important thing to internalise early: the index letter is a <strong>dummy variable</strong>. It exists only inside the sum, to control which terms get added, and has no meaning or value outside it. Swapping $k$ for $i$, $a$, or any other letter changes nothing about the final number.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\sum_{k=1}^{n}a_k = a_1+a_2+a_3+\cdots+a_n$$</p>
+    <p>Two things worth being deliberate about: <strong>order of operations</strong> ($\Sigma$ binds only to what's written immediately after it, so $\sum_{k=1}^na_k+c$ means $\left(\sum_{k=1}^na_k\right)+c$, not $\sum_{k=1}^n(a_k+c)$, unless the $+c$ is explicitly inside brackets), and <strong>counting terms correctly</strong> (a sum from $k=m$ to $k=n$ has exactly $n-m+1$ terms, not $n-m$, an easy off-by-one mistake).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\displaystyle\sum_{k=1}^{4}k^2$.</p>
+    <p class="step">Write out every term, substituting $k=1,2,3,4$ in turn:</p>
+    <p class="step">$$\sum_{k=1}^{4}k^2 = 1^2+2^2+3^2+4^2 = 1+4+9+16 = 30.$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{a=1}^{3}(2a+1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Here the $+1$ is inside the brackets, so it's added inside every term: $(2(1)+1)+(2(2)+1)+(2(3)+1) = 3+5+7 = 15$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{a=1}^{3}2a+1$ (no brackets this time), and compare carefully with Practice 1.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Without brackets, $\Sigma$ only applies to the term written directly after it, here that's $2a$. The $+1$ sits outside the sum entirely:</p>
+      <p>$$\sum_{a=1}^{3}2a+1 = \left(\sum_{a=1}^{3}2a\right)+1 = (2+4+6)+1 = 12+1 = 13.$$</p>
+      <p>Notice this is a genuinely different number from Practice 1's $15$, purely because of where the brackets were (or weren't). Reading $\Sigma$-notation carefully, term by term, is not optional, misplacing a bracket silently changes the answer.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{i=1}^{3}2i+1$, and explain why this must give exactly the same value as Practice 2.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\sum_{i=1}^{3}2i+1 = \left(\sum_{i=1}^{3}2i\right)+1 = (2+4+6)+1 = 13.$$</p>
+      <p>Same answer as Practice 2, because the only thing that changed is the label on the index, $i$ instead of $a$. The index is a dummy variable: it never appears in the final numeric answer, so relabelling it can never change that answer. $\sum_{a=1}^3 2a+1$ and $\sum_{i=1}^3 2i+1$ are two different ways of writing the exact same instruction, "add $2$ times each whole number from $1$ to $3$, then add $1$."</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{k=1}^{6}k\sin\left(\dfrac{k\pi}2\right)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sin\left(\dfrac{k\pi}2\right)$ cycles through $1,0,-1,0$ as $k=1,2,3,4$, then repeats. Write out each term:</p>
+      <p>$k=1$: $1\cdot\sin\frac{\pi}2 = 1(1)=1$. $\ k=2$: $2\sin\pi = 2(0)=0$. $\ k=3$: $3\sin\frac{3\pi}2=3(-1)=-3$. $\ k=4$: $4\sin(2\pi)=4(0)=0$. $\ k=5$: $5\sin\frac{5\pi}2=5(1)=5$. $\ k=6$: $6\sin(3\pi)=6(0)=0$.</p>
+      <p>$$\sum_{k=1}^{6}k\sin\left(\frac{k\pi}2\right) = 1+0-3+0+5+0 = 3.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{k=0}^{6}1$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Every single term equals $1$ (the summand doesn't even depend on $k$), so this sum just counts how many values of $k$ there are, from $0$ up to and including $6$: that's $0,1,2,3,4,5,6$, seven values.</p>
+      <p>$$\sum_{k=0}^{6}1 = 7.$$</p>
+      <p>This is the classic off-by-one trap: it's tempting to say "$6$" since the upper limit is $6$, but the count is upper $-$ lower $+1 = 6-0+1=7$, always add the $1$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{k=1}^{15}\left(\dfrac1k-\dfrac1{k+1}\right)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>This telescopes: writing out a few terms, $\left(1-\dfrac12\right)+\left(\dfrac12-\dfrac13\right)+\left(\dfrac13-\dfrac14\right)+\cdots+\left(\dfrac1{15}-\dfrac1{16}\right)$, every interior piece cancels against its neighbour, leaving only the very first and very last pieces:</p>
+      <p>$$\sum_{k=1}^{15}\left(\frac1k-\frac1{k+1}\right) = 1-\frac1{16} = \frac{15}{16}.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Explain, in your own words, why the index of summation is called a "dummy" variable, and why this matters when you see the same sum written with two different index letters.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The index only exists to control the mechanical process of substitution and addition inside the sum, it takes on each whole-number value in turn, contributes a term, and then the sum is done. Once the addition is complete, the index has no leftover meaning, the final number depends only on the summand's formula and the start/end values, never on what the index was called along the way. This matters practically because it means $\sum_{k}$, $\sum_i$, and $\sum_a$ are completely interchangeable notations for the identical calculation (Practice 2 and 3 confirmed this numerically), so if two sums look different only because of their index letter, they are not actually different sums at all.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Properties of summation</div>
+  <div class="prose">
+    <p>Because $\Sigma$-notation is just repeated addition, it inherits ordinary algebra's rules for addition and constants directly: sums can be split apart, constants can be pulled out front, and a constant added the same number of times is just multiplication.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><strong>Splitting:</strong> $\displaystyle\sum_{k=1}^{n}(a_k\pm b_k) = \sum_{k=1}^{n}a_k \pm \sum_{k=1}^{n}b_k$.</p>
+    <p><strong>Constant factor:</strong> $\displaystyle\sum_{k=1}^{n}ca_k = c\sum_{k=1}^{n}a_k$.</p>
+    <p><strong>Constant term:</strong> $\displaystyle\sum_{k=1}^{n}c = nc$ (adding the same constant $c$, once for each of the $n$ values of $k$, is just $n$ copies of $c$, i.e.\ $nc$).</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why the constant-term rule needs care</span>
+    <p>The formula $\sum_{k=1}^nc=nc$ assumes the sum runs from $k=1$, giving exactly $n$ terms. If a sum instead runs from $k=0$ to $n$, there are $n+1$ terms (Practice 5 hit exactly this), and the correct total is $(n+1)c$, not $nc$. There is no shortcut here beyond counting the terms correctly first, upper limit minus lower limit plus one, before multiplying by the constant.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Given $\displaystyle\sum_{k=1}^{n}a_k=8$ and $\displaystyle\sum_{k=1}^{n}b_k=3$, find $\displaystyle\sum_{k=1}^{n}(4a_k-b_k)$.</p>
+    <p class="step">Split using the key idea's rules: $\displaystyle\sum_{k=1}^n(4a_k-b_k) = 4\sum_{k=1}^na_k - \sum_{k=1}^nb_k$.</p>
+    <p>$$= 4(8)-3 = 29.$$</p>
+    <p>Notice this required no knowledge of what the individual $a_k$ or $b_k$ actually are, only their totals, exactly the kind of shortcut these properties are built for.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{k=3}^{7}5$ (a constant sum, but not starting at $k=1$, so count the terms carefully first).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Number of terms: $7-3+1=5$. Each term equals $5$.</p>
+      <p>$$\sum_{k=3}^{7}5 = 5\times5 = 25.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{i=1}^{10}7$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$10$ terms, each equal to $7$: $\displaystyle\sum_{i=1}^{10}7 = 10\times7=70$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Given $\displaystyle\sum_{k=1}^{n}a_k=12$ and $\displaystyle\sum_{k=1}^{n}b_k=5$, find $\displaystyle\sum_{k=1}^{n}(3a_k-2b_k)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\sum_{k=1}^{n}(3a_k-2b_k) = 3\sum_{k=1}^na_k - 2\sum_{k=1}^nb_k = 3(12)-2(5) = 36-10=26.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Explain the mistake in this reasoning: "$\displaystyle\sum_{k=0}^{4}1$ has upper limit $4$, so the answer is $4$." What's the correct value, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The mistake is treating the upper limit alone as the term count, ignoring that $k=0$ is itself a valid starting value that contributes its own term. The values of $k$ actually used are $0,1,2,3,4$, five values in total, not four. So $\displaystyle\sum_{k=0}^{4}1 = 5\times1=5$, not $4$. The correct rule, upper limit minus lower limit plus one, correctly accounts for the fact that both endpoints are included.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Using the splitting and constant-factor properties, rewrite $\displaystyle\sum_{k=1}^{n}\big(5a_k-2b_k+3\big)$ as a combination of $\sum a_k$, $\sum b_k$, and $n$ alone (don't evaluate, just restructure it using the key idea's rules).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Split the sum into three separate pieces, then pull out constant factors:</p>
+      <p>$$\sum_{k=1}^{n}\big(5a_k-2b_k+3\big) = 5\sum_{k=1}^{n}a_k - 2\sum_{k=1}^{n}b_k + \sum_{k=1}^{n}3 = 5\sum_{k=1}^{n}a_k - 2\sum_{k=1}^{n}b_k + 3n.$$</p>
+      <p>This kind of restructuring is exactly what makes Section 3's formulas usable on more complicated summands, break the messy sum into simple pieces first, then handle each piece separately.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> Standard summation formulas</div>
+  <div class="prose">
+    <p>Three specific sums come up so often that it's worth having closed-form formulas for them memorised, rather than adding up terms by hand every time. Combined with Section 2's splitting property, these three formulas let you evaluate the sum of <em>any</em> polynomial in $k$, no matter how complicated, without writing out a single term.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\sum_{k=1}^{n}k = \frac{n(n+1)}2, \qquad \sum_{k=1}^{n}k^2 = \frac{n(n+1)(2n+1)}6, \qquad \sum_{k=1}^{n}k^3 = \left[\frac{n(n+1)}2\right]^2.$$</p>
+    <p>These only apply exactly as written when the sum starts at $k=1$. If a summand is a more complicated polynomial in $k$ (like $(k+2)^3$), expand it first into separate powers of $k$, then apply Section 2's splitting property before reaching for these formulas.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Given $\displaystyle\sum_{k=1}^{n}k=\dfrac{n(n+1)}2$ and $\displaystyle\sum_{k=1}^{n}k^3=\left[\dfrac{n(n+1)}2\right]^2$, evaluate $\displaystyle\sum_{k=1}^{5}(3k^3-2k+4)$.</p>
+    <p class="step">Split using Section 2's properties: $\displaystyle\sum_{k=1}^{5}(3k^3-2k+4) = 3\sum_{k=1}^{5}k^3 - 2\sum_{k=1}^{5}k + \sum_{k=1}^{5}4$.</p>
+    <p class="step">With $n=5$: $\displaystyle\sum_{k=1}^5k^3 = \left[\frac{5(6)}2\right]^2 = 15^2=225$. $\ \displaystyle\sum_{k=1}^5k = \frac{5(6)}2=15$. $\ \displaystyle\sum_{k=1}^54=5(4)=20$.</p>
+    <p class="step">$$3(225)-2(15)+20 = 675-30+20 = 665.$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{k=1}^{5}k^3$ directly from the formula, as a warm-up check.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\sum_{k=1}^{5}k^3 = \left[\frac{5(6)}2\right]^2 = 15^2 = 225.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span> <span class="tutorial-tag">TUTORIAL</span></div>
+  <div class="p-body"><p>Given $\displaystyle\sum_{k=1}^{n}k = \dfrac{n(n+1)}2$ and $\displaystyle\sum_{k=1}^{n}k^3 = \left[\dfrac{n(n+1)}2\right]^2$, evaluate $\displaystyle\sum_{k=1}^{6}(4k^3-2k+1)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Split: $\displaystyle\sum_{k=1}^{6}(4k^3-2k+1) = 4\sum_{k=1}^6k^3 - 2\sum_{k=1}^6k + \sum_{k=1}^61$.</p>
+      <p>With $n=6$: $\displaystyle\sum_{k=1}^6k^3=\left[\frac{6(7)}2\right]^2=21^2=441$. $\ \displaystyle\sum_{k=1}^6k=\frac{6(7)}2=21$. $\ \displaystyle\sum_{k=1}^61=6$.</p>
+      <p>$$4(441)-2(21)+6 = 1764-42+6 = 1728.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span> <span class="tutorial-tag">TUTORIAL</span></div>
+  <div class="p-body"><p>Given the three formulas in the key idea, evaluate $\displaystyle\sum_{k=1}^{10}(k+2)^3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The formulas only apply to $k$, $k^2$, $k^3$ individually, not to $(k+2)^3$ directly, so expand the binomial first:</p>
+      <p>$$(k+2)^3 = k^3+6k^2+12k+8.$$</p>
+      <p>Now split and apply all three formulas with $n=10$:</p>
+      <p class="step">$\displaystyle\sum_{k=1}^{10}k^3 = \left[\frac{10(11)}2\right]^2 = 55^2=3025$.</p>
+      <p class="step">$\displaystyle\sum_{k=1}^{10}k^2 = \frac{10(11)(21)}6 = 385$.</p>
+      <p class="step">$\displaystyle\sum_{k=1}^{10}k = \frac{10(11)}2=55$.</p>
+      <p class="step">$\displaystyle\sum_{k=1}^{10}8 = 10(8)=80$.</p>
+      <p>$$\sum_{k=1}^{10}(k+2)^3 = 3025+6(385)+12(55)+80 = 3025+2310+660+80 = 6075.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{k=1}^{4}(2k-1)^2$ by expanding first.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Expand: $(2k-1)^2 = 4k^2-4k+1$.</p>
+      <p>With $n=4$: $\displaystyle\sum_{k=1}^4k^2 = \frac{4(5)(9)}6=30$. $\ \displaystyle\sum_{k=1}^4k=\frac{4(5)}2=10$. $\ \displaystyle\sum_{k=1}^41=4$.</p>
+      <p>$$4(30)-4(10)+4 = 120-40+4 = 84.$$</p>
+      <p>(Sanity check by direct expansion: $1^2+3^2+5^2+7^2 = 1+9+25+49=84$, matching.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Find a simplified formula, in terms of $n$, for $\displaystyle\sum_{k=1}^{n}(6k^2+4k)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\sum_{k=1}^{n}(6k^2+4k) = 6\cdot\frac{n(n+1)(2n+1)}6 + 4\cdot\frac{n(n+1)}2 = n(n+1)(2n+1) + 2n(n+1).$$</p>
+      <p>Factor out the common $n(n+1)$: $n(n+1)\big[(2n+1)+2\big] = n(n+1)(2n+3)$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Using $\displaystyle\sum_{k=1}^{n}k=\dfrac{n(n+1)}2$, derive a formula for the sum of the first $n$ even numbers, $2+4+6+\cdots+2n$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The sum of the first $n$ even numbers is $\displaystyle\sum_{k=1}^{n}2k = 2\sum_{k=1}^{n}k = 2\cdot\frac{n(n+1)}2 = n(n+1)$.</p>
+      <p>Quick check with $n=3$: $2+4+6=12$, and $n(n+1)=3(4)=12$. Matches.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> Double summation notation</div>
+  <div class="prose">
+    <p>A <strong>double sum</strong>, $\displaystyle\sum_{i}\sum_{j}a_{ij}$, adds up a two-index quantity $a_{ij}$ over every combination of $i$ and $j$ in their respective ranges. It's read from the inside out: for each fixed value of the outer index, evaluate the entire inner sum first (treating the outer index as a constant while doing so), then add up those results as the outer index runs through its own range. This is exactly the structure you'll need for summing over the rows and columns of a matrix.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\sum_{i=1}^{m}\sum_{j=1}^{n}a_{ij} = \sum_{i=1}^{m}\left(\sum_{j=1}^{n}a_{ij}\right) = \underbrace{(a_{11}+a_{12}+\cdots+a_{1n})}_{i=1} + \underbrace{(a_{21}+a_{22}+\cdots+a_{2n})}_{i=2} + \cdots$$</p>
+    <p>For a finite double sum like this, the two $\Sigma$'s can always be swapped without changing the total, $\sum_i\sum_j a_{ij} = \sum_j\sum_i a_{ij}$, every term $a_{ij}$ gets added exactly once either way, only the order in which they're grouped differs.</p>
+    <p>A double sum <strong>separates</strong> into a product of two ordinary single sums exactly when the summand factors as $a_{ij}=f(i)g(j)$: $\displaystyle\sum_i\sum_j f(i)g(j) = \left(\sum_if(i)\right)\left(\sum_jg(j)\right)$.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\displaystyle\sum_{i=1}^{2}\sum_{j=1}^{3}(i+j)$, and verify the order can be swapped without changing the answer.</p>
+    <p class="step">Inner sum first, for each fixed $i$: at $i=1$, $\displaystyle\sum_{j=1}^{3}(1+j) = (1+1)+(1+2)+(1+3)=2+3+4=9$. At $i=2$, $\displaystyle\sum_{j=1}^3(2+j)=(2+1)+(2+2)+(2+3)=3+4+5=12$.</p>
+    <p class="step">Outer sum: $9+12=21$.</p>
+    <p class="step">Now swap the order, summing over $i$ first for each fixed $j$: at $j=1$, $\displaystyle\sum_{i=1}^2(i+1)=2+3=5$. At $j=2$: $3+4=7$. At $j=3$: $4+5=9$.</p>
+    <p class="step">Outer sum: $5+7+9=21$.</p>
+    <p>Both orders give $21$, confirming the swap rule from the key idea.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{i=1}^{2}\sum_{j=1}^{2}ij$, using the fact that the summand $ij$ factors as $f(i)g(j)=i\cdot j$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since the summand separates: $\displaystyle\sum_{i=1}^2\sum_{j=1}^2 ij = \left(\sum_{i=1}^2i\right)\left(\sum_{j=1}^2j\right) = (1+2)(1+2) = 3\times3=9$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{i=1}^{3}\sum_{j=1}^{2}(2i-j)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Inner sum for each $i$: $\displaystyle\sum_{j=1}^{2}(2i-j) = (2i-1)+(2i-2) = 4i-3$.</p>
+      <p>Outer sum: $\displaystyle\sum_{i=1}^{3}(4i-3) = (4-3)+(8-3)+(12-3) = 1+5+9=15$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{i=1}^{3}\sum_{j=1}^{3}1$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Every combination of $i\in\{1,2,3\}$ and $j\in\{1,2,3\}$ contributes exactly $1$, and there are $3\times3=9$ such combinations. $$\sum_{i=1}^3\sum_{j=1}^31 = 9.$$</p>
+      <p>This is the double-sum analogue of Practice 5's counting trap, a double sum of the constant $1$ simply counts the total number of $(i,j)$ pairs.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Given $x_1=2,\ x_2=5,\ y_1=3,\ y_2=-2,\ y_3=4$, evaluate $\displaystyle\sum_{i=1}^{2}\sum_{j=1}^{3}x_iy_j$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The summand $x_iy_j$ separates (it's a function of $i$ times a function of $j$), so:</p>
+      <p>$$\sum_{i=1}^{2}\sum_{j=1}^{3}x_iy_j = \left(\sum_{i=1}^{2}x_i\right)\left(\sum_{j=1}^{3}y_j\right) = (2+5)(3-2+4) = 7\times5 = 35.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Explain precisely when a double sum $\displaystyle\sum_i\sum_ja_{ij}$ can be separated into a product of two single sums, and give an example of a summand $a_{ij}$ that <em>cannot</em> be separated this way.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Separation requires the summand to factor cleanly into a piece depending only on $i$ times a piece depending only on $j$, i.e.\ $a_{ij}=f(i)g(j)$, with no mixing of the two indices inside a single additive term. The worked example's $a_{ij}=i+j$ is a clear example that does <em>not</em> separate: it's a sum of an $i$-piece and a $j$-piece, not a product, and indeed $\left(\sum_i i\right)+\left(\sum_j j\right)$ would give a completely different (and wrong) number than the correctly computed $21$. As a rule of thumb, sums of terms that mix both indices additively (like $i+j$, or $i^2+j$) generally don't separate, while products of single-index pieces (like $ij$, or $i^2j^3$) always do.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> The Kronecker delta</div>
+  <div class="prose">
+    <p>The <strong>Kronecker delta</strong> $\delta_{ij}$ is a two-index quantity that is remarkably simple to define, but turns out to be one of the most useful pieces of notation in all of linear algebra, precisely because of how it behaves inside sums (Sections 6 and 7).</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\delta_{ij} = \begin{cases}1 & \text{if } i=j \\ 0 & \text{if } i\neq j\end{cases}$$</p>
+    <p>Immediate consequences worth noting: $\delta_{ij}=\delta_{ji}$ (it's symmetric, since $i=j$ and $j=i$ are the same condition), and $\delta_{ii}=1$ for every single value of $i$ (an index matched against itself always agrees).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\delta_{23}$, $\delta_{55}$, and $\displaystyle\sum_{i=1}^{4}\delta_{ii}$.</p>
+    <p class="step">$\delta_{23}$: indices $2$ and $3$ don't match, so $\delta_{23}=0$.</p>
+    <p class="step">$\delta_{55}$: indices match ($5=5$), so $\delta_{55}=1$.</p>
+    <p class="step">$\displaystyle\sum_{i=1}^{4}\delta_{ii}$: every single term in this sum has matching indices by construction ($\delta_{11},\delta_{22},\delta_{33},\delta_{44}$), so every term equals $1$, four terms total:</p>
+    <p>$$\sum_{i=1}^{4}\delta_{ii} = 1+1+1+1 = 4.$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Evaluate $\delta_{12}$ and $\delta_{44}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\delta_{12}=0$ (indices don't match). $\ \delta_{44}=1$ (indices match).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{i=1}^{5}\delta_{ii}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Five matching-index terms, each equal to $1$: $\displaystyle\sum_{i=1}^5\delta_{ii} = 5$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{i=1}^{4}\delta_{i3}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>As $i$ runs through $1,2,3,4$, only $i=3$ makes $\delta_{i3}$ equal to $1$ (matching the fixed second index $3$); every other term is $0$.</p>
+      <p>$$\sum_{i=1}^{4}\delta_{i3} = 0+0+1+0 = 1.$$</p>
+      <p>This single-nonzero-term pattern, most of a sum vanishing except for one surviving term, is the entire idea behind Section 6's sifting property, worth noticing here first in its simplest possible form.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Is $\delta_{ij}=\delta_{ji}$ always true? Justify your answer directly from the definition.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Yes, always. $\delta_{ij}=1$ exactly when $i=j$, and $\delta_{ji}=1$ exactly when $j=i$, but "$i=j$" and "$j=i$" are the identical condition (equality doesn't care about the order it's written in). So $\delta_{ij}$ and $\delta_{ji}$ are $1$ under exactly the same circumstances, and $0$ under exactly the same circumstances too, meaning they're always equal. This symmetry is what made Practice 6.2 (evaluating $\delta_{3k}$ instead of $\delta_{k3}$) give the identical answer later.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Write out the entries of the $3\times3$ identity matrix $I$ using $I_{ij}=\delta_{ij}$ notation, by evaluating $\delta_{ij}$ for every combination of $i,j\in\{1,2,3\}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$I_{11}=\delta_{11}=1,\ I_{12}=\delta_{12}=0,\ I_{13}=\delta_{13}=0$, and similarly for each row, every diagonal entry ($i=j$) is $1$, every off-diagonal entry ($i\neq j$) is $0$:</p>
+      <p>$$I = \begin{pmatrix}1&0&0\\0&1&0\\0&0&1\end{pmatrix}$$</p>
+      <p>This is precisely why $I_{ij}=\delta_{ij}$ is the standard way to write the identity matrix in index notation, the Kronecker delta's definition is, word for word, the defining property of an identity matrix's entries.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{i=1}^{3}\sum_{j=1}^{3}\delta_{ij}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Referring back to Practice 28's identity matrix: this double sum simply adds up every entry of a $3\times3$ identity matrix. Only the $3$ diagonal entries are $1$; the $6$ off-diagonal entries are all $0$.</p>
+      <p>$$\sum_{i=1}^3\sum_{j=1}^3\delta_{ij} = 3.$$</p>
+      <p>In general, $\displaystyle\sum_{i=1}^n\sum_{j=1}^n\delta_{ij}=n$, this is exactly the trace of the $n\times n$ identity matrix, revisited properly in Section 8.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> The delta's sifting property</div>
+  <div class="prose">
+    <p>The single most important thing the Kronecker delta does, and the reason it's worth learning at all rather than just being a curiosity, is what happens when it appears inside a sum alongside another indexed quantity. It <strong>sifts</strong>, or picks out, exactly one term from the entire sum, and silently deletes every other term.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: the sifting property</span>
+    <p>$$\sum_{i}\delta_{ij}\,x_i = x_j$$</p>
+    <p>(provided $j$ falls within the range being summed over). In words: summing $\delta_{ij}x_i$ over $i$ replaces $i$ with $j$ everywhere else in the summand, then removes the sum entirely, since only the $i=j$ term survives.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">Why this works</span>
+    <p>Every term in $\sum_i\delta_{ij}x_i$ has the factor $\delta_{ij}$ attached, and by definition $\delta_{ij}=0$ for every value of $i$ except $i=j$. So every term in the sum is forced to be $0$, except the single term where $i=j$, which is $\delta_{jj}\,x_j = 1\cdot x_j = x_j$. Adding up "$x_j$, plus a pile of zeros" just gives $x_j$ back. The delta hasn't done any real arithmetic here, it's acted purely as a substitution device, replacing the index $i$ with $j$ and collapsing an entire sum down to one surviving term.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\displaystyle\sum_{k=1}^{3}\delta_{k2}\,x_k$.</p>
+    <p class="step">By the sifting property, this replaces $k$ with $2$ in $x_k$, and the sum vanishes:</p>
+    <p>$$\sum_{k=1}^{3}\delta_{k2}\,x_k = x_2.$$</p>
+    <p>Written out as a check: at $k=1$, $\delta_{12}x_1=0$. At $k=2$, $\delta_{22}x_2=x_2$. At $k=3$, $\delta_{32}x_3=0$. Total: $x_2$, matching.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span> <span class="tutorial-tag">TUTORIAL</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{k=1}^{4}\delta_{k3}\,x_k$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Sifting property, $i\to k$, $j\to3$: $\displaystyle\sum_{k=1}^{4}\delta_{k3}x_k = x_3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{k=1}^{4}\delta_{3k}\,x_k$, and explain why it gives the same result as Practice 30.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $\delta_{3k}=\delta_{k3}$ (Practice 27's symmetry), this is exactly the same sum as Practice 30, just with the delta's indices written in the opposite order:</p>
+      <p>$$\sum_{k=1}^{4}\delta_{3k}x_k = x_3.$$</p>
+      <p>Worth internalising: the order of the two indices on a single Kronecker delta never matters, only which two values are inside it.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{i=1}^{5}\delta_{i2}\,a_i$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$\sum_{i=1}^{5}\delta_{i2}a_i = a_2.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{j=1}^{4}\delta_{j1}(2j+3)$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>By the sifting property, replace $j$ with $1$ in the expression $(2j+3)$:</p>
+      <p>$$\sum_{j=1}^{4}\delta_{j1}(2j+3) = 2(1)+3 = 5.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{i=1}^{3}\delta_{i2}\,i^2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Replace $i$ with $2$ in $i^2$: $\displaystyle\sum_{i=1}^{3}\delta_{i2}i^2 = 2^2=4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span></div>
+  <div class="p-body"><p>Explain, without using the word "sift," what $\displaystyle\sum_i\delta_{ij}x_i$ does to a list of numbers $x_1,x_2,\dots,x_n$, thought of as the components of a vector $x$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>It extracts a single component from the vector, specifically the $j$th one, and discards the rest entirely. Every entry of the vector gets multiplied by either $0$ (deleting it from the total) or $1$ (keeping it exactly as-is), and the delta's second index $j$ determines which single entry survives that process. In effect, $\sum_i\delta_{ij}x_i$ is a formula for "go and read off $x_j$," expressed using sum notation instead of ordinary indexing brackets.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> Delta contraction in double sums</div>
+  <div class="prose">
+    <p>The sifting property from Section 6 becomes even more useful once two Kronecker deltas, or a delta alongside a genuine double sum, are involved. The core technique never changes: work through the sums one at a time, from the inside out, and let each delta's sifting property collapse one layer at a time.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>To evaluate $\displaystyle\sum_i\sum_j(\text{stuff involving }\delta_{ij}\text{, or }\delta\text{'s of other index pairs})$: pick whichever index has a delta pinning it directly to a fixed number first, substitute that value in everywhere, and repeat with the remaining sum. A particularly important special case, two deltas sharing one common index, contracts down to a single new delta:</p>
+    <p>$$\sum_{j}\delta_{ij}\delta_{jk} = \delta_{ik}.$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Evaluate $\displaystyle\sum_{i=1}^{3}\sum_{j=1}^{3}\delta_{ij}\,a_ib_j$.</p>
+    <p class="step">Work the inner sum first, over $j$, treating $i$ as fixed: $\displaystyle\sum_{j=1}^{3}\delta_{ij}a_ib_j$. Since $a_i$ doesn't depend on $j$, pull it out: $a_i\displaystyle\sum_{j=1}^{3}\delta_{ij}b_j$. By the sifting property (Section 6), this inner sum collapses to $a_i\,b_i$.</p>
+    <p class="step">Now the outer sum, over $i$, is just an ordinary single sum: $\displaystyle\sum_{i=1}^{3}a_ib_i$.</p>
+    <p>$$\sum_{i=1}^{3}\sum_{j=1}^{3}\delta_{ij}a_ib_j = \sum_{i=1}^{3}a_ib_i.$$</p>
+    <p>This particular identity is worth remembering on its own: a double sum with a single $\delta_{ij}$ ties the two indices together, turning what looked like a double sum into an ordinary single sum, exactly the dot-product formula revisited in Section 8.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span> <span class="tutorial-tag">TUTORIAL</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{i=1}^{4}\sum_{j=1}^{4}\delta_{ij}\,\delta_{j3}\,x_i\,x_3$ (treat $x_3$ as a fixed constant throughout, not itself indexed by $i$ or $j$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Work the inner sum over $j$ first, for fixed $i$, pulling out everything that doesn't depend on $j$ ($x_i$ and $x_3$ are both constants here):</p>
+      <p>$$x_i\,x_3\sum_{j=1}^{4}\delta_{ij}\delta_{j3}.$$</p>
+      <p>By the sifting property, $\displaystyle\sum_j\delta_{ij}\delta_{j3}$ replaces $j$ with $3$ inside $\delta_{ij}$, giving $\delta_{i3}$.</p>
+      <p class="step">So the whole expression reduces to $\displaystyle\sum_{i=1}^{4}x_i\,x_3\,\delta_{i3}$. Now sift over $i$: replace $i$ with $3$ in $x_i$.</p>
+      <p>$$\sum_{i=1}^{4}\sum_{j=1}^{4}\delta_{ij}\delta_{j3}x_ix_3 = x_3\cdot x_3 = x_3^2.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span> <span class="tutorial-tag">TUTORIAL</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{k=1}^{4}\sum_{m=1}^{2}\delta_{km}\,\delta_{k3}$ (notice the two sums have <em>different</em> ranges, $k$ up to $4$ but $m$ only up to $2$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Work the inner sum over $m$ first, for fixed $k$: $\delta_{k3}$ doesn't depend on $m$, pull it out: $\delta_{k3}\displaystyle\sum_{m=1}^{2}\delta_{km}$.</p>
+      <p class="step">Since $m$ only ranges over $\{1,2\}$, the sum $\displaystyle\sum_{m=1}^{2}\delta_{km}$ equals $1$ if $k\in\{1,2\}$ (a matching $m$ exists in range), and equals $0$ if $k=3$ or $k=4$ (no matching $m$ falls inside the range $1$ to $2$).</p>
+      <p class="step">So the full summand is $\delta_{k3}\times\big[1\text{ if }k\in\{1,2\},\text{ else }0\big]$. But $\delta_{k3}$ is only nonzero at $k=3$, and at $k=3$ the bracket is $0$ (since $3\notin\{1,2\}$). The two conditions can never both hold at once.</p>
+      <p>$$\sum_{k=1}^{4}\sum_{m=1}^{2}\delta_{km}\delta_{k3} = 0.$$</p>
+      <p>A useful lesson: whenever two sums run over mismatched ranges, always check whether the target index a delta is trying to "sift toward" actually falls inside <em>every</em> relevant range, not just one of them.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span> <span class="tutorial-tag">TUTORIAL</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{j=1}^{4}\sum_{i=1}^{4}\delta_{i3}\,\delta_{ij}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Work the inner sum over $i$ first (for fixed $j$): $\displaystyle\sum_{i=1}^{4}\delta_{i3}\delta_{ij}$. By the sifting property, replace $i$ with $3$ inside $\delta_{ij}$ (since $\delta_{i3}$ forces $i=3$, and $3$ falls within the range $1$ to $4$):</p>
+      <p>$$\sum_{i=1}^{4}\delta_{i3}\delta_{ij} = \delta_{3j}.$$</p>
+      <p class="step">Now the outer sum over $j$: $\displaystyle\sum_{j=1}^{4}\delta_{3j}$. This equals $1$ exactly once, at $j=3$ (which does fall within the range $1$ to $4$).</p>
+      <p>$$\sum_{j=1}^{4}\sum_{i=1}^{4}\delta_{i3}\delta_{ij} = 1.$$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span> <span class="tutorial-tag">TUTORIAL</span></div>
+  <div class="p-body"><p>Evaluate $\displaystyle\sum_{j=1}^{3}\sum_{i=1}^{3}(3i+j)\,\delta_{ij}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Work the inner sum over $i$ first, for fixed $j$: by the sifting property, $\displaystyle\sum_{i=1}^{3}(3i+j)\delta_{ij}$ replaces $i$ with $j$ throughout the expression $(3i+j)$:</p>
+      <p>$$\sum_{i=1}^{3}(3i+j)\delta_{ij} = 3j+j = 4j.$$</p>
+      <p class="step">Now the outer sum over $j$: $\displaystyle\sum_{j=1}^{3}4j = 4(1+2+3) = 4(6) = 24.$</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 40</span></div>
+  <div class="p-body"><p>Using $n=3$, verify the general identity $\displaystyle\sum_{j}\delta_{ij}\delta_{jk}=\delta_{ik}$ from the key idea by evaluating both sides for the specific case $i=1,\ k=1$, and separately for $i=1,\ k=2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Case $i=1,k=1$:</strong> $\displaystyle\sum_{j=1}^{3}\delta_{1j}\delta_{j1}$. Only $j=1$ makes $\delta_{1j}$ nonzero, giving $\delta_{11}\delta_{11}=1\times1=1$. Right side: $\delta_{ik}=\delta_{11}=1$. Match.</p>
+      <p><strong>Case $i=1,k=2$:</strong> $\displaystyle\sum_{j=1}^{3}\delta_{1j}\delta_{j2}$. Only $j=1$ makes $\delta_{1j}$ nonzero, giving $\delta_{11}\delta_{12}=1\times0=0$. Right side: $\delta_{ik}=\delta_{12}=0$. Match.</p>
+      <p>Both cases confirm the identity: contracting two Kronecker deltas over a shared index produces a single new delta joining the two remaining (unshared) indices, exactly the matrix statement "$I\times I=I$" written out in index notation, revisited directly in Section 8.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 41</span></div>
+  <div class="p-body"><p>Given $a_1=3,\ a_2=-2,\ a_3=5$, evaluate $\displaystyle\sum_{i=1}^{3}\sum_{j=1}^{3}\delta_{ij}\,a_ia_j$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Using the worked example's identity, $\displaystyle\sum_i\sum_j\delta_{ij}a_ia_j = \sum_ia_i^2$ (the delta ties the two indices together, turning the double sum into an ordinary sum of squares):</p>
+      <p>$$\sum_{i=1}^{3}a_i^2 = 3^2+(-2)^2+5^2 = 9+4+25 = 38.$$</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec8">
+  <div class="section-title"><span class="tag">8</span> Applications to matrices and vectors</div>
+  <div class="prose">
+    <p>Everything in this lesson exists to support exactly this section. Matrix algebra, once you move past writing out full grids of numbers, is done almost entirely using indices, sums, and the Kronecker delta, and every technique from Sections 1 through 7 shows up directly.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea: the index-notation dictionary</span>
+    <p><strong>Identity matrix:</strong> $I_{ij}=\delta_{ij}$.</p>
+    <p><strong>Matrix multiplication:</strong> the $(i,j)$ entry of $AB$ is $\displaystyle(AB)_{ij} = \sum_{k}A_{ik}B_{kj}$ (row $i$ of $A$ dotted with column $j$ of $B$).</p>
+    <p><strong>Trace:</strong> $\displaystyle\operatorname{tr}(A) = \sum_iA_{ii} = \sum_i\sum_jA_{ij}\delta_{ij}$ (adding just the diagonal entries).</p>
+    <p><strong>Dot product:</strong> $\displaystyle\mathbf{a}\cdot\mathbf{b} = \sum_ia_ib_i = \sum_i\sum_j\delta_{ij}a_ib_j$.</p>
+    <p><strong>Identity acting on anything:</strong> $\displaystyle\sum_j\delta_{ij}v_j=v_i$ and $\displaystyle\sum_j\delta_{ij}A_{jk}=A_{ik}$, both direct restatements of Section 6's sifting property, this is the index-notation proof that multiplying by the identity matrix changes nothing.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Show, using index notation, that multiplying any vector $\mathbf v$ by the identity matrix leaves it unchanged, then verify numerically with $\mathbf v=(9,-4,2)$.</p>
+    <p class="step">In index notation, the $i$th component of $I\mathbf v$ is $\displaystyle(I\mathbf v)_i = \sum_jI_{ij}v_j = \sum_j\delta_{ij}v_j$.</p>
+    <p class="step">By the sifting property (Section 6), this collapses immediately: $\displaystyle\sum_j\delta_{ij}v_j = v_i$.</p>
+    <p class="step">So $(I\mathbf v)_i=v_i$ for every $i$, meaning $I\mathbf v=\mathbf v$ exactly, proven from the delta's definition alone, no matrix diagram required.</p>
+    <p class="step">Numeric check with $\mathbf v=(9,-4,2)$: $(I\mathbf v)_1=\sum_j\delta_{1j}v_j=v_1=9$. $\ (I\mathbf v)_2=v_2=-4$. $\ (I\mathbf v)_3=v_3=2$.</p>
+    <p>$I\mathbf v = (9,-4,2) = \mathbf v$, confirmed.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 42</span></div>
+  <div class="p-body"><p>Given the $3\times3$ matrix $A=\begin{pmatrix}2&3&1\\4&5&6\\7&8&9\end{pmatrix}$, evaluate the trace two ways: (i) directly, $\sum_iA_{ii}$, and (ii) via the double sum $\sum_i\sum_jA_{ij}\delta_{ij}$. Confirm they match.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Direct:</strong> $\operatorname{tr}(A) = A_{11}+A_{22}+A_{33} = 2+5+9=16$.</p>
+      <p><strong>Via delta:</strong> by the worked example's dot-product-style identity, $\displaystyle\sum_i\sum_jA_{ij}\delta_{ij} = \sum_iA_{ii}$ (the delta ties $j$ to $i$, collapsing the double sum), which is the same computation: $16$.</p>
+      <p>Both give $16$, as they must, the delta double sum is just a more roundabout way of writing "add the diagonal entries."</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 43</span></div>
+  <div class="p-body"><p>Given $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$ and $B=\begin{pmatrix}5&6\\7&8\end{pmatrix}$, use the index formula $\displaystyle(AB)_{12}=\sum_kA_{1k}B_{k2}$ to find just the $(1,2)$ entry of $AB$, without computing the whole product matrix.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$$(AB)_{12} = \sum_{k=1}^{2}A_{1k}B_{k2} = A_{11}B_{12}+A_{12}B_{22} = 1(6)+2(8) = 6+16=22.$$</p>
+      <p>This matches ordinary row-times-column matrix multiplication exactly, row $1$ of $A$ is $(1,2)$, column $2$ of $B$ is $(6,8)$, and their dot product is $1(6)+2(8)=22$; the index formula is simply that same rule written with $\Sigma$-notation instead of a diagram.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 44</span></div>
+  <div class="p-body"><p>Given $\mathbf a=(2,-1,3)$ and $\mathbf b=(4,5,-2)$, evaluate $\mathbf a\cdot\mathbf b$ two ways: (i) directly, $\sum_ia_ib_i$, and (ii) via $\sum_i\sum_j\delta_{ij}a_ib_j$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><strong>Direct:</strong> $\mathbf a\cdot\mathbf b = 2(4)+(-1)(5)+3(-2) = 8-5-6=-3$.</p>
+      <p><strong>Via delta:</strong> $\displaystyle\sum_i\sum_j\delta_{ij}a_ib_j$ collapses, by Practice 41's identity, to $\displaystyle\sum_ia_ib_i$, the identical single sum, giving $-3$ again.</p>
+      <p>This confirms the dot product formula in the key idea is not a new definition, it's the ordinary dot product $\sum_ia_ib_i$, just dressed up with an unnecessary (but harmless) $\delta_{ij}$, useful mainly because it shows the dot product and matrix trace share the exact same underlying delta-contraction structure.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 45</span></div>
+  <div class="p-body"><p>Explain, referring back to the definition in Section 5, precisely why $I_{ij}=\delta_{ij}$ is the correct index-notation formula for an identity matrix of <em>any</em> size, not just $3\times3$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>An identity matrix, by definition, has $1$ on every diagonal entry and $0$ everywhere else, regardless of how large it is. $\delta_{ij}$, by its own definition, equals $1$ precisely when $i=j$ (the diagonal condition) and $0$ whenever $i\neq j$ (the off-diagonal condition). These are word-for-word the same rule, so setting $I_{ij}=\delta_{ij}$ reproduces the correct identity matrix for whatever range $i$ and $j$ happen to run over, $2\times2$, $3\times3$, or $100\times100$, the formula itself never needs to change with the size.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 46</span></div>
+  <div class="p-body"><p>Using the sifting property, simplify $\displaystyle\sum_{j}\delta_{ij}A_{jk}$ to a single indexed quantity (no sum), and explain what matrix statement this represents.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>By the sifting property, summing over $j$ replaces $j$ with $i$ inside $A_{jk}$:</p>
+      <p>$$\sum_j\delta_{ij}A_{jk} = A_{ik}.$$</p>
+      <p>Recognise the left side as exactly the matrix-multiplication formula from the key idea, $(IA)_{ik} = \sum_j I_{ij}A_{jk} = \sum_j\delta_{ij}A_{jk}$. So this identity is the index-notation proof of $IA=A$, multiplying any matrix by the identity matrix (on the left) leaves it completely unchanged, mirroring the worked example's vector version exactly.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 47</span></div>
+  <div class="p-body"><p>Tie together the whole lesson: explain, in a few sentences, how Section 7's identity $\sum_j\delta_{ij}\delta_{jk}=\delta_{ik}$ and Practice 46's identity $\sum_j\delta_{ij}A_{jk}=A_{ik}$ are really the same underlying fact, applied to two different matrices.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $I_{jk}=\delta_{jk}$ (Section 5), Practice 46's identity $\sum_j\delta_{ij}A_{jk}=A_{ik}$ is really the statement $(IA)_{ik}=A_{ik}$, "identity times $A$ equals $A$." If you now substitute $A=I$ itself into that very same identity, $A_{jk}$ becomes $\delta_{jk}$, and the statement becomes $\sum_j\delta_{ij}\delta_{jk}=\delta_{ik}$, precisely Section 7's contraction identity. In other words, Section 7's two-delta identity isn't a separate, unrelated fact to memorise, it's the single special case of "multiplying by the identity matrix does nothing" applied to the situation where the matrix being multiplied happens to be the identity matrix itself, $I\times I=I$, written out one entry at a time.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>MATH141 &middot; Summation, Double Summation, and the Kronecker Delta</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+</script>
+
+</body>
+</html>

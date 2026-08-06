@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson: IF, VLOOKUP/XLOOKUP &amp; PivotTables for Engineers</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:26px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+  .prose code{
+    font-family:'Roboto Mono',monospace;
+    background:#eef1f6;
+    padding:1px 6px;
+    border-radius:4px;
+    font-size:0.92em;
+    color:var(--navy);
+  }
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+  .key-box code, .example-box code, .why-box code{
+    font-family:'Roboto Mono',monospace; background:#fff; border:1px solid var(--line);
+    padding:1px 6px; border-radius:4px; font-size:0.92em; color:var(--navy);
+  }
+
+  table.datatable{
+    width:100%; border-collapse:collapse; font-size:14px; margin:14px 0;
+    font-family:'Roboto Mono',monospace; background:#fff; border:1px solid var(--line); border-radius:6px; overflow:hidden;
+  }
+  table.datatable th{
+    background:var(--navy); color:#fff; font-size:11px; text-transform:uppercase; padding:7px 8px; text-align:center;
+  }
+  table.datatable td{ padding:6px 8px; text-align:center; border-bottom:1px solid var(--line); }
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .practice-card.explore{ border-left-color:var(--green); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; flex-wrap:wrap; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-tag{
+    font-family:'Roboto Mono',monospace; font-size:10.5px; letter-spacing:0.05em;
+    color:#fff; background:var(--green); border-radius:4px; padding:2px 8px;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .practice-card.explore .solution-inner .label{ color:var(--green); }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+  .solution-inner code{
+    font-family:'Roboto Mono',monospace; background:#eef1f6; padding:1px 6px; border-radius:4px; font-size:0.92em; color:var(--navy);
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">MS Excel &middot; Level 2 &middot; Mining &amp; Mechanical Engineering</div>
+  <h1>IF, VLOOKUP/XLOOKUP &amp; PivotTables</h1>
+  <p>The three tools flagged at the end of the last lesson, exactly the point where a spreadsheet stops just storing numbers and starts making decisions, cross-referencing tables, and summarising thousands of rows in a few clicks. Every example here is built around the real Excel workflows of a mining engineer: cutoff grade classification, density lookups for tonnage conversion, and multi-pit production reporting. Solutions stay hidden until you click. Problems marked <span class="p-tag">EXPLORE</span> are open-ended, worth actually opening Excel for.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 39 practice items revealed</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#sec0">Why these three tools?</a></li>
+    <li><a href="#sec1">The IF function</a></li>
+    <li><a href="#sec2">Nested IF and IFS</a></li>
+    <li><a href="#sec3">VLOOKUP</a></li>
+    <li><a href="#sec4">VLOOKUP pitfalls</a></li>
+    <li><a href="#sec5">XLOOKUP: the modern replacement</a></li>
+    <li><a href="#sec6">Introduction to PivotTables</a></li>
+    <li><a href="#sec7">Explore: putting it all together</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">0</span> Why these three tools?</div>
+  <div class="prose">
+    <p>Everything in the Fundamentals lesson, formulas, functions, formatting, charts, works on data you already know the shape of. These three tools solve a different problem: <strong>making a decision automatically</strong> (IF), <strong>cross-referencing two related tables</strong> (VLOOKUP/XLOOKUP), and <strong>summarising a large flat dataset into a report</strong> (PivotTables), the three things every real production, QAQC, or cost workbook actually needs, and the three things a plain SUM/AVERAGE formula genuinely cannot do on its own.</p>
+    <p>They're also, not coincidentally, the three ideas that map most directly onto what comes after Excel: IF becomes a conditional in Python; VLOOKUP becomes a table join or a <code>.map()</code> in pandas; a PivotTable becomes a <code>.groupby()</code>. Getting comfortable with the thinking here, not the exact syntax, pays off twice.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec1">
+  <div class="section-title"><span class="tag">1</span> The IF function</div>
+  <div class="prose">
+    <p><code>IF</code> is Excel's basic decision-maker: test a condition, return one value if it's true, a different value if it's false. This single idea underpins an enormous amount of real mining engineering spreadsheet work, most obviously, deciding whether a sample is ore or waste.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\texttt{=IF(logical\_test, value\_if\_true, value\_if\_false)}$$</p>
+    <p>The logical test almost always uses a comparison operator: <code>=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>&lt;&gt;</code> (not equal to).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A gold grade (g/t) is in B2. The economic cutoff grade is 0.5 g/t. Write a formula in C2 that returns "Ore" if the grade meets or exceeds cutoff, "Waste" otherwise, and evaluate it for B2 = 0.72.</p>
+    <p class="step">$$\texttt{C2: =IF(B2>=0.5,"Ore","Waste")}$$</p>
+    <p class="step">$0.72\ge0.5$, the condition is true.</p>
+    <p><strong>"Ore"</strong>. This single formula, dragged down a column of thousands of assay results, is the literal mechanism behind separating ore from waste in a real block model, the entire economics of a mine plan sits on top of a formula this simple, repeated at scale.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Using the same cutoff grade of 0.5 g/t, evaluate <code>=IF(B2>=0.5,"Ore","Waste")</code> for B2 = 0.49 and for B2 = 0.5 exactly.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>B2 = 0.49: <strong>"Waste"</strong> (just below cutoff). B2 = 0.5: <strong>"Ore"</strong>, because <code>&gt;=</code> includes equality, a sample sitting exactly on the cutoff is classified as ore, not waste.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>An equipment log has "Hours Since Last Service" in B5. Write an IF formula that returns "Overdue" if this exceeds 500 hours, "OK" otherwise.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=IF(B5>500,"Overdue","OK")</code></p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>Evaluate the Practice 2 formula for B5 = 620 and for B5 = 500 exactly.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>B5 = 620: <strong>"Overdue"</strong>. B5 = 500: <strong>"OK"</strong>, since the condition uses strict <code>&gt;</code>, not <code>&gt;=</code>, so exactly 500 hours does not yet count as overdue. (Compare with Practice 1, where <code>&gt;=</code> included the boundary, worth noticing the difference is a deliberate choice each time you write a condition, not a default.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>QAQC duplicate check: an original assay result is in B2 (2.45 g/t), its field duplicate in C2 (2.78 g/t). Write a formula in D2 for the percentage difference, $\left|\dfrac{\text{original}-\text{duplicate}}{\text{original}}\right|\times100$, then a formula in E2 that returns "FAIL" if D2 exceeds 10%, "PASS" otherwise. Evaluate both.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>D2: =ABS((B2-C2)/B2)*100</code></p>
+      <p>$$\left|\frac{2.45-2.78}{2.45}\right|\times100 \approx 13.47\%$$</p>
+      <p><code>E2: =IF(D2>10,"FAIL","PASS")</code> &rarr; since $13.47>10$: <strong>"FAIL"</strong>, this pair of samples has failed the standard duplicate-precision check and would typically trigger a re-assay or a batch review.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Geotechnical: a factor of safety (FoS) calculation for a pit slope is in B3. Write an IF formula that returns "Investigate" if FoS is below 1.5 (the typical minimum design threshold), "Stable" otherwise. Evaluate for B3 = 1.2 and B3 = 1.8.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=IF(B3<1.5,"Investigate","Stable")</code></p>
+      <p>B3 = 1.2: <strong>"Investigate"</strong> (below threshold, a genuine geotechnical flag). B3 = 1.8: <strong>"Stable"</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Explain, with a concrete example, why mixing up <code>&gt;</code> and <code>&gt;=</code> in an IF condition is a genuinely dangerous mistake in a production spreadsheet, not just a minor stylistic slip.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A sample sitting exactly on a boundary value is not a rare edge case in real data, cutoff grades, service thresholds, and QAQC limits are often round numbers precisely because they're policy decisions, and real samples land on them regularly. Practice 1 and Practice 3 showed the two operators give <em>opposite</em> classifications for a value sitting exactly at the boundary, one calls it Ore, the other calls it Waste, purely from a single missing equals sign in the formula. In a real block model with thousands of samples, an accidental <code>&gt;</code> where <code>&gt;=</code> was intended could misclassify a meaningful number of boundary-grade blocks, directly affecting the reported ore reserve, exactly the kind of silent, hard-to-spot error this lesson keeps returning to.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Write an IF formula that checks if a blast powder factor (kg/BCM) in B4 is <em>outside</em> the acceptable design range of 0.3 to 0.5, returning "Out of spec" if so, "OK" if within range. (Hint: you'll need <code>OR</code> nested inside the IF, or two separate comparisons combined.)</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=IF(OR(B4<0.3,B4>0.5),"Out of spec","OK")</code></p>
+      <p>The <code>OR()</code> function returns TRUE if <em>either</em> sub-condition is true (too low, or too high), and that combined TRUE/FALSE result becomes the single logical test the IF function needs. This is a natural extension worth knowing exists, even though <code>OR</code> and <code>AND</code> aren't covered in full detail in this lesson.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec2">
+  <div class="section-title"><span class="tag">2</span> Nested IF and IFS</div>
+  <div class="prose">
+    <p>Real classification almost never has just two outcomes. Ore isn't just "ore or waste," it's often split into grade tiers (High, Medium, Low, Waste) that feed different processing decisions. A single IF only ever gives two outcomes, so multiple thresholds need either <strong>nested IF</strong> statements (an IF inside another IF's false branch) or the newer, flatter <strong>IFS</strong> function.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Nested IF: $$\texttt{=IF(cond1,result1,IF(cond2,result2,IF(cond3,result3,result4)))}$$</p>
+    <p>IFS (cleaner for 3+ outcomes): $$\texttt{=IFS(cond1,result1,cond2,result2,cond3,result3,TRUE,result4)}$$</p>
+    <p>Both must be written with thresholds checked from <strong>highest to lowest</strong> (or lowest to highest, consistently), otherwise an early, looser condition catches values that should have been sorted into a later, stricter category first.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Classify a gold grade (B2) into four tiers: High ($\ge2.0$ g/t), Medium ($\ge0.8$ g/t), Low ($\ge0.3$ g/t), Waste (below 0.3). Write the nested IF, and evaluate for B2 = 1.1.</p>
+    <p class="step">$$\texttt{=IF(B2>=2.0,"High",IF(B2>=0.8,"Medium",IF(B2>=0.3,"Low","Waste")))}$$</p>
+    <p class="step">$B2=1.1$: is it $\ge2.0$? No. Is it $\ge0.8$? Yes.</p>
+    <p><strong>"Medium"</strong>. Notice the check had to go from the highest threshold down, if the formula had checked <code>B2&gt;=0.3</code> first, a value of $1.1$ would have been caught early and wrongly labelled "Low," since $1.1$ also satisfies that looser condition, it's just never given the chance to be checked against the correct, higher tier first.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Using the worked example's formula, evaluate the classification for B2 = 2.5, B2 = 0.45, and B2 = 0.1.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>2.5 &rarr; <strong>"High"</strong> ($\ge2.0$). $\ $ 0.45 &rarr; <strong>"Low"</strong> ($\ge0.3$ but $<0.8$). $\ $ 0.1 &rarr; <strong>"Waste"</strong> (below every threshold).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>Rewrite the worked example's classification using <code>IFS</code> instead of nested IF.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=IFS(B2>=2.0,"High",B2>=0.8,"Medium",B2>=0.3,"Low",TRUE,"Waste")</code></p>
+      <p>The final <code>TRUE,"Waste"</code> pair acts as the catch-all default, exactly the role the innermost <code>IF</code>'s false-branch played in the nested version, just written flatter and, most people find, easier to read once there are three or more tiers.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Classify rock hardness by unconfined compressive strength (UCS, MPa) in B3: Very Hard ($\ge200$), Hard ($\ge100$), Medium ($\ge50$), Soft (below 50). Write the nested IF formula.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=IF(B3>=200,"Very Hard",IF(B3>=100,"Hard",IF(B3>=50,"Medium","Soft")))</code></p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Evaluate Practice 10's formula for a UCS of 145 MPa.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$145\ge100$ but $145<200$: <strong>"Hard"</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Someone writes the rock hardness classification checking thresholds from <em>lowest</em> to highest instead: <code>=IF(B3>=50,"Medium",IF(B3>=100,"Hard",IF(B3>=200,"Very Hard","Soft")))</code>. What does this formula return for a genuinely Very Hard sample, B3 = 250, and why is this wrong?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$250\ge50$ is checked first and is TRUE, so the formula immediately returns <strong>"Medium"</strong>, before it ever gets the chance to check the higher, more correct thresholds. This is precisely the ordering trap the worked example warned about: once the loosest condition is satisfied, the formula stops and returns that result, it never continues checking the remaining, stricter conditions, regardless of how obviously wrong the classification is. Every sample with UCS $\ge50$ MPa, correct answer or not, gets funnelled into "Medium" by this broken formula.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>In your own words, explain one genuine advantage of <code>IFS</code> over deeply nested <code>IF</code> statements, beyond just "it's shorter."</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Nested IF statements accumulate closing parentheses that get genuinely hard to track once you're four or five levels deep, a single missing or misplaced parenthesis breaks the entire formula, and finding which one is wrong in a long nested chain is a real debugging headache. <code>IFS</code> lists condition/result pairs in a single flat sequence with no nesting at all, each pair reads almost like a sentence ("if this, then that"), which makes both writing it correctly the first time, and reading it back later to check the logic, noticeably easier once there are more than two or three tiers.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec3">
+  <div class="section-title"><span class="tag">3</span> VLOOKUP</div>
+  <div class="prose">
+    <p><code>VLOOKUP</code> searches down the first column of a reference table for a matching value, then returns a value from a specified column in that same row. This is the tool for cross-referencing two related tables, and the single most common real use in mining engineering is converting volume (BCM, bank cubic metres) to mass (tonnes) using a rock-type-specific <strong>density</strong> looked up from a reference table.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\texttt{=VLOOKUP(lookup\_value, table\_array, col\_index\_num, range\_lookup)}$$</p>
+    <p><code>col_index_num</code> counts columns <em>from the left edge of the table array</em>, starting at 1 for the lookup column itself. <code>range_lookup</code>: <code>FALSE</code> for an exact match (the usual choice for codes/IDs), <code>TRUE</code> or omitted for an approximate match (used for bracket/threshold lookups, Section 4 covers the difference in more detail).</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A reference table in E2:F5 lists rock type and density (t/BCM): Oxide 1.6, Transition 2.1, Fresh_Rock 2.8, Waste 2.4. Cell B2 contains <code>Fresh_Rock</code> and C2 contains a volume of 12,500 BCM. Write a formula in D2 for tonnes, using VLOOKUP to fetch the density, and evaluate it.</p>
+    <p class="step">First, look up the density: <code>=VLOOKUP(B2,$E$2:$F$5,2,FALSE)</code>, exact match on the rock type text, returning column 2 of the table (density).</p>
+    <p class="step">Combine with the volume: $$\texttt{D2: =C2*VLOOKUP(B2,\$E\$2:\$F\$5,2,FALSE)}$$</p>
+    <p class="step">VLOOKUP finds <code>Fresh_Rock</code> in column E, returns the matching density from column F: $2.8$ t/BCM.</p>
+    <p>$$12{,}500 \text{ BCM} \times 2.8 \text{ t/BCM} = 35{,}000 \text{ tonnes}.$$</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Using the same density table (Oxide 1.6, Transition 2.1, Fresh_Rock 2.8, Waste 2.4), find the tonnes for 8,000 BCM of Oxide material.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$8000\times1.6 = 12{,}800$ tonnes.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>In the density table (columns E=rock type, F=density), what is <code>col_index_num</code> for retrieving the density? What would <code>col_index_num=1</code> return instead?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>col_index_num=2</code> for density (the second column of the table array, counting from the lookup column itself as column 1). <code>col_index_num=1</code> would just return the rock type text back again, the same value you searched with, since column 1 of the table array is always the lookup column itself.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>An equipment spec table lists Model (column E) and Payload Tonnes (column F): CAT777 &rarr; 100, CAT785 &rarr; 150, CAT793 &rarr; 227. A truck log has model <code>CAT793</code> in B2. Write a VLOOKUP formula in C2 to fetch its payload, and state the result.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=VLOOKUP(B2,$E$2:$F$4,2,FALSE)</code> &rarr; <strong>227</strong> tonnes.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Explain the difference between <code>range_lookup=FALSE</code> and <code>range_lookup=TRUE</code>, using a royalty-rate table (grade bracket &rarr; royalty %) as an example of when the approximate (<code>TRUE</code>) version is actually the correct choice.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>FALSE</code> requires an <em>exact</em> match, correct for codes and names like rock type or truck model, where "close enough" makes no sense (there's no such thing as "approximately CAT793"). <code>TRUE</code> finds the largest value in the lookup column that is <em>less than or equal to</em> the search value, appropriate for bracket tables: a royalty table listing minimum grade thresholds (0, 0.5, 1.0, 2.0 g/t) with associated rates would use <code>TRUE</code>, so that a grade of 1.5 g/t correctly matches the "1.0" bracket (the largest threshold not exceeding 1.5) rather than failing to find an exact match on a number that will essentially never appear exactly in the lookup column. (Critical requirement for <code>TRUE</code> to work correctly: the lookup column must be sorted in ascending order.)</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>The rock-type density table lives in E2:F5. A VLOOKUP formula is written in D2 as <code>=C2*VLOOKUP(B2,E2:F5,2,FALSE)</code> (without dollar signs) and then filled down to D3, D4, D5. What goes wrong, and why?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Without the dollar signs (<code>$E$2:$F$5</code>), the table array reference is <em>relative</em>, and filling the formula down shifts it: D3's formula would reference E3:F6 instead of the original E2:F5, D4 would reference E4:F7, and so on, the lookup table itself appears to "slide down" the sheet along with the formula. Since rows 6 and 7 of the actual reference table are empty, most filled-down rows will return <code>#N/A</code> (no match found in a table that's now mostly blank), or worse, silently pick up wrong data if there happens to be something else sitting in those rows. Locking the table array with <code>$</code> (absolute references) keeps it pinned to E2:F5 for every row the formula is filled into, exactly the fix.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>A VLOOKUP formula returns <code>#N/A</code> for a rock type that you can visibly see listed correctly in the reference table. Give two realistic causes of this, beyond a genuinely missing entry.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>(1) A trailing or leading space in one of the two text values, <code>"Fresh_Rock "</code> (with a space) does not exact-match <code>"Fresh_Rock"</code> as far as Excel is concerned, even though they look identical on screen. (2) Inconsistent capitalisation or underscore/space usage between the source data and the lookup table, e.g.\ <code>"Fresh Rock"</code> versus <code>"Fresh_Rock"</code>, VLOOKUP with exact match requires the text to match character-for-character (though it is not case-sensitive), so a formatting inconsistency introduced during data entry is a very common, very frustrating real cause of an otherwise mysterious <code>#N/A</code>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec4">
+  <div class="section-title"><span class="tag">4</span> VLOOKUP pitfalls</div>
+  <div class="prose">
+    <p>VLOOKUP is powerful but has a genuine structural limitation worth knowing before you rely on it in a real workbook: it can only look for a match in the table's <strong>first</strong> column, and return a value from a column <strong>to its right</strong>. It cannot look backward, and cannot gracefully handle a missing match without extra help.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p><code>VLOOKUP</code> always searches the leftmost column of the table array and returns a value from a column with a <em>higher</em> index, i.e.\ further right. Wrap it in <code>IFERROR</code> to replace an ugly <code>#N/A</code> with a clean, deliberate fallback: $$\texttt{=IFERROR(VLOOKUP(...), "Not found")}$$</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>An equipment table has Equipment_ID in column F and Model Name in column E (Model is to the <em>left</em> of ID). You need to look up a Model Name given an Equipment_ID. Can VLOOKUP do this directly? What are the options?</p>
+    <p class="step">No, not directly. VLOOKUP always searches the <em>first</em> (leftmost) column of whatever range you give it as the table array, and here that would be column E (Model), not column F (ID), the exact opposite of what's needed.</p>
+    <p class="step">Two real fixes: rearrange the table so ID sits to the left of Model (not always possible if the table is shared or generated elsewhere), or use <code>INDEX/MATCH</code> (a more flexible but more complex combination, beyond this lesson's scope), or, cleanest of all, switch to <code>XLOOKUP</code>.</p>
+    <p>This exact limitation is the single biggest reason <code>XLOOKUP</code> exists, covered next in Section 5.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A VLOOKUP formula returns <code>#N/A</code> for one specific truck ID out of 40, all other 39 work fine. You confirm the ID genuinely exists in the lookup table, correctly spelled, no extra spaces. What's a third possible cause, related to how the value was originally entered?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A data-type mismatch: the lookup value might be stored as text in one place and as a genuine number in the other (a classic case is an ID like <code>007</code>, stored as the text string "007" in one column but auto-converted to the number 7 in the other, since Excel strips leading zeros from anything it interprets as numeric). VLOOKUP treats text "7" and number 7 as different values for exact-match purposes, even though they display identically or near-identically, producing a confusing single-row <code>#N/A</code> that looks, at a glance, exactly like every other correctly-matching row.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Rewrite <code>=VLOOKUP(B2,$E$2:$F$5,2,FALSE)</code> so that instead of displaying <code>#N/A</code> when a rock type isn't found, it displays the text "Check rock type".</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=IFERROR(VLOOKUP(B2,$E$2:$F$5,2,FALSE),"Check rock type")</code></p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>Explain why wrapping every VLOOKUP in <code>IFERROR</code> as a matter of habit is <em>not</em> always a good idea, even though it makes error messages disappear.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>#N/A</code> is genuinely useful information, it's telling you a real data problem exists (a typo, a missing entry, a formatting mismatch, exactly Practice 19 and 20's scenarios), and hiding it behind a friendly fallback text can mean that underlying problem gets quietly ignored rather than fixed. <code>IFERROR</code> is the right tool once you've deliberately decided a missing match is an <em>expected, acceptable</em> outcome (e.g.\ "this equipment simply hasn't been assigned a spec yet, and that's fine for now"), not a blanket habit to slap onto every lookup formula regardless of whether a missing match should actually be investigated.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Given the equipment table from the worked example (Model in E, ID in F, ID to the right of Model), write a VLOOKUP formula that correctly looks up a Model Name given an ID in B2, assuming the table columns cannot be rearranged.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>There genuinely isn't a correct VLOOKUP formula for this, that's precisely the point of the worked example: VLOOKUP structurally cannot search a column and return a value to its <em>left</em>. Section 5's <code>XLOOKUP</code> is the direct, clean fix for exactly this situation, worth treating this problem as confirmation of the limitation rather than a puzzle to solve within VLOOKUP itself.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec5">
+  <div class="section-title"><span class="tag">5</span> XLOOKUP: the modern replacement</div>
+  <div class="prose">
+    <p><code>XLOOKUP</code> (available in current Excel and Excel for Microsoft 365, but not in older versions) fixes VLOOKUP's two biggest limitations directly: it can search and return in <em>either</em> direction, and it has a clean, built-in way to handle a missing match without needing a separate <code>IFERROR</code> wrapper.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>$$\texttt{=XLOOKUP(lookup\_value, lookup\_array, return\_array, if\_not\_found)}$$</p>
+    <p>No column-counting (<code>col_index_num</code>) required, you point directly at the column to search and the column to return, in any left/right relationship to each other. The optional fourth argument replaces the need for a separate <code>IFERROR</code>.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>Rewrite the density lookup (Section 3's worked example) as XLOOKUP, and separately, solve Practice 23's "look leftward" problem (Model Name given an ID, with ID sitting to the right of Model in columns E and F).</p>
+    <p class="step">Density lookup: $$\texttt{=C2*XLOOKUP(B2,\$E\$2:\$E\$5,\$F\$2:\$F\$5)}$$ &mdash; functionally identical to the VLOOKUP version, just naming the search column (E) and return column (F) directly instead of counting.</p>
+    <p class="step">Looking leftward (impossible for VLOOKUP): $$\texttt{=XLOOKUP(B2,\$F\$2:\$F\$4,\$E\$2:\$E\$4)}$$</p>
+    <p>Here the lookup array is column F (ID) and the return array is column E (Model), even though E sits to the <em>left</em> of F in the actual worksheet. XLOOKUP simply doesn't care which direction the return column is in, exactly the fix Practice 23 needed.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Rewrite the CAT793 payload lookup (Practice 16) using XLOOKUP instead of VLOOKUP.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=XLOOKUP(B2,$E$2:$E$4,$F$2:$F$4)</code>, returning the same <strong>227</strong> tonnes.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Rewrite Practice 21's <code>IFERROR</code>-wrapped VLOOKUP as a single clean XLOOKUP, using the built-in <code>if_not_found</code> argument.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p><code>=XLOOKUP(B2,$E$2:$E$5,$F$2:$F$5,"Check rock type")</code></p>
+      <p>One clean formula instead of a function wrapped inside another, the exact "not found" handling that took two nested functions in VLOOKUP is a single built-in argument here.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Given that XLOOKUP is strictly more capable than VLOOKUP, explain a genuine, practical reason a mining engineer would still need to know VLOOKUP well.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Not every workbook you'll touch was built recently, or in a current version of Excel, older company templates, files from clients or contractors on older software, and legacy spreadsheets that have been passed down and edited for a decade all commonly still use VLOOKUP, since XLOOKUP genuinely doesn't exist in older Excel versions and won't have been an option when those files were first built. Being able to read, debug, and extend an existing VLOOKUP-based workbook, not just build a new one, is a completely realistic day-one task, and you can't do that if you only ever learned XLOOKUP.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>For genuinely new work, where you know everyone opening the file has a modern Excel, would you default to VLOOKUP or XLOOKUP? Justify your answer in one or two sentences.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">A reasonable answer</span>
+      <p>XLOOKUP, for new work with a modern-Excel audience: it's strictly more flexible (either-direction lookups), has cleaner error handling built in, and the formula itself is easier to read since you name columns directly rather than counting them. The only reason to reach for VLOOKUP by default would be compatibility with an older Excel version somewhere in the file's audience, worth actively checking before assuming XLOOKUP is safe to use.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec6">
+  <div class="section-title"><span class="tag">6</span> Introduction to PivotTables</div>
+  <div class="prose">
+    <p>A <strong>PivotTable</strong> takes a large, flat table of raw records (one row per shift, per sample, per event) and summarises it instantly, total tonnes per pit, average grade per month, downtime hours per equipment type, by dragging field names into <strong>Rows</strong>, <strong>Columns</strong>, and <strong>Values</strong> boxes, no formulas typed at all.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">Key idea</span>
+    <p>Drag a category field (like Pit, or Month) into <strong>Rows</strong> to group by it. Drag a numeric field (like Tonnes) into <strong>Values</strong> to summarise it, Excel defaults to <strong>Sum</strong>, but this can be changed to Average, Count, Min, Max, and more. A field in <strong>Columns</strong> creates a further breakdown running across the top of the table, a cross-tab.</p>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Worked example</span>
+    <p>A raw daily production log has one row per shift: Pit, Month, Tonnes. Six rows exist: (North, Jan, 1200), (North, Jan, 1350), (South, Jan, 980), (North, Feb, 1400), (South, Feb, 1100), (South, Feb, 1050). Build (by hand, as a check on what the PivotTable would show) a summary of total tonnes by Pit and Month.</p>
+    <p class="step">North, Jan: $1200+1350=2550$. $\ $ South, Jan: $980$.</p>
+    <p class="step">North, Feb: $1400$. $\ $ South, Feb: $1100+1050=2150$.</p>
+    <table class="datatable">
+      <tr><th></th><th>Jan</th><th>Feb</th></tr>
+      <tr><td><strong>North</strong></td><td>2550</td><td>1400</td></tr>
+      <tr><td><strong>South</strong></td><td>980</td><td>2150</td></tr>
+    </table>
+    <p>This is exactly what a PivotTable with Pit in Rows, Month in Columns, and Sum of Tonnes in Values produces automatically, no formula written anywhere, and it updates instantly if the raw data changes and the PivotTable is refreshed.</p>
+  </div>
+</section>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Using the worked example's table, what is the total across both pits for January?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$2550+980 = 3530$ tonnes, the "Jan" column total a PivotTable would automatically show as a grand total row/column.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>You want a PivotTable showing total tonnes per pit only, with no month breakdown at all. Which field(s) go in Rows, and which in Values?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Pit in Rows, Tonnes in Values (Sum). Month is simply left out of the PivotTable entirely, since it's not needed for this particular summary, Excel automatically aggregates across every month for each pit when Month isn't placed anywhere in the layout.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>The Values field is changed from Sum to Average. Using the worked example's raw data, what would the North/Jan cell show instead of 2550?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>North had two shifts in January (1200 and 1350): average $=\dfrac{1200+1350}2=1275$ tonnes per shift, a genuinely different, and often more useful, question than the raw total ("how big was a typical shift" versus "how much did we produce in total").</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>Two new rows of raw data are added to the source table after the PivotTable has already been built. Does the PivotTable update automatically? What action, if any, is required?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>No, not automatically, a PivotTable is a snapshot summary computed at the time it was built (or last refreshed), it does not watch the source data live. You need to explicitly click <strong>Refresh</strong> (right-click the PivotTable, or use the Refresh button on the ribbon) for it to re-scan the source range and incorporate the new rows. This is exactly why building the source data as a genuine Excel <strong>Table</strong> (from the previous lesson) is worth the habit, a Table-based source range that grows automatically means the PivotTable's data range keeps up without needing to be manually re-selected every time rows are added, only Refresh is still required.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Explain the genuine advantage of a PivotTable over writing five separate <code>SUMIF</code>-style formulas to compute the same five totals (one per pit-month combination) manually.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Beyond simply being faster to set up (drag two fields versus writing and debugging several conditional-sum formulas), a PivotTable is trivially <em>re-shaped</em>: switching from "Pit by Month" to "Month by Pit," or adding a third breakdown by Equipment, or changing Sum to Average, is a few clicks of dragging fields around, not a rewrite of every formula. It also automatically produces grand totals and subtotals correctly with no risk of a formula referencing the wrong range, and it scales effortlessly to genuinely large datasets (thousands of raw rows) where hand-writing individual summary formulas for every category combination would become completely impractical.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 33</span></div>
+  <div class="p-body"><p>Propose a PivotTable layout (which fields in Rows, Columns, Values, and which summary statistic) for a raw equipment downtime log with columns Equipment_Type, Reason_Code, and Downtime_Hours, to answer: "which reason code causes the most total downtime for each equipment type?"</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Equipment_Type in Rows, Reason_Code in Columns, Sum of Downtime_Hours in Values, producing a cross-tab where each row (equipment type) can be scanned across its columns (reason codes) to immediately spot the largest number, the dominant downtime cause for that specific equipment type, exactly the kind of question a PivotTable answers in seconds that would otherwise need careful manual filtering and summing.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="topic" id="sec7">
+  <div class="section-title"><span class="tag">7</span> Explore: putting it all together</div>
+  <div class="prose">
+    <p>These three tools are almost never used in isolation in a real workbook, IF classifies a row, VLOOKUP/XLOOKUP enriches it with data from another table, and a PivotTable summarises the result. The following are open-ended builds, worth actually opening Excel for.</p>
+  </div>
+</section>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 34</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build a small block model: 10 rows of made-up sample data (Sample_ID, Rock_Type, Grade_gt, Volume_BCM). Add a Density lookup column (XLOOKUP against a 4-row rock-type/density table), a Tonnes column, and an Ore/Waste column (IF against a 0.5 g/t cutoff). Then build a PivotTable summarising total tonnes by Rock_Type and by Ore/Waste classification.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">What this ties together</span>
+      <p>This single small workbook uses all three tools from this lesson in the exact sequence they're actually used in real resource estimation: XLOOKUP enriches each raw sample row with a density (Section 3/5), a formula converts volume to tonnes using that looked-up density, IF classifies each row as ore or waste (Section 1), and the PivotTable (Section 6) then summarises the whole block model into a single, decision-ready number: how many tonnes of ore versus waste, broken down by rock type. This is, genuinely, a simplified version of what real mine planning software does under the hood.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 35</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build a royalty calculator: a grade-bracket table (4 brackets, ascending, with royalty rates), then a sample list where each row's royalty rate is found via an approximate-match VLOOKUP or XLOOKUP, and a royalty-owed column (grade &times; rate &times; some fixed tonnage). Total it with SUM.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">What to watch for</span>
+      <p>The bracket table <em>must</em> be sorted ascending by the minimum grade threshold for approximate-match lookup to work correctly (Practice 17's requirement), a genuinely easy thing to get wrong if the table is later re-sorted for display purposes without remembering why the order mattered in the first place. Worth deliberately testing a grade value sitting exactly on a bracket boundary, to confirm which bracket it lands in, exactly the boundary-condition discipline built in Practice 1 and Practice 3.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 36</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build an equipment cost-per-hour report: an equipment spec table (Model, Payload, Fuel_Burn_Rate, Hourly_Cost), a fleet log (Truck_ID, Model, Hours_Run) with Hourly_Cost pulled in via lookup and a Total_Cost column computed, then a PivotTable summarising Total_Cost by Model.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">What this represents</span>
+      <p>This is a realistic, simplified fleet cost report: one reference table (specs, rarely changing) joined against an operational log (hours run, changing daily) via lookup, exactly the "master table + transaction table" pattern that underlies most real production and cost systems, whether built in Excel, a database, or eventually pandas. Recognising this pattern, a small reference table joined to a larger operational log, is one of the most transferable ideas in this entire lesson.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 37</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Build a QAQC batch tracker: 15 rows of original/duplicate assay pairs, a percentage-difference column, a Pass/Fail IF flag (10% threshold), and a PivotTable counting how many samples passed versus failed per lab batch (add a Batch_ID column, 2&ndash;3 batches).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">What this represents</span>
+      <p>Counting Pass/Fail per batch in a PivotTable uses the <strong>Count</strong> value-field setting rather than Sum or Average (Section 6's key idea mentioned this option without dwelling on it, this is the natural place to actually use it): dragging the Pass/Fail field itself into Values and setting it to Count gives, per batch, how many samples fell into each category. A batch with an unusually high fail rate is exactly the kind of signal a QAQC officer would want flagged immediately, and this small workbook produces that signal automatically from raw duplicate-pair data.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 38</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Reflecting on Practice 34 through 37: in your own words, describe how these three tools together resemble a real, simplified mine reconciliation or reporting workflow, from raw field data to a management-ready summary.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">What this is really testing</span>
+      <p>There's no single expected answer, but the pattern worth noticing is consistent across all four builds: raw, granular field data (one row per sample, per truck-hour, per assay pair) gets <strong>enriched</strong> with reference information via lookup (density, cost rate, royalty rate), then <strong>classified</strong> with IF logic (ore/waste, pass/fail), and finally <strong>aggregated</strong> into a PivotTable that answers the actual business question a manager cares about (total ore tonnes, total fleet cost, batch pass rate). Raw data &rarr; enrich &rarr; classify &rarr; summarise is genuinely the shape of most real reporting pipelines, in Excel today, and in pandas or a proper database later, only the tools implementing each step change.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card explore" data-card>
+  <div class="p-head"><span class="p-num">Practice 39</span> <span class="p-tag">EXPLORE</span></div>
+  <div class="p-body"><p>Take the block model from Practice 34 and imagine it as a pandas DataFrame. What single line of pandas code would replace the IF-based Ore/Waste column? What method would replace the PivotTable summary?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">The bridge to data science</span>
+      <p>The IF column becomes roughly <code>df['Ore_Waste'] = np.where(df['Grade_gt']>=0.5,'Ore','Waste')</code>, the exact same true/false branching logic, just as a vectorised operation applied to an entire column at once rather than one cell at a time. The PivotTable becomes <code>df.groupby(['Rock_Type','Ore_Waste'])['Tonnes'].sum()</code>, Rows and Values from the PivotTable interface become arguments to <code>groupby()</code> directly. Neither of these lines does anything conceptually new compared to what you just built by hand in Excel, they're the same three ideas (classify, enrich, aggregate) with different syntax, exactly the payoff this lesson series has been building toward from the very first "why Excel for an engineer" section.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>MS Excel &middot; Level 2 &middot; Mining &amp; Mechanical Engineering</footer>
+
+<script>
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice items revealed';
+}
+</script>
+
+</body>
+</html>

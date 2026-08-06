@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 4 Tutorial - Fourier Series and Special Functions</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root { --navy:#1B3A5C; --blue:#185FA5; --bg:#fafaf8; --line:#e8e6e0; --text:#2c2a28; --muted:#6b6762; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "DM Sans", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.75; padding: 36px 20px 70px; }
+    .wrap { max-width: 900px; margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 28px; }
+    h1,h2,h3 { font-family: "Crimson Pro", Georgia, serif; color: var(--navy); }
+    h1 { font-size: 42px; line-height: 1.1; margin-bottom: 8px; }
+    h2 { font-size: 30px; margin-top: 24px; margin-bottom: 8px; }
+    h3 { font-size: 23px; margin-top: 14px; margin-bottom: 6px; }
+    p,li { font-size: 15px; } ul,ol { padding-left: 22px; margin: 8px 0; }
+    .label { color: #FF3621; font-size: 12px; letter-spacing: .08em; font-weight: 700; text-transform: uppercase; }
+    .hero-sub { color: var(--muted); margin-bottom: 14px; }
+    .nav a { color: var(--blue); text-decoration: none; font-size: 14px; }
+    .card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 10px 0; background: #f9fbff; }
+    .tip { background: #eef6ff; border-left: 4px solid var(--blue); border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 10px 0; }
+    .warn { background: #fff4ef; border-left: 4px solid #FF3621; border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav"><a href="index.html">← MATH282 Index</a></div>
+    <div class="label">Lesson 4 Tutorial · Weeks 6-7</div>
+    <h1>Fourier Series, Beta Function, Error Function</h1>
+    <p class="hero-sub">Complete walkthrough of periodic decomposition plus special-function tools for non-elementary integrals.</p>
+
+    <h2>1) Why this topic exists</h2>
+    <p>Fourier series models periodic signals as sums of sines and cosines. Special functions (Beta, Gamma, erf) appear when integrals cannot be written in elementary antiderivative form.</p>
+    <div class="tip"><strong>Engineering link:</strong> heat conduction, vibration, signal processing, diffusion, and probability all use these representations.</div>
+
+    <h2>2) Build-up concepts</h2>
+    <h3>2.1 Fourier structure on \((-L,L)\)</h3>
+    <p>\[
+      f(x)\sim\frac{a_0}{2}+\sum_{n=1}^\infty\left(a_n\cos\frac{n\pi x}{L}+b_n\sin\frac{n\pi x}{L}\right)
+    \]</p>
+    <p>with
+    \[
+      a_n=\frac{1}{L}\int_{-L}^L f(x)\cos\frac{n\pi x}{L}\,dx,\quad
+      b_n=\frac{1}{L}\int_{-L}^L f(x)\sin\frac{n\pi x}{L}\,dx.
+    \]</p>
+    <h3>2.2 Parity shortcut</h3>
+    <ul>
+      <li>\(f\) even \(\Rightarrow b_n=0\)</li>
+      <li>\(f\) odd \(\Rightarrow a_0=a_n=0\)</li>
+    </ul>
+    <h3>2.3 Special functions</h3>
+    <p>\[
+      B(p,q)=\int_0^1 t^{p-1}(1-t)^{q-1}dt,\quad
+      \Gamma(p)=\int_0^\infty t^{p-1}e^{-t}dt,\quad
+      B(p,q)=\frac{\Gamma(p)\Gamma(q)}{\Gamma(p+q)}
+    \]</p>
+    <p>\[
+      \operatorname{erf}(x)=\frac{2}{\sqrt{\pi}}\int_0^x e^{-u^2}du.
+    \]</p>
+
+    <h2>3) Method scaffold</h2>
+    <div class="card">
+      <strong>Routine A — Fourier coefficients</strong>
+      <ol>
+        <li>Check parity first.</li>
+        <li>Compute only non-zero family (\(a_n\) or \(b_n\)).</li>
+        <li>Use integration by parts as needed.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <strong>Routine B — Beta/Gamma integral recognition</strong>
+      <ol>
+        <li>Try mapping integral to \(t^{p-1}(1-t)^{q-1}\).</li>
+        <li>Read \(p,q\), then use Gamma identity.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <strong>Routine C — error function usage</strong>
+      <ol>
+        <li>If integral has \(e^{-u^2}\), write in erf form.</li>
+        <li>Do not try symbolic elementary antiderivative.</li>
+      </ol>
+    </div>
+
+    <h2>4) Guided worked examples</h2>
+    <h3>Example 1: classic odd function Fourier</h3>
+    <p>\(f(x)=x\) on \((-\pi,\pi)\)</p>
+    <ol>
+      <li>Odd function \(\Rightarrow a_0=a_n=0\).</li>
+      <li>\(b_n=\frac{1}{\pi}\int_{-\pi}^{\pi}x\sin(nx)\,dx=\frac{2}{\pi}\int_0^\pi x\sin(nx)\,dx\).</li>
+      <li>By parts: \(b_n=2(-1)^{n+1}/n\).</li>
+      <li>\(x\sim2\sum_{n=1}^\infty (-1)^{n+1}\frac{\sin nx}{n}\).</li>
+    </ol>
+
+    <h3>Example 2: even function shortcut</h3>
+    <p>For \(f(x)=x^2\) on \((-\pi,\pi)\), only cosine terms survive; sine terms vanish by odd integrand symmetry in \(b_n\).</p>
+
+    <h3>Example 3: Beta integral</h3>
+    <p>\(\int_0^1 \sqrt{t}(1-t)^2 dt = B(3/2,3)\).</p>
+    <ol>
+      <li>\(= \Gamma(3/2)\Gamma(3)/\Gamma(9/2)\).</li>
+      <li>\(=16/105\).</li>
+    </ol>
+
+    <h3>Example 4: erf conversion</h3>
+    <p>\(\int_0^a e^{-u^2}du = (\sqrt{\pi}/2)\operatorname{erf}(a)\).</p>
+
+    <h2>5) Common mistakes and fixes</h2>
+    <div class="warn">
+      <ul>
+        <li><strong>Mistake:</strong> computing both \(a_n\) and \(b_n\) without parity check. <strong>Fix:</strong> test \(f(-x)\) first.</li>
+        <li><strong>Mistake:</strong> wrong interval scaling by \(\pi/L\). <strong>Fix:</strong> write master formula before substitution.</li>
+        <li><strong>Mistake:</strong> trying to integrate \(e^{-x^2}\) elementarily. <strong>Fix:</strong> switch to erf notation.</li>
+      </ul>
+    </div>
+
+    <h2>6) Practice set</h2>
+    <ol>
+      <li>Fourier series of \(f(x)=1\) on \((-\pi,\pi)\).</li>
+      <li>Find parity and non-zero coefficient family for \(f(x)=x^2\).</li>
+      <li>First three non-zero sine terms for \(f(x)=x\) on \((0,\pi)\).</li>
+      <li>First three cosine terms for \(f(x)=x\) on \((0,\pi)\).</li>
+      <li>Evaluate \(B(2,3)\).</li>
+      <li>Evaluate \(\int_0^1 t(1-t)^3dt\).</li>
+      <li>Write \(\int_0^2 e^{-u^2}du\) using erf.</li>
+      <li>State convergence value at jump discontinuity.</li>
+      <li>For \(f(x)=|x|\), identify vanished coefficients.</li>
+      <li>Give one engineering use case of Fourier series.</li>
+    </ol>
+
+    <h2>7) Mini mastery test</h2>
+    <ol>
+      <li>For \(f(x)=x\), state parity and coefficient family.</li>
+      <li>Compute \(B(1/2,1/2)\).</li>
+      <li>Write \(\int_0^a e^{-u^2}du\) in erf form.</li>
+      <li>Convergence value at continuous point?</li>
+      <li>Find \(a_0\) for \(f(x)=x^2\) on \((-\pi,\pi)\).</li>
+      <li>Why use half-range expansions?</li>
+    </ol>
+    <details>
+      <summary><strong>Mini mastery answers</strong></summary>
+      <ol>
+        <li>Odd; only \(b_n\) non-zero</li>
+        <li>\(\pi\)</li>
+        <li>\((\sqrt{\pi}/2)\operatorname{erf}(a)\)</li>
+        <li>Equals function value</li>
+        <li>\(2\pi^2/3\)</li>
+        <li>To model non-periodic data on finite interval via odd/even extension</li>
+      </ol>
+    </details>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      renderMathInElement(document.body, {
+        delimiters: [{ left: "\\(", right: "\\)", display: false }, { left: "\\[", right: "\\]", display: true }],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Road to K-Theory</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f0f4f8;
+  --surf:    #ffffff;
+  --surf2:   #eef2f7;
+  --bord:    #cfd9e6;
+  --text:    #2d3f52;
+  --muted:   #6b8096;
+  --bright:  #1a2b3c;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.75;
+  min-height: 100vh;
+}
+#prog { position:fixed;top:0;left:0;right:0;height:3px;background:var(--bord);z-index:200; }
+#prog-fill { height:100%;background:linear-gradient(90deg,#00a972,#0097e2,#ff3621,#ffb830);width:0;transition:width .2s; }
+.wrap { max-width:860px;margin:0 auto;padding:56px 24px 100px; }
+.hdr { text-align:center;margin-bottom:52px; }
+.hdr h1 { font-family:'Cinzel',serif;font-size:clamp(22px,4.5vw,42px);font-weight:600;color:var(--bright);letter-spacing:.05em; }
+.hdr p { color:var(--muted);font-style:italic;margin-top:10px;font-size:17px; }
+.hdr-rule { width:60px;height:1px;background:var(--bord);margin:16px auto; }
+.layout { display:flex;gap:28px;align-items:flex-start; }
+.tower { width:172px;flex-shrink:0;position:sticky;top:28px; }
+.tower-label { font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;padding-left:4px; }
+.tnav { display:flex;flex-direction:column;gap:1px; }
+.ti {
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  padding:7px 10px;border-left:2px solid var(--bord);
+  color:var(--muted);cursor:pointer;transition:all .2s;line-height:1.3;user-select:none;
+}
+.ti:hover { color:var(--bright);border-left-color:var(--muted); }
+.ti.active { color:var(--bright); }
+.cards { flex:1;min-width:0; }
+.cw { margin-bottom:6px;opacity:0;transform:translateY(14px);transition:opacity .4s,transform .4s; }
+.cw.show { opacity:1;transform:none; }
+.conn { width:2px;height:18px;background:var(--bord);margin:0 0 0 20px; }
+.card {
+  border:1px solid var(--bord);border-radius:6px;background:var(--surf);
+  overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.07);
+}
+.card:hover { border-color:var(--ac); }
+.card.open  { border-color:var(--ac);box-shadow:0 2px 20px -4px var(--ac-shadow); }
+.card-head { display:flex;align-items:center;gap:12px;padding:15px 18px;user-select:none; }
+.bdg {
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;
+  border:1px solid var(--ac);color:var(--ac);padding:3px 7px;border-radius:2px;
+  white-space:nowrap;flex-shrink:0;
+}
+.ctitle { font-family:'Cinzel',serif;font-size:15px;color:var(--bright);letter-spacing:.03em;flex:1; }
+.csub { font-style:italic;font-size:13px;color:var(--muted);flex-shrink:0; }
+.chev { color:var(--muted);font-size:11px;transition:transform .3s;flex-shrink:0; }
+.card.open .chev { transform:rotate(180deg); }
+.card-body { max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1); }
+.card-body.open { max-height:5000px; }
+.card-inner { border-top:1px solid var(--bord);padding:20px 20px 26px; }
+.sec { margin-top:16px; }
+.sec:first-child { margin-top:0; }
+.slabel { font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:7px; }
+.chips { display:flex;flex-wrap:wrap;gap:5px; }
+.chip { font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 9px;border-radius:2px;border:1px solid; }
+.cn { border-color:var(--ac);color:var(--ac);background:var(--ac-faint); }
+.cd { border-color:var(--bord);color:var(--muted);background:transparent; }
+.ck { border-color:var(--ac);color:var(--bright);background:var(--ac-mid);font-weight:500; }
+.prose { color:var(--text);font-size:16.5px;line-height:1.8;margin-top:12px; }
+.prose em { font-style:italic;color:var(--bright); }
+.prose strong { font-weight:600;color:var(--ac); }
+.bsec-heading {
+  font-family:'Cinzel',serif;font-size:13px;letter-spacing:.04em;
+  color:var(--ac);margin-top:22px;margin-bottom:2px;
+  border-bottom:1px solid var(--bord);padding-bottom:6px;
+}
+.fbox {
+  background:#f7f9fc;border-left:3px solid var(--ac);border-radius:0 4px 4px 0;
+  padding:12px 15px;margin-top:10px;font-family:'EB Garamond',serif;
+  font-style:italic;font-size:16px;color:var(--bright);line-height:1.9;white-space:pre-wrap;
+}
+.ex {
+  background:#f7f9fc;border:1px dashed var(--bord);border-radius:4px;
+  padding:11px 15px;margin-top:9px;font-size:15px;color:var(--muted);white-space:pre-wrap;
+}
+.exl { display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--ac);margin-bottom:5px; }
+.ins {
+  border-radius:4px;padding:12px 15px;margin-top:11px;
+  font-size:15.5px;font-style:italic;
+  background:var(--ac-faint);border:1px solid var(--ac-mid);color:var(--text);
+}
+.ins::before { content:"✦ ";color:var(--ac);font-style:normal; }
+.footer { text-align:center;color:var(--muted);font-style:italic;font-size:15px;margin-top:52px;padding-top:26px;border-top:1px solid var(--bord); }
+@media(max-width:620px){ .tower{display:none;} .csub{display:none;} }
+</style>
+</head>
+<body>
+<div id="prog"><div id="prog-fill"></div></div>
+<div class="wrap">
+  <div class="hdr">
+    <h1>The Road to K-Theory</h1>
+    <div class="hdr-rule"></div>
+    <p>Each concept is a prerequisite for the one above &mdash; with its history, motivation, and full explanation.</p>
+  </div>
+  <div class="layout">
+    <div class="tower">
+      <div class="tower-label">Levels</div>
+      <div class="tnav" id="tnav"></div>
+    </div>
+    <div class="cards" id="cards"></div>
+  </div>
+  <div class="footer">
+    Every concept on this page is a prerequisite for something above it.<br>
+    K-theory sits at the top &mdash; built entirely from ideas you can touch.
+  </div>
+</div>
+<script>
+var LV = [
+  {
+    badge:"LEVEL 0", title:"Sets & Functions", sub:"absolute foundation", color:"#00a972",
+    needs:[], key:"Equivalence Relation",
+    gives:["Set","Function","Bijection","Equivalence Relation","Equivalence Class","Quotient Set","Cardinality"],
+    body:[
+      {t:"h", s:"Why this was studied"},
+      {t:"p", s:"In the mid-19th century, mathematics was in a foundational crisis. Calculus had been used powerfully for 200 years, but nobody agreed on what a &ldquo;real number&rdquo; actually was, or whether infinite processes were rigorous. Mathematicians needed a language precise enough to build everything else on top of."},
+      {t:"p", s:"Georg Cantor (1845&ndash;1918) was the first to take infinity seriously as a mathematical object. His question was innocent enough: are there different &ldquo;sizes&rdquo; of infinity? To answer it, he needed a rigorous notion of when two collections are the same size, which forced him to define <em>sets</em> and <em>functions</em> carefully."},
+      {t:"h", s:"Historical timeline"},
+      {t:"e", l:"1874 — CANTOR", s:"Cantor proves that the real numbers cannot be put in bijection with the natural numbers. There are genuinely different sizes of infinity. This shocked the mathematical community."},
+      {t:"e", l:"1901 — RUSSELL&rsquo;S PARADOX", s:"Bertrand Russell shows that naive set theory is contradictory: the set of all sets that do not contain themselves leads to a logical paradox. This forced a more careful axiomatization."},
+      {t:"e", l:"1908&ndash;1922 — ZFC AXIOMS", s:"Zermelo and Fraenkel develop the axiomatic system for set theory (ZFC) that mathematicians still use today. It carefully avoids Russell&rsquo;s paradox by restricting what counts as a set."},
+      {t:"h", s:"The core idea: equivalence"},
+      {t:"p", s:"The single most important concept introduced at this level is the <strong>equivalence relation</strong>. Mathematicians constantly want to ignore irrelevant distinctions. Two triangles might be &ldquo;the same&rdquo; up to rotation, or two integers &ldquo;the same&rdquo; modulo 7, or two continuous paths &ldquo;the same&rdquo; up to deformation. An equivalence relation formalizes this."},
+      {t:"f", s:"An equivalence relation ~ on a set X satisfies three axioms:<br>&nbsp; Reflexivity: x ~ x for all x<br>&nbsp; Symmetry: x ~ y implies y ~ x<br>&nbsp; Transitivity: x ~ y and y ~ z implies x ~ z<br><br>The equivalence class of x is [x] = { y in X : y ~ x }.<br>The quotient set X/~ is the set of all equivalence classes."},
+      {t:"p", s:"The quotient construction is one of the most powerful in all of mathematics. Given a complicated set X and an equivalence relation, you collapse X into a simpler object X/~ that remembers only the distinctions you care about."},
+      {t:"e", l:"EXAMPLE: INTEGERS MOD 5", s:"X = the integers, x ~ y if 5 divides (x - y). The equivalence classes are [0],[1],[2],[3],[4]. The quotient Z/5Z has exactly five elements and inherits addition and multiplication from Z. This is the foundation of modular arithmetic."},
+      {t:"e", l:"EXAMPLE: RATIONAL NUMBERS", s:"The rationals Q are constructed as equivalence classes of pairs (p,q) of integers with q nonzero, where (p,q) ~ (p&rsquo;,q&rsquo;) iff pq&rsquo; = p&rsquo;q. This formally defines fractions rigorously from integers."},
+      {t:"i", s:"K-theory is built on a chain of quotient constructions. Vector bundles modulo isomorphism, then formal differences modulo stable equivalence. Understanding equivalence classes here makes every later step transparent."}
+    ]
+  },
+  {
+    badge:"LEVEL 1", title:"Groups & Monoids", sub:"algebraic structure", color:"#0097e2",
+    needs:["Set","Equivalence Class"], key:"Monoid",
+    gives:["Group","Abelian Group","Monoid","Identity","Inverse","Homomorphism","Kernel","Normal Subgroup"],
+    body:[
+      {t:"h", s:"Why this was studied"},
+      {t:"p", s:"The theory of groups grew out of a very concrete problem: when can a polynomial equation be solved by radicals? Evariste Galois (1811&ndash;1832) &mdash; writing feverishly the night before a fatal duel at age 20 &mdash; realized the answer had nothing to do with the equation&rsquo;s coefficients directly, but with the <em>symmetries</em> of its roots. He encoded those symmetries as a group."},
+      {t:"p", s:"Independently, symmetry was appearing everywhere: in crystallography (what are the possible crystal lattices?), in geometry (Felix Klein&rsquo;s Erlangen Program: a geometry is defined by its symmetry group), and in number theory (Gauss had been computing with modular arithmetic for decades). Groups gave a unified language for all of it."},
+      {t:"h", s:"Historical timeline"},
+      {t:"e", l:"1832 — GALOIS", s:"Galois introduces groups to classify symmetries of polynomial roots, proving that equations of degree 5 or higher cannot generally be solved by radicals. His paper is rejected by the Academy and only published posthumously in 1846."},
+      {t:"e", l:"1854 — CAYLEY", s:"Arthur Cayley gives the first abstract definition of a group, independent of any particular realization. He proves every group can be embedded in a symmetric group (Cayley&rsquo;s Theorem)."},
+      {t:"e", l:"1872 — KLEIN&rsquo;S ERLANGEN PROGRAM", s:"Felix Klein proposes that geometry is the study of invariants under a group of transformations. Euclidean geometry corresponds to the rigid motion group; projective geometry to the projective group. This unifies all known geometries."},
+      {t:"e", l:"1870s&ndash;1880s — ABSTRACT ALGEBRA EMERGES", s:"Dedekind, Frobenius, and others develop the abstract theory of groups, rings, and fields. Algebra becomes a subject in its own right rather than a tool for solving equations."},
+      {t:"h", s:"Groups vs Monoids: the critical gap"},
+      {t:"p", s:"A <strong>group</strong> requires every element to have an inverse. This gives complete reversibility: every operation can be undone. An <strong>abelian group</strong> additionally requires commutativity."},
+      {t:"p", s:"A <strong>monoid</strong> drops the inverse requirement. This sounds weaker, but monoids appear naturally in many places where you can combine but not always undo: strings under concatenation, natural numbers under addition, functions under composition, and &mdash; crucially for us &mdash; vector bundles under direct sum."},
+      {t:"f", s:"Group axioms for (G, &middot;):<br>&nbsp; Associativity: (a&middot;b)&middot;c = a&middot;(b&middot;c)<br>&nbsp; Identity: there exists e with e&middot;g = g&middot;e = g<br>&nbsp; Inverses: for each g, there exists g&supmin;&sup1; with g&middot;g&supmin;&sup1; = e<br><br>A monoid satisfies only the first two. The integers (Z,+) are a group; the naturals (N,+) are only a monoid."},
+      {t:"p", s:"A <strong>homomorphism</strong> f : G &rarr; H is a map that respects the group structure: f(a&middot;b) = f(a)&middot;f(b). The kernel of f is the set of elements mapping to the identity in H; it measures how far f is from being injective."},
+      {t:"e", l:"WHY MONOIDS MATTER FOR K-THEORY", s:"The isomorphism classes of vector bundles over a space X form a commutative monoid under direct sum. You can add bundles but you cannot subtract them within this structure. The entire construction of K-theory is the systematic solution to this problem: how do you formally add inverses to a monoid?"},
+      {t:"i", s:"Galois invented groups to answer a 300-year-old question about polynomials. Two centuries later, the same abstraction turns out to be exactly what is needed to classify the twisted families of vector spaces that appear in topology and physics."}
+    ]
+  },
+  {
+    badge:"LEVEL 2", title:"Topological Spaces", sub:"geometry without measurement", color:"#00c4a0",
+    needs:["Set","Function","Equivalence Relation"], key:"Homotopy",
+    gives:["Topology","Open Set","Continuous Map","Homeomorphism","Homotopy","Homotopy Equivalence","Fundamental Group","CW Complex","Compact","Connected"],
+    body:[
+      {t:"h", s:"Why this was studied"},
+      {t:"p", s:"Leonhard Euler solved the K&ouml;nigsberg bridge problem in 1736 by noticing that the answer depended only on the <em>connectivity</em> of the river islands, not on any distances or shapes. This was perhaps the first explicitly topological argument: only the qualitative structure mattered."},
+      {t:"p", s:"A century later, Bernhard Riemann (1826&ndash;1866) was studying complex functions and realized he needed to think carefully about the &ldquo;shape&rdquo; of the domains they lived on &mdash; without any natural metric. He introduced Riemann surfaces: spaces where complex analysis could be done globally. To classify them, you needed invariants that depended only on their topological type."},
+      {t:"p", s:"Henri Poincar&eacute; (1854&ndash;1912) formalized this into a systematic theory. His 1895 paper <em>Analysis Situs</em> (&ldquo;analysis of position&rdquo;) introduced homology groups, the fundamental group, and the basic apparatus of algebraic topology. His motivating question: how do you tell two spaces apart when you cannot measure distances?"},
+      {t:"h", s:"Historical timeline"},
+      {t:"e", l:"1736 — EULER", s:"Euler solves the K&ouml;nigsberg bridge problem, founding graph theory and topological thinking. The answer (no solution exists) depends only on the number of edges at each vertex, not on geometry."},
+      {t:"e", l:"1851 — RIEMANN", s:"Riemann introduces surfaces and the concept of genus (number of holes) as a topological invariant of complex curves. A torus has genus 1; a sphere has genus 0."},
+      {t:"e", l:"1895 — POINCAR&Eacute;", s:"Analysis Situs introduces homology groups as algebraic invariants of topological spaces. Poincar&eacute; also introduces the fundamental group, which captures information about loops in a space."},
+      {t:"e", l:"1914 — HAUSDORFF", s:"Felix Hausdorff writes the first modern textbook on topology, giving the precise definition of a topological space in terms of open sets and axioms."},
+      {t:"e", l:"1940s&ndash;1950s — CW COMPLEXES", s:"J.H.C. Whitehead introduces CW complexes: spaces built by gluing cells of increasing dimension. Most spaces in algebraic topology are CW complexes, and they behave well with respect to homotopy."},
+      {t:"h", s:"The key concepts"},
+      {t:"p", s:"A <strong>topology</strong> on a set X is a collection of subsets called open sets, satisfying: X and the empty set are open; arbitrary unions of open sets are open; finite intersections of open sets are open. This axiomatizes nearness without distance."},
+      {t:"p", s:"A map f : X &rarr; Y is <strong>continuous</strong> if the preimage of every open set is open. Two spaces are <strong>homeomorphic</strong> if there is a continuous bijection with continuous inverse. Homeomorphic spaces are topologically identical."},
+      {t:"f", s:"A homotopy between maps f, g : X &rarr; Y is a continuous map<br>H : X &times; [0,1] &rarr; Y<br>with H(x,0) = f(x) and H(x,1) = g(x) for all x.<br>Think of H as a continuous family of maps interpolating from f to g."},
+      {t:"p", s:"Two spaces X and Y are <strong>homotopy equivalent</strong> if there exist maps f : X &rarr; Y and g : Y &rarr; X such that g&compfn;f is homotopic to the identity on X and f&compfn;g is homotopic to the identity on Y. Homotopy equivalence is coarser than homeomorphism: a disk and a point are homotopy equivalent, but not homeomorphic."},
+      {t:"e", l:"EXAMPLE: DEFORMATION RETRACT", s:"The punctured plane R&sup2; minus a point is homotopy equivalent to a circle S&sup1;. You can continuously retract the plane onto a circle surrounding the missing point. They have the same homotopy type even though they are not homeomorphic."},
+      {t:"e", l:"WHY HOMOTOPY MATTERS FOR K-THEORY", s:"K-theory assigns a group K(X) to each space. The key theorem is that if X and Y are homotopy equivalent, then K(X) and K(Y) are isomorphic. So K-theory is really a functor on homotopy types, not on topological spaces themselves. Much of the computational power of K-theory comes from being able to replace a complicated space with a simpler homotopy-equivalent one."},
+      {t:"i", s:"Poincar&eacute; asked: what algebraic structure can detect the shape of a space? His homology groups were the first answer. K-theory, 60 years later, is a different and in many ways more powerful answer to the same question."}
+    ]
+  },
+  {
+    badge:"LEVEL 3", title:"Vector Spaces", sub:"linear algebra", color:"#ff6b35",
+    needs:["Set","Group","Function"], key:"Direct Sum",
+    gives:["Field","Vector Space","Basis","Dimension","Linear Map","Direct Sum","Tensor Product","Dual Space","Inner Product"],
+    body:[
+      {t:"h", s:"Why this was studied"},
+      {t:"p", s:"The theory of systems of linear equations is ancient &mdash; Chinese mathematicians were solving them in 200 BCE. But the modern, abstract formulation emerged only in the 19th century, driven by two forces: the need to handle higher-dimensional geometry (Grassmann&rsquo;s work in 1844), and the explosion of physics in the 1800s, where forces, velocities, and fields naturally lived in multi-dimensional spaces."},
+      {t:"p", s:"Hermann Grassmann (1809&ndash;1877) was a schoolteacher who, in 1844, published a book introducing what we now call vector spaces in arbitrary dimensions, along with the exterior algebra. His ideas were so far ahead of their time that the book was almost completely ignored for 20 years. Giuseppe Peano gave the first recognizably modern axiomatic definition of a vector space in 1888."},
+      {t:"h", s:"Historical timeline"},
+      {t:"e", l:"1844 — GRASSMANN", s:"Grassmann&rsquo;s Ausdehnungslehre (Theory of Extension) introduces n-dimensional linear spaces and the exterior product. Almost entirely ignored in his lifetime; only recognized after his death."},
+      {t:"e", l:"1888 — PEANO", s:"Peano gives the first modern axiomatic definition of a vector space. He is the same Peano who axiomatized the natural numbers."},
+      {t:"e", l:"1900s — LINEAR ALGEBRA AS A SUBJECT", s:"David Hilbert and others develop infinite-dimensional function spaces (Hilbert spaces) to handle quantum mechanics and Fourier analysis. Linear algebra expands from finite to infinite dimensions."},
+      {t:"e", l:"1930s — QUANTUM MECHANICS", s:"The state space of a quantum system is a complex Hilbert space. Every observable is a self-adjoint operator on this space. Linear algebra becomes the language of fundamental physics."},
+      {t:"h", s:"Vector spaces and their operations"},
+      {t:"p", s:"A <strong>vector space</strong> over a field k (think k = R or k = C) is an abelian group (V, +) together with scalar multiplication k &times; V &rarr; V, satisfying the usual distributivity and compatibility laws. The key examples are R&sup3; (three-dimensional real space), the space of polynomials, and spaces of functions."},
+      {t:"p", s:"Every vector space has a <strong>basis</strong>: a linearly independent spanning set. All bases of a finite-dimensional space have the same cardinality, called the <strong>dimension</strong>. Over a field, any two vector spaces of the same dimension are isomorphic &mdash; so dimension <em>completely</em> classifies finite-dimensional vector spaces. This simplicity is what makes K-theory interesting: the analogous statement for bundles is emphatically false."},
+      {t:"f", s:"Direct sum: V &oplus; W = { (v,w) : v &isin; V, w &isin; W }<br>with (v,w) + (v&rsquo;,w&rsquo;) = (v+v&rsquo;, w+w&rsquo;) and &lambda;(v,w) = (&lambda;v, &lambda;w)<br><br>dim(V &oplus; W) = dim(V) + dim(W)<br><br>Tensor product: V &otimes; W has basis { e_i &otimes; f_j } where {e_i} basis for V, {f_j} for W<br>dim(V &otimes; W) = dim(V) &middot; dim(W)"},
+      {t:"p", s:"The <strong>direct sum</strong> is the operation we will lift to bundles. When you have two bundles over the same base space, you form their direct sum by taking the direct sum of their fibers at each point. The dimension formula becomes a rank formula: rank(E &oplus; F) = rank(E) + rank(F)."},
+      {t:"e", l:"WHY DIMENSION IS NOT ENOUGH FOR BUNDLES", s:"Over a point, every vector space of dimension n is isomorphic to R&sup3;. But over a circle, there are two genuinely different line bundles (rank-1 bundles): the trivial one (cylinder) and the Mobius band. Dimension alone cannot distinguish them. To classify bundles we need a finer invariant &mdash; that is K-theory."},
+      {t:"i", s:"The miracle of linear algebra is that one number &mdash; dimension &mdash; classifies everything. K-theory can be seen as the systematic study of how this miracle fails when vector spaces are allowed to vary over a topological space."}
+    ]
+  },
+  {
+    badge:"LEVEL 4", title:"Vector Bundles", sub:"spaces of varying fibers", color:"#ff3621",
+    needs:["Topological Space","Vector Space","Continuous Map","Homeomorphism"], key:"Vector Bundle",
+    gives:["Vector Bundle","Fiber","Total Space","Base Space","Projection","Local Trivialization","Transition Functions","Trivial Bundle","Mobius Bundle","Tangent Bundle","Clutching Construction"],
+    body:[
+      {t:"h", s:"Why this was studied"},
+      {t:"p", s:"The concept of a vector bundle emerged from two independent sources in the 1930s: differential geometry and topology. In differential geometry, every smooth manifold M has a <em>tangent bundle</em>: at each point you can attach the tangent space, forming a continuous family of vector spaces. To do calculus on manifolds, you needed a precise framework for these families."},
+      {t:"p", s:"In topology, the question was classification: given a space X, what kinds of &ldquo;twisted families of vector spaces&rdquo; can sit over it? Whitney and Steenrod were trying to understand characteristic classes &mdash; algebraic invariants that detect the global twisting of a bundle. The answer would have applications to whether manifolds admit certain geometric structures."},
+      {t:"p", s:"The key insight is that locally, any reasonable family of vector spaces looks like a product U &times; R&sup3;. But globally, the pieces can be glued back together with a twist. The amount and type of twisting is exactly what topology detects."},
+      {t:"h", s:"Historical timeline"},
+      {t:"e", l:"1935 — WHITNEY", s:"Hassler Whitney introduces the formal definition of a fiber bundle and proves the Whitney embedding theorem. He develops characteristic classes (Stiefel-Whitney classes) to detect the global topology of real vector bundles."},
+      {t:"e", l:"1941 — STIEFEL-WHITNEY CLASSES", s:"Eduard Stiefel and Whitney independently discover cohomological invariants of vector bundles. These are the first &ldquo;characteristic classes&rdquo; &mdash; algebraic data that detect whether a bundle is trivial."},
+      {t:"e", l:"1945 — CHERN CLASSES", s:"Shiing-Shen Chern discovers characteristic classes for complex vector bundles. The Chern classes c_1, c_2, ... live in the cohomology of the base space and are among the most important invariants in geometry."},
+      {t:"e", l:"1951 — STEENROD", s:"Norman Steenrod publishes The Topology of Fibre Bundles, the definitive early reference. He develops the classification theorem: principal bundles over X are classified by homotopy classes of maps X &rarr; BG, where BG is the classifying space of the structure group G."},
+      {t:"h", s:"The definition in detail"},
+      {t:"p", s:"A <strong>vector bundle</strong> of rank n over a space X is a topological space E (the total space) together with a continuous surjection &pi; : E &rarr; X (the projection) such that each fiber &pi;&supmin;&sup1;(x) is a real (or complex) vector space of dimension n, and X can be covered by open sets U over which the bundle is trivial: there is a homeomorphism &pi;&supmin;&sup1;(U) &cong; U &times; R&sup3; that is linear on each fiber."},
+      {t:"p", s:"The key data specifying how local trivializations are glued together are the <strong>transition functions</strong> g&alpha;&beta; : U&alpha; &cap; U&beta; &rarr; GL(n,R). These are continuous maps into the invertible matrices. If the transition functions are all the identity, the bundle is trivial. The topology of X constrains what transition functions are possible."},
+      {t:"f", s:"Transition functions must satisfy the cocycle condition:<br>g&alpha;&gamma;(x) = g&alpha;&beta;(x) &middot; g&beta;&gamma;(x) for all x &isin; U&alpha; &cap; U&beta; &cap; U&gamma;<br><br>Two bundles are isomorphic iff their transition functions differ by a coboundary:<br>g&rsquo;&alpha;&beta;(x) = h&alpha;(x) &middot; g&alpha;&beta;(x) &middot; h&beta;(x)&supmin;&sup1; for some h&alpha; : U&alpha; &rarr; GL(n,R)"},
+      {t:"e", l:"THE TRIVIAL BUNDLE", s:"The product bundle X &times; R&sup3; has all transition functions equal to the identity matrix. Any bundle isomorphic to this is called trivial. A major question in topology: when is a given bundle trivial? The answer encodes deep geometry."},
+      {t:"e", l:"THE MOBIUS BUNDLE OVER S&sup1;", s:"Cover S&sup1; with two open arcs U and V. Their intersection has two components. The trivial bundle has both transition functions equal to 1. The Mobius bundle has one transition function equal to 1 and the other equal to -1 (the flip). This -1 prevents a global trivialization."},
+      {t:"e", l:"THE TANGENT BUNDLE OF S&sup2;", s:"At each point p of the 2-sphere, the tangent space is a 2-dimensional plane. These planes fit together into a rank-2 bundle TS&sup2;. The Hairy Ball Theorem (Brouwer, 1912) states that TS&sup2; has no nonzero global section: you cannot assign a nonzero tangent vector to every point continuously. Equivalently, TS&sup2; is not trivial."},
+      {t:"e", l:"THE CLUTCHING CONSTRUCTION FOR BUNDLES OVER SPHERES", s:"Every complex rank-n bundle over S&sup2; is determined by a single map f : S&sup1; &rarr; GL(n,C) (the clutching function), gluing the bundle over the northern hemisphere to the bundle over the southern hemisphere along the equator. This reduces bundle classification over S&sup2; to the study of maps S&sup1; &rarr; GL(n,C), i.e., to homotopy theory."},
+      {t:"i", s:"The clutching construction is the bridge between topology and linear algebra. Bundles over spheres are classified by homotopy groups of GL(n). Bott periodicity &mdash; Level 9 &mdash; is a theorem about exactly these homotopy groups."}
+    ]
+  },
+  {
+    badge:"LEVEL 5", title:"Vect(X) — Monoid of Bundles", sub:"arithmetic of bundles", color:"#ffb830",
+    needs:["Vector Bundle","Direct Sum","Equivalence Class","Monoid"], key:"Vect(X)",
+    gives:["Bundle Isomorphism","Whitney Sum","Vect(X)","Isomorphism Class [E]","Rank","Bundle Map","Pullback Bundle"],
+    body:[
+      {t:"h", s:"Why this was studied"},
+      {t:"p", s:"By the mid-1950s, algebraic topologists had powerful tools for studying individual vector bundles &mdash; characteristic classes, obstruction theory, the clutching construction. But a fundamental meta-question had not been seriously asked: what is the <em>set</em> of all vector bundles over X, and does it carry useful algebraic structure?"},
+      {t:"p", s:"The impetus came from a different direction entirely: Grothendieck&rsquo;s work in algebraic geometry. In 1957, studying a generalization of the Riemann-Roch theorem, he found himself needing to talk about the &ldquo;group of coherent sheaves&rdquo; on an algebraic variety &mdash; the algebraic geometry analogue of vector bundles over a manifold. His construction showed that the correct object to study was not individual sheaves but their equivalence classes under a group-completion operation."},
+      {t:"p", s:"Atiyah and Hirzebruch saw this and immediately applied it to topology, creating topological K-theory in 1959."},
+      {t:"h", s:"The monoid structure"},
+      {t:"p", s:"Given two vector bundles E and F over X, their <strong>Whitney sum</strong> E &oplus; F is formed by taking the direct sum of fibers pointwise: (E &oplus; F)_x = E_x &oplus; F_x. This operation descends to isomorphism classes: [E] &oplus; [F] = [E &oplus; F] is well-defined."},
+      {t:"f", s:"Vect(X) = { isomorphism classes [E] of vector bundles over X }<br><br>Under Whitney sum:<br>[E] &oplus; [F] := [E &oplus; F]<br><br>This is commutative: [E] &oplus; [F] = [F] &oplus; [E]<br>This is associative: ([E] &oplus; [F]) &oplus; [G] = [E] &oplus; ([F] &oplus; [G])<br>The zero bundle (rank 0) is the identity: [E] &oplus; [0] = [E]"},
+      {t:"p", s:"This makes Vect(X) a commutative monoid. The rank of a bundle gives a monoid homomorphism rank : Vect(X) &rarr; N, where N is the natural numbers under addition."},
+      {t:"e", l:"VECT(POINT) = N", s:"Over a single point, a vector bundle is just a vector space. Isomorphism classes of vector spaces are determined by dimension. So Vect(point) = {[R&sup0;],[R&sup1;],[R&sup2;],...} = N under addition of dimensions. This is the simplest possible case."},
+      {t:"e", l:"VECT(S&sup1;) HAS EXACTLY TWO RANK-1 CLASSES", s:"Over the circle, rank-1 bundles are classified by whether they are orientable. There are exactly two: the trivial bundle [cylinder] and the Mobius bundle [M]. The Whitney sum [M] &oplus; [M] is isomorphic to [cylinder] &oplus; [cylinder]: the two twists cancel. So in Vect(S&sup1;), we have the surprising identity 2[M] = 2[cylinder] even though [M] &ne; [cylinder]."},
+      {t:"e", l:"THE TAUTOLOGICAL BUNDLE OVER CP&sup1;", s:"Over the complex projective line CP&sup1; (which is homeomorphic to S&sup2;), there is a canonical rank-1 complex bundle: over each point [z] in CP&sup1; (which represents a line in C&sup2;), attach that line as the fiber. This tautological bundle H is not isomorphic to the trivial bundle. Its class in K-theory generates the &ldquo;interesting&rdquo; part of K(S&sup2;)."},
+      {t:"h", s:"The obstruction: no subtraction"},
+      {t:"p", s:"The monoid Vect(X) has addition but no subtraction. There is no bundle [-E] such that [E] &oplus; [-E] = [0], because a direct sum always has rank at least as large as each summand. The rank is always non-negative."},
+      {t:"p", s:"This is not a minor inconvenience. It means we cannot form &ldquo;virtual bundles&rdquo; like [E] - [F]. We cannot define a meaningful notion of the &ldquo;difference&rdquo; between two bundles. We cannot apply standard algebraic machinery (exact sequences, homological algebra) that requires inverses."},
+      {t:"i", s:"The Grothendieck construction at Level 6 is the systematic solution. It is the universal way to turn a commutative monoid into an abelian group, and it works just as well for Vect(X) as it does for the natural numbers."}
+    ]
+  },
+  {
+    badge:"LEVEL 6", title:"The Grothendieck Construction", sub:"forcing inverses to exist", color:"#0097e2",
+    needs:["Monoid","Equivalence Relation","Vect(X)","Abelian Group"], key:"Grothendieck Group",
+    gives:["Grothendieck Group K(M)","Formal Difference [E]-[F]","Stable Equivalence","Universal Property","Group Completion","K(X) in algebraic geometry"],
+    body:[
+      {t:"h", s:"Why this was studied"},
+      {t:"p", s:"Alexander Grothendieck (1928&ndash;2014) is one of the most extraordinary mathematicians of the 20th century. Born in Germany, stateless for much of his life due to his parents&rsquo; political circumstances, he rebuilt algebraic geometry almost single-handedly in the 1950s and 1960s, introducing ideas of breathtaking generality."},
+      {t:"p", s:"In 1957, Grothendieck was working on a vast generalization of the Riemann-Roch theorem &mdash; a 19th-century result relating the topology and analysis of complex curves. His key insight was that the natural setting was not individual coherent sheaves (the algebraic-geometry analogue of vector bundles) but their <em>classes</em> in a certain group. To define this group, he invented what we now call the Grothendieck construction."},
+      {t:"p", s:"He wrote about it in a letter to Serre in 1957, using the letter K (from the German <em>Klassen</em>, meaning &ldquo;classes&rdquo;). Atiyah and Hirzebruch saw the construction and applied it to topological vector bundles in 1959, creating topological K-theory. The algebraic and topological versions have been deeply intertwined ever since."},
+      {t:"h", s:"Historical timeline"},
+      {t:"e", l:"1957 — GROTHENDIECK&rsquo;S LETTER TO SERRE", s:"Grothendieck introduces K(X) for algebraic varieties, applying the group completion construction to coherent sheaves. He proves the Grothendieck-Riemann-Roch theorem, vastly generalizing the classical result."},
+      {t:"e", l:"1959 — ATIYAH-HIRZEBRUCH", s:"Michael Atiyah and Friedrich Hirzebruch apply the construction to topological vector bundles, defining K(X) for topological spaces. They discover that K-theory satisfies a version of the Mayer-Vietoris sequence and quickly prove spectacular results."},
+      {t:"e", l:"1972 — QUILLEN&rsquo;S HIGHER ALGEBRAIC K-THEORY", s:"Daniel Quillen defines K_n(R) for all n and any ring R using homotopy-theoretic methods, winning the Fields Medal in 1978. This unifies and vastly extends all previous K-theory."},
+      {t:"h", s:"The construction in detail"},
+      {t:"p", s:"Given a commutative monoid (M, +), the <strong>Grothendieck group</strong> K(M) is constructed as follows. Consider all formal pairs (a,b) where a,b &isin; M. Intuitively, (a,b) represents the &ldquo;virtual element&rdquo; a - b. Two pairs are equivalent if they represent the same virtual difference:"},
+      {t:"f", s:"(a, b) ~ (a&rsquo;, b&rsquo;) if and only if there exists c &isin; M with<br>a + b&rsquo; + c = a&rsquo; + b + c<br><br>(The extra c is needed for cancellation in monoids without cancellation.)<br><br>K(M) = (M &times; M) / ~<br><br>Addition: [(a,b)] + [(a&rsquo;,b&rsquo;)] = [(a+a&rsquo;, b+b&rsquo;)]<br>Inverse: -[(a,b)] = [(b,a)]<br>Zero: [(a,a)] for any a"},
+      {t:"e", l:"THE INTEGERS FROM THE NATURALS", s:"K(N,+) = Z. The integer n is represented by [(n,0)]; the integer -n by [(0,n)]. The equivalence (a,b) ~ (a&rsquo;,b&rsquo;) iff a+b&rsquo; = a&rsquo;+b is exactly the standard construction of Z from N taught in logic courses. Every construction of K-theory is a direct generalization of how we build negative numbers from scratch."},
+      {t:"p", s:"The Grothendieck group satisfies a <strong>universal property</strong>: any monoid homomorphism f : M &rarr; A, where A is an abelian group, factors uniquely through K(M). This means K(M) is the &ldquo;most efficient&rdquo; abelian group you can build from M &mdash; it adds inverses and nothing else."},
+      {t:"h", s:"Stable equivalence for bundles"},
+      {t:"p", s:"When we apply this to Vect(X), two formal differences [E]-[F] and [E&rsquo;]-[F&rsquo;] represent the same element of K(X) when E &oplus; F&rsquo; &oplus; &epsilon;k &cong; E&rsquo; &oplus; F &oplus; &epsilon;k for some trivial bundle &epsilon;k. The trivial bundle plays the role of the &ldquo;stabilizing&rdquo; element c in the abstract construction."},
+      {t:"p", s:"We say E and E&rsquo; are <strong>stably equivalent</strong> if E &oplus; &epsilon;k &cong; E&rsquo; &oplus; &epsilon;k for some k. Stably equivalent bundles become equal in K(X). This is a weaker equivalence than isomorphism: there exist non-isomorphic bundles that are stably equivalent."},
+      {t:"e", l:"WHY STABLE EQUIVALENCE IS NATURAL", s:"Over S&sup2;, the tangent bundle TS&sup2; and the trivial bundle &epsilon;&sup2; are not isomorphic (the Hairy Ball Theorem). But TS&sup2; &oplus; &epsilon;&sup1; IS isomorphic to &epsilon;&sup3; (the normal bundle to the standard embedding S&sup2; &rarr; R&sup3; provides the missing direction). So TS&sup2; and &epsilon;&sup2; ARE stably equivalent. In K-theory they represent the same class."},
+      {t:"i", s:"The Grothendieck construction is now ubiquitous across mathematics. It appears in algebraic K-theory, motivic cohomology, and even in the definition of spectra in stable homotopy theory. Every time you want to &ldquo;subtract&rdquo; something that only naturally adds, you reach for Grothendieck."}
+    ]
+  },
+  {
+    badge:"LEVEL 7", title:"K\u2080(X) \u2014 The Zeroth K-Group", sub:"the main construction", color:"#00a972",
+    needs:["Vect(X)","Grothendieck Group","Stable Equivalence"], key:"K\u2080(X)",
+    gives:["K\u2080(X)","Reduced K-theory \u1E30\u2080(X)","Virtual Bundle","Augmentation Map","Rank Homomorphism","Ring Structure on K(X)"],
+    body:[
+      {t:"h", s:"Why this was studied"},
+      {t:"p", s:"By 1959, the tools were in place: Grothendieck had built his group-completion construction, characteristic classes (Chern, Whitney, Pontryagin) were well understood, and the need for a powerful cohomology theory was pressing. Atiyah and Hirzebruch applied Grothendieck&rsquo;s construction to topological vector bundles and immediately discovered that the resulting theory had extraordinary properties that ordinary cohomology lacked."},
+      {t:"p", s:"Their original motivation was a topological version of the Grothendieck-Riemann-Roch theorem, relating the K-theory of a space to its ordinary cohomology via the Chern character. But the theory quickly took on a life of its own, connecting to representation theory, index theory, and eventually physics."},
+      {t:"h", s:"The definition"},
+      {t:"f", s:"K\u2080(X) = K(Vect(X)) = Grothendieck group of vector bundles over X<br><br>Elements: formal differences [E] - [F] of isomorphism classes<br>[E]-[F] = [E&rsquo;]-[F&rsquo;] iff E &oplus; F&rsquo; &oplus; &epsilon;k &cong; E&rsquo; &oplus; F &oplus; &epsilon;k<br><br>Every element can be written as [E] - [&epsilon;n] for some bundle E and n &isin; N<br>(take a large enough trivial bundle to absorb any negative part)"},
+      {t:"p", s:"K\u2080(X) is not just an abelian group: it is a commutative ring. The multiplication comes from the <strong>tensor product</strong> of bundles: [E] &middot; [F] = [E &otimes; F]. The tensor product distributes over direct sum, so this is well-defined on formal differences."},
+      {t:"h", s:"The reduced K-group"},
+      {t:"p", s:"Choosing a basepoint x\u2080 &isin; X, restriction to x\u2080 gives a ring homomorphism &epsilon; : K\u2080(X) &rarr; K\u2080(point) = Z, called the augmentation map. It sends [E] to rank(E) (the dimension of the fiber). The <strong>reduced K-group</strong> K\u0303\u2080(X) = ker(&epsilon;) is the subgroup of elements with virtual rank zero."},
+      {t:"p", s:"Intuitively, K\u0303\u2080(X) captures the &ldquo;purely topological&rdquo; information in K\u2080(X), stripping away the information about fiber dimensions that exists even over a point. We have a splitting K\u2080(X) &cong; K\u0303\u2080(X) &oplus; Z (for connected X)."},
+      {t:"h", s:"Computations and what they mean"},
+      {t:"f", s:"K\u2080(point) = Z<br>K\u2080(S\u00B9) = Z<br>K\u2080(S\u00B2) = Z \u2295 Z, &nbsp; K\u0303\u2080(S\u00B2) = Z<br>K\u2080(S\u00B2\u207F) = Z \u2295 Z for all n \u2265 1, &nbsp; K\u2080(S\u00B2\u207F\u207A\u00B9) = Z"},
+      {t:"e", l:"WHY K\u2080(S\u00B2) = Z \u2295 Z", s:"One Z comes from the rank (all bundles over a connected space have a well-defined rank). The other Z comes from the tautological complex line bundle H over CP\u00B9 &cong; S\u00B2. The class [H] - [&epsilon;\u00B9] generates K\u0303\u2080(S\u00B2). The key fact is that H is not trivial (it has nontrivial first Chern class c\u2081 = 1), so [H] &ne; [&epsilon;\u00B9] in K\u2080(S\u00B2)."},
+      {t:"e", l:"COMPARING WITH ORDINARY COHOMOLOGY", s:"Ordinary cohomology gives H*(S\u00B2;Z) = Z in degrees 0 and 2, and 0 elsewhere. K-theory gives K\u2080(S\u00B2) = Z \u2295 Z and K\u00B9(S\u00B2) = 0. The two theories are different but related: the Chern character is a natural transformation ch : K(X) \u2297 Q \u2192 H*\u1d49\u1d9b\u1d49\u02b3(X;Q) that becomes an isomorphism after tensoring with Q."},
+      {t:"e", l:"K-THEORY DETECTS THE HAIRY BALL THEOREM", s:"In K\u2080(S\u00B2), the tangent bundle TS\u00B2 satisfies [TS\u00B2] + [&epsilon;\u00B9] = [&epsilon;\u00B3] (because the normal bundle to S\u00B2 in R\u00B3 is trivial). So [TS\u00B2] = [&epsilon;\u00B3] - [&epsilon;\u00B9] = [&epsilon;\u00B2] in K\u2080(S\u00B2)? No: [TS\u00B2] = [&epsilon;\u00B2] + ([H]-[&epsilon;\u00B9])\u00B2 ... the precise computation shows [TS\u00B2] - [&epsilon;\u00B2] is the generator of K\u0303\u2080(S\u00B2). K-theory sees the nontriviality of TS\u00B2 that the Hairy Ball Theorem asserts."},
+      {t:"i", s:"K\u2080(X) is the starting point, but the full power of K-theory only emerges when you have higher K-groups K\u207F(X) for all n, forming a cohomology theory. The extraordinary fact &mdash; Bott periodicity &mdash; is that all these groups are determined by just K\u2080 and K\u00B9."}
+    ]
+  },
+  {
+    badge:"LEVEL 8", title:"Higher K-Groups", sub:"suspension and iteration", color:"#00c4a0",
+    needs:["K\u2080(X)","Homotopy","Reduced K-theory"], key:"Suspension",
+    gives:["Suspension \u03A3X","K\u207B\u207F(X)","Long Exact Sequence","Six-Term Exact Sequence","Thom Isomorphism","Mayer-Vietoris for K-theory"],
+    body:[
+      {t:"h", s:"Why this was studied"},
+      {t:"p", s:"A single group K\u2080(X) is useful, but what really makes a cohomology theory powerful is having a whole <em>sequence</em> of groups K\u207F(X) connected by exact sequences. In ordinary cohomology H\u207F(X), the different degrees interact through the long exact sequence of a pair, Mayer-Vietoris, and the cup product. Without higher groups, K-theory would be a one-off invariant rather than a machine."},
+      {t:"p", s:"Atiyah and Hirzebruch defined the higher K-groups in 1959-1961 using the suspension operation. The idea is elegant: if you want K\u207B\u00B9(X), study K\u2080 of the suspension of X instead. The suspension raises the &ldquo;topological complexity&rdquo; of X by one dimension, playing the role that increasing the cohomological degree does in ordinary cohomology."},
+      {t:"h", s:"The suspension construction"},
+      {t:"p", s:"The <strong>unreduced suspension</strong> SX of a space X is the quotient of X &times; [-1,1] obtained by collapsing X &times; {-1} to a point (the south pole) and X &times; {1} to another point (the north pole). Geometrically, SX is a double cone over X."},
+      {t:"p", s:"The <strong>reduced suspension</strong> \u03A3X (with basepoint) is a slight variant that gives cleaner formulas. The key examples are: \u03A3S\u207F = S\u207F\u207A\u00B9, so suspending raises the sphere&rsquo;s dimension. Also \u03A3(X \u2228 Y) = \u03A3X \u2228 \u03A3Y (suspension distributes over wedge sum)."},
+      {t:"f", s:"For negative integers n \u2265 0:<br>K\u0303\u207B\u207F(X) := K\u0303\u2080(\u03A3\u207FX)<br><br>Equivalently, K\u0303\u207B\u207F(X) = K\u0303\u2080(X \u2227 S\u207F)<br>where X \u2227 S\u207F is the smash product of X with an n-sphere"},
+      {t:"p", s:"The notation K\u207B\u207F reflects that these are defined for negative integers n. Bott periodicity (Level 9) will tell us that K\u207B\u207F(X) = K\u207B\u207F\u207B\u00B2(X), so only K\u2080 and K\u207B\u00B9 are genuinely independent. Conventionally, K\u00B9(X) := K\u207B\u00B9(X)."},
+      {t:"h", s:"The exact sequences"},
+      {t:"p", s:"The power of having higher groups is the existence of long exact sequences that let you compute K-theory inductively. For a pair (X,A) where A is a closed subspace:"},
+      {t:"f", s:"Long exact sequence:<br>... \u2192 K\u0303\u207B\u00B9(X) \u2192 K\u0303\u207B\u00B9(A) \u2192 K\u0303\u2080(X/A) \u2192 K\u0303\u2080(X) \u2192 K\u0303\u2080(A) \u2192 0<br><br>Since K\u207B\u207F = K\u207B\u207F\u207B\u00B2 by Bott periodicity, this collapses to a six-term exact sequence:<br><br>K\u2080(A) \u2190 K\u2080(X) \u2190 K\u2080(X/A)<br>&darr; &uarr;<br>K\u00B9(X/A) \u2192 K\u00B9(X) \u2192 K\u00B9(A)"},
+      {t:"p", s:"This six-term exact sequence is one of the most useful computational tools in K-theory. It is analogous to the Mayer-Vietoris sequence in ordinary cohomology, and it allows you to compute K-theory of complicated spaces from simpler pieces."},
+      {t:"e", l:"COMPUTING K-THEORY OF S\u00B2 FROM SCRATCH", s:"Write S\u00B2 = D\u00B2/S\u00B9 (a disk with its boundary collapsed). The six-term sequence for the pair (D\u00B2, S\u00B9) gives (since D\u00B2 is contractible, K(D\u00B2) = K(point) = Z): K\u0303\u2080(S\u00B2) \u2245 K\u0303\u207B\u00B9(S\u00B9) \u2245 K\u0303\u2080(S\u00B2). This gives K\u0303\u2080(S\u00B2) = Z. The exact sequence makes the computation mechanical once you know K-theory of spheres in lower dimensions."},
+      {t:"e", l:"THE THOM ISOMORPHISM", s:"For a complex vector bundle E of rank n over X, there is an isomorphism K\u0303\u2080(Th(E)) \u2245 K\u2080(X), where Th(E) is the Thom space (one-point compactification of E). This is the Thom isomorphism in K-theory. It is the key step in defining the topological index in the Atiyah-Singer Index Theorem."},
+      {t:"i", s:"The six-term exact sequence together with Bott periodicity makes K-theory a computable machine. The contrast with ordinary cohomology is striking: H\u207F(X) can be nonzero in arbitrarily high degrees, requiring infinitely many groups to describe. K-theory only has two independent groups."}
+    ]
+  },
+  {
+    badge:"LEVEL 9", title:"Bott Periodicity", sub:"the miracle", color:"#ff3621",
+    needs:["Higher K-Groups","Suspension","Long Exact Sequence"], key:"Bott Periodicity",
+    gives:["Bott Periodicity","Period-2 in complex K-theory","Period-8 in real K-theory KO","Bott Map \u03B2","Clifford Algebras","Homotopy Groups of U(n)"],
+    body:[
+      {t:"h", s:"Why this is a miracle"},
+      {t:"p", s:"When you define K\u207B\u207F(X) = K\u2080(\u03A3\u207FX), you get a sequence of groups K\u2080(X), K\u207B\u00B9(X), K\u207B\u00B2(X), K\u207B\u00B3(X), ... There is no a priori reason these should ever repeat. In ordinary cohomology, they do not: H\u207F(S\u207D) can be nonzero for arbitrarily large n. So Bott&rsquo;s theorem &mdash; that K\u207B\u207F(X) &cong; K\u207B\u207F\u207B\u00B2(X) for all n and all X &mdash; was genuinely shocking when proved in 1957-1959."},
+      {t:"p", s:"Raoul Bott (1923&ndash;2005) proved the theorem by computing the homotopy groups of the infinite unitary group U = colim U(n). His computation showed they alternate between Z and 0:"},
+      {t:"h", s:"Historical timeline"},
+      {t:"e", l:"1957 — BOTT PROVES THE THEOREM", s:"Bott computes \u03C0_k(U) using Morse theory on the loop space of U. He proves \u03C0\u2080(U) = 0, \u03C0\u2081(U) = Z, \u03C0\u2082(U) = 0, \u03C0\u2083(U) = Z, etc. These are exactly the homotopy groups of the classifying space BU that control complex vector bundles."},
+      {t:"e", l:"1959 — ATIYAH-HIRZEBRUCH", s:"Atiyah and Hirzebruch reinterpret Bott&rsquo;s theorem in K-theoretic language: the periodicity of \u03C0_*(U) translates directly into K\u207B\u207F(X) = K\u207B\u207F\u207B\u00B2(X). They use this to prove the Atiyah-Hirzebruch spectral sequence, relating K-theory to ordinary cohomology."},
+      {t:"e", l:"1964 — ATIYAH&rsquo;S PROOF USING K-THEORY ITSELF", s:"Atiyah finds an elegant proof of Bott periodicity using K-theory: the Bott class \u03B2 &isin; K\u0303\u2080(S\u00B2) generates K\u0303\u2080(S\u00B2) = Z, and the map x \u21A6 x \u00B7 \u03B2 is the periodicity isomorphism K\u207B\u207F(X) &rarr; K\u207B\u207F\u207B\u00B2(X). The proof uses the Thom isomorphism and the six-term exact sequence."},
+      {t:"h", s:"The theorem and its meaning"},
+      {t:"f", s:"Complex Bott Periodicity:<br>K\u0303\u207B\u207F(X) \u2245 K\u0303\u207B\u207F\u207B\u00B2(X) for all n and all X<br><br>Equivalently: K\u0303\u2080(\u03A3\u00B2X) \u2245 K\u0303\u2080(X)<br><br>The Bott element \u03B2 = [H] - [1] \u2208 K\u0303\u2080(S\u00B2) generates the periodicity:<br>multiplication by \u03B2 gives the isomorphism"},
+      {t:"f", s:"K-theory of spheres (complex, reduced):<br>K\u0303\u2080(S\u2080) = Z, K\u0303\u2080(S\u00B9) = 0, K\u0303\u2080(S\u00B2) = Z, K\u0303\u2080(S\u00B3) = 0, ...<br>K\u0303\u2080(S\u00B2\u207F) = Z for all n \u2265 0<br>K\u0303\u2080(S\u00B2\u207F\u207A\u00B9) = 0 for all n \u2265 0"},
+      {t:"p", s:"The contrast with ordinary cohomology is stark. Ordinary cohomology H*(S\u207F) is nonzero in exactly two degrees (0 and n), giving different information for each n. K-theory &ldquo;wraps around&rdquo; with period 2: the K-theory of a 4-sphere is the same as that of a 2-sphere, even though they are topologically very different."},
+      {t:"h", s:"Real K-theory and Clifford algebras"},
+      {t:"p", s:"For <strong>real</strong> vector bundles (replacing GL(n,C) with GL(n,R)), the analogous theory is called <strong>KO-theory</strong> (for K-Orthogonal). The real version of Bott periodicity has period 8 rather than 2:"},
+      {t:"f", s:"Real Bott Periodicity:<br>KO\u0303\u207B\u207F(X) \u2245 KO\u0303\u207B\u207F\u207B\u2078(X) for all n and all X<br><br>Homotopy groups of the infinite orthogonal group O = colim O(n):<br>\u03C0_k(O): Z/2, Z/2, 0, Z, 0, 0, 0, Z, Z/2, Z/2, 0, Z, ... (period 8)"},
+      {t:"p", s:"This 8-fold periodicity is connected to the structure of Clifford algebras. The Clifford algebra Cl_n (real, with n generators satisfying e_i e_j + e_j e_i = -2\u03B4_{ij}) has a period-8 pattern in its Morita equivalence class. This is the same 8 that appears in the classification of real division algebras, in the octonions, and in the fact that spin groups in dimensions differing by 8 look the same."},
+      {t:"e", l:"APPLICATIONS: HOPF INVARIANT ONE", s:"Adams and Atiyah used K-theory to prove the Hopf invariant one theorem (1966): the only dimensions n for which S\u207F\u207B\u00B9 is an H-space (has a continuous multiplication) are n = 1, 2, 4, 8. These correspond to R, C, quaternions, and octonions. The proof uses Adams operations in K-theory in an essential way."},
+      {t:"e", l:"APPLICATIONS: VECTOR FIELDS ON SPHERES", s:"Using real K-theory, Adams (1962) determined exactly how many linearly independent tangent vector fields S\u207F\u207B\u00B9 can carry. The answer depends on the 2-adic valuation of n and is expressed using the Radon-Hurwitz numbers. This solved a problem that had been open for decades."},
+      {t:"i", s:"Bott periodicity is both a theorem and a point of view: complex geometry has a natural period-2 symmetry that is invisible in ordinary cohomology. Real geometry has a period-8 symmetry, connected to Clifford algebras and the octonions. K-theory is the cohomology theory that makes these periodicities visible."}
+    ]
+  },
+  {
+    badge:"HORIZON", title:"Where K-Theory Leads", sub:"connections and generalizations", color:"#ffb830",
+    needs:["K\u2080(X)","Higher K-Groups","Bott Periodicity"], key:"Atiyah-Singer Index Theorem",
+    gives:["Atiyah-Singer Index Theorem","Algebraic K-theory K_n(R)","Quillen&rsquo;s +-construction and Q-construction","Motivic K-theory","D-branes in String Theory","Twisted K-theory","Equivariant K-theory"],
+    body:[
+      {t:"h", s:"The Atiyah-Singer Index Theorem (1963)"},
+      {t:"p", s:"The deepest application of topological K-theory is the Atiyah-Singer Index Theorem, published in 1963 and extended through the 1970s. It answers a question of fundamental importance: for an elliptic differential operator D on a compact manifold M, what is the dimension of its solution space?"},
+      {t:"p", s:"The <strong>analytic index</strong> of D is dim(ker D) - dim(coker D): how many independent solutions minus how many independent obstructions. Naively, this is an analytic quantity depending on differential equations. The extraordinary theorem says it equals a purely topological quantity computed from K-theory classes."},
+      {t:"f", s:"Index(D) = analytic index = dim ker D - dim coker D<br><br>= topological index = \u03C7(K-theory class of D)<br><br>where the K-theory class lives in K(T*M) via the symbol of D<br>and \u03C7 is the Thom map K(T*M) \u2192 K(point) = Z"},
+      {t:"p", s:"Specializations of this theorem reproduce and generalize the Gauss-Bonnet theorem, the Riemann-Roch theorem, the Hirzebruch signature theorem, and Dirac&rsquo;s equation for spin manifolds. It unified large swaths of 20th-century mathematics into a single framework."},
+      {t:"h", s:"Algebraic K-theory"},
+      {t:"p", s:"The algebraic version of K-theory replaces the topological category with the algebraic one. Given a ring R, define K\u2080(R) as the Grothendieck group of finitely generated projective R-modules (the algebraic analogue of vector bundles over Spec(R))."},
+      {t:"e", l:"K\u2080 OF RINGS", s:"K\u2080(Z) = Z (projective Z-modules are just free abelian groups, classified by rank). K\u2080(F) = Z for any field F. K\u2080 of a Dedekind domain encodes its class group: K\u2080(O_K) = Z &oplus; Cl(K) where Cl(K) is the ideal class group of the number field K. This connects K-theory to the deepest problems in number theory."},
+      {t:"p", s:"Bass defined K\u2081(R) = GL(R)/[GL(R),GL(R)] (abelianization of the infinite general linear group) and K\u2082(R) using Milnor&rsquo;s K\u2082. But these ad hoc definitions did not obviously generalize. The breakthrough came with Quillen."},
+      {t:"e", l:"1972 — QUILLEN&rsquo;S HIGHER K-THEORY", s:"Daniel Quillen introduced two constructions (the +-construction and the Q-construction) that give well-behaved groups K_n(R) for all n \u2265 0, satisfying a long exact sequence (the localization sequence) and agreeing with previous definitions for n = 0,1,2. He won the Fields Medal in 1978 for this work."},
+      {t:"e", l:"QUILLEN-LICHTENBAUM CONJECTURE", s:"The values K_n(Z) for n odd are related to special values of the Riemann zeta function. Specifically, |K_{4k-1}(Z)| = denominator of \u03B6(1-2k)/2 (up to some factors). This conjecture, proved by Voevodsky and Rost around 2000 using motivic cohomology, connects K-theory to the deepest analytic number theory."},
+      {t:"h", s:"K-theory in physics"},
+      {t:"p", s:"In the late 1990s, physicists realized that K-theory was the correct framework for classifying D-brane charges in string theory. D-branes are extended objects in string theory; their charges are conserved quantities that were originally thought to live in ordinary cohomology (H-flux), but a more careful analysis shows they live in K(X) where X is the spacetime manifold."},
+      {t:"e", l:"TYPE II STRING THEORY AND K-THEORY", s:"In Type IIB string theory, D-brane charges in a compact spacetime X are classified by K\u2080(X). In Type IIA string theory, they are classified by K\u00B9(X). This is not a coincidence: T-duality (a fundamental symmetry relating the two theories) acts as the K-theory suspension isomorphism."},
+      {t:"e", l:"TWISTED K-THEORY", s:"When the H-flux of a string background is nonzero, the relevant K-theory is twisted by a class [H] \u2208 H\u00B3(X;Z). Twisted K-theory K\u1D34(X) was introduced by Donovan-Karoubi (1970) and developed extensively by Atiyah-Segal, with major applications in string theory and the Freed-Hopkins-Teleman theorem relating twisted K-theory to the Verlinde formula in conformal field theory."},
+      {t:"h", s:"The big picture"},
+      {t:"p", s:"K-theory sits at the intersection of algebra, geometry, topology, and physics. It has a common core: take a collection of objects (vector bundles, projective modules, coherent sheaves) that you can add but not subtract, apply the Grothendieck group completion, and study the resulting abelian group as an invariant. The sophistication comes from the structures you discover: exact sequences, periodicity, characteristic classes, connections to analysis and physics."},
+      {t:"i", s:"The development from Level 0 to this Horizon spans roughly 150 years of mathematics, from Cantor&rsquo;s set theory (1870s) through Grothendieck&rsquo;s letter to Serre (1957) to Voevodsky&rsquo;s proof of the Milnor conjecture (2000). At every step, an abstract structural idea &mdash; equivalence, group, homotopy, bundle, completion &mdash; was the precise language needed for the next advance."}
+    ]
+  }
+];
+
+function rgba(hex, a) {
+  var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return "rgba("+r+","+g+","+b+","+a+")";
+}
+function chips(arr, cls) {
+  return arr.map(function(t){ return '<span class="chip '+cls+'">'+t+'</span>'; }).join("");
+}
+function buildBody(blocks) {
+  return blocks.map(function(b) {
+    if (b.t === "h") return '<div class="bsec-heading">'+b.s+'</div>';
+    if (b.t === "p") return '<div class="prose">'+b.s+'</div>';
+    if (b.t === "f") return '<div class="fbox">'+b.s+'</div>';
+    if (b.t === "e") return '<div class="ex"><span class="exl">'+b.l+'</span>'+b.s+'</div>';
+    if (b.t === "i") return '<div class="ins">'+b.s+'</div>';
+    return '';
+  }).join("");
+}
+function init() {
+  var tnav = document.getElementById("tnav");
+  var cards = document.getElementById("cards");
+  LV.forEach(function(lv, i) {
+    var ti = document.createElement("div");
+    ti.className = "ti"; ti.textContent = lv.title; ti.dataset.i = i;
+    ti.addEventListener("click", function() {
+      var cw = document.querySelector(".cw[data-i='"+i+"']");
+      if (cw) { cw.scrollIntoView({behavior:"smooth",block:"center"}); setTimeout(function(){ openCard(i); },350); }
+    });
+    tnav.appendChild(ti);
+    var cw = document.createElement("div");
+    cw.className = "cw"; cw.dataset.i = i;
+    var needHtml = lv.needs.length
+      ? '<div class="sec"><div class="slabel">&larr; Needs from below</div><div class="chips">'+chips(lv.needs,"chip cd")+'</div></div>'
+      : '<div class="sec"><div class="slabel">&larr; Needs from below</div><span style="font-style:italic;color:var(--muted);font-size:13px">Foundation &mdash; no prerequisites</span></div>';
+    var givesHtml = lv.gives.map(function(t){
+      return '<span class="chip '+(t===lv.key ? "ck" : "cn")+'">'+t+'</span>';
+    }).join("");
+    cw.innerHTML =
+      (i > 0 ? '<div class="conn"></div>' : '') +
+      '<div class="card" style="--ac:'+lv.color+';--ac-faint:'+rgba(lv.color,.08)+';--ac-mid:'+rgba(lv.color,.22)+';--ac-shadow:'+rgba(lv.color,.35)+'">' +
+        '<div class="card-head">' +
+          '<span class="bdg">'+lv.badge+'</span>' +
+          '<span class="ctitle">'+lv.title+'</span>' +
+          '<span class="csub">'+lv.sub+'</span>' +
+          '<span class="chev">&#9660;</span>' +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="card-inner">' +
+            needHtml +
+            '<div class="sec"><div class="slabel">&rarr; Introduces</div><div class="chips">'+givesHtml+'</div></div>' +
+            '<div class="sec">'+buildBody(lv.body)+'</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    cards.appendChild(cw);
+    var card = cw.querySelector(".card"), body = cw.querySelector(".card-body");
+    card.addEventListener("click", function() {
+      var open = card.classList.contains("open");
+      card.classList.toggle("open", !open); body.classList.toggle("open", !open);
+      document.querySelectorAll(".ti").forEach(function(t,j){ t.classList.toggle("active",!open && j===i); });
+      if (!open) { ti.style.borderLeftColor = lv.color; ti.style.color = lv.color; }
+      else { ti.style.borderLeftColor = ""; ti.style.color = ""; }
+    });
+  });
+  var fill = document.getElementById("prog-fill");
+  window.addEventListener("scroll", function(){
+    var pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    fill.style.width = Math.min(pct,100)+"%";
+  });
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("show"); });
+  },{threshold:0.05});
+  document.querySelectorAll(".cw").forEach(function(el){ obs.observe(el); });
+  setTimeout(function(){ openCard(0); }, 150);
+}
+function openCard(i) {
+  var cw = document.querySelector(".cw[data-i='"+i+"']");
+  if (!cw) return;
+  var card = cw.querySelector(".card"), body = cw.querySelector(".card-body");
+  if (!card.classList.contains("open")) {
+    card.classList.add("open"); body.classList.add("open");
+    var ti = document.querySelector(".ti[data-i='"+i+"']");
+    if (ti) { ti.style.borderLeftColor = LV[i].color; ti.style.color = LV[i].color; }
+    document.querySelectorAll(".ti").forEach(function(t,j){ t.classList.toggle("active",j===i); });
+  }
+}
+init();
+</script>
+</body>
+</html>
