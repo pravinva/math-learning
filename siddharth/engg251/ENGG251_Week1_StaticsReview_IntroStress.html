@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Statics Review &amp; Introduction to Stress</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG251 &middot; Mechanics of Solids &middot; Week 1</div>
+  <h1>Statics Review &amp; Introduction to Stress</h1>
+  <p>A review of equilibrium and free body diagrams from ENGG102/152/153, then the foundational concepts of the whole subject: average normal stress and shear stress on a cross-section, and allowable stress design with the factor of safety. Everything from here builds on these definitions. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 32 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this block's toolkit</span>
+  <ul>
+<li><strong>Equilibrium (2D):</strong> $\sum F_x=0,\ \sum F_y=0,\ \sum M=0$ &mdash; always start with a free body diagram.</li>
+<li><strong>Support unknowns:</strong> pin = 2, roller = 1, fixed = 3 &mdash; compare total unknowns to 3 equations for determinacy.</li>
+<li><strong>Average normal stress:</strong> $\sigma=P/A$ for axial loading through the centroid.</li>
+<li><strong>Average shear stress:</strong> $\tau=V/A$ (single shear) or $\tau=P/2A$ (double shear, e.g. clevis pins).</li>
+<li><strong>Factor of safety:</strong> $FS=\sigma_{\text{failure}}/\sigma_{\text{allow}}$; design requires $\sigma_{\text{actual}}\le\sigma_{\text{allow}}$.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Statics Review &mdash; Equilibrium &amp; Free Body Diagrams</a></li>
+<li><a href="#sec1">Normal Stress on a Cross-Section</a></li>
+<li><a href="#sec2">Shear Stress on a Cross-Section</a></li>
+<li><a href="#sec3">Allowable Stress Design &amp; Factor of Safety</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+<div class="section-title"><span class="tag">0</span> Statics Review &mdash; Equilibrium &amp; Free Body Diagrams</div>
+
+<div class="prose">
+<p>Every mechanics-of-solids problem starts the same way it did in Statics: isolate the body (or part of it) with a <strong>free body diagram (FBD)</strong>, replace every removed support or connection with the force(s)/moment(s) it exerts, then apply the equilibrium equations $\sum F_x=0,\ \sum F_y=0,\ \sum M=0$ (in 2D) to solve for unknown reactions or internal forces.</p>
+<p><strong>Support types</strong> you'll see constantly: a <strong>pin</strong> provides a reaction force in any direction (2 unknowns: $R_x,R_y$) but no moment; a <strong>roller</strong> provides one reaction force perpendicular to the rolling surface (1 unknown); a <strong>fixed support</strong> provides a force in any direction plus a reaction moment (3 unknowns). Counting unknowns against available equilibrium equations tells you immediately whether a structure is statically determinate.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\sum F_x=0 \qquad \sum F_y=0 \qquad \sum M_{\text{any point}}=0 \qquad \text{(2D rigid-body equilibrium)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A simply supported beam (pin at A, roller at B), length 6 m, carries a downward point load $P=12$ kN at 2 m from A. Find the reactions.</p>
+<p class="step">$\sum M_A=0$: $-12(2)+B_y(6)=0\Rightarrow B_y=4$ kN. $\sum F_y=0$: $A_y+4-12=0\Rightarrow A_y=8$ kN. $\sum F_x=0\Rightarrow A_x=0$ (no horizontal load).</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A simply supported beam, span 8 m, carries a central point load of 20 kN. Find the support reactions (pin at A, roller at B).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>By symmetry, $A_y=B_y=10$ kN; $A_x=0$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A cantilever beam of length 4 m is fixed at A and carries a downward point load of 10 kN at its free end. Find the reactions at the fixed support.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sum F_y=0\Rightarrow A_y=10$ kN (up). $\sum M_A=0\Rightarrow M_A=10(4)=40$ kN&middot;m (counteracting the load's moment).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A simply supported beam (span 10 m) carries a uniformly distributed load of 5 kN/m over its full length. Find the reactions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Total load $=50$ kN acting at midspan; by symmetry each reaction $=25$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>A beam is supported by a pin at A and a roller at B (6 m apart) and carries a point load of 15 kN at 4 m from A. Find $A_y$ and $B_y$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sum M_A=0$: $-15(4)+B_y(6)=0\Rightarrow B_y=10$ kN. $\sum F_y=0\Rightarrow A_y=5$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Classify each support type (pin, roller, fixed) by the number of reaction unknowns it introduces, and state the total unknowns for a beam with a fixed support at one end only.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Pin: 2 unknowns ($R_x,R_y$). Roller: 1 unknown. Fixed: 3 unknowns ($R_x,R_y,M$). A beam fixed at one end (cantilever) has exactly 3 unknowns, matching the 3 available 2D equilibrium equations &mdash; statically determinate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>A simply supported beam (span 12 m) carries two point loads: 8 kN at 3 m from A, and 12 kN at 9 m from A. Find the reactions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sum M_A=0$: $-8(3)-12(9)+B_y(12)=0\Rightarrow B_y=(24+108)/12=11$ kN. $\sum F_y=0\Rightarrow A_y=20-11=9$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A beam overhangs its right support: pin at A (x=0), roller at B (x=6 m), with a 10 kN downward load at x=8 m (beyond B). Find the reactions.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sum M_A=0$: $-10(8)+B_y(6)=0\Rightarrow B_y=13.33$ kN. $\sum F_y=0\Rightarrow A_y=10-13.33=-3.33$ kN (i.e. 3.33 kN downward &mdash; the overhang lifts support A).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Explain, using unknown-counting, why a beam with a pin at one end and a pin at the other end (both providing 2 unknowns each, 4 total) is statically indeterminate in 2D.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>2D rigid-body equilibrium provides only 3 independent equations ($\sum F_x,\sum F_y,\sum M$), but two pins introduce 4 unknowns. With more unknowns than equations, the reactions cannot be found from statics alone &mdash; the structure is statically indeterminate to the first degree, requiring compatibility (deformation) equations to solve, a theme that returns in Week 2.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+<div class="section-title"><span class="tag">1</span> Normal Stress on a Cross-Section</div>
+
+<div class="prose">
+<p>When an axial force $P$ acts through the centroid of a straight, prismatic member's cross-section, the <strong>average normal stress</strong> is $\sigma=\dfrac{P}{A}$, where $A$ is the cross-sectional area. Tensile $P$ gives positive (tensile) stress; compressive $P$ gives negative (compressive) stress.</p>
+<p>This is only an <em>average</em> &mdash; true stress distribution can vary across the section (especially near load application points or geometric discontinuities, <strong>Saint-Venant's principle</strong> says these local effects die out within roughly one member-width of the disturbance). Units: Pa ($\text{N/m}^2$) in SI, commonly expressed in MPa ($\text{N/mm}^2$) for engineering-scale problems.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\sigma=\frac{P}{A} \qquad \text{(average normal stress, axial loading, SI units: Pa or MPa)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A steel rod of diameter 20 mm carries an axial tensile load of 50 kN. Find the average normal stress.</p>
+<p class="step">$A=\dfrac{\pi(0.020)^2}{4}=3.14\times10^{-4}\ \text{m}^2$. $\sigma=\dfrac{50\times10^3}{3.14\times10^{-4}}=159.2\times10^6\ \text{Pa}=159.2\ \text{MPa}$.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A square bar, 25 mm &times; 25 mm cross-section, carries an axial tensile load of 80 kN. Find the normal stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=625\ \text{mm}^2=625\times10^{-6}\ \text{m}^2$. $\sigma=80000/625\times10^{-6}=128\ \text{MPa}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A circular rod of diameter 15 mm must carry an axial load of 25 kN without exceeding 150 MPa. Is it adequate?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\pi(0.0075)^2=1.767\times10^{-4}\ \text{m}^2$. $\sigma=25000/1.767\times10^{-4}=141.5$ MPa $<150$ MPa. Adequate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>A hollow circular tube (outer diameter 50 mm, inner diameter 40 mm) carries an axial compressive load of 100 kN. Find the normal stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\frac\pi4(0.05^2-0.04^2)=7.07\times10^{-4}\ \text{m}^2$. $\sigma=100000/7.07\times10^{-4}=141.4$ MPa (compressive).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>Find the minimum diameter of a solid circular rod required to carry an axial tensile load of 60 kN without exceeding an allowable stress of 120 MPa.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A\ge P/\sigma_{\text{allow}}=60000/120\times10^6=5\times10^{-4}\ \text{m}^2$. $d=\sqrt{4A/\pi}=\sqrt{4(5\times10^{-4})/\pi}=0.0252\ \text{m}=25.2$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A rectangular bar 40 mm &times; 60 mm carries an axial load $P$. If the allowable stress is 90 MPa, find the maximum allowable $P$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=2400\ \text{mm}^2=2.4\times10^{-3}\ \text{m}^2$. $P_{\max}=\sigma_{\text{allow}}A=90\times10^6\times2.4\times10^{-3}=216$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>A stepped bar has two sections: section 1 (diameter 30 mm) and section 2 (diameter 20 mm), both carrying the same axial load $P=40$ kN. Compare the stresses in each section.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A_1=706.9\ \text{mm}^2\Rightarrow\sigma_1=56.6$ MPa. $A_2=314.2\ \text{mm}^2\Rightarrow\sigma_2=127.3$ MPa. The smaller section carries more than double the stress &mdash; the critical (governing) section for design.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Three cables, each of diameter 8 mm, support a load of 30 kN shared equally. Find the normal stress in each cable.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Load per cable $=10$ kN. $A=\pi(0.004)^2=5.03\times10^{-5}\ \text{m}^2$. $\sigma=10000/5.03\times10^{-5}=198.8$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Explain why Saint-Venant's principle justifies using the simple formula $\sigma=P/A$ even though the true stress distribution near a bolted or pinned connection is highly non-uniform.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Saint-Venant's principle states that the specific manner in which a load is applied only affects the stress distribution significantly within a region roughly one characteristic member-dimension away from the load point; sufficiently far from such disturbances, the stress distribution settles down to the smooth, uniform average $P/A$ predicted by simple theory &mdash; which is why the formula remains valid for most of a member's length despite localised complications near connections.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+<div class="section-title"><span class="tag">2</span> Shear Stress on a Cross-Section</div>
+
+<div class="prose">
+<p>When an internal force acts <strong>parallel</strong> (tangent) to a cross-section rather than perpendicular to it, it produces <strong>average shear stress</strong> $\tau=\dfrac{V}{A}$, where $V$ is the shear force and $A$ is the area being sheared.</p>
+<p>Two common connection scenarios: <strong>single shear</strong> (a bolt/pin resists load across one cross-sectional plane, e.g. a lap joint) gives $\tau=V/A$ directly with $V=P$; <strong>double shear</strong> (a pin resists load across two planes, e.g. a clevis/fork connection) shares the load over two areas, so $\tau=\dfrac{P}{2A}$ &mdash; roughly half the stress of the equivalent single-shear case for the same load and pin size.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\tau=\frac{V}{A} \quad \text{(single shear: } V=P\text{)} \qquad \tau=\frac{P}{2A} \quad \text{(double shear)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A 12 mm diameter bolt in single shear carries a load of 15 kN. Find the shear stress.</p>
+<p class="step">$A=\pi(0.006)^2=1.131\times10^{-4}\ \text{m}^2$. $\tau=15000/1.131\times10^{-4}=132.6$ MPa.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>A 10 mm diameter rivet in single shear carries a load of 8 kN. Find the shear stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\pi(0.005)^2=7.854\times10^{-5}\ \text{m}^2$. $\tau=8000/7.854\times10^{-5}=101.9$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A clevis pin (double shear), diameter 16 mm, carries a total load of 40 kN. Find the shear stress in the pin.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\pi(0.008)^2=2.011\times10^{-4}\ \text{m}^2$. $\tau=40000/(2\times2.011\times10^{-4})=99.5$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Find the minimum bolt diameter (single shear) to carry a 25 kN load without exceeding an allowable shear stress of 80 MPa.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A\ge25000/80\times10^6=3.125\times10^{-4}\ \text{m}^2$. $d=\sqrt{4A/\pi}=0.01995\ \text{m}\approx20$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A double-shear pin connection carries 60 kN. If the allowable shear stress is 100 MPa, find the minimum pin diameter.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Each shear plane carries 30 kN. $A\ge30000/100\times10^6=3\times10^{-4}\ \text{m}^2$. $d=\sqrt{4A/\pi}=19.5$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>A lap joint uses a single 14 mm diameter bolt to transmit 18 kN. Find the shear stress and compare to an allowable of 110 MPa.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=1.539\times10^{-4}\ \text{m}^2$. $\tau=18000/1.539\times10^{-4}=117$ MPa $>110$ MPa &mdash; inadequate, bolt would need to be larger.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>A punch is used to punch a 20 mm diameter hole through a 10 mm thick steel plate. If the ultimate shear strength of the plate is 300 MPa, find the force required.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The sheared area is the cylindrical surface: $A=\pi d t=\pi(0.020)(0.010)=6.283\times10^{-4}\ \text{m}^2$. $P=\tau_{\text{ult}}A=300\times10^6\times6.283\times10^{-4}=188.5$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>Two plates are joined by two identical bolts in single shear sharing a load of 32 kN equally. Find the minimum bolt diameter if allowable shear stress is 90 MPa.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Load per bolt $=16$ kN. $A\ge16000/90\times10^6=1.778\times10^{-4}\ \text{m}^2$. $d=\sqrt{4A/\pi}=15.0$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>Explain, using a free body diagram argument, why a clevis (fork) pin connection is in double shear while a simple lap-joint bolt is in single shear.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>In a clevis connection, the pin passes through three plates (the fork's two outer plates and the central plate carrying the load); cutting a free body around the central plate shows the pin resists the load across <em>two</em> internal cross-sectional planes (one on each side of the central member), sharing the load and halving the stress per plane. In a lap joint, only two plates overlap and the bolt is cut by a single plane between them, so the full load acts across just one shear plane.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+<div class="section-title"><span class="tag">3</span> Allowable Stress Design &amp; Factor of Safety</div>
+
+<div class="prose">
+<p>Real materials fail at some <strong>ultimate stress</strong> $\sigma_u$ (or yield stress $\sigma_Y$ for ductile materials, where permanent deformation begins). To design safely, engineers apply a <strong>factor of safety</strong> $FS=\dfrac{\sigma_{\text{failure}}}{\sigma_{\text{allow}}}>1$, so the <strong>allowable stress</strong> used in design is $\sigma_{\text{allow}}=\dfrac{\sigma_{\text{failure}}}{FS}$.</p>
+<p>$FS$ accounts for uncertainties: material property variability, approximations in load estimation, simplifications in analysis, and consequences of failure. Typical values range from 1.5&ndash;2 (well-understood loads, ductile materials, low consequence of failure) up to 4&ndash;8+ (uncertain loads, brittle materials, high consequence of failure, e.g. life-safety structures). <strong>Allowable stress design (ASD)</strong> requires $\sigma_{\text{actual}}\le\sigma_{\text{allow}}$ everywhere in the structure.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$FS=\frac{\sigma_{\text{failure}}}{\sigma_{\text{allow}}} \quad (FS>1) \qquad \sigma_{\text{allow}}=\frac{\sigma_{\text{failure}}}{FS} \qquad \text{design requires } \sigma_{\text{actual}}\le\sigma_{\text{allow}}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A steel bar has yield stress $\sigma_Y=250$ MPa. Using $FS=2$, find the allowable stress, then the maximum load for a 30 mm diameter bar.</p>
+<p class="step">$\sigma_{\text{allow}}=250/2=125$ MPa. $A=\pi(0.015)^2=7.069\times10^{-4}\ \text{m}^2$. $P_{\max}=\sigma_{\text{allow}}A=125\times10^6\times7.069\times10^{-4}=88.4$ kN.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>An aluminium member has ultimate stress $\sigma_u=310$ MPa. Using $FS=3$, find the allowable stress.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{\text{allow}}=310/3=103.3$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>A cable has a breaking strength of 120 kN and carries an actual working load of 30 kN. Find the factor of safety.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$FS=120/30=4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>A steel rod (yield stress 300 MPa, $FS=2.5$) must carry an axial load of 90 kN. Find the required diameter.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{\text{allow}}=300/2.5=120$ MPa. $A=90000/120\times10^6=7.5\times10^{-4}\ \text{m}^2$. $d=\sqrt{4A/\pi}=30.9$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>A structural component made of a material with $\sigma_u=400$ MPa carries an actual stress of 100 MPa. Find the factor of safety.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$FS=400/100=4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 29</span></div>
+  <div class="p-body"><p>Compare two design choices for a tension member: Material A ($\sigma_Y=250$ MPa, $FS=2$) vs Material B ($\sigma_Y=500$ MPa, $FS=2.5$). Which gives the higher allowable stress?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Material A: $\sigma_{\text{allow}}=125$ MPa. Material B: $\sigma_{\text{allow}}=200$ MPa. Material B gives the higher allowable stress despite its larger factor of safety, because its yield stress is proportionally much higher.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 30</span></div>
+  <div class="p-body"><p>A bolt group must carry 200 kN total, shared by 4 bolts in single shear. If the allowable shear stress is 90 MPa, find the required bolt diameter (assume equal load sharing).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Load per bolt $=50$ kN. $A\ge50000/90\times10^6=5.556\times10^{-4}\ \text{m}^2$. $d=\sqrt{4A/\pi}=26.6$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 31</span></div>
+  <div class="p-body"><p>A design code specifies $FS=1.67$ for a ductile steel with yield stress 345 MPa. Find the allowable stress, and the maximum axial load for a 50 mm &times; 50 mm square bar.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{\text{allow}}=345/1.67=206.6$ MPa. $A=2500\ \text{mm}^2=2.5\times10^{-3}\ \text{m}^2$. $P_{\max}=206.6\times10^6\times2.5\times10^{-3}=516.5$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 32</span></div>
+  <div class="p-body"><p>Explain why a higher factor of safety is typically chosen for brittle materials (e.g. cast iron, concrete) compared to ductile materials (e.g. structural steel), even when their ultimate strengths might be comparable.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Ductile materials give visible warning before failure &mdash; they yield and deform substantially, allowing inspection or load-shedding before final fracture, and they can redistribute stress around local overloads (stress concentrations) through plastic flow. Brittle materials fail suddenly with little to no warning, and cannot relieve local stress concentrations plastically, so a larger safety margin is needed to compensate for this greater uncertainty and the more catastrophic nature of brittle failure.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>ENGG251 Mechanics of Solids &middot; Week 1 &middot; 32 practice problems</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

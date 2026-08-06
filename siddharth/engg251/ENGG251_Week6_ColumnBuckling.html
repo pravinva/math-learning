@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Column Buckling</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG251 &middot; Mechanics of Solids &middot; Week 6</div>
+  <h1>Column Buckling</h1>
+  <p>Euler's buckling formula and the physical difference between buckling and crushing failure, effective length and the four standard end conditions, the slenderness ratio and critical stress (including where Euler's formula stops being valid), and the practical design considerations that follow. This closes out the first half of the subject before the mid-session recess. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 28 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this block's toolkit</span>
+  <ul>
+<li><strong>Euler's formula:</strong> $P_{cr}=\pi^2EI/L^2$ (pin-ended) &mdash; buckling is a stiffness/geometry failure, not a strength failure.</li>
+<li><strong>Effective length</strong> $L_e=KL$: $K=1$ (pin-pin), $2$ (fixed-free), $0.5$ (fixed-fixed), $\approx0.7$ (fixed-pin).</li>
+<li><strong>Slenderness ratio</strong> $\lambda=L_e/r$ (with $r=\sqrt{I/A}$) distinguishes slender (buckling-governed) from stocky (yield-governed) columns.</li>
+<li><strong>Critical stress</strong> $\sigma_{cr}=\pi^2E/\lambda^2$ is only valid while it stays below the material's yield/proportional-limit stress.</li>
+<li><strong>Design:</strong> apply a factor of safety to $P_{cr}$ (columns typically use higher $FS$ than tension members); empirical formulas bridge the short-column/long-column regimes.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Euler Buckling &amp; the Critical Load</a></li>
+<li><a href="#sec1">Effective Length &amp; End Conditions</a></li>
+<li><a href="#sec2">Slenderness Ratio &amp; Critical Stress</a></li>
+<li><a href="#sec3">Column Design Considerations</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+<div class="section-title"><span class="tag">0</span> Euler Buckling &amp; the Critical Load</div>
+
+<div class="prose">
+<p>A slender column under increasing axial compression eventually becomes <strong>unstable</strong> and buckles sideways at a critical load $P_{cr}$, well before the material's compressive strength is reached &mdash; a fundamentally different failure mode from simple crushing, governed by <strong>stiffness</strong> and <strong>geometry</strong> rather than material strength alone.</p>
+<p>For an <strong>ideal pin-ended column</strong> (both ends free to rotate, no moment resistance), solving the governing beam equation with the compressive axial load produces <strong>Euler's formula</strong>: $P_{cr}=\dfrac{\pi^2EI}{L^2}$. Below $P_{cr}$, the column remains straight (stable equilibrium); at $P_{cr}$, it can buckle into a sideways bowed shape at no further increase in load (in idealised theory) &mdash; any imperfection or slight load increase beyond $P_{cr}$ leads to rapid, large lateral deflection.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$P_{cr}=\frac{\pi^2EI}{L^2} \qquad \text{(Euler buckling load, ideal pin-ended column)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A pin-ended steel column, length 3 m, $E=200$ GPa, $I=8\times10^{-6}\ \text{m}^4$ (about the weaker axis). Find the Euler buckling load.</p>
+<p class="step">$P_{cr}=\dfrac{\pi^2(200\times10^9)(8\times10^{-6})}{3^2}=\dfrac{\pi^2\times1.6\times10^6}{9}=1.754\times10^6\ \text{N}=1754$ kN.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>A pin-ended column, length 2.5 m, $E=200$ GPa, $I=5\times10^{-6}\ \text{m}^4$. Find $P_{cr}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{cr}=\dfrac{\pi^2(200\times10^9)(5\times10^{-6})}{2.5^2}=\dfrac{\pi^2(1\times10^6)}{6.25}=1579$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A pin-ended aluminium column ($E=70$ GPa), length 4 m, $I=2\times10^{-6}\ \text{m}^4$. Find $P_{cr}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{cr}=\dfrac{\pi^2(70\times10^9)(2\times10^{-6})}{4^2}=\dfrac{\pi^2(1.4\times10^5)}{16}=86.4$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A column has $P_{cr}=500$ kN, $E=200$ GPa, $I=4\times10^{-6}\ \text{m}^4$. Find its length (pin-ended).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$L=\sqrt{\dfrac{\pi^2EI}{P_{cr}}}=\sqrt{\dfrac{\pi^2(200\times10^9)(4\times10^{-6})}{500000}}=\sqrt{15.79}=3.97\ \text{m}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Two pin-ended columns of the same material and length have $I_1=2I_2$. Compare their Euler buckling loads.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since $P_{cr}\propto I$ (all else equal), $P_{cr,1}=2P_{cr,2}$ &mdash; the stiffer column (larger $I$) buckles at twice the load.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A pin-ended column's length is doubled (all else unchanged). By what factor does $P_{cr}$ change?</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{cr}\propto1/L^2$, so doubling $L$ reduces $P_{cr}$ to $1/4$ of its original value &mdash; buckling capacity is extremely sensitive to length.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>A pin-ended column with a circular cross-section (diameter 60 mm), length 2 m, $E=200$ GPa. Find $P_{cr}$ (recall $I=\pi d^4/64$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$I=\dfrac{\pi(0.060)^4}{64}=6.362\times10^{-7}\ \text{m}^4$. $P_{cr}=\dfrac{\pi^2(200\times10^9)(6.362\times10^{-7})}{2^2}=\dfrac{\pi^2(1.272\times10^5)}4=313.9$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>Explain, conceptually, why Euler's formula uses the <em>smaller</em> moment of inertia of an unsymmetric cross-section (e.g. a rectangular column, where $I$ differs about its two principal axes) when predicting the buckling load, rather than the larger one.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A column will buckle in whichever direction it is <em>least</em> stiff against bending, since that is the path of least resistance to instability; the smaller $I$ corresponds to the weaker bending direction, and Euler's formula (being a stability criterion) always identifies the <em>lowest</em> critical load at which buckling first becomes possible &mdash; using the larger $I$ would incorrectly predict a higher, unsafe buckling capacity that the column would never actually reach before buckling about its weaker axis first.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+<div class="section-title"><span class="tag">1</span> Effective Length &amp; End Conditions</div>
+
+<div class="prose">
+<p>Real columns rarely have ideal pin-pin ends. The <strong>effective length</strong> $L_e=KL$ generalises Euler's formula to any end condition, where $K$ is the <strong>effective length factor</strong> capturing how restrained the ends are against rotation: $P_{cr}=\dfrac{\pi^2EI}{L_e^2}=\dfrac{\pi^2EI}{(KL)^2}$.</p>
+<p>Standard theoretical values: <strong>pin-pin</strong> $K=1$ (baseline case); <strong>fixed-free</strong> (cantilever column) $K=2$ (weakest, most prone to buckling for a given $L$); <strong>fixed-fixed</strong> $K=0.5$ (strongest); <strong>fixed-pin</strong> $K\approx0.7$. Design codes often specify slightly conservative $K$ values above these idealised theoretical minimums to account for real, imperfect end restraint.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$P_{cr}=\frac{\pi^2EI}{(KL)^2} \qquad K_{\text{pin-pin}}=1 \quad K_{\text{fixed-free}}=2 \quad K_{\text{fixed-fixed}}=0.5 \quad K_{\text{fixed-pin}}\approx0.7$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A fixed-free column (cantilever, $K=2$), length 2 m, $E=200$ GPa, $I=3\times10^{-6}\ \text{m}^4$. Find $P_{cr}$ and compare to the same column pin-ended.</p>
+<p class="step">$L_e=KL=2(2)=4$ m. $P_{cr}=\dfrac{\pi^2(200\times10^9)(3\times10^{-6})}{4^2}=\dfrac{\pi^2(6\times10^5)}{16}=370.1$ kN.</p>
+<p class="step">Pin-ended equivalent ($K=1,L_e=2$ m): $P_{cr}=\dfrac{\pi^2(6\times10^5)}{4}=1480.4$ kN &mdash; four times higher (matches $K^2=4$ ratio), confirming a cantilever column is far more buckling-prone than a pin-ended one of the same actual length.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A fixed-fixed column, length 3 m, $E=200$ GPa, $I=6\times10^{-6}\ \text{m}^4$ ($K=0.5$). Find $P_{cr}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$L_e=0.5(3)=1.5$ m. $P_{cr}=\dfrac{\pi^2(200\times10^9)(6\times10^{-6})}{1.5^2}=\dfrac{\pi^2(1.2\times10^6)}{2.25}=5262$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A fixed-pin column, length 4 m, $E=200$ GPa, $I=4\times10^{-6}\ \text{m}^4$ ($K=0.7$). Find $P_{cr}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$L_e=0.7(4)=2.8$ m. $P_{cr}=\dfrac{\pi^2(200\times10^9)(4\times10^{-6})}{2.8^2}=\dfrac{\pi^2(8\times10^5)}{7.84}=1007.7$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A cantilever column (fixed-free, $K=2$), length 2.5 m, $E=70$ GPa (aluminium), $I=1.5\times10^{-6}\ \text{m}^4$. Find $P_{cr}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$L_e=2(2.5)=5$ m. $P_{cr}=\dfrac{\pi^2(70\times10^9)(1.5\times10^{-6})}{5^2}=\dfrac{\pi^2(1.05\times10^5)}{25}=41.5$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>For the same physical column length $L$ and cross-section, rank the four standard end conditions (pin-pin, fixed-free, fixed-fixed, fixed-pin) from lowest to highest $P_{cr}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Lowest to highest: fixed-free ($K=2$) &lt; pin-pin ($K=1$) &lt; fixed-pin ($K\approx0.7$) &lt; fixed-fixed ($K=0.5$) &mdash; since $P_{cr}\propto1/K^2$, smaller $K$ gives higher buckling capacity.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>A column originally pin-ended has $P_{cr}=200$ kN. If its end conditions are changed to fixed-fixed (same $L,E,I$), find the new $P_{cr}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{cr}\propto1/K^2$; going from $K=1$ to $K=0.5$ multiplies $P_{cr}$ by $(1/0.5)^2=4$. New $P_{cr}=800$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A designer needs a fixed-free (cantilever) column to have the same buckling capacity as a pin-ended column of length 3 m (same $E,I$). Find the required length of the cantilever column.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Equal $P_{cr}$ requires equal $L_e$: for pin-pin, $L_e=3$ m. For fixed-free, $L_e=2L\Rightarrow L=1.5$ m &mdash; the cantilever must be half as long to match the pin-ended column's buckling strength.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Explain physically why a fixed-fixed column has a smaller effective length than its actual physical length ($K=0.5<1$), using the shape of its buckled mode.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A fixed-fixed column, when it buckles, forms an S-shaped (double-curvature) deflected shape with inflection points (points of zero curvature/moment) located a quarter of the way in from each end; the central portion of the column, between these two inflection points, behaves exactly like a pin-ended column of that shorter length (zero moment at each inflection point mimics a pin support there). Since that effective "pin-ended-equivalent" segment is only half the total physical length, the effective length is correspondingly smaller, giving a higher buckling capacity for the same total material length.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+<div class="section-title"><span class="tag">2</span> Slenderness Ratio &amp; Critical Stress</div>
+
+<div class="prose">
+<p>The <strong>radius of gyration</strong> $r=\sqrt{I/A}$ packages a cross-section's bending stiffness per unit area into a single length-scale. The <strong>slenderness ratio</strong> $\lambda=\dfrac{L_e}{r}$ is the key parameter distinguishing buckling-governed columns (large $\lambda$, "slender") from crushing-governed columns (small $\lambda$, "short/stocky").</p>
+<p>Dividing Euler's formula by area gives the <strong>critical (average) stress</strong>: $\sigma_{cr}=\dfrac{P_{cr}}{A}=\dfrac{\pi^2E}{(L_e/r)^2}=\dfrac{\pi^2E}{\lambda^2}$. Euler's formula is only valid while $\sigma_{cr}$ remains below the material's proportional limit (elastic range); for stocky columns with small $\lambda$, the predicted $\sigma_{cr}$ would exceed the material's yield strength, meaning the column actually fails by <strong>yielding/crushing</strong> rather than elastic buckling, and Euler's formula no longer applies.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$r=\sqrt{I/A} \qquad \lambda=\frac{L_e}{r} \qquad \sigma_{cr}=\frac{\pi^2E}{\lambda^2} \quad \text{(valid only while } \sigma_{cr}\le\sigma_{\text{proportional limit}}\text{)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A pin-ended column, circular section diameter 40 mm, length 2 m, $E=200$ GPa. Find the slenderness ratio and critical stress; check validity if $\sigma_Y=250$ MPa.</p>
+<p class="step">$A=\pi(0.020)^2=1.257\times10^{-3}\ \text{m}^2$; $I=\dfrac{\pi(0.040)^4}{64}=1.257\times10^{-7}\ \text{m}^4$; $r=\sqrt{I/A}=\sqrt{1\times10^{-4}}=0.010$ m (equivalently $r=d/4$ for a solid circle).</p>
+<p class="step">$\lambda=L_e/r=2/0.010=200$. $\sigma_{cr}=\dfrac{\pi^2(200\times10^9)}{200^2}=49.3\times10^6\ \text{Pa}=49.3$ MPa $<250$ MPa &mdash; well below yield, so Euler buckling genuinely governs (elastic buckling is valid here).</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A rectangular column cross-section, $b=100$ mm, $h=200$ mm. Find the radius of gyration about the weaker axis (using the smaller $I$, i.e. bending about the axis where $h=200$ mm is the width dimension for that bending direction &mdash; use $I_{\min}=hb^3/12$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$I_{\min}=\dfrac{0.200(0.100)^3}{12}=1.667\times10^{-5}\ \text{m}^4$. $A=0.020\ \text{m}^2$. $r_{\min}=\sqrt{1.667\times10^{-5}/0.020}=0.02887\ \text{m}=28.9$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A pin-ended column, length 5 m, has $r_{\min}=40$ mm. Find its slenderness ratio.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\lambda=L_e/r=5/0.040=125$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>Find the critical stress for a pin-ended steel column ($E=200$ GPa) with slenderness ratio $\lambda=150$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{cr}=\dfrac{\pi^2(200\times10^9)}{150^2}=87.7\times10^6\ \text{Pa}=87.7$ MPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A steel column ($E=200$ GPa, $\sigma_Y=250$ MPa) has slenderness ratio $\lambda=80$. Check whether Euler's formula is valid (i.e. whether $\sigma_{cr}<\sigma_Y$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\sigma_{cr}=\dfrac{\pi^2(200\times10^9)}{80^2}=308.4\times10^6\ \text{Pa}=308.4$ MPa $>250$ MPa (yield). Euler's formula is NOT valid here &mdash; the column would yield before elastic buckling occurs; this is a "short/intermediate" column governed by material strength, not Euler theory.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Find the slenderness ratio at which a steel column ($E=200$ GPa) has $\sigma_{cr}$ exactly equal to $\sigma_Y=250$ MPa (the boundary between "Euler-valid" and "not valid").</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$250\times10^6=\dfrac{\pi^2(200\times10^9)}{\lambda^2}\Rightarrow\lambda^2=\dfrac{\pi^2(200\times10^9)}{250\times10^6}=7896\Rightarrow\lambda=88.9$ &mdash; columns with $\lambda>88.9$ are genuinely governed by Euler buckling for this steel; columns with $\lambda<88.9$ would yield first.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A pin-ended column, circular section diameter 30 mm, length 1.5 m, $E=200$ GPa, $\sigma_Y=300$ MPa. Find $\lambda$, $\sigma_{cr}$, and determine whether Euler's formula governs.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$r=d/4=0.0075$ m. $\lambda=1.5/0.0075=200$. $\sigma_{cr}=\dfrac{\pi^2(200\times10^9)}{200^2}=49.3$ MPa $\ll300$ MPa. Euler's formula governs (very slender column, elastic buckling well before yielding).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Explain why the concept of slenderness ratio, rather than length alone, is the correct parameter for classifying a column as "slender" (buckling-prone) versus "stocky" (crushing-prone), using the definition $\lambda=L_e/r$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Two columns of the identical physical length can behave completely differently depending on their cross-sectional shape: a long, thin column (small $r$, since $I$ is small relative to $A$) is far more prone to buckling than a short, stout column of the same length but a much larger $r$ (bulkier cross-section). By normalising length against $r$ (a measure of the section's own resistance to bending), the slenderness ratio $\lambda$ captures the true geometric tendency toward buckling instability independent of absolute size, making it the physically meaningful classification parameter rather than raw length.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+<div class="section-title"><span class="tag">3</span> Column Design Considerations</div>
+
+<div class="prose">
+<p>Practical column design applies a <strong>factor of safety</strong> to the critical load: $P_{\text{allow}}=\dfrac{P_{cr}}{FS}$, with $FS$ typically in the range 1.5&ndash;3.5 for columns (often higher than for simple tension members, reflecting the sensitivity of buckling to imperfections, eccentric loading, and initial crookedness not captured by the idealised Euler model).</p>
+<p><strong>Real columns</strong> deviate from Euler's idealised prediction at low slenderness ratios (as seen in Section 2) &mdash; design codes therefore use <strong>empirical column formulas</strong> (e.g. parabolic/Johnson formulas for intermediate columns, straight-line formulas for very short columns) that transition smoothly from the yield-governed regime at small $\lambda$ to the Euler-governed regime at large $\lambda$, rather than relying on Euler's formula (or a simple yield check) alone across the whole range.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$P_{\text{allow}}=\frac{P_{cr}}{FS} \qquad \text{Short columns: yield/crushing governs} \qquad \text{Long/slender columns: Euler buckling governs}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A pin-ended column has $P_{cr}=800$ kN (Euler). Using $FS=2.5$, find the allowable load, and the resulting allowable axial stress if $A=5\times10^{-3}\ \text{m}^2$.</p>
+<p class="step">$P_{\text{allow}}=800/2.5=320$ kN. $\sigma_{\text{allow}}=320000/5\times10^{-3}=64\times10^6\ \text{Pa}=64$ MPa.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>A pin-ended column has $P_{cr}=1200$ kN. Using $FS=3$, find the allowable load.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{\text{allow}}=1200/3=400$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>A column must safely carry an actual load of 150 kN using $FS=2.5$. Find the required Euler critical load $P_{cr}$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{cr}=FS\times P_{\text{actual}}=2.5\times150=375$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>A pin-ended steel column, length 3.5 m, $E=200$ GPa, must carry an actual load of 200 kN with $FS=3$. Find the required $I$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{cr,\text{req}}=3\times200=600$ kN. $I=\dfrac{P_{cr}L^2}{\pi^2E}=\dfrac{600000(3.5)^2}{\pi^2(200\times10^9)}=\dfrac{7.35\times10^6}{1.974\times10^{12}}=3.723\times10^{-6}\ \text{m}^4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>A fixed-free (cantilever) column, length 2 m, $E=200$ GPa, must carry 50 kN with $FS=3$. Find the required $I$ (recall $K=2$ for fixed-free).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{cr,\text{req}}=150$ kN. $L_e=2(2)=4$ m. $I=\dfrac{P_{cr}L_e^2}{\pi^2E}=\dfrac{150000(4)^2}{\pi^2(200\times10^9)}=\dfrac{2.4\times10^6}{1.974\times10^{12}}=1.216\times10^{-6}\ \text{m}^4$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Explain why column design typically uses a higher factor of safety than tension-member design for the same material, even though both might use the same nominal strength basis.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Tension-member failure (yielding/fracture) is a comparatively well-predicted, controlled failure mode with limited sensitivity to small imperfections. Column buckling, by contrast, is highly sensitive to factors the idealised Euler formula does not capture &mdash; initial crookedness, load eccentricity, imperfect end restraint, and residual stresses &mdash; all of which can significantly reduce the actual buckling capacity below the theoretical prediction. The larger safety factor compensates for this greater real-world uncertainty and the potentially sudden, catastrophic nature of buckling failure.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>A column design table gives an allowable stress of 90 MPa for a certain slenderness ratio and material. If the column's actual cross-sectional area is $4\times10^{-3}\ \text{m}^2$, find the maximum allowable axial load.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{\text{allow}}=\sigma_{\text{allow}}A=90\times10^6\times4\times10^{-3}=360$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 28</span></div>
+  <div class="p-body"><p>Explain, in general terms, why empirical column formulas (rather than Euler's formula alone) are used for design across the full practical range of slenderness ratios, referencing the earlier finding that Euler's formula overestimates capacity for short/stocky columns.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>As shown in Section 2, Euler's formula predicts a critical stress that can exceed the material's actual yield strength for columns with low slenderness ratios (short, stocky columns) &mdash; an unphysical result, since the column would yield (or crush) well before reaching that theoretical elastic-buckling stress. Empirical formulas (such as parabolic/Johnson-type formulas) are calibrated to blend smoothly between a yield-strength-governed prediction at low $\lambda$ and the genuine Euler prediction at high $\lambda$, giving realistic, safe capacity estimates across the entire practical range of column slenderness encountered in real structures, rather than relying on a formula that is only valid in the slender-column regime.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>ENGG251 Mechanics of Solids &middot; Week 6 &middot; 28 practice problems</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>
