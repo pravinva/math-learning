@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -24,6 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
       - name: Prepare static site
         run: |
           mkdir _site
@@ -34,16 +37,16 @@ jobs:
             --exclude='.DS_Store' \
             ./ _site/
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
+      # Retry: GitHub Pages often sticks in deployment_queued (platform bug).
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: Wandalen/wretry.action@v3.8.0
         with:
-          timeout: 1200000
+          action: actions/deploy-pages@v4
+          attempt_limit: 4
+          attempt_delay: 45000
