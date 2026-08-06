@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fluid Statics: Manometry, Buoyancy &amp; Rigid Body Motion</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG252 &middot; Engineering Fluid Mechanics &middot; Week 3</div>
+  <h1>Fluid Statics: Manometry, Buoyancy &amp; Rigid Body Motion</h1>
+  <p>The hydrostatic equation and pressure variation with depth, manometers and how to trace through them, buoyancy via Archimedes' principle and the stability of floating bodies, and rigid body motion of fluids under linear acceleration or rotation. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 27 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this block's toolkit</span>
+  <ul>
+<li><strong>Hydrostatic equation:</strong> $P=P_0+\rho gh$ &mdash; pressure depends only on depth in a connected, uniform-density fluid at rest.</li>
+<li><strong>Manometers:</strong> trace the fluid path, adding $\rho gh$ going down and subtracting going up, from one known point to the other.</li>
+<li><strong>Archimedes' principle:</strong> $F_B=\rho_{\text{fluid}}gV_{\text{displaced}}$; floating equilibrium requires $W=F_B$.</li>
+<li><strong>Stability:</strong> metacentre $M$ above centre of gravity $G$ gives a stable floating body; below gives unstable.</li>
+<li><strong>Rigid body motion:</strong> linear acceleration tilts the free surface ($\tan\theta=a_x/g$); rotation curves it into a paraboloid ($z=\omega^2r^2/2g$).</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Pressure Variation with Depth &mdash; the Hydrostatic Equation</a></li>
+<li><a href="#sec1">Manometers</a></li>
+<li><a href="#sec2">Buoyancy &amp; Stability of Floating Bodies</a></li>
+<li><a href="#sec3">Rigid Body Motion of Fluids</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+<div class="section-title"><span class="tag">0</span> Pressure Variation with Depth &mdash; the Hydrostatic Equation</div>
+
+<div class="prose">
+<p>In a static fluid, pressure varies <strong>only with depth</strong> (not horizontally, within a single connected fluid of constant density) &mdash; a direct consequence of a vertical force balance on a small fluid element: the <strong>hydrostatic equation</strong> $\dfrac{dP}{dz}=-\rho g$, or in integrated form for constant density, $P=P_0+\rho gh$, where $h$ is the depth below the reference point (where pressure is $P_0$).</p>
+<p>Key consequences: (1) pressure increases linearly with depth in any single, connected fluid of uniform density; (2) points at the <strong>same depth</strong> within the same connected fluid have <strong>equal</strong> pressure, regardless of the shape of the container (the basis of manometry, Section 1); (3) the pressure at a free surface exposed to the atmosphere equals atmospheric pressure (unless otherwise stated).</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\frac{dP}{dz}=-\rho g \qquad P=P_0+\rho gh \quad \text{(constant density)} \qquad \text{Equal depth, same connected fluid} \implies \text{equal pressure}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Find the gauge pressure at a depth of 5 m in a freshwater lake ($\rho=1000\ \text{kg/m}^3$).</p>
+<p class="step">$P_{\text{gauge}}=\rho gh=1000(9.81)(5)=49050\ \text{Pa}=49.05\ \text{kPa}$.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Find the gauge pressure at a depth of 10 m in seawater ($\rho=1025\ \text{kg/m}^3$).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P=1025(9.81)(10)=100{,}552.5\ \text{Pa}=100.6$ kPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>Find the absolute pressure at a depth of 3 m in a freshwater tank, if atmospheric pressure is 101.3 kPa.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{\text{gauge}}=1000(9.81)(3)=29430\ \text{Pa}=29.43$ kPa. $P_{\text{abs}}=29.43+101.3=130.7$ kPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A pressure gauge at the bottom of an oil tank reads 45 kPa. If the oil has $SG=0.85$, find the depth of oil.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\rho=850\ \text{kg/m}^3$. $h=P/(\rho g)=45000/(850\times9.81)=5.395$ m.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Two points, A and B, are at the same depth in a connected body of water, but B is in a wider section of the tank. Compare the pressures at A and B.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Equal &mdash; pressure depends only on depth within a single connected fluid of uniform density, not on the shape or width of the container at that depth (a key, sometimes counter-intuitive, result known as the "hydrostatic paradox").</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A tank contains two layers: 2 m of oil ($SG=0.8$) on top of 3 m of water. Find the gauge pressure at the bottom of the tank.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{\text{bottom}}=\rho_{\text{oil}}gh_{\text{oil}}+\rho_{\text{water}}gh_{\text{water}}=800(9.81)(2)+1000(9.81)(3)=15696+29430=45126\ \text{Pa}=45.13$ kPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Explain why pressure in a static fluid varies only with depth (vertical direction) and not horizontally, using a horizontal force balance on a small fluid element.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Consider a small fluid element with a horizontal axis; the only forces acting on its two opposing vertical faces (perpendicular to the horizontal direction) are the pressure forces themselves (gravity acts vertically, contributing nothing to a horizontal force balance, and there is no shear in a static fluid). For the element to remain in static equilibrium, these two opposing horizontal pressure forces must be equal, meaning the pressure must be the same at both faces &mdash; i.e. pressure cannot vary horizontally at a fixed depth in a static, connected fluid.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A U-tube contains a single fluid, open to the atmosphere at both ends, and is at rest. Explain why the fluid level must be the same in both arms of the tube, using the hydrostatic equation.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Since both arms are open to the same atmosphere, the pressure at each free surface equals atmospheric pressure, i.e. equal at both surfaces. Applying the hydrostatic equation from each free surface down to a common reference depth (the bottom of the U-tube) must then give equal pressures reached from each side; since the fluid is the same (same $\rho$) and the pressures at that common depth must match, the depths $h$ from each free surface to that common reference must also be equal, forcing the two free surfaces to be at the same height.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+<div class="section-title"><span class="tag">1</span> Manometers</div>
+
+<div class="prose">
+<p>A <strong>manometer</strong> uses the hydrostatic equation directly to measure pressure (or a pressure difference) by observing the height of a fluid column. The standard technique: start at a point of known (or desired) pressure, and work through the manometer <strong>one fluid segment at a time</strong>, <strong>adding</strong> $\rho gh$ when moving <strong>down</strong> through a fluid, and <strong>subtracting</strong> $\rho gh$ when moving <strong>up</strong> &mdash; arriving at an equation for the unknown pressure (or pressure difference) in terms of the measured column heights.</p>
+<p>A <strong>differential manometer</strong> (comparing two pressure points directly, e.g. across a pipe fitting) skips computing either absolute pressure and directly gives $P_A-P_B$ by tracing through the connecting fluid path between the two points. Manometer fluid is typically chosen much <strong>denser</strong> than the fluid being measured (e.g. mercury for large air-pressure differences) to keep the resulting column height to a conveniently readable size.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\text{Down through a fluid: add } \rho gh \qquad \text{Up through a fluid: subtract } \rho gh \qquad \text{Trace segment by segment from one known point to the other}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A simple manometer connects a pressurised air tank (point A) to the atmosphere via a mercury U-tube ($SG=13.6$). The mercury column height difference is 250 mm, with the tank-side leg lower than the open-side leg. Find the gauge pressure in the tank.</p>
+<p class="step">Starting at A (in the air, negligible air weight contribution), moving down through the mercury on the tank side, then up through the mercury on the open side to atmosphere: $P_A+\rho_{Hg}gh=P_{\text{atm}}$ (using the height difference directly, since equal mercury levels below the difference point cancel).</p>
+<p class="step">$P_{A,\text{gauge}}=-\rho_{Hg}gh=-13600(9.81)(0.250)$... using the correct sign convention (tank pressure pushes the mercury down on its side, so the open side is higher, meaning $P_A>P_{\text{atm}}$): $P_{A,\text{gauge}}=\rho_{Hg}gh=13600(9.81)(0.250)=33{,}354\ \text{Pa}=33.35$ kPa.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A mercury manometer ($SG=13.6$) measures a gauge pressure with a column height difference of 180 mm. Find the pressure.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P=\rho_{Hg}gh=13600(9.81)(0.180)=24{,}015\ \text{Pa}=24.02$ kPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A water manometer measures a small pressure difference with a column height of 400 mm. Find the pressure difference.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\Delta P=1000(9.81)(0.400)=3924\ \text{Pa}=3.92$ kPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A manometer is required to measure a gauge pressure of 50 kPa using mercury ($SG=13.6$). Find the required column height.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$h=P/(\rho_{Hg}g)=50000/(13600\times9.81)=0.375\ \text{m}=375$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>The same 50 kPa pressure is to be measured using water instead of mercury. Find the required column height, and comment on why mercury is often preferred for larger pressures.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$h=50000/(1000\times9.81)=5.10\ \text{m}$ &mdash; over 13 times taller than the mercury column (375 mm), illustrating why a dense fluid like mercury is preferred for measuring larger pressures: it keeps the manometer to a practical, manageable physical size.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>A differential manometer, using mercury ($SG=13.6$), measures the pressure difference between two points A and B in a pipe carrying water. The mercury column height difference is 120 mm, with B's side higher. Find $P_A-P_B$ (accounting for the water above the mercury in both legs, assumed equal and cancelling, a common simplification when both legs have equal water column heights above the mercury).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Using the standard differential-manometer result (equal water columns above cancel, leaving only the mercury height difference contribution, adjusted for the density difference between mercury and the measured fluid): $P_A-P_B=(\rho_{Hg}-\rho_{\text{water}})gh=(13600-1000)(9.81)(0.120)=14{,}830\ \text{Pa}=14.83$ kPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Explain the general rule ("add going down, subtract going up") used when tracing through a manometer, referencing the hydrostatic equation directly.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The hydrostatic equation $P=P_0+\rho gh$ shows that pressure increases as you move to a greater depth (larger $h$) within a fluid, and correspondingly decreases as you move upward (toward the surface, smaller $h$) within that same fluid. When tracing a path through a manometer from one known pressure point to an unknown one, moving downward through a fluid segment means depth is increasing, so the pressure at that point must be larger than at the start of that segment (add $\rho gh$); moving upward means depth is decreasing, so pressure must be smaller (subtract $\rho gh$) &mdash; this rule is simply a bookkeeping restatement of the hydrostatic equation applied incrementally along the traced path.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Explain why manometer fluid must be immiscible with (not mix with) the fluid whose pressure is being measured.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>If the manometer fluid and the measured fluid were miscible (able to mix), they would blend together at their interface rather than maintaining a sharp, stable, well-defined boundary; the manometer reading relies entirely on measuring the height of a distinct fluid column with a known, constant density, so any mixing would blur the interface, change the effective density of the mixed region unpredictably, and make an accurate pressure reading essentially impossible to obtain.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+<div class="section-title"><span class="tag">2</span> Buoyancy &amp; Stability of Floating Bodies</div>
+
+<div class="prose">
+<p><strong>Archimedes' principle</strong>: a body submerged (fully or partially) in a fluid experiences an upward <strong>buoyant force</strong> equal to the weight of fluid <strong>displaced</strong> by the body: $F_B=\rho_{\text{fluid}}gV_{\text{displaced}}$. This buoyant force acts through the <strong>centre of buoyancy</strong> (the centroid of the displaced volume) and is a direct consequence of the hydrostatic pressure difference between the top and bottom of the submerged body.</p>
+<p>A floating body reaches <strong>equilibrium</strong> when its weight equals the buoyant force ($W=F_B$), i.e. it displaces exactly its own weight in fluid. <strong>Stability</strong> of a floating body depends on the relative positions of the centre of gravity $G$ and the <strong>metacentre</strong> $M$ (the point where the buoyant force's line of action crosses the body's axis of symmetry after a small tilt): if $M$ is <strong>above</strong> $G$, the body is stable (a small tilt creates a righting moment); if $M$ is <strong>below</strong> $G$, the body is unstable (a small tilt creates a capsizing moment).</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$F_B=\rho_{\text{fluid}}gV_{\text{displaced}} \qquad \text{Floating equilibrium: } W=F_B \qquad M \text{ above } G: \text{ stable} \qquad M \text{ below } G: \text{ unstable}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A solid block, volume 0.02 m$^3$, floats in water with 60% of its volume submerged. Find the block's density and mass.</p>
+<p class="step">Floating equilibrium: $W=F_B\Rightarrow\rho_{\text{block}}gV_{\text{block}}=\rho_{\text{water}}gV_{\text{displaced}}$. $V_{\text{displaced}}=0.6(0.02)=0.012\ \text{m}^3$.</p>
+<p class="step">$\rho_{\text{block}}=\rho_{\text{water}}\dfrac{V_{\text{displaced}}}{V_{\text{block}}}=1000\times\dfrac{0.012}{0.02}=600\ \text{kg/m}^3$. $m=\rho_{\text{block}}V_{\text{block}}=600(0.02)=12$ kg.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A solid cube, side 0.3 m, is fully submerged in water. Find the buoyant force acting on it.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V=0.3^3=0.027\ \text{m}^3$. $F_B=1000(9.81)(0.027)=264.87$ N.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>A block of wood ($SG=0.6$), volume 0.05 m$^3$, floats in water. Find the volume of wood submerged.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Floating equilibrium: $\rho_{\text{wood}}V_{\text{wood}}=\rho_{\text{water}}V_{\text{sub}}\Rightarrow V_{\text{sub}}=SG\times V_{\text{wood}}=0.6(0.05)=0.030\ \text{m}^3$ (i.e. 60% submerged, matching the specific gravity directly &mdash; a useful shortcut).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>An object weighs 80 N in air and 55 N when fully submerged in water. Find the buoyant force and the object's volume.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F_B=80-55=25$ N (the "apparent weight loss" equals the buoyant force). $V=F_B/(\rho_{\text{water}}g)=25/(1000\times9.81)=2.55\times10^{-3}\ \text{m}^3$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A steel ball ($SG=7.8$), diameter 40 mm, is fully submerged in oil ($SG=0.85$). Find the net downward force (weight minus buoyancy).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V=\frac43\pi(0.020)^3=3.351\times10^{-5}\ \text{m}^3$. $W=7800(9.81)(3.351\times10^{-5})=2.564$ N. $F_B=850(9.81)(3.351\times10^{-5})=0.2795$ N. Net downward force $=2.564-0.280=2.284$ N (the ball sinks, as expected since $SG_{\text{ball}}\gg SG_{\text{oil}}$).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>A rectangular barge (length 10 m, width 4 m) floats in water with a draft (submerged depth) of 1.2 m. Find the total weight of the barge and its cargo.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V_{\text{sub}}=10(4)(1.2)=48\ \text{m}^3$. $W=F_B=1000(9.81)(48)=470{,}880\ \text{N}\approx470.9$ kN.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Explain, using Archimedes' principle, why a steel ship can float even though steel itself has a specific gravity far greater than 1 (i.e. steel alone would sink).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A ship's hull is shaped to enclose a large volume of air (and cargo space) within its overall form; what matters for floating is the <em>average</em> density of the entire ship (steel hull plus enclosed air/cargo space), not the density of the steel material alone. By spreading the same mass of steel over a much larger overall displaced volume (via the hollow hull shape), the ship's average density can be brought below that of water, allowing it to float and displace a volume of water equal in weight to the entire ship &mdash; exactly as Archimedes' principle requires, regardless of the fact that solid steel itself would sink if simply dropped in as a compact block.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Explain, using the concept of the metacentre, why a wide, flat-bottomed boat is generally more stable (harder to capsize) than a narrow, deep-hulled boat of the same weight.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A wider hull shape causes the centre of buoyancy to shift much more significantly sideways for a given small angle of tilt (since a larger "wedge" of the hull's cross-section becomes submerged/emerged on each side as it tips), which raises the metacentre $M$ higher relative to the centre of gravity $G$. A higher $M$ relative to $G$ produces a stronger self-righting moment when the boat tilts, giving greater stability; a narrow hull, by contrast, produces a much smaller shift in the centre of buoyancy for the same tilt angle, keeping $M$ closer to (or even below) $G$, and is therefore inherently less stable against capsizing.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+<div class="section-title"><span class="tag">3</span> Rigid Body Motion of Fluids</div>
+
+<div class="prose">
+<p>A fluid undergoing <strong>rigid body motion</strong> (uniform linear acceleration, or steady rotation about a fixed axis, with no relative motion between fluid particles &mdash; the entire fluid mass moves together like a solid) still obeys a modified hydrostatic-type equation, since there is still no shear (no relative sliding between adjacent fluid layers).</p>
+<p>For <strong>uniform linear acceleration</strong> $a_x$ (horizontal): the free surface tilts at angle $\theta$ where $\tan\theta=\dfrac{a_x}{g}$, and pressure varies according to $P=P_0-\rho a_xx-\rho gz$ (accounting for both the horizontal and vertical pressure gradients). For <strong>rigid body rotation</strong> at angular velocity $\omega$ about a vertical axis: the free surface forms a <strong>paraboloid</strong>, $z=\dfrac{\omega^2r^2}{2g}$ (height above the vessel's centre-axis low point), from the balance between the centripetal acceleration requirement and gravity.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\text{Linear accel.: } \tan\theta=\frac{a_x}{g} \qquad \text{Rotation: } z=\frac{\omega^2r^2}{2g} \ \text{(paraboloid free surface)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> An open tank of water is accelerated horizontally at $a_x=3\ \text{m/s}^2$. Find the angle of tilt of the free surface.</p>
+<p class="step">$\tan\theta=\dfrac{a_x}{g}=\dfrac{3}{9.81}=0.3058\Rightarrow\theta=17.0\,{}^\circ$.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>An open container of liquid is accelerated horizontally at $2\ \text{m/s}^2$. Find the tilt angle of the free surface.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\tan\theta=2/9.81=0.2039\Rightarrow\theta=11.5\,{}^\circ$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>An open cylindrical tank of water (radius 0.3 m) is rotated about its central vertical axis at $\omega=10\ \text{rad/s}$. Find the height of the free surface at the tank wall (relative to the centre, the lowest point).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$z=\dfrac{\omega^2r^2}{2g}=\dfrac{100(0.3)^2}{2(9.81)}=\dfrac{9}{19.62}=0.4587\ \text{m}=458.7$ mm.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>An open tank of water is accelerated horizontally such that the free surface tilts at 20&deg;. Find the horizontal acceleration.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$a_x=g\tan20\,{}^\circ=9.81(0.364)=3.57\ \text{m/s}^2$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>An open cylindrical tank (radius 0.4 m) must be rotated such that the free surface rise at the wall does not exceed 0.2 m. Find the maximum allowable angular velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\omega=\sqrt{2gz/r^2}=\sqrt{2(9.81)(0.2)/0.16}=\sqrt{24.525}=4.95\ \text{rad/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 26</span></div>
+  <div class="p-body"><p>Explain why a rigidly rotating fluid's free surface forms a paraboloid shape, referencing the balance between centripetal acceleration requirements and gravity, at a conceptual level (no full derivation needed).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Each fluid particle in rigid body rotation must experience a net inward (centripetal) force sufficient to keep it moving in its circular path, proportional to $\omega^2r$ &mdash; increasing with distance from the rotation axis. This required inward force is provided by a radial pressure gradient (higher pressure farther from the axis, pushing inward), which in turn (combined with the usual vertical hydrostatic pressure variation due to gravity) requires the free surface to rise progressively higher as radius increases, and the specific mathematical relationship between the required centripetal force and radius produces exactly a parabolic (not linear or any other simple) surface shape.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 27</span></div>
+  <div class="p-body"><p>Explain why the free surface of a linearly accelerating fluid tilts at a CONSTANT angle (a flat plane), while a rotating fluid's free surface curves into a parabola, referencing the difference between constant linear acceleration and radius-dependent centripetal acceleration.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Under uniform linear acceleration, every fluid particle experiences the exact same acceleration $a_x$ regardless of its position, so the resulting pressure gradient (and hence the free surface's balance condition) is uniform throughout the fluid, producing a flat, uniformly tilted plane surface. Under rigid body rotation, by contrast, the required centripetal acceleration $\omega^2r$ increases with radial distance from the axis (it is NOT constant across the fluid), so the pressure gradient needed to sustain that motion also varies with radius, and this radius-dependent variation is what produces the curved (parabolic, rather than flat) free surface shape.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>ENGG252 Engineering Fluid Mechanics &middot; Week 3 &middot; 27 practice problems</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

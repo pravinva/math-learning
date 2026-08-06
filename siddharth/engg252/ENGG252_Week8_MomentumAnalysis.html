@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Momentum Analysis of Flow Systems</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG252 &middot; Engineering Fluid Mechanics &middot; Week 8</div>
+  <h1>Momentum Analysis of Flow Systems</h1>
+  <p>The linear momentum equation as fluid mechanics' version of Newton's second law, its application to forces on pipe bends and nozzles, jets striking flat plates and curved vanes (connecting directly to turbine design), and moving control volumes with an introduction to angular momentum. This completes the trio of fundamental flow equations begun with mass (Week 6) and energy (Week 7). Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 21 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this block's toolkit</span>
+  <ul>
+<li><strong>Momentum equation:</strong> $\sum\vec F=\sum_{\text{out}}\dot m\vec V-\sum_{\text{in}}\dot m\vec V$ (steady flow) &mdash; a vector equation, direction matters throughout.</li>
+<li><strong>Pipe bends/nozzles:</strong> include pressure forces at inlet/outlet plus the unknown reaction force; solve component-by-component.</li>
+<li><strong>Free jets on vanes:</strong> pressure cancels (atmospheric throughout); $F_x=\dot mV(1-\cos\theta)$, maximised at $\theta=180\,{}^\circ$ (Pelton-wheel-style full reversal).</li>
+<li><strong>Moving vanes:</strong> use the relative velocity $V_r=V_{\text{jet}}-V_{\text{vane}}$, not the jet's absolute velocity.</li>
+<li><strong>Angular momentum</strong> extends the same logic to torque and rotation &mdash; the basis for turbomachinery (pumps, turbines) analysis.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">The Linear Momentum Equation</a></li>
+<li><a href="#sec1">Momentum Equation Applications: Pipe Bends &amp; Nozzles</a></li>
+<li><a href="#sec2">Momentum Equation for Jets Striking Surfaces</a></li>
+<li><a href="#sec3">Moving Control Volumes &amp; an Introduction to Angular Momentum</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+<div class="section-title"><span class="tag">0</span> The Linear Momentum Equation</div>
+
+<div class="prose">
+<p>Applying the Reynolds Transport Theorem (Week 5) with $B=m\vec V$ (linear momentum), $b=\vec V$, to a fixed control volume gives the <strong>linear momentum equation</strong> &mdash; the fluid-mechanics statement of Newton's second law: $\sum\vec F=\dfrac{\partial}{\partial t}\displaystyle\int_{CV}\rho\vec V\,dV+\displaystyle\int_{CS}\rho\vec V(\vec V\cdot\hat n)\,dA$. For <strong>steady</strong> flow with uniform properties across each inlet/outlet, this reduces to the practical working form: $$\sum\vec F=\sum_{\text{out}}\dot m\vec V-\sum_{\text{in}}\dot m\vec V$$</p>
+<p>$\sum\vec F$ includes <strong>all</strong> forces acting on the fluid within the control volume: pressure forces at the inlets/outlets, weight, and the <strong>reaction force</strong> from any solid surfaces (pipe walls, vanes, nozzles) in contact with the fluid &mdash; it is precisely this last term, found by solving the momentum equation, that gives the force a flow exerts on a pipe bend, nozzle, or vane, the central application throughout this week.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\sum\vec F=\sum_{\text{out}}\dot m\vec V-\sum_{\text{in}}\dot m\vec V \quad \text{(steady flow, uniform properties at each inlet/outlet)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Water flows through a straight horizontal pipe of constant diameter at $\dot m=20$ kg/s, entering and leaving at the same velocity 3 m/s (no change in speed or direction). Find the net force the water exerts in the flow direction, purely from momentum change.</p>
+<p class="step">Since velocity doesn't change (same magnitude, same direction, constant-diameter straight pipe), $\sum\vec F=\dot m(V_{\text{out}}-V_{\text{in}})=20(3-3)=0$ &mdash; zero net force from momentum change alone (any actual force on the pipe wall here comes purely from pressure difference due to friction losses, not from momentum change, since the velocity itself is unchanged).</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Water flows through a nozzle at $\dot m=15$ kg/s, entering at 2 m/s and leaving at 12 m/s (same direction, straight nozzle). Find the net force (in the flow direction) required to produce this momentum change.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F=\dot m(V_{\text{out}}-V_{\text{in}})=15(12-2)=150$ N.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A jet of water, $\dot m=8$ kg/s, strikes a flat plate perpendicular to the jet and is deflected to zero velocity along the original jet direction (i.e. spreads out sideways). Find the force on the plate (in the original jet direction), if the jet enters at 15 m/s.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F=\dot m(V_{\text{out}}-V_{\text{in}})=8(0-15)=-120$ N (on the water, in the jet direction) &mdash; meaning the plate exerts $-120$ N on the water (decelerating it), so by Newton's third law, the water exerts $+120$ N on the plate, in the original jet direction.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A water jet, $\dot m=5$ kg/s, enters a control volume at 10 m/s and exits at 10 m/s but in the exact opposite direction (a full $180\,{}^\circ$ reversal, as at a curved vane). Find the magnitude of the force required (using a 1D sign convention along the jet's original direction).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Taking the original direction as positive: $V_{\text{in}}=+10$, $V_{\text{out}}=-10$ (reversed). $F=\dot m(V_{\text{out}}-V_{\text{in}})=5(-10-10)=-100$ N &mdash; a much larger magnitude force than a simple deceleration-to-zero case, since the momentum change spans the full reversal (from $+10$ to $-10$, a change of 20 m/s, not just 10 m/s).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Explain why the force found from the momentum equation, $\sum\vec F=\dot m(V_{\text{out}}-V_{\text{in}})$, represents the TOTAL force on the fluid (including pressure, weight, AND the reaction force from any solid surface), not just the reaction force alone.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The momentum equation is derived directly from Newton's second law applied to the fluid within the control volume; $\sum\vec F$ on the left-hand side is, by definition, the sum of ALL external forces acting on that fluid, regardless of their physical origin (pressure pushing on the fluid at the inlet/outlet cross-sections, the fluid's own weight, and any contact/reaction force from solid boundaries like pipe walls or vanes). To isolate specifically the reaction force from a solid surface (which is usually the quantity of practical engineering interest, e.g. the force on a pipe bend), one must separately account for and subtract the pressure and weight contributions from the total force found via the momentum equation &mdash; a step demonstrated explicitly in the pipe-bend application (Section 1).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>Explain why the momentum equation is stated in terms of $\dot m\vec V$ (a vector quantity, with the sign/direction of $\vec V$ mattering) rather than simply $\dot m|\vec V|$ (treating speed alone), using the 180-degree reversal example from this section as illustration.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Momentum is fundamentally a vector quantity (it has both magnitude and direction), and Newton's second law relates the vector sum of forces to the vector rate of change of momentum; simply using speed (magnitude only, always treated as positive) would completely fail to capture situations like the 180&deg; reversal example, where the fluid's speed is unchanged (10 m/s throughout) but its direction has fully reversed &mdash; a huge vector change in momentum despite zero change in speed. Only by correctly treating velocity (and momentum) as a signed/directional vector quantity does the momentum equation correctly predict the very large force required to fully reverse a jet's direction, compared to the much smaller force needed merely to decelerate the same jet to rest.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+<div class="section-title"><span class="tag">1</span> Momentum Equation Applications: Pipe Bends &amp; Nozzles</div>
+
+<div class="prose">
+<p>For a pipe bend or reducing nozzle, the fluid's <strong>direction and/or speed changes</strong> between inlet and outlet, requiring a net force &mdash; supplied by the pipe wall's <strong>anchoring/reaction force</strong> $\vec R$ on the fluid (and, by Newton's third law, the fluid exerts an equal and opposite force on the pipe/bend itself, which anchor bolts or thrust blocks must be designed to resist). Applying the momentum equation component-by-component (typically $x$ and $y$ separately) with all forces (pressure at inlet $P_1A_1$, pressure at outlet $P_2A_2$, and the unknown reaction $\vec R$) explicitly included: $$\sum F_x=P_1A_1-P_2A_2\cos\theta+R_x=\dot m(V_2\cos\theta-V_1)$$</p>
+<p><strong>Standard solution procedure</strong>: (1) sketch the control volume and define a consistent sign convention; (2) find $V_1,V_2$ from continuity (Week 6); (3) find $P_1,P_2$ from Bernoulli or the energy equation (Weeks 6&ndash;7) if not directly given; (4) apply the momentum equation in each coordinate direction, solving for the unknown reaction force components $R_x,R_y$; (5) combine into a resultant force magnitude and direction, and note that the force <em>on the bend</em> is equal and opposite to $\vec R$ (the force on the fluid).</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\sum F_x=P_1A_1-P_2A_2\cos\theta+R_x=\dot m(V_2\cos\theta-V_1) \qquad \text{Force on the bend } = -\vec R \ \text{(Newton&rsquo;s third law)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Water flows through a 90&deg; horizontal reducing pipe bend: inlet diameter 200 mm, outlet diameter 100 mm, $\dot m=100$ kg/s, $P_1=150$ kPa (gauge). Find $V_1,V_2$, and $P_2$ (using Bernoulli, horizontal, negligible loss for this idealised case), then set up the momentum equations (values only, full solve omitted for brevity in this preview).</p>
+<p class="step">$A_1=\pi(0.100)^2=0.03142\ \text{m}^2$, $A_2=\pi(0.050)^2=7.854\times10^{-3}\ \text{m}^2$. $V_1=\dot m/(\rho A_1)=100/(1000\times0.03142)=3.183\ \text{m/s}$. $V_2=\dot m/(\rho A_2)=100/(1000\times7.854\times10^{-3})=12.73\ \text{m/s}$.</p>
+<p class="step">Bernoulli: $P_2=P_1+\frac12\rho(V_1^2-V_2^2)=150000+\frac12(1000)(10.13-162.1)=150000-75{,}990=74{,}010\ \text{Pa}$. These values ($V_1,V_2,P_1,P_2$) are exactly what feed into the $x$- and $y$-momentum equations to solve for $R_x,R_y$ (a full 90&deg;-bend solve is worked through in the practice problems).</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Water flows through a straight, horizontal, constant-diameter pipe section (100 mm diameter) at $\dot m=30$ kg/s. $P_1=200$ kPa, $P_2=190$ kPa (a pressure drop due to friction, Week 9-10). Find the net anchoring force $R_x$ needed in the flow direction (no direction change, so $V_1=V_2$, momentum change is zero).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\pi(0.050)^2=7.854\times10^{-3}\ \text{m}^2$. $P_1A_1-P_2A_2+R_x=\dot m(V_2-V_1)=0\Rightarrow R_x=(P_2-P_1)A=(190000-200000)(7.854\times10^{-3})=-78.5$ N (the pipe must be anchored to resist this net force, arising purely from the pressure difference, since momentum itself doesn't change here).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A jet of water, $\dot m=10$ kg/s, $V=20$ m/s, strikes a stationary flat plate held perpendicular to the jet, and splatters sideways (final velocity component in the original jet direction $=0$). Find the force on the plate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F_{\text{on fluid}}=\dot m(0-20)=-200$ N (in the jet direction). By Newton's third law, force ON the plate $=+200$ N, in the original jet direction.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>A jet of water, $\dot m=6$ kg/s, $V=15$ m/s, strikes a curved vane and is deflected through 60&deg; from its original direction, leaving at the same speed (15 m/s, frictionless vane assumption). Find the $x$-component (original jet direction) of the force on the vane.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F_x$ on fluid $=\dot m(V\cos60\,{}^\circ-V)=6(15\times0.5-15)=6(7.5-15)=6(-7.5)=-45$ N. Force ON the vane (Newton's third law) $=+45$ N, in the original jet direction.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>For the same vane in the previous question, find the $y$-component (perpendicular to the original jet direction) of the force on the vane.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F_y$ on fluid $=\dot m(V\sin60\,{}^\circ-0)=6(15\times0.866)=6(12.99)=77.9$ N. Force ON the vane $=-77.9$ N (opposite sign, Newton's third law) in that same perpendicular direction.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>A fire hose nozzle reduces the pipe diameter from 80 mm to 25 mm, delivering water at $\dot m=25$ kg/s. Find $V_1$ and $V_2$ using continuity, then explain (without full pressure/force calculation) why the firefighter holding the nozzle must brace against a substantial reaction force.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A_1=\pi(0.040)^2=5.027\times10^{-3}\ \text{m}^2$, $A_2=\pi(0.0125)^2=4.909\times10^{-4}\ \text{m}^2$. $V_1=25/(1000\times5.027\times10^{-3})=4.97\ \text{m/s}$. $V_2=25/(1000\times4.909\times10^{-4})=50.9\ \text{m/s}$. The large increase in velocity (roughly a 10-fold speed increase) represents a substantial momentum change of the water as it passes through the nozzle; by the momentum equation, this requires a correspondingly large force from the nozzle (and the firefighter's grip) acting on the water to accelerate it &mdash; and by Newton's third law, the water exerts an equal and opposite (substantial) reaction force back on the nozzle and the person holding it, which is exactly the "kick" firefighters must brace against when operating a fire hose.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Explain why a 180-degree pipe bend (U-bend) experiences a LARGER anchoring force than a 90-degree bend, for the same inlet/outlet velocity magnitudes and mass flow rate, referencing the vector nature of the momentum change.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>In a 90&deg; bend, the velocity vector changes direction by 90&deg;, producing a moderate net vector change in momentum. In a 180&deg; bend, the velocity vector reverses direction entirely, meaning the outlet momentum vector points in essentially the exact opposite direction from the inlet momentum vector &mdash; the vector difference (change) between two opposite-pointing vectors of the same magnitude is exactly double the magnitude of either vector alone (whereas a 90&deg; direction change produces a vector difference smaller than a full reversal, specifically related to $\sqrt2$ times the magnitude for equal speeds). Since the required force is directly proportional to this vector momentum change, a 180&deg; U-bend requires substantially more anchoring force than a 90&deg; bend under otherwise identical flow conditions.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+<div class="section-title"><span class="tag">2</span> Momentum Equation for Jets Striking Surfaces</div>
+
+<div class="prose">
+<p>A free jet striking a <strong>stationary flat plate</strong> or <strong>curved vane</strong> (open to atmosphere, unlike the enclosed pipe-bend case) is a classic and instructive momentum-equation application, directly relevant to devices like Pelton wheel turbines (water jets striking curved buckets to extract mechanical energy, connecting directly back to Week 7's turbine concepts). Since the jet and its deflected flow are both exposed to atmospheric pressure throughout, the pressure terms in the momentum equation <strong>cancel</strong> (atmospheric pressure acts uniformly on both the incoming jet and outgoing deflected flow), leaving a comparatively simple pure-momentum-change calculation.</p>
+<p>For a jet deflected through angle $\theta$ by a <strong>frictionless</strong> vane (speed unchanged, only direction changes): force component along the original jet direction $F_x=\dot m V(1-\cos\theta)$ (using the sign convention that $F_x$ is the force <em>on the vane</em>, in the jet's original direction) &mdash; maximum ($F_x=2\dot mV$) when $\theta=180\,{}^\circ$ (full reversal, as found in Section 0), and zero when $\theta=0$ (no deflection at all, as expected).</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$F_x \text{ (on vane, frictionless, speed unchanged)}=\dot mV(1-\cos\theta) \qquad \theta=180\,{}^\circ: F_x=2\dot mV \ \text{(maximum)} \qquad \theta=0: F_x=0$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A water jet, $\dot m=4$ kg/s, $V=25$ m/s, strikes a curved vane that deflects it through $135\,{}^\circ$ (frictionless, speed unchanged). Find the force on the vane in the original jet direction.</p>
+<p class="step">$F_x=\dot mV(1-\cos135\,{}^\circ)=4(25)(1-(-0.707))=100(1.707)=170.7\ \text{N}$.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>A jet, $\dot m=3$ kg/s, $V=18$ m/s, strikes a flat plate perpendicular to the jet ($\theta=90\,{}^\circ$ deflection, splattering sideways). Find the force on the plate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F_x=\dot mV(1-\cos90\,{}^\circ)=3(18)(1-0)=54$ N.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>A jet, $\dot m=5$ kg/s, $V=20$ m/s, strikes a vane that fully reverses it ($\theta=180\,{}^\circ$, as in a Pelton wheel bucket). Find the force on the vane, and compare to a flat plate case ($\theta=90\,{}^\circ$) with the same $\dot m,V$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F_{180}=\dot mV(1-\cos180\,{}^\circ)=5(20)(1-(-1))=100(2)=200$ N. $F_{90}=5(20)(1-0)=100$ N. The full-reversal vane produces exactly double the force of the flat-plate case &mdash; explaining why Pelton wheel buckets are curved to nearly reverse the jet, maximising force (and hence power extraction) for a given jet.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>A jet, $\dot m=2$ kg/s, $V=30$ m/s, is deflected through $45\,{}^\circ$ by a vane. Find the force on the vane in the original jet direction.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$F_x=2(30)(1-\cos45\,{}^\circ)=60(1-0.707)=60(0.293)=17.6$ N.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>Explain why the pressure terms cancel out of the momentum equation for a free jet striking a vane in open air, but do NOT cancel for an enclosed pipe bend (Section 1), even though both involve fluid changing direction.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For a free jet exposed to the atmosphere both before and after striking the vane, the pressure acting on the jet at both the inlet and outlet cross-sections is simply atmospheric pressure (gauge pressure zero) &mdash; there is no pressure buildup or pressure difference driving the flow through an enclosed geometry, so the pressure-force terms in the momentum equation vanish identically. In an enclosed pipe bend, by contrast, the fluid is under genuine internal gauge pressure (needed to push it through the pipe system against friction and other resistances), and this internal pressure differs from atmospheric and generally differs between the inlet and outlet cross-sections (especially if the pipe diameter changes) &mdash; these nonzero, generally unequal pressure forces must be explicitly included and cannot be assumed to cancel.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Explain, using the formula $F_x=\dot mV(1-\cos\theta)$, why Pelton wheel turbine buckets are deliberately shaped to deflect the water jet through nearly (but not exactly) 180&deg;, rather than exactly 180&deg;, referencing a practical engineering constraint.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The formula shows that force (and hence power extraction) is maximised exactly at $\theta=180\,{}^\circ$ (full reversal); however, a real Pelton bucket moving past the fixed jet nozzle must allow the deflected water to clear the bucket and flow away without striking the back of the FOLLOWING bucket (which is moving into position immediately behind it) &mdash; a physical/geometric necessity given the turbine wheel's continuous rotation. Deflecting the jet through very nearly (but slightly less than) 180&deg; (typically around 165&deg;&ndash;170&deg; in real Pelton wheel designs) sacrifices only a small amount of theoretical force/power (since $\cos\theta$ changes very slowly near $\theta=180\,{}^\circ$) while providing the practical clearance needed for the deflected water to exit the bucket cleanly.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+<div class="section-title"><span class="tag">3</span> Moving Control Volumes &amp; an Introduction to Angular Momentum</div>
+
+<div class="prose">
+<p>For a <strong>moving vane</strong> (e.g. a series of buckets on a rotating turbine wheel, or a single vane moving at constant velocity $\vec V_{\text{vane}}$), the momentum equation must be applied using the <strong>relative velocity</strong> $\vec V_r=\vec V_{\text{jet}}-\vec V_{\text{vane}}$ (the velocity of the fluid <em>as seen by an observer moving with the vane</em>) &mdash; this is the velocity that actually determines the force the vane experiences, since it reflects the fluid's true velocity change relative to the (moving) surface deflecting it.</p>
+<p><strong>Angular momentum</strong> (a natural extension of linear momentum for rotating systems, e.g. sprinklers, pumps, turbines with rotating blades) follows the same Reynolds Transport Theorem logic with $B=\vec r\times m\vec V$ (moment of momentum): $\sum\vec M=\sum_{\text{out}}\dot m(\vec r\times\vec V)-\sum_{\text{in}}\dot m(\vec r\times\vec V)$, directly relating the torque on a rotating fluid machine to the change in the fluid's angular momentum as it passes through &mdash; the fundamental principle behind turbomachinery (pumps, turbines, compressors) design, though full development of this topic is left for further study beyond this subject.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\vec V_r=\vec V_{\text{jet}}-\vec V_{\text{vane}} \ \text{(use relative velocity for a moving vane)} \qquad \sum\vec M=\sum_{\text{out}}\dot m(\vec r\times\vec V)-\sum_{\text{in}}\dot m(\vec r\times\vec V) \ \text{(angular momentum)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A water jet, $V_{\text{jet}}=25$ m/s, strikes a single flat vane moving away from the nozzle at $V_{\text{vane}}=8$ m/s (same direction as the jet). If the jet's own mass flow rate (from the stationary nozzle) is $\dot m_{\text{jet}}=10$ kg/s, find the relative velocity, and note the important subtlety that the EFFECTIVE mass flow rate striking the moving vane is reduced (since the vane is "running away" from the jet).</p>
+<p class="step">$V_r=V_{\text{jet}}-V_{\text{vane}}=25-8=17\ \text{m/s}$ &mdash; this is the velocity actually used in the force calculation (deflected relative to the vane, e.g. $F_x=\dot m_{\text{eff}}V_r(1-\cos\theta)$ for a single vane).</p>
+<p class="step">Effective mass flow rate onto the moving vane: $\dot m_{\text{eff}}=\rho A_{\text{jet}}V_r$ (using the relative velocity, not the original jet velocity, since only the "catching up" portion of the jet actually reaches and interacts with the receding vane) &mdash; a subtlety worth remembering whenever a single vane, rather than a full series of vanes on a wheel, is being analysed.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>A jet with $V_{\text{jet}}=30$ m/s strikes a single vane moving in the same direction at $V_{\text{vane}}=10$ m/s. Find the relative velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V_r=30-10=20\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>A jet with $V_{\text{jet}}=20$ m/s strikes a vane moving TOWARD the nozzle (opposite direction) at $V_{\text{vane}}=5$ m/s. Find the relative velocity (careful with signs: use consistent sign convention where the jet direction is positive, so the vane's opposing velocity is negative).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V_r=V_{\text{jet}}-V_{\text{vane}}=20-(-5)=25\ \text{m/s}$ (larger than the jet speed alone, since the vane is approaching the oncoming jet).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Explain why the relative velocity, rather than the jet's original (absolute) velocity, must be used when calculating the force on a MOVING vane.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The force a vane experiences depends on the actual velocity change of the fluid AS EXPERIENCED BY THE VANE ITSELF (i.e. observed from a reference frame moving with the vane), since it is this relative motion that determines how the fluid is genuinely being deflected and decelerated/accelerated by the vane's surface. Using the jet's absolute (ground-frame) velocity would incorrectly ignore the fact that a receding vane is being "caught up to" more slowly (reducing the effective impact), or that an approaching vane experiences a faster, more forceful impact than the jet's raw ground-frame speed alone would suggest &mdash; the relative velocity correctly captures this vane-frame perspective.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>Explain, in general conceptual terms, why the angular momentum equation (rather than the simpler linear momentum equation) is the appropriate tool for analysing torque and rotational effects in devices like lawn sprinklers, pump impellers, or turbine rotors.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Linear momentum and the associated linear momentum equation relate net force to the rate of change of straight-line (translational) momentum, which is the natural tool for analysing devices that produce or resist translational forces (like pipe bends or vanes moving in a straight line). Devices like sprinklers, pump impellers, or turbine rotors, however, involve fluid entering and leaving at different radial positions relative to a rotation axis, producing (or being driven by) a TORQUE (rotational effect) rather than simply a translational force; the angular momentum equation, which relates net torque to the rate of change of the moment of momentum ($\vec r\times m\vec V$), is the directly analogous and appropriate tool for capturing this rotational, rather than purely translational, physical behaviour.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>Summarising the arc of Weeks 6-8: explain how mass conservation (continuity), the energy equation, and the momentum equation each answer a DIFFERENT fundamental question about the same flowing fluid, using a single example (e.g. flow through a pump) to illustrate all three.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>For flow through a pump: continuity (Week 6) answers "how much fluid passes through, and how does velocity change with cross-sectional area?" (a purely geometric/kinematic bookkeeping question). The energy equation (Week 7) answers "how much mechanical energy (head) does the pump add to the fluid, and what shaft power is required, accounting for efficiency and losses?" (a scalar energy-accounting question). The momentum equation (Week 8) answers "what net force does the fluid exert on the pump casing/mounting bolts as its momentum changes passing through?" (a vector force-and-reaction question). All three principles apply simultaneously to the very same physical flow, but each extracts fundamentally different, complementary information &mdash; together forming the complete analytical toolkit for any flow system, exactly the progression this subject has built across these three weeks.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>ENGG252 Engineering Fluid Mechanics &middot; Week 8 &middot; 21 practice problems</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mass Conservation &amp; the Bernoulli Equation</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --navy:#1B2431;
+    --red:#FF3621;
+    --paper:#ffffff;
+    --grid:#e3e8ef;
+    --line:#c8d2de;
+    --text:#1B2431;
+    --muted:#5b6779;
+    --blue-box:#eef3fb;
+    --green:#2f8f5b;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:'Barlow',sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    padding:0 0 80px 0;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:36px 24px 30px;
+    border-bottom:6px solid var(--red);
+  }
+  header .eyebrow{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb0c9;
+    margin-bottom:6px;
+  }
+  header h1{ margin:0; font-size:27px; font-weight:700; letter-spacing:-0.01em; }
+  header p{ margin:8px 0 0; color:#c3ccdb; font-size:15px; max-width:700px; line-height:1.55; }
+
+  .progress-wrap{ max-width:820px; margin:22px auto 0; padding:0 24px; }
+  .progress-bar{ height:6px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+  .progress-label{ font-family:'Roboto Mono',monospace; font-size:11px; color:#9fb0c9; margin-top:6px; }
+
+  nav.toc{
+    max-width:820px; margin:26px auto 0; padding:16px 22px;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+  }
+  nav.toc .toc-title{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  nav.toc ol{ margin:0; padding-left:20px; columns:2; font-size:14px; line-height:1.9; }
+  nav.toc a{ color:var(--navy); text-decoration:none; font-weight:500; }
+  nav.toc a:hover{ color:var(--red); text-decoration:underline; }
+
+  main{ max-width:820px; margin:30px auto 0; padding:0 24px; }
+  section.topic{ margin-bottom:46px; }
+
+  .landbox{
+    margin:22px auto 0; max-width:820px; padding:18px 24px 20px; margin-left:auto; margin-right:auto;
+    background:var(--navy); color:#e7ecf5; border-radius:8px; border-left:6px solid var(--red);
+  }
+  .landbox .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:#ff8a78; margin-bottom:10px; display:block;
+  }
+  .landbox ul{ margin:0; padding-left:20px; }
+  .landbox li{ margin:7px 0; font-size:14.5px; line-height:1.55; }
+  .landbox li strong{ color:#fff; }
+
+  .section-title{
+    font-size:22px; font-weight:700; margin:0 0 6px; padding-bottom:8px;
+    border-bottom:2px solid var(--navy); display:flex; align-items:baseline; gap:10px;
+    scroll-margin-top:20px;
+  }
+  .section-title .tag{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); background:rgba(255,54,33,0.08);
+    border-radius:4px; padding:3px 9px;
+  }
+
+  .prose{ font-size:16px; line-height:1.65; margin:16px 0; }
+  .prose p{margin:12px 0;}
+  .prose strong{color:var(--navy);}
+
+  .key-box, .example-box, .why-box{
+    margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line);
+  }
+  .key-box{ background:#fff7f5; border-left:4px solid var(--red); }
+  .example-box{ background:#f7f9fc; border-left:4px solid var(--navy); }
+  .why-box{ background:var(--blue-box); border-left:4px solid var(--navy); }
+  .box-label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .key-box .box-label{color:var(--red);}
+  .example-box .box-label, .why-box .box-label{color:var(--navy);}
+  .key-box p, .example-box p, .why-box p{margin:8px 0; font-size:15px; line-height:1.6;}
+  .example-box .step{margin:10px 0 10px 14px;}
+  .why-box .step{margin:10px 0 10px 14px;}
+
+  .practice-card{
+    background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a;
+    border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden;
+  }
+  .practice-card.solved{ border-left-color:var(--red); }
+  .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
+  .p-num{
+    font-family:'Roboto Mono',monospace; font-weight:500; font-size:12.5px; color:#33415a;
+    background:#eef1f6; border-radius:4px; padding:2px 8px; flex-shrink:0;
+  }
+  .p-body{ padding:4px 20px 16px; font-size:15.5px; line-height:1.55; }
+  .p-body p{margin:6px 0;}
+
+  .toggle-row{ padding:0 20px 14px; }
+  .toggle-btn{
+    font-family:'Barlow',sans-serif; font-weight:600; font-size:13.5px; color:var(--navy);
+    background:#fff; border:1.5px solid var(--navy); border-radius:5px; padding:8px 16px;
+    cursor:pointer; transition:background .15s ease,color .15s ease;
+  }
+  .toggle-btn:hover{ background:var(--navy); color:#fff; }
+  .toggle-btn.shown{ background:var(--red); border-color:var(--red); color:#fff; }
+  .toggle-btn.shown:hover{ background:#e02e1c; }
+
+  .solution{ max-height:0; overflow:hidden; transition:max-height .35s ease; border-top:1px dashed var(--line); }
+  .solution.open{ max-height:5000px; transition:max-height .7s ease; }
+  .solution-inner{ padding:14px 20px 18px; background:#fbfcfe; font-size:15px; line-height:1.6; }
+  .solution-inner .label{
+    font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block;
+  }
+  .solution-inner p{margin:8px 0;}
+  .solution-inner .step{margin:8px 0 8px 14px;}
+
+  table.ref-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  table.ref-table th{ background:var(--navy); color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12.5px; }
+  table.ref-table td{ padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.ref-table tr:nth-child(even) td{ background:#f7f9fc; }
+  table.ref-table tr:nth-child(odd) td{ background:#fff; }
+
+  .flow-box{ background:#f7f9fc; border:1px solid var(--line); border-left:4px solid var(--navy); border-radius:6px; padding:14px 18px; margin:16px 0; font-size:14.5px; line-height:1.7; }
+  .flow-box .flow-q{ font-weight:600; color:var(--navy); }
+  .flow-box .flow-yes{ color:#2f8f5b; font-weight:600; }
+  .flow-box .flow-no{ color:var(--red); font-weight:600; }
+
+  .banner{
+    max-width:820px; margin:6px auto 0; padding:0 24px;
+    font-family:'Roboto Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:0.05em;
+  }
+
+  footer{
+    max-width:820px; margin:10px auto 0; padding:0 24px; text-align:center;
+    color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ENGG252 &middot; Engineering Fluid Mechanics &middot; Week 6</div>
+  <h1>Mass Conservation &amp; the Bernoulli Equation</h1>
+  <p>The continuity equation for steady flow, mass flow rate and the meaning of average velocity, the Bernoulli equation and its four essential assumptions, and its applications to flow measurement devices and Torricelli's theorem. Continuity and Bernoulli together form the core working toolkit of practical fluid mechanics. Exam-level worked examples and practice throughout. Solutions stay hidden until you click.</p>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 25 practice solutions revealed</div>
+  </div>
+</header>
+
+<div class="landbox">
+  <span class="box-label">Lay of the land &mdash; this block's toolkit</span>
+  <ul>
+<li><strong>Continuity:</strong> $\dot m_1=\dot m_2$ (general); $Q_1=Q_2$, i.e. $A_1V_1=A_2V_2$ (incompressible) &mdash; the most-used equation in the subject.</li>
+<li><strong>Average velocity</strong> $V_{\text{avg}}$ is defined to preserve the true total flow rate $Q=V_{\text{avg}}A$, even though the real velocity profile is non-uniform.</li>
+<li><strong>Bernoulli equation:</strong> $P+\frac12\rho V^2+\rho gz=\text{constant}$ &mdash; requires steady, incompressible, frictionless flow along a streamline.</li>
+<li><strong>Standard pattern:</strong> Bernoulli between two points + continuity to eliminate one unknown &rarr; solve for velocity, pressure, or flow rate.</li>
+<li><strong>Applications:</strong> Venturi/nozzle meters, Pitot-static tubes, and Torricelli's theorem ($V=\sqrt{2gh}$) for tank draining.</li>
+  </ul>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+<li><a href="#sec0">Conservation of Mass &mdash; the Continuity Equation</a></li>
+<li><a href="#sec1">Mass Flow Rate &amp; Average Velocity</a></li>
+<li><a href="#sec2">The Bernoulli Equation</a></li>
+<li><a href="#sec3">Applications of the Bernoulli Equation</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section class="topic" id="sec0">
+
+<div class="section-title"><span class="tag">0</span> Conservation of Mass &mdash; the Continuity Equation</div>
+
+<div class="prose">
+<p>Applying the Reynolds Transport Theorem (Week 5) with $B=m$ (mass), $b=1$, to a fixed control volume under <strong>steady</strong> flow gives the <strong>continuity equation</strong>: mass flow rate <strong>in</strong> equals mass flow rate <strong>out</strong>. For a single inlet and single outlet: $\dot m_1=\dot m_2$, i.e. $\rho_1A_1V_1=\rho_2A_2V_2$, where $\dot m=\rho AV$ is the mass flow rate (kg/s), $A$ is the cross-sectional area, and $V$ is the average velocity across that section.</p>
+<p>For an <strong>incompressible</strong> fluid (constant $\rho$, an excellent approximation for essentially all liquid-flow problems in this subject), density cancels, giving the simpler <strong>volume flow rate</strong> form: $A_1V_1=A_2V_2$, i.e. $Q_1=Q_2$ (with $Q=AV$ in m$^3$/s) &mdash; the single most-used equation in this entire subject, appearing in nearly every problem involving flow through pipes, nozzles, or channels of varying cross-section.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\dot m_1=\dot m_2 \quad (\rho_1A_1V_1=\rho_2A_2V_2) \qquad \text{Incompressible: } Q_1=Q_2 \quad (A_1V_1=A_2V_2)$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Water flows through a pipe that narrows from diameter 100 mm to diameter 50 mm. If the velocity in the larger section is 2 m/s, find the velocity in the smaller section.</p>
+<p class="step">$A_1=\dfrac{\pi(0.100)^2}4=7.854\times10^{-3}\ \text{m}^2$. $A_2=\dfrac{\pi(0.050)^2}4=1.963\times10^{-3}\ \text{m}^2$.</p>
+<p class="step">$A_1V_1=A_2V_2\Rightarrow V_2=V_1\dfrac{A_1}{A_2}=2\times\dfrac{7.854\times10^{-3}}{1.963\times10^{-3}}=2\times4=8\ \text{m/s}$ (halving the diameter quadruples the velocity, since $A\propto d^2$).</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 1</span></div>
+  <div class="p-body"><p>Water flows at 3 m/s through a 150 mm diameter pipe. Find the volume flow rate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\pi(0.075)^2=0.01767\ \text{m}^2$. $Q=AV=0.01767(3)=0.0530\ \text{m}^3/\text{s}=53.0$ L/s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 2</span></div>
+  <div class="p-body"><p>A pipe carries a volume flow rate of 0.02 m$^3$/s. If the pipe diameter is 80 mm, find the average velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\pi(0.040)^2=5.027\times10^{-3}\ \text{m}^2$. $V=Q/A=0.02/5.027\times10^{-3}=3.98\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 3</span></div>
+  <div class="p-body"><p>A pipe of diameter 200 mm splits into two smaller pipes, each of diameter 120 mm, carrying equal flow. If the velocity in the main pipe is 2.5 m/s, find the velocity in each branch pipe.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$Q_{\text{main}}=A_{\text{main}}V_{\text{main}}=\pi(0.100)^2(2.5)=0.0785\ \text{m}^3/\text{s}$. Each branch carries half: $Q_{\text{branch}}=0.03927\ \text{m}^3/\text{s}$. $A_{\text{branch}}=\pi(0.060)^2=0.01131\ \text{m}^2$. $V_{\text{branch}}=0.03927/0.01131=3.47\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 4</span></div>
+  <div class="p-body"><p>Air flows through a duct, entering at density 1.2 kg/m$^3$, area 0.5 m$^2$, velocity 10 m/s. At the exit, the area is 0.3 m$^2$ and density is 1.0 kg/m$^3$ (compressible flow, density changes). Find the exit velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\dot m_1=\rho_1A_1V_1=1.2(0.5)(10)=6\ \text{kg/s}$. $\dot m_2=\dot m_1\Rightarrow V_2=\dfrac{\dot m_1}{\rho_2A_2}=\dfrac{6}{1.0(0.3)}=20\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 5</span></div>
+  <div class="p-body"><p>A garden hose (diameter 20 mm) delivers water at 1.5 m/s. If the nozzle at the end reduces the diameter to 6 mm, find the exit jet velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A_1V_1=A_2V_2\Rightarrow V_2=V_1(d_1/d_2)^2=1.5(20/6)^2=1.5(11.11)=16.7\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 6</span></div>
+  <div class="p-body"><p>Explain why the continuity equation $A_1V_1=A_2V_2$ (for incompressible flow) directly predicts that fluid speeds up when a pipe narrows, using the physical requirement of steady flow (no accumulation of fluid anywhere within the pipe).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Under steady, incompressible flow, mass (and hence, since density is constant, volume) cannot accumulate or deplete anywhere within a fixed section of pipe &mdash; whatever volume flow rate enters at any section must exactly equal the volume flow rate leaving at any other section, otherwise fluid would have to be mysteriously appearing or disappearing somewhere inside. Since $Q=AV$ must therefore remain constant along the pipe, a decrease in cross-sectional area $A$ at a narrower section necessarily requires a corresponding increase in velocity $V$ to keep the product $AV$ unchanged &mdash; continuity is simply the mathematical statement of this common-sense "no fluid can pile up" requirement.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 7</span></div>
+  <div class="p-body"><p>A large tank drains through a small pipe at its base. Explain qualitatively (no calculation needed) how the exit velocity from the pipe compares to the velocity of the free surface dropping inside the tank, using the continuity equation and the large area ratio between the tank and the pipe.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Applying continuity between the (large) free-surface cross-section of the tank and the (much smaller) pipe cross-section: $A_{\text{tank}}V_{\text{surface}}=A_{\text{pipe}}V_{\text{exit}}$. Since $A_{\text{tank}}\gg A_{\text{pipe}}$ for a typical draining tank, the exit velocity through the pipe must be correspondingly much LARGER than the rate at which the tank's free surface itself is dropping &mdash; this is why the surface level of a large tank appears to drop only very slowly even while a relatively fast jet issues from a small drain pipe at its base.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec1">
+
+<div class="section-title"><span class="tag">1</span> Mass Flow Rate &amp; Average Velocity</div>
+
+<div class="prose">
+<p>Real velocity profiles across a pipe or duct cross-section are <strong>not uniform</strong> (typically maximum at the centre, zero at the wall due to the no-slip condition &mdash; a preview of Weeks 9&ndash;10's pipe flow). The <strong>average velocity</strong> $V_{\text{avg}}$ used throughout the continuity and Bernoulli equations is defined so that $Q=V_{\text{avg}}A$ gives the <em>same</em> total volume flow rate as the true, non-uniform velocity profile: $V_{\text{avg}}=\dfrac1A\displaystyle\int_A u\,dA$.</p>
+<p>Using this single average velocity value (rather than the full, more complex velocity profile) is a deliberate and extremely useful simplification for most macroscopic engineering calculations (overall flow rate, pressure drop, force balances) &mdash; the actual profile shape only becomes essential when studying the detailed internal structure of the flow itself (e.g. wall shear stress, friction losses, Weeks 9&ndash;10).</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\dot m=\rho V_{\text{avg}}A \qquad Q=V_{\text{avg}}A \qquad V_{\text{avg}}=\frac1A\int_A u\,dA \quad \text{(true, non-uniform profile averaged to give the same total flow rate)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Water flows through a 100 mm diameter pipe at a mass flow rate of 15 kg/s. Find the average velocity.</p>
+<p class="step">$A=\pi(0.050)^2=7.854\times10^{-3}\ \text{m}^2$. $\dot m=\rho V_{\text{avg}}A\Rightarrow V_{\text{avg}}=\dfrac{\dot m}{\rho A}=\dfrac{15}{1000(7.854\times10^{-3})}=1.910\ \text{m/s}$.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 8</span></div>
+  <div class="p-body"><p>Water flows through a 250 mm diameter pipe at a mass flow rate of 100 kg/s. Find the average velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\pi(0.125)^2=0.04909\ \text{m}^2$. $V_{\text{avg}}=100/(1000\times0.04909)=2.037\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 9</span></div>
+  <div class="p-body"><p>A pipe of diameter 60 mm carries water at an average velocity of 3.5 m/s. Find the mass flow rate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=\pi(0.030)^2=2.827\times10^{-3}\ \text{m}^2$. $\dot m=\rho V_{\text{avg}}A=1000(3.5)(2.827\times10^{-3})=9.90$ kg/s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 10</span></div>
+  <div class="p-body"><p>Air ($\rho=1.2\ \text{kg/m}^3$) flows through a rectangular duct, 0.4 m &times; 0.3 m, at an average velocity of 8 m/s. Find the mass flow rate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A=0.4(0.3)=0.12\ \text{m}^2$. $\dot m=1.2(8)(0.12)=1.152\ \text{kg/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 11</span></div>
+  <div class="p-body"><p>Explain why using a single "average velocity" value, rather than the true (non-uniform) velocity profile, is an acceptable simplification for most overall flow-rate calculations, even though it discards information about the profile's actual shape.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The average velocity is specifically defined so that $Q=V_{\text{avg}}A$ reproduces exactly the same total volume flow rate as integrating the true, non-uniform velocity profile across the entire cross-section &mdash; by construction, no error is introduced into overall flow-rate, continuity, or macroscopic mass/momentum/energy balance calculations that only depend on the total flow rate through a cross-section. The detailed shape of the profile only matters for phenomena that depend on the local velocity gradient near the wall (e.g. wall shear stress and friction losses, covered in Weeks 9&ndash;10), which genuinely do require knowledge of the actual profile shape, not just its average.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 12</span></div>
+  <div class="p-body"><p>A laminar velocity profile in a circular pipe is parabolic, with maximum (centreline) velocity $u_{\max}$ and average velocity known to be exactly $V_{\text{avg}}=u_{\max}/2$ (a standard result derived in Week 9). If $u_{\max}=4\ \text{m/s}$, find the volume flow rate through a 40 mm diameter pipe.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V_{\text{avg}}=4/2=2\ \text{m/s}$. $A=\pi(0.020)^2=1.257\times10^{-3}\ \text{m}^2$. $Q=V_{\text{avg}}A=2(1.257\times10^{-3})=2.51\times10^{-3}\ \text{m}^3/\text{s}=2.51$ L/s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 13</span></div>
+  <div class="p-body"><p>Explain why the no-slip condition (fluid velocity is exactly zero at any solid, stationary wall) necessarily means that the true velocity profile across a pipe cannot be uniform, and why the average velocity must therefore always be somewhat less than the maximum (centreline) velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The no-slip condition is an experimentally and theoretically well-established boundary condition: fluid directly in contact with a stationary solid surface has zero relative velocity at that surface (it effectively "sticks" to the wall). Since velocity must be exactly zero at the pipe wall but is generally nonzero (and typically largest) at the centreline (farthest from any wall influence), the velocity profile must vary continuously across the cross-section from zero at the edges to some maximum value in the middle &mdash; it cannot be uniform. Because some portion of the cross-section always has velocity below the centreline maximum (tapering to zero at the walls), the area-averaged velocity must always be less than the maximum centreline velocity for any real, viscous flow.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec2">
+
+<div class="section-title"><span class="tag">2</span> The Bernoulli Equation</div>
+
+<div class="prose">
+<p>For <strong>steady</strong>, <strong>incompressible</strong>, <strong>frictionless (inviscid)</strong> flow along a streamline, the <strong>Bernoulli equation</strong> states that the sum of pressure, kinetic, and potential "heads" (or energy per unit weight/volume) remains <strong>constant</strong>: $\dfrac{P}{\rho g}+\dfrac{V^2}{2g}+z=\text{constant}$ (head form, units of length/metres) or equivalently $P+\dfrac12\rho V^2+\rho gz=\text{constant}$ (pressure form, units of Pa) &mdash; a direct statement of mechanical energy conservation along a streamline, in the complete absence of friction losses or any pump/turbine work.</p>
+<p>The <strong>four key assumptions</strong> (all essential, and all worth checking before applying the equation): (1) <strong>steady</strong> flow; (2) <strong>incompressible</strong> flow (constant $\rho$); (3) <strong>frictionless</strong> (negligible viscous losses along the streamline of interest); (4) flow along a <strong>single streamline</strong> (or, for a uniform velocity profile across a cross-section, effectively valid between any two points in the flow). Violating any of these assumptions (e.g. applying it across a pump, or through a long pipe with significant friction) requires the more general energy equation of Week 7 instead.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\frac{P}{\rho g}+\frac{V^2}{2g}+z=\text{constant} \qquad P+\frac12\rho V^2+\rho gz=\text{constant} \qquad \text{(steady, incompressible, frictionless, along a streamline)}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> Water flows steadily through a horizontal pipe that narrows from 150 mm to 75 mm diameter. At the wider section, $P_1=200$ kPa (gauge) and $V_1=2$ m/s. Find $P_2$ at the narrower section.</p>
+<p class="step">Continuity: $V_2=V_1(d_1/d_2)^2=2(150/75)^2=2(4)=8\ \text{m/s}$.</p>
+<p class="step">Bernoulli (horizontal pipe, $z_1=z_2$): $P_1+\frac12\rho V_1^2=P_2+\frac12\rho V_2^2\Rightarrow P_2=P_1+\frac12\rho(V_1^2-V_2^2)=200000+\frac12(1000)(4-64)=200000-30000=170{,}000\ \text{Pa}=170$ kPa.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 14</span></div>
+  <div class="p-body"><p>Water flows through a horizontal pipe, narrowing from 200 mm to 100 mm diameter. $P_1=150$ kPa, $V_1=1.5$ m/s. Find $P_2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V_2=1.5(200/100)^2=6\ \text{m/s}$. $P_2=150000+\frac12(1000)(1.5^2-6^2)=150000+\frac12(1000)(2.25-36)=150000-16875=133{,}125\ \text{Pa}=133.1$ kPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 15</span></div>
+  <div class="p-body"><p>A large open tank has water at a depth of 4 m above a small outlet at the base (Torricelli's problem). Using Bernoulli between the free surface (atmospheric, near-zero velocity, at the top) and the outlet (atmospheric, at the base), find the outlet jet velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Free surface: $P_1=P_{\text{atm}},V_1\approx0,z_1=4$ m (relative to the outlet). Outlet: $P_2=P_{\text{atm}},z_2=0$. Bernoulli: $gz_1=\frac12V_2^2\Rightarrow V_2=\sqrt{2gz_1}=\sqrt{2(9.81)(4)}=8.86\ \text{m/s}$ (this is Torricelli's theorem, a special case of Bernoulli).</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 16</span></div>
+  <div class="p-body"><p>Water flows through a Venturi meter (a converging-diverging section used for flow measurement, previewing Week 11): throat diameter 40 mm, approach pipe diameter 80 mm. At the approach section, $V_1=1$ m/s, $P_1=180$ kPa. Find the throat pressure $P_2$.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V_2=1(80/40)^2=4\ \text{m/s}$. $P_2=180000+\frac12(1000)(1-16)=180000-7500=172{,}500\ \text{Pa}=172.5$ kPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 17</span></div>
+  <div class="p-body"><p>A pitot tube measures the stagnation pressure at a point in a flow where the static pressure is 100 kPa and the free-stream velocity is 5 m/s. Using Bernoulli (bringing the flow to rest at the stagnation point, same elevation), find the stagnation pressure.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_{\text{stag}}=P_{\text{static}}+\frac12\rho V^2=100000+\frac12(1000)(5)^2=100000+12500=112{,}500\ \text{Pa}=112.5$ kPa.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 18</span></div>
+  <div class="p-body"><p>Explain why the Bernoulli equation cannot be directly applied across a pump (a device that adds significant mechanical energy to the fluid), referencing which of the four key assumptions is violated.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>The Bernoulli equation assumes no external mechanical work is done on or by the fluid along the streamline (it is purely a statement of mechanical energy conservation with no additional energy input or extraction) &mdash; while this is not explicitly one of the four named assumptions, it is implicit in the derivation, since a pump actively adds mechanical energy to the fluid, breaking the constant-total-head assumption. Applying the simple Bernoulli equation directly across a pump would incorrectly predict conservation of mechanical energy across a device that is deliberately designed to increase it; the general energy equation (Week 7), which explicitly includes a pump work term, must be used instead whenever a pump or turbine is present between the two points of interest.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 19</span></div>
+  <div class="p-body"><p>Explain why applying Bernoulli's equation through a long, narrow pipe with significant frictional losses would give an inaccurate (over-optimistic) prediction of the downstream pressure or velocity, referencing the "frictionless" assumption.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>Bernoulli's equation assumes no viscous friction losses occur along the streamline, meaning the total mechanical energy (pressure plus kinetic plus potential head) is assumed perfectly conserved between any two points. In a real pipe with significant length and friction, viscous effects continuously dissipate some of the fluid's mechanical energy into heat (an irreversible loss, covered explicitly in Week 7's energy equation via the head-loss term); ignoring this loss and assuming Bernoulli's equation still holds would incorrectly predict that all of the initial mechanical energy remains available downstream, over-predicting the downstream pressure or velocity compared to what is actually achievable once real friction losses are properly accounted for.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section class="topic" id="sec3">
+
+<div class="section-title"><span class="tag">3</span> Applications of the Bernoulli Equation</div>
+
+<div class="prose">
+<p>The Bernoulli equation, combined with continuity (Section 0), is the working tool behind an enormous range of practical flow-measurement and flow-analysis devices: <strong>Venturi meters</strong> and <strong>flow nozzles</strong> (measuring flow rate from a pressure drop at a deliberate area constriction, Section 2's worked example), <strong>Pitot(-static) tubes</strong> (measuring local velocity from the difference between stagnation and static pressure), and <strong>Torricelli's theorem</strong> (predicting the exit velocity from a tank via a small orifice, purely from the depth of fluid above it).</p>
+<p>A recurring, powerful pattern across all these applications: apply Bernoulli between two points on the same streamline (often points 1 and 2 spanning a known geometric change, e.g. approach pipe to throat, or free surface to outlet), <strong>combine with continuity</strong> to eliminate one of the two unknown velocities, then solve algebraically for the remaining unknown (velocity, pressure, or flow rate) before substituting numbers &mdash; directly following the problem-solving approach established in Week 1.</p>
+</div>
+
+<div class="key-box">
+<span class="box-label">Key idea</span>
+<p>$$\text{Standard pattern: Bernoulli (1} \to \text{2) + Continuity} \to \text{eliminate one unknown} \to \text{solve for velocity/pressure/flow rate}$$</p>
+</div>
+
+<div class="example-box">
+<span class="box-label">Worked example</span>
+<p><strong>Example.</strong> A Venturi meter has an approach diameter of 100 mm and a throat diameter of 50 mm, installed horizontally, measuring water flow. The measured pressure drop (approach to throat) is 25 kPa. Find the volume flow rate.</p>
+<p class="step">Continuity: $V_2=V_1(100/50)^2=4V_1$. Bernoulli (horizontal, $z_1=z_2$): $P_1-P_2=\frac12\rho(V_2^2-V_1^2)=\frac12\rho(16V_1^2-V_1^2)=\frac{15}2\rho V_1^2$.</p>
+<p class="step">$25000=\dfrac{15}2(1000)V_1^2\Rightarrow V_1^2=\dfrac{25000}{7500}=3.333\Rightarrow V_1=1.826\ \text{m/s}$. $A_1=\pi(0.050)^2=7.854\times10^{-3}\ \text{m}^2$. $Q=A_1V_1=7.854\times10^{-3}(1.826)=0.01434\ \text{m}^3/\text{s}=14.3$ L/s.</p>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 20</span></div>
+  <div class="p-body"><p>A Venturi meter (approach diameter 120 mm, throat diameter 60 mm) measures a pressure drop of 30 kPa in water flow. Find the approach velocity $V_1$ (using the same method as the worked example: $V_2=4V_1$, since the diameter ratio is again 2:1).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$P_1-P_2=\frac{15}2\rho V_1^2\Rightarrow30000=7500V_1^2\Rightarrow V_1=2.0\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 21</span></div>
+  <div class="p-body"><p>For the Venturi meter in the previous question, find the volume flow rate.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$A_1=\pi(0.060)^2=0.01131\ \text{m}^2$. $Q=A_1V_1=0.01131(2.0)=0.02262\ \text{m}^3/\text{s}=22.6$ L/s.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 22</span></div>
+  <div class="p-body"><p>A large tank has water at a depth of 2.5 m above a small orifice in its side wall. Using Torricelli's theorem, find the exit jet velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V=\sqrt{2gh}=\sqrt{2(9.81)(2.5)}=7.0\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 23</span></div>
+  <div class="p-body"><p>A pitot-static tube in an air flow ($\rho_{\text{air}}=1.2\ \text{kg/m}^3$) measures a stagnation-to-static pressure difference of 50 Pa. Find the local air velocity.</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$\Delta P=\frac12\rho V^2\Rightarrow V=\sqrt{2\Delta P/\rho}=\sqrt{2(50)/1.2}=9.13\ \text{m/s}$.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 24</span></div>
+  <div class="p-body"><p>A tank drains through an orifice, with the water depth above the orifice decreasing from 3 m to 1 m as it empties. Using Torricelli's theorem, compare the initial and final exit velocities (find the ratio).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>$V\propto\sqrt h$, so $\dfrac{V_{\text{initial}}}{V_{\text{final}}}=\sqrt{3/1}=\sqrt3=1.73$ &mdash; the exit velocity decreases (but not linearly) as the tank drains, exactly proportional to the square root of the remaining depth, explaining why tanks drain quickly at first and much more slowly as they near empty.</p>
+    </div>
+  </div>
+</div>
+
+<div class="practice-card" data-card>
+  <div class="p-head"><span class="p-num">Practice 25</span></div>
+  <div class="p-body"><p>Explain why a Venturi meter is generally preferred over a simple sharp-edged orifice plate for permanent flow-measurement installations, in terms of the flow's behaviour through each device (conceptual answer, referencing energy loss, not calculation).</p></div>
+  <div class="toggle-row"><button class="toggle-btn" data-toggle>Show solution</button></div>
+  <div class="solution" data-solution>
+    <div class="solution-inner">
+      <span class="label">Solution</span>
+      <p>A Venturi meter's smooth, gradually converging and diverging geometry allows the flow to accelerate and then decelerate with comparatively little separation or turbulence, meaning most of the pressure drop through the throat is subsequently recovered as the flow re-expands back to the approach pipe diameter &mdash; resulting in a low permanent (irrecoverable) pressure loss overall. A sharp-edged orifice plate, by contrast, creates an abrupt flow constriction that causes significant flow separation and turbulent eddies downstream, converting much more of the pressure drop into an irrecoverable energy loss (as heat, via friction and turbulence) rather than recovering it &mdash; making the Venturi meter more energy-efficient for continuous, long-term flow measurement despite being more complex and costly to fabricate than a simple orifice plate.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>ENGG252 Engineering Fluid Mechanics &middot; Week 6 &middot; 25 practice problems</footer>
+
+<script>
+
+const cards = document.querySelectorAll('[data-card]');
+const fill = document.getElementById('progressFill');
+const label = document.getElementById('progressLabel');
+let revealed = 0;
+const total = cards.length;
+
+cards.forEach(card => {
+  const btn = card.querySelector('[data-toggle]');
+  const sol = card.querySelector('[data-solution]');
+  let isOpen = false;
+  btn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    sol.classList.toggle('open', isOpen);
+    btn.classList.toggle('shown', isOpen);
+    btn.textContent = isOpen ? 'Hide solution' : 'Show solution';
+    card.classList.toggle('solved', isOpen);
+    revealed += isOpen ? 1 : -1;
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const pct = Math.round((revealed/total)*100);
+  fill.style.width = pct + '%';
+  label.textContent = revealed + ' / ' + total + ' practice solutions revealed';
+}
+
+</script>
+
+</body>
+</html>
