@@ -59,6 +59,13 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
   .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
   .solution-inner p{ margin:8px 0; }
   footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+  .ref-table{ width:100%; border-collapse:collapse; font-size:14.5px; line-height:1.45; margin:6px 0 2px; }
+  .ref-table th, .ref-table td{ border-bottom:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  .ref-table th{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); background:#f7f9fc; }
+  .ref-table td:first-child{ white-space:nowrap; font-weight:600; color:var(--navy); width:28%; }
+  .analogy-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); background:#f4f8f4; border-left:4px solid var(--green); }
+  .analogy-box .box-label{ color:var(--green); }
+  .fig-caption{ text-align:center; font-size:13px; color:var(--muted); margin:-6px 0 18px; }
 </style>
 </head>
 <body>
@@ -66,16 +73,38 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <header>
   <div class="eyebrow">DPEN102 &middot; Week 8</div>
   <h1>Centroids, Center of Gravity &amp; Inertia</h1>
-  <p>Where a shape's weight "balances," how to handle composite shapes built from simple pieces (and holes cut out of them), and the second moment of area, the geometric property that decides how stiff a beam actually is.</p>
+  <p>Where does a shape "balance"? How stiff is a beam's cross-section against bending? This week answers both: the <em>centroid</em> is the geometric balance point of an area, and the <em>second moment of area</em> \(I\) is the property that decides how stiff a beam actually is.</p>
   <div class="progress-wrap">
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-label" id="progressLabel">0 / 46 practice solutions revealed</div>
   </div>
 </header>
 
+<div class="key-box" id="formulas" style="max-width:812px; margin:26px auto 0;">
+  <span class="box-label">Formula summary · Week 8</span>
+  <table class="ref-table">
+    <thead><tr><th>Formula</th><th>Meaning / use</th></tr></thead>
+    <tbody>
+      <tr><td>\(\bar x=\dfrac{\sum A_i x_i}{\sum A_i}\)</td><td>Composite centroid \(x\)-coordinate: area-weighted average of each piece's own centroid.</td></tr>
+      <tr><td>\(\bar y=\dfrac{\sum A_i y_i}{\sum A_i}\)</td><td>Same idea for the \(y\)-coordinate. Holes enter with <em>negative</em> area.</td></tr>
+      <tr><td>\(\bar y=\dfrac{4r}{3\pi}\)</td><td>Centroid of a semicircular area of radius \(r\), measured from the flat diameter.</td></tr>
+      <tr><td>\(I_x=\displaystyle\int y^2\,dA\)</td><td>Second moment of area about the \(x\)-axis: how far area is spread from that axis.</td></tr>
+      <tr><td>\(I=\dfrac{bh^3}{12}\)</td><td>Rectangle of width \(b\) and height \(h\), about its own horizontal centroidal axis.</td></tr>
+      <tr><td>\(I=\dfrac{bh^3}{36}\)</td><td>Triangle of base \(b\) and height \(h\), about its own centroidal axis parallel to the base.</td></tr>
+      <tr><td>\(I=\dfrac{\pi r^4}{4}\)</td><td>Circle of radius \(r\) about a diameter through its centre.</td></tr>
+      <tr><td>\(I=I_c+Ad^2\)</td><td>Parallel-axis theorem: shift \(I\) from a centroidal axis to any parallel axis a distance \(d\) away.</td></tr>
+      <tr><td>\(I_{\mathrm{comp}}=\sum(I_{c,i}+A_i d_i^2)\)</td><td>Composite \(I\): find the shared centroid first, then transfer each piece to that axis and sum.</td></tr>
+    </tbody>
+  </table>
+  <p style="margin:12px 10px 0; font-size:14px; line-height:1.55;"><strong>Symbols:</strong> \(A\) = area; \((x_i,y_i)\) = centroid of piece \(i\); \(\bar x,\bar y\) = composite centroid (x-bar, y-bar); \(I\) = second moment of area (mm⁴ or m⁴); \(I_c\) = value about the piece's own centroid; \(d\) = distance between parallel axes; \(b,h\) = width, height; \(r\) = radius; \(\pi\) = <strong>pi</strong> (~3.1416).</p>
+  <p class="note" style="margin:8px 10px 0; font-size:13.5px; color:var(--muted);"><strong>I-beam tip:</strong> because of the \(Ad^2\) term, material far from the centroid contributes far more stiffness than material near it, that is why flanges sit at the top and bottom.</p>
+</div>
+
 <nav class="toc">
   <div class="toc-title">Contents</div>
   <ol>
+    <li><a href="#formulas">Formula summary &amp; notation</a></li>
+    <li><a href="#intro">What centroids &amp; \(I\) are &amp; why they matter</a></li>
     <li><a href="#sec0">Composite centroids: addition</a></li>
     <li><a href="#sec1">Composite areas with holes: subtraction</a></li>
     <li><a href="#sec2">Second moment of area &amp; parallel axis theorem</a></li>
@@ -86,11 +115,80 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <main>
 
 <!-- ============================================================ -->
+<section class="topic" id="intro">
+  <div class="section-title"><span class="tag">Intro</span> What centroids &amp; \(I\) are &amp; why they matter</div>
+  <div class="prose">
+    <p>Every flat shape has a geometric balance point, the place where you could balance that shape on a pin if it were a thin plate of uniform thickness. That point is the <strong>centroid</strong>, written \((\bar x,\bar y)\). For a rectangle or circle it sits dead in the middle; for an L-shape or a plate with a hole cut out, it drifts toward the side that still has more material. Finding the centroid is the first job whenever you need to know where a body's weight acts, or where to place the neutral axis of a beam.</p>
+    <p>The second big idea this week is the <strong>second moment of area</strong> \(I\) (also called the area moment of inertia). It measures how far a cross-section's material is spread from a chosen axis. A tall, thin rectangle bends much less than a short, fat one of the same area, because more of its material sits far from the bending axis, and \(I\) captures exactly that. Beam deflection and bending stress both depend on \(I\): larger \(I\) means a stiffer, stronger beam for the same material.</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- L-shape -->
+    <rect x="40" y="140" width="160" height="40" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <rect x="160" y="40" width="40" height="140" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <circle cx="120" cy="120" r="5" fill="#c0392b"/>
+    <text x="128" y="116" font-size="13" fill="#c0392b" font-weight="600">(x̄, ȳ)</text>
+    <text x="70" y="30" font-size="13" fill="#5b6779">L-section centroid</text>
+    <line x1="40" y1="180" x2="40" y2="30" stroke="#c8d2de" stroke-width="1"/>
+    <line x1="40" y1="180" x2="220" y2="180" stroke="#c8d2de" stroke-width="1"/>
+    <!-- I comparison -->
+    <rect x="280" y="60" width="30" height="120" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <rect x="350" y="100" width="70" height="40" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <text x="270" y="50" font-size="12" fill="#2f8f5b" font-weight="600">same area</text>
+    <text x="275" y="195" font-size="12" fill="#2f8f5b">tall → large I</text>
+    <text x="348" y="195" font-size="12" fill="#c0392b">flat → small I</text>
+  </svg>
+  <p class="fig-caption">Left: an L-shape's centroid is pulled toward the heavier base. Right: same area, different \(I\), tall sections resist bending far better.</p>
+
+  <div class="analogy-box">
+    <span class="box-label">Why should I care?</span>
+    <p>Every steel I-beam, timber joist, and concrete lintel is sized using \(I\). Put the same amount of steel in a solid square and it will sag; stretch it into an I-shape (flanges far from the centre) and \(I\) skyrockets because of the \(Ad^2\) term, giving you stiffness "for free." Centroids tell you where the neutral axis sits and where the weight of an odd-shaped plate acts. Miss either and your beam design or your tipping calculation is wrong from the start.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">The words you'll meet (keep this handy)</span>
+    <table class="ref-table">
+      <thead><tr><th>Term / symbol</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td>Centroid \((\bar x,\bar y)\)</td><td>Geometric centre of an area; the balance point of a uniform plate of that shape.</td></tr>
+        <tr><td>Center of gravity (CG)</td><td>Where the weight of a body acts. For uniform density in 2D, coincides with the centroid.</td></tr>
+        <tr><td>Composite area</td><td>A shape built by adding (or subtracting) simple pieces: rectangles, triangles, circles.</td></tr>
+        <tr><td>Hole = negative area</td><td>Treat a cut-out as an area with a minus sign in the centroid / \(I\) formulas.</td></tr>
+        <tr><td>Second moment of area \(I\)</td><td>Measure of how far area is spread from an axis; controls bending stiffness. Units: mm⁴ or m⁴.</td></tr>
+        <tr><td>Centroidal axis</td><td>An axis that passes through the centroid; \(I_c\) is the value about such an axis.</td></tr>
+        <tr><td>Parallel-axis theorem</td><td>\(I=I_c+Ad^2\): how to move \(I\) from the centroid to any parallel axis a distance \(d\) away.</td></tr>
+        <tr><td>\(d\)</td><td>Perpendicular distance between the two parallel axes in the transfer theorem.</td></tr>
+        <tr><td>Neutral axis</td><td>In a bent beam, the line through the centroid where bending stress is zero.</td></tr>
+        <tr><td>\(\bar x,\bar y\)</td><td>Read "x-bar" and "y-bar"; the overbar marks the composite (average) centroid.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">The approach, in one breath</span>
+    <p>Section 0 builds composite centroids by <em>adding</em> simple pieces. Section 1 handles holes by treating them as negative area. Section 2 introduces \(I\) for standard shapes and the parallel-axis theorem that lets you shift axes. Section 3 puts it all together: find the composite centroid first, then transfer each piece's \(I\) onto that shared axis and sum. Every composite problem is the same two-step dance: locate the centroid, then assemble \(I\).</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
 <section class="topic" id="sec0">
   <div class="section-title"><span class="tag">0</span> Composite centroids: addition</div>
   <div class="prose">
-    <p>The centroid of a composite shape is an area-weighted average of each piece's own centroid, larger pieces pull the average toward themselves, exactly like a weighted mean.</p>
+    <p>The centroid of a composite shape is an area-weighted average of each piece's own centroid, larger pieces pull the average toward themselves, exactly like a weighted mean. Break the shape into rectangles (or triangles, circles), look up each piece's own centroid, then plug into the formulas below.</p>
   </div>
+
+  <svg class="diagram" viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="40" y="140" width="180" height="40" fill="#dfe8f5" stroke="#1B2431" stroke-width="1.5"/>
+    <rect x="180" y="40" width="40" height="140" fill="#f0e6d8" stroke="#1B2431" stroke-width="1.5"/>
+    <circle cx="130" cy="160" r="4" fill="#33415a"/>
+    <text x="70" y="130" font-size="12" fill="#33415a">R₁ centroid</text>
+    <circle cx="200" cy="90" r="4" fill="#c07830"/>
+    <text x="210" y="85" font-size="12" fill="#c07830">R₂ centroid</text>
+    <circle cx="152" cy="132" r="5" fill="#c0392b"/>
+    <text x="160" y="128" font-size="13" fill="#c0392b" font-weight="600">composite (x̄,ȳ)</text>
+    <text x="50" y="30" font-size="12" fill="#5b6779">L-shape = base rectangle + upright rectangle</text>
+  </svg>
+  <p class="fig-caption">Composite L-section: each piece has its own centroid; the combined centroid is the area-weighted average of the two.</p>
 
   <div class="key-box">
     <span class="box-label">Key idea</span>
@@ -170,8 +268,21 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <section class="topic" id="sec1">
   <div class="section-title"><span class="tag">1</span> Composite areas with holes: subtraction</div>
   <div class="prose">
-    <p>A hole is just negative area, plug it into the exact same formulas with a minus sign.</p>
+    <p>A hole is just negative area, plug it into the exact same formulas with a minus sign. Removing material on one side of the gross centroid shifts the balance point the <em>other</em> way, away from the hole.</p>
   </div>
+
+  <svg class="diagram" viewBox="0 0 380 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="arShift" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2f8f5b"/></marker></defs>
+    <rect x="50" y="40" width="280" height="140" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <circle cx="250" cy="110" r="35" fill="#fff" stroke="#c0392b" stroke-width="2" stroke-dasharray="4,2"/>
+    <text x="228" y="115" font-size="12" fill="#c0392b" font-weight="600">hole</text>
+    <circle cx="190" cy="110" r="4" fill="#5b6779"/>
+    <text x="100" y="105" font-size="12" fill="#5b6779">gross centre</text>
+    <circle cx="165" cy="110" r="5" fill="#2f8f5b"/>
+    <text x="95" y="145" font-size="12" fill="#2f8f5b" font-weight="600">new (x̄,ȳ) shifts left</text>
+    <line x1="190" y1="110" x2="165" y2="110" stroke="#2f8f5b" stroke-width="1.5" marker-end="url(#arShift)"/>
+  </svg>
+  <p class="fig-caption">Cutting a hole on the right pulls the centroid left: less area on the right means the balance point moves toward the remaining material.</p>
 
   <div class="example-box">
     <span class="box-label">Worked example 1</span>
@@ -247,8 +358,21 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <section class="topic" id="sec2">
   <div class="section-title"><span class="tag">2</span> Second moment of area &amp; parallel axis theorem</div>
   <div class="prose">
-    <p>Second moment of area \(I\) measures how resistant a cross-section is to bending, larger \(I\) means a stiffer beam for the same material. The parallel axis theorem lets you shift \(I\) from a shape's own centroidal axis to any other parallel axis.</p>
+    <p>Second moment of area \(I\) measures how resistant a cross-section is to bending, larger \(I\) means a stiffer beam for the same material. The parallel axis theorem lets you shift \(I\) from a shape's own centroidal axis to any other parallel axis: the farther you move, the larger the \(Ad^2\) contribution grows.</p>
   </div>
+
+  <svg class="diagram" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="140" y="50" width="80" height="120" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <line x1="40" y1="110" x2="360" y2="110" stroke="#c0392b" stroke-width="2"/>
+    <text x="300" y="100" font-size="12" fill="#c0392b" font-weight="600">centroidal axis</text>
+    <text x="155" y="105" font-size="12" fill="#c0392b">I_c = bh³/12</text>
+    <line x1="40" y1="180" x2="360" y2="180" stroke="#2f8f5b" stroke-width="2"/>
+    <text x="270" y="195" font-size="12" fill="#2f8f5b" font-weight="600">parallel axis (ref)</text>
+    <line x1="230" y1="110" x2="230" y2="180" stroke="#5b6779" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <text x="238" y="150" font-size="13" fill="#5b6779">d</text>
+    <text x="50" y="40" font-size="13" fill="#5b6779">I_ref = I_c + A d²</text>
+  </svg>
+  <p class="fig-caption">Parallel-axis theorem: start from the easy centroidal \(I_c\), then add \(Ad^2\) to shift to any parallel reference axis.</p>
 
   <div class="key-box">
     <span class="box-label">Key idea</span>
@@ -351,6 +475,7 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
     <line x1="15" y1="66" x2="220" y2="66" stroke="#2f8f5b" stroke-width="1.5"/>
     <text x="222" y="70" font-size="10" fill="#2f8f5b" font-weight="600">composite &#375;=125.71mm</text>
   </svg>
+  <p class="fig-caption">T-section: locate the composite centroid first, then transfer each piece's \(I\) onto that shared axis with \(I_c+Ad^2\).</p>
 </section>
 
 <div class="practice-card" data-card>

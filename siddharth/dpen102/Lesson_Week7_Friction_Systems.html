@@ -59,6 +59,13 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
   .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
   .solution-inner p{ margin:8px 0; }
   footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+  .ref-table{ width:100%; border-collapse:collapse; font-size:14.5px; line-height:1.45; margin:6px 0 2px; }
+  .ref-table th, .ref-table td{ border-bottom:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  .ref-table th{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); background:#f7f9fc; }
+  .ref-table td:first-child{ white-space:nowrap; font-weight:600; color:var(--navy); width:28%; }
+  .analogy-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); background:#f4f8f4; border-left:4px solid var(--green); }
+  .analogy-box .box-label{ color:var(--green); }
+  .fig-caption{ text-align:center; font-size:13px; color:var(--muted); margin:-6px 0 18px; }
 </style>
 </head>
 <body>
@@ -66,16 +73,39 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <header>
   <div class="eyebrow">DPEN102 &middot; Week 7</div>
   <h1>Friction Systems</h1>
-  <p>Static vs kinetic friction, the angle of repose on inclines, two-body wedge problems, and the exponential belt-friction relationship, four escalating applications of the same core idea: friction resists relative sliding, up to a maximum.</p>
+  <p>Friction is the force that stops you sliding on a floor, keeps a car on the road, and lets a rope hold a ship. This week builds four escalating applications of one idea: friction resists relative sliding, up to a maximum set by the surfaces and how hard they press together.</p>
   <div class="progress-wrap">
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-label" id="progressLabel">0 / 46 practice solutions revealed</div>
   </div>
 </header>
 
+<div class="key-box" id="formulas" style="max-width:812px; margin:26px auto 0;">
+  <span class="box-label">Formula summary · Week 7</span>
+  <table class="ref-table">
+    <thead><tr><th>Formula</th><th>Meaning / use</th></tr></thead>
+    <tbody>
+      <tr><td>\(F_s^{\max}=\mu_s N\)</td><td>Largest static friction available before slip. \(N\) is the normal (pressing) force.</td></tr>
+      <tr><td>\(F\le F_s^{\max}\)</td><td>If the body is not moving, friction equals whatever is needed for equilibrium, up to this ceiling.</td></tr>
+      <tr><td>\(F_k=\mu_k N\)</td><td>Kinetic (sliding) friction: a fixed value once motion has started, usually with \(\mu_k&lt;\mu_s\).</td></tr>
+      <tr><td>\(N=W\cos\theta\)</td><td>Normal force on an incline of angle \(\theta\). Weight \(W=mg\).</td></tr>
+      <tr><td>\(W\sin\theta\)</td><td>Component of weight pulling down the incline.</td></tr>
+      <tr><td>\(\tan\theta_r=\mu_s\)</td><td>Angle of repose: steepest incline that static friction alone can hold. Mass cancels out.</td></tr>
+      <tr><td>\(\varphi=\arctan\mu\)</td><td>Friction angle: tilt of the resultant contact force away from the true normal.</td></tr>
+      <tr><td>\(P=W\tan(\theta+\varphi)\)</td><td>Driving force to raise a load with a wedge of angle \(\theta\) (friction on the wedge face; frictionless floor).</td></tr>
+      <tr><td>\(\dfrac{T_2}{T_1}=e^{\mu\beta}\)</td><td>Belt / rope friction. \(T_2\) tight side, \(T_1\) slack side; \(\beta\) = wrap angle in <strong>radians</strong>.</td></tr>
+      <tr><td>\(\beta=\theta^\circ\cdot\dfrac{\pi}{180}\)</td><td>Convert wrap from degrees to radians before using the exponential formula.</td></tr>
+    </tbody>
+  </table>
+  <p style="margin:12px 10px 0; font-size:14px; line-height:1.55;"><strong>Symbols:</strong> \(\mu_s,\mu_k\) = static / kinetic friction coefficients (mu); \(N\) = normal force; \(F,F_k\) = friction force; \(W\) = weight; \(\theta\) = incline or wedge angle (theta); \(\varphi\) = friction angle (phi); \(\beta\) = wrap angle (beta); \(T_1,T_2\) = slack / tight belt tensions; \(e\) = base of natural log (~2.718).</p>
+  <p class="note" style="margin:8px 10px 0; font-size:13.5px; color:var(--muted);"><strong>State check:</strong> compare required friction with \(F_s^{\max}\) first. Below the ceiling → static, \(f=\) required. At the ceiling → impending. Above → kinetic, \(f=\mu_k N\).</p>
+</div>
+
 <nav class="toc">
   <div class="toc-title">Contents</div>
   <ol>
+    <li><a href="#formulas">Formula summary &amp; notation</a></li>
+    <li><a href="#intro">What friction is &amp; why we study it</a></li>
     <li><a href="#sec0">The three friction states</a></li>
     <li><a href="#sec1">Friction on inclines &amp; angle of repose</a></li>
     <li><a href="#sec2">Wedges</a></li>
@@ -84,6 +114,65 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 </nav>
 
 <main>
+
+<!-- ============================================================ -->
+<section class="topic" id="intro">
+  <div class="section-title"><span class="tag">Intro</span> What friction is &amp; why we study it</div>
+  <div class="prose">
+    <p>Whenever two surfaces try to slide past each other, a resisting force appears at the contact. That force is <strong>friction</strong>. It is what lets you walk without slipping, what stops a parked car rolling downhill, and what lets a rope wrapped around a bollard hold a ship that weighs tonnes. Without friction, every structure would skate, every screw would unwind, and every ladder would kick away from the wall.</p>
+    <p>Friction always acts <em>parallel</em> to the contact surface and <em>opposite</em> to the impending (or actual) slide. Its partner is the <strong>normal force</strong> \(N\), the force pressing the surfaces together, which acts perpendicular to the contact. The bigger the press, the bigger the friction that can be mobilised, up to a maximum set by the surface pair: \(F^{\max}=\mu N\), where \(\mu\) (Greek <strong>mu</strong>) is the coefficient of friction for those two materials.</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 420 170" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arN" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2f8f5b"/></marker>
+      <marker id="arF" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c0392b"/></marker>
+      <marker id="arP" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#1B2431"/></marker>
+      <marker id="arW" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c07830"/></marker>
+    </defs>
+    <line x1="40" y1="130" x2="380" y2="130" stroke="#1B2431" stroke-width="2"/>
+    <rect x="160" y="70" width="100" height="60" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <line x1="210" y1="100" x2="210" y2="35" stroke="#2f8f5b" stroke-width="2.5" marker-end="url(#arN)"/>
+    <text x="218" y="50" font-size="13" fill="#2f8f5b" font-weight="600">N</text>
+    <line x1="210" y1="100" x2="210" y2="155" stroke="#c07830" stroke-width="2.5" marker-end="url(#arW)"/>
+    <text x="218" y="150" font-size="13" fill="#c07830" font-weight="600">W</text>
+    <line x1="210" y1="100" x2="95" y2="100" stroke="#c0392b" stroke-width="2.5" marker-end="url(#arF)"/>
+    <text x="100" y="90" font-size="13" fill="#c0392b" font-weight="600">f (friction)</text>
+    <line x1="210" y1="100" x2="325" y2="100" stroke="#1B2431" stroke-width="2.5" marker-end="url(#arP)"/>
+    <text x="300" y="90" font-size="13" fill="#1B2431" font-weight="600">P (push)</text>
+  </svg>
+  <p class="fig-caption">Free-body diagram of a block on a flat surface: weight \(W\) down, normal \(N\) up, push \(P\) one way, friction \(f\) the other.</p>
+
+  <div class="analogy-box">
+    <span class="box-label">Why should I care?</span>
+    <p>Almost every machine that clamps, brakes, lifts, or holds something relies on friction. Too little and a brake fails; too much and a machine jams or overheats. This week's four applications, flat surfaces, inclines, wedges, and belts, are the bread-and-butter calculations behind screw jacks, ramps, locking wedges, capstans, and belt drives. Get the friction state wrong (static vs kinetic) and your answer can be off by 30% or more.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">The words you'll meet (keep this handy)</span>
+    <table class="ref-table">
+      <thead><tr><th>Term / symbol</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td>Friction \(f\) or \(F\)</td><td>Contact force parallel to the surface, opposing relative sliding.</td></tr>
+        <tr><td>Normal force \(N\)</td><td>Contact force perpendicular to the surface (the "press").</td></tr>
+        <tr><td>\(\mu_s\) (mu-s)</td><td>Coefficient of <em>static</em> friction: how grippy the surfaces are when not yet sliding.</td></tr>
+        <tr><td>\(\mu_k\) (mu-k)</td><td>Coefficient of <em>kinetic</em> friction: grippiness once sliding has started (usually smaller).</td></tr>
+        <tr><td>Impending slip</td><td>The instant just before motion: friction has hit its static maximum.</td></tr>
+        <tr><td>Angle of repose \(\theta_r\)</td><td>Steepest incline a body can rest on by friction alone; \(\tan\theta_r=\mu_s\).</td></tr>
+        <tr><td>Friction angle \(\varphi\)</td><td>\(\varphi=\arctan\mu\); used to tilt the contact resultant in wedge problems.</td></tr>
+        <tr><td>Wedge</td><td>A triangular block driven under a load to lift or separate it.</td></tr>
+        <tr><td>Belt / capstan friction</td><td>Friction accumulated along a rope or belt wrapped around a drum; grows exponentially with wrap angle.</td></tr>
+        <tr><td>\(\beta\) (beta)</td><td>Wrap angle of a belt around a drum, always in radians in the formula.</td></tr>
+        <tr><td>\(T_1,T_2\)</td><td>Slack-side and tight-side belt tensions.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">The approach, in one breath</span>
+    <p>Section 0 fixes the three friction states (static below the ceiling, impending at the ceiling, kinetic once sliding). Section 1 puts a block on a ramp and derives the angle of repose. Section 2 drives a wedge under a load, using the friction angle to simplify the FBDs. Section 3 wraps a belt around a drum and meets the exponential law \(T_2/T_1=e^{\mu\beta}\). Every problem starts the same way: draw the FBD, decide which friction state applies, then write \(\Sigma F=0\) (or \(=ma\) if sliding).</p>
+  </div>
+</section>
 
 <!-- ============================================================ -->
 <section class="topic" id="sec0">
@@ -172,8 +261,30 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <section class="topic" id="sec1">
   <div class="section-title"><span class="tag">1</span> Friction on inclines &amp; angle of repose</div>
   <div class="prose">
-    <p>On an incline, gravity's down-slope pull is \(W\sin\theta\), balanced by \(N=W\cos\theta\). At the exact angle where friction alone can no longer hold a block, \(\tan\theta=\mu_s\), the "angle of repose", the mass cancels out entirely.</p>
+    <p>On an incline, gravity's down-slope pull is \(W\sin\theta\), balanced by friction, while the surface presses back with \(N=W\cos\theta\). At the exact angle where friction alone can no longer hold a block, \(\tan\theta=\mu_s\), the "angle of repose", the mass cancels out entirely: a pebble and a boulder both start sliding at the same angle.</p>
   </div>
+
+  <svg class="diagram" viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arNi" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2f8f5b"/></marker>
+      <marker id="arFi" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c0392b"/></marker>
+      <marker id="arWi" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c07830"/></marker>
+    </defs>
+    <polygon points="40,190 360,190 360,70" fill="#f7f9fc" stroke="#1B2431" stroke-width="1.5"/>
+    <g transform="translate(230,130) rotate(-20)">
+      <rect x="-35" y="-50" width="70" height="50" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+      <line x1="0" y1="-25" x2="0" y2="-95" stroke="#2f8f5b" stroke-width="2.5" marker-end="url(#arNi)"/>
+      <text x="8" y="-85" font-size="12" fill="#2f8f5b" font-weight="600">N = W cos θ</text>
+      <line x1="0" y1="-25" x2="-90" y2="-25" stroke="#c0392b" stroke-width="2.5" marker-end="url(#arFi)"/>
+      <text x="-95" y="-35" font-size="12" fill="#c0392b" font-weight="600">f ≤ μN</text>
+    </g>
+    <line x1="250" y1="100" x2="250" y2="170" stroke="#c07830" stroke-width="2.5" marker-end="url(#arWi)"/>
+    <text x="258" y="155" font-size="12" fill="#c07830" font-weight="600">W</text>
+    <path d="M 360 190 A 50 50 0 0 1 340 145" fill="none" stroke="#5b6779" stroke-width="1.5"/>
+    <text x="370" y="170" font-size="13" fill="#5b6779">θ</text>
+    <text x="80" y="210" font-size="12" fill="#5b6779">At impending slip: W sin θ = μ_s W cos θ ⇒ tan θ = μ_s</text>
+  </svg>
+  <p class="fig-caption">Block on an incline: resolve weight into components parallel and perpendicular to the slope.</p>
 
   <div class="example-box">
     <span class="box-label">Worked example 1</span>
@@ -273,6 +384,7 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
     <text x="230" y="130" font-size="12" fill="#c0392b" font-weight="600">W=500N</text>
     <text x="60" y="145" font-size="12" fill="#5b6779">&#952;=15&deg;</text>
   </svg>
+  <p class="fig-caption">Wedge driven under a vertically guided block: \(P\) pushes the wedge in; friction on the sloping face opposes relative slip.</p>
 </section>
 
 <div class="practice-card" data-card>
@@ -324,8 +436,26 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <section class="topic" id="sec3">
   <div class="section-title"><span class="tag">3</span> Belt friction</div>
   <div class="prose">
-    <p>Wrapping a rope or belt around a drum lets friction accumulate over the entire contact arc, producing an exponential, not linear, relationship between the two side tensions.</p>
+    <p>Wrapping a rope or belt around a drum lets friction accumulate over the entire contact arc, producing an exponential, not linear, relationship between the two side tensions. That is why a few turns of rope around a bollard can hold a ship: every extra radian of wrap multiplies the sustainable tension ratio by \(e^\mu\).</p>
   </div>
+
+  <svg class="diagram" viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arT2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c0392b"/></marker>
+      <marker id="arT1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2f8f5b"/></marker>
+    </defs>
+    <circle cx="210" cy="110" r="55" fill="#f7f9fc" stroke="#1B2431" stroke-width="2"/>
+    <text x="195" y="115" font-size="13" fill="#5b6779">drum</text>
+    <path d="M 210 55 A 55 55 0 0 1 210 165" fill="none" stroke="#c07830" stroke-width="4"/>
+    <line x1="210" y1="55" x2="80" y2="55" stroke="#c0392b" stroke-width="3" marker-end="url(#arT2)"/>
+    <text x="85" y="45" font-size="13" fill="#c0392b" font-weight="600">T₂ (tight)</text>
+    <line x1="210" y1="165" x2="340" y2="165" stroke="#2f8f5b" stroke-width="3" marker-end="url(#arT1)"/>
+    <text x="280" y="155" font-size="13" fill="#2f8f5b" font-weight="600">T₁ (slack)</text>
+    <path d="M 235 60 A 40 40 0 0 1 235 160" fill="none" stroke="#5b6779" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <text x="275" y="110" font-size="13" fill="#5b6779">β (wrap)</text>
+    <text x="90" y="205" font-size="13" fill="#5b6779">T₂ / T₁ = e^(μ β) · β must be in radians</text>
+  </svg>
+  <p class="fig-caption">Belt wrapped halfway around a drum: friction along the contact arc lets \(T_2\) exceed \(T_1\).</p>
 
   <div class="key-box">
     <span class="box-label">Key idea</span>
