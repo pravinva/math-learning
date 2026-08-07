@@ -62,6 +62,12 @@ window.MathJax = {
   .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
   .solution-inner p{ margin:8px 0; }
   footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+  .ref-table{ width:100%; border-collapse:collapse; font-size:14.5px; line-height:1.45; margin:6px 0 2px; }
+  .ref-table th, .ref-table td{ border-bottom:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  .ref-table th{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); background:#f7f9fc; }
+  .ref-table td:first-child{ white-space:nowrap; font-weight:600; color:var(--navy); width:26%; }
+  .analogy-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); background:#f4f8f4; border-left:4px solid var(--green); }
+  .analogy-box .box-label{ color:var(--green); }
 </style>
 </head>
 <body>
@@ -69,7 +75,7 @@ window.MathJax = {
 <header>
   <div class="eyebrow">DPEN102 &middot; Week 5</div>
   <h1>Shear Force &amp; Bending Moment Diagrams</h1>
-  <p>Week 4 found the internal shear \(V\) and moment \(M\) at a single cut. This week builds the full picture: \(V(x)\) and \(M(x)\) at every point along a beam, plotted as the SFD and BMD, so you can see exactly where a beam is most at risk without cutting it a hundred times.</p>
+  <p>Week 4 found the internal shear \(V\) and moment \(M\) at a single cut. This week builds the full picture: \(V(x)\) and \(M(x)\) at <em>every</em> point along a beam, plotted as the shear force diagram (SFD) and bending moment diagram (BMD), so you can see at a glance exactly where a beam is most at risk, and design it to survive.</p>
   <div class="progress-wrap">
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-label" id="progressLabel">0 / 36 practice solutions revealed</div>
@@ -79,6 +85,7 @@ window.MathJax = {
 <nav class="toc">
   <div class="toc-title">Contents</div>
   <ol>
+    <li><a href="#sec0">What this lesson is about &amp; why it matters</a></li>
     <li><a href="#sec1">Reactions first, then sign convention</a></li>
     <li><a href="#sec2">Point loads: piecewise shear diagrams</a></li>
     <li><a href="#sec3">The V&ndash;M relationship &amp; distributed loads</a></li>
@@ -89,10 +96,59 @@ window.MathJax = {
 <main>
 
 <!-- ============================================================ -->
+<section class="topic" id="sec0">
+  <div class="section-title"><span class="tag">Intro</span> What this lesson is about &amp; why it matters</div>
+  <div class="prose">
+    <p>When a load sits on a beam, the beam has to carry that load across to its supports through the material itself. Two different things are happening inside it at once. One part of the beam is being pushed <em>past</em> the neighbouring part, like a pair of scissors trying to slice through, this internal sliding action is the <strong>shear force</strong>, written \(V\). At the same time the beam is being bent into a curve, and the internal effort resisting that bending is the <strong>bending moment</strong>, written \(M\). Both change from point to point along the beam: near a support the shear is usually large, while near the middle of a loaded span the bending is usually large.</p>
+    <p>A <strong>shear force diagram (SFD)</strong> is just a graph of \(V\) against position \(x\) along the beam. A <strong>bending moment diagram (BMD)</strong> is a graph of \(M\) against \(x\). Together they are the single most useful pair of pictures in structural design: they tell you, without guessing, <em>where</em> along the beam the internal forces peak and <em>how large</em> they get. That is exactly the information you need to choose a beam that won't break.</p>
+  </div>
+
+  <div class="analogy-box">
+    <span class="box-label">Why should I care?</span>
+    <p>Week 4 let you find \(V\) and \(M\) at one chosen cut. But a real beam can fail at <em>any</em> point, and the worst point is rarely obvious by eye. Cutting the beam at fifty different places to check them all would be madness. The SFD and BMD do it in one sweep: draw the two diagrams once, read off the largest \(V\) (which drives shear failure) and the largest \(M\) (which drives bending failure), and you instantly know the critical sections to design for. Every steel beam, timber joist, and concrete lintel around you was sized this way.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">The words you'll meet (keep this handy)</span>
+    <table class="ref-table">
+      <thead><tr><th>Term / symbol</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td>Beam</td><td>A structural member loaded <em>across</em> its length (loads push sideways on it), so it bends. Contrast with a column, loaded along its length.</td></tr>
+        <tr><td>Shear force \(V\)</td><td>Internal force acting <em>perpendicular</em> to the beam at a cut, the "scissors" action of one side sliding past the other. Units: N (or kN).</td></tr>
+        <tr><td>Bending moment \(M\)</td><td>Internal turning effect at a cut that bends the beam. Units: N&middot;m (or kN&middot;m).</td></tr>
+        <tr><td>SFD / BMD</td><td>Shear force diagram / bending moment diagram: graphs of \(V(x)\) and \(M(x)\) along the beam.</td></tr>
+        <tr><td>Reaction \(R_A,R_B\)</td><td>The support forces holding the beam up. Found from equilibrium <em>before</em> anything else.</td></tr>
+        <tr><td>Pin (hinge) support</td><td>Resists vertical <em>and</em> horizontal force, but not rotation. Drawn as a triangle.</td></tr>
+        <tr><td>Roller support</td><td>Resists force in one direction only (usually vertical). Drawn as a circle/roller.</td></tr>
+        <tr><td>Simply supported</td><td>A beam on a pin at one end and a roller at the other, the standard case.</td></tr>
+        <tr><td>Cantilever</td><td>A beam <em>fixed</em> (built in) at one end and free at the other, like a diving board.</td></tr>
+        <tr><td>Point load \(P\)</td><td>A load acting at a single spot (N).</td></tr>
+        <tr><td>UDL, \(w\)</td><td>Uniformly distributed load: load spread evenly along a length, measured in N/m. Its total is \(w\times(\text{length})\), acting at the middle of that length.</td></tr>
+        <tr><td>Span \(L\)</td><td>The distance between the supports.</td></tr>
+        <tr><td>Sagging / hogging</td><td>Sagging = beam curves like a smile (tension on the bottom), taken as positive \(M\). Hogging = curves like a frown (tension on top), negative \(M\).</td></tr>
+        <tr><td>\(\Sigma F=0,\ \Sigma M=0\)</td><td>Equilibrium: forces balance and turning effects balance. \(\Sigma\) is the Greek capital <strong>sigma</strong>, meaning "sum of".</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">The three relationships that make it all work</span>
+    <p>$$\frac{dV}{dx}=-w(x), \qquad \frac{dM}{dx}=V(x), \qquad M(x)=\int V(x)\,dx.$$</p>
+    <p>In plain words: the <strong>slope of the shear diagram is the (negative of the) distributed load</strong>; the <strong>slope of the moment diagram is the shear</strong>; and the <strong>moment at any point is the running area under the shear diagram</strong> up to that point. One immediate payoff: the bending moment is largest exactly where the shear passes through zero, because that is where \(M\)'s slope is zero. This single fact locates the most critical section on most beams.</p>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">How the rest of the lesson is organised</span>
+    <p>Section 1 nails the starting move, finding the support reactions, and fixes the sign convention. Section 2 builds shear diagrams for beams with point loads only (the diagram is a staircase of flat steps). Section 3 introduces distributed loads and the \(V\)&ndash;\(M\) calculus relationships above, where shear slopes and moment curves. Section 4 combines everything into full SFD/BMD construction for realistic beams. Each section has a worked example followed by graded practice, reveal the solutions only after attempting them.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
 <section class="topic" id="sec1">
   <div class="section-title"><span class="tag">1</span> Reactions first, then sign convention</div>
   <div class="prose">
-    <p>Every SFD/BMD problem starts the same way every other statics problem does: find the support reactions first, using \(\Sigma F_y=0\) and \(\Sigma M=0\). Only once those are known can you build \(V(x)\) and \(M(x)\).</p>
+    <p>Every SFD/BMD problem starts the same way every other statics problem does: find the support reactions first, using \(\Sigma F_y=0\) (all vertical forces balance) and \(\Sigma M=0\) (all turning effects balance). The reactions are the upward forces the supports push back with; until you know them, you don't know the full set of forces acting on the beam, and \(V(x)\) and \(M(x)\) are built from that full set.</p>
+    <p>The reliable recipe is to take moments about one support first. Because a support's own reaction has zero lever arm about itself, it drops out of the \(\Sigma M\) equation, leaving a single unknown, the <em>other</em> reaction, which you can solve immediately. Then \(\Sigma F_y=0\) hands you the first reaction. A quick sanity check: the two reactions must add up to the total downward load on the beam.</p>
   </div>
 
   <div class="key-box">
@@ -139,7 +195,8 @@ window.MathJax = {
 <section class="topic" id="sec2">
   <div class="section-title"><span class="tag">2</span> Point loads: piecewise shear diagrams</div>
   <div class="prose">
-    <p>With only point loads (no distributed load), the shear diagram is a series of horizontal steps: constant between loads, jumping instantly at each load or reaction.</p>
+    <p>With only point loads (no distributed load), the shear diagram is a series of horizontal steps: <strong>constant between loads, jumping instantly at each load or reaction</strong>. The reason follows straight from \(dV/dx=-w\): where there is no distributed load, \(w=0\), so the slope of the shear graph is zero and \(V\) holds flat. A concentrated force is an infinitely narrow load, so it produces an instant vertical jump instead of a slope, up by the size of an upward reaction, down by the size of a downward load.</p>
+    <p>To build the diagram, imagine walking along the beam from the left end and keeping a running total of every vertical force you have passed so far. That running total <em>is</em> \(V\) at your current position. The staircase you draw should start at the first reaction and, if your reactions were right, land back at exactly zero just after the last force on the right.</p>
   </div>
 
   <div class="example-box">
@@ -214,7 +271,8 @@ window.MathJax = {
 <section class="topic" id="sec3">
   <div class="section-title"><span class="tag">3</span> The V&ndash;M relationship &amp; distributed loads</div>
   <div class="prose">
-    <p>With a distributed load, \(V\) no longer jumps in steps, it slopes smoothly. And moment, in turn, is simply the running area under the shear diagram.</p>
+    <p>A <strong>uniformly distributed load (UDL)</strong> spreads weight evenly along the beam, measured in newtons per metre (N/m) rather than as a single force. Think of the beam's own self-weight, a layer of snow, or floorboards resting on a joist. Its <em>total</em> force is \(w\times(\text{length it covers})\), and for equilibrium purposes that total acts at the middle of the loaded length.</p>
+    <p>Because the load is now spread out, the shear no longer jumps in sudden steps, it <strong>slopes smoothly</strong>: every extra metre you pass adds another \(w\) newtons to the running total, so \(V\) falls at a constant rate (\(dV/dx=-w\)). The moment, in turn, is the <strong>running area under the shear diagram</strong>. When \(V\) is a sloping line, that accumulated area grows as a curve, so the BMD becomes a parabola. The peak of that parabola sits exactly where the shear line crosses zero.</p>
   </div>
 
   <div class="key-box">
@@ -303,7 +361,8 @@ window.MathJax = {
 <section class="topic" id="sec4">
   <div class="section-title"><span class="tag">4</span> Advanced: combined loading, full SFD/BMD</div>
   <div class="prose">
-    <p>Real beams often mix point loads and distributed loads. Build the SFD region by region (each new load type changes the local slope), then build the BMD as the running area underneath it, always finding reactions first.</p>
+    <p>Real beams rarely carry just one kind of load, they mix point loads and distributed loads together. The good news is that nothing new is needed: the same two rules apply everywhere. Work <strong>region by region</strong>, where a region is any stretch between two "events" (a support, a point load, or the start/end of a UDL). Within each region the load pattern is constant, so the SFD has a single predictable shape: flat where there's no UDL, sloping where there is; and a point load simply drops the diagram vertically at its location.</p>
+    <p>Once the SFD is drawn, the BMD is built as the running area underneath it, straight-line segments of shear give straight moment lines, sloping segments give parabolas. As always, find the reactions first, then sweep left to right. The largest \(V\) and largest \(M\) you read off are precisely the numbers a designer feeds into strength checks, which is where the next practice problems (and real engineering) lead.</p>
   </div>
 
   <div class="example-box">
