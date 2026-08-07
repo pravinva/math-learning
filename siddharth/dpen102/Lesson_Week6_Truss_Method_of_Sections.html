@@ -62,6 +62,12 @@ window.MathJax = {
   .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
   .solution-inner p{ margin:8px 0; }
   footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+  .ref-table{ width:100%; border-collapse:collapse; font-size:14.5px; line-height:1.45; margin:6px 0 2px; }
+  .ref-table th, .ref-table td{ border-bottom:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  .ref-table th{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); background:#f7f9fc; }
+  .ref-table td:first-child{ white-space:nowrap; font-weight:600; color:var(--navy); width:26%; }
+  .analogy-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); background:#f4f8f4; border-left:4px solid var(--green); }
+  .analogy-box .box-label{ color:var(--green); }
 </style>
 </head>
 <body>
@@ -69,16 +75,38 @@ window.MathJax = {
 <header>
   <div class="eyebrow">DPEN102 &middot; Week 6</div>
   <h1>Truss Analysis (Method of Sections)</h1>
-  <p>Instead of solving every joint in sequence, method of sections cuts straight through a truss and finds one specific member's force directly, using the same equilibrium tools from every prior week: FBDs, reactions, and moments.</p>
+  <p>A truss is a framework of straight bars pinned together into triangles, the skeleton inside bridges, roofs and cranes. This week we work out the force carried by any single bar, using <em>method of sections</em>: slice straight through the truss and find one specific member's force directly, with the same equilibrium tools from every prior week: FBDs, reactions, and moments.</p>
   <div class="progress-wrap">
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-label" id="progressLabel">0 / 36 practice solutions revealed</div>
   </div>
 </header>
 
+<div class="key-box" id="formulas" style="max-width:812px; margin:26px auto 0;">
+  <span class="box-label">Formula summary · Week 6</span>
+  <table class="ref-table">
+    <thead><tr><th>Formula</th><th>Meaning / use</th></tr></thead>
+    <tbody>
+      <tr><td>\(\Sigma F_x=0\)</td><td>Horizontal equilibrium of the whole truss or of a cut portion.</td></tr>
+      <tr><td>\(\Sigma F_y=0\)</td><td>Vertical equilibrium. Reactions plus member vertical components balance the applied loads.</td></tr>
+      <tr><td>\(\Sigma M=0\)</td><td>Moment equilibrium about any point; use \(M=F\times d_\perp\).</td></tr>
+      <tr><td>\(\Sigma M_{O}=0\)</td><td>Take moments about the point \(O\) where two unknown cut members cross, both drop out, isolating the third member in one step.</td></tr>
+      <tr><td>\(F_x=F\cos\theta,\ F_y=F\sin\theta\)</td><td>Resolve a member's axial force \(F\) into horizontal and vertical components along its angle \(\theta\).</td></tr>
+      <tr><td>\(\cos\theta=\dfrac{\text{run}}{L},\ \sin\theta=\dfrac{\text{rise}}{L}\)</td><td>Direction cosines from geometry, with member length \(L=\sqrt{\text{run}^2+\text{rise}^2}\). (A 3-4-5 bar gives \(\tfrac35,\tfrac45\).)</td></tr>
+      <tr><td>\(F>0\Rightarrow\) tension</td><td>Under the standard "assume tension" convention, a positive answer means the member pulls (tension).</td></tr>
+      <tr><td>\(F<0\Rightarrow\) compression</td><td>A negative answer means the member pushes (compression); keep the magnitude, reverse the arrow.</td></tr>
+      <tr><td>\(\le 3\) unknowns per cut</td><td>A planar section gives only three equations (\(\Sigma F_x,\Sigma F_y,\Sigma M\)), so cut through at most three unknown members.</td></tr>
+    </tbody>
+  </table>
+  <p style="margin:12px 10px 0; font-size:14px; line-height:1.55;"><strong>Symbols:</strong> \(F\) = axial force in a member (N); \(F_x,F_y\) = its horizontal/vertical components; \(\theta\) = member angle to horizontal; \(L\) = member length; \(d_\perp\) = perpendicular distance from a force to the moment point; \(R_A,R_B\) = support reactions; \(\Sigma\) = capital <strong>sigma</strong>, "sum of"; \(O\) = chosen moment centre.</p>
+  <p class="note" style="margin:8px 10px 0; font-size:13.5px; color:var(--muted);"><strong>Sign shortcut:</strong> always draw member arrows <em>pulling away</em> from the cut (tension). Then the algebra decides the sign for you, no re-guessing needed.</p>
+</div>
+
 <nav class="toc">
   <div class="toc-title">Contents</div>
   <ol>
+    <li><a href="#formulas">Formula summary &amp; notation</a></li>
+    <li><a href="#intro">What a truss is &amp; why we study it</a></li>
     <li><a href="#sec0">Assumptions &amp; why method of sections</a></li>
     <li><a href="#sec1">Zero-force members</a></li>
     <li><a href="#sec2">Global support reactions for trusses</a></li>
@@ -88,6 +116,49 @@ window.MathJax = {
 </nav>
 
 <main>
+
+<!-- ============================================================ -->
+<section class="topic" id="intro">
+  <div class="section-title"><span class="tag">Intro</span> What a truss is &amp; why we study it</div>
+  <div class="prose">
+    <p>Look inside almost any large bridge, an electricity pylon, a stadium roof, a construction crane, or the rafters in a house, and you'll see the same thing: straight bars joined into a lattice of <strong>triangles</strong>. That structure is a <strong>truss</strong>. Instead of using one enormous, heavy beam to span a gap, engineers build a web of slender bars that together carry the same load using a fraction of the material. Trusses are how we cross wide distances cheaply and lightly.</p>
+    <p>The magic ingredient is the triangle. Push on the corner of a four-sided frame and it collapses into a parallelogram, it has no inherent stiffness. A triangle can't do that: its shape is fixed by the length of its three sides, so it holds firm. Build up a chain of triangles and you get a rigid structure that turns any load into simple pushes and pulls along its bars, rather than bending. That is why every bar in an ideal truss carries <strong>only axial force</strong>, straight tension (being stretched) or compression (being squashed), and never bending.</p>
+    <p>So the whole engineering question for a truss is delightfully focused: <em>for each bar, is it being pulled or pushed, and how hard?</em> Answer that and you can pick a bar thick enough not to snap (if in tension) or buckle (if in compression). Finding those bar forces is exactly what this lesson is about.</p>
+  </div>
+
+  <div class="analogy-box">
+    <span class="box-label">Why should I care?</span>
+    <p>The top and bottom bars of a truss (the <em>chords</em>) act like the top and bottom of a beam: one squashes, the other stretches, and together they resist bending across the whole span, but with mostly empty space in between, saving weight and cost. Get one bar's force wrong and you either waste steel or risk a collapse. Because a bar in compression can buckle long before it would ever crush, knowing <em>which</em> bars are in compression (not just how big the force is) genuinely decides whether a structure stands up. Method of sections is the fast, targeted way to get that answer for any single bar you care about.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">The words you'll meet (keep this handy)</span>
+    <table class="ref-table">
+      <thead><tr><th>Term / symbol</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td>Truss</td><td>A rigid framework of straight bars connected at their ends into triangles, loaded only at those connection points.</td></tr>
+        <tr><td>Member</td><td>One straight bar of the truss.</td></tr>
+        <tr><td>Joint (node)</td><td>A connection point where members meet, idealised as a frictionless pin (it can rotate, so members carry no bending).</td></tr>
+        <tr><td>Chord</td><td>The members running along the top or bottom edge of the truss (the <em>top chord</em> and <em>bottom chord</em>).</td></tr>
+        <tr><td>Web members</td><td>The interior diagonals and verticals connecting the two chords.</td></tr>
+        <tr><td>Axial force</td><td>Force acting straight along a member's length, the only kind a truss member carries.</td></tr>
+        <tr><td>Tension</td><td>A member being stretched; it pulls inward on its joints. Taken as positive \(F\).</td></tr>
+        <tr><td>Compression</td><td>A member being squashed; it pushes outward on its joints. Taken as negative \(F\).</td></tr>
+        <tr><td>Two-force member</td><td>A bar loaded only at its two ends, so its force must lie along the line joining them. Every truss member is one.</td></tr>
+        <tr><td>Zero-force member</td><td>A member carrying no force under the current loading; spotted by inspection (see Section 1).</td></tr>
+        <tr><td>Reaction \(R_A,R_B\)</td><td>The support forces holding the whole truss up; found from equilibrium first.</td></tr>
+        <tr><td>Method of joints</td><td>Solving one joint at a time with \(\Sigma F_x=0,\Sigma F_y=0\); thorough but slow for a single deep member.</td></tr>
+        <tr><td>Method of sections</td><td>Cutting through the truss to expose the target member and solving it directly, this lesson's focus.</td></tr>
+        <tr><td>\(\Sigma\)</td><td>Greek capital <strong>sigma</strong>, meaning "sum of"; \(\theta\) (<strong>theta</strong>) is a member's angle.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">The approach, in one breath</span>
+    <p>Trusses have two standard analysis routes. <strong>Method of joints</strong> marches from joint to joint solving \(\Sigma F_x=0,\Sigma F_y=0\) at each, great when you want <em>every</em> member, but tedious if you only need one bar buried in the middle. <strong>Method of sections</strong> (this week) is the shortcut: imagine slicing the truss into two pieces with a single cut that passes through the bar you want. Each cut bar becomes an external force on the free body, and because the whole piece must still be in equilibrium, three equations (\(\Sigma F_x,\Sigma F_y,\Sigma M\)) solve directly for up to three unknown bars, often getting your target in a single line by choosing the moment centre cleverly. The sections below build this up: the modelling assumptions, spotting zero-force members, finding reactions, the step-by-step cutting algorithm, and finally reading tension vs compression from the sign.</p>
+  </div>
+</section>
 
 <!-- ============================================================ -->
 <section class="topic" id="sec0">
