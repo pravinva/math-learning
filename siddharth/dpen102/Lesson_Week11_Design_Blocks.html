@@ -41,6 +41,7 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
   .example-box .box-label, .why-box .box-label{ color:var(--navy); }
   .key-box p, .example-box p, .why-box p{ margin:8px 0; font-size:15px; line-height:1.6; }
   .example-box .step{ margin:10px 0 10px 14px; }
+  svg.diagram{ display:block; margin:16px auto; background:#fff; border:1px solid var(--line); border-radius:6px; max-width:100%; height:auto; }
   .practice-card{ background:var(--paper); border:1px solid var(--line); border-left:4px solid #33415a; border-radius:6px; margin:18px 0; box-shadow:0 1px 2px rgba(27,36,49,0.05); overflow:hidden; }
   .practice-card.solved{ border-left-color:var(--red); }
   .p-head{ display:flex; align-items:baseline; gap:12px; padding:14px 20px 4px; }
@@ -58,6 +59,13 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
   .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
   .solution-inner p{ margin:8px 0; }
   footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+  .ref-table{ width:100%; border-collapse:collapse; font-size:14.5px; line-height:1.45; margin:6px 0 2px; }
+  .ref-table th, .ref-table td{ border-bottom:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  .ref-table th{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); background:#f7f9fc; }
+  .ref-table td:first-child{ white-space:nowrap; font-weight:600; color:var(--navy); width:30%; }
+  .analogy-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); background:#f4f8f4; border-left:4px solid var(--green); }
+  .analogy-box .box-label{ color:var(--green); }
+  .fig-caption{ text-align:center; font-size:13px; color:var(--muted); margin:-6px 0 18px; }
 </style>
 </head>
 <body>
@@ -65,16 +73,39 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <header>
   <div class="eyebrow">DPEN102 &middot; Week 11</div>
   <h1>Design Blocks: Stress, Centroid &amp; Second Moment</h1>
-  <p>Weeks 4 and 8 built the individual tools, stress checks, centroids, second moment of area. This week fuses them into the actual design workflow: given a section and a load, is it safe? Given a section and an allowable stress, how much can it carry?</p>
+  <p>Weeks 4 and 8 built the individual tools: stress checks, centroids, second moment of area. This week fuses them into the actual design workflow, a repeatable "design block": given a section and a load, is it safe? Given a section and an allowable stress, how much can it carry? Given a load, how big must it be?</p>
   <div class="progress-wrap">
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-label" id="progressLabel">0 / 42 practice solutions revealed</div>
   </div>
 </header>
 
+<div class="key-box" id="formulas" style="max-width:812px; margin:26px auto 0;">
+  <span class="box-label">Formula summary · Week 11</span>
+  <table class="ref-table">
+    <thead><tr><th>Formula</th><th>Meaning / use</th></tr></thead>
+    <tbody>
+      <tr><td>\(\sigma=F/A\)</td><td>Working (actual) axial stress. Keep units consistent: N and mm² → MPa.</td></tr>
+      <tr><td>\(\sigma_{\mathrm{allow}}=\sigma_y/\mathrm{FoS}\)</td><td>Allowable stress: yield strength divided by factor of safety.</td></tr>
+      <tr><td>\(\sigma_{\mathrm{work}}\le\sigma_{\mathrm{allow}}\)</td><td>Pass / fail check. Equal is the design limit (impending "fail" of the safety criterion).</td></tr>
+      <tr><td>\(F_{\max}=\sigma_{\mathrm{allow}}A\)</td><td>Maximum safe axial load for a given section.</td></tr>
+      <tr><td>\(A_{\mathrm{req}}=F/\sigma_{\mathrm{allow}}\)</td><td>Minimum area needed to carry load \(F\) safely.</td></tr>
+      <tr><td>\(d=\sqrt{4A/\pi}\)</td><td>Circular diameter from a required area.</td></tr>
+      <tr><td>\(\bar x=\dfrac{\sum A_ix_i}{\sum A_i}\)</td><td>Composite centroid (same for \(\bar y\)). Holes = negative area.</td></tr>
+      <tr><td>\(I=I_c+Ad^2\)</td><td>Parallel-axis theorem: build composite \(I\) about the shared centroid.</td></tr>
+      <tr><td>\(\sigma=Mc/I\)</td><td>Bending stress at distance \(c\) from the neutral (centroidal) axis. Needed when the load is not pure axial.</td></tr>
+      <tr><td>margin \(=\dfrac{\sigma_{\mathrm{allow}}-\sigma_{\mathrm{work}}}{\sigma_{\mathrm{allow}}}\)</td><td>Percentage safety cushion (or use \(F_{\max}-F\) over \(F_{\max}\)).</td></tr>
+    </tbody>
+  </table>
+  <p style="margin:12px 10px 0; font-size:14px; line-height:1.55;"><strong>Symbols:</strong> \(\sigma\) (<strong>sigma</strong>) = stress; \(\sigma_y\) = yield strength; \(\sigma_{\mathrm{allow}}\) = allowable stress; \(\sigma_{\mathrm{work}}\) = working stress under the actual load; FoS = factor of safety; \(A\) = cross-sectional area; \(F\) = axial force; \(I\) = second moment of area; \(M\) = bending moment; \(c\) = extreme-fibre distance from the centroid; \(d\) = diameter or parallel-axis transfer distance (context tells which).</p>
+  <p class="note" style="margin:8px 10px 0; font-size:13.5px; color:var(--muted);"><strong>Design tip:</strong> pure axial → only \(A\) matters. Bending → you need centroid, \(I\), and \(c\). Same material budget, different shape → same axial capacity, very different bending capacity.</p>
+</div>
+
 <nav class="toc">
   <div class="toc-title">Contents</div>
   <ol>
+    <li><a href="#formulas">Formula summary &amp; notation</a></li>
+    <li><a href="#intro">What a design block is &amp; why it matters</a></li>
     <li><a href="#sec1">Checking if a section is safe</a></li>
     <li><a href="#sec2">Finding the maximum safe load</a></li>
     <li><a href="#sec3">Composite section design blocks</a></li>
@@ -85,10 +116,72 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <main>
 
 <!-- ============================================================ -->
+<section class="topic" id="intro">
+  <div class="section-title"><span class="tag">Intro</span> What a design block is &amp; why it matters</div>
+  <div class="prose">
+    <p>Earlier weeks taught the pieces in isolation: Week 4 showed how to compute stress and apply a factor of safety; Week 8 showed how to find a composite centroid and second moment of area. A <strong>design block</strong> is simply those pieces chained into one decision: pick (or invent) a cross-section, compute the relevant stress, and decide <strong>PASS</strong> or <strong>FAIL</strong>, then redesign if it fails.</p>
+    <p>Three questions show up again and again in real structural work:</p>
+    <p><strong>1. Is this section safe under this load?</strong> Compute \(\sigma_{\mathrm{work}}\) and compare with \(\sigma_{\mathrm{allow}}\).<br>
+    <strong>2. How much can this section carry?</strong> Solve \(F_{\max}=\sigma_{\mathrm{allow}}A\).<br>
+    <strong>3. How big must it be?</strong> Solve \(A_{\mathrm{req}}=F/\sigma_{\mathrm{allow}}\), then pick a diameter or plate size.</p>
+    <p>That loop, size → check → resize, is the heart of member design. This lesson drills it until it is automatic.</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 440 170" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arDb" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#5b6779"/></marker>
+    </defs>
+    <rect x="20" y="50" width="90" height="70" rx="4" fill="#eef3fb" stroke="#1B2431" stroke-width="1.5"/>
+    <text x="38" y="80" font-size="13" fill="#1B2431" font-weight="600">Load F</text>
+    <text x="30" y="100" font-size="11" fill="#5b6779">material σ_y</text>
+    <text x="45" y="115" font-size="11" fill="#5b6779">FoS</text>
+    <line x1="110" y1="85" x2="145" y2="85" stroke="#5b6779" stroke-width="2" marker-end="url(#arDb)"/>
+    <rect x="150" y="50" width="100" height="70" rx="4" fill="#fdf5f3" stroke="#c0392b" stroke-width="1.5"/>
+    <text x="165" y="80" font-size="13" fill="#c0392b" font-weight="600">Section A</text>
+    <text x="168" y="100" font-size="11" fill="#5b6779">(or find A_req)</text>
+    <line x1="250" y1="85" x2="285" y2="85" stroke="#5b6779" stroke-width="2" marker-end="url(#arDb)"/>
+    <rect x="290" y="50" width="120" height="70" rx="4" fill="#f4f8f4" stroke="#2f8f5b" stroke-width="1.5"/>
+    <text x="305" y="75" font-size="12" fill="#2f8f5b" font-weight="600">σ_work ≟ σ_allow</text>
+    <text x="318" y="100" font-size="12" fill="#2f8f5b">PASS / FAIL</text>
+    <text x="310" y="118" font-size="11" fill="#5b6779">then redesign</text>
+  </svg>
+  <p class="fig-caption">The design block: inputs → section properties → stress check → pass/fail → redesign loop.</p>
+
+  <div class="analogy-box">
+    <span class="box-label">Why should I care?</span>
+    <p>Every bolted connection, tie rod, column, and beam in a building was sized with some version of this block. Undersize and the member yields or snaps; oversize and you waste steel and money. The factor of safety sits between those extremes: it is not superstition, it covers uncertainty in loads, material defects, and idealised analysis. Learn the block here and you can defend every sizing decision with a short, clear calculation.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">The words you'll meet (keep this handy)</span>
+    <table class="ref-table">
+      <thead><tr><th>Term / symbol</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td>Design block</td><td>A fixed sequence: gather loads &amp; material data → compute section properties → check stress → pass/fail → redesign.</td></tr>
+        <tr><td>Working stress \(\sigma_{\mathrm{work}}\)</td><td>The stress the member actually sees under the design load (\(F/A\) for axial).</td></tr>
+        <tr><td>Yield strength \(\sigma_y\)</td><td>Stress at which the material begins to deform permanently.</td></tr>
+        <tr><td>Factor of safety (FoS)</td><td>How many times stronger than yield we require the design to be. Typical 1.5–4 depending on uncertainty.</td></tr>
+        <tr><td>Allowable stress \(\sigma_{\mathrm{allow}}\)</td><td>\(\sigma_y/\mathrm{FoS}\): the ceiling the design is allowed to reach.</td></tr>
+        <tr><td>Pass / fail</td><td>Pass if \(\sigma_{\mathrm{work}}\le\sigma_{\mathrm{allow}}\); fail otherwise (even if the material has not yet yielded).</td></tr>
+        <tr><td>Margin</td><td>How far below the allowable you are, preferably as a percentage of capacity.</td></tr>
+        <tr><td>Pure axial</td><td>Force through the centroid with no bending; only total area \(A\) matters.</td></tr>
+        <tr><td>Bending check</td><td>Uses \(\sigma=Mc/I\); needs centroid, \(I\), and extreme-fibre distance \(c\).</td></tr>
+        <tr><td>Composite section</td><td>Cross-section built from simple pieces (L, T, I); find \(A\), centroid, and \(I\) first.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">The approach, in one breath</span>
+    <p>Section 1 runs the pass/fail check on a known section. Section 2 flips it: find \(F_{\max}\) for a known section. Section 3 brings in composite geometry (Week 8) before the stress check. Section 4 shows why shape matters for bending even when area (and therefore axial capacity) is fixed. Keep units straight (N with mm² → MPa) and always state pass/fail with a margin.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
 <section class="topic" id="sec1">
   <div class="section-title"><span class="tag">1</span> Checking if a section is safe</div>
   <div class="prose">
-    <p>The most common real design question: given an actual load and a chosen section, does it pass?</p>
+    <p>The most common real design question: given an actual load and a chosen section, does it pass? Compute the stress the load produces, compute the stress you are allowed, and compare. If working stress exceeds allowable, the design fails its safety criterion, even if the material has not yet reached yield.</p>
   </div>
 
   <div class="key-box">
@@ -195,8 +288,24 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <section class="topic" id="sec2">
   <div class="section-title"><span class="tag">2</span> Finding the maximum safe load</div>
   <div class="prose">
-    <p>The reverse question: given a chosen section, how much load can it actually carry before the allowable stress is exceeded?</p>
+    <p>The reverse question: given a chosen section, how much load can it actually carry before the allowable stress is exceeded? Rearrange \(\sigma=F/A\) to \(F_{\max}=\sigma_{\mathrm{allow}}A\). Then compare the demand load against that capacity and report the margin as a percentage.</p>
   </div>
+
+  <svg class="diagram" viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arFup" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c0392b"/></marker>
+      <marker id="arFdn" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c0392b"/></marker>
+    </defs>
+    <rect x="170" y="40" width="40" height="90" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <line x1="190" y1="40" x2="190" y2="15" stroke="#c0392b" stroke-width="2.5" marker-end="url(#arFup)"/>
+    <line x1="190" y1="130" x2="190" y2="155" stroke="#c0392b" stroke-width="2.5" marker-end="url(#arFdn)"/>
+    <text x="200" y="25" font-size="13" fill="#c0392b" font-weight="600">F</text>
+    <text x="240" y="70" font-size="13" fill="#1B2431">A known</text>
+    <text x="240" y="90" font-size="13" fill="#1B2431">σ_allow known</text>
+    <text x="240" y="115" font-size="13" fill="#2f8f5b" font-weight="600">F_max = σ_allow × A</text>
+    <text x="40" y="85" font-size="12" fill="#5b6779">tie rod / column</text>
+  </svg>
+  <p class="fig-caption">Capacity check: for a known area and allowable stress, the maximum safe axial load is \(F_{\max}=\sigma_{\mathrm{allow}}A\).</p>
 
   <div class="key-box">
     <span class="box-label">Key idea</span>
@@ -274,8 +383,21 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <section class="topic" id="sec3">
   <div class="section-title"><span class="tag">3</span> Composite section design blocks</div>
   <div class="prose">
-    <p>Real sections aren't simple rectangles, they're composites. The full design block strings the Week 8 geometry tools directly into the Week 4 stress check.</p>
+    <p>Real sections aren't simple rectangles, they're composites (L, T, I, plates with holes). The full design block strings the Week 8 geometry tools directly into the Week 4 stress check: find total area (and centroid / \(I\) if bending is involved), then run the same pass/fail comparison. For <em>pure axial</em> loading, only the total area enters \(\sigma=F/A\); the centroid is still worth finding because the next load case may include bending.</p>
   </div>
+
+  <svg class="diagram" viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
+    <rect x="60" y="30" width="30" height="120" fill="#dfe8f5" stroke="#1B2431" stroke-width="1.5"/>
+    <rect x="60" y="120" width="140" height="30" fill="#f0e6d8" stroke="#1B2431" stroke-width="1.5"/>
+    <circle cx="100" cy="100" r="5" fill="#c0392b"/>
+    <text x="110" y="95" font-size="13" fill="#c0392b" font-weight="600">(x̄, ȳ)</text>
+    <text x="220" y="60" font-size="12" fill="#5b6779">1. find A_total</text>
+    <text x="220" y="80" font-size="12" fill="#5b6779">2. find centroid</text>
+    <text x="220" y="100" font-size="12" fill="#5b6779">3. σ = F / A_total</text>
+    <text x="220" y="120" font-size="12" fill="#5b6779">4. compare to σ_allow</text>
+    <text x="60" y="170" font-size="12" fill="#5b6779">L-bracket under axial load</text>
+  </svg>
+  <p class="fig-caption">Composite design block: geometry first, then the same stress check as a simple rod.</p>
 
   <div class="example-box">
     <span class="box-label">Worked example</span>
@@ -335,8 +457,26 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <section class="topic" id="sec4">
   <div class="section-title"><span class="tag">4</span> Advanced: shape &amp; design decisions</div>
   <div class="prose">
-    <p>For the same amount of material, different shapes give wildly different bending stiffness, even though axial capacity stays identical. Choosing the shape is itself a design decision.</p>
+    <p>For the same amount of material, different shapes give wildly different bending stiffness, even though axial capacity stays identical. Choosing the shape is itself a design decision: put material far from the centroid (I-beam flanges) and \(Ad^2\) boosts \(I\) dramatically; pack it into a solid square and most of it sits near the neutral axis where it barely helps bending.</p>
   </div>
+
+  <svg class="diagram" viewBox="0 0 420 180" xmlns="http://www.w3.org/2000/svg">
+    <!-- square -->
+    <rect x="60" y="50" width="80" height="80" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <text x="70" y="145" font-size="12" fill="#5b6779">solid square</text>
+    <text x="75" y="40" font-size="12" fill="#c0392b">same A</text>
+    <text x="55" y="165" font-size="12" fill="#c0392b">small I</text>
+    <!-- I-beam -->
+    <rect x="260" y="40" width="100" height="18" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <rect x="295" y="58" width="30" height="64" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <rect x="260" y="122" width="100" height="18" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <text x="275" y="40" font-size="12" fill="#5b6779"></text>
+    <text x="280" y="155" font-size="12" fill="#5b6779">I-shape</text>
+    <text x="285" y="30" font-size="12" fill="#2f8f5b">same A</text>
+    <text x="270" y="175" font-size="12" fill="#2f8f5b" font-weight="600">large I (Ad²)</text>
+    <text x="160" y="95" font-size="14" fill="#5b6779">vs</text>
+  </svg>
+  <p class="fig-caption">Same area, different placement: the I-shape puts material far from the centroid and wins on bending stiffness.</p>
 
   <div class="why-box">
     <span class="box-label">Worked comparison</span>
