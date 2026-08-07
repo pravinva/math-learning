@@ -59,6 +59,13 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
   .solution-inner .label{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--red); margin-bottom:8px; display:block; }
   .solution-inner p{ margin:8px 0; }
   footer{ max-width:860px; margin:10px auto 0; padding:0 24px; text-align:center; color:var(--muted); font-size:12.5px; font-family:'Roboto Mono',monospace; }
+  .ref-table{ width:100%; border-collapse:collapse; font-size:14.5px; line-height:1.45; margin:6px 0 2px; }
+  .ref-table th, .ref-table td{ border-bottom:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  .ref-table th{ font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); background:#f7f9fc; }
+  .ref-table td:first-child{ white-space:nowrap; font-weight:600; color:var(--navy); width:30%; }
+  .analogy-box{ margin:20px 0; padding:16px 18px 18px; border-radius:6px; border:1px solid var(--line); background:#f4f8f4; border-left:4px solid var(--green); }
+  .analogy-box .box-label{ color:var(--green); }
+  .fig-caption{ text-align:center; font-size:13px; color:var(--muted); margin:-6px 0 18px; }
 </style>
 </head>
 <body>
@@ -66,16 +73,38 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <header>
   <div class="eyebrow">DPEN102 &middot; Week 9</div>
   <h1>Work, Energy &amp; Conservation</h1>
-  <p>When the force varies with position (springs, gravity along a curved path), tracking forces and acceleration directly gets messy fast. Energy methods sidestep that entirely: compare the total energy at a start state and an end state, without ever needing to know what happens in between.</p>
+  <p>Energy methods answer "how fast?" and "how far?" without tracking acceleration every step of the way. Compare the total energy at a start state and an end state, and what happens in between can stay a mystery, as long as you account for any work done by non-conservative forces like friction.</p>
   <div class="progress-wrap">
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-label" id="progressLabel">0 / 48 practice solutions revealed</div>
   </div>
 </header>
 
+<div class="key-box" id="formulas" style="max-width:812px; margin:26px auto 0;">
+  <span class="box-label">Formula summary · Week 9</span>
+  <table class="ref-table">
+    <thead><tr><th>Formula</th><th>Meaning / use</th></tr></thead>
+    <tbody>
+      <tr><td>\(W=F\cdot d\cos\alpha\)</td><td>Work by a constant force: force component along the displacement times distance. Units: joules (J).</td></tr>
+      <tr><td>\(K=\dfrac12 mv^2\)</td><td>Kinetic energy: energy of motion. Always \(\ge 0\).</td></tr>
+      <tr><td>\(W_{\mathrm{net}}=\Delta K=K_2-K_1\)</td><td>Work–energy theorem: net work done on a body equals its change in kinetic energy.</td></tr>
+      <tr><td>\(U_g=mgh\)</td><td>Gravitational potential energy relative to a chosen height datum (\(h=0\)).</td></tr>
+      <tr><td>\(U_s=\dfrac12 kx^2\)</td><td>Elastic (spring) potential energy; \(x\) = stretch or compression from the natural length.</td></tr>
+      <tr><td>\(K_1+U_1=K_2+U_2\)</td><td>Conservation of mechanical energy when only conservative forces act (no friction / drag losses).</td></tr>
+      <tr><td>\(K_1+U_1+W_{\mathrm{nc}}=K_2+U_2\)</td><td>General energy balance: non-conservative work \(W_{\mathrm{nc}}\) (e.g. friction) enters as an extra term.</td></tr>
+      <tr><td>\(v=\sqrt{2gh}\)</td><td>Speed after falling height \(h\) from rest (frictionless). Mass cancels.</td></tr>
+      <tr><td>\(F_s=kx\)</td><td>Hooke's law: spring force proportional to deflection (useful for FBDs; energy uses \(\tfrac12 kx^2\)).</td></tr>
+    </tbody>
+  </table>
+  <p style="margin:12px 10px 0; font-size:14px; line-height:1.55;"><strong>Symbols:</strong> \(W\) = work (J); \(K\) = kinetic energy; \(U_g,U_s\) = gravitational / spring potential; \(m\) = mass (kg); \(v\) = speed (m/s); \(h\) = height above datum (m); \(k\) = spring stiffness (N/m); \(x\) = spring deflection (m); \(\alpha\) = angle between force and displacement; \(g\approx 9.8\text{ m/s}^2\); \(\Delta\) = capital Greek <strong>delta</strong>, meaning "change in".</p>
+  <p class="note" style="margin:8px 10px 0; font-size:13.5px; color:var(--muted);"><strong>Method tip:</strong> pick two clear states (start / end), list every energy form present at each, set totals equal (plus \(W_{\mathrm{nc}}\) if needed). You never need the path in between for conservative forces.</p>
+</div>
+
 <nav class="toc">
   <div class="toc-title">Contents</div>
   <ol>
+    <li><a href="#formulas">Formula summary &amp; notation</a></li>
+    <li><a href="#intro">What energy methods are &amp; why we use them</a></li>
     <li><a href="#sec0">The work&ndash;energy theorem</a></li>
     <li><a href="#sec1">Gravitational potential energy</a></li>
     <li><a href="#sec2">Spring potential energy</a></li>
@@ -86,10 +115,73 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <main>
 
 <!-- ============================================================ -->
+<section class="topic" id="intro">
+  <div class="section-title"><span class="tag">Intro</span> What energy methods are &amp; why we use them</div>
+  <div class="prose">
+    <p>Up to now, most statics problems asked "what force?" Energy methods ask a different question: <em>what speed, what height, how far?</em>, and they answer it by bookkeeping. <strong>Work</strong> is energy transferred by a force acting through a distance. <strong>Kinetic energy</strong> \(K\) is energy of motion. <strong>Potential energy</strong> \(U\) is energy stored by position, high up against gravity, or squashed into a spring. The golden rule is that energy is never created or destroyed: it only changes form.</p>
+    <p>That single idea is powerful because it lets you jump from a start state to an end state in one equation. You do not need the acceleration at every instant, or the shape of a curved ramp, or the force history of a spring. If you know the energies at both ends (and any work lost to friction), the rest follows.</p>
+  </div>
+
+  <svg class="diagram" viewBox="0 0 460 200" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arE" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#5b6779"/></marker>
+    </defs>
+    <!-- State 1 -->
+    <rect x="30" y="40" width="120" height="120" rx="6" fill="#fdf5f3" stroke="#c0392b" stroke-width="1.5"/>
+    <text x="55" y="70" font-size="13" fill="#c0392b" font-weight="600">State 1</text>
+    <text x="48" y="100" font-size="12" fill="#1B2431">K₁ + U_g1</text>
+    <text x="55" y="120" font-size="12" fill="#1B2431">+ U_s1</text>
+    <text x="60" y="145" font-size="11" fill="#5b6779">(start)</text>
+    <!-- Arrow -->
+    <line x1="160" y1="100" x2="220" y2="100" stroke="#5b6779" stroke-width="2.5" marker-end="url(#arE)"/>
+    <text x="165" y="88" font-size="11" fill="#5b6779">+ W_nc</text>
+    <!-- State 2 -->
+    <rect x="230" y="40" width="120" height="120" rx="6" fill="#f4f8f4" stroke="#2f8f5b" stroke-width="1.5"/>
+    <text x="255" y="70" font-size="13" fill="#2f8f5b" font-weight="600">State 2</text>
+    <text x="248" y="100" font-size="12" fill="#1B2431">K₂ + U_g2</text>
+    <text x="255" y="120" font-size="12" fill="#1B2431">+ U_s2</text>
+    <text x="265" y="145" font-size="11" fill="#5b6779">(end)</text>
+    <!-- Note -->
+    <text x="30" y="185" font-size="12" fill="#5b6779">If W_nc = 0 (no friction): total mechanical energy is conserved.</text>
+  </svg>
+  <p class="fig-caption">Energy bookkeeping: list every form at the start, every form at the end, and any non-conservative work in between.</p>
+
+  <div class="analogy-box">
+    <span class="box-label">Why should I care?</span>
+    <p>A roller-coaster car on a curved track, a spring launching a block up a ramp, a crate sliding then flying off a ledge, all of these are painful with \(F=ma\) because the force keeps changing. With energy you write one balance and solve for speed or height directly. That is how engineers size escape velocities, bumper stops, bungee cords, and flywheels: compare stored energy in and kinetic energy out.</p>
+  </div>
+
+  <div class="key-box">
+    <span class="box-label">The words you'll meet (keep this handy)</span>
+    <table class="ref-table">
+      <thead><tr><th>Term / symbol</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td>Work \(W\)</td><td>Energy transferred by a force acting through a displacement. Positive when force helps the motion.</td></tr>
+        <tr><td>Joule (J)</td><td>SI unit of work and energy: \(1\text{ J}=1\text{ N}\cdot\text{m}\).</td></tr>
+        <tr><td>Kinetic energy \(K\)</td><td>Energy of motion, \(\tfrac12 mv^2\). Zero when at rest; never negative.</td></tr>
+        <tr><td>Potential energy \(U\)</td><td>Stored energy of position or configuration (gravity, spring).</td></tr>
+        <tr><td>Conservative force</td><td>Work depends only on start and end positions (gravity, ideal springs). Path does not matter.</td></tr>
+        <tr><td>Non-conservative force</td><td>Work depends on the path (friction, drag). Removes or adds mechanical energy.</td></tr>
+        <tr><td>Datum</td><td>The height you choose as \(h=0\) for \(U_g\). Only <em>changes</em> in height matter.</td></tr>
+        <tr><td>Spring constant \(k\)</td><td>Stiffness in N/m: how hard the spring pushes back per metre of deflection.</td></tr>
+        <tr><td>Natural length</td><td>Unstretched / uncompressed length of a spring; \(x=0\) here, so \(U_s=0\).</td></tr>
+        <tr><td>Mechanical energy</td><td>\(E=K+U\); conserved when only conservative forces do work.</td></tr>
+        <tr><td>\(\Delta\) (delta)</td><td>"Change in": \(\Delta K=K_2-K_1\).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="why-box">
+    <span class="box-label">The approach, in one breath</span>
+    <p>Section 0 links net work to the change in kinetic energy. Section 1 stores energy as height (\(U_g=mgh\)) and uses conservation for frictionless falls and ramps. Section 2 does the same for springs (\(U_s=\tfrac12 kx^2\)). Section 3 combines both: spring launch into gravity, tracking every energy form at each state. Habit to build: draw the two states, write \(K+U\) on both sides, solve for the unknown.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
 <section class="topic" id="sec0">
   <div class="section-title"><span class="tag">0</span> The work&ndash;energy theorem</div>
   <div class="prose">
-    <p>Net work done on an object always shows up as a change in its kinetic energy, nothing more, nothing less.</p>
+    <p>Net work done on an object always shows up as a change in its kinetic energy, nothing more, nothing less. Push in the direction of motion and \(K\) rises; oppose the motion (brakes, friction) and \(K\) falls. If you know the work, you know the speed change, without finding acceleration first.</p>
   </div>
 
   <div class="key-box">
@@ -169,8 +261,27 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <section class="topic" id="sec1">
   <div class="section-title"><span class="tag">1</span> Gravitational potential energy</div>
   <div class="prose">
-    <p>Height stores energy. As a conservative force, gravity's work depends only on the change in height, never on the path taken.</p>
+    <p>Height stores energy. Raise a mass and you bank \(mgh\) joules; let it fall and that bank converts into kinetic energy. Because gravity is a <strong>conservative</strong> force, the work it does depends only on the change in height, never on the path taken, a straight drop and a winding frictionless ramp give the same final speed from the same height.</p>
   </div>
+
+  <svg class="diagram" viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arDown" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c0392b"/></marker>
+    </defs>
+    <line x1="40" y1="170" x2="380" y2="170" stroke="#1B2431" stroke-width="2"/>
+    <text x="300" y="190" font-size="12" fill="#5b6779">datum h = 0</text>
+    <circle cx="120" cy="50" r="14" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <text x="145" y="45" font-size="12" fill="#c0392b" font-weight="600">U_g = mgh</text>
+    <text x="145" y="62" font-size="12" fill="#5b6779">K = 0</text>
+    <line x1="120" y1="64" x2="120" y2="155" stroke="#c0392b" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arDown)"/>
+    <text x="50" y="115" font-size="12" fill="#c0392b">h</text>
+    <circle cx="280" cy="156" r="14" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <text x="305" y="150" font-size="12" fill="#2f8f5b" font-weight="600">K = ½mv²</text>
+    <text x="305" y="167" font-size="12" fill="#5b6779">U_g = 0</text>
+    <path d="M 200 50 Q 240 50 260 100 Q 275 140 280 156" fill="none" stroke="#c07830" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="210" y="100" font-size="11" fill="#c07830">any frictionless path</text>
+  </svg>
+  <p class="fig-caption">Drop or slide from height \(h\): \(mgh\) converts to \(\tfrac12 mv^2\). Path shape does not matter if there is no friction.</p>
 
   <div class="key-box">
     <span class="box-label">Key idea</span>
@@ -248,8 +359,26 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <section class="topic" id="sec2">
   <div class="section-title"><span class="tag">2</span> Spring potential energy</div>
   <div class="prose">
-    <p>A stretched or compressed spring stores energy exactly like height does, and the same conservation approach applies.</p>
+    <p>A stretched or compressed spring stores energy exactly like height does. The stored amount is \(\tfrac12 kx^2\), which grows with the <em>square</em> of the deflection, so doubling the compression stores four times the energy. Once released (frictionless), that bank converts cleanly into kinetic energy, or into gravitational PE if the block then climbs.</p>
   </div>
+
+  <svg class="diagram" viewBox="0 0 420 160" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arV" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2f8f5b"/></marker>
+    </defs>
+    <line x1="30" y1="100" x2="390" y2="100" stroke="#1B2431" stroke-width="2"/>
+    <rect x="30" y="60" width="16" height="50" fill="#5b6779"/>
+    <!-- compressed spring zig-zag -->
+    <polyline points="46,85 58,70 70,100 82,70 94,100 106,70 118,85" fill="none" stroke="#c07830" stroke-width="2.5"/>
+    <rect x="118" y="70" width="40" height="30" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <text x="50" y="130" font-size="12" fill="#c07830" font-weight="600">compressed: U_s = ½kx²</text>
+    <line x1="160" y1="85" x2="230" y2="85" stroke="#2f8f5b" stroke-width="2.5" marker-end="url(#arV)"/>
+    <text x="175" y="75" font-size="12" fill="#2f8f5b">launch</text>
+    <rect x="250" y="70" width="40" height="30" fill="#eef1f6" stroke="#1B2431" stroke-width="1.5"/>
+    <text x="300" y="90" font-size="12" fill="#2f8f5b" font-weight="600">K = ½mv²</text>
+    <text x="250" y="130" font-size="12" fill="#5b6779">spring back to natural length (U_s = 0)</text>
+  </svg>
+  <p class="fig-caption">Spring launch on a frictionless surface: stored elastic energy becomes kinetic energy.</p>
 
   <div class="key-box">
     <span class="box-label">Key idea</span>
@@ -328,7 +457,7 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
 <section class="topic" id="sec3">
   <div class="section-title"><span class="tag">3</span> Advanced: combined spring &amp; gravity conservation</div>
   <div class="prose">
-    <p>When both a spring and gravity act, track every energy form present at each state and set the totals equal.</p>
+    <p>When both a spring and gravity act, track every energy form present at each state and set the totals equal. The spring may be "empty" by the end while height has grown, or vice versa, list \(K\), \(U_s\), and \(U_g\) at both ends so nothing is missed.</p>
   </div>
 
   <div class="key-box">
@@ -354,6 +483,7 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [[
     <text x="45" y="170" font-size="12" fill="#5b6779">spring (k=600N/m, x=0.3m)</text>
     <text x="200" y="70" font-size="12" fill="#5b6779">25&deg;</text>
   </svg>
+  <p class="fig-caption">Combined problem: spring PE at the bottom converts into a mix of KE and gravitational PE further up the incline.</p>
 </section>
 
 <div class="practice-card" data-card>
