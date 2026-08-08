@@ -175,6 +175,12 @@ p code,li code{font-family:'JetBrains Mono',monospace;font-size:12.5px;backgroun
         <div class="hero-title">Engineering Dynamics: Kinematics</div>
         <div class="hero-sub"><em>Kinematics</em> is the study of motion — position, velocity and acceleration — <strong>without</strong> worrying about the forces that cause it. This guide covers motion in a straight line (rectilinear), the constant-acceleration equations, motion that changes erratically, and 2-D projectile motion. These are the mechanics half of ENGG100.</div>
       </div>
+      <div class="callout c-note" style="margin:16px 0 8px">
+        <strong>Exam vs MATLAB.</strong> The <em>dynamics exam (~20%)</em> is hand-worked SUVAT / graphs / projectiles — show formulas and units on paper.
+        Labs and the kinematic plotting project expect the same ideas in <strong>MATLAB</strong>: vectorise \(t\), use <code>diff</code>/<code>gradient</code> for \(v\) and \(a\), and <code>plot</code> trajectories.
+        Each topic below has a <strong>Do it in MATLAB</strong> block; short MATLAB videos are on the
+        <a href="DPEN100_WeekWise_Video_Hub.html#w89-matlab" style="color:#185FA5;font-weight:600">Video Hub · MATLAB kinematics</a>.
+      </div>
       <div class="series-banner">
         <div class="sb-left">
           <div class="sb-series-lbl">DPEN100 ENGINEERING COMPUTING &amp; ANALYSIS</div>
@@ -259,6 +265,31 @@ p code,li code{font-family:'JetBrains Mono',monospace;font-size:12.5px;backgroun
         </div>
       </div>
 
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">MATLAB</span><span class="dpen-ht">Do it in MATLAB — s(t) → v(t) → a(t) and plot</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>On paper you differentiate by hand. In the lab you usually have a time vector and either a formula or measured positions. Two common patterns:</p>
+          <p><strong>1. Analytic formula, vectorised</strong> (exact derivatives, then plot):</p>
+          <div class="code"><span class="cm">% s = 2t^3 - 6t^2  (same example as above)</span>
+t = linspace(0, 4, 401);
+s = 2*t.^3 - 6*t.^2;
+v = 6*t.^2 - 12*t;          <span class="cm">% ds/dt</span>
+a = 12*t - 12;              <span class="cm">% dv/dt</span>
+
+subplot(3,1,1); plot(t,s); ylabel('s (m)'); grid on
+subplot(3,1,2); plot(t,v); ylabel('v (m/s)'); grid on
+subplot(3,1,3); plot(t,a); ylabel('a (m/s^2)'); xlabel('t (s)'); grid on</div>
+          <p><strong>2. Numeric data</strong> (coursework plotting project) — approximate derivatives with <code>diff</code> or <code>gradient</code>:</p>
+          <div class="code">t = 0:0.1:10;
+s = 5*t.^2;                       <span class="cm">% or load measured positions</span>
+v = diff(s) ./ diff(t);           <span class="cm">% length n-1</span>
+a = diff(v) ./ diff(t(1:end-1));  <span class="cm">% length n-2</span>
+<span class="cm">% plot(t(1:end-1), v)  and  plot(t(1:end-2), a)</span>
+<span class="cm">% Prefer gradient(s, t) if you want v and a the same length as t.</span></div>
+          <div class="callout c-warn"><strong>Watch:</strong> <code>diff</code> shortens the array — line up time vectors carefully, or use <code>gradient(s,t)</code> so \(s\), \(v\), \(a\) share the same \(t\).</div>
+        </div>
+      </div>
+
       <div class="qp-section">
         <div class="qp-header"><span class="qp-title">Quick Practice — Topic 1</span><span class="qp-sub">Click to reveal</span></div>
         <div class="qp-items">
@@ -318,6 +349,24 @@ p code,li code{font-family:'JetBrains Mono',monospace;font-size:12.5px;backgroun
             <div class="mb">\[ v = u + at = 0 + 9.81\times3 = 29.43\ \text{m/s} \]</div>
             <div class="ans-box"><span class="ans-lbl">ANSWER</span> v ≈ 29.4 m/s downward</div>
           </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">MATLAB</span><span class="dpen-ht">Do it in MATLAB — SUVAT as a tiny script</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>The dynamics exam still wants hand algebra, but labs often ask you to <em>compute and plot</em> a constant-acceleration motion. Encode the formula once, then sweep time:</p>
+          <div class="code"><span class="cm">% Braking car: u=20 m/s, a=-4 m/s^2, stop when v=0</span>
+u = 20; a = -4; g = 9.81;
+t_stop = (0 - u)/a;                 <span class="cm">% from v = u + a t</span>
+t = linspace(0, t_stop, 200);
+v = u + a*t;
+s = u*t + 0.5*a*t.^2;
+
+figure; subplot(2,1,1); plot(t,v); ylabel('v'); grid on
+subplot(2,1,2); plot(t,s); ylabel('s'); xlabel('t'); grid on
+fprintf('Stopping distance = %.2f m\n', s(end));</div>
+          <div class="callout c-info"><strong>Pattern:</strong> list knowns → pick the SUVAT relation → implement with element-wise <code>.*</code> / <code>.^</code> on a <code>t</code> vector → <code>plot</code> / <code>fprintf</code> the result you would box on paper.</div>
         </div>
       </div>
 
@@ -394,6 +443,25 @@ p code,li code{font-family:'JetBrains Mono',monospace;font-size:12.5px;backgroun
         </div>
       </div>
 
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">MATLAB</span><span class="dpen-ht">Do it in MATLAB — find turning points and total distance</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>Same example \(s=t^2-6t\) on \(0\le t\le 4\). Locate \(v=0\), sample positions, sum absolute legs:</p>
+          <div class="code">s_fun = @(t) t.^2 - 6*t;
+v_fun = @(t) 2*t - 6;
+t_turn = fzero(v_fun, 2);            <span class="cm">% or solve 2*t-6=0 by hand → 3</span>
+t_pts = [0, t_turn, 4];
+s_pts = s_fun(t_pts);
+dist = sum(abs(diff(s_pts)));        <span class="cm">% 10 m</span>
+
+t = linspace(0,4,400);
+plot(t, s_fun(t)); hold on
+plot(t_pts, s_pts, 'ro'); grid on
+xlabel('t'); ylabel('s'); title('Turning point marked')</div>
+          <div class="callout c-warn"><strong>Lab tip:</strong> if \(s\) is only a data array (no formula), find sign changes in <code>v = gradient(s,t)</code> to locate reversals, then sum <code>abs(diff(s))</code> between those indices.</div>
+        </div>
+      </div>
+
       <div class="qp-section">
         <div class="qp-header"><span class="qp-title">Quick Practice — Topic 3</span><span class="qp-sub">Click to reveal</span></div>
         <div class="qp-items">
@@ -458,6 +526,25 @@ p code,li code{font-family:'JetBrains Mono',monospace;font-size:12.5px;backgroun
             </div>
             <div class="ans-box"><span class="ans-lbl">ANSWER</span> t ≈ 2.04 s, range ≈ 35.3 m</div>
           </div>
+        </div>
+      </div>
+
+      <div class="dpen-block">
+        <div class="dpen-hd" onclick="td(this)"><span class="dpen-pill pill-p">MATLAB</span><span class="dpen-ht">Do it in MATLAB — plot the trajectory</span><span class="dpen-ch">▶</span></div>
+        <div class="dpen-bd">
+          <p>Use <code>cosd</code>/<code>sind</code> (degrees) so the launch angle matches the hand calculation. Build \(x(t)\) and \(y(t)\) on a shared time vector, then <code>plot(x,y)</code>:</p>
+          <div class="code">u = 20; theta = 30; g = 9.81;
+ux = u*cosd(theta);
+uy = u*sind(theta);
+t_flight = 2*uy/g;
+t = linspace(0, t_flight, 200);
+x = ux*t;
+y = uy*t - 0.5*g*t.^2;
+
+plot(x, y, 'LineWidth', 1.5); axis equal; grid on
+xlabel('Range x (m)'); ylabel('Height y (m)');
+title(sprintf('Projectile: R = %.1f m', x(end)));</div>
+          <div class="callout c-info"><strong>Exam vs lab:</strong> on paper compute \(t\) and \(R\) with SUVAT. In MATLAB, the same formulas become arrays so you can also animate, overlay several angles with <code>hold on</code>, or compare against measured data from the plotting project.</div>
         </div>
       </div>
 
