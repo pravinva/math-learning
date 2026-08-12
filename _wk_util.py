@@ -99,6 +99,24 @@ def g(x):
     return ('%.2f' % x).rstrip('0').rstrip('.')
 
 
+def angle_deg(text, default=20.0):
+    m = re.search(r'(\d+(?:\.\d+)?)\s*(?:&deg;|\^\{?\\?circ\}?|\\,?\^?\\circ|°)', text)
+    return float(m.group(1)) if m else default
+
+
+def beta_deg(text, default=180.0):
+    """Wrap angle in degrees from '90&deg;' or 'pi/2 rad' style text."""
+    m = re.search(r'(\d+(?:\.\d+)?)\s*(?:&deg;|°|\\?circ)', text)
+    if m:
+        return float(m.group(1))
+    m = re.search(r'(\d*)\s*\\?pi(?:\s*/\s*(\d+))?', text)
+    if m:
+        coef = float(m.group(1)) if m.group(1) else 1.0
+        den = float(m.group(2)) if m.group(2) else 1.0
+        return coef * 180.0 / den
+    return default
+
+
 def caption(a, limit=72):
     """Turn a LaTeX-ish solution snippet into a short, XML-safe ASCII note."""
     a = re.sub(r'^\s*Solution\s*', '', a)
