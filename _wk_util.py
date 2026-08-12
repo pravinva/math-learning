@@ -26,7 +26,8 @@ def cards(html):
     idxs.append(len(html))
     for i in range(len(idxs) - 1):
         seg = html[idxs[i]:idxs[i + 1]]
-        num = int(re.search(r'Practice (\d+)', seg).group(1))
+        m = re.search(r'Practice (\d+)', seg)
+        num = int(m.group(1)) if m else (i + 1)
         body = re.search(r'<div class="p-body">(.*?)</div>\s*<div class="toggle-row"', seg, re.S)
         sol = re.search(r'<div class="solution-inner">(.*?)</div></div>\s*</div>', seg, re.S)
         q = clean(body.group(1)) if body else ''

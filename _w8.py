@@ -10,7 +10,7 @@ def build(num, q, a):
 
     # rectangle with a hole -> centroid of a composite with a void
     if 'hole' in ql or 'void' in ql or 'washer' in ql or 'tube' in ql:
-        return k.rect_hole_centroid(centroid=(cap or 'centroid'), note='shaded area minus the void')
+        return k.rect_hole_centroid(centroid='C', note=cap)
 
     # parallel-axis transfer
     if ('parallel' in ql or 'transfer' in ql or re.search(r'\bd\s*=', q)
