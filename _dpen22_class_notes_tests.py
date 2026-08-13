@@ -48,41 +48,33 @@ def page(title, body, katex=True):
     return rendered.replace("\\'", "'")
 
 
-def write_pair(slug, subject, timing, sample_href, tests_q, tests_a):
-    # questions page with all 4 tests
+def write_pair(slug, subject, timing, sample_href, tests_q, tests_a, fmt):
+    """fmt keys: total, mc, long_marks, mc_label, long_label, rules"""
+    total = fmt['total']
+    n_mc = fmt['mc']
+    long_marks = fmt['long_marks']
+    assert n_mc + len(long_marks) == total
     q_blocks = []
     for i, qs in enumerate(tests_q, 1):
-        if slug == 'trig':
-            assert len(qs) == 15 and all(isinstance(q, tuple) for q in qs[:5])
-            mc_items = []
-            for stem, choices in qs[:5]:
-                ch = ''.join(f'<div class="mc">{c}</div>' for c in choices)
-                mc_items.append(f'<li>{stem}{ch}</li>')
-            long_marks = [2, 2, 2, 2, 2, 3, 3, 3, 4, 4]
-            long_items = [
-                f'<li>{q}<span class="question-mark">[{mark} marks]</span></li>'
-                for q, mark in zip(qs[5:], long_marks)
-            ]
-            rules = '''<div class="paper-rules"><strong>Total number of questions: 15</strong>
-<ul><li>Questions 1–5 are multiple choice. Each question is worth 1 mark; marks are awarded for the answer only.</li>
-<li>Questions 6–15 are long-answer questions. The value of each question is indicated; show all working.</li></ul></div>'''
-            q_blocks.append(
-                f'<div class="test"><h3>Test {i}</h3>{rules}'
-                f'<h4 class="part-title">Questions 1–5: Multiple choice</h4><ol>\n'
-                + '\n'.join(mc_items)
-                + '\n</ol><h4 class="part-title">Questions 6–15: Long answer</h4><ol start="6">\n'
-                + '\n'.join(long_items) + '\n</ol></div>'
-            )
-        else:
-            items = []
-            for q in qs:
-                if isinstance(q, tuple):
-                    stem, choices = q
-                    ch = ''.join(f'<div class="mc">{c}</div>' for c in choices)
-                    items.append(f'<li>{stem}{ch}</li>')
-                else:
-                    items.append(f'<li>{q}</li>')
-            q_blocks.append(f'<div class="test"><h3>Test {i}</h3><ol>\n' + '\n'.join(items) + '\n</ol></div>')
+        assert len(qs) == total, f'{slug} test {i}: expected {total} questions, got {len(qs)}'
+        assert all(isinstance(q, tuple) for q in qs[:n_mc])
+        assert all(isinstance(q, str) for q in qs[n_mc:])
+        mc_items = []
+        for stem, choices in qs[:n_mc]:
+            ch = ''.join(f'<div class="mc">{c}</div>' for c in choices)
+            mc_items.append(f'<li>{stem}{ch}</li>')
+        long_items = [
+            f'<li>{q}<span class="question-mark">[{mark} mark{"s" if mark != 1 else ""}]</span></li>'
+            for q, mark in zip(qs[n_mc:], long_marks)
+        ]
+        long_start = n_mc + 1
+        q_blocks.append(
+            f'<div class="test"><h3>Test {i}</h3>{fmt["rules"]}'
+            f'<h4 class="part-title">{fmt["mc_label"]}</h4><ol>\n'
+            + '\n'.join(mc_items)
+            + f'\n</ol><h4 class="part-title">{fmt["long_label"]}</h4><ol start="{long_start}">\n'
+            + '\n'.join(long_items) + '\n</ol></div>'
+        )
 
     q_body = f'''
 <h1>DPEN022 {subject} — Practice Tests (Questions)</h1>
@@ -100,6 +92,7 @@ Timing guide: {timing}. Show full working on long-answer items.</p>
 
     a_blocks = []
     for i, ans in enumerate(tests_a, 1):
+        assert len(ans) == total, f'{slug} answers test {i}: expected {total}, got {len(ans)}'
         items = []
         for j, a in enumerate(ans, 1):
             items.append(f'<div class="ans"><strong>Q{j}.</strong> {a}</div>')
@@ -116,6 +109,40 @@ Timing guide: {timing}. Show full working on long-answer items.</p>
 {''.join(a_blocks)}
 '''
     (TESTS / f'{slug}-answers.html').write_text(page(f'DPEN022 {subject} Practice Tests — Answers', a_body))
+
+
+TRIG_FMT = {
+    'total': 15,
+    'mc': 5,
+    'long_marks': [2, 2, 2, 2, 2, 3, 3, 3, 4, 4],
+    'mc_label': 'Questions 1–5: Multiple choice',
+    'long_label': 'Questions 6–15: Long answer',
+    'rules': '''<div class="paper-rules"><strong>Total number of questions: 15</strong>
+<ul><li>Questions 1–5 are multiple choice. Each question is worth 1 mark; marks are awarded for the answer only.</li>
+<li>Questions 6–15 are long-answer questions. The value of each question is indicated; show all working.</li></ul></div>''',
+}
+
+DIFF_FMT = {
+    'total': 18,
+    'mc': 6,
+    'long_marks': [1, 4, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+    'mc_label': 'Questions 1–6: Multiple choice',
+    'long_label': 'Questions 7–18: Long answer',
+    'rules': '''<div class="paper-rules"><strong>Total number of questions: 18</strong>
+<ul><li>Questions 1–6 are multiple choice. Each question is worth 1 mark; marks are awarded for the answer only.</li>
+<li>Questions 7–18 are long-answer questions. The value of each question is indicated; show all working.</li></ul></div>''',
+}
+
+INT_FMT = {
+    'total': 16,
+    'mc': 6,
+    'long_marks': [2, 2, 2, 3, 4, 3, 2, 4, 4, 3],
+    'mc_label': 'Questions 1–6: Multiple choice',
+    'long_label': 'Questions 7–16: Long answer',
+    'rules': '''<div class="paper-rules"><strong>Total number of questions: 16</strong>
+<ul><li>Questions 1–6 are multiple choice. Each question is worth 1 mark; marks are awarded for the answer only.</li>
+<li>Questions 7–16 are long-answer questions. The value of each question is indicated; show all working.</li></ul></div>''',
+}
 
 
 # ---------- TRIG (4 tests × 15: 5 multiple choice + 10 long answer) ----------
@@ -281,86 +308,115 @@ trig_a = [
 ],
 ]
 write_pair('trig', 'Trigonometry', '1 hour per test',
-           '../trig/2a_Trigonometry_Exam_Sample_Public_Holiday.pdf', trig_q, trig_a)
+           '../trig/2a_Trigonometry_Exam_Sample_Public_Holiday.pdf', trig_q, trig_a, TRIG_FMT)
 
 
-# ---------- LIMITS + DIFF ----------
+
+# ---------- LIMITS + DIFF (4 tests x 18: 6 MC + 12 long) ----------
 ld_q = [
 [
- (r'\(\displaystyle\lim_{x\to-2}\dfrac{x^3+2}{x^2+5}\)=',
+ (r'\(\displaystyle\lim_{x\to-2}\dfrac{x^3+2}{x^2+5}=\)',
   ['(A) \(0\)','(B) \(-\infty\)','(C) \(-2\)','(D) \(4\)','(E) DNE']),
  (r'For \(f(x)=x^2-6x-1\), \(f\'(x)=0\) when \(x=\)',
   ['(A) \(-1\)','(B) \(6\)','(C) \(-3\)','(D) \(3\)','(E) \(0\)']),
  (r'Derivative of \(y=(x^2-1)^{1/3}\) is',
   [r'(A) \(\dfrac{2x}{3(x^2-1)^{2/3}}\)',r'(B) \(\dfrac{2x}{3(x^2-1)^{4/3}}\)',r'(C) \(-\dfrac{2x}{3(x^2-1)^{4/3}}\)',r'(D) \(\dfrac{x}{(x^2-1)^{2/3}}\)',r'(E) other']),
  (r'\(f(x)=\dfrac{x^2+3}{x^3}\) has \(f\'(x)=\)',
-  [r'(A) \(2x-3x^2\)',r'(B) \(\dfrac{2x\cdot x^3-3x^2(x^2+3)}{x^6}\)',r'(C) \(\dfrac{-x^2-9}{x^4}\)',r'(D) \(\dfrac{2}{x}\) ',r'(E) \(-\dfrac{x^2+9}{x^4}\)']),
+  [r'(A) \(2x-3x^2\)',r'(B) \(\dfrac{2x\cdot x^3-3x^2(x^2+3)}{x^6}\)',r'(C) \(\dfrac{-x^2-9}{x^4}\)',r'(D) \(\dfrac{2}{x}\)',r'(E) \(-\dfrac{x^2+9}{x^4}\)']),
+ (r'Derivative of \(y=e^{x}\sin(3x)\) is',
+  [r'(A) \(e^x(3\cos3x+\sin3x)\)',r'(B) \(3\cos3x\,e^x\)',r'(C) \(e^x\sin3x\)',r'(D) \(e^x(\cos3x-\sin3x)\)',r'(E) other']),
  (r'Tangent to \(y=3x^2\) at \(x=-1\) (gradient-intercept) is',
   [r'(A) \(y=-6x-3\)',r'(B) \(y=-6x+3\)',r'(C) \(y=6x-3\)',r'(D) \(y=6x+3\)',r'(E) \(y=-6x-6\)']),
  r'From a graph that approaches \(y=4\) from both sides at \(x=1\), does \(\lim_{x\to1}f(x)\) exist? Justify.',
- r'Evaluate \(\displaystyle\lim_{x\to2}\dfrac{x^2-4}{x-2}\) if it exists.',
- r'Evaluate \(\displaystyle\lim_{x\to\infty}\dfrac{3x^2+6}{2x^2-7}\) if it exists.',
+ r'Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to2}\dfrac{x^2-4}{x-2}\) (b) \(\displaystyle\lim_{x\to\infty}\dfrac{3x^2+6}{2x^2-7}\).',
  r'Find \(\dfrac{dy}{dx}\) for \(y=\sqrt{x}+x\sqrt{x}\), leaving surds.',
- r'Expand and differentiate \(f(x)=(x-1)(2x+3)\), simplify fully.',
- r'Find \(f\'(1)\) for \(f(x)=e^{x^2+2}\) (chain rule, exact).',
+ r'Differentiate \(y=(2x-1)^5\).',
+ r'Find the second derivative of \(y=\sqrt{x-1}\) and simplify.',
+ r'Find \(f\'(1)\) for \(f(x)=e^{x^2+2}\).',
  r'Differentiate \(y=\dfrac{\ln(2x)}{x}\) and simplify.',
+ r'Find \(f\'(2)\) if \(f(x)=\ln(2x-3)\).',
+ r'Find \(y\'\left(\dfrac{\pi}{6}\right)\) for \(y=\tan(2\pi x)\).',
+ r'Differentiate \(y=e^{-x}(x^2-1)\) and simplify.',
+ r'Find the equation of the tangent to \(y=x^3-3x\) at \(x=2\).',
+ r'A particle has \(s(t)=t^3-6t^2+9t\). Find the times when its velocity is zero on \([0,5]\).',
 ],
 [
- (r'\(\displaystyle\lim_{x\to3}\dfrac{x^2-9}{x-3}\)=',
+ (r'\(\displaystyle\lim_{x\to3}\dfrac{x^2-9}{x-3}=\)',
   ['(A) \(0\)','(B) \(3\)','(C) \(6\)','(D) DNE','(E) \(\infty\)']),
  (r'\(f(x)=4x^3-12x\). Stationary points when \(f\'=0\):',
   [r'(A) \(x=0\) only',r'(B) \(x=\pm1\)',r'(C) \(x=\pm\sqrt{3}\)',r'(D) \(x=1,2\)',r'(E) none']),
- (r'Derivative of \(y=\sin(3x)e^{x}\) by product rule:',
-  [r'(A) \(e^x(3\cos3x+\sin3x)\)',r'(B) \(3\cos3x\,e^x\)',r'(C) \(e^x\sin3x\)',r'(D) \(e^x(\cos3x-\sin3x)\)',r'(E) other']),
+ (r'Derivative of \(y=(x^2+4)^{3/2}\) is',
+  [r'(A) \(3x(x^2+4)^{1/2}\)',r'(B) \(\dfrac{3}{2}(x^2+4)^{1/2}\)',r'(C) \(3x\sqrt{x^2+4}\)',r'(D) \(2x(x^2+4)^{3/2}\)',r'(E) other']),
  (r'\(y=\ln(5x^2+1)\). Then \(y\'=\)',
   [r'(A) \(\dfrac{1}{5x^2+1}\)',r'(B) \(\dfrac{10x}{5x^2+1}\)',r'(C) \(\dfrac{5x}{5x^2+1}\)',r'(D) \(10x\)',r'(E) \(\ln(10x)\)']),
+ (r'\(f(x)=\dfrac{e^{x}}{x}\). \(f\'(x)=\)',
+  [r'(A) \(e^x\)',r'(B) \(\dfrac{e^x(x-1)}{x^2}\)',r'(C) \(\dfrac{e^x}{x^2}\)',r'(D) \(e^x(1-x)\)',r'(E) \(\dfrac{xe^x-e^x}{x}\)']),
  (r'Tangent to \(y=e^{2x}\) at \(x=0\):',
   [r'(A) \(y=2x+1\)',r'(B) \(y=x+1\)',r'(C) \(y=2x\)',r'(D) \(y=e^{2}x\)',r'(E) \(y=2e^{2}x+1\)']),
  r'Does \(\displaystyle\lim_{x\to0}\dfrac{|x|}{x}\) exist? Justify.',
- r'Evaluate \(\displaystyle\lim_{x\to-1}\dfrac{x^2-1}{x+1}\).',
- r'Evaluate \(\displaystyle\lim_{x\to\infty}\dfrac{5x+1}{x^2+4}\).',
- r'Differentiate \(y=(2x-1)^5\).',
+ r'Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to-1}\dfrac{x^2-1}{x+1}\) (b) \(\displaystyle\lim_{x\to\infty}\dfrac{5x+1}{x^2+4}\).',
+ r'Differentiate \(y=x^4-8x^2+3\) and find all stationary points.',
  r'Differentiate \(y=\dfrac{3x+2}{x-4}\).',
- r'Differentiate \(y=x^4-8x^2+3\) and find all stationary points (classification optional).',
- r'Find the equation of the tangent to \(y=x^3-3x\) at \(x=2\).',
+ r'Find \(f\'\'(x)\) for \(f(x)=x^4-4x^3+2\), then solve \(f\'\'(x)=0\).',
+ r'Find \(f\'(0)\) for \(f(x)=\cos(5x^2)\).',
+ r'Differentiate \(y=x\ln x\).',
+ r'Find \(f\'(e)\) for \(f(x)=\dfrac{\ln x}{x}\).',
+ r'Find \(y\'\) for \(y=\sin^2(4x)\).',
+ r'Differentiate \(y=(x^2+1)e^{x}\).',
+ r'Find the equation of the tangent to \(y=\dfrac{1}{x}\) at \(x=2\).',
+ r'Find the point(s) on \(y=\dfrac12 x^2+9x+4\) where the tangent is parallel to \(y=3x-1\).',
 ],
 [
- (r'\(\displaystyle\lim_{x\to0}\dfrac{\sin x}{x}\)=',
+ (r'\(\displaystyle\lim_{x\to0}\dfrac{\sin x}{x}=\)',
   ['(A) \(0\)','(B) \(1\)','(C) \(\infty\)','(D) DNE','(E) \(-1\)']),
  (r'\(f(x)=x^4-4x^3+2\). \(f\'\'(x)=0\) has solution(s)',
   [r'(A) \(x=0,2\)',r'(B) \(x=1\) only',r'(C) \(x=0\) only',r'(D) \(x=3\)',r'(E) none']),
+ (r'Derivative of \(y=\dfrac{1}{(3x-1)^4}\) is',
+  [r'(A) \(\dfrac{-12}{(3x-1)^5}\)',r'(B) \(\dfrac{-4}{(3x-1)^5}\)',r'(C) \(\dfrac{12}{(3x-1)^5}\)',r'(D) \(\dfrac{-3}{(3x-1)^4}\)',r'(E) other']),
  (r'\(y=\tan(2\pi x)\). \(y\'(\tfrac16)=\)',
   [r'(A) \(2\pi\sec^2(\pi/3)\)',r'(B) \(\sec^2(\pi/3)\)',r'(C) \(2\pi\)',r'(D) \(4\)',r'(E) \(4\pi\)']),
- (r'\(f(x)=\dfrac{e^{x}}{x}\). \(f\'(x)=\)',
-  [r'(A) \(e^x\)',r'(B) \(\dfrac{e^x(x-1)}{x^2}\)',r'(C) \(\dfrac{e^x}{x^2}\)',r'(D) \(e^x(1-x)\)',r'(E) \(\dfrac{xe^x-e^x}{x}\)']),
- (r'Point on \(y=\dfrac12 x^2+9x+4\) where tangent is parallel to \(y=3x-1\):',
-  [r'(A) \(x=-6\)',r'(B) \(x=3\)',r'(C) \(x=-3\)',r'(D) \(x=6\)',r'(E) \(x=0\)']),
- r'Evaluate \(\displaystyle\lim_{x\to4}\dfrac{\sqrt{x}-2}{x-4}\) if it exists.',
- r'Evaluate \(\displaystyle\lim_{x\to\infty}\left(3+\dfrac{2}{x}\right)\).',
- r'Differentiate \(y=x\ln x\).',
- r'Differentiate \(y=\cos(5x^2)\).',
- r'Find \(f\'(2)\) if \(f(x)=\ln(2x-3)\).',
- r'Differentiate \(y=e^{-x}(x^2-1)\) and simplify.',
- r'Find coordinates where the tangent to \(y=x^3-6x^2+9x+1\) is horizontal.',
-],
-[
- (r'\(\displaystyle\lim_{x\to1}\dfrac{x^3-1}{x-1}\)=',
-  ['(A) \(0\)','(B) \(1\)','(C) \(2\)','(D) \(3\)','(E) DNE']),
- (r'\(f(x)=2x^3-15x^2+36x\). Local max/min classification starts from solving',
-  [r'(A) \(f=0\)',r'(B) \(f\'=0\)',r'(C) \(f\'\'=0\)',r'(D) \(f\'=f\)',r'(E) \(f\'\'=f\'\)']),
- (r'\(y=\sin^2(4x)\). \(y\'=\)',
-  [r'(A) \(2\sin4x\)',r'(B) \(8\sin4x\cos4x\)',r'(C) \(\sin8x\)',r'(D) \(4\sin4x\)',r'(E) both B and equivalent forms']),
  (r'\(y=\dfrac{\ln x}{x}\). Critical points from \(y\'=0\) give',
   [r'(A) \(x=e\)',r'(B) \(x=1\)',r'(C) \(x=0\)',r'(D) \(x=e^{-1}\)',r'(E) none']),
  (r'Tangent to \(y=\dfrac{1}{x}\) at \(x=2\):',
   [r'(A) \(y=-\tfrac14 x+1\)',r'(B) \(y=-\tfrac14x+\tfrac34\)',r'(C) \(y=-\tfrac12x+1\)',r'(D) \(y=\tfrac12x\)',r'(E) \(y=-\tfrac14 x+\tfrac12\)']),
- r'State whether \(\displaystyle\lim_{x\to0^+} \ln x\) exists as a real number.',
- r'Evaluate \(\displaystyle\lim_{x\to2}\dfrac{x^3-8}{x-2}\).',
- r'Differentiate \(y=(x^2+1)e^{x}\).',
+ r'State whether \(\displaystyle\lim_{x\to0^+} \ln x\) exists as a real number. Justify.',
+ r'Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to4}\dfrac{\sqrt{x}-2}{x-4}\) (b) \(\displaystyle\lim_{x\to\infty}\left(3+\dfrac{2}{x}\right)\).',
+ r'Differentiate \(y=4x^{3/2}-2x^{-1/2}\).',
+ r'Differentiate \(y=\cos(5x^2)\).',
+ r'Find \(y\'\'\) for \(y=e^{2x}+x^2\).',
+ r'Find \(f\'(1)\) for \(f(x)=(2x+1)^5\).',
  r'Differentiate \(y=\dfrac{x^2+2}{x^2-2}\).',
+ r'Find \(f\'(1)\) if \(f(x)=\ln(x^2+1)\).',
+ r'Find \(y\'\) for \(y=\sin(3x)e^{x}\).',
+ r'Differentiate \(y=x^2\ln(3x)\).',
+ r'Find the equation of the tangent to \(y=e^{x}+x\) at \(x=0\).',
+ r'Find the coordinates where the tangent to \(y=x^3-6x^2+9x+1\) is horizontal.',
+],
+[
+ (r'\(\displaystyle\lim_{x\to1}\dfrac{x^3-1}{x-1}=\)',
+  ['(A) \(0\)','(B) \(1\)','(C) \(2\)','(D) \(3\)','(E) DNE']),
+ (r'\(f(x)=2x^3-15x^2+36x\). Local max/min classification starts from solving',
+  [r'(A) \(f=0\)',r'(B) \(f\'=0\)',r'(C) \(f\'\'=0\)',r'(D) \(f\'=f\)',r'(E) \(f\'\'=f\'\)']),
+ (r'Derivative of \(y=\sqrt{2x+5}\) is',
+  [r'(A) \(\dfrac{1}{\sqrt{2x+5}}\)',r'(B) \(\dfrac{2}{\sqrt{2x+5}}\)',r'(C) \(\dfrac{1}{2\sqrt{2x+5}}\)',r'(D) \(\sqrt{2x+5}\)',r'(E) other']),
+ (r'\(y=\sin^2(4x)\). \(y\'=\)',
+  [r'(A) \(2\sin4x\)',r'(B) \(8\sin4x\cos4x\)',r'(C) \(\sin8x\)',r'(D) \(4\sin4x\)',r'(E) both B and equivalent forms']),
+ (r'Point on \(y=\dfrac12 x^2+9x+4\) where tangent is parallel to \(y=3x-1\):',
+  [r'(A) \(x=-6\)',r'(B) \(x=3\)',r'(C) \(x=-3\)',r'(D) \(x=6\)',r'(E) \(x=0\)']),
+ (r'Tangent to \(y=x^2-4x\) at \(x=3\):',
+  [r'(A) \(y=2x-9\)',r'(B) \(y=2x-3\)',r'(C) \(y=6x-15\)',r'(D) \(y=2x+3\)',r'(E) \(y=-2x+3\)']),
+ r'Explain whether \(\displaystyle\lim_{x\to2}f(x)\) can exist if \(f(2)\) is undefined.',
+ r'Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to2}\dfrac{x^3-8}{x-2}\) (b) \(\displaystyle\lim_{x\to\infty}\dfrac{4x^3-1}{2x^3+5}\).',
+ r'Differentiate \(y=x^{5/2}+3x^{-2}\).',
+ r'Differentiate \(y=(3x-2)^4\).',
  r'Find \(y\'\'\) for \(y=\sqrt{x-1}\).',
- r'Equation of tangent to \(y=e^{x}+x\) at \(x=0\).',
- r'A particle has \(s(t)=t^3-6t^2+9t\). Find times when velocity is zero on \([0,5]\).',
+ r'Find \(f\'(0)\) for \(f(x)=e^{3x}\cos x\).',
+ r'Differentiate \(y=\dfrac{2x-1}{x+3}\).',
+ r'Find \(f\'(1)\) if \(f(x)=\ln(3x+1)\).',
+ r'Find \(y\'\) for \(y=\tan(3x)\).',
+ r'Differentiate \(y=e^{2x}\sin x\).',
+ r'Find the equation of the tangent to \(y=\ln x\) at \(x=e\).',
+ r'A particle has \(v(t)=3t^2-12t+9\). Find the times when it is at rest, and its acceleration at the first such time.',
 ],
 ]
 
@@ -370,63 +426,87 @@ ld_a = [
  r'(D) \(x=3\).',
  r'(C) \(-\dfrac{2x}{3(x^2-1)^{4/3}}\).',
  r'(E) \(-\dfrac{x^2+9}{x^4}\).',
+ r'(A) \(e^x(3\cos3x+\sin3x)\).',
  r'(A) \(y=-6x-3\).',
- r'Yes if LHL=RHL (=4); exists.',
- r'\(4\) (factor).',
- r'\(\dfrac{3}{2}\).',
+ r'Yes, if LHL = RHL (=4); the limit exists.',
+ r'(a) \(4\) (b) \(\dfrac{3}{2}\).',
  r'\(\dfrac{1}{2\sqrt{x}}+\dfrac{3}{2}\sqrt{x}\).',
- r'\(f\'(x)=4x+1\).',
+ r'\(y\'=10(2x-1)^4\).',
+ r'\(y\'\'=-\dfrac{1}{4}(x-1)^{-3/2}\).',
  r'\(f\'(1)=2e^{3}\).',
  r'\(y\'=\dfrac{1-\ln(2x)}{x^2}\).',
+ r'\(f\'(2)=2\).',
+ r'\(y\'=2\pi\sec^2(2\pi x)\), so \(y\'(\pi/6)=2\pi\cdot4=8\pi\).',
+ r'\(e^{-x}(-x^2+2x+1)\).',
+ r'\(y=9x-16\).',
+ r'\(t=1,3\).',
 ],
 [
  r'(C) \(6\).',
  r'(B) \(x=\pm1\).',
- r'(A) \(e^x(3\cos3x+\sin3x)\).',
+ r'(A)/(C) \(3x\sqrt{x^2+4}\).',
  r'(B) \(\dfrac{10x}{5x^2+1}\).',
+ r'(B) \(\dfrac{e^x(x-1)}{x^2}\).',
  r'(A) \(y=2x+1\).',
- r'No (LHL=-1, RHL=1).',
- r'\(-2\).',
- r'\(0\).',
- r'\(y\'=10(2x-1)^4\).',
+ r'No (LHL = \(-1\), RHL = \(1\)).',
+ r'(a) \(-2\) (b) \(0\).',
+ r'\(y\'=4x(x^2-4)\); stationary points \((-2,-13)\), \((0,3)\), \((2,-13)\).',
  r'\(y\'=\dfrac{-14}{(x-4)^2}\).',
- r'\(y\'=4x(x^2-4)\), so stationary points are \((-2,-13)\), \((0,3)\), and \((2,-13)\).',
- r'\(y=9x-16\) (since \(y\'=3x^2-3\), at 2: \(m=9\), \(y(2)=2\)).',
+ r'\(f\'\'(x)=12x^2-24x\); \(x=0,2\).',
+ r'\(0\).',
+ r'\(1+\ln x\).',
+ r'\(0\).',
+ r'\(8\sin4x\cos4x\) (or \(4\sin8x\)).',
+ r'\(e^x(x^2+2x+1)\).',
+ r'\(y=-\dfrac14 x+1\).',
+ r'\(x=-6\); point \((-6,-23)\).',
 ],
 [
  r'(B) \(1\).',
  r'(A) \(x=0,2\).',
- r'(A) \(2\pi\sec^2(\pi/3)=2\pi\cdot4=8\pi\).',
- r'(B) \(\dfrac{e^x(x-1)}{x^2}\).',
- r'(A) \(x=-6\) (\(y\'=x+9=3\)).',
- r'\(\dfrac{1}{4}\) (rationalise).',
- r'\(3\).',
- r'\(1+\ln x\).',
+ r'(A) \(\dfrac{-12}{(3x-1)^5}\).',
+ r'(A) \(2\pi\sec^2(\pi/3)=8\pi\).',
+ r'(A) \(x=e\).',
+ r'(A) \(y=-\tfrac14 x+1\).',
+ r'No; it diverges to \(-\infty\).',
+ r'(a) \(\dfrac14\) (b) \(3\).',
+ r'\(6x^{1/2}+x^{-3/2}\).',
  r'\(-10x\sin(5x^2)\).',
- r'\(f\'(2)=2/(4-3)=2\).',
- r'\(e^{-x}(-x^2+2x+1)\).',
- r'\((1,5)\) is a local maximum and \((3,1)\) is a local minimum, since \(y\'=3(x-1)(x-3)\).',
+ r'\(y\'\'=4e^{2x}+2\).',
+ r'\(f\'(1)=5\cdot3^4\cdot2=810\).',
+ r'\(y\'=\dfrac{-8x}{(x^2-2)^2}\).',
+ r'\(f\'(1)=1\).',
+ r'\(e^x(3\cos3x+\sin3x)\).',
+ r'\(2x\ln(3x)+x\).',
+ r'\(y=2x+1\).',
+ r'\((1,5)\) local max and \((3,1)\) local min.',
 ],
 [
  r'(D) \(3\).',
  r'(B) \(f\'=0\).',
- r'(B)/(E) \(8\sin4x\cos4x=4\sin8x\).',
- r'(A) \(x=e\).',
- r'At \(x=2\), \(y=1/2\), \(m=-1/4\): \(y-\tfrac12=-\tfrac14(x-2)\Rightarrow y=-\tfrac14x+1\).',
- r'No (diverges to \(-\infty\)).',
- r'\(12\).',
- r'\(e^x(x^2+2x+1)\).',
- r'\(y\'=\dfrac{-8x}{(x^2-2)^2}\).',
- r'\(y\'\'=-\dfrac{1}{4}(x-1)^{-3/2}\).',
- r'\(y=2x+1\).',
- r'\(t=1,3\).',
+ r'(A) \(\dfrac{1}{\sqrt{2x+5}}\).',
+ r'(B)/(E) \(8\sin4x\cos4x\).',
+ r'(A) \(x=-6\).',
+ r'(A) \(y=2x-9\).',
+ r'Yes; the limit depends on nearby values, not on \(f(2)\).',
+ r'(a) \(12\) (b) \(2\).',
+ r'\(\dfrac52 x^{3/2}-6x^{-3}\).',
+ r'\(12(3x-2)^3\).',
+ r'\(y\'\'=-\dfrac14(x-1)^{-3/2}\).',
+ r'\(f\'(0)=3\).',
+ r'\(y\'=\dfrac{7}{(x+3)^2}\).',
+ r'\(f\'(1)=\dfrac34\).',
+ r'\(y\'=3\sec^2(3x)\).',
+ r'\(e^{2x}(2\sin x+\cos x)\).',
+ r'\(y=\dfrac1e(x-e)+1=\dfrac{x}{e}\).',
+ r'Rest at \(t=1,3\); \(a(1)=-6\).',
 ],
 ]
-write_pair('limits-diff', 'Limits & Differentiation', 'about 70–80 minutes per test',
-           '../limits-diff/2a_Differentiation_Exam_Sample.pdf', ld_q, ld_a)
+write_pair('limits-diff', 'Limits & Differentiation', '1 hour 20 minutes per test',
+           '../limits-diff/2a_Differentiation_Exam_Sample.pdf', ld_q, ld_a, DIFF_FMT)
 
 
-# ---------- INTEGRATION ----------
+# ---------- INTEGRATION (4 tests x 16: 6 MC + 10 long) ----------
 int_q = [
 [
  (r'Best first step for \(\displaystyle\int\left(x-\dfrac{3}{x}\right)^2 dx\)?',
@@ -435,17 +515,22 @@ int_q = [
   [r'(A) \(\tfrac{2}{3}x^{3/2}+\ln|x|+C\)',r'(B) \(\tfrac{3}{2}x^{3/2}+\ln|x|+C\)',r'(C) \(x^{1/2}-\dfrac{1}{x}+C\)',r'(D) \(\tfrac{2}{3}x^{3/2}-\dfrac{1}{x}+C\)',r'(E) other']),
  (r'\(\displaystyle\int_{-1}^{2}(2x^3+2)\,dx=\)',
   ['(A) \(14\)','(B) \(25/2\)','(C) \(9\)','(D) \(12\)','(E) \(27/2\)']),
- (r'Area between \(f(x)=x^3-4x^2-x+4\) and \(x\)-axis on roots needs',
+ (r'Area between \(f(x)=x^3-4x^2-x+4\) and the \(x\)-axis on its roots needs',
   ['(A) one integral only','(B) split where \(f\) changes sign','(C) ignore negatives','(D) differentiate','(E) none']),
  (r'\(\displaystyle\int 3\cos\!\left(\dfrac{x}{3}\right)dx=\)',
   [r'(A) \(9\sin(x/3)+C\)',r'(B) \(3\sin(x/3)+C\)',r'(C) \(\sin(3x)+C\)',r'(D) \(\tfrac13\sin(x/3)+C\)',r'(E) \(-3\sin(x/3)+C\)']),
+ (r'For \(\displaystyle\int(6x-2)\sqrt{3x^2-2x}\,dx\), a good substitution is',
+  [r'(A) \(u=6x-2\)',r'(B) \(u=3x^2-2x\)',r'(C) \(u=\sqrt{x}\)',r'(D) \(u=3x\)',r'(E) \(u=x^2\)']),
  r'If \(\dfrac{dy}{dx}=1+3x\) and the curve passes through \((4,10)\), find \(y\).',
- r'Find \(\displaystyle\int(9x^5+3x^2)\,dx\) in positive-index form.',
- r'Find \(\displaystyle\int\left(3x^3-\dfrac{4}{x}\right)dx\) with positive indices/surds as needed.',
- r'Area between \(y=x-x^2\) and the \(x\)-axis from \(0\) to \(1\).',
- r'Show intersection of \(y=x^2\) and \(y=2-x^2\) at \((\pm1,1)\) and find the enclosed area.',
+ r'Find \(\displaystyle\int(9x^5+3x^2)\,dx\).',
+ r'Find \(\displaystyle\int\left(3x^3-\dfrac{4}{x}\right)dx\).',
+ r'Find the area between \(y=x-x^2\) and the \(x\)-axis from \(0\) to \(1\).',
+ r'Show that \(y=x^2\) and \(y=2-x^2\) meet at \((\pm1,1)\), then find the enclosed area.',
  r'Find \(\displaystyle\int(e^{2x}+4x)\,dx\).',
- r'Use \(u=x^2-3\) (or suitable) to evaluate \(\displaystyle\int 2x(x^2-3)^3\,dx\).',
+ r'Find \(\displaystyle\int\dfrac{1}{5+x}\,dx\).',
+ r'Evaluate \(\displaystyle\int_0^{\pi/2}(1-\sin2x)\,dx\).',
+ r'Use \(u=x^2-3\) to evaluate \(\displaystyle\int 2x(x^2-3)^3\,dx\).',
+ r'Use a suitable substitution to evaluate \(\displaystyle\int\dfrac{2x}{\sqrt{x^2+9}}\,dx\).',
 ],
 [
  (r'\(\displaystyle\int x^{1/2}\,dx=\)',
@@ -458,32 +543,42 @@ int_q = [
   [r'(A) \(3e^{3x}+C\)',r'(B) \(\tfrac13 e^{3x}+C\)',r'(C) \(e^{3x}+C\)',r'(D) \(e^{x}/3+C\)',r'(E) \(-3e^{3x}+C\)']),
  (r'Area under \(y=\sqrt{x}\) from \(0\) to \(4\) equals',
   ['(A) \(8/3\)','(B) \(16/3\)','(C) \(4\)','(D) \(8\)','(E) \(2\)']),
- r'Gradient \(\dfrac{dy}{dx}=2x-5\), passes through \((3,1)\). Find the curve.',
+ (r'Best \(u\) for \(\displaystyle\int x e^{x^2}\,dx\)',
+  [r'(A) \(u=x\)',r'(B) \(u=x^2\)',r'(C) \(u=e^{x}\)',r'(D) \(u=xe^{x}\)',r'(E) \(u=2x\)']),
+ r'Gradient \(\dfrac{dy}{dx}=2x-5\), curve through \((3,1)\). Find the equation of the curve.',
  r'\(\displaystyle\int\left(x^4-\dfrac{1}{x^2}\right)dx\).',
  r'\(\displaystyle\int_1^{4}\dfrac{1}{\sqrt{x}}\,dx\).',
- r'Area between \(y=4-x^2\) and the \(x\)-axis (full positive region).',
+ r'Find the area between \(y=4-x^2\) and the \(x\)-axis (full positive region).',
+ r'Find the area between \(y=x\) and \(y=x^2\) on \([0,1]\).',
  r'\(\displaystyle\int(3\cos2x-2\sin x)\,dx\).',
- r'\(\displaystyle\int\dfrac{1}{5+x}\,dx\).',
+ r'Find \(\displaystyle\int 5e^{-x}\,dx\).',
+ r'Evaluate \(\displaystyle\int_0^{1}(e^{x}+2x)\,dx\).',
  r'Substitution for \(\displaystyle\int\cos2x\cdot(2\sin2x)^3\,dx\): choose \(u\) and finish.',
+ r'Use substitution to evaluate \(\displaystyle\int\dfrac{\cos x}{\sin x}\,dx\).',
 ],
 [
- (r'\(\displaystyle\int(2x+1)^5\,dx\) (by inspection/chain reverse) =',
+ (r'\(\displaystyle\int(2x+1)^5\,dx=\)',
   [r'(A) \(\tfrac16(2x+1)^6+C\)',r'(B) \(\tfrac{1}{12}(2x+1)^6+C\)',r'(C) \(5(2x+1)^4+C\)',r'(D) \(\tfrac15(2x+1)^6+C\)',r'(E) \((2x+1)^6+C\)']),
  (r'\(\displaystyle\int_0^{1}(3x^2-1)\,dx=\)',
   ['(A) \(0\)','(B) \(1\)','(C) \(2\)','(D) \(-1\)','(E) \(1/2\)']),
  (r'\(\displaystyle\int\sin(3x)\,dx=\)',
   [r'(A) \(-\tfrac13\cos3x+C\)',r'(B) \(\tfrac13\cos3x+C\)',r'(C) \(-\cos3x+C\)',r'(D) \(3\cos3x+C\)',r'(E) \(\sin3x+C\)']),
- (r'Best \(u\) for \(\displaystyle\int x e^{x^2}\,dx\)',
-  [r'(A) \(u=x\)',r'(B) \(u=x^2\)',r'(C) \(u=e^{x}\)',r'(D) \(u=xe^{x}\)',r'(E) \(u=2x\)']),
  (r'FTC: if \(F\'=f\) then \(\displaystyle\int_a^b f=\)',
   [r'(A) \(F(a)-F(b)\)',r'(B) \(F(b)-F(a)\)',r'(C) \(F(ab)\)',r'(D) \(F\'(b)-F\'(a)\)',r'(E) \(f(b)-f(a)\)']),
+ (r'Area under \(y=e^{x}\) from \(0\) to \(1\) is',
+  [r'(A) \(e-1\)',r'(B) \(e\)',r'(C) \(1\)',r'(D) \(e+1\)',r'(E) \(1/e\)']),
+ (r'For \(\displaystyle\int\dfrac{4x}{x^2+1}\,dx\), a good \(u\) is',
+  [r'(A) \(u=4x\)',r'(B) \(u=x^2+1\)',r'(C) \(u=x\)',r'(D) \(u=\ln x\)',r'(E) \(u=x^2\)']),
  r'Curve with \(\dfrac{dy}{dx}=\dfrac{1}{x}\) through \((e,2)\). Find \(y\).',
  r'\(\displaystyle\int\left(6x^{1/2}-x^{-1/2}\right)dx\).',
- r'\(\displaystyle\int_0^{\pi/2}(1-\sin2x)\,dx\) exact value.',
- r'Area between \(y=x\) and \(y=x^2\) on \([0,1]\).',
+ r'\(\displaystyle\int_{-2}^{1}(3x^2)\,dx\).',
+ r'Find the area between \(y=\sin x\) and the \(x\)-axis from \(0\) to \(\pi\).',
+ r'Find the area enclosed by \(y=x^2\) and \(y=4x-x^2\).',
  r'\(\displaystyle\int\dfrac{4}{2x+1}\,dx\).',
- r'Find \(\displaystyle\int 5e^{-x}\,dx\).',
- r'Use substitution to find \(\displaystyle\int\dfrac{2x}{\sqrt{x^2+9}}\,dx\).',
+ r'\(\displaystyle\int(2\sec^2 x-3\cos x)\,dx\).',
+ r'Evaluate \(\displaystyle\int_0^{\pi/4}\sec^2 x\,dx\).',
+ r'Use substitution to find \(\displaystyle\int\dfrac{x}{x^2+1}\,dx\).',
+ r'Use substitution to evaluate \(\displaystyle\int(3x-1)(3x^2-2x)^4\,dx\).',
 ],
 [
  (r'\(\displaystyle\int\dfrac{1}{x^2}\,dx=\)',
@@ -492,17 +587,22 @@ int_q = [
   ['(A) \(8/3\)','(B) \(14/3\)','(C) \(4\)','(D) \(6\)','(E) \(10/3\)']),
  (r'\(\displaystyle\int\cos\!\left(\dfrac{x}{2}\right)dx=\)',
   [r'(A) \(2\sin(x/2)+C\)',r'(B) \(\tfrac12\sin(x/2)+C\)',r'(C) \(-\sin(x/2)+C\)',r'(D) \(2\cos(x/2)+C\)',r'(E) \(\sin x+C\)']),
- (r'Area under \(y=e^{x}\) from \(0\) to \(1\) is',
-  [r'(A) \(e-1\)',r'(B) \(e\)',r'(C) \(1\)',r'(D) \(e+1\)',r'(E) \(1/e\)']),
- (r'For \(\displaystyle\int(6x-2)\sqrt{3x^2-2x}\,dx\), a good substitution is',
-  [r'(A) \(u=6x-2\)',r'(B) \(u=3x^2-2x\)',r'(C) \(u=\sqrt{x}\)',r'(D) \(u=3x\)',r'(E) \(u=x^2\)']),
+ (r'Best first step for \(\displaystyle\int(x+1)^2\,dx\)?',
+  ['(A) Expand','(B) Parts','(C) Partial fractions','(D) Differentiate','(E) none']),
+ (r'\(\displaystyle\int\dfrac{1}{x}\,dx=\)',
+  [r'(A) \(x+C\)',r'(B) \(\ln|x|+C\)',r'(C) \(1/x+C\)',r'(D) \(e^{x}+C\)',r'(E) \(x\ln x+C\)']),
+ (r'For \(\displaystyle\int\sin x\cos x\,dx\), a good substitution is',
+  [r'(A) \(u=\sin x\)',r'(B) \(u=x\)',r'(C) \(u=\tan x\)',r'(D) \(u=\sec x\)',r'(E) \(u=\cos^2 x\)']),
  r'If \(y\'=4x^3-2\) and \(y(1)=5\), find \(y\).',
  r'\(\displaystyle\int\left(x^{3}-\dfrac{2}{x^{3}}\right)dx\).',
- r'\(\displaystyle\int_{-2}^{1}(3x^2)\,dx\).',
- r'Area between \(y=\sin x\) and the \(x\)-axis from \(0\) to \(\pi\).',
- r'\(\displaystyle\int(2\sec^2 x-3\cos x)\,dx\).',
- r'\(\displaystyle\int\dfrac{x}{x^2+1}\,dx\).',
- r'Substitution: evaluate \(\displaystyle\int\dfrac{\cos x}{\sin x}\,dx\) (or \(\displaystyle\int\cot x\,dx\)).',
+ r'\(\displaystyle\int_0^{1}(4x^3-1)\,dx\).',
+ r'Find the area between \(y=2x\) and \(y=x^2\) from their positive intersection points.',
+ r'Find the area between \(y=\sqrt{x}\) and \(y=x\) from \(0\) to \(1\).',
+ r'\(\displaystyle\int(2e^{x}-3\sin x)\,dx\).',
+ r'\(\displaystyle\int\dfrac{3}{x}\,dx\).',
+ r'Evaluate \(\displaystyle\int_0^{\pi/2}\cos2x\,dx\).',
+ r'Use substitution to evaluate \(\displaystyle\int\dfrac{6x}{x^2+4}\,dx\).',
+ r'Use substitution to evaluate \(\displaystyle\int 2\cos x\sin^5 x\,dx\).',
 ],
 ]
 
@@ -513,13 +613,17 @@ int_a = [
  r'(E) \(27/2\).',
  r'(B) Split on sign changes.',
  r'(A) \(9\sin(x/3)+C\).',
- r'\(y=x+\tfrac32 x^2+C\); through (4,10) \(\Rightarrow C=-18\); \(y=x+\tfrac32x^2-18\).',
+ r'(B) \(u=3x^2-2x\).',
+ r'\(y=x+\tfrac32 x^2-18\).',
  r'\(\tfrac32 x^6+x^3+C\).',
  r'\(\tfrac34 x^4-4\ln|x|+C\).',
- r'\(\int_0^1(x-x^2)dx=\tfrac16\).',
- r'Area \(=\int_{-1}^{1}((2-x^2)-x^2)dx=\dfrac{8}{3}\).',
+ r'\(\dfrac16\).',
+ r'Area \(=\dfrac{8}{3}\).',
  r'\(\tfrac12 e^{2x}+2x^2+C\).',
+ r'\(\ln|5+x|+C\).',
+ r'\(\dfrac{\pi}{2}-1\).',
  r'\(\tfrac12(x^2-3)^4+C\).',
+ r'\(2\sqrt{x^2+9}+C\).',
 ],
 [
  r'(A) \(\tfrac23 x^{3/2}+C\).',
@@ -527,44 +631,56 @@ int_a = [
  r'(B) \(u=x^2+5\).',
  r'(B) \(\tfrac13 e^{3x}+C\).',
  r'(B) \(16/3\).',
- r'\(y=x^2-5x+C\); (3,1)\(\Rightarrow C=7\); \(y=x^2-5x+7\).',
+ r'(B) \(u=x^2\).',
+ r'\(y=x^2-5x+7\).',
  r'\(\tfrac15 x^5+\dfrac{1}{x}+C\).',
- r'\([2\sqrt{x}]_1^4=4-2=2\).',
- r'\(\int_{-2}^{2}(4-x^2)dx=\dfrac{32}{3}\).',
+ r'\(2\).',
+ r'\(\dfrac{32}{3}\).',
+ r'\(\dfrac16\).',
  r'\(\tfrac32\sin2x+2\cos x+C\).',
- r'\(\ln|5+x|+C\).',
- r'\(u=\sin2x\), result \(\tfrac18(\sin2x)^4+C\) (up to constant factor check).',
+ r'\(-5e^{-x}+C\).',
+ r'\(e-\tfrac12\).',
+ r'\(u=\sin2x\Rightarrow \tfrac18\sin^4(2x)+C\).',
+ r'\(\ln|\sin x|+C\).',
 ],
 [
  r'(B) \(\tfrac{1}{12}(2x+1)^6+C\).',
  r'(A) \(0\).',
  r'(A) \(-\tfrac13\cos3x+C\).',
- r'(B) \(u=x^2\).',
  r'(B) \(F(b)-F(a)\).',
+ r'(A) \(e-1\).',
+ r'(B) \(u=x^2+1\).',
  r'\(y=\ln|x|+1\).',
  r'\(4x^{3/2}-2x^{1/2}+C\).',
- r'\(\dfrac{\pi}{2}-1\).',
- r'\(\dfrac16\).',
+ r'\(9\).',
+ r'\(2\).',
+ r'Intersections \(x=0,2\); area \(=\dfrac{8}{3}\).',
  r'\(2\ln|2x+1|+C\).',
- r'\(-5e^{-x}+C\).',
- r'\(2\sqrt{x^2+9}+C\).',
+ r'\(2\tan x-3\sin x+C\).',
+ r'\(1\).',
+ r'\(\tfrac12\ln(x^2+1)+C\).',
+ r'\(\tfrac1{10}(3x^2-2x)^5+C\) (via \(u=3x^2-2x\)).',
 ],
 [
  r'(B) \(-1/x+C\).',
  r'(B) \(14/3\).',
  r'(A) \(2\sin(x/2)+C\).',
- r'(A) \(e-1\).',
- r'(B) \(u=3x^2-2x\).',
- r'\(y=x^4-2x+C\); \(y(1)=5\Rightarrow C=6\); \(y=x^4-2x+6\).',
+ r'(A) Expand.',
+ r'(B) \(\ln|x|+C\).',
+ r'(A) \(u=\sin x\) (or \(u=\cos x\)).',
+ r'\(y=x^4-2x+6\).',
  r'\(\tfrac14 x^4+\dfrac{1}{x^2}+C\).',
- r'\([x^3]_{-2}^{1}=1-(-8)=9\).',
- r'\(2\).',
- r'\(2\tan x-3\sin x+C\).',
- r'\(\tfrac12\ln(x^2+1)+C\).',
- r'\(\ln|\sin x|+C\).',
+ r'\(0\).',
+ r'Intersections \(x=0,2\); area \(=\dfrac43\).',
+ r'\(\dfrac16\).',
+ r'\(2e^{x}+3\cos x+C\).',
+ r'\(3\ln|x|+C\).',
+ r'\(0\).',
+ r'\(3\ln(x^2+4)+C\).',
+ r'\(\tfrac13\sin^6 x+C\).',
 ],
 ]
-write_pair('integration', 'Integration', 'about 70–80 minutes per test',
-           '../integration/2a_Integration_Exam_Sample.pdf', int_q, int_a)
+write_pair('integration', 'Integration', '1 hour 20 minutes per test',
+           '../integration/2a_Integration_Exam_Sample.pdf', int_q, int_a, INT_FMT)
 
 print('tests written to', TESTS)
