@@ -19,6 +19,11 @@ ol>li{margin:10px 0;line-height:1.65;}
 .top-links a{margin-right:12px;text-decoration:none;color:#185FA5;font-weight:600;}
 .ans{background:#f0fdf4;border-left:4px solid #15803d;padding:10px 12px;margin:8px 0 14px;}
 .mark{color:#6b7280;font-size:13px;}
+.paper-rules{background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:10px 14px;margin:10px 0 16px;font-size:14px;}
+.paper-rules ul{margin:6px 0 0 20px;padding:0;}
+.paper-rules li{margin:3px 0;}
+.part-title{margin:16px 0 6px;color:#1B3A5C;font-size:16px;border-bottom:1px solid #d1d5db;padding-bottom:5px;}
+.question-mark{display:block;text-align:right;color:#4b5563;font-size:13px;font-weight:600;margin-top:4px;}
 """
 
 def page(title, body, katex=True):
@@ -28,7 +33,7 @@ def page(title, body, katex=True):
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\\\(',right:'\\\\)',display:false}]});"></script>'''
-    return f'''<!DOCTYPE html>
+    rendered = f'''<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{H.escape(title)}</title>
@@ -38,21 +43,46 @@ def page(title, body, katex=True):
 {body}
 </div></body></html>
 '''
+    # Python source uses \' inside single-quoted raw strings; KaTeX needs a plain
+    # apostrophe for derivatives and arcminutes.
+    return rendered.replace("\\'", "'")
 
 
 def write_pair(slug, subject, timing, sample_href, tests_q, tests_a):
     # questions page with all 4 tests
     q_blocks = []
     for i, qs in enumerate(tests_q, 1):
-        items = []
-        for q in qs:
-            if isinstance(q, tuple):
-                stem, choices = q
+        if slug == 'trig':
+            assert len(qs) == 15 and all(isinstance(q, tuple) for q in qs[:5])
+            mc_items = []
+            for stem, choices in qs[:5]:
                 ch = ''.join(f'<div class="mc">{c}</div>' for c in choices)
-                items.append(f'<li>{stem}{ch}</li>')
-            else:
-                items.append(f'<li>{q}</li>')
-        q_blocks.append(f'<div class="test"><h3>Test {i}</h3><ol>\n' + '\n'.join(items) + '\n</ol></div>')
+                mc_items.append(f'<li>{stem}{ch}</li>')
+            long_marks = [2, 2, 2, 2, 2, 3, 3, 3, 4, 4]
+            long_items = [
+                f'<li>{q}<span class="question-mark">[{mark} marks]</span></li>'
+                for q, mark in zip(qs[5:], long_marks)
+            ]
+            rules = '''<div class="paper-rules"><strong>Total number of questions: 15</strong>
+<ul><li>Questions 1–5 are multiple choice. Each question is worth 1 mark; marks are awarded for the answer only.</li>
+<li>Questions 6–15 are long-answer questions. The value of each question is indicated; show all working.</li></ul></div>'''
+            q_blocks.append(
+                f'<div class="test"><h3>Test {i}</h3>{rules}'
+                f'<h4 class="part-title">Questions 1–5: Multiple choice</h4><ol>\n'
+                + '\n'.join(mc_items)
+                + '\n</ol><h4 class="part-title">Questions 6–15: Long answer</h4><ol start="6">\n'
+                + '\n'.join(long_items) + '\n</ol></div>'
+            )
+        else:
+            items = []
+            for q in qs:
+                if isinstance(q, tuple):
+                    stem, choices = q
+                    ch = ''.join(f'<div class="mc">{c}</div>' for c in choices)
+                    items.append(f'<li>{stem}{ch}</li>')
+                else:
+                    items.append(f'<li>{q}</li>')
+            q_blocks.append(f'<div class="test"><h3>Test {i}</h3><ol>\n' + '\n'.join(items) + '\n</ol></div>')
 
     q_body = f'''
 <h1>DPEN022 {subject} — Practice Tests (Questions)</h1>
@@ -88,10 +118,10 @@ Timing guide: {timing}. Show full working on long-answer items.</p>
     (TESTS / f'{slug}-answers.html').write_text(page(f'DPEN022 {subject} Practice Tests — Answers', a_body))
 
 
-# ---------- TRIG (4 tests × 12) ----------
+# ---------- TRIG (4 tests × 15: 5 multiple choice + 10 long answer) ----------
 trig_q = [
 [
- (r'In a right triangle, adjacent side \(5\) m and angle \(13^\circ45'\). Find the hypotenuse correct to 2 d.p.',
+ (r'In a right triangle, adjacent side \(5\) m and angle \(13^\circ45\'\). Find the hypotenuse correct to 2 d.p.',
   ['(A) \(1.19\) m','(B) \(5.15\) m','(C) \(21.04\) m','(D) \(4.86\) m','(E) \(20.43\) m']),
  (r'What is the reference angle for \(\theta=-135^\circ\)?',
   ['(A) \(135^\circ\)','(B) \(225^\circ\)','(C) \(315^\circ\)','(D) \(45^\circ\)','(E) \(90^\circ\)']),
@@ -104,10 +134,13 @@ trig_q = [
  r'Simplify \((1-\sin^2 x)\sec^2 x\).',
  r'Hypotenuse \(15\) m, adjacent \(7\) m. Find the included angle to the nearest minute.',
  r'If \(\sin\theta=\dfrac{3}{5}\) and \(\theta\) is acute, find the exact value of \(\sec\theta\).',
- r'Find \(x\) if \(\sin 80^\circ=\cos(90^\circ-2x)\).',
+ r'Solve \(\sin 80^\circ=\cos(90^\circ-2x)\) for \(0^\circ<x<90^\circ\).',
  r'Find the exact value of \(\tan\dfrac{2\pi}{3}\).',
  r'Solve \(\cos\theta=\dfrac{1}{2}\) for \(0^\circ\le\theta\le360^\circ\). Exact answers in degrees.',
  r'Solve \(\cot\theta=\sqrt{3}\) for \(0\le\theta\le2\pi\). Exact answers in radians.',
+ r'Given \(\sin A=\dfrac35\) and \(\cos B=\dfrac{12}{13}\), where \(A\) and \(B\) are acute, find the exact value of \(\cos(A-B)\).',
+ r'Solve \(2\sin^2\theta-3\sin\theta+1=0\) for \(0^\circ\le\theta\le360^\circ\).',
+ r'Sketch \(y=3\sin(2x)-1\) for \(0\le x\le2\pi\). State its amplitude, period and range.',
 ],
 [
  (r'Adjacent \(8\) m, angle \(22^\circ\). Find the opposite side to 2 d.p.',
@@ -123,10 +156,13 @@ trig_q = [
  r'Simplify \(\dfrac{\sin\theta}{\cos\theta}\cdot\cos\theta\sec\theta\).',
  r'Opposite \(9\) m, hypotenuse \(15\) m. Find the angle opposite the \(9\) m side to the nearest degree.',
  r'If \(\cos\theta=\dfrac{5}{13}\) and \(\theta\) acute, find exact \(\tan\theta\).',
- r'Find \(x\) if \(\cos 35^\circ=\sin(2x)\).',
+ r'Solve \(\cos 35^\circ=\sin(2x)\) for \(0^\circ<x<90^\circ\).',
  r'Exact value of \(\sin\dfrac{5\pi}{6}\).',
  r'Solve \(2\sin\theta=-1\) for \(0^\circ\le\theta\le360^\circ\).',
  r'Sketch \(y=2\cos 3x\) on \([0,2\pi]\) and state amplitude and period.',
+ r'Prove \((\sec\theta-\tan\theta)(\sec\theta+\tan\theta)=1\).',
+ r'Two observation points on level ground are \(20\) m apart and lie on the same straight line from a tower. Their angles of elevation to the top are \(45^\circ\) and \(30^\circ\). Find the tower height to 2 d.p.',
+ r'Sketch \(y=2\cos\!\left(3x-\dfrac{\pi}{2}\right)+1\) for \(0\le x\le2\pi\). State its amplitude, period, phase shift and range.',
 ],
 [
  (r'Angle of elevation \(18^\circ\) from a point \(40\) m from a tower base. Tower height to 1 d.p.?',
@@ -145,7 +181,10 @@ trig_q = [
  r'Find exact \(\cos\dfrac{3\pi}{4}\).',
  r'Solve \(\tan\theta=1\) for \(0\le\theta\le2\pi\).',
  r'Solve \(2\cos\theta=\sqrt{3}\) for \(0^\circ\le\theta\le360^\circ\).',
- r'Prove \(\dfrac{1-\cos 2\theta}{\sin 2\theta}=\tan\theta\) (or show both sides equal for a chosen \(\theta\) and outline the identity steps).',
+ r'Prove \(\dfrac{1-\cos 2\theta}{\sin 2\theta}=\tan\theta\).',
+ r'If \(\sin\theta=-\dfrac35\) and \(\theta\) is in Quadrant IV, find the exact values of \(\cos 2\theta\) and \(\tan 2\theta\).',
+ r'Solve \(2\cos\theta+1=0\) for \(0\le\theta\le2\pi\).',
+ r'Given \(\sin A=\dfrac{5}{13}\) and \(\cos B=\dfrac45\), where \(A\) and \(B\) are acute, find the exact value of \(\sin(A+B)\).',
 ],
 [
  (r'In \(\triangle ABC\), right-angled at \(C\), \(AC=6\), \(BC=8\). Find \(\sin A\).',
@@ -165,23 +204,29 @@ trig_q = [
  r'Solve \(\sin 2\theta=0\) for \(0^\circ\le\theta\le180^\circ\).',
  r'Solve \(2\cos^2\theta-1=0\) for \(0^\circ\le\theta\le360^\circ\).',
  r'For \(y=\dfrac12\sin 2x\), state amplitude, period, and the first positive \(x\)-intercept.',
+ r'Prove \(\dfrac{1-\cos 2\theta}{1+\cos 2\theta}=\tan^2\theta\).',
+ r'Solve \(\sin^2\theta=\dfrac34\) for \(0^\circ\le\theta\le360^\circ\).',
+ r'A sinusoidal function has maximum \(5\), minimum \(-1\), period \(\dfrac{2\pi}{3}\), and passes through \((0,2)\) while increasing. Find an equation for the function and sketch one period.',
 ],
 ]
 
 trig_a = [
 [
- r'(B) \(5.15\) m — \(x=5/\cos 13^\circ45'\).',
- r'(D)/(E as sample) reference angle \(45^\circ\) after mapping \(-135^\circ\to225^\circ\).',
+ r'(B) \(5.15\) m — \(x=5/\cos 13^\circ45\'\).',
+ r'(D) Reference angle \(45^\circ\), since \(-135^\circ\) is coterminal with \(225^\circ\).',
  r'(C) Quadrant 3.',
  r'(A) \(165^\circ\).',
  r'(B) \(3\cos(x/2)-2\).',
  r'\(1\).',
- r'\(\cos^{-1}(7/15)\approx62^\circ12'\).',
+ r'\(\cos^{-1}(7/15)\approx62^\circ11\'\).',
  r'\(\sec\theta=5/4\).',
- r'\(x=5^\circ\).',
+ r'\(x=40^\circ\) or \(50^\circ\), since \(\sin 80^\circ=\sin 2x\).',
  r'\(-\sqrt{3}\).',
  r'\(\theta=60^\circ,300^\circ\).',
  r'\(\theta=\pi/6, 7\pi/6\).',
+ r'\(\cos A=\dfrac45\), \(\sin B=\dfrac5{13}\), so \(\cos(A-B)=\dfrac45\cdot\dfrac{12}{13}+\dfrac35\cdot\dfrac5{13}=\dfrac{63}{65}\).',
+ r'\((2\sin\theta-1)(\sin\theta-1)=0\), hence \(\theta=30^\circ,90^\circ,150^\circ\).',
+ r'Amplitude \(3\), period \(\pi\), midline \(y=-1\), range \([-4,2]\). Plot two complete cycles on \([0,2\pi]\).',
 ],
 [
  r'(A) \(3.23\) m (or check \(8\tan22^\circ\)).',
@@ -192,10 +237,13 @@ trig_a = [
  r'\(\sec\theta\) (simplifies to \(1/\cos\theta\)).',
  r'\(\sin^{-1}(9/15)=37^\circ\) approx.',
  r'\(\tan\theta=12/5\).',
- r'\(x=27.5^\circ\).',
+ r'\(x=27.5^\circ\) or \(62.5^\circ\), since \(\sin 2x=\sin55^\circ\).',
  r'\(1/2\).',
  r'\(\theta=210^\circ,330^\circ\).',
  r'Amp \(2\), period \(2\pi/3\).',
+ r'\((\sec\theta-\tan\theta)(\sec\theta+\tan\theta)=\sec^2\theta-\tan^2\theta=1\).',
+ r'Let the nearer distance be \(x\) m. Then \(h=x\) and \(h=(x+20)/\sqrt3\), so \(h=10(\sqrt3+1)\approx27.32\) m.',
+ r'Amplitude \(2\), period \(2\pi/3\), phase shift \(\pi/6\) right, midline \(y=1\), range \([-1,3]\).',
 ],
 [
  r'(B) \(13.0\) m (\(40\tan18^\circ\)).',
@@ -209,7 +257,10 @@ trig_a = [
  r'\(-\dfrac{\sqrt2}{2}\).',
  r'\(\theta=\pi/4,5\pi/4\).',
  r'\(\theta=30^\circ,330^\circ\).',
- r'Use double-angle identities; both sides \(\tan\theta\).',
+ r'\(\dfrac{1-\cos2\theta}{\sin2\theta}=\dfrac{2\sin^2\theta}{2\sin\theta\cos\theta}=\tan\theta\).',
+ r'\(\cos\theta=\dfrac45\). Thus \(\cos2\theta=\dfrac7{25}\) and \(\tan2\theta=-\dfrac{24}{7}\).',
+ r'\(\theta=\dfrac{2\pi}{3},\dfrac{4\pi}{3}\).',
+ r'\(\cos A=\dfrac{12}{13}\), \(\sin B=\dfrac35\), so \(\sin(A+B)=\dfrac5{13}\cdot\dfrac45+\dfrac{12}{13}\cdot\dfrac35=\dfrac{56}{65}\).',
 ],
 [
  r'(B) \(4/5\).',
@@ -224,9 +275,12 @@ trig_a = [
  r'\(\theta=0^\circ,90^\circ,180^\circ\).',
  r'\(\theta=45^\circ,135^\circ,225^\circ,315^\circ\).',
  r'Amp \(1/2\), period \(\pi\), first positive intercept \(x=\pi/2\).',
+ r'\(\dfrac{1-\cos2\theta}{1+\cos2\theta}=\dfrac{2\sin^2\theta}{2\cos^2\theta}=\tan^2\theta\).',
+ r'\(\sin\theta=\pm\dfrac{\sqrt3}{2}\), so \(\theta=60^\circ,120^\circ,240^\circ,300^\circ\).',
+ r'Midline \(2\), amplitude \(3\), angular frequency \(3\); an equation is \(y=3\sin3x+2\). One period is \(0\le x\le2\pi/3\).',
 ],
 ]
-write_pair('trig', 'Trigonometry', 'about 50–60 minutes per test',
+write_pair('trig', 'Trigonometry', '1 hour per test',
            '../trig/2a_Trigonometry_Exam_Sample_Public_Holiday.pdf', trig_q, trig_a)
 
 
@@ -235,11 +289,11 @@ ld_q = [
 [
  (r'\(\displaystyle\lim_{x\to-2}\dfrac{x^3+2}{x^2+5}\)=',
   ['(A) \(0\)','(B) \(-\infty\)','(C) \(-2\)','(D) \(4\)','(E) DNE']),
- (r'For \(f(x)=x^2-6x-1\), \(f'(x)=0\) when \(x=\)',
+ (r'For \(f(x)=x^2-6x-1\), \(f\'(x)=0\) when \(x=\)',
   ['(A) \(-1\)','(B) \(6\)','(C) \(-3\)','(D) \(3\)','(E) \(0\)']),
  (r'Derivative of \(y=(x^2-1)^{1/3}\) is',
   [r'(A) \(\dfrac{2x}{3(x^2-1)^{2/3}}\)',r'(B) \(\dfrac{2x}{3(x^2-1)^{4/3}}\)',r'(C) \(-\dfrac{2x}{3(x^2-1)^{4/3}}\)',r'(D) \(\dfrac{x}{(x^2-1)^{2/3}}\)',r'(E) other']),
- (r'\(f(x)=\dfrac{x^2+3}{x^3}\) has \(f'(x)=\)',
+ (r'\(f(x)=\dfrac{x^2+3}{x^3}\) has \(f\'(x)=\)',
   [r'(A) \(2x-3x^2\)',r'(B) \(\dfrac{2x\cdot x^3-3x^2(x^2+3)}{x^6}\)',r'(C) \(\dfrac{-x^2-9}{x^4}\)',r'(D) \(\dfrac{2}{x}\) ',r'(E) \(-\dfrac{x^2+9}{x^4}\)']),
  (r'Tangent to \(y=3x^2\) at \(x=-1\) (gradient-intercept) is',
   [r'(A) \(y=-6x-3\)',r'(B) \(y=-6x+3\)',r'(C) \(y=6x-3\)',r'(D) \(y=6x+3\)',r'(E) \(y=-6x-6\)']),
@@ -248,17 +302,17 @@ ld_q = [
  r'Evaluate \(\displaystyle\lim_{x\to\infty}\dfrac{3x^2+6}{2x^2-7}\) if it exists.',
  r'Find \(\dfrac{dy}{dx}\) for \(y=\sqrt{x}+x\sqrt{x}\), leaving surds.',
  r'Expand and differentiate \(f(x)=(x-1)(2x+3)\), simplify fully.',
- r'Find \(f'(1)\) for \(f(x)=e^{x^2+2}\) (chain rule, exact).',
+ r'Find \(f\'(1)\) for \(f(x)=e^{x^2+2}\) (chain rule, exact).',
  r'Differentiate \(y=\dfrac{\ln(2x)}{x}\) and simplify.',
 ],
 [
  (r'\(\displaystyle\lim_{x\to3}\dfrac{x^2-9}{x-3}\)=',
   ['(A) \(0\)','(B) \(3\)','(C) \(6\)','(D) DNE','(E) \(\infty\)']),
- (r'\(f(x)=4x^3-12x\). Stationary points when \(f'=0\):',
+ (r'\(f(x)=4x^3-12x\). Stationary points when \(f\'=0\):',
   [r'(A) \(x=0\) only',r'(B) \(x=\pm1\)',r'(C) \(x=\pm\sqrt{3}\)',r'(D) \(x=1,2\)',r'(E) none']),
  (r'Derivative of \(y=\sin(3x)e^{x}\) by product rule:',
   [r'(A) \(e^x(3\cos3x+\sin3x)\)',r'(B) \(3\cos3x\,e^x\)',r'(C) \(e^x\sin3x\)',r'(D) \(e^x(\cos3x-\sin3x)\)',r'(E) other']),
- (r'\(y=\ln(5x^2+1)\). Then \(y'=\)',
+ (r'\(y=\ln(5x^2+1)\). Then \(y\'=\)',
   [r'(A) \(\dfrac{1}{5x^2+1}\)',r'(B) \(\dfrac{10x}{5x^2+1}\)',r'(C) \(\dfrac{5x}{5x^2+1}\)',r'(D) \(10x\)',r'(E) \(\ln(10x)\)']),
  (r'Tangent to \(y=e^{2x}\) at \(x=0\):',
   [r'(A) \(y=2x+1\)',r'(B) \(y=x+1\)',r'(C) \(y=2x\)',r'(D) \(y=e^{2}x\)',r'(E) \(y=2e^{2}x+1\)']),
@@ -267,17 +321,17 @@ ld_q = [
  r'Evaluate \(\displaystyle\lim_{x\to\infty}\dfrac{5x+1}{x^2+4}\).',
  r'Differentiate \(y=(2x-1)^5\).',
  r'Differentiate \(y=\dfrac{3x+2}{x-4}\).',
- r'Find the second derivative of \(y=(x-2)^2\sqrt{x}\) at a simplified form (or first find \(y'\) fully).',
+ r'Differentiate \(y=x^4-8x^2+3\) and find all stationary points (classification optional).',
  r'Find the equation of the tangent to \(y=x^3-3x\) at \(x=2\).',
 ],
 [
  (r'\(\displaystyle\lim_{x\to0}\dfrac{\sin x}{x}\)=',
   ['(A) \(0\)','(B) \(1\)','(C) \(\infty\)','(D) DNE','(E) \(-1\)']),
- (r'\(f(x)=x^4-4x^3+2\). \(f''(x)=0\) has solution(s)',
+ (r'\(f(x)=x^4-4x^3+2\). \(f\'\'(x)=0\) has solution(s)',
   [r'(A) \(x=0,2\)',r'(B) \(x=1\) only',r'(C) \(x=0\) only',r'(D) \(x=3\)',r'(E) none']),
- (r'\(y=\tan(2\pi x)\). \(y'(\tfrac16)=\)',
-  [r'(A) \(2\pi\sec^2(\pi/3)\)',r'(B) \(\sec^2(\pi/3)\)',r'(C) \(2\pi\)',r'(D) \(4\)',r'(E) \(2\pi\cdot4=8\pi\) approx check']),
- (r'\(f(x)=\dfrac{e^{x}}{x}\). \(f'(x)=\)',
+ (r'\(y=\tan(2\pi x)\). \(y\'(\tfrac16)=\)',
+  [r'(A) \(2\pi\sec^2(\pi/3)\)',r'(B) \(\sec^2(\pi/3)\)',r'(C) \(2\pi\)',r'(D) \(4\)',r'(E) \(4\pi\)']),
+ (r'\(f(x)=\dfrac{e^{x}}{x}\). \(f\'(x)=\)',
   [r'(A) \(e^x\)',r'(B) \(\dfrac{e^x(x-1)}{x^2}\)',r'(C) \(\dfrac{e^x}{x^2}\)',r'(D) \(e^x(1-x)\)',r'(E) \(\dfrac{xe^x-e^x}{x}\)']),
  (r'Point on \(y=\dfrac12 x^2+9x+4\) where tangent is parallel to \(y=3x-1\):',
   [r'(A) \(x=-6\)',r'(B) \(x=3\)',r'(C) \(x=-3\)',r'(D) \(x=6\)',r'(E) \(x=0\)']),
@@ -285,7 +339,7 @@ ld_q = [
  r'Evaluate \(\displaystyle\lim_{x\to\infty}\left(3+\dfrac{2}{x}\right)\).',
  r'Differentiate \(y=x\ln x\).',
  r'Differentiate \(y=\cos(5x^2)\).',
- r'Find \(f'(2)\) if \(f(x)=\ln(2x-3)\).',
+ r'Find \(f\'(2)\) if \(f(x)=\ln(2x-3)\).',
  r'Differentiate \(y=e^{-x}(x^2-1)\) and simplify.',
  r'Find coordinates where the tangent to \(y=x^3-6x^2+9x+1\) is horizontal.',
 ],
@@ -293,18 +347,18 @@ ld_q = [
  (r'\(\displaystyle\lim_{x\to1}\dfrac{x^3-1}{x-1}\)=',
   ['(A) \(0\)','(B) \(1\)','(C) \(2\)','(D) \(3\)','(E) DNE']),
  (r'\(f(x)=2x^3-15x^2+36x\). Local max/min classification starts from solving',
-  [r'(A) \(f=0\)',r'(B) \(f'=0\)',r'(C) \(f''=0\)',r'(D) \(f'=f\)',r'(E) \(f''=f'\)']),
- (r'\(y=\sin^2(4x)\). \(y'=\)',
+  [r'(A) \(f=0\)',r'(B) \(f\'=0\)',r'(C) \(f\'\'=0\)',r'(D) \(f\'=f\)',r'(E) \(f\'\'=f\'\)']),
+ (r'\(y=\sin^2(4x)\). \(y\'=\)',
   [r'(A) \(2\sin4x\)',r'(B) \(8\sin4x\cos4x\)',r'(C) \(\sin8x\)',r'(D) \(4\sin4x\)',r'(E) both B and equivalent forms']),
- (r'\(y=\dfrac{\ln x}{x}\). Critical points from \(y'=0\) give',
+ (r'\(y=\dfrac{\ln x}{x}\). Critical points from \(y\'=0\) give',
   [r'(A) \(x=e\)',r'(B) \(x=1\)',r'(C) \(x=0\)',r'(D) \(x=e^{-1}\)',r'(E) none']),
  (r'Tangent to \(y=\dfrac{1}{x}\) at \(x=2\):',
-  [r'(A) \(y=-\tfrac14 x+1\)',r'(B) \(y=-\tfrac14x+\tfrac34\) wait check',r'(C) \(y=-\tfrac12x+1\)',r'(D) \(y=\tfrac12x\)',r'(E) \(y=-\tfrac14 x+\tfrac12\)']),
+  [r'(A) \(y=-\tfrac14 x+1\)',r'(B) \(y=-\tfrac14x+\tfrac34\)',r'(C) \(y=-\tfrac12x+1\)',r'(D) \(y=\tfrac12x\)',r'(E) \(y=-\tfrac14 x+\tfrac12\)']),
  r'State whether \(\displaystyle\lim_{x\to0^+} \ln x\) exists as a real number.',
  r'Evaluate \(\displaystyle\lim_{x\to2}\dfrac{x^3-8}{x-2}\).',
  r'Differentiate \(y=(x^2+1)e^{x}\).',
  r'Differentiate \(y=\dfrac{x^2+2}{x^2-2}\).',
- r'Find \(y''\) for \(y=\sqrt{x-1}\).',
+ r'Find \(y\'\'\) for \(y=\sqrt{x-1}\).',
  r'Equation of tangent to \(y=e^{x}+x\) at \(x=0\).',
  r'A particle has \(s(t)=t^3-6t^2+9t\). Find times when velocity is zero on \([0,5]\).',
 ],
@@ -321,9 +375,9 @@ ld_a = [
  r'\(4\) (factor).',
  r'\(\dfrac{3}{2}\).',
  r'\(\dfrac{1}{2\sqrt{x}}+\dfrac{3}{2}\sqrt{x}\).',
- r'\(f'(x)=4x+1\).',
- r'\(f'(1)=2e^{3}\).',
- r'\(y'=\dfrac{1-\ln(2x)}{x^2}\).',
+ r'\(f\'(x)=4x+1\).',
+ r'\(f\'(1)=2e^{3}\).',
+ r'\(y\'=\dfrac{1-\ln(2x)}{x^2}\).',
 ],
 [
  r'(C) \(6\).',
@@ -334,36 +388,36 @@ ld_a = [
  r'No (LHL=-1, RHL=1).',
  r'\(-2\).',
  r'\(0\).',
- r'\(y'=10(2x-1)^4\).',
- r'\(y'=\dfrac{-14}{(x-4)^2}\).',
- r'Compute via product/chain; leave simplified surd/polynomial form.',
- r'\(y=9x-16\) (since \(y'=3x^2-3\), at 2: \(m=9\), \(y(2)=2\)).',
+ r'\(y\'=10(2x-1)^4\).',
+ r'\(y\'=\dfrac{-14}{(x-4)^2}\).',
+ r'\(y\'=4x(x^2-4)\), so stationary points are \((-2,-13)\), \((0,3)\), and \((2,-13)\).',
+ r'\(y=9x-16\) (since \(y\'=3x^2-3\), at 2: \(m=9\), \(y(2)=2\)).',
 ],
 [
  r'(B) \(1\).',
  r'(A) \(x=0,2\).',
- r'(E)/(A) \(2\pi\sec^2(\pi/3)=2\pi\cdot4=8\pi\).',
+ r'(A) \(2\pi\sec^2(\pi/3)=2\pi\cdot4=8\pi\).',
  r'(B) \(\dfrac{e^x(x-1)}{x^2}\).',
- r'(A) \(x=-6\) (\(y'=x+9=3\)).',
+ r'(A) \(x=-6\) (\(y\'=x+9=3\)).',
  r'\(\dfrac{1}{4}\) (rationalise).',
  r'\(3\).',
  r'\(1+\ln x\).',
  r'\(-10x\sin(5x^2)\).',
- r'\(f'(2)=2/(4-3)=2\).',
+ r'\(f\'(2)=2/(4-3)=2\).',
  r'\(e^{-x}(-x^2+2x+1)\).',
- r'\((1,5)\) local max, \((3,-1)\)? check \(y'=3(x-1)(x-3)\); points \((1,5),(3,1)\).',
+ r'\((1,5)\) is a local maximum and \((3,1)\) is a local minimum, since \(y\'=3(x-1)(x-3)\).',
 ],
 [
  r'(D) \(3\).',
- r'(B) \(f'=0\).',
+ r'(B) \(f\'=0\).',
  r'(B)/(E) \(8\sin4x\cos4x=4\sin8x\).',
  r'(A) \(x=e\).',
  r'At \(x=2\), \(y=1/2\), \(m=-1/4\): \(y-\tfrac12=-\tfrac14(x-2)\Rightarrow y=-\tfrac14x+1\).',
  r'No (diverges to \(-\infty\)).',
  r'\(12\).',
  r'\(e^x(x^2+2x+1)\).',
- r'\(y'=\dfrac{-8x}{(x^2-2)^2}\).',
- r'\(y''=-\dfrac{1}{4}(x-1)^{-3/2}\).',
+ r'\(y\'=\dfrac{-8x}{(x^2-2)^2}\).',
+ r'\(y\'\'=-\dfrac{1}{4}(x-1)^{-3/2}\).',
  r'\(y=2x+1\).',
  r'\(t=1,3\).',
 ],
@@ -377,7 +431,7 @@ int_q = [
 [
  (r'Best first step for \(\displaystyle\int\left(x-\dfrac{3}{x}\right)^2 dx\)?',
   ['(A) Substitution','(B) Expand','(C) Differentiate first','(D) Common denominator','(E) none']),
- (r'\(\displaystyle\int\left(x+\dfrac{1}{x}\right)^2?\) wait: \(\displaystyle\int\left(\sqrt{x}+\dfrac{1}{x}\right)dx\) closest form among',
+ (r'\(\displaystyle\int\left(\sqrt{x}+\dfrac{1}{x}\right)\,dx=\)',
   [r'(A) \(\tfrac{2}{3}x^{3/2}+\ln|x|+C\)',r'(B) \(\tfrac{3}{2}x^{3/2}+\ln|x|+C\)',r'(C) \(x^{1/2}-\dfrac{1}{x}+C\)',r'(D) \(\tfrac{2}{3}x^{3/2}-\dfrac{1}{x}+C\)',r'(E) other']),
  (r'\(\displaystyle\int_{-1}^{2}(2x^3+2)\,dx=\)',
   ['(A) \(14\)','(B) \(25/2\)','(C) \(9\)','(D) \(12\)','(E) \(27/2\)']),
@@ -421,14 +475,14 @@ int_q = [
   [r'(A) \(-\tfrac13\cos3x+C\)',r'(B) \(\tfrac13\cos3x+C\)',r'(C) \(-\cos3x+C\)',r'(D) \(3\cos3x+C\)',r'(E) \(\sin3x+C\)']),
  (r'Best \(u\) for \(\displaystyle\int x e^{x^2}\,dx\)',
   [r'(A) \(u=x\)',r'(B) \(u=x^2\)',r'(C) \(u=e^{x}\)',r'(D) \(u=xe^{x}\)',r'(E) \(u=2x\)']),
- (r'FTC: if \(F'=f\) then \(\displaystyle\int_a^b f=\)',
-  [r'(A) \(F(a)-F(b)\)',r'(B) \(F(b)-F(a)\)',r'(C) \(F(ab)\)',r'(D) \(F'(b)-F'(a)\)',r'(E) \(f(b)-f(a)\)']),
+ (r'FTC: if \(F\'=f\) then \(\displaystyle\int_a^b f=\)',
+  [r'(A) \(F(a)-F(b)\)',r'(B) \(F(b)-F(a)\)',r'(C) \(F(ab)\)',r'(D) \(F\'(b)-F\'(a)\)',r'(E) \(f(b)-f(a)\)']),
  r'Curve with \(\dfrac{dy}{dx}=\dfrac{1}{x}\) through \((e,2)\). Find \(y\).',
  r'\(\displaystyle\int\left(6x^{1/2}-x^{-1/2}\right)dx\).',
  r'\(\displaystyle\int_0^{\pi/2}(1-\sin2x)\,dx\) exact value.',
  r'Area between \(y=x\) and \(y=x^2\) on \([0,1]\).',
  r'\(\displaystyle\int\dfrac{4}{2x+1}\,dx\).',
- r'\(\displaystyle\int e^{x}\sin\text{ — skip: }\) Find \(\displaystyle\int 5e^{-x}\,dx\).',
+ r'Find \(\displaystyle\int 5e^{-x}\,dx\).',
  r'Use substitution to find \(\displaystyle\int\dfrac{2x}{\sqrt{x^2+9}}\,dx\).',
 ],
 [
@@ -440,9 +494,9 @@ int_q = [
   [r'(A) \(2\sin(x/2)+C\)',r'(B) \(\tfrac12\sin(x/2)+C\)',r'(C) \(-\sin(x/2)+C\)',r'(D) \(2\cos(x/2)+C\)',r'(E) \(\sin x+C\)']),
  (r'Area under \(y=e^{x}\) from \(0\) to \(1\) is',
   [r'(A) \(e-1\)',r'(B) \(e\)',r'(C) \(1\)',r'(D) \(e+1\)',r'(E) \(1/e\)']),
- (r'For \(\displaystyle\int(3x-1)(6x^2-4x+2)^{1/2}?\) wait: \(\displaystyle\int(6x-2)\sqrt{3x^2-2x}\,dx\), good \(u\) is',
+ (r'For \(\displaystyle\int(6x-2)\sqrt{3x^2-2x}\,dx\), a good substitution is',
   [r'(A) \(u=6x-2\)',r'(B) \(u=3x^2-2x\)',r'(C) \(u=\sqrt{x}\)',r'(D) \(u=3x\)',r'(E) \(u=x^2\)']),
- r'If \(y'=4x^3-2\) and \(y(1)=5\), find \(y\).',
+ r'If \(y\'=4x^3-2\) and \(y(1)=5\), find \(y\).',
  r'\(\displaystyle\int\left(x^{3}-\dfrac{2}{x^{3}}\right)dx\).',
  r'\(\displaystyle\int_{-2}^{1}(3x^2)\,dx\).',
  r'Area between \(y=\sin x\) and the \(x\)-axis from \(0\) to \(\pi\).',
