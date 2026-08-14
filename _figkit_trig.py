@@ -196,7 +196,11 @@ def plot(fn, xmin, xmax, ymin, ymax, keypoints, *,
     # period arrow under the axis
     by = MT + ph + 36
     if period:
-        x1, x2 = sx(keypoints[0][0]), sx(keypoints[0][0] + period)
+        if asymptotes and len(asymptotes) >= 2:
+            start = asymptotes[0]
+        else:
+            start = keypoints[0][0]
+        x1, x2 = sx(start), sx(start + period)
         if x2 <= ML + pw + 1:
             p.append(f'<line x1="{x1:.1f}" y1="{by}" x2="{x2:.1f}" y2="{by}" stroke="{NAVY}" '
                      'stroke-width="1.5" marker-start="url(#arN)" marker-end="url(#arN)"/>')
