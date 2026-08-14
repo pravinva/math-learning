@@ -2,6 +2,7 @@
 """Generate DPEN022 Trig short-lesson practice sets from Weeks 1A–2A notes."""
 from pathlib import Path
 import html as H
+import math
 
 OUT = Path(__file__).resolve().parent / 'siddharth' / 'dpen22' / 'class-notes' / 'trig' / 'lessons'
 OUT.mkdir(parents=True, exist_ok=True)
@@ -23,6 +24,16 @@ h3{font-size:16px;color:var(--blue);margin:16px 0 8px;}
 .formulas{background:#eef6ff;border-color:#c9dff7;}
 .formulas ul,.summary ul{margin-left:20px;}
 .ex{background:#fff7f5;border-left:4px solid var(--orange);padding:10px 12px;margin:12px 0;border-radius:0 6px 6px 0;}
+.exam-note{background:#fff7ed;border:2px solid #f0b429;border-radius:8px;padding:12px 14px;margin:14px 0;color:#92400e;font-size:15px;}
+.exam-note strong{color:#78350f;}
+.tri-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;}
+@media(max-width:700px){.tri-grid{grid-template-columns:1fr;}}
+.tri-card{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:10px 10px 12px;text-align:center;}
+.tri-card h4{font-size:14px;color:var(--navy);margin:0 0 8px;}
+.tri-card svg{max-width:100%;height:auto;}
+.ratio-table{width:100%;border-collapse:collapse;margin:10px 0 4px;font-size:14px;}
+.ratio-table th,.ratio-table td{border:1px solid #c9dff7;padding:7px 8px;text-align:center;}
+.ratio-table th{background:#eef6ff;color:var(--navy);}
 .problems ol{margin-left:22px;}
 .problems li{margin:10px 0;}
 .ans{background:#f0fdf4;border-left:4px solid var(--green);padding:8px 12px;margin:8px 0;border-radius:0 6px 6px 0;}
@@ -33,6 +44,100 @@ summary{cursor:pointer;font-weight:600;color:var(--navy);}
 .chip{display:inline-block;padding:7px 11px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;border:1px solid #c9dff7;background:#eef6ff;color:var(--blue);}
 .chip.on{background:var(--navy);border-color:var(--navy);color:#fff;}
 '''
+
+def _rt_triangle_svg(base_units, height_units, base_lab, height_lab, hyp_lab,
+                     ang_bottom, ang_top, W=330, H=250):
+    """Right triangle with the right angle at bottom-left, drawn to scale.
+
+    Angle arc sweep follows the sign of the cross product because SVG's y-axis
+    points down, so a positive cross product is clockwise on screen.
+    """
+    x0, y0 = 66.0, 196.0
+    scale = 176.0 / max(base_units, height_units)
+    bx, hy = base_units * scale, height_units * scale
+    R, B, T = (x0, y0), (x0 + bx, y0), (x0, y0 - hy)
+    NAVY, INK, MUT = '#1B3A5C', '#2c2a28', '#6b6762'
+
+    def arc(centre, v1, v2, r):
+        n1 = math.hypot(*v1) or 1.0
+        n2 = math.hypot(*v2) or 1.0
+        p1 = (centre[0] + r * v1[0] / n1, centre[1] + r * v1[1] / n1)
+        p2 = (centre[0] + r * v2[0] / n2, centre[1] + r * v2[1] / n2)
+        sweep = 1 if v1[0] * v2[1] - v1[1] * v2[0] > 0 else 0
+        return (f'<path d="M{p1[0]:.1f},{p1[1]:.1f} A{r},{r} 0 0,{sweep} '
+                f'{p2[0]:.1f},{p2[1]:.1f}" fill="none" stroke="{NAVY}" stroke-width="1.6"/>')
+
+    def bisector_label(centre, v1, v2, dist, text):
+        n1 = math.hypot(*v1) or 1.0
+        n2 = math.hypot(*v2) or 1.0
+        ux = v1[0] / n1 + v2[0] / n2
+        uy = v1[1] / n1 + v2[1] / n2
+        n = math.hypot(ux, uy) or 1.0
+        x, y = centre[0] + dist * ux / n, centre[1] + dist * uy / n
+        return (f'<text x="{x:.1f}" y="{y:.1f}" text-anchor="middle" '
+                f'dominant-baseline="middle" font-size="13.5" font-family="Georgia,serif" '
+                f'fill="{NAVY}" font-weight="bold">{text}</text>')
+
+    vB1, vB2 = (R[0] - B[0], R[1] - B[1]), (T[0] - B[0], T[1] - B[1])
+    vT1, vT2 = (R[0] - T[0], R[1] - T[1]), (B[0] - T[0], B[1] - T[1])
+    mid = (x0 + bx / 2, y0 - hy / 2)
+    dxo, dyo = mid[0] - R[0], mid[1] - R[1]
+    no = math.hypot(dxo, dyo) or 1.0
+
+    vy = y0 - hy - 30  # crop dead space above a short apex
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 {vy:.1f} {W} {H - vy:.1f}" width="{W}" height="{H - vy:.0f}" role="img">
+<polygon points="{R[0]:.1f},{R[1]:.1f} {B[0]:.1f},{B[1]:.1f} {T[0]:.1f},{T[1]:.1f}"
+ fill="#eef6ff" stroke="{NAVY}" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M{x0 + 15},{y0} L{x0 + 15},{y0 - 15} L{x0},{y0 - 15}" fill="none" stroke="{NAVY}" stroke-width="1.6"/>
+{arc(B, vB1, vB2, 34)}
+{arc(T, vT1, vT2, 34)}
+{bisector_label(B, vB1, vB2, 56, ang_bottom)}
+{bisector_label(T, vT1, vT2, 56, ang_top)}
+<text x="{x0 + bx / 2:.1f}" y="{y0 + 26:.1f}" text-anchor="middle" font-size="15" font-family="Georgia,serif" fill="{INK}">{base_lab}</text>
+<text x="{x0 - 14:.1f}" y="{y0 - hy / 2:.1f}" text-anchor="end" dominant-baseline="middle" font-size="15" font-family="Georgia,serif" fill="{INK}">{height_lab}</text>
+<text x="{mid[0] + 22 * dxo / no:.1f}" y="{mid[1] + 22 * dyo / no:.1f}" text-anchor="middle" dominant-baseline="middle" font-size="15" font-family="Georgia,serif" fill="{INK}">{hyp_lab}</text>
+<text x="{x0 + 15:.1f}" y="{y0 - 22:.1f}" font-size="11" font-family="Georgia,serif" fill="{MUT}">90°</text>
+</svg>'''
+
+
+TRI_45 = _rt_triangle_svg(1, 1, '1', '1', '&#8730;2', '45°', '45°')
+TRI_30 = _rt_triangle_svg(math.sqrt(3), 1, '&#8730;3', '1', '2', '30°', '60°')
+
+CANONICAL_TRIANGLES = r'''
+<div class="exam-note"><strong>Exam note.</strong> The exam expects you to know the exact ratios for
+\(30^\circ,45^\circ,60^\circ\) (that is \(\dfrac{\pi}{6},\dfrac{\pi}{4},\dfrac{\pi}{3}\))
+straight from these two canonical right triangles — calculators are not accepted for exact-value questions.
+Learn to redraw both triangles from memory and read the ratios off them.</div>
+<div class="tri-grid">
+  <div class="tri-card">
+    <h4>Isosceles right triangle &mdash; \(45^\circ\!-\!45^\circ\!-\!90^\circ\) \(\left(\tfrac{\pi}{4},\tfrac{\pi}{4},\tfrac{\pi}{2}\right)\)</h4>
+    ''' + TRI_45 + r'''
+    <p style="font-size:13px;color:#6b6762;margin-top:6px;">Sides \(1:1:\sqrt2\) &mdash; start from a unit square and cut along the diagonal.</p>
+  </div>
+  <div class="tri-card">
+    <h4>Half-equilateral triangle &mdash; \(30^\circ\!-\!60^\circ\!-\!90^\circ\) \(\left(\tfrac{\pi}{6},\tfrac{\pi}{3},\tfrac{\pi}{2}\right)\)</h4>
+    ''' + TRI_30 + r'''
+    <p style="font-size:13px;color:#6b6762;margin-top:6px;">Sides \(1:\sqrt3:2\) &mdash; start from an equilateral triangle of side \(2\) and cut it in half.</p>
+  </div>
+</div>
+<table class="ratio-table">
+<thead><tr><th>Angle (deg)</th><th>Angle (rad)</th><th>\(\sin\)</th><th>\(\cos\)</th><th>\(\tan\)</th></tr></thead>
+<tbody>
+<tr><td>\(30^\circ\)</td><td>\(\dfrac{\pi}{6}\)</td><td>\(\dfrac12\)</td><td>\(\dfrac{\sqrt3}{2}\)</td><td>\(\dfrac{1}{\sqrt3}=\dfrac{\sqrt3}{3}\)</td></tr>
+<tr><td>\(45^\circ\)</td><td>\(\dfrac{\pi}{4}\)</td><td>\(\dfrac{\sqrt2}{2}\)</td><td>\(\dfrac{\sqrt2}{2}\)</td><td>\(1\)</td></tr>
+<tr><td>\(60^\circ\)</td><td>\(\dfrac{\pi}{3}\)</td><td>\(\dfrac{\sqrt3}{2}\)</td><td>\(\dfrac12\)</td><td>\(\sqrt3\)</td></tr>
+</tbody>
+</table>
+<table class="ratio-table">
+<thead><tr><th>Angle</th><th>\(\csc\)</th><th>\(\sec\)</th><th>\(\cot\)</th></tr></thead>
+<tbody>
+<tr><td>\(30^\circ=\dfrac{\pi}{6}\)</td><td>\(2\)</td><td>\(\dfrac{2}{\sqrt3}=\dfrac{2\sqrt3}{3}\)</td><td>\(\sqrt3\)</td></tr>
+<tr><td>\(45^\circ=\dfrac{\pi}{4}\)</td><td>\(\sqrt2\)</td><td>\(\sqrt2\)</td><td>\(1\)</td></tr>
+<tr><td>\(60^\circ=\dfrac{\pi}{3}\)</td><td>\(\dfrac{2}{\sqrt3}=\dfrac{2\sqrt3}{3}\)</td><td>\(2\)</td><td>\(\dfrac{1}{\sqrt3}=\dfrac{\sqrt3}{3}\)</td></tr>
+</tbody>
+</table>
+'''
+
 
 def page(title, body):
     return f'''<!DOCTYPE html>
@@ -47,7 +152,7 @@ def page(title, body):
 </head><body><div class="wrap">
 {body}
 </div></body></html>
-'''.replace(r"\\'", "'")
+'''.replace("\\'", "'")
 
 
 def set_page(meta, siblings):
@@ -55,7 +160,10 @@ def set_page(meta, siblings):
         f'<a class="chip{" on" if s["slug"]==meta["slug"] else ""}" href="{s["slug"]}.html">{s["short"]}</a>'
         for s in siblings
     )
-    lesson_html = ''.join(f'<p>{p}</p>' for p in meta['lesson'])
+    lesson_html = ''.join(
+        p if str(p).lstrip().startswith('<') else f'<p>{p}</p>'
+        for p in meta['lesson']
+    )
     if meta.get('example'):
         lesson_html += f'<div class="ex"><strong>Worked example.</strong> {meta["example"]}</div>'
     points = ''.join(f'<li>{x}</li>' for x in meta['points'])
@@ -200,21 +308,27 @@ GROUPS['1a1b'] = {
     'blurb': r'From Week 1A: exact values for \(30^\circ,45^\circ,60^\circ\), calculator use, and standard right-triangle problems (including elevation).',
     'lesson': [
       r'Exact trig values come from two special triangles: the isosceles right triangle (\(45^\circ\)-\(45^\circ\)-\(90^\circ\)) with sides \(1:1:\sqrt2\), and the half-equilateral triangle (\(30^\circ\)-\(60^\circ\)-\(90^\circ\)) with sides \(1:\sqrt3:2\).',
-      r'These give exact \(\sin,\cos,\tan\) of \(30^\circ,45^\circ,60^\circ\) without a calculator. For other acute angles, use a calculator in <strong>degree</strong> mode and round as required.',
+      CANONICAL_TRIANGLES,
+      r'Read every ratio straight off the triangles with SOH-CAH-TOA. For example \(\sin 30^\circ\) is the side opposite \(30^\circ\) over the hypotenuse, \(\dfrac12\); and \(\tan 60^\circ\) is opposite over adjacent, \(\dfrac{\sqrt3}{1}=\sqrt3\).',
+      r'The same two triangles serve radian questions unchanged — \(30^\circ,45^\circ,60^\circ\) are just \(\dfrac{\pi}{6},\dfrac{\pi}{4},\dfrac{\pi}{3}\), so \(\sin\dfrac{\pi}{6}=\dfrac12\) and \(\cos\dfrac{\pi}{4}=\dfrac{\sqrt2}{2}\).',
+      r'These give exact \(\sin,\cos,\tan\) of \(30^\circ,45^\circ,60^\circ\) without a calculator. For other acute angles, use a calculator in <strong>degree</strong> mode (or <strong>radian</strong> mode when the question is in radians) and round as required.',
       'Right-triangle applications: choose the ratio that links the known side/angle to the unknown. Elevation/depression problems are just right triangles standing upright.',
     ],
     'example': r'\(\sin 30^\circ=\dfrac12\), \(\cos 30^\circ=\dfrac{\sqrt3}{2}\), \(\tan 30^\circ=\dfrac{1}{\sqrt3}\); \(\sin 45^\circ=\cos 45^\circ=\dfrac{\sqrt2}{2}\), \(\tan 45^\circ=1\); \(\sin 60^\circ=\dfrac{\sqrt3}{2}\), \(\cos 60^\circ=\dfrac12\), \(\tan 60^\circ=\sqrt3\).',
     'points': [
-      r'\(45^\circ\)-\(45^\circ\)-\(90^\circ\) sides: \(1:1:\sqrt2\).',
-      r'\(30^\circ\)-\(60^\circ\)-\(90^\circ\) sides: \(1:\sqrt3:2\) (short leg opposite \(30^\circ\)).',
-      r'Memorise exact sin/cos/tan of \(30^\circ,45^\circ,60^\circ\).',
-      'Check calculator is in degrees for degree problems.',
+      r'<strong>Exam requirement:</strong> know the exact ratios for \(30^\circ,45^\circ,60^\circ\) (\(\tfrac{\pi}{6},\tfrac{\pi}{4},\tfrac{\pi}{3}\)) from the two canonical triangles, in degrees and radians.',
+      r'\(45^\circ\)-\(45^\circ\)-\(90^\circ\) (\(\tfrac{\pi}{4},\tfrac{\pi}{4},\tfrac{\pi}{2}\)) sides: \(1:1:\sqrt2\) — half a unit square.',
+      r'\(30^\circ\)-\(60^\circ\)-\(90^\circ\) (\(\tfrac{\pi}{6},\tfrac{\pi}{3},\tfrac{\pi}{2}\)) sides: \(1:\sqrt3:2\) (short leg opposite \(30^\circ\)) — half an equilateral triangle of side \(2\).',
+      'If you can redraw the two triangles, you can rebuild every exact ratio without memorising the table.',
+      'Check the calculator mode matches the question: degrees for degree problems, radians for radian problems.',
       'Elevation: angle up from horizontal; depression: angle down from horizontal.',
     ],
     'formulas': [
-      r'\(\sin30^\circ=\dfrac12,\ \cos30^\circ=\dfrac{\sqrt3}{2},\ \tan30^\circ=\dfrac{1}{\sqrt3}\)',
-      r'\(\sin45^\circ=\dfrac{\sqrt2}{2},\ \cos45^\circ=\dfrac{\sqrt2}{2},\ \tan45^\circ=1\)',
-      r'\(\sin60^\circ=\dfrac{\sqrt3}{2},\ \cos60^\circ=\dfrac12,\ \tan60^\circ=\sqrt3\)',
+      r'\(\sin30^\circ=\sin\dfrac{\pi}{6}=\dfrac12,\ \cos30^\circ=\dfrac{\sqrt3}{2},\ \tan30^\circ=\dfrac{1}{\sqrt3}\)',
+      r'\(\sin45^\circ=\sin\dfrac{\pi}{4}=\dfrac{\sqrt2}{2},\ \cos45^\circ=\dfrac{\sqrt2}{2},\ \tan45^\circ=1\)',
+      r'\(\sin60^\circ=\sin\dfrac{\pi}{3}=\dfrac{\sqrt3}{2},\ \cos60^\circ=\dfrac12,\ \tan60^\circ=\sqrt3\)',
+      r'Reciprocals: \(\csc30^\circ=2,\ \sec45^\circ=\sqrt2,\ \cot60^\circ=\dfrac{1}{\sqrt3}\)',
+      r'Degrees to radians: multiply by \(\dfrac{\pi}{180}\); radians to degrees: multiply by \(\dfrac{180}{\pi}\).',
       r'Unknown side: rearrange SOH-CAH-TOA, e.g. \(\text{opp}=\text{hyp}\sin\theta\).',
     ],
     'problems': [
