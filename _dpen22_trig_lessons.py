@@ -172,7 +172,7 @@ def set_page(meta, siblings):
     body = f'''
 <div class="eyebrow">DPEN022 Trigonometry · {meta["source"]}</div>
 <span class="tag">{meta["group"]}</span>
-<h1>{meta["title"]}</h1>
+<h1>{H.escape(meta["title"])}</h1>
 <p class="sub">{meta["blurb"]}</p>
 <div class="nav">
   <a href="index.html">← Lesson sets hub</a>
@@ -215,7 +215,7 @@ def answers_page(meta, siblings):
     body = f'''
 <div class="eyebrow">DPEN022 Trigonometry · {meta["source"]}</div>
 <span class="tag">{meta["group"]} · ANSWERS</span>
-<h1>{title}</h1>
+<h1>{H.escape(title)}</h1>
 <p class="sub">Answers to the 15 practice problems in this set.</p>
 <div class="nav">
   <a href="{meta["slug"]}.html">← Back to lesson &amp; problems</a>
@@ -256,9 +256,9 @@ GROUPS['1a1b'] = {
       'Hypotenuse is always opposite the right angle.',
       'Opposite/adjacent depend on which acute angle you choose.',
       'Remember <strong>SOH-CAH-TOA</strong>.',
-      r'\(\\sin\\theta\) and \(\\cos\\theta\) are never greater than \(1\) in a right triangle.',
-      r'Reciprocals: \(\\csc=1/\\sin\), \(\\sec=1/\\cos\), \(\\cot=1/\\tan\).',
-      r'Complementary: \(\\sin\\theta=\\cos(90^\\circ-\\theta)\).',
+      r'\(\sin\theta\) and \(\cos\theta\) are never greater than \(1\) in a right triangle.',
+      r'Reciprocals: \(\csc\theta=\dfrac{1}{\sin\theta}\), \(\sec\theta=\dfrac{1}{\cos\theta}\), \(\cot\theta=\dfrac{1}{\tan\theta}\).',
+      r'Complementary: \(\sin\theta=\cos(90^\circ-\theta)\).',
     ],
     'formulas': [
       r'\(\sin\theta=\dfrac{\text{opp}}{\text{hyp}},\quad \cos\theta=\dfrac{\text{adj}}{\text{hyp}},\quad \tan\theta=\dfrac{\text{opp}}{\text{adj}}\)',

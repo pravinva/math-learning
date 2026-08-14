@@ -64,7 +64,7 @@ def set_page(out: Path, subject: str, meta: dict, siblings: list, hub_up='../../
     body = f'''
 <div class="eyebrow">DPEN022 {H.escape(subject)} · {meta["source"]}</div>
 <span class="tag">{meta["group"]}</span>
-<h1>{meta["title"]}</h1>
+<h1>{H.escape(meta["title"])}</h1>
 <p class="sub">{meta["blurb"]}</p>
 <div class="nav">
   <a href="index.html">← Lesson sets hub</a>
@@ -108,7 +108,7 @@ def answers_page(out: Path, subject: str, meta: dict, siblings: list, n: int):
     body = f'''
 <div class="eyebrow">DPEN022 {H.escape(subject)} · {meta["source"]}</div>
 <span class="tag">{meta["group"]} · ANSWERS</span>
-<h1>{title}</h1>
+<h1>{H.escape(title)}</h1>
 <p class="sub">Answers to the {n} practice problems in this set.</p>
 <div class="nav">
   <a href="{meta["slug"]}.html">← Back to lesson &amp; problems</a>

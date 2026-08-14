@@ -82,8 +82,8 @@ def write_pair(slug, subject, timing, sample_href, tests_q, tests_a, fmt):
         )
 
     q_body = f'''
-<h1>DPEN022 {subject} — Practice Tests (Questions)</h1>
-<p class="sub">Six practice papers modelled on the official DPEN022 {subject} Exam Sample.
+<h1>DPEN022 {H.escape(subject)} — Practice Tests (Questions)</h1>
+<p class="sub">Six practice papers modelled on the official DPEN022 {H.escape(subject)} Exam Sample.
 Timing guide: {timing}. Show full working on long-answer items. Diagrams are provided where the sample uses graphs.</p>
 <div class="meta"><strong>Official sample:</strong> <a href="{sample_href}">open PDF</a> · use it as the style/difficulty reference for these four papers.</div>
 <div class="top-links">
@@ -104,8 +104,8 @@ Timing guide: {timing}. Show full working on long-answer items. Diagrams are pro
         a_blocks.append(f'<div class="test"><h3>Test {i} — Answers</h3>\n' + '\n'.join(items) + '\n</div>')
 
     a_body = f'''
-<h1>DPEN022 {subject} — Practice Tests (Answers)</h1>
-<p class="sub">Separate worked answers for the six {subject} practice papers.</p>
+<h1>DPEN022 {H.escape(subject)} — Practice Tests (Answers)</h1>
+<p class="sub">Separate worked answers for the six {H.escape(subject)} practice papers.</p>
 <div class="top-links">
   <a href="{slug}-questions.html">Back to Questions</a>
   <a href="../index.html">Class Notes Hub</a>
