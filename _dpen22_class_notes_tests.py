@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
-"""Generate DPEN022 Class Notes hub + 4 practice tests per strand (with answers)."""
+"""Generate DPEN022 Class Notes hub + practice tests per strand (with answers)."""
 from pathlib import Path
 import html as H
+import math
+from _figkit_exam import (
+    limit_removable, limit_jump, limit_one_sided, area_under, area_between,
+)
 
 BASE = Path(__file__).resolve().parent / 'siddharth' / 'dpen22' / 'class-notes'
 TESTS = BASE / 'tests'
@@ -24,6 +28,7 @@ ol>li{margin:10px 0;line-height:1.65;}
 .paper-rules li{margin:3px 0;}
 .part-title{margin:16px 0 6px;color:#1B3A5C;font-size:16px;border-bottom:1px solid #d1d5db;padding-bottom:5px;}
 .question-mark{display:block;text-align:right;color:#4b5563;font-size:13px;font-weight:600;margin-top:4px;}
+.fig{margin:8px 0 4px;}
 """
 
 def page(title, body, katex=True):
@@ -78,8 +83,8 @@ def write_pair(slug, subject, timing, sample_href, tests_q, tests_a, fmt):
 
     q_body = f'''
 <h1>DPEN022 {subject} — Practice Tests (Questions)</h1>
-<p class="sub">Four practice papers modelled on the official DPEN022 {subject} Exam Sample.
-Timing guide: {timing}. Show full working on long-answer items.</p>
+<p class="sub">Six practice papers modelled on the official DPEN022 {subject} Exam Sample.
+Timing guide: {timing}. Show full working on long-answer items. Diagrams are provided where the sample uses graphs.</p>
 <div class="meta"><strong>Official sample:</strong> <a href="{sample_href}">open PDF</a> · use it as the style/difficulty reference for these four papers.</div>
 <div class="top-links">
   <a href="{slug}-answers.html">Open Separate Answers</a>
@@ -100,7 +105,7 @@ Timing guide: {timing}. Show full working on long-answer items.</p>
 
     a_body = f'''
 <h1>DPEN022 {subject} — Practice Tests (Answers)</h1>
-<p class="sub">Separate worked answers for the four {subject} practice papers.</p>
+<p class="sub">Separate worked answers for the six {subject} practice papers.</p>
 <div class="top-links">
   <a href="{slug}-questions.html">Back to Questions</a>
   <a href="../index.html">Class Notes Hub</a>
@@ -422,7 +427,8 @@ ld_q = [
   [r'(A) \(e^x(3\cos3x+\sin3x)\)',r'(B) \(3\cos3x\,e^x\)',r'(C) \(e^x\sin3x\)',r'(D) \(e^x(\cos3x-\sin3x)\)',r'(E) other']),
  (r'[Tangent] Tangent to \(y=3x^2\) at \(x=-1\) (gradient-intercept) is',
   [r'(A) \(y=-6x-3\)',r'(B) \(y=-6x+3\)',r'(C) \(y=6x-3\)',r'(D) \(y=6x+3\)',r'(E) \(y=-6x-6\)']),
- r'[Limits] From a graph that approaches \(y=4\) from both sides at \(x=1\), does \(\lim_{x\to1}f(x)\) exist? Justify.',
+ r'[Limits] Consider the graph drawn below. Determine whether \(\displaystyle\lim_{x\to1}f(x)\) exists. Justify your answer.'
+ + limit_removable(hole_x=1, hole_y=4, filled_y=2, caption='Graph of y = f(x)'),
  r'[Limits] Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to2}\dfrac{x^2-4}{x-2}\) (b) \(\displaystyle\lim_{x\to\infty}\dfrac{3x^2+6}{2x^2-7}\).',
  r'[Powers of \(x\)] Find \(\dfrac{dy}{dx}\) for \(y=\sqrt{x}+x\sqrt{x}\), leaving surds.',
  r'[Rules 1–5] Expand and differentiate \(f(x)=(x-1)(2x+3)\), then simplify fully.',
@@ -448,7 +454,8 @@ ld_q = [
   [r'(A) \(e^x\)',r'(B) \(\dfrac{e^x(x-1)}{x^2}\)',r'(C) \(\dfrac{e^x}{x^2}\)',r'(D) \(e^x(1-x)\)',r'(E) \(\dfrac{xe^x-e^x}{x}\)']),
  (r'[Tangent] Tangent to \(y=e^{2x}\) at \(x=0\):',
   [r'(A) \(y=2x+1\)',r'(B) \(y=x+1\)',r'(C) \(y=2x\)',r'(D) \(y=e^{2}x\)',r'(E) \(y=2e^{2}x+1\)']),
- r'[Limits] Does \(\displaystyle\lim_{x\to0}\dfrac{|x|}{x}\) exist? Justify.',
+ r'[Limits] The graph below shows \(y=f(x)\). Does \(\displaystyle\lim_{x\to0}f(x)\) exist? Justify. (This is the graph of \(y=\dfrac{|x|}{x}\) with the usual jump.)'
+ + limit_jump(a=0, y_left=-1, y_right=1, caption='Graph of y = |x|/x'),
  r'[Limits] Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to-1}\dfrac{x^2-1}{x+1}\) (b) \(\displaystyle\lim_{x\to\infty}\dfrac{5x+1}{x^2+4}\).',
  r'[Powers of \(x\)] Differentiate \(y=x^4-8x^2+3\) and find all stationary points.',
  r'[Rules 1–5] Differentiate \(y=\dfrac{3x+2}{x-4}\) and simplify.',
@@ -474,7 +481,8 @@ ld_q = [
   [r'(A) \(x=e\)',r'(B) \(x=1\)',r'(C) \(x=0\)',r'(D) \(x=e^{-1}\)',r'(E) none']),
  (r'[Tangent] Tangent to \(y=\dfrac{1}{x}\) at \(x=2\):',
   [r'(A) \(y=-\tfrac14 x+1\)',r'(B) \(y=-\tfrac14x+\tfrac34\)',r'(C) \(y=-\tfrac12x+1\)',r'(D) \(y=\tfrac12x\)',r'(E) \(y=-\tfrac14 x+\tfrac12\)']),
- r'[Limits] State whether \(\displaystyle\lim_{x\to0^+} \ln x\) exists as a real number. Justify.',
+ r'[Limits] The graph below shows \(y=\ln x\) for \(x>0\). State whether \(\displaystyle\lim_{x\to0^+} \ln x\) exists as a real number. Justify.'
+ + limit_one_sided(),
  r'[Limits] Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to4}\dfrac{\sqrt{x}-2}{x-4}\) (b) \(\displaystyle\lim_{x\to\infty}\left(3+\dfrac{2}{x}\right)\).',
  r'[Powers of \(x\)] Differentiate \(y=4x^{3/2}-2x^{-1/2}\).',
  r'[Rules 1–5] Differentiate \(y=(2x-1)^5\).',
@@ -500,7 +508,9 @@ ld_q = [
   [r'(A) \(x=-6\)',r'(B) \(x=3\)',r'(C) \(x=-3\)',r'(D) \(x=6\)',r'(E) \(x=0\)']),
  (r'[Tangent] Tangent to \(y=x^2-4x\) at \(x=3\):',
   [r'(A) \(y=2x-9\)',r'(B) \(y=2x-3\)',r'(C) \(y=6x-15\)',r'(D) \(y=2x+3\)',r'(E) \(y=-2x+3\)']),
- r'[Limits] Explain whether \(\displaystyle\lim_{x\to2}f(x)\) can exist if \(f(2)\) is undefined.',
+ r'[Limits] Consider the graph drawn below. Explain whether \(\displaystyle\lim_{x\to2}f(x)\) can exist if \(f(2)\) is undefined. Justify.'
+ + limit_removable(xmin=-1, xmax=5, ymin=-1, ymax=5, hole_x=2, hole_y=3, filled_y=1,
+                   caption='Graph of y = f(x)  (open circle: limit candidate; filled: f(2))'),
  r'[Limits] Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to2}\dfrac{x^3-8}{x-2}\) (b) \(\displaystyle\lim_{x\to\infty}\dfrac{4x^3-1}{2x^3+5}\).',
  r'[Powers of \(x\)] Differentiate \(y=x^{5/2}+3x^{-2}\).',
  r'[Rules 1–5] Differentiate \(y=(3x-2)^4\).',
@@ -526,7 +536,8 @@ ld_q = [
   [r'(A) \(e^{3x}(2x+3x^2)\)',r'(B) \(2xe^{3x}\)',r'(C) \(3x^2e^{3x}\)',r'(D) \(e^{3x}(2x+3)\)',r'(E) other']),
  (r'[Tangent] Tangent to \(y=x^3\) at \(x=1\):',
   [r'(A) \(y=3x-2\)',r'(B) \(y=3x+2\)',r'(C) \(y=x-2\)',r'(D) \(y=3x\)',r'(E) \(y=3x-1\)']),
- r'[Limits] A graph has a jump discontinuity at \(x=0\). Does \(\lim_{x\to0}f(x)\) exist? Justify.',
+ r'[Limits] The graph below has a jump discontinuity at \(x=0\). Does \(\displaystyle\lim_{x\to0}f(x)\) exist? Justify.'
+ + limit_jump(a=0, y_left=2, y_right=-1, caption='Graph of y = f(x)  (jump at x = 0)'),
  r'[Limits] Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to1}\dfrac{x^2+x-2}{x-1}\) (b) \(\displaystyle\lim_{x\to\infty}\dfrac{7x-1}{2x+5}\).',
  r'[Powers of \(x\)] Find \(\dfrac{dy}{dx}\) for \(y=x^{3/2}-4x^{-1}\).',
  r'[Rules 1–5] Differentiate \(y=(5-2x)^6\).',
@@ -552,7 +563,9 @@ ld_q = [
   [r'(A) \(\cos2x\)',r'(B) \(\sin2x\)',r'(C) \(1\)',r'(D) \(\cos^2x-\sin^2x\)',r'(E) both A and D']),
  (r'[Tangent] Tangent to \(y=2^x\) is not required; instead tangent to \(y=e^{x}\) at \(x=0\) is',
   [r'(A) \(y=x\)',r'(B) \(y=x+1\)',r'(C) \(y=e x\)',r'(D) \(y=1\)',r'(E) \(y=ex+1\)']),
- r'[Limits] If LHL\(=2\) and RHL\(=2\) at \(x=3\), does \(\lim_{x\to3}f(x)\) exist? Justify.',
+ r'[Limits] The graph below approaches the same height from both sides at \(x=3\) (LHL \(=\) RHL \(=2\)), with \(f(3)\) possibly different. Does \(\displaystyle\lim_{x\to3}f(x)\) exist? Justify.'
+ + limit_removable(xmin=-1, xmax=6, ymin=-1, ymax=5, hole_x=3, hole_y=2, filled_y=4,
+                   caption='Graph of y = f(x)  (both sides → 2 at x = 3)'),
  r'[Limits] Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to0}\dfrac{(x+2)^2-4}{x}\) (b) \(\displaystyle\lim_{x\to\infty}\dfrac{x^2+1}{3x^2-4}\).',
  r'[Powers of \(x\)] Differentiate \(y=6x^{5/3}-x^{-3}\).',
  r'[Rules 1–5] Differentiate \(y=\dfrac{1}{\sqrt{4x+1}}\).',
@@ -717,8 +730,12 @@ int_q = [
  r'[Applications of primitive] If \(\dfrac{dy}{dx}=1+3x\) and the curve passes through \((4,10)\), find \(y\).',
  r'[Power of \(x\)] Find \(\displaystyle\int(9x^5+3x^2)\,dx\) in positive-index form.',
  r'[Power of \(x\)] Find \(\displaystyle\int\left(3x^3-\dfrac{4}{x}\right)dx\).',
- r'[Area] Find the area between \(y=x-x^2\) and the \(x\)-axis from \(0\) to \(1\).',
- r'[Area] Show \(y=x^2\) and \(y=2-x^2\) meet at \((\pm1,1)\), then find the enclosed area.',
+ r'[Area] Find the area between \(y=x-x^2\) and the \(x\)-axis from \(0\) to \(1\).'
+ + area_under(lambda x: x - x*x, 0, 1, xmin=-0.3, xmax=1.4, ymin=-0.3, ymax=0.5,
+              caption='y = x − x²', shade_label='area'),
+ r'[Area] Use algebra to show that \(y=x^2\) and \(y=2-x^2\) meet at \((\pm1,1)\), then find the area of the region bounded by the graphs shown below.'
+ + area_between(lambda x: x*x, lambda x: 2 - x*x, -1, 1, xmin=-1.8, xmax=1.8, ymin=-0.4, ymax=2.4,
+                caption='y = x² and y = 2 − x²', label_f='y = x²', label_g='y = 2 − x²'),
  r'[Exp/log/trig] Find \(\displaystyle\int(e^{2x}+4x)\,dx\).',
  r'[Exp/log/trig] Find \(\displaystyle\int\dfrac{1}{5+x}\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{\pi/2}(1-\sin2x)\,dx\).',
@@ -741,8 +758,12 @@ int_q = [
  r'[Applications of primitive] Gradient \(\dfrac{dy}{dx}=2x-5\), curve through \((3,1)\). Find the equation of the curve.',
  r'[Power of \(x\)] \(\displaystyle\int\left(x^4-\dfrac{1}{x^2}\right)dx\).',
  r'[Power of \(x\)] \(\displaystyle\int_1^{4}\dfrac{1}{\sqrt{x}}\,dx\).',
- r'[Area] Find the area between \(y=4-x^2\) and the \(x\)-axis (full positive region).',
- r'[Area] Find the area between \(y=x\) and \(y=x^2\) on \([0,1]\).',
+ r'[Area] Find the area between \(y=4-x^2\) and the \(x\)-axis (full positive region).'
+ + area_under(lambda x: 4 - x*x, -2, 2, xmin=-2.6, xmax=2.6, ymin=-0.5, ymax=4.5,
+              caption='y = 4 − x²', shade_label='area'),
+ r'[Area] Find the area between \(y=x\) and \(y=x^2\) on \([0,1]\).'
+ + area_between(lambda x: x, lambda x: x*x, 0, 1, xmin=-0.3, xmax=1.4, ymin=-0.3, ymax=1.3,
+                caption='y = x and y = x²', label_f='y = x', label_g='y = x²'),
  r'[Exp/log/trig] \(\displaystyle\int(3\cos2x-2\sin x)\,dx\).',
  r'[Exp/log/trig] Find \(\displaystyle\int 5e^{-x}\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{1}(e^{x}+2x)\,dx\).',
@@ -765,8 +786,12 @@ int_q = [
  r'[Applications of primitive] Curve with \(\dfrac{dy}{dx}=\dfrac{1}{x}\) through \((e,2)\). Find \(y\).',
  r'[Power of \(x\)] \(\displaystyle\int\left(6x^{1/2}-x^{-1/2}\right)dx\).',
  r'[Power of \(x\)] \(\displaystyle\int_{-2}^{1}(3x^2)\,dx\).',
- r'[Area] Find the area between \(y=\sin x\) and the \(x\)-axis from \(0\) to \(\pi\).',
- r'[Area] Find the area enclosed by \(y=x^2\) and \(y=4x-x^2\).',
+ r'[Area] Find the area between \(y=\sin x\) and the \(x\)-axis from \(0\) to \(\pi\).'
+ + area_under(math.sin, 0, math.pi, xmin=-0.4, xmax=math.pi + 0.4, ymin=-0.3, ymax=1.3,
+              caption='y = sin x', shade_label='area'),
+ r'[Area] Find the area enclosed by \(y=x^2\) and \(y=4x-x^2\).'
+ + area_between(lambda x: x*x, lambda x: 4*x - x*x, 0, 2, xmin=-0.4, xmax=2.5, ymin=-0.4, ymax=4.5,
+                caption='y = x² and y = 4x − x²', label_f='y = x²', label_g='y = 4x − x²'),
  r'[Exp/log/trig] \(\displaystyle\int\dfrac{4}{2x+1}\,dx\).',
  r'[Exp/log/trig] \(\displaystyle\int(2\sec^2 x-3\cos x)\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{\pi/4}\sec^2 x\,dx\).',
@@ -789,8 +814,12 @@ int_q = [
  r'[Applications of primitive] If \(y\'=4x^3-2\) and \(y(1)=5\), find \(y\).',
  r'[Power of \(x\)] \(\displaystyle\int\left(x^{3}-\dfrac{2}{x^{3}}\right)dx\).',
  r'[Power of \(x\)] \(\displaystyle\int_0^{1}(4x^3-1)\,dx\).',
- r'[Area] Find the area between \(y=\sqrt{x}\) and \(y=x\) from \(0\) to \(1\).',
- r'[Area] Find the area between \(y=x^2\) and \(y=2x\).',
+ r'[Area] Find the area between \(y=\sqrt{x}\) and \(y=x\) from \(0\) to \(1\).'
+ + area_between(math.sqrt, lambda x: x, 0, 1, xmin=-0.2, xmax=1.3, ymin=-0.2, ymax=1.2,
+                caption='y = √x and y = x', label_f='y = √x', label_g='y = x'),
+ r'[Area] Find the area between \(y=x^2\) and \(y=2x\).'
+ + area_between(lambda x: x*x, lambda x: 2*x, 0, 2, xmin=-0.3, xmax=2.4, ymin=-0.3, ymax=4.3,
+                caption='y = x² and y = 2x', label_f='y = x²', label_g='y = 2x'),
  r'[Exp/log/trig] \(\displaystyle\int(2e^{x}-3\sin x)\,dx\).',
  r'[Exp/log/trig] \(\displaystyle\int\dfrac{3}{x}\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{\pi/2}\cos2x\,dx\).',
@@ -813,8 +842,12 @@ int_q = [
  r'[Applications of primitive] \(\dfrac{dy}{dx}=3x^2-4\), through \((1,2)\). Find \(y\).',
  r'[Power of \(x\)] Find \(\displaystyle\int\left(5x^4-\dfrac{3}{x^2}\right)dx\).',
  r'[Power of \(x\)] Evaluate \(\displaystyle\int_1^{8}x^{-2/3}\,dx\).',
- r'[Area] Find the area under \(y=3x-x^2\) from \(x=0\) to \(x=3\).',
- r'[Area] Show intersections of \(y=x\) and \(y=x^3\) for \(x\ge0\), then find the enclosed area on \([0,1]\).',
+ r'[Area] Find the area under \(y=3x-x^2\) from \(x=0\) to \(x=3\).'
+ + area_under(lambda x: 3*x - x*x, 0, 3, xmin=-0.4, xmax=3.4, ymin=-0.4, ymax=2.8,
+              caption='y = 3x − x²', shade_label='area'),
+ r'[Area] Show the intersections of \(y=x\) and \(y=x^3\) for \(x\ge0\), then find the enclosed area on \([0,1]\).'
+ + area_between(lambda x: x, lambda x: x**3, 0, 1, xmin=-0.2, xmax=1.3, ymin=-0.2, ymax=1.2,
+                caption='y = x and y = x³', label_f='y = x', label_g='y = x³'),
  r'[Exp/log/trig] Find \(\displaystyle\int(4\cos x-e^{x})\,dx\).',
  r'[Exp/log/trig] Find \(\displaystyle\int\dfrac{2}{3x+1}\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{\pi/6}\sin3x\,dx\).',
@@ -837,8 +870,12 @@ int_q = [
  r'[Applications of primitive] \(\dfrac{dy}{dx}=e^{x}+2\), through \((0,3)\). Find \(y\).',
  r'[Power of \(x\)] Find \(\displaystyle\int\left(x^{-3}+4x\right)dx\).',
  r'[Power of \(x\)] Evaluate \(\displaystyle\int_{-1}^{2}(x^2-x)\,dx\).',
- r'[Area] Find the area under \(y=\cos x\) from \(0\) to \(\dfrac{\pi}{2}\).',
- r'[Area] Find the area enclosed by \(y=x^2\) and \(y=3x\).',
+ r'[Area] Find the area under \(y=\cos x\) from \(0\) to \(\dfrac{\pi}{2}\).'
+ + area_under(math.cos, 0, math.pi/2, xmin=-0.3, xmax=math.pi/2 + 0.4, ymin=-0.3, ymax=1.3,
+              caption='y = cos x', shade_label='area'),
+ r'[Area] Find the area enclosed by \(y=x^2\) and \(y=3x\).'
+ + area_between(lambda x: x*x, lambda x: 3*x, 0, 3, xmin=-0.4, xmax=3.4, ymin=-0.4, ymax=9.5,
+                caption='y = x² and y = 3x', label_f='y = x²', label_g='y = 3x'),
  r'[Exp/log/trig] Find \(\displaystyle\int\left(3e^{2x}-\sin x\right)dx\).',
  r'[Exp/log/trig] Find \(\displaystyle\int\dfrac{5}{x}\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{\ln2}e^{x}\,dx\).',
