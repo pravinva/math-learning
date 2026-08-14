@@ -47,7 +47,7 @@ def page(title, body):
 </head><body><div class="wrap">
 {body}
 </div></body></html>
-'''.replace("\\'", "'")
+'''.replace(r"\\'", "'")
 
 
 def set_page(meta, siblings):
@@ -139,18 +139,18 @@ GROUPS['1a1b'] = {
     'title': 'Right triangles & trigonometric ratios',
     'blurb': 'From Week 1A: naming sides, SOH-CAH-TOA, reciprocal ratios, and complementary angles.',
     'lesson': [
-      'Trigonometry studies the relationship between sides and angles in triangles. In a right-angled triangle the <strong>hypotenuse</strong> is opposite the \(90^\circ\) angle and is the longest side. Relative to a chosen acute angle \(\theta\), the other sides are the <strong>opposite</strong> and <strong>adjacent</strong>.',
-      'In similar right triangles the side ratios are constant for a fixed \(\theta\). Those constant ratios are \(\sin\theta\), \(\cos\theta\) and \(\tan\theta\). Their reciprocals are \(\csc\theta\), \(\sec\theta\) and \(\cot\theta\).',
-      'Complementary angles add to \(90^\circ\). This gives the co-function identities \(\sin\theta=\cos(90^\circ-\theta)\) and \(\cos\theta=\sin(90^\circ-\theta)\).',
+      r'Trigonometry studies the relationship between sides and angles in triangles. In a right-angled triangle the <strong>hypotenuse</strong> is opposite the \(90^\circ\) angle and is the longest side. Relative to a chosen acute angle \(\theta\), the other sides are the <strong>opposite</strong> and <strong>adjacent</strong>.',
+      r'In similar right triangles the side ratios are constant for a fixed \(\theta\). Those constant ratios are \(\sin\theta\), \(\cos\theta\) and \(\tan\theta\). Their reciprocals are \(\csc\theta\), \(\sec\theta\) and \(\cot\theta\).',
+      r'Complementary angles add to \(90^\circ\). This gives the co-function identities \(\sin\theta=\cos(90^\circ-\theta)\) and \(\cos\theta=\sin(90^\circ-\theta)\).',
     ],
-    'example': 'In a \(3\)-\(4\)-\(5\) triangle, if the opposite to \(\theta\) is \(3\) and the hypotenuse is \(5\), then \(\sin\theta=\dfrac35\), \(\cos\theta=\dfrac45\), \(\tan\theta=\dfrac34\), \(\csc\theta=\dfrac53\), \(\sec\theta=\dfrac54\), \(\cot\theta=\dfrac43\).',
+    'example': r'In a \(3\)-\(4\)-\(5\) triangle, if the opposite to \(\theta\) is \(3\) and the hypotenuse is \(5\), then \(\sin\theta=\dfrac35\), \(\cos\theta=\dfrac45\), \(\tan\theta=\dfrac34\), \(\csc\theta=\dfrac53\), \(\sec\theta=\dfrac54\), \(\cot\theta=\dfrac43\).',
     'points': [
       'Hypotenuse is always opposite the right angle.',
       'Opposite/adjacent depend on which acute angle you choose.',
       'Remember <strong>SOH-CAH-TOA</strong>.',
-      '\(\\sin\\theta\) and \(\\cos\\theta\) are never greater than \(1\) in a right triangle.',
-      'Reciprocals: \(\\csc=1/\\sin\), \(\\sec=1/\\cos\), \(\\cot=1/\\tan\).',
-      'Complementary: \(\\sin\\theta=\\cos(90^\\circ-\\theta)\).',
+      r'\(\\sin\\theta\) and \(\\cos\\theta\) are never greater than \(1\) in a right triangle.',
+      r'Reciprocals: \(\\csc=1/\\sin\), \(\\sec=1/\\cos\), \(\\cot=1/\\tan\).',
+      r'Complementary: \(\\sin\\theta=\\cos(90^\\circ-\\theta)\).',
     ],
     'formulas': [
       r'\(\sin\theta=\dfrac{\text{opp}}{\text{hyp}},\quad \cos\theta=\dfrac{\text{adj}}{\text{hyp}},\quad \tan\theta=\dfrac{\text{opp}}{\text{adj}}\)',
@@ -197,17 +197,17 @@ GROUPS['1a1b'] = {
     'slug': 'w1ab-set2', 'short': '1A+1B Set 2', 'group': 'WEEKS 1A + 1B · SET 2 OF 3',
     'source': 'Student Notes Week 1A (filled-in)',
     'title': 'Exact ratios & right-triangle applications',
-    'blurb': 'From Week 1A: exact values for \(30^\circ,45^\circ,60^\circ\), calculator use, and standard right-triangle problems (including elevation).',
+    'blurb': r'From Week 1A: exact values for \(30^\circ,45^\circ,60^\circ\), calculator use, and standard right-triangle problems (including elevation).',
     'lesson': [
-      'Exact trig values come from two special triangles: the isosceles right triangle (\(45^\circ\)-\(45^\circ\)-\(90^\circ\)) with sides \(1:1:\sqrt2\), and the half-equilateral triangle (\(30^\circ\)-\(60^\circ\)-\(90^\circ\)) with sides \(1:\sqrt3:2\).',
-      'These give exact \(\sin,\cos,\tan\) of \(30^\circ,45^\circ,60^\circ\) without a calculator. For other acute angles, use a calculator in <strong>degree</strong> mode and round as required.',
+      r'Exact trig values come from two special triangles: the isosceles right triangle (\(45^\circ\)-\(45^\circ\)-\(90^\circ\)) with sides \(1:1:\sqrt2\), and the half-equilateral triangle (\(30^\circ\)-\(60^\circ\)-\(90^\circ\)) with sides \(1:\sqrt3:2\).',
+      r'These give exact \(\sin,\cos,\tan\) of \(30^\circ,45^\circ,60^\circ\) without a calculator. For other acute angles, use a calculator in <strong>degree</strong> mode and round as required.',
       'Right-triangle applications: choose the ratio that links the known side/angle to the unknown. Elevation/depression problems are just right triangles standing upright.',
     ],
     'example': r'\(\sin 30^\circ=\dfrac12\), \(\cos 30^\circ=\dfrac{\sqrt3}{2}\), \(\tan 30^\circ=\dfrac{1}{\sqrt3}\); \(\sin 45^\circ=\cos 45^\circ=\dfrac{\sqrt2}{2}\), \(\tan 45^\circ=1\); \(\sin 60^\circ=\dfrac{\sqrt3}{2}\), \(\cos 60^\circ=\dfrac12\), \(\tan 60^\circ=\sqrt3\).',
     'points': [
       r'\(45^\circ\)-\(45^\circ\)-\(90^\circ\) sides: \(1:1:\sqrt2\).',
       r'\(30^\circ\)-\(60^\circ\)-\(90^\circ\) sides: \(1:\sqrt3:2\) (short leg opposite \(30^\circ\)).',
-      'Memorise exact sin/cos/tan of \(30^\circ,45^\circ,60^\circ\).',
+      r'Memorise exact sin/cos/tan of \(30^\circ,45^\circ,60^\circ\).',
       'Check calculator is in degrees for degree problems.',
       'Elevation: angle up from horizontal; depression: angle down from horizontal.',
     ],
@@ -256,12 +256,12 @@ GROUPS['1a1b'] = {
     'slug': 'w1ab-set3', 'short': '1A+1B Set 3', 'group': 'WEEKS 1A + 1B · SET 3 OF 3',
     'source': 'Student Notes Week 1B (filled-in)',
     'title': 'Angles of any magnitude (degrees)',
-    'blurb': 'From Week 1B: unit circle, CAST signs, reference angles, exact values beyond \(90^\circ\), and solving trig equations in degrees.',
+    'blurb': r'From Week 1B: unit circle, CAST signs, reference angles, exact values beyond \(90^\circ\), and solving trig equations in degrees.',
     'lesson': [
-      'On the unit circle, a point \(P\) at angle \(\theta\) (from the positive \(x\)-axis, anticlockwise positive) has coordinates \((\cos\theta,\sin\theta)\). This extends trig ratios to any magnitude, including negatives.',
+      r'On the unit circle, a point \(P\) at angle \(\theta\) (from the positive \(x\)-axis, anticlockwise positive) has coordinates \((\cos\theta,\sin\theta)\). This extends trig ratios to any magnitude, including negatives.',
       'Signs by quadrant (CAST / ASTC): All positive in Q1; Sin positive in Q2; Tan positive in Q3; Cos positive in Q4.',
-      'A <strong>reference angle</strong> is the acute angle between the terminal ray and the \(x\)-axis. Exact values for non-acute angles = (sign from quadrant) × (exact acute value).',
-      'To solve equations like \(\sin\theta=k\) on \(0^\circ\le\theta\le360^\circ\): find the reference angle, then list all solutions in the correct quadrants.',
+      r'A <strong>reference angle</strong> is the acute angle between the terminal ray and the \(x\)-axis. Exact values for non-acute angles = (sign from quadrant) × (exact acute value).',
+      r'To solve equations like \(\sin\theta=k\) on \(0^\circ\le\theta\le360^\circ\): find the reference angle, then list all solutions in the correct quadrants.',
     ],
     'example': r'\(\sin 150^\circ=\sin 30^\circ=\dfrac12\) (Q2, sin +). \(\cos 210^\circ=-\cos 30^\circ=-\dfrac{\sqrt3}{2}\) (Q3, cos −).',
     'points': [
@@ -269,7 +269,7 @@ GROUPS['1a1b'] = {
       'Positive angles anticlockwise; negative clockwise.',
       'Remember CAST for signs.',
       'Reference angle is always acute.',
-      'Axis angles: \(0^\circ,90^\circ,180^\circ,270^\circ,360^\circ\) have simple coordinates.',
+      r'Axis angles: \(0^\circ,90^\circ,180^\circ,270^\circ,360^\circ\) have simple coordinates.',
       'Equation solving: reference angle → correct quadrants → list all in the interval.',
     ],
     'formulas': [
@@ -324,16 +324,16 @@ GROUPS['1c'] = {
     'title': 'Radian measure & conversion',
     'blurb': 'From Week 1C: what a radian is, and converting between degrees and radians (exact and approximate).',
     'lesson': [
-      'One radian is the central angle subtended by an arc of length equal to the radius. On a unit circle, a full turn is circumference \(2\pi\), so \(2\pi\) radians \(=360^\circ\) and \(\pi\) radians \(=180^\circ\).',
-      'When no unit is written, angles are assumed to be in radians in higher mathematics. Degree problems must be marked with \(^\circ\).',
-      'Convert degrees → radians by multiplying by \(\dfrac{\pi}{180}\). Convert radians → degrees by multiplying by \(\dfrac{180}{\pi}\).',
+      r'One radian is the central angle subtended by an arc of length equal to the radius. On a unit circle, a full turn is circumference \(2\pi\), so \(2\pi\) radians \(=360^\circ\) and \(\pi\) radians \(=180^\circ\).',
+      r'When no unit is written, angles are assumed to be in radians in higher mathematics. Degree problems must be marked with \(^\circ\).',
+      r'Convert degrees → radians by multiplying by \(\dfrac{\pi}{180}\). Convert radians → degrees by multiplying by \(\dfrac{180}{\pi}\).',
     ],
     'example': r'\(90^\circ=\dfrac{\pi}{2}\) rad. \(\dfrac{\pi}{4}\) rad \(=45^\circ\). \(156^\circ\approx 2.72\) rad (2 d.p.).',
     'points': [
       r'\(\pi\) rad \(=180^\circ\) is the master conversion.',
-      'Full turn: \(2\pi\) rad \(=360^\circ\).',
+      r'Full turn: \(2\pi\) rad \(=360^\circ\).',
       'Anticlockwise positive; clockwise negative (same as degrees).',
-      'Leave exact answers in terms of \(\pi\) unless asked for decimals.',
+      r'Leave exact answers in terms of \(\pi\) unless asked for decimals.',
     ],
     'formulas': [
       r'\(\pi\ \text{rad}=180^\circ\)',
@@ -380,17 +380,17 @@ GROUPS['1c'] = {
     'slug': 'w1c-set2', 'short': '1C Set 2', 'group': 'WEEK 1C · SET 2 OF 3',
     'source': 'Student Notes Week 1C (filled-in)',
     'title': 'Exact ratios & quadrants in radians',
-    'blurb': 'From Week 1C: exact trig values using radian arguments, and identifying quadrants for angles in terms of \(\pi\).',
+    'blurb': r'From Week 1C: exact trig values using radian arguments, and identifying quadrants for angles in terms of \(\pi\).',
     'lesson': [
-      'The same special-triangle values apply with radian arguments: replace \(30^\circ,45^\circ,60^\circ\) by \(\dfrac{\pi}{6},\dfrac{\pi}{4},\dfrac{\pi}{3}\).',
-      'Quadrants for \(0<\theta<2\pi\): Q1 \(0<\theta<\dfrac{\pi}{2}\); Q2 \(\dfrac{\pi}{2}<\theta<\pi\); Q3 \(\pi<\theta<\dfrac{3\pi}{2}\); Q4 \(\dfrac{3\pi}{2}<\theta<2\pi\).',
-      'Angles differing by \(2\pi k\) land on the same unit-circle point. Reduce first, then find the quadrant and reference angle.',
+      r'The same special-triangle values apply with radian arguments: replace \(30^\circ,45^\circ,60^\circ\) by \(\dfrac{\pi}{6},\dfrac{\pi}{4},\dfrac{\pi}{3}\).',
+      r'Quadrants for \(0<\theta<2\pi\): Q1 \(0<\theta<\dfrac{\pi}{2}\); Q2 \(\dfrac{\pi}{2}<\theta<\pi\); Q3 \(\pi<\theta<\dfrac{3\pi}{2}\); Q4 \(\dfrac{3\pi}{2}<\theta<2\pi\).',
+      r'Angles differing by \(2\pi k\) land on the same unit-circle point. Reduce first, then find the quadrant and reference angle.',
     ],
     'example': r'\(\sin\dfrac{5\pi}{6}=\sin\dfrac{\pi}{6}=\dfrac12\) (Q2). \(\cos\dfrac{4\pi}{3}=-\dfrac12\) (Q3).',
     'points': [
       r'Memorise \(\sin,\cos,\tan\) of \(\dfrac{\pi}{6},\dfrac{\pi}{4},\dfrac{\pi}{3}\) and axis angles.',
-      'Reduce by \(\pm 2\pi\) to get into \([0,2\pi)\).',
-      'Reference angle in radians is still the acute angle to the \(x\)-axis.',
+      r'Reduce by \(\pm 2\pi\) to get into \([0,2\pi)\).',
+      r'Reference angle in radians is still the acute angle to the \(x\)-axis.',
       'CAST signs unchanged.',
     ],
     'formulas': [
@@ -440,9 +440,9 @@ GROUPS['1c'] = {
     'title': 'Solving trig equations in radians',
     'blurb': 'From Week 1C: solve sine/cosine/tangent equations on a given radian interval with exact answers.',
     'lesson': [
-      'Working in radians is the same process as degrees: find a reference angle, place solutions in the correct quadrants, and list every solution inside the required interval (often \(0\le\theta\le 2\pi\)).',
-      'Write answers as exact multiples of \(\pi\) whenever possible. Check calculator mode only for decimal approximations.',
-      'For equations like \(2\sin\theta=-1\), first isolate the trig function: \(\sin\theta=-\dfrac12\), then solve.',
+      r'Working in radians is the same process as degrees: find a reference angle, place solutions in the correct quadrants, and list every solution inside the required interval (often \(0\le\theta\le 2\pi\)).',
+      r'Write answers as exact multiples of \(\pi\) whenever possible. Check calculator mode only for decimal approximations.',
+      r'For equations like \(2\sin\theta=-1\), first isolate the trig function: \(\sin\theta=-\dfrac12\), then solve.',
     ],
     'example': r'Solve \(\sin\theta=\dfrac12\) for \(0\le\theta\le 2\pi\): \(\theta=\dfrac{\pi}{6},\dfrac{5\pi}{6}\).',
     'points': [
@@ -450,7 +450,7 @@ GROUPS['1c'] = {
       'Reference angle from the acute inverse (exact where possible).',
       'Use CAST to choose quadrants.',
       'Include all solutions in the interval.',
-      'Answers usually in terms of \(\pi\).',
+      r'Answers usually in terms of \(\pi\).',
     ],
     'formulas': [
       r'If \(\sin\theta=k\): solutions in Q1/Q2 (or Q3/Q4 if \(k<0\)).',
@@ -501,18 +501,18 @@ GROUPS['1d'] = {
     'slug': 'w1d-set1', 'short': '1D Set 1', 'group': 'WEEK 1D · SET 1 OF 3',
     'source': 'Student Notes Week 1D (filled-in)',
     'title': 'Graphs of sin, cos and tan',
-    'blurb': 'From Week 1D: basic graphs in radians, period, amplitude, and key features of \(y=\sin x\), \(y=\cos x\), \(y=\tan x\).',
+    'blurb': r'From Week 1D: basic graphs in radians, period, amplitude, and key features of \(y=\sin x\), \(y=\cos x\), \(y=\tan x\).',
     'lesson': [
-      'Plotting unit-circle \(y\)-coordinates as \(x\) varies produces \(y=\sin x\). Plotting \(x\)-coordinates produces \(y=\cos x\). Both are continuous, amplitude \(1\), period \(2\pi\).',
-      'The cosine graph is a horizontal shift of the sine graph (by \(\dfrac{\pi}{2}\)).',
-      '\(y=\tan x\) has period \(\pi\), vertical asymptotes at \(x=\dfrac{\pi}{2}+k\pi\), and no amplitude (range all real \(y\)).',
+      r'Plotting unit-circle \(y\)-coordinates as \(x\) varies produces \(y=\sin x\). Plotting \(x\)-coordinates produces \(y=\cos x\). Both are continuous, amplitude \(1\), period \(2\pi\).',
+      r'The cosine graph is a horizontal shift of the sine graph (by \(\dfrac{\pi}{2}\)).',
+      r'\(y=\tan x\) has period \(\pi\), vertical asymptotes at \(x=\dfrac{\pi}{2}+k\pi\), and no amplitude (range all real \(y\)).',
     ],
     'example': r'For \(y=\sin x\): at \(x=0,\dfrac{\pi}{2},\pi,\dfrac{3\pi}{2},2\pi\) the values are \(0,1,0,-1,0\).',
     'points': [
       r'\(\sin\) and \(\cos\): period \(2\pi\), amplitude \(1\), range \([-1,1]\).',
       r'\(\tan\): period \(\pi\), range \(\mathbb{R}\), asymptotes odd multiples of \(\dfrac{\pi}{2}\).',
       r'\(\sin(x+2k\pi)=\sin x\); \(\tan(x+k\pi)=\tan x\).',
-      'Cosine is sine shifted left by \(\dfrac{\pi}{2}\): \(\cos x=\sin\!\left(x+\dfrac{\pi}{2}\right)\).',
+      r'Cosine is sine shifted left by \(\dfrac{\pi}{2}\): \(\cos x=\sin\!\left(x+\dfrac{\pi}{2}\right)\).',
     ],
     'formulas': [
       r'Amplitude of \(a\sin x\) or \(a\cos x\): \(|a|\)',
@@ -558,10 +558,10 @@ GROUPS['1d'] = {
     'slug': 'w1d-set2', 'short': '1D Set 2', 'group': 'WEEK 1D · SET 2 OF 3',
     'source': 'Student Notes Week 1D (filled-in)',
     'title': 'Amplitude, period & the general sine/cosine model',
-    'blurb': 'From Week 1D: transformations \(y=a\sin(bx)+d\) and \(y=a\cos(bx)+d\) — reading amplitude, period and midline.',
+    'blurb': r'From Week 1D: transformations \(y=a\sin(bx)+d\) and \(y=a\cos(bx)+d\) — reading amplitude, period and midline.',
     'lesson': [
-      'For \(y=a\sin(bx)\) or \(y=a\cos(bx)\): amplitude is \(|a|\); period is \(\dfrac{2\pi}{|b|}\). The graph is stretched vertically by \(|a|\) and horizontally by \(\dfrac{1}{|b|}\).',
-      'A vertical shift \(+d\) moves the midline to \(y=d\). Range becomes \([d-|a|, d+|a|]\).',
+      r'For \(y=a\sin(bx)\) or \(y=a\cos(bx)\): amplitude is \(|a|\); period is \(\dfrac{2\pi}{|b|}\). The graph is stretched vertically by \(|a|\) and horizontally by \(\dfrac{1}{|b|}\).',
+      r'A vertical shift \(+d\) moves the midline to \(y=d\). Range becomes \([d-|a|, d+|a|]\).',
       'Always state amplitude, period, midline/range when describing a transformed wave.',
     ],
     'example': r'\(y=3\sin(2x)\): amp \(3\), period \(\pi\). \(y=2\cos\!\left(\dfrac{x}{2}\right)-1\): amp \(2\), period \(4\pi\), midline \(y=-1\), range \([-3,1]\).',
@@ -569,7 +569,7 @@ GROUPS['1d'] = {
       r'Amplitude \(=|a|\).',
       r'Period \(=\dfrac{2\pi}{|b|}\) for sine/cosine.',
       r'Midline \(y=d\); range \([d-|a|,d+|a|]\).',
-      'Larger \(|b|\) → shorter period (more cycles).',
+      r'Larger \(|b|\) → shorter period (more cycles).',
     ],
     'formulas': [
       r'\(y=a\sin(bx)+d\) or \(y=a\cos(bx)+d\)',
@@ -615,16 +615,16 @@ GROUPS['1d'] = {
     'slug': 'w1d-set3', 'short': '1D Set 3', 'group': 'WEEK 1D · SET 3 OF 3',
     'source': 'Student Notes Week 1D (filled-in)',
     'title': 'Phase shift & full transformations',
-    'blurb': 'From Week 1D: horizontal shifts / phase, and reading/writing full models \(y=a\sin(b(x-c))+d\).',
+    'blurb': r'From Week 1D: horizontal shifts / phase, and reading/writing full models \(y=a\sin(b(x-c))+d\).',
     'lesson': [
-      'A phase shift appears when the angle is \(b(x-c)\) or \(bx-c\). In the form \(a\sin(b(x-c))+d\), the graph shifts right by \(c\) if \(c>0\).',
-      'If written as \(a\sin(bx-c)+d\), the phase shift is \(\dfrac{c}{b}\) (to the right if \(\dfrac{c}{b}>0\)).',
+      r'A phase shift appears when the angle is \(b(x-c)\) or \(bx-c\). In the form \(a\sin(b(x-c))+d\), the graph shifts right by \(c\) if \(c>0\).',
+      r'If written as \(a\sin(bx-c)+d\), the phase shift is \(\dfrac{c}{b}\) (to the right if \(\dfrac{c}{b}>0\)).',
       'When sketching: mark midline, amplitude envelope, period length, then place one key point using the phase shift.',
     ],
     'example': r'\(y=2\sin\!\left(3x-\dfrac{\pi}{2}\right)+1\): amp \(2\), period \(\dfrac{2\pi}{3}\), phase shift \(\dfrac{\pi}{6}\) right, midline \(y=1\).',
     'points': [
-      'Factor \(b\) out of the angle to read phase cleanly.',
-      'Right shift for \((x-c)\); left for \((x+c)\).',
+      r'Factor \(b\) out of the angle to read phase cleanly.',
+      r'Right shift for \((x-c)\); left for \((x+c)\).',
       'List amp, period, phase, midline, range.',
       'Check one easy point to verify the sketch.',
     ],
@@ -677,18 +677,18 @@ GROUPS['2a'] = {
     'slug': 'w2a-set1', 'short': '2A Set 1', 'group': 'WEEK 2A · SET 1 OF 3',
     'source': 'Student Notes Week 2A (filled-in)',
     'title': 'Pythagorean trigonometric identities',
-    'blurb': 'From Week 2A: deriving and using \(\sin^2\theta+\cos^2\theta=1\) and the companion identities.',
+    'blurb': r'From Week 2A: deriving and using \(\sin^2\theta+\cos^2\theta=1\) and the companion identities.',
     'lesson': [
-      'On the unit circle, \(x=\cos\theta\), \(y=\sin\theta\) and \(x^2+y^2=1\). Substituting gives the fundamental identity \(\sin^2\theta+\cos^2\theta=1\).',
-      'Divide by \(\cos^2\theta\) (where defined) to get \(1+\tan^2\theta=\sec^2\theta\). Divide by \(\sin^2\theta\) to get \(1+\cot^2\theta=\csc^2\theta\).',
-      'These identities are true for all \(\theta\) where the functions exist. Use them to rewrite expressions and find exact ratios.',
+      r'On the unit circle, \(x=\cos\theta\), \(y=\sin\theta\) and \(x^2+y^2=1\). Substituting gives the fundamental identity \(\sin^2\theta+\cos^2\theta=1\).',
+      r'Divide by \(\cos^2\theta\) (where defined) to get \(1+\tan^2\theta=\sec^2\theta\). Divide by \(\sin^2\theta\) to get \(1+\cot^2\theta=\csc^2\theta\).',
+      r'These identities are true for all \(\theta\) where the functions exist. Use them to rewrite expressions and find exact ratios.',
     ],
     'example': r'If \(\sin\theta=\dfrac{2}{\sqrt{29}}\) and \(\theta\) obtuse, then \(\cos\theta=-\sqrt{1-\sin^2\theta}=-\dfrac{5}{\sqrt{29}}\) (negative in Q2).',
     'points': [
       r'Primary: \(\sin^2+\cos^2=1\).',
       r'Then: \(1+\tan^2=\sec^2\) and \(1+\cot^2=\csc^2\).',
       'Choose the sign of the square root using the quadrant.',
-      'Identities hold for all valid \(\theta\), not just acute angles.',
+      r'Identities hold for all valid \(\theta\), not just acute angles.',
     ],
     'formulas': [
       r'\(\sin^2\theta+\cos^2\theta=1\)',
@@ -737,14 +737,14 @@ GROUPS['2a'] = {
     'title': 'Simplifying & proving identities',
     'blurb': 'From Week 2A: rewrite trig expressions and prove identities by moving from one side to the other.',
     'lesson': [
-      'To simplify: expand products, factor, rewrite everything in \(\sin\) and \(\cos\), then apply Pythagorean identities.',
+      r'To simplify: expand products, factor, rewrite everything in \(\sin\) and \(\cos\), then apply Pythagorean identities.',
       'To prove an identity: start from the more complicated side and transform it into the other side. Do not move terms across the equals sign as if solving an equation.',
-      'Common moves: \(1-\sin^2=\cos^2\), factor \(\sin^2\) or \(\cos^2\), and rewrite tan/sec in sin/cos.',
+      r'Common moves: \(1-\sin^2=\cos^2\), factor \(\sin^2\) or \(\cos^2\), and rewrite tan/sec in sin/cos.',
     ],
     'example': r'Simplify \(\sin^4\theta+\sin^2\theta\cos^2\theta=\sin^2\theta(\sin^2\theta+\cos^2\theta)=\sin^2\theta\).',
     'points': [
       'Complicated side → simpler side.',
-      'Prefer \(\sin/\cos\) form for algebra.',
+      r'Prefer \(\sin/\cos\) form for algebra.',
       'Factor common terms early.',
       'Quote the identity you use.',
     ],
@@ -794,15 +794,15 @@ GROUPS['2a'] = {
     'title': 'Equations that need identities',
     'blurb': 'From Week 2A: solve trig equations by rewriting with Pythagorean identities, then solving on a stated interval.',
     'lesson': [
-      'Some equations are not solvable until rewritten. Classic pattern: replace \(\cos^2\theta\) by \(1-\sin^2\theta\) (or vice versa) to get a quadratic in one trig function.',
-      'After rewriting, solve the quadratic for \(\sin\theta\) or \(\cos\theta\), discard impossible roots (\(|k|>1\)), then find angles in the interval.',
+      r'Some equations are not solvable until rewritten. Classic pattern: replace \(\cos^2\theta\) by \(1-\sin^2\theta\) (or vice versa) to get a quadratic in one trig function.',
+      r'After rewriting, solve the quadratic for \(\sin\theta\) or \(\cos\theta\), discard impossible roots (\(|k|>1\)), then find angles in the interval.',
       'Always check solutions in the original equation if you squared or used reciprocal steps.',
     ],
     'example': r'Solve \(2\sin^2\theta-\sin\theta-1=0\) on \(0^\circ\le\theta\le360^\circ\): \((2\sin\theta+1)(\sin\theta-1)=0\) → \(\sin\theta=-\dfrac12\) or \(1\) → \(\theta=90^\circ,210^\circ,330^\circ\).',
     'points': [
       'Rewrite to one trig function when possible.',
-      'Quadratic in \(\sin\) or \(\cos\) is common.',
-      'Reject roots with absolute value \(>1\).',
+      r'Quadratic in \(\sin\) or \(\cos\) is common.',
+      r'Reject roots with absolute value \(>1\).',
       'Finish with the usual quadrant method.',
     ],
     'formulas': [
