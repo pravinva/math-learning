@@ -61,7 +61,6 @@ def set_page(meta, siblings):
     points = ''.join(f'<li>{x}</li>' for x in meta['points'])
     formulas = ''.join(f'<li>{x}</li>' for x in meta['formulas'])
     probs = ''.join(f'<li>{q}</li>' for q in meta['problems'])
-    ans = ''.join(f'<div class="ans"><strong>Q{i}.</strong> {a}</div>' for i,a in enumerate(meta['answers'],1))
     body = f'''
 <div class="eyebrow">DPEN022 Trigonometry · {meta["source"]}</div>
 <span class="tag">{meta["group"]}</span>
@@ -69,6 +68,7 @@ def set_page(meta, siblings):
 <p class="sub">{meta["blurb"]}</p>
 <div class="nav">
   <a href="index.html">← Lesson sets hub</a>
+  <a href="{meta["slug"]}-answers.html">Open Separate Answers</a>
   <a href="../../index.html">Class notes</a>
   <a href="../../../index.html">DPEN22 home</a>
 </div>
@@ -86,13 +86,40 @@ def set_page(meta, siblings):
 <h2>4. Practice problems (15)</h2>
 <div class="problems"><ol>{probs}</ol></div>
 
-<h2>5. Answers</h2>
-<details>
-<summary>Show answers</summary>
-<div class="answers">{ans}</div>
-</details>
+<div class="chiprow" style="margin-top:22px;">
+  <a class="chip on" href="{meta["slug"]}-answers.html">✅ Answers for this set</a>
+</div>
 '''
     (OUT / f'{meta["slug"]}.html').write_text(page(meta['title'], body))
+    answers_page(meta, siblings)
+
+
+def answers_page(meta, siblings):
+    chips = ''.join(
+        f'<a class="chip{" on" if s["slug"]==meta["slug"] else ""}" href="{s["slug"]}-answers.html">{s["short"]}</a>'
+        for s in siblings
+    )
+    rows = ''.join(
+        f'<div class="ans"><strong>Q{i}.</strong> {a}</div>'
+        for i, a in enumerate(meta['answers'], 1)
+    )
+    title = f'{meta["title"]} — Answers'
+    body = f'''
+<div class="eyebrow">DPEN022 Trigonometry · {meta["source"]}</div>
+<span class="tag">{meta["group"]} · ANSWERS</span>
+<h1>{title}</h1>
+<p class="sub">Answers to the 15 practice problems in this set.</p>
+<div class="nav">
+  <a href="{meta["slug"]}.html">← Back to lesson &amp; problems</a>
+  <a href="index.html">Lesson sets hub</a>
+  <a href="../../index.html">Class notes</a>
+</div>
+<div class="chiprow">{chips}</div>
+
+<h2>Answers (15)</h2>
+<div class="answers">{rows}</div>
+'''
+    (OUT / f'{meta["slug"]}-answers.html').write_text(page(title, body))
 
 
 # ===================== CONTENT =====================
@@ -826,11 +853,12 @@ def write_hub():
     for key, g in GROUPS.items():
         links = ''.join(
             f'<a class="chip" href="{s["slug"]}.html">{s["short"]}: {H.escape(s["title"])}</a>'
+            f'<a class="chip on" href="{s["slug"]}-answers.html">{s["short"]} answers</a>'
             for s in g['sets']
         )
         cards.append(f'''<div class="summary" style="margin-bottom:16px;">
 <h3 style="margin-top:0;">{H.escape(g["label"])} — 3 sets</h3>
-<p class="sub" style="margin:0 0 10px;">Each set: short lesson · key points · formulas/identities · 15 problems + answers</p>
+<p class="sub" style="margin:0 0 10px;">Each set: short lesson · key points · formulas/identities · 15 problems, with answers on a separate page</p>
 <div class="chiprow">{links}</div>
 </div>''')
     body = f'''
