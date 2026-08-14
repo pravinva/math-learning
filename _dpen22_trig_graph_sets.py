@@ -1,10 +1,94 @@
 #!/usr/bin/env python3
 """Two dedicated trig graph-sketching sets (10 questions each) + hub update."""
 from pathlib import Path
+import math
 import html as H
 from _dpen22_lesson_kit import set_page, page, CSS
+from _figkit_trig import plot, PI
 
 OUT = Path(__file__).resolve().parent / 'siddharth' / 'dpen22' / 'class-notes' / 'trig' / 'lessons'
+
+
+def kp(*pairs):
+    return list(pairs)
+
+
+# One labelled sketch per answer: (function, xmin, xmax, ymin, ymax, kwargs)
+FIGURES = {
+  'graph-set1': [
+    (math.sin, 0, 2*PI, -1.6, 1.6,
+     dict(keypoints=kp((0, 0), (PI/2, 1), (PI, 0), (3*PI/2, -1), (2*PI, 0)),
+          midline=0, amplitude=1, period=2*PI, caption='y = sin x')),
+    (math.cos, 0, 2*PI, -1.6, 1.6,
+     dict(keypoints=kp((0, 1), (PI/2, 0), (PI, -1), (3*PI/2, 0), (2*PI, 1)),
+          midline=0, amplitude=1, period=2*PI, caption='y = cos x')),
+    (lambda x: 2*math.sin(x), 0, 2*PI, -2.8, 2.8,
+     dict(keypoints=kp((0, 0), (PI/2, 2), (PI, 0), (3*PI/2, -2), (2*PI, 0)),
+          midline=0, amplitude=2, period=2*PI, caption='y = 2 sin x')),
+    (lambda x: math.sin(2*x), 0, PI, -1.6, 1.6,
+     dict(keypoints=kp((0, 0), (PI/4, 1), (PI/2, 0), (3*PI/4, -1), (PI, 0)),
+          midline=0, amplitude=1, period=PI, caption='y = sin 2x')),
+    (lambda x: math.cos(x)+2, 0, 2*PI, 0.4, 3.6,
+     dict(keypoints=kp((0, 3), (PI/2, 2), (PI, 1), (3*PI/2, 2), (2*PI, 3)),
+          midline=2, amplitude=1, period=2*PI, caption='y = cos x + 2  (range [1, 3])')),
+    (lambda x: -math.sin(x), 0, 2*PI, -1.6, 1.6,
+     dict(keypoints=kp((0, 0), (PI/2, -1), (PI, 0), (3*PI/2, 1), (2*PI, 0)),
+          midline=0, amplitude=1, period=2*PI,
+          caption='y = -sin x  (reflected: mid, min, mid, max, mid)')),
+    (lambda x: 3*math.cos(x), 0, 2*PI, -4, 4,
+     dict(keypoints=kp((0, 3), (PI/2, 0), (PI, -3), (3*PI/2, 0), (2*PI, 3)),
+          midline=0, amplitude=3, period=2*PI, caption='y = 3 cos x')),
+    (lambda x: math.sin(x - PI/2), PI/2, 5*PI/2, -1.6, 1.6,
+     dict(keypoints=kp((PI/2, 0), (PI, 1), (3*PI/2, 0), (2*PI, -1), (5*PI/2, 0)),
+          midline=0, amplitude=1, period=2*PI,
+          caption='y = sin(x - π/2)  (shift right π/2)')),
+    (lambda x: 2*math.cos(2*x), 0, PI, -2.8, 2.8,
+     dict(keypoints=kp((0, 2), (PI/4, 0), (PI/2, -2), (3*PI/4, 0), (PI, 2)),
+          midline=0, amplitude=2, period=PI, caption='y = 2 cos 2x')),
+    (math.tan, -PI/2, PI/2, -4.2, 4.2,
+     dict(keypoints=kp((-PI/4, -1), (0, 0), (PI/4, 1)),
+          asymptotes=(-PI/2, PI/2), caption='y = tan x  (period π, no amplitude)',
+          extra_notes=('Asymptotes at x = ±π/2; increasing through the origin.',))),
+  ],
+  'graph-set2': [
+    (lambda x: 2*math.sin(x + PI/2), -PI/2, 3*PI/2, -2.8, 2.8,
+     dict(keypoints=kp((-PI/2, 0), (0, 2), (PI/2, 0), (PI, -2), (3*PI/2, 0)),
+          midline=0, amplitude=2, period=2*PI,
+          caption='y = 2 sin(x + π/2) = 2 cos x')),
+    (lambda x: math.cos(x - PI) + 1, PI, 3*PI, -0.6, 2.6,
+     dict(keypoints=kp((PI, 2), (3*PI/2, 1), (2*PI, 0), (5*PI/2, 1), (3*PI, 2)),
+          midline=1, amplitude=1, period=2*PI, caption='y = cos(x - π) + 1')),
+    (lambda x: -2*math.cos(x), 0, 2*PI, -2.8, 2.8,
+     dict(keypoints=kp((0, -2), (PI/2, 0), (PI, 2), (3*PI/2, 0), (2*PI, -2)),
+          midline=0, amplitude=2, period=2*PI,
+          caption='y = -2 cos x  (max and min swapped)')),
+    (lambda x: 3*math.sin(2*x) + 1, 0, PI, -2.8, 4.8,
+     dict(keypoints=kp((0, 1), (PI/4, 4), (PI/2, 1), (3*PI/4, -2), (PI, 1)),
+          midline=1, amplitude=3, period=PI, caption='y = 3 sin 2x + 1')),
+    (lambda x: math.sin(2*(x - PI/6)), PI/6, 7*PI/6, -1.6, 1.6,
+     dict(keypoints=kp((PI/6, 0), (5*PI/12, 1), (2*PI/3, 0), (11*PI/12, -1), (7*PI/6, 0)),
+          midline=0, amplitude=1, period=PI,
+          caption='y = sin(2(x - π/6))  (start x = π/6)')),
+    (lambda x: 2*math.tan(x), -PI/2, PI/2, -5, 5,
+     dict(keypoints=kp((-PI/4, -2), (0, 0), (PI/4, 2)),
+          asymptotes=(-PI/2, PI/2), caption='y = 2 tan x  (steeper than tan x)',
+          extra_notes=('Asymptotes at x = ±π/2; passes through (0, 0).',))),
+    (lambda x: 5*math.sin(2*x) + 2, 0, PI, -4, 8,
+     dict(keypoints=kp((0, 2), (PI/4, 7), (PI/2, 2), (3*PI/4, -3), (PI, 2)),
+          midline=2, amplitude=5, period=PI,
+          caption='y = 5 sin 2x + 2  (amp 5, period π, midline y = 2)')),
+    (lambda x: math.cos(x) - 3, 0, 2*PI, -4.6, -1.4,
+     dict(keypoints=kp((0, -2), (PI/2, -3), (PI, -4), (3*PI/2, -3), (2*PI, -2)),
+          midline=-3, amplitude=1, period=2*PI, caption='y = cos x - 3')),
+    (lambda x: 4*math.cos(3*x), 0, 2*PI/3, -5.2, 5.2,
+     dict(keypoints=kp((0, 4), (PI/6, 0), (PI/3, -4), (PI/2, 0), (2*PI/3, 4)),
+          midline=0, amplitude=4, period=2*PI/3, caption='y = 4 cos 3x')),
+    (lambda x: -math.sin(2*x) + 2, 0, PI, 0.4, 3.6,
+     dict(keypoints=kp((0, 2), (PI/4, 1), (PI/2, 2), (3*PI/4, 3), (PI, 2)),
+          midline=2, amplitude=1, period=PI,
+          caption='y = -sin 2x + 2  (reflected, midline y = 2)')),
+  ],
+}
 
 SETS = [
   {
@@ -140,7 +224,20 @@ def patch_hub():
         print('hub patched')
 
 
+def attach_figures():
+    """Append a labelled sketch to every answer in both graph sets."""
+    for s in SETS:
+        figs = FIGURES[s['slug']]
+        assert len(figs) == len(s['answers']), \
+            f"{s['slug']}: {len(figs)} figures vs {len(s['answers'])} answers"
+        s['answers'] = [
+            ans + plot(fn, xmin, xmax, ymin, ymax, **kw)
+            for ans, (fn, xmin, xmax, ymin, ymax, kw) in zip(s['answers'], figs)
+        ]
+
+
 def main():
+    attach_figures()
     for s in SETS:
         set_page(OUT, 'Trigonometry', s, SETS)
         print('wrote', s['slug'])
