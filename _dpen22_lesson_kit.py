@@ -2,6 +2,7 @@
 """Shared HTML kit for DPEN022 short-lesson practice sets."""
 from pathlib import Path
 import html as H
+import re
 
 CSS = r'''
 :root{--navy:#1B3A5C;--orange:#FF3621;--blue:#185FA5;--bg:#fafaf8;--text:#2c2a28;--muted:#6b6762;--line:#e8e6e0;--green:#15803d;}
@@ -30,6 +31,29 @@ h3{font-size:16px;color:var(--blue);margin:16px 0 8px;}
 '''
 
 
+_MATH_SPAN = re.compile(r'(?<!\\)\\\(.*?(?<!\\)\\\)|\$\$.*?\$\$', re.S)
+_PROTECTED = re.compile(r'<svg[\s\S]*?</svg>|<style[\s\S]*?</style>|<script[\s\S]*?</script>', re.I)
+
+
+def escape_math_brackets(html: str) -> str:
+    """Escape < and > inside math spans.
+
+    The browser parses the HTML before KaTeX ever runs, so a raw `<` in
+    something like \\(-\\pi/2<x<\\pi/2\\) opens a bogus tag and swallows the
+    rest of the line. Entities survive parsing and reach KaTeX as plain text.
+    """
+    def fix_span(m):
+        return m.group(0).replace('<', '&lt;').replace('>', '&gt;')
+
+    out, pos = [], 0
+    for prot in _PROTECTED.finditer(html):
+        out.append(_MATH_SPAN.sub(fix_span, html[pos:prot.start()]))
+        out.append(prot.group(0))
+        pos = prot.end()
+    out.append(_MATH_SPAN.sub(fix_span, html[pos:]))
+    return ''.join(out)
+
+
 def page(title, body):
     html = f'''<!DOCTYPE html>
 <html lang="en"><head>
@@ -44,7 +68,7 @@ def page(title, body):
 {body}
 </div></body></html>
 '''
-    return html.replace("\\'", "'")
+    return escape_math_brackets(html.replace("\\'", "'"))
 
 
 def set_page(out: Path, subject: str, meta: dict, siblings: list, hub_up='../../index.html', home_up='../../../index.html'):

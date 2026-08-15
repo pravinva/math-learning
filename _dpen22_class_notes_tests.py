@@ -3,6 +3,7 @@
 from pathlib import Path
 import html as H
 import math
+from _dpen22_lesson_kit import escape_math_brackets
 from _figkit_exam import (
     limit_removable, limit_jump, limit_one_sided, area_under, area_between,
 )
@@ -50,7 +51,7 @@ def page(title, body, katex=True):
 '''
     # Python source uses \' inside single-quoted raw strings; KaTeX needs a plain
     # apostrophe for derivatives and arcminutes.
-    return rendered.replace("\\'", "'")
+    return escape_math_brackets(rendered.replace("\\'", "'"))
 
 
 def write_pair(slug, subject, timing, sample_href, tests_q, tests_a, fmt):

@@ -3,6 +3,7 @@
 from pathlib import Path
 import html as H
 import math
+from _dpen22_lesson_kit import escape_math_brackets
 
 OUT = Path(__file__).resolve().parent / 'siddharth' / 'dpen22' / 'class-notes' / 'trig' / 'lessons'
 OUT.mkdir(parents=True, exist_ok=True)
@@ -140,7 +141,7 @@ Learn to redraw both triangles from memory and read the ratios off them.</div>
 
 
 def page(title, body):
-    return f'''<!DOCTYPE html>
+    html = f'''<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{H.escape(title)}</title>
@@ -152,7 +153,8 @@ def page(title, body):
 </head><body><div class="wrap">
 {body}
 </div></body></html>
-'''.replace("\\'", "'")
+'''
+    return escape_math_brackets(html.replace("\\'", "'"))
 
 
 def set_page(meta, siblings):
