@@ -23,7 +23,9 @@ h3{font-size:16px;color:var(--blue);margin:16px 0 8px;}
 .ex{background:#fff7f5;border-left:4px solid var(--orange);padding:10px 12px;margin:12px 0;border-radius:0 6px 6px 0;}
 .problems ol{margin-left:22px;}
 .problems li{margin:10px 0;}
-.ans{background:#f0fdf4;border-left:4px solid var(--green);padding:8px 12px;margin:8px 0;border-radius:0 6px 6px 0;}
+.ans{background:#f0fdf4;border-left:4px solid var(--green);padding:8px 12px;margin:8px 0;border-radius:0 6px 6px 0;overflow-x:auto;}
+.ans .katex-display{overflow-x:auto;margin:6px 0;}
+@media(max-width:640px){.ans .katex{font-size:0.95em;}}
 .tag{display:inline-block;background:var(--orange);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;margin-bottom:8px;}
 .chiprow{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px;}
 .chip{display:inline-block;padding:7px 11px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;border:1px solid #c9dff7;background:#eef6ff;color:var(--blue);}
@@ -31,7 +33,10 @@ h3{font-size:16px;color:var(--blue);margin:16px 0 8px;}
 '''
 
 
-_MATH_SPAN = re.compile(r'(?<!\\)\\\(.*?(?<!\\)\\\)|\$\$.*?\$\$', re.S)
+_MATH_SPAN = re.compile(
+    r'(?<!\\)\\\(.*?(?<!\\)\\\)|(?<!\\)\\\[.*?(?<!\\)\\\]|\$\$.*?\$\$',
+    re.S,
+)
 _PROTECTED = re.compile(r'<svg[\s\S]*?</svg>|<style[\s\S]*?</style>|<script[\s\S]*?</script>', re.I)
 
 
@@ -62,7 +67,7 @@ def page(title, body):
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
- onload="renderMathInElement(document.body,{{delimiters:[{{left:'$$',right:'$$',display:true}},{{left:'\\\\(',right:'\\\\)',display:false}}]}});"></script>
+ onload="renderMathInElement(document.body,{{delimiters:[{{left:'$$',right:'$$',display:true}},{{left:'\\\\[',right:'\\\\]',display:true}},{{left:'\\\\(',right:'\\\\)',display:false}}]}});"></script>
 <style>{CSS}</style>
 </head><body><div class="wrap">
 {body}

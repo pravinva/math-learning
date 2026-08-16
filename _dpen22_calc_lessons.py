@@ -2,6 +2,7 @@
 """Generate DPEN022 Limits+Differentiation and Integration lesson packs."""
 from pathlib import Path
 from _dpen22_lesson_kit import generate
+from _dpen22_calc_sets45 import extend_groups
 
 
 def _set(slug, short, group, source, title, blurb, lesson, example, points, formulas, qa, **extra):
@@ -33,7 +34,7 @@ def validate(groups):
 LD_GROUPS = {}
 
 LD_GROUPS['2d'] = _grp('Week 2D — Limits', [
-_set('w2d-set1', '2D Set 1', 'WEEK 2D · SET 1 OF 3', 'Student Notes Week 2D (filled-in)',
+_set('w2d-set1', '2D Set 1', 'WEEK 2D · SET 1 OF 5', 'Student Notes Week 2D (filled-in)',
      'Introduction to limits & direct substitution',
      'From Week 2D: limit notation, reading graphs, and evaluating limits by substitution when the function is defined at the point.',
      [
@@ -61,7 +62,7 @@ _set('w2d-set1', '2D Set 1', 'WEEK 2D · SET 1 OF 3', 'Student Notes Week 2D (fi
          (r'\(\displaystyle\lim_{x\to 2}(x^2-3x+4)\)', r'\(2\)'),
          (r'\(\displaystyle\lim_{x\to 0}\dfrac{\sin x}{x}\)', r'\(1\)'),
      ], formulas_title='Key limit results'),
-_set('w2d-set2', '2D Set 2', 'WEEK 2D · SET 2 OF 3', 'Student Notes Week 2D (filled-in)',
+_set('w2d-set2', '2D Set 2', 'WEEK 2D · SET 2 OF 5', 'Student Notes Week 2D (filled-in)',
      r'Limits by factorisation (\(0/0\) forms)',
      r'From Week 2D: when direct substitution gives \(\frac00\), factor numerator and denominator, cancel common factors, then substitute.',
      [
@@ -89,7 +90,7 @@ _set('w2d-set2', '2D Set 2', 'WEEK 2D · SET 2 OF 3', 'Student Notes Week 2D (fi
          (r'\(\displaystyle\lim_{x\to 0}\frac{x^2}{\sin x}\)', r'\(0\)'),
          (r'\(\displaystyle\lim_{x\to 2}\frac{x^2-x-2}{x-2}\)', r'\(3\)'),
      ], formulas_title='Key limit results'),
-_set('w2d-set3', '2D Set 3', 'WEEK 2D · SET 3 OF 3', 'Student Notes Week 2D (filled-in)',
+_set('w2d-set3', '2D Set 3', 'WEEK 2D · SET 3 OF 5', 'Student Notes Week 2D (filled-in)',
      'Infinite limits & limits at infinity',
      r'From Week 2D: vertical asymptotes (\(\pm\infty\)) and end behaviour as \(x\to\pm\infty\).',
      [
@@ -120,7 +121,7 @@ _set('w2d-set3', '2D Set 3', 'WEEK 2D · SET 3 OF 3', 'Student Notes Week 2D (fi
 ])
 
 LD_GROUPS['3a'] = _grp('Week 3A — Power rule basics', [
-_set('w3a-set1', '3A Set 1', 'WEEK 3A · SET 1 OF 3', 'Student Notes Week 3A (filled-in)',
+_set('w3a-set1', '3A Set 1', 'WEEK 3A · SET 1 OF 5', 'Student Notes Week 3A (filled-in)',
      'Gradient function & meaning of the derivative',
      r"From Week 3A: average rate of change, gradient function \(f^{\prime}(x)\), and \(\dfrac{dy}{dx}\) notation.",
      [
@@ -148,7 +149,7 @@ _set('w3a-set1', '3A Set 1', 'WEEK 3A · SET 1 OF 3', 'Student Notes Week 3A (fi
          (r"Sketch idea: \(f^{\prime}(x)>0\) where \(y=x^2\) for \(x>0\).", r'Increasing for \(x>0\).'),
          (r"Units: if \(s(t)\) is metres, what are units of \(s^{\prime}(t)\)?", r'm/s (velocity).'),
      ]),
-_set('w3a-set2', '3A Set 2', 'WEEK 3A · SET 2 OF 3', 'Student Notes Week 3A (filled-in)',
+_set('w3a-set2', '3A Set 2', 'WEEK 3A · SET 2 OF 5', 'Student Notes Week 3A (filled-in)',
      'Power rule, constant multiple & sum rule',
      r'From Week 3A: differentiate polynomials using \(\dfrac{d}{dx}x^n=nx^{n-1}\), constant multiple and sum rules.',
      [
@@ -176,7 +177,7 @@ _set('w3a-set2', '3A Set 2', 'WEEK 3A · SET 2 OF 3', 'Student Notes Week 3A (fi
          (r'\(\dfrac{d}{dx}(10-7x)\)', r'\(-7\)'),
          (r'\(\dfrac{d}{dx}(x^6)\)', r'\(6x^5\)'),
      ]),
-_set('w3a-set3', '3A Set 3', 'WEEK 3A · SET 3 OF 3', 'Student Notes Week 3A (filled-in)',
+_set('w3a-set3', '3A Set 3', 'WEEK 3A · SET 3 OF 5', 'Student Notes Week 3A (filled-in)',
      'Gradient at a point & simple applications',
      r"From Week 3A: evaluate \(f^{\prime}(a)\), interpret gradient, and use derivatives in basic motion problems.",
      [
@@ -207,7 +208,7 @@ _set('w3a-set3', '3A Set 3', 'WEEK 3A · SET 3 OF 3', 'Student Notes Week 3A (fi
 ])
 
 LD_GROUPS['3c'] = _grp('Week 3C — Quotient & chain rule', [
-_set('w3c-set1', '3C Set 1', 'WEEK 3C · SET 1 OF 3', 'Student Notes Week 3C (filled-in)',
+_set('w3c-set1', '3C Set 1', 'WEEK 3C · SET 1 OF 5', 'Student Notes Week 3C (filled-in)',
      'Quotient rule',
      r'From Week 3C: differentiate \(\dfrac{f(x)}{g(x)}\) using the quotient rule.',
      [
@@ -235,7 +236,7 @@ _set('w3c-set1', '3C Set 1', 'WEEK 3C · SET 1 OF 3', 'Student Notes Week 3C (fi
          (r'\(\dfrac{d}{dx}\!\left(\dfrac{1}{2x}\right)\)', r'\(-\dfrac{1}{2x^2}\)'),
          (r'\(\dfrac{d}{dx}\!\left(\dfrac{x^2+2x}{x+2}\right)\)', r'\(\dfrac{x^2+4x+4}{(x+2)^2}=\dfrac{(x+2)^2}{(x+2)^2}=1\) (for \(x\neq -2\))'),
      ]),
-_set('w3c-set2', '3C Set 2', 'WEEK 3C · SET 2 OF 3', 'Student Notes Week 3C (filled-in)',
+_set('w3c-set2', '3C Set 2', 'WEEK 3C · SET 2 OF 5', 'Student Notes Week 3C (filled-in)',
      'Chain rule',
      r'From Week 3C: differentiate composite functions \(f(g(x))\) using the chain rule.',
      [
@@ -263,7 +264,7 @@ _set('w3c-set2', '3C Set 2', 'WEEK 3C · SET 2 OF 3', 'Student Notes Week 3C (fi
          (r'\(\dfrac{d}{dx}(x^4+1)^{1/2}\)', r'\(\dfrac{2x^3}{\sqrt{x^4+1}}\)'),
          (r'\(\dfrac{d}{dx}(2x-5)^{-2}\)', r'\(-4(2x-5)^{-3}\)'),
      ]),
-_set('w3c-set3', '3C Set 3', 'WEEK 3C · SET 3 OF 3', 'Student Notes Week 3C (filled-in)',
+_set('w3c-set3', '3C Set 3', 'WEEK 3C · SET 3 OF 5', 'Student Notes Week 3C (filled-in)',
      'Combining differentiation rules',
      'From Week 3C: problems mixing product, quotient, and chain rules.',
      [
@@ -294,7 +295,7 @@ _set('w3c-set3', '3C Set 3', 'WEEK 3C · SET 3 OF 3', 'Student Notes Week 3C (fi
 ])
 
 LD_GROUPS['3b'] = _grp('Week 3B — Product rule & higher derivatives', [
-_set('w3b-set1', '3B Set 1', 'WEEK 3B · SET 1 OF 3', 'Student Notes Week 3B (filled-in)',
+_set('w3b-set1', '3B Set 1', 'WEEK 3B · SET 1 OF 5', 'Student Notes Week 3B (filled-in)',
      r"Finding \(f\) and \(f^{\prime}\) from information",
      'From Week 3B: given derivative or gradient conditions, recover parts of a function or evaluate at a point.',
      [
@@ -322,7 +323,7 @@ _set('w3b-set1', '3B Set 1', 'WEEK 3B · SET 1 OF 3', 'Student Notes Week 3B (fi
          (r"\(f^{\prime}(x)=5x^4\), \(f(1)=3\). Find \(f(-1)\).", r'\(f(x)=x^5+2\); \(1\)'),
          (r"\(f^{\prime}(x)=-4\), \(f(2)=0\). Find \(f(6)\).", r'\(-16\)'),
      ]),
-_set('w3b-set2', '3B Set 2', 'WEEK 3B · SET 2 OF 3', 'Student Notes Week 3B (filled-in)',
+_set('w3b-set2', '3B Set 2', 'WEEK 3B · SET 2 OF 5', 'Student Notes Week 3B (filled-in)',
      'Product rule',
      r'From Week 3B: differentiate products \(f(x)g(x)\) using \((fg)^{\prime}=f^{\prime}g+fg^{\prime}\).',
      [
@@ -350,7 +351,7 @@ _set('w3b-set2', '3B Set 2', 'WEEK 3B · SET 2 OF 3', 'Student Notes Week 3B (fi
          (r'\(\dfrac{d}{dx}[(x^3+1)(2x)]\)', r'\(8x^3+2\)'),
          (r'\(\dfrac{d}{dx}[(x+4)(x^2)]\)', r'\(3x^2+8x\)'),
      ]),
-_set('w3b-set3', '3B Set 3', 'WEEK 3B · SET 3 OF 3', 'Student Notes Week 3B (filled-in)',
+_set('w3b-set3', '3B Set 3', 'WEEK 3B · SET 3 OF 5', 'Student Notes Week 3B (filled-in)',
      'Second derivatives',
      r"From Week 3B: notation \(f^{\prime\prime}(x)=\dfrac{d^2y}{dx^2}\), concavity, and acceleration as second derivative of displacement.",
      [
@@ -381,7 +382,7 @@ _set('w3b-set3', '3B Set 3', 'WEEK 3B · SET 3 OF 3', 'Student Notes Week 3B (fi
 ])
 
 LD_GROUPS['3d'] = _grp('Week 3D — Tangents & exponentials', [
-_set('w3d-set1', '3D Set 1', 'WEEK 3D · SET 1 OF 3', 'Student Notes Week 3D (filled-in)',
+_set('w3d-set1', '3D Set 1', 'WEEK 3D · SET 1 OF 5', 'Student Notes Week 3D (filled-in)',
      'Equation of the tangent (point–gradient form)',
      r"From Week 3D: use \(y-y_1=m(x-x_1)\) with \(m=f^{\prime}(a)\) at the point of tangency.",
      [
@@ -409,7 +410,7 @@ _set('w3d-set1', '3D Set 1', 'WEEK 3D · SET 1 OF 3', 'Student Notes Week 3D (fi
          (r'\(f(x)=x^2-1\); tangent at \(x=2\).', r'\(y-3=4(x-2)\)'),
          (r'\(f(x)=x^3\); tangent at \(x=-1\).', r'\(y+1=3(x+1)\)'),
      ]),
-_set('w3d-set2', '3D Set 2', 'WEEK 3D · SET 2 OF 3', 'Student Notes Week 3D (filled-in)',
+_set('w3d-set2', '3D Set 2', 'WEEK 3D · SET 2 OF 5', 'Student Notes Week 3D (filled-in)',
      r'Derivative of \(e^x\)',
      r'From Week 3D: the exponential function differentiates to itself: \(\dfrac{d}{dx}e^x=e^x\).',
      [
@@ -437,7 +438,7 @@ _set('w3d-set2', '3D Set 2', 'WEEK 3D · SET 2 OF 3', 'Student Notes Week 3D (fi
          (r'\(\dfrac{d}{dx}(x e^x)\) (product)', r'\(e^x+x e^x\)'),
          (r'\(\dfrac{d}{dx}(e^{3x}-e^x)\)', r'\(3e^{3x}-e^x\)'),
      ]),
-_set('w3d-set3', '3D Set 3', 'WEEK 3D · SET 3 OF 3', 'Student Notes Week 3D (filled-in)',
+_set('w3d-set3', '3D Set 3', 'WEEK 3D · SET 3 OF 5', 'Student Notes Week 3D (filled-in)',
      r'Derivative of \(e^{f(x)}\)',
      r"From Week 3D: chain rule for exponentials — \(\dfrac{d}{dx}e^{f(x)}=f^{\prime}(x)e^{f(x)}\).",
      [
@@ -468,7 +469,7 @@ _set('w3d-set3', '3D Set 3', 'WEEK 3D · SET 3 OF 3', 'Student Notes Week 3D (fi
 ])
 
 LD_GROUPS['4a'] = _grp('Week 4A — Log & trig derivatives', [
-_set('w4a-set1', '4A Set 1', 'WEEK 4A · SET 1 OF 3', 'Student Notes Week 4A (filled-in)',
+_set('w4a-set1', '4A Set 1', 'WEEK 4A · SET 1 OF 5', 'Student Notes Week 4A (filled-in)',
      r'Derivatives of \(\ln x\) and \(\ln(f(x))\)',
      r"From Week 4A: \(\dfrac{d}{dx}\ln x=\dfrac1x\) and chain rule gives \(\dfrac{d}{dx}\ln(f(x))=\dfrac{f^{\prime}(x)}{f(x)}\).",
      [
@@ -496,7 +497,7 @@ _set('w4a-set1', '4A Set 1', 'WEEK 4A · SET 1 OF 3', 'Student Notes Week 4A (fi
          (r'\(\dfrac{d}{dx}(\ln(x^2+x))\)', r'\(\dfrac{2x+1}{x^2+x}\)'),
          (r'\(\dfrac{d}{dx}(\ln(e^{2x}))\)', r'\(2\)'),
      ]),
-_set('w4a-set2', '4A Set 2', 'WEEK 4A · SET 2 OF 3', 'Student Notes Week 4A (filled-in)',
+_set('w4a-set2', '4A Set 2', 'WEEK 4A · SET 2 OF 5', 'Student Notes Week 4A (filled-in)',
      r'Derivatives of \(\sin x\), \(\cos x\), \(\tan x\)',
      'From Week 4A: standard trig derivatives and simple combinations.',
      [
@@ -524,7 +525,7 @@ _set('w4a-set2', '4A Set 2', 'WEEK 4A · SET 2 OF 3', 'Student Notes Week 4A (fi
          (r'\(\dfrac{d}{dx}(\sin(\pi x))\)', r'\(\pi\cos(\pi x)\)'),
          (r'\(\dfrac{d}{dx}(\sec^2 x)\)', r'\(2\sec^2 x\tan x\)'),
      ]),
-_set('w4a-set3', '4A Set 3', 'WEEK 4A · SET 3 OF 3', 'Student Notes Week 4A (filled-in)',
+_set('w4a-set3', '4A Set 3', 'WEEK 4A · SET 3 OF 5', 'Student Notes Week 4A (filled-in)',
      'Mixed log, exponential & trig derivatives',
      r'From Week 4A: combine rules on functions involving \(e^x\), \(\ln x\), and trig.',
      [
@@ -557,7 +558,7 @@ _set('w4a-set3', '4A Set 3', 'WEEK 4A · SET 3 OF 3', 'Student Notes Week 4A (fi
 INT_GROUPS = {}
 
 INT_GROUPS['4d'] = _grp('Week 4D — Antiderivatives', [
-_set('w4d-set1', '4D Set 1', 'WEEK 4D · SET 1 OF 3', 'Student Notes Week 4D (filled-in)',
+_set('w4d-set1', '4D Set 1', 'WEEK 4D · SET 1 OF 5', 'Student Notes Week 4D (filled-in)',
      'Introduction to indefinite integrals',
      r'From Week 4D: antiderivatives, \(\int f(x)\,dx\), and the constant of integration.',
      [
@@ -585,7 +586,7 @@ _set('w4d-set1', '4D Set 1', 'WEEK 4D · SET 1 OF 3', 'Student Notes Week 4D (fi
          (r'\(\int (3x^2-2)\,dx\)', r'\(x^3-2x+C\)'),
          (r'\(\int x^{-3}\,dx\)', r'\(-\dfrac{1}{2x^2}+C\)'),
      ]),
-_set('w4d-set2', '4D Set 2', 'WEEK 4D · SET 2 OF 3', 'Student Notes Week 4D (filled-in)',
+_set('w4d-set2', '4D Set 2', 'WEEK 4D · SET 2 OF 5', 'Student Notes Week 4D (filled-in)',
      'Power rule, constant multiple & sum rules for integration',
      r'From Week 4D: \(\int x^n\,dx=\dfrac{x^{n+1}}{n+1}+C\) (\(n\neq -1\)), plus constant multiple and sum.',
      [
@@ -613,7 +614,7 @@ _set('w4d-set2', '4D Set 2', 'WEEK 4D · SET 2 OF 3', 'Student Notes Week 4D (fi
          (r'\(\int \dfrac{3}{x^4}\,dx\)', r'\(-\dfrac{1}{x^3}+C\)'),
          (r'\(\int (5x^2+2x+1)\,dx\)', r'\(\dfrac{5x^3}{3}+x^2+x+C\)'),
      ]),
-_set('w4d-set3', '4D Set 3', 'WEEK 4D · SET 3 OF 3', 'Student Notes Week 4D (filled-in)',
+_set('w4d-set3', '4D Set 3', 'WEEK 4D · SET 3 OF 5', 'Student Notes Week 4D (filled-in)',
      'Simplifying the integrand before integrating',
      'From Week 4D: expand, factor, or rewrite powers before integrating.',
      [
@@ -644,7 +645,7 @@ _set('w4d-set3', '4D Set 3', 'WEEK 4D · SET 3 OF 3', 'Student Notes Week 4D (fi
 ])
 
 INT_GROUPS['5a'] = _grp('Week 5A — Definite integrals & area', [
-_set('w5a-set1', '5A Set 1', 'WEEK 5A · SET 1 OF 3', 'Student Notes Week 5A (filled-in)',
+_set('w5a-set1', '5A Set 1', 'WEEK 5A · SET 1 OF 5', 'Student Notes Week 5A (filled-in)',
      'Fundamental Theorem of Calculus & definite integrals',
      r"From Week 5A: evaluate \(\int_a^b f(x)\,dx = F(b)-F(a)\) where \(F^{\prime}=f\).",
      [
@@ -672,7 +673,7 @@ _set('w5a-set1', '5A Set 1', 'WEEK 5A · SET 1 OF 3', 'Student Notes Week 5A (fi
          (r'\(\displaystyle\int_0^{\pi/2} \cos x\,dx\)', r'\(1\)'),
          (r'\(\displaystyle\int_0^1 (2x^3-x)\,dx\)', r'\(\dfrac{1}{2}\)'),
      ]),
-_set('w5a-set2', '5A Set 2', 'WEEK 5A · SET 2 OF 3', 'Student Notes Week 5A (filled-in)',
+_set('w5a-set2', '5A Set 2', 'WEEK 5A · SET 2 OF 5', 'Student Notes Week 5A (filled-in)',
      'Definite integrals of powers & polynomials',
      'From Week 5A: practice evaluating definite integrals of polynomial and power functions.',
      [
@@ -700,7 +701,7 @@ _set('w5a-set2', '5A Set 2', 'WEEK 5A · SET 2 OF 3', 'Student Notes Week 5A (fi
          (r'\(\displaystyle\int_0^1 (x^3+x)\,dx\)', r'\(\dfrac{3}{4}\)'),
          (r'\(\displaystyle\int_{-1}^1 (x^2-1)\,dx\)', r'\(-\dfrac{4}{3}\)'),
      ]),
-_set('w5a-set3', '5A Set 3', 'WEEK 5A · SET 3 OF 3', 'Student Notes Week 5A (filled-in)',
+_set('w5a-set3', '5A Set 3', 'WEEK 5A · SET 3 OF 5', 'Student Notes Week 5A (filled-in)',
      'Area under a curve (above the axis)',
      r'From Week 5A: area between \(y=f(x)\) and the \(x\)-axis when \(f(x)\ge 0\) on \([a,b]\).',
      [
@@ -731,7 +732,7 @@ _set('w5a-set3', '5A Set 3', 'WEEK 5A · SET 3 OF 3', 'Student Notes Week 5A (fi
 ])
 
 INT_GROUPS['5b'] = _grp('Week 5B — Areas below axis & between curves', [
-_set('w5b-set1', '5B Set 1', 'WEEK 5B · SET 1 OF 3', 'Student Notes Week 5B (filled-in)',
+_set('w5b-set1', '5B Set 1', 'WEEK 5B · SET 1 OF 5', 'Student Notes Week 5B (filled-in)',
      r'Area below the \(x\)-axis',
      r'From Week 5B: when \(f(x)<0\), contribution to area uses absolute value — flip sign of integral.',
      [
@@ -759,7 +760,7 @@ _set('w5b-set1', '5B Set 1', 'WEEK 5B · SET 1 OF 3', 'Student Notes Week 5B (fi
          (r'Area under \(y=\sin x\) from \(-\pi\) to \(0\).', r'\(2\)'),
          (r'Area under \(y=2x-6\) from \(1\) to \(4\).', r'\(\dfrac{9}{2}\)'),
      ]),
-_set('w5b-set2', '5B Set 2', 'WEEK 5B · SET 2 OF 3', 'Student Notes Week 5B (filled-in)',
+_set('w5b-set2', '5B Set 2', 'WEEK 5B · SET 2 OF 5', 'Student Notes Week 5B (filled-in)',
      'Subdividing regions at zeros',
      r'From Week 5B: split \([a,b]\) where \(f\) changes sign; integrate each piece with correct sign.',
      [
@@ -787,7 +788,7 @@ _set('w5b-set2', '5B Set 2', 'WEEK 5B · SET 2 OF 3', 'Student Notes Week 5B (fi
          (r'Area under \(y=x^2-x-2\) from \(-1\) to \(3\).', r'\(\dfrac{32}{3}\)'),
          (r'Area under \(y=\cos x\) from \(-\pi/2\) to \(\pi/2\).', r'\(2\)'),
      ]),
-_set('w5b-set3', '5B Set 3', 'WEEK 5B · SET 3 OF 3', 'Student Notes Week 5B (filled-in)',
+_set('w5b-set3', '5B Set 3', 'WEEK 5B · SET 3 OF 5', 'Student Notes Week 5B (filled-in)',
      'Area between two curves',
      r'From Week 5B: area between \(y=f(x)\) and \(y=g(x)\) is \(\displaystyle\int_a^b |f(x)-g(x)|\,dx\).',
      [
@@ -818,7 +819,7 @@ _set('w5b-set3', '5B Set 3', 'WEEK 5B · SET 3 OF 3', 'Student Notes Week 5B (fi
 ])
 
 INT_GROUPS['5c'] = _grp('Week 5C — Log & trig integrals', [
-_set('w5c-set1', '5C Set 1', 'WEEK 5C · SET 1 OF 3', 'Student Notes Week 5C (filled-in)',
+_set('w5c-set1', '5C Set 1', 'WEEK 5C · SET 1 OF 5', 'Student Notes Week 5C (filled-in)',
      r'Integrating \(\dfrac{1}{x}\)',
      r'From Week 5C: \(\int \dfrac{1}{x}\,dx = \ln|x|+C\).',
      [
@@ -846,7 +847,7 @@ _set('w5c-set1', '5C Set 1', 'WEEK 5C · SET 1 OF 3', 'Student Notes Week 5C (fi
          (r'\(\displaystyle\int \dfrac{e^x}{e^x+1}\,dx\)', r'\(\ln(e^x+1)+C\)'),
          (r'\(\displaystyle\int \dfrac{1}{4x}\,dx\)', r'\(\dfrac{1}{4}\ln|x|+C\)'),
      ]),
-_set('w5c-set2', '5C Set 2', 'WEEK 5C · SET 2 OF 3', 'Student Notes Week 5C (filled-in)',
+_set('w5c-set2', '5C Set 2', 'WEEK 5C · SET 2 OF 5', 'Student Notes Week 5C (filled-in)',
      r'Integrating \(\sin x\) and \(\cos x\)',
      r'From Week 5C: \(\int \sin x\,dx=-\cos x+C\), \(\int \cos x\,dx=\sin x+C\).',
      [
@@ -874,7 +875,7 @@ _set('w5c-set2', '5C Set 2', 'WEEK 5C · SET 2 OF 3', 'Student Notes Week 5C (fi
          (r'\(\displaystyle\int \dfrac{\sin x}{\cos^2 x}\,dx\)', r'\(\sec x+C\)'),
          (r'\(\displaystyle\int \cos^2 x\sin x\,dx\)', r'\(-\dfrac{\cos^3 x}{3}+C\)'),
      ]),
-_set('w5c-set3', '5C Set 3', 'WEEK 5C · SET 3 OF 3', 'Student Notes Week 5C (filled-in)',
+_set('w5c-set3', '5C Set 3', 'WEEK 5C · SET 3 OF 5', 'Student Notes Week 5C (filled-in)',
      'Basic trig integrals & identities',
      r'From Week 5C: \(\int \sec^2 x\,dx=\tan x+C\), \(\int \tan x\,dx\), and simple trig combinations.',
      [
@@ -905,7 +906,7 @@ _set('w5c-set3', '5C Set 3', 'WEEK 5C · SET 3 OF 3', 'Student Notes Week 5C (fi
 ])
 
 INT_GROUPS['5d'] = _grp('Week 5D — Substitution', [
-_set('w5d-set1', '5D Set 1', 'WEEK 5D · SET 1 OF 3', 'Student Notes Week 5D (filled-in)',
+_set('w5d-set1', '5D Set 1', 'WEEK 5D · SET 1 OF 5', 'Student Notes Week 5D (filled-in)',
      'Simple substitution (indefinite)',
      r"From Week 5D: let \(u=g(x)\), \(du=g^{\prime}(x)\,dx\), rewrite integral in \(u\).",
      [
@@ -933,7 +934,7 @@ _set('w5d-set1', '5D Set 1', 'WEEK 5D · SET 1 OF 3', 'Student Notes Week 5D (fi
          (r'\(\displaystyle\int \dfrac{1}{\sqrt{1-x}}\,dx\)', r'\(-2\sqrt{1-x}+C\)'),
          (r'\(\displaystyle\int x^3(x^4+2)^2\,dx\)', r'\(\dfrac{(x^4+2)^3}{12}+C\)'),
      ]),
-_set('w5d-set2', '5D Set 2', 'WEEK 5D · SET 2 OF 3', 'Student Notes Week 5D (filled-in)',
+_set('w5d-set2', '5D Set 2', 'WEEK 5D · SET 2 OF 5', 'Student Notes Week 5D (filled-in)',
      'Definite integrals with substitution (change limits)',
      r'From Week 5D: when using substitution on \(\int_a^b\), change limits to \(u(a)\) and \(u(b)\).',
      [
@@ -961,7 +962,7 @@ _set('w5d-set2', '5D Set 2', 'WEEK 5D · SET 2 OF 3', 'Student Notes Week 5D (fi
          (r'\(\displaystyle\int_0^1 x(x^2+3)^3\,dx\)', r'\(\dfrac{40}{3}\)'),
          (r'\(\displaystyle\int_0^{\pi/4} \tan x\,dx\)', r'\(\dfrac{1}{2}\ln 2\)'),
      ]),
-_set('w5d-set3', '5D Set 3', 'WEEK 5D · SET 3 OF 3', 'Student Notes Week 5D (filled-in)',
+_set('w5d-set3', '5D Set 3', 'WEEK 5D · SET 3 OF 5', 'Student Notes Week 5D (filled-in)',
      'More substitution practice',
      r'From Week 5D: harder choices of \(u\) and integrals needing algebraic adjustment.',
      [
@@ -992,7 +993,7 @@ _set('w5d-set3', '5D Set 3', 'WEEK 5D · SET 3 OF 3', 'Student Notes Week 5D (fi
 ])
 
 INT_GROUPS['6a'] = _grp('Week 6A — Further substitution', [
-_set('w6a-set1', '6A Set 1', 'WEEK 6A · SET 1 OF 3', 'Student Notes Week 6A (filled-in)',
+_set('w6a-set1', '6A Set 1', 'WEEK 6A · SET 1 OF 5', 'Student Notes Week 6A (filled-in)',
      'Substitution with exponential composites',
      r'From Week 6A: integrals involving \(e^{f(x)}\) and related forms.',
      [
@@ -1020,7 +1021,7 @@ _set('w6a-set1', '6A Set 1', 'WEEK 6A · SET 1 OF 3', 'Student Notes Week 6A (fi
          (r'\(\displaystyle\int (e^x+e^{-x})\,dx\)', r'\(e^x-e^{-x}+C\)'),
          (r'\(\displaystyle\int x^3 e^{x^4}\,dx\)', r'\(\dfrac{e^{x^4}}{4}+C\)'),
      ]),
-_set('w6a-set2', '6A Set 2', 'WEEK 6A · SET 2 OF 3', 'Student Notes Week 6A (filled-in)',
+_set('w6a-set2', '6A Set 2', 'WEEK 6A · SET 2 OF 5', 'Student Notes Week 6A (filled-in)',
      'Substitution with trigonometric composites',
      r"From Week 6A: integrals like \(\int \sin^n x\cos x\,dx\), \(\int f^{\prime}(x)\sin(f(x))\,dx\), etc.",
      [
@@ -1048,7 +1049,7 @@ _set('w6a-set2', '6A Set 2', 'WEEK 6A · SET 2 OF 3', 'Student Notes Week 6A (fi
          (r'\(\displaystyle\int \sin x\,e^{\cos x}\,dx\)', r'\(-e^{\cos x}+C\)'),
          (r'\(\displaystyle\int \cos x\,e^{\sin x}\,dx\)', r'\(e^{\sin x}+C\)'),
      ]),
-_set('w6a-set3', '6A Set 3', 'WEEK 6A · SET 3 OF 3', 'Student Notes Week 6A (filled-in)',
+_set('w6a-set3', '6A Set 3', 'WEEK 6A · SET 3 OF 5', 'Student Notes Week 6A (filled-in)',
      'Further substitution — mixed composites',
      'From Week 6A: combine exponential, log, and trig substitutions in harder problems.',
      [
@@ -1078,6 +1079,8 @@ _set('w6a-set3', '6A Set 3', 'WEEK 6A · SET 3 OF 3', 'Student Notes Week 6A (fi
      ]),
 ])
 
+extend_groups(_set, LD_GROUPS, INT_GROUPS)
+
 
 def main():
     root = Path(__file__).resolve().parent / 'siddharth' / 'dpen22' / 'class-notes'
@@ -1088,7 +1091,7 @@ def main():
         'Limits + Differentiation',
         LD_GROUPS,
         'Limits & differentiation lesson packs (Week 2D–4A)',
-        'Built from filled-in student notes: Week <strong>2D</strong> (limits), then <strong>3A–3D</strong> and <strong>4A</strong> (differentiation), 3 sets each.',
+        'Built from filled-in student notes: Week <strong>2D</strong> (limits), then <strong>3A–3D</strong> and <strong>4A</strong> (differentiation), 5 sets each.',
         extra_nav='<a href="../../tests/limits-diff-questions.html">Limits &amp; Diff practice tests</a>',
     )
     generate(
@@ -1096,7 +1099,7 @@ def main():
         'Integration',
         INT_GROUPS,
         'Integration lesson packs (Week 4D–6A)',
-        'Built from filled-in student notes: Week <strong>4D</strong> (antiderivatives), <strong>5A–5D</strong> and <strong>6A</strong> (definite integrals, area, substitution), 3 sets each.',
+        'Built from filled-in student notes: Week <strong>4D</strong> (antiderivatives), <strong>5A–5D</strong> and <strong>6A</strong> (definite integrals, area, substitution), 5 sets each.',
         extra_nav='<a href="../../tests/integration-questions.html">Integration practice tests</a>',
     )
 
