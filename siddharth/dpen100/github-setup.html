@@ -36,8 +36,8 @@ pre{background:#1e293b;color:#e2e8f0;padding:12px 14px;border-radius:8px;overflo
 
 <div class="eyebrow">DPEN100 · ENGG100 · MATLAB projects &amp; practice</div>
 <span class="tag">BEFORE YOU START</span>
-<h1>Create a GitHub repo and push from Windows</h1>
-<p class="sub">Do this once before Practicals and Engineering Analysis projects. You will keep your MATLAB <code>.m</code> scripts, plots, and reports in a private (or public) GitHub repository so your work is backed up and easy to share.</p>
+<h1>Use GitHub for your MATLAB work (Windows)</h1>
+<p class="sub">Set this up once before Practicals and Engineering Analysis projects. You will keep your MATLAB <code>.m</code> scripts, plots, and reports in a GitHub repository — not just to back them up and push, but to <strong>work</strong> in day to day: save scripts into the repo, version your figures, and roll back if something breaks. Steps 1–5 get you set up; the “Using GitHub for your MATLAB work” section below is the part you use every session.</p>
 
 <div class="chiprow">
   <a class="chip on" href="github-setup.html">GitHub setup</a>
@@ -140,6 +140,7 @@ git push -u origin main</pre>
   <strong>Suggested repo layout</strong>
 <pre style="margin-top:8px">dpen100-matlab/
   README.md
+  .gitignore
   practicals/
     p03_hello.m
     p04_…
@@ -148,6 +149,100 @@ git push -u origin main</pre>
     proj1_partB.m
     proj2_partA.m
   plots/</pre>
+</div>
+
+<h2>Using GitHub for your MATLAB work (not just pushing)</h2>
+<p class="sub">This is the part that matters day to day: point MATLAB at your repo folder, save scripts and figures there, and let Git track every version so you can go back if something breaks.</p>
+
+<div class="step">
+  <div class="n">A · Make the repo your MATLAB working folder</div>
+  <ol class="plain">
+    <li>Open <strong>MATLAB</strong>.</li>
+    <li>In the <strong>Current Folder</strong> panel (top-left address bar), browse to your repo, e.g. <code>Documents\dpen100-matlab</code>.</li>
+    <li>Everything you create now (scripts, figures) lives inside the repo, so Git can see it. Tip: <strong>right-click the folder → Add to Path</strong> if you call functions across subfolders.</li>
+  </ol>
+</div>
+
+<div class="step">
+  <div class="n">B · Create and save a script into the repo</div>
+  <ol class="plain">
+    <li><strong>Home → New Script</strong> (or <code>Ctrl+N</code>).</li>
+    <li>Write your code, then <strong>Save As…</strong> into the right subfolder, e.g. <code>projects\proj1_partA.m</code>.</li>
+    <li>Use clear names that match the task: <code>p03_hello.m</code>, <code>proj1_partB.m</code>. No spaces in file names.</li>
+    <li>Run with <strong>F5</strong> (or the green Run button) and check the plots/output.</li>
+  </ol>
+</div>
+
+<div class="step">
+  <div class="n">C · Save your figures into the repo too</div>
+  <p>So your plots are versioned alongside the code, export each figure to the <code>plots\</code> folder. Add these lines at the end of a script:</p>
+<pre>% after you create figure(1), figure(2), ...
+saveas(figure(1), 'plots/proj1_path3d.png');
+exportgraphics(figure(2), 'plots/proj1_grade.png', 'Resolution', 150);</pre>
+  <p class="meta">Or use the Figure window: <strong>File → Save As…</strong> and choose the <code>plots</code> folder (PNG or PDF).</p>
+</div>
+
+<div class="step">
+  <div class="n">D · Add a MATLAB <code>.gitignore</code> (skip junk files)</div>
+  <p>Create a file named <code>.gitignore</code> in the repo root so Git ignores auto-generated files. In GitHub Desktop you can also do <strong>Repository → Repository settings → Ignored files</strong>. Paste:</p>
+<pre>*.asv          % MATLAB autosave backups
+*.m~           % editor backups
+slprj/         % Simulink build folder
+*.mex*         % compiled MEX
+octave-workspace
+.DS_Store</pre>
+  <p class="meta">Keep your <code>.m</code> files and exported <code>.png</code>/<code>.pdf</code> plots — ignore only the temporary stuff above.</p>
+</div>
+
+<div class="step">
+  <div class="n">E · The MATLAB work cycle (repeat every session)</div>
+  <ol class="plain">
+    <li>In MATLAB: write / edit a script, run it, confirm the plot is right.</li>
+    <li>Export any figures to <code>plots\</code>.</li>
+    <li>Switch to <strong>GitHub Desktop</strong> — your changed <code>.m</code> and <code>.png</code> files are listed on the left with a diff.</li>
+    <li>Write a short <strong>Summary</strong> describing what you did, e.g. <code>Proj1 Part B: distance &amp; speed plots</code>.</li>
+    <li><strong>Commit to main</strong>, then <strong>Push origin</strong>.</li>
+  </ol>
+  <p class="meta">Commit little and often — one commit per part of a practical/project is ideal. Each commit is a save-point you can return to.</p>
+</div>
+
+<div class="step">
+  <div class="n">F · MATLAB’s built-in source control (optional, no separate app)</div>
+  <p>MATLAB can talk to Git directly, so you can commit without leaving MATLAB:</p>
+  <ol class="plain">
+    <li>In the <strong>Current Folder</strong> panel, right-click empty space → <strong>Source Control → …</strong> (available once the folder is a Git repo).</li>
+    <li>Right-click a changed file → <strong>Add to Git</strong>, then <strong>Source Control → Commit</strong> with a message.</li>
+    <li>For bigger work, use a <strong>MATLAB Project</strong> (<em>Home → New → Project → From Git</em>) which wires source control, path, and startup together.</li>
+  </ol>
+  <p class="meta">Beginners can ignore this and just use GitHub Desktop — both do the same thing.</p>
+</div>
+
+<div class="step">
+  <div class="n">G · Go back to an earlier version (why version control helps)</div>
+  <ol class="plain">
+    <li>Broke a working script? In GitHub Desktop open the <strong>History</strong> tab, click an earlier commit to see exactly what changed.</li>
+    <li>To undo the latest commit’s changes: right-click it → <strong>Revert changes in commit</strong> (creates a new “undo” commit — safe).</li>
+    <li>To grab one old file: on github.com open the file → <strong>History</strong> → view the old version → copy the code back.</li>
+  </ol>
+</div>
+
+<div class="step">
+  <div class="n">H · Use it on another computer (uni lab PC)</div>
+  <ol class="plain">
+    <li>Install GitHub Desktop, sign in with the same Gmail account.</li>
+    <li><strong>File → Clone repository →</strong> pick <code>dpen100-matlab</code> → Clone.</li>
+    <li>Open that folder as MATLAB’s Current Folder and keep working.</li>
+    <li>Before you start: click <strong>Fetch/Pull origin</strong> to get your latest work; when done, Commit &amp; Push.</li>
+  </ol>
+</div>
+
+<div class="note">
+  <strong>Good README habit.</strong> In <code>README.md</code>, keep a short list like:
+<pre style="margin-top:8px"># DPEN100 MATLAB
+- practicals/p03_hello.m  — Practical 3, F-to-C converter
+- projects/proj1_partA.m  — 3D path &amp; grade plots
+- plots/proj1_path3d.png  — exported figure for the report</pre>
+  This makes it obvious (to you and your tutor) what each file is for.
 </div>
 
 <h2>Then start MATLAB practice</h2>
