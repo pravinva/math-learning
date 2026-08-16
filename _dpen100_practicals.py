@@ -966,7 +966,7 @@ Distance = area under \(v\)–\(t\) (or integrate piecewise).
         matlab=['(optional) diff / gradient', 'roots / solve for v=0', 'plot for checking s(t), v(t)', 'syms (symbolic check)'],
         also=[
             'Starred questions are Workshop 8 priority — do those first',
-            'Always sketch the path or a \(v\)–\(t\) graph before computing totals',
+            r'Always sketch the path or a \(v\)–\(t\) graph before computing totals',
             'Convert units carefully (e.g. km/h → m/s)',
         ],
     )
