@@ -65,6 +65,7 @@ def page(title, body):
 
 def nav(current=''):
     items = [
+        ('../plan-40-days.html', '40-day plan'),
         ('../github-setup.html', 'GitHub setup'),
         ('index.html', 'Projects hub'),
         ('project1.html', 'Project 1'),
