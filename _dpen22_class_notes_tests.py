@@ -697,16 +697,339 @@ trig_a[5][13] = r'''\[
 \end{aligned}
 \]'''
 
-# Correct the Test 1 Q15 solution set and show the equation steps.
-trig_a[0][14] = r'''\[
+# ---------------------------------------------------------------------------
+# Fully worked long-answer solutions for the six trig papers.
+# Each override shows the method/setup, every algebraic/trig step, quadrant and
+# reference-angle reasoning where relevant, and ends with a boxed final answer.
+# Q7 (idx6) nearest-minute / applied ratios; Q9 (idx8) co-function solve;
+# Q10 (idx9) exact special values; Q11 (idx10) solve in degrees;
+# Q12 (idx11) solve in radians; Q15 (idx14) solve trig equation.
+# ---------------------------------------------------------------------------
+
+# Q7 (index 6): inverse-trig / applied right-triangle, answer to nearest minute
+# or 2 d.p. as the question demands.
+q7_working = [
+    r'''Draw the right triangle with hypotenuse \(15\) m and adjacent side \(7\) m; the
+included angle \(\theta\) satisfies \(\cos\theta=\dfrac{\text{adjacent}}{\text{hypotenuse}}\).
+\[
 \begin{aligned}
-2\sin^2x-\cos2x&=2\\
+\cos\theta&=\frac{7}{15}\\
+\theta&=\cos^{-1}\!\left(\frac{7}{15}\right)=62.1819\ldots^\circ.
+\end{aligned}
+\]
+Convert the decimal part to minutes: \(0.1819^\circ\times 60=10.9'\), which rounds to \(11'\).
+\[\boxed{\theta\approx 62^\circ 11'}\]''',
+    r'''The \(9\) m side is opposite \(\theta\) with hypotenuse \(15\) m, so
+\(\sin\theta=\dfrac{\text{opposite}}{\text{hypotenuse}}\).
+\[
+\begin{aligned}
+\sin\theta&=\frac{9}{15}=\frac{3}{5}\\
+\theta&=\sin^{-1}(0.6)=36.87^\circ.
+\end{aligned}
+\]
+To the nearest degree,
+\[\boxed{\theta\approx 37^\circ}\]''',
+    r'''The horizontal distance \(2.5\) km is adjacent to the \(12^\circ\) angle of elevation
+and the height \(h\) is opposite, so \(\tan 12^\circ=\dfrac{h}{2.5}\).
+\[
+\begin{aligned}
+h&=2.5\tan 12^\circ\\
+&=2.5(0.21256\ldots)\\
+&=0.5314\ldots
+\end{aligned}
+\]
+\[\boxed{h\approx 0.53\text{ km}}\]''',
+    r'''The \(12\) m pole is opposite the \(35^\circ\) angle and the wire \(L\) is the hypotenuse,
+so \(\sin 35^\circ=\dfrac{12}{L}\).
+\[
+\begin{aligned}
+L&=\frac{12}{\sin 35^\circ}\\
+&=\frac{12}{0.57358\ldots}\\
+&=20.9214\ldots
+\end{aligned}
+\]
+\[\boxed{L\approx 20.92\text{ m}}\]''',
+    r'''The \(9\) m side is opposite \(\theta\) with hypotenuse \(20\) m, so
+\(\sin\theta=\dfrac{\text{opposite}}{\text{hypotenuse}}\).
+\[
+\begin{aligned}
+\sin\theta&=\frac{9}{20}=0.45\\
+\theta&=\sin^{-1}(0.45)=26.7437\ldots^\circ.
+\end{aligned}
+\]
+Convert to minutes: \(0.7437^\circ\times 60=44.6'\), which rounds to \(45'\).
+\[\boxed{\theta\approx 26^\circ 45'}\]''',
+    r'''With opposite side \(5\) m and adjacent side \(11\) m,
+\(\tan\theta=\dfrac{\text{opposite}}{\text{adjacent}}\).
+\[
+\begin{aligned}
+\tan\theta&=\frac{5}{11}\\
+\theta&=\tan^{-1}\!\left(\frac{5}{11}\right)=24.4440\ldots^\circ.
+\end{aligned}
+\]
+Convert to minutes: \(0.4440^\circ\times 60=26.6'\), which rounds to \(27'\).
+\[\boxed{\theta\approx 24^\circ 27'}\]''',
+]
+
+# Q9 (index 8): co-function identity solve for x.
+q9_working = [
+    r'''Apply the co-function identity \(\cos(90^\circ-\alpha)=\sin\alpha\) to the right side.
+\[
+\begin{aligned}
+\cos(90^\circ-2x)&=\sin 2x\\
+\sin 80^\circ&=\sin 2x\\
+2x&=80^\circ\\
+x&=40^\circ.
+\end{aligned}
+\]
+\[\boxed{x=40^\circ}\]''',
+    r'''Rewrite the cosine as a sine using \(\cos\alpha=\sin(90^\circ-\alpha)\).
+\[
+\begin{aligned}
+\cos 35^\circ&=\sin(90^\circ-35^\circ)=\sin 55^\circ\\
+\sin 2x&=\sin 55^\circ\\
+2x&=55^\circ\\
+x&=27.5^\circ.
+\end{aligned}
+\]
+\[\boxed{x=27.5^\circ}\]''',
+    r'''Convert the sine to a cosine with \(\sin\alpha=\cos(90^\circ-\alpha)\).
+\[
+\begin{aligned}
+\sin 70^\circ&=\cos(90^\circ-70^\circ)=\cos 20^\circ\\
+\cos 3x&=\cos 20^\circ\\
+3x&=20^\circ\\
+x&=\frac{20^\circ}{3}=6^\circ 40'.
+\end{aligned}
+\]
+\[\boxed{x=\tfrac{20^\circ}{3}\approx 6^\circ 40'}\]''',
+    r'''Apply the co-function identity \(\sin(90^\circ-x)=\cos x\).
+\[
+\begin{aligned}
+\sin(90^\circ-x)&=\cos x\\
+\cos 20^\circ&=\cos x\\
+x&=20^\circ.
+\end{aligned}
+\]
+\[\boxed{x=20^\circ}\]''',
+    r'''Use \(\cos(90^\circ-\alpha)=\sin\alpha\) to convert the right-hand side.
+\[
+\begin{aligned}
+\cos(90^\circ-3x)&=\sin 3x\\
+\sin 55^\circ&=\sin 3x\\
+3x&=55^\circ\\
+x&=\frac{55^\circ}{3}.
+\end{aligned}
+\]
+\[\boxed{x=\tfrac{55^\circ}{3}\approx 18^\circ 20'}\]''',
+    r'''First convert the cosine to a sine: \(\cos 40^\circ=\sin(90^\circ-40^\circ)=\sin 50^\circ\).
+\[
+\begin{aligned}
+\sin(50^\circ-x)&=\sin 50^\circ\\
+50^\circ-x&=50^\circ\\
+x&=0^\circ.
+\end{aligned}
+\]
+\[\boxed{x=0^\circ}\]''',
+]
+
+# Q10 (index 9): exact value via quadrant + reference angle + special triangle.
+q10_working = [
+    r'''\(\dfrac{2\pi}{3}=120^\circ\) lies in Quadrant II, where the tangent is negative, with
+reference angle \(180^\circ-120^\circ=60^\circ=\dfrac{\pi}{3}\). Using the special-triangle
+value \(\tan\dfrac{\pi}{3}=\sqrt3\),
+\[
+\tan\frac{2\pi}{3}=-\tan\frac{\pi}{3}=-\sqrt3.
+\]
+\[\boxed{\tan\tfrac{2\pi}{3}=-\sqrt3}\]''',
+    r'''\(\dfrac{5\pi}{6}=150^\circ\) lies in Quadrant II, where the sine is positive, with
+reference angle \(180^\circ-150^\circ=30^\circ=\dfrac{\pi}{6}\). Using \(\sin\dfrac{\pi}{6}=\dfrac12\),
+\[
+\sin\frac{5\pi}{6}=+\sin\frac{\pi}{6}=\frac12.
+\]
+\[\boxed{\sin\tfrac{5\pi}{6}=\tfrac12}\]''',
+    r'''\(\dfrac{3\pi}{4}=135^\circ\) lies in Quadrant II, where the cosine is negative, with
+reference angle \(180^\circ-135^\circ=45^\circ=\dfrac{\pi}{4}\). Using \(\cos\dfrac{\pi}{4}=\dfrac{\sqrt2}{2}\),
+\[
+\cos\frac{3\pi}{4}=-\cos\frac{\pi}{4}=-\frac{\sqrt2}{2}.
+\]
+\[\boxed{\cos\tfrac{3\pi}{4}=-\tfrac{\sqrt2}{2}}\]''',
+    r'''\(-\dfrac{\pi}{4}=-45^\circ\) is a Quadrant IV angle (measured clockwise), where the
+tangent is negative, with reference angle \(\dfrac{\pi}{4}\). Since tangent is odd and
+\(\tan\dfrac{\pi}{4}=1\),
+\[
+\tan\!\left(-\frac{\pi}{4}\right)=-\tan\frac{\pi}{4}=-1.
+\]
+\[\boxed{\tan\!\left(-\tfrac{\pi}{4}\right)=-1}\]''',
+    r'''\(\dfrac{2\pi}{3}=120^\circ\) lies in Quadrant II, where the cosine is negative, with
+reference angle \(180^\circ-120^\circ=60^\circ=\dfrac{\pi}{3}\). Using \(\cos\dfrac{\pi}{3}=\dfrac12\),
+\[
+\cos\frac{2\pi}{3}=-\cos\frac{\pi}{3}=-\frac12.
+\]
+\[\boxed{\cos\tfrac{2\pi}{3}=-\tfrac12}\]''',
+    r'''\(\dfrac{3\pi}{2}=270^\circ\) is a quadrantal angle whose terminal side is the negative
+\(y\)-axis, meeting the unit circle at \((0,-1)\). Since \(\sin\theta\) is the
+\(y\)-coordinate,
+\[
+\sin\frac{3\pi}{2}=-1.
+\]
+\[\boxed{\sin\tfrac{3\pi}{2}=-1}\]''',
+]
+
+# Q11 (index 10): solve in degrees over 0 to 360 (or as stated).
+q11_working = [
+    r'''Since \(\cos\theta=\dfrac12\) is positive, \(\theta\) is in Quadrants I and IV. The
+reference angle is \(\cos^{-1}\dfrac12=60^\circ\).
+\[
+\theta=60^\circ\quad\text{(QI)}\qquad\text{or}\qquad\theta=360^\circ-60^\circ=300^\circ\quad\text{(QIV)}.
+\]
+\[\boxed{\theta=60^\circ,\ 300^\circ}\]''',
+    r'''\[2\sin\theta=-1\ \Rightarrow\ \sin\theta=-\tfrac12.\]
+Sine is negative in Quadrants III and IV; the reference angle is \(\sin^{-1}\dfrac12=30^\circ\).
+\[
+\theta=180^\circ+30^\circ=210^\circ\qquad\text{or}\qquad\theta=360^\circ-30^\circ=330^\circ.
+\]
+\[\boxed{\theta=210^\circ,\ 330^\circ}\]''',
+    r'''\[2\cos\theta=\sqrt3\ \Rightarrow\ \cos\theta=\tfrac{\sqrt3}{2}.\]
+Cosine is positive in Quadrants I and IV; the reference angle is \(30^\circ\).
+\[
+\theta=30^\circ\qquad\text{or}\qquad\theta=360^\circ-30^\circ=330^\circ.
+\]
+\[\boxed{\theta=30^\circ,\ 330^\circ}\]''',
+    r'''Let \(\phi=2\theta\). As \(0^\circ\le\theta\le180^\circ\) we have \(0^\circ\le\phi\le360^\circ\).
+Sine is zero at integer multiples of \(180^\circ\):
+\[
+2\theta=0^\circ,\ 180^\circ,\ 360^\circ\ \Rightarrow\ \theta=0^\circ,\ 90^\circ,\ 180^\circ.
+\]
+\[\boxed{\theta=0^\circ,\ 90^\circ,\ 180^\circ}\]''',
+    r'''\[2\sin\theta=\sqrt3\ \Rightarrow\ \sin\theta=\tfrac{\sqrt3}{2}.\]
+Sine is positive in Quadrants I and II; the reference angle is \(60^\circ\).
+\[
+\theta=60^\circ\qquad\text{or}\qquad\theta=180^\circ-60^\circ=120^\circ.
+\]
+\[\boxed{\theta=60^\circ,\ 120^\circ}\]''',
+    r'''\(\tan\theta=-\sqrt3\) is negative, so \(\theta\) is in Quadrants II and IV. The
+reference angle is \(\tan^{-1}\sqrt3=60^\circ\).
+\[
+\theta=180^\circ-60^\circ=120^\circ\qquad\text{or}\qquad\theta=360^\circ-60^\circ=300^\circ.
+\]
+\[\boxed{\theta=120^\circ,\ 300^\circ}\]''',
+]
+
+# Q12 (index 11): solve in radians over 0 to 2 pi.
+q12_working = [
+    r'''\(\cot\theta=\sqrt3\) means \(\tan\theta=\dfrac{1}{\sqrt3}\), which is positive, so
+\(\theta\) is in Quadrants I and III. The reference angle is \(\dfrac{\pi}{6}\).
+\[
+\theta=\frac{\pi}{6}\qquad\text{or}\qquad\theta=\pi+\frac{\pi}{6}=\frac{7\pi}{6}.
+\]
+\[\boxed{\theta=\tfrac{\pi}{6},\ \tfrac{7\pi}{6}}\]''',
+    r'''\(\tan\theta=1\) is positive, so \(\theta\) is in Quadrants I and III. The reference
+angle is \(\dfrac{\pi}{4}\).
+\[
+\theta=\frac{\pi}{4}\qquad\text{or}\qquad\theta=\pi+\frac{\pi}{4}=\frac{5\pi}{4}.
+\]
+\[\boxed{\theta=\tfrac{\pi}{4},\ \tfrac{5\pi}{4}}\]''',
+    r'''\[2\sin\theta=\sqrt2\ \Rightarrow\ \sin\theta=\tfrac{\sqrt2}{2}.\]
+Sine is positive in Quadrants I and II; the reference angle is \(\dfrac{\pi}{4}\).
+\[
+\theta=\frac{\pi}{4}\qquad\text{or}\qquad\theta=\pi-\frac{\pi}{4}=\frac{3\pi}{4}.
+\]
+\[\boxed{\theta=\tfrac{\pi}{4},\ \tfrac{3\pi}{4}}\]''',
+    r'''\[2\cos\theta+1=0\ \Rightarrow\ \cos\theta=-\tfrac12.\]
+Cosine is negative in Quadrants II and III; the reference angle is \(\dfrac{\pi}{3}\).
+\[
+\theta=\pi-\frac{\pi}{3}=\frac{2\pi}{3}\qquad\text{or}\qquad\theta=\pi+\frac{\pi}{3}=\frac{4\pi}{3}.
+\]
+\[\boxed{\theta=\tfrac{2\pi}{3},\ \tfrac{4\pi}{3}}\]''',
+    r'''\(\cot\theta=-1\) means \(\tan\theta=-1\), which is negative, so \(\theta\) is in
+Quadrants II and IV. The reference angle is \(\dfrac{\pi}{4}\).
+\[
+\theta=\pi-\frac{\pi}{4}=\frac{3\pi}{4}\qquad\text{or}\qquad\theta=2\pi-\frac{\pi}{4}=\frac{7\pi}{4}.
+\]
+\[\boxed{\theta=\tfrac{3\pi}{4},\ \tfrac{7\pi}{4}}\]''',
+    r'''\[2\cos\theta=-\sqrt2\ \Rightarrow\ \cos\theta=-\tfrac{\sqrt2}{2}.\]
+Cosine is negative in Quadrants II and III; the reference angle is \(\dfrac{\pi}{4}\).
+\[
+\theta=\pi-\frac{\pi}{4}=\frac{3\pi}{4}\qquad\text{or}\qquad\theta=\pi+\frac{\pi}{4}=\frac{5\pi}{4}.
+\]
+\[\boxed{\theta=\tfrac{3\pi}{4},\ \tfrac{5\pi}{4}}\]''',
+]
+
+# Q15 (index 14): solve a trig equation, showing identity/factoring and all
+# solutions in the stated domain.
+q15_working = [
+    r'''Use the double-angle identity \(\cos 2x=1-2\sin^2x\).
+\[
+\begin{aligned}
+2\sin^2x-\cos 2x&=2\\
 2\sin^2x-(1-2\sin^2x)&=2\\
+4\sin^2x-1&=2\\
 4\sin^2x&=3\\
 \sin x&=\pm\frac{\sqrt3}{2}.
 \end{aligned}
 \]
-Hence \(x=60^\circ,120^\circ,240^\circ,300^\circ\) on the stated domain.'''
+The reference angle is \(60^\circ\). \(\sin x=\dfrac{\sqrt3}{2}\Rightarrow x=60^\circ,120^\circ\);
+\(\sin x=-\dfrac{\sqrt3}{2}\Rightarrow x=240^\circ,300^\circ\).
+\[\boxed{x=60^\circ,\ 120^\circ,\ 240^\circ,\ 300^\circ}\]''',
+    r'''\[
+\begin{aligned}
+2\cos^2\theta-1&=0\\
+\cos^2\theta&=\frac12\\
+\cos\theta&=\pm\frac{\sqrt2}{2}.
+\end{aligned}
+\]
+The reference angle is \(45^\circ\). \(\cos\theta=\dfrac{\sqrt2}{2}\Rightarrow\theta=45^\circ,315^\circ\);
+\(\cos\theta=-\dfrac{\sqrt2}{2}\Rightarrow\theta=135^\circ,225^\circ\).
+\[\boxed{\theta=45^\circ,\ 135^\circ,\ 225^\circ,\ 315^\circ}\]''',
+    r'''Because the argument is \(2\theta\), extend the domain: \(0^\circ\le\theta\le360^\circ\)
+gives \(0^\circ\le 2\theta\le720^\circ\). With \(\sin 2\theta=\dfrac12\) the reference angle is
+\(30^\circ\) and sine is positive in Quadrants I and II:
+\[
+\begin{aligned}
+2\theta&=30^\circ,\ 150^\circ,\ 390^\circ,\ 510^\circ\\
+\theta&=15^\circ,\ 75^\circ,\ 195^\circ,\ 255^\circ.
+\end{aligned}
+\]
+\[\boxed{\theta=15^\circ,\ 75^\circ,\ 195^\circ,\ 255^\circ}\]''',
+    r'''\[
+\begin{aligned}
+\sin^2\theta&=\frac34\\
+\sin\theta&=\pm\frac{\sqrt3}{2}.
+\end{aligned}
+\]
+The reference angle is \(60^\circ\). \(\sin\theta=\dfrac{\sqrt3}{2}\Rightarrow\theta=60^\circ,120^\circ\);
+\(\sin\theta=-\dfrac{\sqrt3}{2}\Rightarrow\theta=240^\circ,300^\circ\).
+\[\boxed{\theta=60^\circ,\ 120^\circ,\ 240^\circ,\ 300^\circ}\]''',
+    r'''Because the argument is \(2\theta\), extend the domain: \(0^\circ\le\theta\le360^\circ\)
+gives \(0^\circ\le 2\theta\le720^\circ\). With \(\cos 2\theta=-\dfrac12\) the reference angle is
+\(60^\circ\) and cosine is negative in Quadrants II and III:
+\[
+\begin{aligned}
+2\theta&=120^\circ,\ 240^\circ,\ 480^\circ,\ 600^\circ\\
+\theta&=60^\circ,\ 120^\circ,\ 240^\circ,\ 300^\circ.
+\end{aligned}
+\]
+\[\boxed{\theta=60^\circ,\ 120^\circ,\ 240^\circ,\ 300^\circ}\]''',
+    r'''Treat the equation as a quadratic in \(\cos\theta\) and factor.
+\[
+\begin{aligned}
+2\cos^2\theta+\cos\theta-1&=0\\
+(2\cos\theta-1)(\cos\theta+1)&=0.
+\end{aligned}
+\]
+So \(\cos\theta=\dfrac12\) (reference angle \(60^\circ\)) giving \(\theta=60^\circ,300^\circ\),
+or \(\cos\theta=-1\) giving \(\theta=180^\circ\).
+\[\boxed{\theta=60^\circ,\ 180^\circ,\ 300^\circ}\]''',
+]
+
+for i in range(6):
+    trig_a[i][6] = q7_working[i]
+    trig_a[i][8] = q9_working[i]
+    trig_a[i][9] = q10_working[i]
+    trig_a[i][10] = q11_working[i]
+    trig_a[i][11] = q12_working[i]
+    trig_a[i][14] = q15_working[i]
 
 write_pair('trig', 'Trigonometry', '1 hour per test',
            '../trig/2a_Trigonometry_Exam_Sample_Public_Holiday.pdf', trig_q, trig_a, TRIG_FMT)
