@@ -39,6 +39,12 @@ pre{background:#1e293b;color:#e2e8f0;padding:12px 14px;border-radius:8px;overflo
 .meta{font-size:13px;color:var(--muted);margin:4px 0 10px}
 .todo-box{background:#fff7ed;border:2px solid #f0b429;border-radius:10px;padding:16px 18px;margin:18px 0}
 .todo-box h2{margin-top:0;border:0;padding:0;font-size:18px;color:#92400e}
+.prep{background:#eef6ff;border:1px solid #c9dff7;border-radius:10px;padding:16px 18px;margin:16px 0 22px}
+.prep h2{margin:0 0 10px;border:0;padding:0;font-size:18px;color:var(--navy)}
+.prep h3{margin:14px 0 6px;font-size:14px;color:var(--blue);text-transform:uppercase;letter-spacing:.04em}
+.prep ul{margin:0 0 0 18px}.prep li{margin:4px 0}
+.prep .ml{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.prep .ml code{background:#fff;border:1px solid #c9dff7;padding:3px 8px;border-radius:4px;font-size:12.5px;color:var(--navy)}
 .ans{background:#f0fdf4;border-left:4px solid var(--green);padding:10px 12px;margin:8px 0;border-radius:0 6px 6px 0;overflow-x:auto}
 .flow-wrap{overflow-x:auto;margin:12px 0;padding:8px;background:#fff;border:1px solid var(--line);border-radius:8px}
 .flow-wrap svg{display:block;margin:0 auto;max-width:100%;height:auto}
@@ -101,6 +107,23 @@ def q(n, title, body, book_ref=None, star=False, hint=None, do=None, answer=None
 {body}
 {tip}{action}
 {ans}
+</div>'''
+
+
+def prep_box(ideas, matlab, also=None):
+    """Summary block at the top of each practical."""
+    idea_li = ''.join(f'<li>{x}</li>' for x in ideas)
+    ml = ''.join(f'<code>{x}</code>' for x in matlab)
+    also_html = ''
+    if also:
+        also_html = '<h3>Also useful</h3><ul>' + ''.join(f'<li>{x}</li>' for x in also) + '</ul>'
+    return f'''<div class="prep">
+<h2>Before you start — key ideas &amp; MATLAB</h2>
+<h3>Concepts &amp; ideas</h3>
+<ul>{idea_li}</ul>
+<h3>MATLAB functionality you will use</h3>
+<div class="ml">{ml}</div>
+{also_html}
 </div>'''
 
 
@@ -518,6 +541,20 @@ needed to handle all cases of \(ax^2+bx+c=0\).</p>
         do='Keep this flowchart for Practical 4 (you will implement it with <code>if</code>/<code>elseif</code>). Discuss other math problems that need conditionals or loops.',
         answer=flowchart_quadratic()))
 
+    prep = prep_box(
+        ideas=[
+            r'<strong>Script vs Command Window:</strong> a script (<code>.m</code>) stores a reusable sequence of commands; the Editor lets you edit, comment, and re-run.',
+            r'<strong>Structure plan / flowchart:</strong> top-down design in pseudo-code before coding — label Input, Operations, Output.',
+            r'<strong>Array arithmetic:</strong> vectors of time values let you evaluate \(s(t)\) for every \(t\) at once (element-wise <code>.^</code>).',
+            r'<strong>Program design process:</strong> seven steps from problem statement through testing and documentation.',
+            r'<strong>Decision structure:</strong> the quadratic solver needs nested decisions for linear / complex / equal / two-real cases.',
+        ],
+        matlab=['Editor / New Script', 'Run', '% comments', 'colon operator :', '.^', 'plot', 'title', 'xlabel', 'ylabel', 'grid', 'inv', 'eye'],
+        also=[
+            'Workspace and Current Folder panes to see variables and saved files',
+            'Flowchart symbols: oval = start/stop, parallelogram = I/O, rectangle = process, diamond = decision',
+        ],
+    )
     body = f'''
 <div class="eyebrow">DPEN100 · ENGG100 · Week 3</div>
 <span class="tag">PRACTICAL 3</span>
@@ -525,6 +562,7 @@ needed to handle all cases of \(ax^2+bx+c=0\).</p>
 <p class="sub">Work through parts of Chapters 1–3 of {BOOK}. Each card is a concrete task pulled from the practical worksheet and the cited book section. Where a flowchart is required, open <strong>Model answer / flowchart</strong>.</p>
 {nav('p03.html')}
 <p><a class="chip pdf" href="pdfs/engg100-practical-3-using-matlab-for-engineering-analysis.pdf" target="_blank" rel="noopener">Original Practical 3 PDF</a></p>
+{prep}
 {''.join(qs)}
 '''
     (OUT / 'p03.html').write_text(page('DPEN100 Practical 3', body))
@@ -616,6 +654,20 @@ end</pre>''',
         book_ref='Book Exercise 2.20 · p. 78',
         do=r'Submit your hand-trace table and the final values of \(i\), \(j\), \(m\).'))
 
+    prep = prep_box(
+        ideas=[
+            r'<strong>Relational &amp; logical operators:</strong> compare values (<code>== ~= &lt; &gt;</code>) and combine conditions (<code>&amp;&amp; || ~</code>). True → \(1\), false → \(0\).',
+            r'<strong>Branching:</strong> <code>if</code> / <code>elseif</code> / <code>else</code> / <code>end</code> implements decision diamonds; <code>switch</code>/<code>case</code> for discrete labels.',
+            r'<strong>Repetition:</strong> a <code>for</code> loop runs a known number of times; useful for sums, Newton iterations, and series.',
+            r'<strong>Vectorisation:</strong> replace many loops with array ops (<code>sum</code>, <code>1./(1:n)</code>) — usually faster.',
+            r'<strong>Hand-tracing:</strong> before trusting code, step through variable values on paper (Exercises 2.19–2.20).',
+        ],
+        matlab=['if', 'elseif', 'else', 'end', 'switch', 'case', 'otherwise', 'for', 'rand', 'floor', 'disp', 'input', 'sqrt', 'sum', 'tic', 'toc', './', '.^'],
+        also=[
+            'Function M-file layout for <code>quadratic.m</code> (inputs in header, locals not cluttering Workspace)',
+            'Nesting: an <code>else</code> belongs to the nearest unmatched <code>if</code> — place <code>end</code> carefully',
+        ],
+    )
     body = f'''
 <div class="eyebrow">DPEN100 · ENGG100 · Week 4</div>
 <span class="tag">PRACTICAL 4</span>
@@ -623,6 +675,7 @@ end</pre>''',
 <p class="sub">Finish Chapter 2 decisions &amp; loops from {BOOK}, then implement last week’s quadratic flowchart.</p>
 {nav('p04.html')}
 <p><a class="chip pdf" href="pdfs/engg100-practical-4-matlab-programming-with-decision-structures.pdf" target="_blank" rel="noopener">Original Practical 4 PDF</a></p>
+{prep}
 {''.join(qs)}
 '''
     (OUT / 'p04.html').write_text(page('DPEN100 Practical 4', body))
@@ -712,6 +765,20 @@ using the structure plan in Fig. 3.3 / §3.2.2. The flag must return:</p>
         do='Show your tutor flag outputs for each test case.',
         answer='<p>Implement using the same decision tree as Practical 3:</p>' + flowchart_quadratic()))
 
+    prep = prep_box(
+        ideas=[
+            r'<strong>Functions vs scripts:</strong> a function M-file has a header <code>function [outs] = name(ins)</code>; variables inside stay local to the Workspace.',
+            r'<strong>Reusable algorithms:</strong> GCD by subtraction, max-of-two, simultaneous lines, and robust quadratics all start from a structure plan / flowchart.',
+            r'<strong>Multiple outputs &amp; flags:</strong> return status codes (e.g. Exercise 7.7) so the caller knows which case occurred.',
+            r'<strong>Function handles &amp; name resolution:</strong> Chapter 7 ideas — how MATLAB finds <code>f.m</code>, and how handles pass functions as data.',
+            r'<strong>Testing:</strong> exercise every branch (equal numbers, parallel lines, \(a=b=c=0\), complex roots).',
+        ],
+        matlab=['function', 'end', 'inline (legacy)', 'function handles', 'feval', 'while', 'if / elseif', 'disp', 'NaN', 'sqrt'],
+        also=[
+            'Save each function as <code>name.m</code> matching the function name; keep them on the path / Current Folder',
+            'Avoid shadowing built-ins (e.g. name your doubler <code>mydouble.m</code> if needed)',
+        ],
+    )
     body = f'''
 <div class="eyebrow">DPEN100 · ENGG100 · Week 5</div>
 <span class="tag">PRACTICAL 5</span>
@@ -719,6 +786,7 @@ using the structure plan in Fig. 3.3 / §3.2.2. The flag must return:</p>
 <p class="sub">Chapters 3 and 7 of {BOOK}: inline/function M-files, then Exercises 3.2, 3.4, 3.6 and 7.3, 7.4, 7.7. Flowcharts are in the model answers where a structure plan / flowchart is required.</p>
 {nav('p05.html')}
 <p><a class="chip pdf" href="pdfs/engg100-practical-5-matlab-functions-and-chapter-exercises-guide.pdf" target="_blank" rel="noopener">Original Practical 5 PDF</a></p>
+{prep}
 {''.join(qs)}
 '''
     (OUT / 'p05.html').write_text(page('DPEN100 Practical 5', body))
@@ -755,6 +823,20 @@ Then <code>plot</code> \(s(t)\), \(v(t)\) and \(a(t)\).</p>''',
 <p>Sample the integrands with a fine spacing (e.g. \(0.01\)) so the trapezoidal sum is close to the exact value.</p>''',
         do='Print both numerical estimates and the absolute error vs the exact answers.'))
 
+    prep = prep_box(
+        ideas=[
+            r'<strong>Piecewise kinematics:</strong> different \(a\) (or \(v\)) rules in successive phases — switch when a threshold is hit (\(v=40\), \(s=800\), \(v=0\)).',
+            r'<strong>Discrete time stepping:</strong> with \(\Delta t=0.1\,\mathrm{s}\), update \(v\leftarrow v+a\Delta t\), \(s\leftarrow s+v\Delta t\) (or a consistent integrator) inside <code>while</code> loops.',
+            r'<strong>Growing arrays:</strong> append samples each step (or preallocate if you know a bound) so you can plot afterwards.',
+            r'<strong>Trapezoidal rule:</strong> area of one strip \(\tfrac12(y_1+y_2)(x_2-x_1)\); sum strips for \(\int y\,\mathrm{d}x\).',
+            r'<strong>Function composition:</strong> <code>areaUnderCurve</code> should call <code>trapArea</code> in a loop — modular code.',
+        ],
+        matlab=['while', 'end', 'function', 'plot', 'subplot', 'xlabel', 'ylabel', 'legend', 'title', 'grid', 'length', 'for', 'linspace', 'pi', 'cos'],
+        also=[
+            'Test <code>trapArea</code> on a rectangle and a triangle before wiring the composite rule',
+            r'Verify \(\int_0^3 x^2\,\mathrm{d}x=9\) and \(\int_{-\pi/2}^{\pi/2}\cos x\,\mathrm{d}x=2\) with a fine sample spacing',
+        ],
+    )
     body = f'''
 <div class="eyebrow">DPEN100 · ENGG100 · Week 7</div>
 <span class="tag">COMPUTER LAB 6</span>
@@ -762,6 +844,7 @@ Then <code>plot</code> \(s(t)\), \(v(t)\) and \(a(t)\).</p>''',
 <p class="sub">Lab worksheet (not a Hahn chapter drill): build kinematic arrays with <code>while</code>, then trapezoidal integration via functions.</p>
 {nav('lab06.html')}
 <p><a class="chip pdf" href="pdfs/engg100-lab-6-arrays-functions-in-engineering-computing.pdf" target="_blank" rel="noopener">Original Lab 6 PDF</a></p>
+{prep}
 {''.join(qs)}
 '''
     (OUT / 'lab06.html').write_text(page('DPEN100 Lab 6', body))
@@ -872,6 +955,21 @@ Distance = area under \(v\)–\(t\) (or integrate piecewise).
 </details>
 '''
 
+    prep = prep_box(
+        ideas=[
+            r'<strong>Rectilinear kinematics:</strong> \(v=\dot s\), \(a=\dot v=\ddot s\). Position polynomials → differentiate for \(v,a\).',
+            r'<strong>Displacement vs distance:</strong> displacement is net change in \(s\); total distance sums \(|\Delta s|\) on each segment between turning points (\(v=0\)).',
+            r'<strong>Constant acceleration (SUVAT):</strong> \(v=u+at\), \(s=ut+\tfrac12 at^2\), \(v^2=u^2+2as\) — use with a clear sign convention.',
+            r'<strong>Graphical kinematics:</strong> slope of \(v\)–\(t\) is \(a\); area under \(v\)–\(t\) is \(\Delta s\); area under \(a\)–\(t\) is \(\Delta v\).',
+            r'<strong>Piecewise / erratic motion:</strong> split the timeline at kinks; integrate each constant-\(a\) (or linear-\(v\)) piece separately.',
+        ],
+        matlab=['(optional) diff / gradient', 'roots / solve for v=0', 'plot for checking s(t), v(t)', 'syms (symbolic check)'],
+        also=[
+            'Starred questions are Workshop 8 priority — do those first',
+            'Always sketch the path or a \(v\)–\(t\) graph before computing totals',
+            'Convert units carefully (e.g. km/h → m/s)',
+        ],
+    )
     body = f'''
 <div class="eyebrow">DPEN100 · ENGG100 · Week 8</div>
 <span class="tag">PRACTICAL 8</span>
@@ -879,6 +977,7 @@ Distance = area under \(v\)–\(t\) (or integrate piecewise).
 <p class="sub">Mechanics worksheet (not from the MATLAB textbook). Starred items are Workshop 8 priority.</p>
 {nav('p08.html')}
 <p><a class="chip pdf" href="pdfs/engg100-practical-8-kinematics-in-rectilinear-motion-exercises.pdf" target="_blank" rel="noopener">Original Practical 8 PDF</a></p>
+{prep}
 {''.join(qs)}
 {answers}
 '''
