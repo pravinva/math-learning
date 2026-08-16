@@ -40,6 +40,9 @@ pre{background:#1e293b;color:#e2e8f0;padding:12px 14px;border-radius:8px;overflo
 .todo-box{background:#fff7ed;border:2px solid #f0b429;border-radius:10px;padding:16px 18px;margin:18px 0}
 .todo-box h2{margin-top:0;border:0;padding:0;font-size:18px;color:#92400e}
 .ans{background:#f0fdf4;border-left:4px solid var(--green);padding:10px 12px;margin:8px 0;border-radius:0 6px 6px 0;overflow-x:auto}
+.flow-wrap{overflow-x:auto;margin:12px 0;padding:8px;background:#fff;border:1px solid var(--line);border-radius:8px}
+.flow-wrap svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.flow-cap{font-size:13px;color:var(--muted);text-align:center;margin:4px 0 0}
 details{margin-top:8px} summary{cursor:pointer;font-weight:600;color:var(--navy)}
 @media(max-width:640px){.wrap{padding:18px 14px 32px}}
 '''
@@ -78,7 +81,7 @@ def nav(current=''):
     return f'<div class="chiprow">{chips}</div>'
 
 
-def q(n, title, body, book_ref=None, star=False, hint=None, do=None):
+def q(n, title, body, book_ref=None, star=False, hint=None, do=None, answer=None):
     refs = ''
     if book_ref:
         refs += f'<span class="ref">{book_ref}</span>'
@@ -86,12 +89,350 @@ def q(n, title, body, book_ref=None, star=False, hint=None, do=None):
         refs += '<span class="star">★ Workshop priority</span>'
     tip = f'<div class="hint"><strong>Hint.</strong> {hint}</div>' if hint else ''
     action = f'<div class="do"><strong>Do.</strong> {do}</div>' if do else ''
+    ans = ''
+    if answer:
+        ans = f'''<details class="ans-box" open style="margin-top:12px;">
+<summary>✅ Model answer / flowchart</summary>
+<div class="ans">{answer}</div>
+</details>'''
     return f'''<div class="q" id="q{n}">
 {refs}
 <h3>Q{n}. {title}</h3>
 {body}
 {tip}{action}
+{ans}
 </div>'''
+
+
+# ───────────────────── SVG flowchart helpers ─────────────────────
+
+NAVY, BLUE, ORANGE, GREEN, INK, MUT = '#1B3A5C', '#185FA5', '#FF3621', '#15803d', '#2c2a28', '#6b6762'
+
+
+def _arrow(x1, y1, x2, y2):
+    return (f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{NAVY}" stroke-width="1.8"/>'
+            f'<polygon points="{x2-5},{y2-8} {x2+5},{y2-8} {x2},{y2}" fill="{NAVY}"/>'
+            if abs(x2 - x1) < 1 else
+            f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{NAVY}" stroke-width="1.8" marker-end="url(#arr)"/>')
+
+
+def _esc(s):
+    return (s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            if isinstance(s, str) else s)
+
+
+def _terminal(cx, cy, w, h, text):
+    text = _esc(text)
+    return (f'<rect x="{cx-w/2}" y="{cy-h/2}" width="{w}" height="{h}" rx="{h/2}" '
+            f'fill="#eef6ff" stroke="{NAVY}" stroke-width="2"/>'
+            f'<text x="{cx}" y="{cy+4}" text-anchor="middle" font-size="13" font-family="Georgia,serif" '
+            f'fill="{NAVY}" font-weight="700">{text}</text>')
+
+
+def _process(cx, cy, w, h, text, lines=None):
+    fill = '#f8fafc'
+    box = (f'<rect x="{cx-w/2}" y="{cy-h/2}" width="{w}" height="{h}" rx="6" '
+           f'fill="{fill}" stroke="{BLUE}" stroke-width="2"/>')
+    if lines:
+        texts = ''.join(
+            f'<text x="{cx}" y="{cy - 8*(len(lines)-1)/2 + 14*i}" text-anchor="middle" '
+            f'font-size="12" font-family="Georgia,serif" fill="{INK}">{_esc(ln)}</text>'
+            for i, ln in enumerate(lines)
+        )
+    else:
+        texts = (f'<text x="{cx}" y="{cy+4}" text-anchor="middle" font-size="12.5" '
+                 f'font-family="Georgia,serif" fill="{INK}">{_esc(text)}</text>')
+    return box + texts
+
+
+def _decision(cx, cy, w, h, text, lines=None):
+    # diamond via polygon
+    pts = f'{cx},{cy-h/2} {cx+w/2},{cy} {cx},{cy+h/2} {cx-w/2},{cy}'
+    box = f'<polygon points="{pts}" fill="#fff7ed" stroke="{ORANGE}" stroke-width="2"/>'
+    if lines:
+        texts = ''.join(
+            f'<text x="{cx}" y="{cy - 7*(len(lines)-1) + 13*i}" text-anchor="middle" '
+            f'font-size="11.5" font-family="Georgia,serif" fill="{INK}" font-weight="600">{_esc(ln)}</text>'
+            for i, ln in enumerate(lines)
+        )
+    else:
+        texts = (f'<text x="{cx}" y="{cy+4}" text-anchor="middle" font-size="12" '
+                 f'font-family="Georgia,serif" fill="{INK}" font-weight="600">{_esc(text)}</text>')
+    return box + texts
+
+
+def _io(cx, cy, w, h, text):
+    # parallelogram
+    skew = 14
+    pts = f'{cx-w/2+skew},{cy-h/2} {cx+w/2+skew},{cy-h/2} {cx+w/2-skew},{cy+h/2} {cx-w/2-skew},{cy+h/2}'
+    return (f'<polygon points="{pts}" fill="#f0fdf4" stroke="{GREEN}" stroke-width="2"/>'
+            f'<text x="{cx}" y="{cy+4}" text-anchor="middle" font-size="12.5" '
+            f'font-family="Georgia,serif" fill="{INK}">{_esc(text)}</text>')
+
+
+def _vlink(x, y1, y2, label=None, label_side='right'):
+    mid = (y1 + y2) / 2
+    s = (f'<line x1="{x}" y1="{y1}" x2="{x}" y2="{y2-6}" stroke="{NAVY}" stroke-width="1.8"/>'
+         f'<polygon points="{x-5},{y2-8} {x+5},{y2-8} {x},{y2}" fill="{NAVY}"/>')
+    if label:
+        lx = x + 8 if label_side == 'right' else x - 8
+        anchor = 'start' if label_side == 'right' else 'end'
+        s += (f'<text x="{lx}" y="{mid+4}" text-anchor="{anchor}" font-size="11" '
+              f'font-family="Georgia,serif" fill="{MUT}" font-weight="700">{label}</text>')
+    return s
+
+
+def _hlink(x1, y, x2, y2=None, label=None):
+    y2 = y if y2 is None else y2
+    # horizontal then optional vertical into target
+    s = f'<path d="M{x1},{y} L{x2},{y}" fill="none" stroke="{NAVY}" stroke-width="1.8"/>'
+    if label:
+        s += (f'<text x="{(x1+x2)/2}" y="{y-6}" text-anchor="middle" font-size="11" '
+              f'font-family="Georgia,serif" fill="{MUT}" font-weight="700">{label}</text>')
+    return s
+
+
+def flow_wrap(svg, caption):
+    return f'<div class="flow-wrap">{svg}</div><p class="flow-cap">{caption}</p>'
+
+
+def flowchart_fahrenheit():
+    W, cx = 320, 160
+    parts = [
+        _terminal(cx, 28, 100, 32, 'Start'),
+        _vlink(cx, 44, 68),
+        _io(cx, 90, 200, 36, 'Input F (Fahrenheit)'),
+        _vlink(cx, 108, 132),
+        _process(cx, 158, 220, 40, '', lines=['C = (F − 32) × 5/9']),
+        _vlink(cx, 178, 202),
+        _io(cx, 224, 180, 36, 'Display C'),
+        _vlink(cx, 242, 266),
+        _terminal(cx, 284, 100, 32, 'Stop'),
+    ]
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} 310" width="{W}" height="310" role="img" aria-label="Fahrenheit to Celsius flowchart">
+{''.join(parts)}
+</svg>'''
+    return flow_wrap(svg, 'Flowchart — Fahrenheit → Celsius (Input / Operations / Output)')
+
+
+def flowchart_vertical_motion():
+    W, cx = 360, 180
+    parts = [
+        _terminal(cx, 28, 100, 32, 'Start'),
+        _vlink(cx, 44, 68),
+        _io(cx, 92, 260, 44, '',),
+        # custom multi-line IO
+    ]
+    # rebuild with multi-line IO manually
+    parts = [
+        _terminal(cx, 28, 100, 32, 'Start'),
+        _vlink(cx, 44, 70),
+        _process(cx, 100, 280, 52, '', lines=['INPUT: g = 9.81, u = 60', 't = 0 : 0.01 : 12.3']),
+        _vlink(cx, 126, 152),
+        _process(cx, 182, 280, 48, '', lines=['OPERATIONS:', 's = u·t − ½ g t²  (array)']),
+        _vlink(cx, 206, 232),
+        _process(cx, 262, 280, 48, '', lines=['OUTPUT: plot(t, s)', 'title, labels, grid']),
+        _vlink(cx, 286, 312),
+        _terminal(cx, 330, 100, 32, 'Stop'),
+    ]
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} 360" width="{W}" height="360" role="img" aria-label="Vertical motion flowchart">
+{''.join(parts)}
+</svg>'''
+    return flow_wrap(svg, 'Flowchart — §2.4 Vertical motion under gravity (throw.m)')
+
+
+def flowchart_quadratic():
+    """Decision-heavy quadratic solver flowchart."""
+    W, H = 720, 780
+    cx = 360
+    # Layout columns: left branch (a=0), centre main, right results
+    parts = []
+    parts.append(_terminal(cx, 28, 100, 32, 'Start'))
+    parts.append(_vlink(cx, 44, 68))
+    parts.append(_io(cx, 90, 200, 36, 'Input a, b, c'))
+    parts.append(_vlink(cx, 108, 140))
+    parts.append(_decision(cx, 180, 160, 70, '', lines=['a = 0?']))
+
+    # YES left → nested a=0 branch
+    # NO down → discriminant
+
+    # Left arrow Yes
+    parts.append(_hlink(cx - 80, 180, 140, label='Yes'))
+    parts.append(f'<line x1="140" y1="180" x2="140" y2="214" stroke="{NAVY}" stroke-width="1.8"/>')
+    parts.append(f'<polygon points="135,214 145,214 140,222" fill="{NAVY}"/>')
+    parts.append(_decision(140, 260, 130, 64, '', lines=['b = 0?']))
+
+    # b=0 Yes → further left
+    parts.append(_hlink(140 - 65, 260, 40, label='Yes'))
+    parts.append(f'<line x1="40" y1="260" x2="40" y2="300" stroke="{NAVY}" stroke-width="1.8"/>')
+    parts.append(f'<polygon points="35,300 45,300 40,308" fill="{NAVY}"/>')
+    parts.append(_decision(40, 340, 120, 60, '', lines=['c = 0?']))
+    parts.append(_vlink(40, 370, 400, 'Yes', 'right'))
+    parts.append(_process(40, 430, 130, 40, '', lines=['Indeterminate']))
+    parts.append(_hlink(40 + 65, 340, 40 + 65))  # noop
+    # c=0 No
+    parts.append(_hlink(40 + 60, 340, 120, label='No'))
+    parts.append(f'<line x1="120" y1="340" x2="120" y2="400" stroke="{NAVY}" stroke-width="1.8"/>')
+    parts.append(f'<polygon points="115,400 125,400 120,408" fill="{NAVY}"/>')
+    parts.append(_process(120, 430, 120, 40, '', lines=['No solution']))
+
+    # b=0 No → linear
+    parts.append(_vlink(140, 292, 400, 'No', 'right'))
+    parts.append(_process(140, 440, 150, 44, '', lines=['x = −c/b', '(linear)']))
+
+    # Merge left branch down to stop later via lines
+
+    # a=0 No → discriminant path (centre-right)
+    parts.append(_vlink(cx, 215, 270, 'No', 'right'))
+    parts.append(_decision(cx, 310, 170, 72, '', lines=['b² < 4ac?']))
+
+    # Yes → complex
+    parts.append(_hlink(cx + 85, 310, 560, label='Yes'))
+    parts.append(f'<line x1="560" y1="310" x2="560" y2="350" stroke="{NAVY}" stroke-width="1.8"/>')
+    parts.append(f'<polygon points="555,350 565,350 560,358" fill="{NAVY}"/>')
+    parts.append(_process(560, 390, 150, 44, '', lines=['Complex roots', '(or use complex √)']))
+
+    # No → equal?
+    parts.append(_vlink(cx, 346, 400, 'No', 'right'))
+    parts.append(_decision(cx, 440, 170, 72, '', lines=['b² = 4ac?']))
+
+    # Yes equal
+    parts.append(_hlink(cx + 85, 440, 560, label='Yes'))
+    parts.append(f'<line x1="560" y1="440" x2="560" y2="480" stroke="{NAVY}" stroke-width="1.8"/>')
+    parts.append(f'<polygon points="555,480 565,480 560,488" fill="{NAVY}"/>')
+    parts.append(_process(560, 520, 160, 44, '', lines=['Equal root', 'x = −b/(2a)']))
+
+    # No → two real
+    parts.append(_vlink(cx, 476, 530, 'No', 'right'))
+    parts.append(_process(cx, 570, 240, 52, '', lines=['x₁, x₂ via quadratic formula', '√(b² − 4ac)']))
+
+    # All converge conceptually to Stop
+    parts.append(_vlink(cx, 596, 650))
+    parts.append(_vlink(560, 542, 650))
+    parts.append(_vlink(560, 412, 650))
+    parts.append(f'<line x1="40" y1="450" x2="40" y2="650" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>')
+    parts.append(f'<line x1="140" y1="462" x2="140" y2="650" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>')
+    parts.append(f'<line x1="120" y1="450" x2="120" y2="650" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>')
+    parts.append(f'<line x1="40" y1="650" x2="560" y2="650" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>')
+    parts.append(_vlink(cx, 650, 700))
+    parts.append(_terminal(cx, 722, 100, 32, 'Stop'))
+
+    # legend
+    parts.append(f'<text x="20" y="765" font-size="11" font-family="Georgia,serif" fill="{MUT}">Diamonds = decisions (every branch the structure plan needs). Dashed lines merge to Stop.</text>')
+
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-label="Quadratic equation flowchart">
+{''.join(parts)}
+</svg>'''
+    return flow_wrap(svg, 'Flowchart — quadratic ax²+bx+c=0 with all decision boxes (Book pp. 94–96)')
+
+
+def flowchart_euclidean():
+    W, cx = 400, 200
+    parts = [
+        _terminal(cx, 28, 100, 32, 'Start'),
+        _vlink(cx, 44, 68),
+        _process(cx, 92, 200, 36, '', lines=['Set M, N']),
+        _vlink(cx, 110, 140),
+        _decision(cx, 180, 150, 68, '', lines=['M = N?']),
+    ]
+    # Yes → display
+    parts.append(_hlink(cx + 75, 180, 340, label='Yes'))
+    parts.append(f'<line x1="340" y1="180" x2="340" y2="520" stroke="{NAVY}" stroke-width="1.8"/>')
+    parts.append(f'<polygon points="335,520 345,520 340,528" fill="{NAVY}"/>')
+    parts.append(_io(340, 560, 140, 36, 'Display M'))
+    parts.append(_vlink(340, 578, 620))
+    parts.append(_terminal(340, 640, 100, 32, 'Stop'))
+
+    # No → M>N?
+    parts.append(_vlink(cx, 214, 260, 'No', 'left'))
+    parts.append(_decision(cx, 300, 150, 68, '', lines=['M > N?']))
+    parts.append(_hlink(cx - 75, 300, 70, label='Yes'))
+    parts.append(f'<line x1="70" y1="300" x2="70" y2="360" stroke="{NAVY}" stroke-width="1.8"/>')
+    parts.append(f'<polygon points="65,360 75,360 70,368" fill="{NAVY}"/>')
+    parts.append(_process(70, 400, 120, 40, '', lines=['M ← M − N']))
+    # loop back
+    parts.append(f'<path d="M70,420 V450 H{cx} V214" fill="none" stroke="{NAVY}" stroke-width="1.8" stroke-dasharray="5 3"/>')
+    parts.append(f'<text x="110" y="445" font-size="11" font-family="Georgia,serif" fill="{MUT}" font-weight="700">loop</text>')
+
+    parts.append(_vlink(cx, 334, 390, 'No', 'right'))
+    parts.append(_process(cx, 430, 140, 40, '', lines=['N ← N − M']))
+    parts.append(f'<path d="M{cx+70},430 H{cx+110} V214 H{cx+75}" fill="none" stroke="{NAVY}" stroke-width="1.8" stroke-dasharray="5 3"/>')
+
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} 680" width="{W}" height="680" role="img" aria-label="Euclidean algorithm flowchart">
+{''.join(parts)}
+</svg>'''
+    return flow_wrap(svg, 'Flowchart — Exercise 3.2 Euclidean algorithm (GCD by subtraction)')
+
+
+def flowchart_larger_of_two():
+    W, cx = 420, 210
+    parts = [
+        _terminal(cx, 28, 100, 32, 'Start'),
+        _vlink(cx, 44, 68),
+        _io(cx, 90, 180, 36, 'Input A, B'),
+        _vlink(cx, 108, 140),
+        _decision(cx, 180, 140, 64, '', lines=['A = B?']),
+        _hlink(cx + 70, 180, 350, label='Yes'),
+        f'<line x1="350" y1="180" x2="350" y2="240" stroke="{NAVY}" stroke-width="1.8"/>',
+        f'<polygon points="345,240 355,240 350,248" fill="{NAVY}"/>',
+        _process(350, 280, 140, 40, '', lines=['“A equals B”']),
+        _vlink(cx, 212, 260, 'No', 'left'),
+        _decision(cx, 300, 140, 64, '', lines=['A > B?']),
+        _hlink(cx - 70, 300, 70, label='Yes'),
+        f'<line x1="70" y1="300" x2="70" y2="360" stroke="{NAVY}" stroke-width="1.8"/>',
+        f'<polygon points="65,360 75,360 70,368" fill="{NAVY}"/>',
+        _process(70, 400, 120, 40, '', lines=['Display A']),
+        _vlink(cx, 332, 390, 'No', 'right'),
+        _process(cx, 430, 140, 40, '', lines=['Display B']),
+        # merge
+        f'<line x1="70" y1="420" x2="70" y2="500" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>',
+        f'<line x1="{cx}" y1="450" x2="{cx}" y2="500" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>',
+        f'<line x1="350" y1="300" x2="350" y2="500" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>',
+        f'<line x1="70" y1="500" x2="350" y2="500" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>',
+        _vlink(cx, 500, 540),
+        _terminal(cx, 560, 100, 32, 'Stop'),
+    ]
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} 600" width="{W}" height="600" role="img">
+{''.join(str(p) for p in parts)}
+</svg>'''
+    return flow_wrap(svg, 'Flowchart — Exercise 3.4 larger of two numbers')
+
+
+def flowchart_simultaneous():
+    W, cx = 520, 260
+    parts = [
+        _terminal(cx, 28, 100, 32, 'Start'),
+        _vlink(cx, 44, 70),
+        _io(cx, 95, 280, 40, 'Input a,b,c,d,e,f'),
+        _vlink(cx, 115, 145),
+        _process(cx, 175, 260, 40, '', lines=['Δ = ae − bd']),
+        _vlink(cx, 195, 230),
+        _decision(cx, 270, 150, 68, '', lines=['Δ = 0?']),
+        _hlink(cx + 75, 270, 430, label='No'),
+        f'<line x1="430" y1="270" x2="430" y2="330" stroke="{NAVY}" stroke-width="1.8"/>',
+        f'<polygon points="425,330 435,330 430,338" fill="{NAVY}"/>',
+        _process(430, 380, 170, 56, '', lines=['Unique intersection', 'x=(ce−bf)/Δ', 'y=(af−cd)/Δ']),
+        _vlink(430, 408, 560),
+        _vlink(cx, 304, 360, 'Yes', 'left'),
+        _decision(cx, 410, 180, 80, '', lines=['Same line?', 'ratios match']),
+        _hlink(cx - 90, 410, 90, label='Yes'),
+        f'<line x1="90" y1="410" x2="90" y2="480" stroke="{NAVY}" stroke-width="1.8"/>',
+        f'<polygon points="85,480 95,480 90,488" fill="{NAVY}"/>',
+        _process(90, 520, 150, 44, '', lines=['Infinite solutions', '(coincident)']),
+        _vlink(cx, 450, 500, 'No', 'right'),
+        _process(cx, 540, 160, 44, '', lines=['No solution', '(parallel)']),
+        f'<line x1="90" y1="542" x2="90" y2="600" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>',
+        f'<line x1="{cx}" y1="562" x2="{cx}" y2="600" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>',
+        f'<line x1="430" y1="560" x2="430" y2="600" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>',
+        f'<line x1="90" y1="600" x2="430" y2="600" stroke="{NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>',
+        _vlink(cx, 600, 640),
+        _terminal(cx, 660, 100, 32, 'Stop'),
+    ]
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} 700" width="{W}" height="700" role="img">
+{''.join(parts)}
+</svg>'''
+    return flow_wrap(svg, 'Flowchart — Exercise 3.6 two simultaneous linear equations')
+
 
 
 # ───────────────────── Practical pages ─────────────────────
@@ -124,7 +465,8 @@ Level 2
 3. Display C
 4. Stop</div>''',
         book_ref='Book §2.3.8 Structure plan',
-        do=r'Translate your plan into a commented MATLAB script and run it for \(F=32\) and \(F=212\).'))
+        do=r'Translate your plan into a commented MATLAB script and run it for \(F=32\) and \(F=212\).',
+        answer=flowchart_fahrenheit() + r'''<p>Check: \(F=32\Rightarrow C=0\); \(F=212\Rightarrow C=100\).</p>'''))
 
     qs.append(q(3, 'Vertical motion under gravity',
         r'''<p>A stone is thrown vertically upward. Follow the book’s structure plan and produce a script that plots
@@ -138,7 +480,8 @@ plot(t,s,'k','LineWidth',3), grid
 title('Vertical motion under gravity')
 xlabel('time'), ylabel('vertical displacement')</pre>''',
         book_ref='Book §2.4 Vertical motion under gravity',
-        do='Draw the flowchart for the structure plan, then generate the program from it with plenty of comments. Save as <code>throw.m</code>.'))
+        do=r'Draw the flowchart for the structure plan, then generate the program from it with plenty of comments. Save as <code>throw.m</code>.',
+        answer=flowchart_vertical_motion()))
 
     qs.append(q(4, 'Program design process &amp; the projectile problem',
         r'''<p>Read the <strong>7 steps</strong> of the program design process. Work through the projectile example to the end of Steps 6 &amp; 7.</p>
@@ -148,7 +491,13 @@ xlabel('time'), ylabel('vertical displacement')</pre>''',
 </ol>
 <p>Write 3–5 sentences: how would you <em>test</em> (Step 6) that a projectile script is correct?</p>''',
         book_ref='Book §3.1 · §3.1.1 Projectile problem',
-        do=r'List at least three concrete test cases (e.g. \(v_0=0\), \(45^\circ\) max-range check, landing when \(y=0\)).'))
+        do=r'List at least three concrete test cases (e.g. \(v_0=0\), \(45^\circ\) max-range check, landing when \(y=0\)).',
+        answer=r'''<ul>
+<li>\(v_0=0\): trajectory stays at the launch point (range \(=0\)).</li>
+<li>\(\theta=45^\circ\) on flat ground: range should be \(v_0^2/g\) (maximum).</li>
+<li>\(\theta=90^\circ\): range \(=0\); time of flight \(=2v_0/g\).</li>
+<li>Landing: solve \(y(t)=0\) for \(t&gt;0\) and compare with the plotted landing time.</li>
+</ul>'''))
 
     qs.append(q(5, 'Quadratic equation — structure plan &amp; flowchart',
         r'''<p>Study the quadratic structure plan (Book pp. 94–95). Draw a flowchart that shows every <strong>decision box</strong>
@@ -166,13 +515,14 @@ needed to handle all cases of \(ax^2+bx+c=0\).</p>
    else → two real roots via quadratic formula
 4. Stop</div>''',
         book_ref='Book §3.1 / §3.2.2 · pp. 94–96',
-        do='Keep this flowchart for Practical 4 (you will implement it with <code>if</code>/<code>elseif</code>). Discuss other math problems that need conditionals or loops.'))
+        do='Keep this flowchart for Practical 4 (you will implement it with <code>if</code>/<code>elseif</code>). Discuss other math problems that need conditionals or loops.',
+        answer=flowchart_quadratic()))
 
     body = f'''
 <div class="eyebrow">DPEN100 · ENGG100 · Week 3</div>
 <span class="tag">PRACTICAL 3</span>
 <h1>Using MATLAB for engineering analysis</h1>
-<p class="sub">Work through parts of Chapters 1–3 of {BOOK}. Each card is a concrete task pulled from the practical worksheet and the cited book section.</p>
+<p class="sub">Work through parts of Chapters 1–3 of {BOOK}. Each card is a concrete task pulled from the practical worksheet and the cited book section. Where a flowchart is required, open <strong>Model answer / flowchart</strong>.</p>
 {nav('p03.html')}
 <p><a class="chip pdf" href="pdfs/engg100-practical-3-using-matlab-for-engineering-analysis.pdf" target="_blank" rel="noopener">Original Practical 3 PDF</a></p>
 {''.join(qs)}
@@ -213,7 +563,8 @@ end
 end</pre>
 <p>Test: <code>quadratic(4,2,-2)</code> should give roots \(0.5\) and \(-1\).</p>''',
         book_ref='Book §2.8.2–2.8.7 · pp. 95–96',
-        do='Save as <code>quadratic.m</code> and test indeterminate / linear / complex / equal / two-real cases.'))
+        do='Save as <code>quadratic.m</code> and test indeterminate / linear / complex / equal / two-real cases.',
+        answer='<p>Same decision structure as Practical 3 Q5 — use this flowchart while coding:</p>' + flowchart_quadratic()))
 
     qs.append(q(3, 'Rewrite with <code>switch</code>',
         r'''<p>Read §2.8.9. Sketch how you could classify the quadratic outcome with a <code>switch</code> on a status code
@@ -302,13 +653,18 @@ end</pre>
 <li>What general arithmetic procedure is this?</li>
 </ol>''',
         book_ref='Book Exercise 3.2 · p. 97',
-        do='Then implement as a MATLAB function and verify against your hand-trace.'))
+        do='Then implement as a MATLAB function and verify against your hand-trace.',
+        answer=flowchart_euclidean() + r'''
+<p><strong>(a)</strong> \(M=44,N=28\to 16,28\to 16,12\to 4,12\to 4,8\to 4,4\). Output \(M=4\).</p>
+<p><strong>(b)</strong> \(M=14,N=24\to 14,10\to 4,10\to 4,6\to 4,2\to 2,2\). Output \(M=2\).</p>
+<p><strong>(c)</strong> Greatest common divisor (Euclidean algorithm by repeated subtraction).</p>'''))
 
     qs.append(q(3, 'Exercise 3.4 — larger of two numbers',
         r'''<p>Write a script that inputs any two numbers (which may be equal) and displays the larger one with a suitable message,
 or reports that they are equal.</p>''',
         book_ref='Book Exercise 3.4 · p. 97',
-        do='Structure-plan first, then code. Test equal and unequal cases.'))
+        do='Structure-plan first, then code. Test equal and unequal cases.',
+        answer=flowchart_larger_of_two()))
 
     qs.append(q(4, 'Exercise 3.6 — two simultaneous linear equations',
         r'''<p>Develop a structure plan for
@@ -317,7 +673,9 @@ that handles intersecting, parallel, and coincident lines. Implement and test on
 \[x+y=3,\qquad 2x-y=3\]
 (solution \(x=2\), \(y=1\)).</p>''',
         book_ref='Book Exercise 3.6 · pp. 97–98',
-        do=r'Input all six coefficients; branch on the determinant \(ae-bd\).'))
+        do=r'Input all six coefficients; branch on the determinant \(ae-bd\).',
+        answer=flowchart_simultaneous() + r'''
+<p>Test: \(a=1,b=1,c=3,d=2,e=-1,f=3\Rightarrow\Delta=-3\neq0\Rightarrow x=2,\,y=1\).</p>'''))
 
     qs.append(q(5, 'Chapter 7 — function M-files &amp; <code>stats.m</code>',
         r'''<p>Read Ch. 7 intro and §7.1 (no need to code Newton’s method yet). Create <code>stats.m</code> from §7.2 and run the book’s tests.
@@ -351,13 +709,14 @@ using the structure plan in Fig. 3.3 / §3.2.2. The flag must return:</p>
 </ul>
 <p>Test on Exercise 3.5 data: \((1,1,1)\), \((2,4,2)\), \((2,2,-12)\).</p>''',
         book_ref='Book Exercise 7.7 · pp. 179–180',
-        do='Show your tutor flag outputs for each test case.'))
+        do='Show your tutor flag outputs for each test case.',
+        answer='<p>Implement using the same decision tree as Practical 3:</p>' + flowchart_quadratic()))
 
     body = f'''
 <div class="eyebrow">DPEN100 · ENGG100 · Week 5</div>
 <span class="tag">PRACTICAL 5</span>
 <h1>MATLAB functions &amp; chapter exercises</h1>
-<p class="sub">Chapters 3 and 7 of {BOOK}: inline/function M-files, then Exercises 3.2, 3.4, 3.6 and 7.3, 7.4, 7.7.</p>
+<p class="sub">Chapters 3 and 7 of {BOOK}: inline/function M-files, then Exercises 3.2, 3.4, 3.6 and 7.3, 7.4, 7.7. Flowcharts are in the model answers where a structure plan / flowchart is required.</p>
 {nav('p05.html')}
 <p><a class="chip pdf" href="pdfs/engg100-practical-5-matlab-functions-and-chapter-exercises-guide.pdf" target="_blank" rel="noopener">Original Practical 5 PDF</a></p>
 {''.join(qs)}
