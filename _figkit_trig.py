@@ -33,6 +33,8 @@ def pi_label(x, zero='0'):
 
 
 def num_label(v):
+    if abs(abs(v) - 0.5) < 1e-9:
+        return '\u2212\u00bd' if v < 0 else '\u00bd'
     if abs(v - round(v)) < 1e-9:
         v = int(round(v))
         return f'\u2212{abs(v)}' if v < 0 else str(v)
@@ -50,8 +52,15 @@ def _text(x, y, s, *, size=12, fill=GREY, anchor='start', weight='normal'):
 
 def plot(fn, xmin, xmax, ymin, ymax, keypoints, *,
          midline=None, amplitude=None, period=None, asymptotes=(),
-         caption='', extra_notes=(), yticks=None):
-    """Return an SVG string for one sketched trig graph."""
+         caption='', extra_notes=(), yticks=None, xticks=None,
+         label_points=None):
+    """Return an SVG string for one sketched trig graph.
+
+    ``keypoints`` are always drawn as marked critical points.  ``xticks`` can
+    independently control the vertical grid and x-axis labels, while
+    ``label_points`` controls which keypoints receive coordinate text.  The
+    defaults preserve the original behaviour for existing callers.
+    """
     pw, ph = W - ML - MR, H - MT - MB
 
     def sx(x):
@@ -60,15 +69,19 @@ def plot(fn, xmin, xmax, ymin, ymax, keypoints, *,
     def sy(y):
         return MT + (ymax - y) / (ymax - ymin) * ph
 
+    marker_suffix = sum((i + 1) * ord(ch) for i, ch in enumerate(caption)) % 100000
+    marker_green = f'arG{marker_suffix}'
+    marker_navy = f'arN{marker_suffix}'
+    total_h = H + 14 * len(extra_notes)
     p = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" '
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {total_h}" width="{W}" height="{total_h}" '
         f'preserveAspectRatio="xMidYMid meet" role="img" aria-label="{_esc(caption)}" '
         'style="width:100%;height:auto;max-width:660px;background:#fff;border:1px solid #e8e6e0;'
         'border-radius:8px;margin:10px 0;">',
         '<defs>'
-        f'<marker id="arG" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" '
+        f'<marker id="{marker_green}" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" '
         f'orient="auto-start-reverse"><path d="M 0 1 L 7 5 L 0 9 z" fill="{GREEN}"/></marker>'
-        f'<marker id="arN" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" '
+        f'<marker id="{marker_navy}" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" '
         f'orient="auto-start-reverse"><path d="M 0 1 L 7 5 L 0 9 z" fill="{NAVY}"/></marker>'
         '</defs>',
     ]
@@ -82,7 +95,8 @@ def plot(fn, xmin, xmax, ymin, ymax, keypoints, *,
         p.append(f'<line x1="{ML}" y1="{sy(gy):.1f}" x2="{ML+pw}" y2="{sy(gy):.1f}" '
                  f'stroke="{GRID}" stroke-width="1"/>')
         gy += 1
-    for x, _ in keypoints:
+    x_tick_values = list(xticks) if xticks is not None else [x for x, _ in keypoints]
+    for x in x_tick_values:
         p.append(f'<line x1="{sx(x):.1f}" y1="{MT}" x2="{sx(x):.1f}" y2="{MT+ph}" '
                  f'stroke="{GRID}" stroke-width="1"/>')
 
@@ -159,7 +173,7 @@ def plot(fn, xmin, xmax, ymin, ymax, keypoints, *,
 
     # x ticks at key points
     seen = set()
-    for x, _ in keypoints:
+    for x in x_tick_values:
         lbl = pi_label(x)
         if lbl in seen:
             continue
@@ -169,6 +183,8 @@ def plot(fn, xmin, xmax, ymin, ymax, keypoints, *,
         p.append(_text(sx(x), MT + ph + 18, lbl, size=12, anchor='middle'))
 
     # key points with coordinates
+    labelled = keypoints if label_points is None else label_points
+    labelled_keys = {(round(x, 9), round(y, 9)) for x, y in labelled}
     for x, y in keypoints:
         above = y >= (midline if midline is not None else 0)
         dy = -10 if above else 18
@@ -176,6 +192,8 @@ def plot(fn, xmin, xmax, ymin, ymax, keypoints, *,
         if abs(sy(y) - ax_y) < 2:
             dy = -12 if above else 20
         p.append(f'<circle cx="{sx(x):.1f}" cy="{sy(y):.1f}" r="4" fill="{NAVY}"/>')
+        if (round(x, 9), round(y, 9)) not in labelled_keys:
+            continue
         tx, anchor = sx(x), 'middle'
         if tx < ML + 36:
             tx, anchor = ML + 2, 'start'
@@ -189,7 +207,8 @@ def plot(fn, xmin, xmax, ymin, ymax, keypoints, *,
         ax = ML + pw * 0.5
         top, bot = sy(midline + amplitude), sy(midline)
         p.append(f'<line x1="{ax:.1f}" y1="{top:.1f}" x2="{ax:.1f}" y2="{bot:.1f}" '
-                 f'stroke="{GREEN}" stroke-width="1.6" marker-start="url(#arG)" marker-end="url(#arG)"/>')
+                 f'stroke="{GREEN}" stroke-width="1.6" marker-start="url(#{marker_green})" '
+                 f'marker-end="url(#{marker_green})"/>')
         p.append(_text(ax + 7, (top + bot) / 2 + 4, f'amplitude = {num_label(amplitude)}',
                        size=12, fill=GREEN, weight='bold'))
 
@@ -203,12 +222,13 @@ def plot(fn, xmin, xmax, ymin, ymax, keypoints, *,
         x1, x2 = sx(start), sx(start + period)
         if x2 <= ML + pw + 1:
             p.append(f'<line x1="{x1:.1f}" y1="{by}" x2="{x2:.1f}" y2="{by}" stroke="{NAVY}" '
-                     'stroke-width="1.5" marker-start="url(#arN)" marker-end="url(#arN)"/>')
+                     f'stroke-width="1.5" marker-start="url(#{marker_navy})" '
+                     f'marker-end="url(#{marker_navy})"/>')
             p.append(_text((x1 + x2) / 2, by - 5, f'period T = {pi_label(period)}',
                            size=12, fill=NAVY, anchor='middle', weight='bold'))
 
     for i, note in enumerate(extra_notes):
-        p.append(_text(ML, by + 4 + i * 15, note, size=12, fill=NAVY))
+        p.append(_text(ML, by + 22 + i * 15, note, size=12, fill=NAVY))
 
     p.append('</svg>')
     return ''.join(p)

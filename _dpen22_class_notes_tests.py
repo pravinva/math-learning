@@ -7,6 +7,7 @@ from _dpen22_lesson_kit import escape_math_brackets
 from _figkit_exam import (
     limit_removable, limit_jump, limit_one_sided, area_under, area_between,
 )
+from _figkit_trig import pi_label, plot as trig_plot
 
 BASE = Path(__file__).resolve().parent / 'siddharth' / 'dpen22' / 'class-notes'
 TESTS = BASE / 'tests'
@@ -22,7 +23,9 @@ h1,h2,h3{color:#1B3A5C;margin:0 0 10px;}
 .mc{margin:6px 0 6px 18px;color:#374151;}
 ol>li{margin:10px 0;line-height:1.65;}
 .top-links a{margin-right:12px;text-decoration:none;color:#185FA5;font-weight:600;}
-.ans{background:#f0fdf4;border-left:4px solid #15803d;padding:10px 12px;margin:8px 0 14px;}
+.ans{background:#f0fdf4;border-left:4px solid #15803d;padding:10px 12px;margin:8px 0 14px;overflow-x:auto;}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding-bottom:2px;}
+@media(max-width:520px){.ans .katex{font-size:.92em;}}
 .mark{color:#6b7280;font-size:13px;}
 .paper-rules{background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:10px 14px;margin:10px 0 16px;font-size:14px;}
 .paper-rules ul{margin:6px 0 0 20px;padding:0;}
@@ -38,7 +41,7 @@ def page(title, body, katex=True):
         kx = '''<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
- onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\\\(',right:'\\\\)',display:false}]});"></script>'''
+ onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\\\[',right:'\\\\]',display:true},{left:'\\\\(',right:'\\\\)',display:false}]});"></script>'''
     rendered = f'''<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,6 +62,11 @@ def write_pair(slug, subject, timing, sample_href, tests_q, tests_a, fmt):
     total = fmt['total']
     n_mc = fmt['mc']
     long_marks = fmt['long_marks']
+    diagram_copy = (
+        'Required given diagrams and graph-sketching axes are provided.'
+        if slug == 'trig'
+        else 'Diagrams are provided where the sample uses graphs.'
+    )
     assert n_mc + len(long_marks) == total
     q_blocks = []
     for i, qs in enumerate(tests_q, 1):
@@ -85,8 +93,8 @@ def write_pair(slug, subject, timing, sample_href, tests_q, tests_a, fmt):
     q_body = f'''
 <h1>DPEN022 {H.escape(subject)} — Practice Tests (Questions)</h1>
 <p class="sub">Six practice papers modelled on the official DPEN022 {H.escape(subject)} Exam Sample.
-Timing guide: {timing}. Show full working on long-answer items. Diagrams are provided where the sample uses graphs.</p>
-<div class="meta"><strong>Official sample:</strong> <a href="{sample_href}">open PDF</a> · use it as the style/difficulty reference for these four papers.</div>
+Timing guide: {timing}. Show full working on long-answer items. {diagram_copy}</p>
+<div class="meta"><strong>Official sample:</strong> <a href="{sample_href}">open PDF</a> · use it as the style/difficulty reference for these six papers.</div>
 <div class="top-links">
   <a href="{slug}-answers.html">Open Separate Answers</a>
   <a href="../index.html">Class Notes Hub</a>
@@ -158,6 +166,95 @@ INT_FMT = {
 # L9(2) co-function solve for x, L10(2) exact special value,
 # L11(3) solve degrees, L12(3) solve radians, L13(3) sketch amp/period,
 # L14(3) prove identity, L15(3) solve trig equation
+
+def _svg_text(x, y, text, *, anchor='middle', size=15, weight='normal', fill='#1f2937'):
+    return (f'<text x="{x}" y="{y}" text-anchor="{anchor}" font-family="Georgia,serif" '
+            f'font-size="{size}" font-weight="{weight}" fill="{fill}">{H.escape(text)}</text>')
+
+
+def right_triangle_svg(horizontal, vertical, hypotenuse, angle, *,
+                       caption='Right-triangle diagram', context='', vertices=None,
+                       answer_prompt=''):
+    """Labelled right triangle used by the given Q1 diagrams and acute Q8 answers."""
+    labels = [
+        _svg_text(210, 235, horizontal) if horizontal else '',
+        _svg_text(372, 136, vertical, anchor='start') if vertical else '',
+        _svg_text(195, 120, hypotenuse, anchor='end') if hypotenuse else '',
+        _svg_text(108, 198, angle, size=14, fill='#185FA5') if angle else '',
+        _svg_text(22, 25, caption, anchor='start', size=15, weight='bold', fill='#1B3A5C'),
+    ]
+    if context:
+        labels.append(_svg_text(22, 252, context, anchor='start', size=12, fill='#6b7280'))
+    if answer_prompt:
+        labels.append(_svg_text(225, 52, answer_prompt, size=14, weight='bold', fill='#15803d'))
+    if vertices:
+        a, b, c = vertices
+        labels.extend([
+            _svg_text(58, 226, a, anchor='end', weight='bold'),
+            _svg_text(362, 48, b, anchor='start', weight='bold'),
+            _svg_text(362, 226, c, anchor='start', weight='bold'),
+        ])
+    return f'''<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 270"
+ role="img" aria-label="{H.escape(caption)}" style="width:100%;max-width:520px;height:auto;background:#fff;border:1px solid #d8dee7;border-radius:8px">
+<line x1="70" y1="210" x2="350" y2="210" stroke="#1B3A5C" stroke-width="3"/>
+<line x1="350" y1="210" x2="350" y2="55" stroke="#1B3A5C" stroke-width="3"/>
+<line x1="70" y1="210" x2="350" y2="55" stroke="#185FA5" stroke-width="3"/>
+<path d="M 330 210 L 330 190 L 350 190" fill="none" stroke="#1B3A5C" stroke-width="2"/>
+<path d="M 111 210 A 41 41 0 0 0 106 190" fill="none" stroke="#185FA5" stroke-width="2"/>
+{''.join(labels)}</svg></div>'''
+
+
+def q2_reference_triangle_svg():
+    """Accurate quadrant-II reference triangle; theta is a standard-position angle."""
+    return f'''<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300"
+ role="img" aria-label="Quadrant two reference triangle for sine twelve thirteenths"
+ style="width:100%;max-width:560px;height:auto;background:#fff;border:1px solid #d8dee7;border-radius:8px">
+{_svg_text(22, 25, 'QII reference triangle', anchor='start', size=15, weight='bold', fill='#1B3A5C')}
+<line x1="35" y1="235" x2="450" y2="235" stroke="#1f2937" stroke-width="2"/>
+<line x1="270" y1="275" x2="270" y2="42" stroke="#1f2937" stroke-width="2"/>
+{_svg_text(454, 230, 'x', anchor='start')}{_svg_text(280, 48, 'y', anchor='start')}
+<line x1="270" y1="235" x2="155" y2="75" stroke="#185FA5" stroke-width="3"/>
+<line x1="155" y1="75" x2="155" y2="235" stroke="#1B3A5C" stroke-width="3"/>
+<line x1="155" y1="235" x2="270" y2="235" stroke="#1B3A5C" stroke-width="3"/>
+<path d="M 175 235 L 175 215 L 155 215" fill="none" stroke="#1B3A5C" stroke-width="2"/>
+<path d="M 323 235 A 53 53 0 0 0 239 192" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+{_svg_text(316, 190, 'θ (obtuse)', anchor='start', fill='#c2410c', weight='bold')}
+{_svg_text(205, 143, 'r = 13', anchor='end', fill='#185FA5')}
+{_svg_text(145, 158, 'y = 12', anchor='end')}
+{_svg_text(212, 257, 'x = −5')}
+{_svg_text(150, 62, '(−5, 12)', anchor='end', size=13, fill='#15803d')}
+</svg></div>'''
+
+
+def blank_trig_grid(xmin, xmax, xticks, *, caption):
+    """Blank labelled axes for a student's Q13 graph sketch."""
+    width, height = 640, 300
+    left, right, top, bottom = 58, 28, 38, 52
+    pw, ph = width - left - right, height - top - bottom
+    sx = lambda x: left + (x - xmin) / (xmax - xmin) * pw
+    axis_y = top + ph / 2
+    parts = [f'''<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}"
+ role="img" aria-label="{H.escape(caption)} blank graphing axes"
+ style="width:100%;max-width:660px;height:auto;background:#fff;border:1px solid #d8dee7;border-radius:8px">
+{_svg_text(left, 24, caption, anchor='start', size=15, weight='bold', fill='#1B3A5C')}''']
+    for i in range(9):
+        y = top + i * ph / 8
+        parts.append(f'<line x1="{left}" y1="{y:.1f}" x2="{left+pw}" y2="{y:.1f}" stroke="#e5e7eb"/>')
+    for x in xticks:
+        px = sx(x)
+        parts.append(f'<line x1="{px:.1f}" y1="{top}" x2="{px:.1f}" y2="{top+ph}" stroke="#e5e7eb"/>')
+        parts.append(f'<line x1="{px:.1f}" y1="{axis_y-4}" x2="{px:.1f}" y2="{axis_y+4}" stroke="#1f2937"/>')
+        parts.append(_svg_text(round(px, 1), height - 22, pi_label(x), size=12))
+    parts.extend([
+        f'<line x1="{left}" y1="{axis_y}" x2="{left+pw}" y2="{axis_y}" stroke="#1f2937" stroke-width="1.7"/>',
+        f'<line x1="{sx(0):.1f}" y1="{top}" x2="{sx(0):.1f}" y2="{top+ph}" stroke="#1f2937" stroke-width="1.7"/>',
+        _svg_text(left + pw + 5, axis_y - 7, 'x', anchor='start'),
+        _svg_text(sx(0) + 9, top + 12, 'y', anchor='start'),
+        '</svg></div>',
+    ])
+    return ''.join(parts)
+
+
 trig_q = [
 [
  (r'In a right triangle, adjacent side \(5\) m and angle \(13^\circ45\'\). Find the hypotenuse correct to 2 d.p.',
@@ -403,6 +500,214 @@ trig_a = [
  r'\((2\cos\theta-1)(\cos\theta+1)=0\Rightarrow\theta=60^\circ,180^\circ,300^\circ\).',
 ],
 ]
+
+# Diagram and worked-answer upgrades.  These are kept data-driven so every
+# paper uses the same reusable SVG helpers while retaining its question slots.
+q1_diagrams = [
+    right_triangle_svg('5 m', '', 'x m', "13°45′",
+                       caption='Given right triangle: find the hypotenuse',
+                       context='adjacent = 5 m; hypotenuse = x'),
+    right_triangle_svg('8 m', 'x m', '', '22°',
+                       caption='Given right triangle: find the opposite side',
+                       context='adjacent = 8 m; opposite = x'),
+    right_triangle_svg('40 m', 'h m', 'line of sight', '18°',
+                       caption='Tower and angle of elevation',
+                       context='observer                         tower base; tower height = h'),
+    right_triangle_svg('AC = 6', 'BC = 8', '', 'A',
+                       caption='Triangle ABC, right-angled at C',
+                       vertices=('A', 'B', 'C'), answer_prompt='sin A = ?'),
+    right_triangle_svg('a m', '7 m', '', '28°',
+                       caption='Given right triangle: find the adjacent side',
+                       context='opposite = 7 m; adjacent = a'),
+    right_triangle_svg('3.5 m', 'wall', 'L m (ladder)', '62°',
+                       caption='Ladder leaning against a vertical wall',
+                       context='ground                         wall; ladder length = L'),
+]
+for test, diagram in zip(trig_q, q1_diagrams):
+    stem, choices = test[0]
+    test[0] = (stem + diagram, choices)
+
+# Correct pre-existing answer/choice issues found during the six-paper audit.
+trig_a[1][5] = r'(E) \(\tan\theta\).'
+transform_stem, transform_choices = trig_q[2][4]
+transform_choices[0] = r'(A) \(4\cos\!\left(x+\dfrac{\pi}{2}\right)+1\)'
+trig_q[2][4] = (transform_stem, transform_choices)
+trig_a[2][4] = r'(A) \(4\cos\!\left(x+\dfrac{\pi}{2}\right)+1\).'
+trig_a[4][6] = r'\(\sin^{-1}(9/20)\approx26^\circ45\'\).'
+trig_a[5][6] = r'\(\tan^{-1}(5/11)\approx24^\circ27\'\).'
+trig_a[5][8] = (
+    r'\(x=0^\circ\), since \(\cos40^\circ=\sin50^\circ\), '
+    r'so \(50^\circ-x=50^\circ\).'
+)
+
+# Coherent 2-mark application question (height rounded to two decimal places).
+trig_q[2][6] = (r'A ship is \(2.5\) km horizontally from a lighthouse. The angle of elevation '
+                r'to the top is \(12^\circ\). Find the lighthouse height to 2 d.p. in kilometres.')
+
+acute_q8 = [
+    right_triangle_svg('4', '3', '5', 'θ', caption='Reference triangle for sin θ = 3/5'),
+    right_triangle_svg('5', '12', '13', 'θ', caption='Reference triangle for cos θ = 5/13'),
+    right_triangle_svg('15', '8', '17', 'θ', caption='Reference triangle for tan θ = 8/15'),
+    q2_reference_triangle_svg(),
+    right_triangle_svg('8', '15', '17', 'θ', caption='Reference triangle for cos θ = 8/17'),
+    right_triangle_svg('24', '7', '25', 'θ', caption='Reference triangle for sin θ = 7/25'),
+]
+q8_working = [
+    r'''Since \(\sin\theta=\frac{\mathrm{opp}}{\mathrm{hyp}}=\frac35\), take opposite \(3\)
+and hypotenuse \(5\). By Pythagoras, the adjacent side is
+\(\sqrt{5^2-3^2}=4\). Hence \(\displaystyle\sec\theta=\frac{\mathrm{hyp}}{\mathrm{adj}}=\frac54\).''',
+    r'''Since \(\cos\theta=\frac{\mathrm{adj}}{\mathrm{hyp}}=\frac5{13}\), take adjacent \(5\)
+and hypotenuse \(13\). The opposite side is
+\(\sqrt{13^2-5^2}=12\). Hence \(\displaystyle\tan\theta=\frac{\mathrm{opp}}{\mathrm{adj}}=\frac{12}{5}\).''',
+    r'''Since \(\tan\theta=\frac{\mathrm{opp}}{\mathrm{adj}}=\frac8{15}\), take opposite \(8\)
+and adjacent \(15\). The hypotenuse is \(\sqrt{8^2+15^2}=17\), so
+\(\displaystyle\sin\theta=\frac{\mathrm{opp}}{\mathrm{hyp}}=\frac8{17}\).''',
+    r'''\(\theta\) lies in quadrant II, so \(y>0\) and \(x<0\). With
+\(\sin\theta=\frac{y}{r}=\frac{12}{13}\), Pythagoras gives
+\(|x|=\sqrt{13^2-12^2}=5\), hence \(x=-5\). Therefore
+\(\displaystyle\cos\theta=\frac{x}{r}=-\frac5{13}\). The diagram shows
+\(\theta\) in standard position; it is not the acute reference angle.''',
+    r'''Since \(\cos\theta=\frac{\mathrm{adj}}{\mathrm{hyp}}=\frac8{17}\), the opposite side is
+\(\sqrt{17^2-8^2}=15\). Thus
+\(\displaystyle\csc\theta=\frac{\mathrm{hyp}}{\mathrm{opp}}=\frac{17}{15}\).''',
+    r'''Since \(\sin\theta=\frac{\mathrm{opp}}{\mathrm{hyp}}=\frac7{25}\), the adjacent side is
+\(\sqrt{25^2-7^2}=24\). Thus
+\(\displaystyle\cot\theta=\frac{\mathrm{adj}}{\mathrm{opp}}=\frac{24}{7}\).''',
+]
+for i in range(6):
+    trig_a[i][7] = q8_working[i] + acute_q8[i]
+
+graph_specs = [
+    {
+        'fn': lambda x: 0.5 * math.sin(2*x), 'xmin': -math.pi, 'xmax': math.pi,
+        'amp': 0.5, 'period': math.pi, 'step': math.pi/4,
+        'period_tex': r'\pi',
+        'caption': 'y = ½ sin(2x),  −π ≤ x ≤ π',
+        'notes': ('midline y = 0',),
+    },
+    {
+        'fn': lambda x: 2 * math.cos(3*x), 'xmin': 0, 'xmax': 2*math.pi,
+        'amp': 2, 'period': 2*math.pi/3, 'step': math.pi/6,
+        'period_tex': r'\dfrac{2\pi}{3}',
+        'caption': 'y = 2 cos(3x),  0 ≤ x ≤ 2π',
+        'notes': ('midline y = 0',),
+    },
+    {
+        'fn': lambda x: 3 * math.sin(x/2), 'xmin': 0, 'xmax': 4*math.pi,
+        'amp': 3, 'period': 4*math.pi, 'step': math.pi,
+        'period_tex': r'4\pi',
+        'caption': 'y = 3 sin(x/2),  0 ≤ x ≤ 4π',
+        'notes': ('midline y = 0',),
+    },
+    {
+        'fn': lambda x: 2 * math.sin(x-math.pi/2), 'xmin': 0, 'xmax': 2*math.pi,
+        'amp': 2, 'period': 2*math.pi, 'step': math.pi/2,
+        'period_tex': r'2\pi',
+        'caption': 'y = 2 sin(x − π/2),  0 ≤ x ≤ 2π',
+        'notes': ('midline y = 0', 'phase shift = π/2 to the right'),
+    },
+    {
+        'fn': lambda x: 4 * math.cos(2*x), 'xmin': 0, 'xmax': math.pi,
+        'amp': 4, 'period': math.pi, 'step': math.pi/4,
+        'period_tex': r'\pi',
+        'caption': 'y = 4 cos(2x),  0 ≤ x ≤ π',
+        'notes': ('midline y = 0',),
+    },
+    {
+        'fn': lambda x: -math.sin(2*x), 'xmin': 0, 'xmax': 2*math.pi,
+        'amp': 1, 'period': math.pi, 'step': math.pi/4,
+        'period_tex': r'\pi',
+        'caption': 'y = −sin(2x),  0 ≤ x ≤ 2π',
+        'notes': ('midline y = 0', 'reflection of y = sin(2x) in the x-axis'),
+    },
+]
+
+for i, spec in enumerate(graph_specs):
+    count = round((spec['xmax'] - spec['xmin']) / spec['step'])
+    xs = [spec['xmin'] + j * spec['step'] for j in range(count + 1)]
+    points = [(x, 0.0 if abs(spec['fn'](x)) < 1e-10 else spec['fn'](x)) for x in xs]
+    # Coordinate text is reserved for extrema and endpoints; every intercept
+    # and quarter-period point is still marked and has its own labelled x tick.
+    labelled = [(x, y) for j, (x, y) in enumerate(points)
+                if abs(abs(y) - spec['amp']) < 1e-9 or j in (0, len(points)-1)]
+    trig_q[i][12] += blank_trig_grid(
+        spec['xmin'], spec['xmax'], xs, caption=f"Sketching grid: {spec['caption']}")
+    graph = trig_plot(
+        spec['fn'], spec['xmin'], spec['xmax'],
+        -spec['amp'] - 0.6, spec['amp'] + 0.6, points,
+        midline=0, amplitude=spec['amp'], period=spec['period'],
+        caption=spec['caption'], extra_notes=spec['notes'],
+        yticks=[-spec['amp'], 0, spec['amp']], xticks=xs,
+        label_points=labelled,
+    )
+    amp_answer = r'\frac12' if math.isclose(spec['amp'], 0.5) else f'{spec["amp"]:g}'
+    trig_a[i][12] = (
+        f'''Amplitude \(={amp_answer}\); period \(={spec["period_tex"]}\).
+The marked points occur at every quarter-period, so all intercepts and extrema
+are shown across the full stated domain.''' + graph
+    )
+
+# Proper LHS-to-RHS identity proofs, with each algebraic substitution shown.
+trig_a[0][13] = r'''\[
+\begin{aligned}
+\text{LHS}&=\sin(2\theta)\\
+&=\sin(\theta+\theta)\\
+&=\sin\theta\cos\theta+\cos\theta\sin\theta\\
+&=2\sin\theta\cos\theta=\text{RHS}.
+\end{aligned}
+\]'''
+trig_a[1][13] = r'''\[
+\begin{aligned}
+\text{LHS}&=(\sec\theta-\tan\theta)(\sec\theta+\tan\theta)\\
+&=\sec^2\theta-\tan^2\theta\\
+&=(1+\tan^2\theta)-\tan^2\theta\\
+&=1=\text{RHS}.
+\end{aligned}
+\]'''
+trig_a[2][13] = r'''\[
+\begin{aligned}
+\text{LHS}&=\frac{1-\cos2\theta}{\sin2\theta}\\
+&=\frac{2\sin^2\theta}{2\sin\theta\cos\theta}\\
+&=\frac{\sin\theta}{\cos\theta}\\
+&=\tan\theta=\text{RHS}.
+\end{aligned}
+\]'''
+trig_a[3][13] = r'''\[
+\begin{aligned}
+\text{LHS}&=\frac{1-\cos2\theta}{1+\cos2\theta}\\
+&=\frac{2\sin^2\theta}{2\cos^2\theta}\\
+&=\left(\frac{\sin\theta}{\cos\theta}\right)^2\\
+&=\tan^2\theta=\text{RHS}.
+\end{aligned}
+\]'''
+trig_a[4][13] = r'''\[
+\begin{aligned}
+\text{LHS}&=1+\cot^2\theta\\
+&=1+\frac{\cos^2\theta}{\sin^2\theta}\\
+&=\frac{\sin^2\theta+\cos^2\theta}{\sin^2\theta}\\
+&=\frac1{\sin^2\theta}=\csc^2\theta=\text{RHS}.
+\end{aligned}
+\]'''
+trig_a[5][13] = r'''\[
+\begin{aligned}
+\text{LHS}&=\frac{\sin2\theta}{1+\cos2\theta}\\
+&=\frac{2\sin\theta\cos\theta}{2\cos^2\theta}\\
+&=\frac{\sin\theta}{\cos\theta}\\
+&=\tan\theta=\text{RHS}.
+\end{aligned}
+\]'''
+
+# Correct the Test 1 Q15 solution set and show the equation steps.
+trig_a[0][14] = r'''\[
+\begin{aligned}
+2\sin^2x-\cos2x&=2\\
+2\sin^2x-(1-2\sin^2x)&=2\\
+4\sin^2x&=3\\
+\sin x&=\pm\frac{\sqrt3}{2}.
+\end{aligned}
+\]
+Hence \(x=60^\circ,120^\circ,240^\circ,300^\circ\) on the stated domain.'''
+
 write_pair('trig', 'Trigonometry', '1 hour per test',
            '../trig/2a_Trigonometry_Exam_Sample_Public_Holiday.pdf', trig_q, trig_a, TRIG_FMT)
 
