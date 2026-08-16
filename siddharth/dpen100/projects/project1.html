@@ -53,5 +53,82 @@ table.data th{background:#eef6ff;color:var(--navy)}
 <div class="chiprow"><a class="chip" href="index.html">Projects hub</a><a class="chip on" href="project1.html">Project 1</a><a class="chip ans" href="project1-answers.html">P1 answers</a><a class="chip" href="project2.html">Project 2</a><a class="chip ans" href="project2-answers.html">P2 answers</a><a class="chip" href="../practicals/index.html">Practicals</a><a class="chip" href="../index.html">DPEN100 home</a></div>
 <p><a class="chip ans" href="project1-answers.html">✅ Full worked answers (separate page)</a>
 <a class="chip pdf" href="pdfs/engg100-major-project-group-p314-kinematic-plots-and-analysis.pdf" target="_blank" rel="noopener">Sample major project PDF</a></p>
-{qs}
+
+<div class="note"><strong>Context.</strong> UOW’s Engineering Analysis focus in ENGG100/DPEN100 is using MATLAB on kinematics of rectilinear and curvilinear motion.
+This project mirrors the <em>Major Project</em> style (kinematic plots &amp; analysis) using a compact synthetic “GPS ride” dataset so you can finish without GPX parsing.
+A sample student major-project PDF is linked on the hub for comparison.</div>
+
+<div class="prep">
+<h2>Before you start — key ideas &amp; MATLAB</h2>
+<h3>Concepts &amp; ideas</h3>
+<ul><li><strong>Engineering Analysis (ENGG100/DPEN100):</strong> use MATLAB to analyse rectilinear and curvilinear motion — track position, velocity, acceleration and produce professional plots.</li><li><strong>Rectilinear:</strong> 1-D motion along a path; \(v=\mathrm{d}s/\mathrm{d}t\), \(a=\mathrm{d}v/\mathrm{d}t\); SUVAT when \(a\) is constant.</li><li><strong>Path distance:</strong> cumulative distance from successive coordinate samples \(\sum\sqrt{(\Delta E)^2+(\Delta N)^2+(\Delta z)^2}\).</li><li><strong>Curvilinear / projectile:</strong> independent \(x\) and \(y\) motion with constant \(a_x=0\), \(a_y=-g\).</li><li><strong>Vectorisation:</strong> compute velocity for all samples at once with <code>diff</code> / array ops — not one scalar at a time in a slow nested style.</li></ul>
+<h3>MATLAB functionality you will use</h3>
+<div class="ml"><code>plot</code><code>plot3</code><code>subplot</code><code>xlabel</code><code>ylabel</code><code>zlabel</code><code>title</code><code>legend</code><code>grid</code><code>diff</code><code>cumsum</code><code>sqrt</code><code>hold on</code><code>yyaxis</code><code>linspace</code><code>max</code><code>min</code><code>trapz</code></div>
+<h3>Also useful</h3><ul><li>Label every graph (units in axis labels)</li><li>Comment your script: Input / Operations / Output</li><li>Save figures (File → Save As / <code>saveas</code>) for your report</li></ul>
+</div>
+
+<h2>Given data — synthetic bike segment</h2>
+<p>Eastings \(E\), Northings \(N\) and elevation \(z\) are already relative to the start (origin). Time \(t\) is in seconds.</p>
+<table class="data">
+<tr><th>\(t\) (s)</th><th>\(E\) (m)</th><th>\(N\) (m)</th><th>\(z\) (m)</th></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>20</td></tr>
+<tr><td>20</td><td>80</td><td>30</td><td>22</td></tr>
+<tr><td>40</td><td>170</td><td>55</td><td>28</td></tr>
+<tr><td>60</td><td>260</td><td>70</td><td>35</td></tr>
+<tr><td>80</td><td>340</td><td>95</td><td>33</td></tr>
+<tr><td>100</td><td>400</td><td>130</td><td>30</td></tr>
+<tr><td>120</td><td>450</td><td>180</td><td>26</td></tr>
+</table>
+<p>Store these as row or column vectors in MATLAB, e.g.</p>
+<pre>t = [0 20 40 60 80 100 120];
+E = [0 80 170 260 340 400 450];   % m
+N = [0 30 55 70 95 130 180];      % m
+z = [20 22 28 35 33 30 26];       % m</pre>
+
+<div class="q" id="q1">
+<h3>Part A — 3D path &amp; elevation (rectilinear path description)</h3>
+<ol type="a">
+<li>Convert \(E\) and \(N\) to kilometres. Plot a 3-D path of Easting (km) vs Northing (km) vs elevation (m) using <code>plot3</code>. Label all axes and add a title and grid.</li>
+<li>On one figure with a secondary axis (<code>yyaxis</code>), plot elevation \(z\) (m) vs \(t\) on the left, and elevation grade (%) vs \(t\) on the right.
+Define grade between samples as
+\[G_i = 100\cdot\frac{z_{i+1}-z_i}{\Delta s_{xy,i}},\quad
+\Delta s_{xy,i}=\sqrt{(E_{i+1}-E_i)^2+(N_{i+1}-N_i)^2}.\]
+Plot grade at the mid-time of each interval (or at \(t(1:end-1)\)).</li>
+</ol>
+<div class="deliv"><strong>Deliverable.</strong> Script <code>proj1_partA.m</code> + two labelled figures.</div>
+</div>
+
+<div class="q" id="q2">
+<h3>Part B — Cumulative distance &amp; speed</h3>
+<ol type="a">
+<li>Compute segment lengths in 3-D:
+\[\Delta s_i=\sqrt{(\Delta E_i)^2+(\Delta N_i)^2+(\Delta z_i)^2}\]
+and the cumulative distance \(s(t)\) in km (<code>cumsum</code>). Plot \(s\) (km) vs \(t\) (s).</li>
+<li>Estimate average speed on each segment \(v_i=\Delta s_i/\Delta t_i\) in km/h. Plot \(v\) vs \(t\) (use interval mid-times) and \(v\) vs cumulative distance.</li>
+<li>Report numerically: total path length (km), mean speed (km/h), max segment speed (km/h).</li>
+</ol>
+<div class="deliv"><strong>Deliverable.</strong> Script <code>proj1_partB.m</code>, three plots, and a short numeric summary printed with <code>fprintf</code>.</div>
+</div>
+
+<div class="q" id="q3">
+<h3>Part C — Curvilinear projectile (challenge analysis)</h3>
+<p>A drone is launched from the origin with speed \(v_0=28\,\mathrm{m/s}\) at \(\theta=40^\circ\) above horizontal. Take \(g=9.81\,\mathrm{m/s^2}\), flat ground.</p>
+<ol type="a">
+<li>Using vectorisation, create \(t=\texttt{linspace}(0,T,200)\) up to the landing time \(T\), and arrays
+\[x(t)= (v_0\cos\theta)\,t,\qquad y(t)= (v_0\sin\theta)\,t - \tfrac12 g t^2.\]</li>
+<li>Plot the trajectory \(y\) vs \(x\). Mark the apex and landing point.</li>
+<li>Compute analytically (and confirm from the arrays): time of flight, range, maximum height.</li>
+</ol>
+<div class="deliv"><strong>Deliverable.</strong> Script <code>proj1_partC.m</code> + trajectory figure + printed analytic results.</div>
+</div>
+
+<div class="q" id="q4">
+<h3>Part D — Brief engineering write-up</h3>
+<ol type="a">
+<li>In ≤150 words: which segments of the ride are uphill / downhill based on grade, and where is speed highest? Relate to the elevation plot.</li>
+<li>Explain why differentiating noisy GPS position with <code>diff</code> can amplify noise, and one practical remedy (e.g. smoothing / larger \(\Delta t\)).</li>
+</ol>
+<div class="deliv"><strong>Deliverable.</strong> Short answers in comments at the bottom of your main script, or a half-page <code>proj1_writeup.txt</code>.</div>
+</div>
+
 </div></body></html>

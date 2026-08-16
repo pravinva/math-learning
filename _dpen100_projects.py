@@ -150,8 +150,8 @@ z = [20 22 28 35 33 30 26];       % m</pre>
 <li>Convert \(E\) and \(N\) to kilometres. Plot a 3-D path of Easting (km) vs Northing (km) vs elevation (m) using <code>plot3</code>. Label all axes and add a title and grid.</li>
 <li>On one figure with a secondary axis (<code>yyaxis</code>), plot elevation \(z\) (m) vs \(t\) on the left, and elevation grade (%) vs \(t\) on the right.
 Define grade between samples as
-\[G_i = 100\cdot\frac{{z_{{i+1}}-z_i}}{{\Delta s_{{xy},i}}},\quad
-\Delta s_{{xy},i}=\sqrt{{(E_{{i+1}}-E_i)^2+(N_{{i+1}}-N_i)^2}}.\]
+\[G_i = 100\cdot\frac{{z_{{i+1}}-z_i}}{{\Delta s_{{xy,i}}}},\quad
+\Delta s_{{xy,i}}=\sqrt{{(E_{{i+1}}-E_i)^2+(N_{{i+1}}-N_i)^2}}.\]
 Plot grade at the mid-time of each interval (or at \(t(1:end-1)\)).</li>
 </ol>
 <div class="deliv"><strong>Deliverable.</strong> Script <code>proj1_partA.m</code> + two labelled figures.</div>
@@ -200,6 +200,8 @@ __NAV__
 <p><a class="chip ans" href="project1-answers.html">✅ Full worked answers (separate page)</a>
 <a class="chip pdf" href="pdfs/engg100-major-project-group-p314-kinematic-plots-and-analysis.pdf" target="_blank" rel="noopener">Sample major project PDF</a></p>
 {qs}'''.replace('__NAV__', nav('project1.html'))
+    qs = qs.replace('{{', '{').replace('}}', '}').replace('{prep}', prep)
+    body = body.replace('{qs}', qs)
     (OUT / 'project1.html').write_text(page('DPEN100 Project 1 — Questions', body))
 
 
@@ -354,7 +356,7 @@ No GPS file needed — all data is specified below.</div>
 <p>A van starts from rest and must travel \(900\,\mathrm{{m}}\) then stop. It can accelerate at \(+2.0\,\mathrm{{m/s^2}}\), cruise at most \(20\,\mathrm{{m/s}}\), and brake at \(-4.0\,\mathrm{{m/s^2}}\).</p>
 <ol type="a">
 <li>Determine the shortest time to complete the trip (accel → cruise → brake). Draw / plot the \(v\)–\(t\) graph.</li>
-<li>In MATLAB, build time arrays for each phase with \(\Delta t=0.05\,\mathrm{{s}}\) and concatenate \(t\), \(v(t)\), \(s(t)\). Plot \(s\), \(v\), \(a\) vs \(t\) in a \(3\\times 1\) <code>subplot</code>.</li>
+<li>In MATLAB, build time arrays for each phase with \(\Delta t=0.05\,\mathrm{{s}}\) and concatenate \(t\), \(v(t)\), \(s(t)\). Plot \(s\), \(v\), \(a\) vs \(t\) in a \(3\times 1\) <code>subplot</code>.</li>
 <li>Print total time and distance check (\(s_{{\mathrm{{final}}}}\) should be \(900\,\mathrm{{m}}\)).</li>
 </ol>
 <div class="deliv"><strong>Deliverable.</strong> <code>proj2_partA.m</code> + subplot figure + printed totals.</div>
@@ -399,6 +401,8 @@ Release height is \(1.6\,\mathrm{{m}}\). Take \(g=9.81\,\mathrm{{m/s^2}}\).</p>
 __NAV__
 <p><a class="chip ans" href="project2-answers.html">✅ Full worked answers (separate page)</a></p>
 {qs}'''.replace('__NAV__', nav('project2.html'))
+    qs = qs.replace('{{', '{').replace('}}', '}').replace('{prep}', prep)
+    body = body.replace('{qs}', qs)
     (OUT / 'project2.html').write_text(page('DPEN100 Project 2 — Questions', body))
 
 
