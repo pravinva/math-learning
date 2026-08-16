@@ -65,6 +65,7 @@ def page(title, body):
 
 def nav(current=''):
     items = [
+        ('../github-setup.html', 'GitHub setup'),
         ('index.html', 'Projects hub'),
         ('project1.html', 'Project 1'),
         ('project1-answers.html', 'P1 answers'),
@@ -521,6 +522,15 @@ def build_hub():
 <p class="sub">Engineering Analysis in this subject means using MATLAB to analyse rectilinear and curvilinear motion — calculating and plotting position, velocity, acceleration and related forces.
 These two projects practise that skill with full worked answers on separate pages.</p>
 __NAV__
+
+<div class="card" style="border-color:#93c5fd;background:#eef6ff">
+<h3>Before you start — GitHub (Windows)</h3>
+<p><strong>Siddharth:</strong> create a GitHub account with <strong>your Gmail</strong>, then make a repo for your MATLAB scripts and push from Windows (GitHub Desktop is easiest).</p>
+<div class="chiprow">
+  <a class="chip on" href="../github-setup.html">Open GitHub setup guide</a>
+  <a class="chip pdf" href="https://www.youtube.com/watch?v=8Dd7KRpKeaE" target="_blank" rel="noopener">▶ Video walkthrough</a>
+</div>
+</div>
 
 <div class="card">
 <h3>What “Engineering Analysis” covers here</h3>
