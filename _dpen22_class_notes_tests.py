@@ -82,19 +82,26 @@ def write_pair(slug, subject, timing, sample_href, tests_q, tests_a, fmt):
             for q, mark in zip(qs[n_mc:], long_marks)
         ]
         long_start = n_mc + 1
+        title = f'Test {i}'
+        if slug == 'trig' and i >= 7:
+            title = f'Test {i} <span style="color:#b45309;font-size:13px;">(harder)</span>'
         q_blocks.append(
-            f'<div class="test"><h3>Test {i}</h3>{fmt["rules"]}'
+            f'<div class="test"><h3>{title}</h3>{fmt["rules"]}'
             f'<h4 class="part-title">{fmt["mc_label"]}</h4><ol>\n'
             + '\n'.join(mc_items)
             + f'\n</ol><h4 class="part-title">{fmt["long_label"]}</h4><ol start="{long_start}">\n'
             + '\n'.join(long_items) + '\n</ol></div>'
         )
 
+    n_papers = len(tests_q)
+    hard_note = ''
+    if slug == 'trig' and n_papers > 6:
+        hard_note = ' Tests 7–8 are deliberately harder extension papers.'
     q_body = f'''
 <h1>DPEN022 {H.escape(subject)} — Practice Tests (Questions)</h1>
-<p class="sub">Six practice papers modelled on the official DPEN022 {H.escape(subject)} Exam Sample.
+<p class="sub">{n_papers} practice papers modelled on the official DPEN022 {H.escape(subject)} Exam Sample.{hard_note}
 Timing guide: {timing}. Show full working on long-answer items. {diagram_copy}</p>
-<div class="meta"><strong>Official sample:</strong> <a href="{sample_href}">open PDF</a> · use it as the style/difficulty reference for these six papers.</div>
+<div class="meta"><strong>Official sample:</strong> <a href="{sample_href}">open PDF</a> · use it as the style/difficulty reference for these papers.</div>
 <div class="top-links">
   <a href="{slug}-answers.html">Open Separate Answers</a>
   <a href="../index.html">Class Notes Hub</a>
@@ -110,11 +117,14 @@ Timing guide: {timing}. Show full working on long-answer items. {diagram_copy}</
         items = []
         for j, a in enumerate(ans, 1):
             items.append(f'<div class="ans"><strong>Q{j}.</strong> {a}</div>')
-        a_blocks.append(f'<div class="test"><h3>Test {i} — Answers</h3>\n' + '\n'.join(items) + '\n</div>')
+        a_title = f'Test {i} — Answers'
+        if slug == 'trig' and i >= 7:
+            a_title = f'Test {i} — Answers <span style="color:#b45309;font-size:13px;">(harder)</span>'
+        a_blocks.append(f'<div class="test"><h3>{a_title}</h3>\n' + '\n'.join(items) + '\n</div>')
 
     a_body = f'''
 <h1>DPEN022 {H.escape(subject)} — Practice Tests (Answers)</h1>
-<p class="sub">Separate worked answers for the six {H.escape(subject)} practice papers.</p>
+<p class="sub">Separate worked answers for the {len(tests_a)} {H.escape(subject)} practice papers.</p>
 <div class="top-links">
   <a href="{slug}-questions.html">Back to Questions</a>
   <a href="../index.html">Class Notes Hub</a>
@@ -1031,7 +1041,300 @@ for i in range(6):
     trig_a[i][11] = q12_working[i]
     trig_a[i][14] = q15_working[i]
 
-write_pair('trig', 'Trigonometry', '1 hour per test',
+# ---------- TRIG Tests 7–8 (harder extension) ----------
+# Same 15-question format, but compound angles, multi-angle equations,
+# non-acute exact ratios, harder identities, and phase-shifted sketches.
+
+_hard_t7_q1_fig = right_triangle_svg(
+    'x m', '12.4 m', None, '37°15′',
+    caption='Given right triangle: find the adjacent side',
+    context='opposite = 12.4 m; adjacent = x')
+_hard_t8_q1_fig = right_triangle_svg(
+    '9.6 m', None, 'x m', '21°40′',
+    caption='Given right triangle: find the hypotenuse',
+    context='adjacent = 9.6 m; hypotenuse = x')
+
+trig_q.append([
+ (r'Opposite \(12.4\) m and angle \(37^\circ15\'\). Find the adjacent side to 2 d.p.' + _hard_t7_q1_fig,
+  ['(A) \(9.41\) m', '(B) \(16.31\) m', '(C) \(20.52\) m', '(D) \(7.48\) m', '(E) \(15.55\) m']),
+ (r'The reference angle for \(\theta=\dfrac{17\pi}{12}\) is',
+  [r'(A) \(\dfrac{\pi}{12}\)', r'(B) \(\dfrac{5\pi}{12}\)', r'(C) \(\dfrac{7\pi}{12}\)', r'(D) \(\dfrac{\pi}{6}\)', r'(E) \(\dfrac{\pi}{3}\)']),
+ (r'If \(\sin\theta<0\), \(\cos\theta<0\) and \(\cot\theta>0\), then \(\theta\) is in quadrant',
+  ['(A) 1', '(B) 2', '(C) 3', '(D) 4', '(E) impossible']),
+ (r'Convert \(-\dfrac{11\pi}{6}\) to a positive degree measure in \([0^\circ,360^\circ)\).',
+  ['(A) \(330^\circ\)', '(B) \(210^\circ\)', '(C) \(150^\circ\)', '(D) \(30^\circ\)', '(E) \(390^\circ\)']),
+ (r'Starting from \(y=\sin x\): amplitude \(2\), period \(\pi\), phase shift \(\dfrac{\pi}{6}\) left, down \(1\). The equation is',
+  [r'(A) \(2\sin\!\left(2x+\dfrac{\pi}{3}\right)-1\)',
+   r'(B) \(2\sin\!\left(2x-\dfrac{\pi}{3}\right)-1\)',
+   r'(C) \(2\sin\!\left(x+\dfrac{\pi}{6}\right)-1\)',
+   r'(D) \(2\sin\!\left(\dfrac{x}{2}+\dfrac{\pi}{6}\right)-1\)',
+   r'(E) \(\sin\!\left(2x+\dfrac{\pi}{6}\right)-1\)']),
+ (r'Simplify \(\dfrac{1-\cos 2\theta}{\sin 2\theta}\cdot\cot\theta\).',
+  [r'(A) \(1\)', r'(B) \(\tan\theta\)', r'(C) \(\cot\theta\)', r'(D) \(\sin\theta\)', r'(E) \(0\)']),
+ r'From a point \(85\) m from the base of a cliff, the angle of elevation to the top is \(52^\circ20\'\). Find the cliff height to the nearest metre.',
+ r'If \(\sin\theta=-\dfrac{5}{13}\) and \(\theta\) is in Quadrant III: (i) draw a labelled diagram in standard position; (ii) find the exact value of \(\sec\theta\).',
+ r'Find all \(x\) in degrees if \(\cos(90^\circ-3x)=\sin(2x+15^\circ)\) and \(0^\circ\le x\le90^\circ\).',
+ r'Find the exact value of \(\sin 15^\circ\) using an angle-difference identity.',
+ r'Solve \(2\cos 2\theta=\sqrt{3}\) for \(0^\circ\le\theta\le360^\circ\). Give exact answers in degrees.',
+ r'Solve \(\tan 2\theta=-1\) for \(0\le\theta\le\pi\). Give exact answers in radians.',
+ r'Sketch \(y=2\sin\!\left(2x-\dfrac{\pi}{3}\right)\) for \(0\le x\le\pi\) and state amplitude, period and phase shift.',
+ r'Prove \(\dfrac{\sin 2\theta}{1+\cos 2\theta}=\tan\theta\).',
+ r'Solve \(2\sin^2\theta-3\sin\theta+1=0\) for \(0^\circ\le\theta\le360^\circ\). Exact answers in degrees.',
+])
+
+trig_q.append([
+ (r'Adjacent \(9.6\) m and angle \(21^\circ40\'\). Find the hypotenuse to 2 d.p.' + _hard_t8_q1_fig,
+  ['(A) \(8.93\) m', '(B) \(10.33\) m', '(C) \(25.96\) m', '(D) \(3.81\) m', '(E) \(9.60\) m']),
+ (r'Reference angle for \(\theta=-250^\circ\)?',
+  ['(A) \(70^\circ\)', '(B) \(110^\circ\)', '(C) \(250^\circ\)', '(D) \(20^\circ\)', '(E) \(40^\circ\)']),
+ (r'If \(\csc\theta>0\) and \(\sec\theta<0\), \(\theta\) lies in quadrant',
+  ['(A) 1', '(B) 2', '(C) 3', '(D) 4', '(E) none']),
+ (r'Convert \(495^\circ\) to an equivalent radian measure in \([0,2\pi)\).',
+  [r'(A) \(\dfrac{3\pi}{4}\)', r'(B) \(\dfrac{11\pi}{4}\)', r'(C) \(\dfrac{7\pi}{4}\)', r'(D) \(\dfrac{5\pi}{4}\)', r'(E) \(\dfrac{\pi}{4}\)']),
+ (r'\(y=\cos x\): amplitude \(3\), period \(\dfrac{2\pi}{3}\), right shift \(\dfrac{\pi}{9}\), up \(2\):',
+  [r'(A) \(3\cos\!\left(3x-\dfrac{\pi}{3}\right)+2\)',
+   r'(B) \(3\cos\!\left(3x+\dfrac{\pi}{3}\right)+2\)',
+   r'(C) \(3\cos\!\left(\dfrac{x}{3}-\dfrac{\pi}{9}\right)+2\)',
+   r'(D) \(3\cos\!\left(3x-\dfrac{\pi}{9}\right)+2\)',
+   r'(E) \(\cos\!\left(3x-\dfrac{\pi}{3}\right)+2\)']),
+ (r'Simplify \(\sin(\pi-\theta)\cos\!\left(\dfrac{\pi}{2}-\theta\right)-\cos(\pi-\theta)\sin\!\left(\dfrac{\pi}{2}-\theta\right)\).',
+  [r'(A) \(1\)', r'(B) \(-1\)', r'(C) \(\sin 2\theta\)', r'(D) \(\cos 2\theta\)', r'(E) \(0\)']),
+ r'A wire from the top of a \(18\) m pole makes an angle of \(34^\circ\) with the ground. Find the length of the wire to the nearest \(0.1\) m.',
+ r'If \(\cos\theta=\dfrac{8}{17}\) and \(\theta\) is in Quadrant IV: (i) draw a diagram; (ii) find exact \(\tan\theta\).',
+ r'Find all \(x\) if \(\sin(3x-10^\circ)=\cos(2x+20^\circ)\) and \(0^\circ\le x\le90^\circ\).',
+ r'Find the exact value of \(\cos 75^\circ\) using an angle-sum identity.',
+ r'Solve \(\sin 2\theta=\dfrac{\sqrt{3}}{2}\) for \(0^\circ\le\theta\le180^\circ\). Exact answers in degrees.',
+ r'Solve \(2\cos^2\theta+\cos\theta-1=0\) for \(0\le\theta\le 2\pi\). Exact answers in radians.',
+ r'Sketch \(y=-3\cos\!\left(x+\dfrac{\pi}{4}\right)\) for \(-\pi\le x\le\pi\) and state amplitude, period and phase shift.',
+ r'Prove \(\tan\theta+\cot\theta=\sec\theta\csc\theta\).',
+ r'Solve \(\cos 2\theta=\cos\theta\) for \(0^\circ\le\theta\le360^\circ\). Exact answers in degrees.',
+])
+
+_hard_t7_q8_svg = f'''<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300"
+ role="img" aria-label="Quadrant three reference triangle for sine negative five thirteenths"
+ style="width:100%;max-width:560px;height:auto;background:#fff;border:1px solid #d8dee7;border-radius:8px">
+{_svg_text(22, 25, 'QIII reference triangle', anchor='start', size=15, weight='bold', fill='#1B3A5C')}
+<line x1="35" y1="150" x2="450" y2="150" stroke="#1f2937" stroke-width="2"/>
+<line x1="270" y1="275" x2="270" y2="42" stroke="#1f2937" stroke-width="2"/>
+{_svg_text(454, 145, 'x', anchor='start')}{_svg_text(280, 48, 'y', anchor='start')}
+<line x1="270" y1="150" x2="155" y2="250" stroke="#185FA5" stroke-width="3"/>
+<line x1="155" y1="250" x2="155" y2="150" stroke="#1B3A5C" stroke-width="3"/>
+<line x1="155" y1="150" x2="270" y2="150" stroke="#1B3A5C" stroke-width="3"/>
+<path d="M 175 150 L 175 170 L 155 170" fill="none" stroke="#1B3A5C" stroke-width="2"/>
+{_svg_text(205, 210, 'r = 13', anchor='end', fill='#185FA5')}
+{_svg_text(145, 210, 'y = −5', anchor='end')}
+{_svg_text(212, 140, 'x = −12')}
+{_svg_text(150, 268, '(−12, −5)', anchor='end', size=13, fill='#15803d')}
+</svg></div>'''
+
+_hard_t8_q8_svg = right_triangle_svg(
+    '8', '15', '17', 'θ',
+    caption='QIV magnitudes for cos θ = 8/17',
+    context='adj = 8, |opp| = 15, hyp = 17; tan is negative in QIV')
+
+trig_a.append([
+ r'(B) \(16.31\) m (\(12.4/\tan37^\circ15\'\)).',
+ r'(B) \(\dfrac{5\pi}{12}\) (\(\dfrac{17\pi}{12}=\pi+\dfrac{5\pi}{12}\), so reference \(\dfrac{5\pi}{12}\)).',
+ r'(C) Quadrant 3 (\(\sin,\cos\) both negative \(\Rightarrow\) QIII; \(\cot=\cos/\sin>0\)).',
+ r'(D) \(30^\circ\) (\(-\dfrac{11\pi}{6}+2\pi=\dfrac{\pi}{6}\)).',
+ r'(A) \(2\sin\!\left(2x+\dfrac{\pi}{3}\right)-1\) (period \(\pi\Rightarrow b=2\); left shift \(\pi/6\) means \(2x+\pi/3\)).',
+ r'(A) \(1\) (use \(1-\cos2\theta=2\sin^2\theta\), \(\sin2\theta=2\sin\theta\cos\theta\)).',
+ r'''Height \(h\) is opposite \(52^\circ20'\) with adjacent \(85\) m, so \(\tan52^\circ20'=\dfrac{h}{85}\).
+\[
+\begin{aligned}
+h&=85\tan52^\circ20'\\
+&=85\tan(52.333\ldots^\circ)\\
+&=85(1.2953\ldots)\\
+&=110.10\ldots
+\end{aligned}
+\]
+\[\boxed{h\approx 110\text{ m}}\]''',
+ r'''In Quadrant III, \(x<0\) and \(y<0\). With \(\sin\theta=\dfrac{y}{r}=-\dfrac{5}{13}\), take \(r=13\), \(y=-5\).
+Then \(|x|=\sqrt{13^2-5^2}=12\), so \(x=-12\). Therefore
+\(\displaystyle\sec\theta=\dfrac{r}{x}=-\dfrac{13}{12}\).
+''' + _hard_t7_q8_svg,
+ r'''Use \(\cos(90^\circ-3x)=\sin 3x\).
+\[
+\begin{aligned}
+\sin 3x&=\sin(2x+15^\circ)\\
+3x&=2x+15^\circ\quad\text{or}\quad 3x=180^\circ-(2x+15^\circ)\\
+x&=15^\circ\quad\text{or}\quad 5x=165^\circ\Rightarrow x=33^\circ.
+\end{aligned}
+\]
+Both lie in \([0^\circ,90^\circ]\).
+\[\boxed{x=15^\circ,\ 33^\circ}\]''',
+ r'''\[
+\begin{aligned}
+\sin15^\circ&=\sin(45^\circ-30^\circ)\\
+&=\sin45^\circ\cos30^\circ-\cos45^\circ\sin30^\circ\\
+&=\frac{\sqrt2}{2}\cdot\frac{\sqrt3}{2}-\frac{\sqrt2}{2}\cdot\frac12\\
+&=\frac{\sqrt6-\sqrt2}{4}.
+\end{aligned}
+\]
+\[\boxed{\sin15^\circ=\dfrac{\sqrt6-\sqrt2}{4}}\]''',
+ r'''Because the argument is \(2\theta\), use \(0^\circ\le 2\theta\le720^\circ\). With \(\cos2\theta=\dfrac{\sqrt3}{2}\),
+reference angle \(30^\circ\) and cosine positive in QI, QIV:
+\[
+\begin{aligned}
+2\theta&=30^\circ,\ 330^\circ,\ 390^\circ,\ 690^\circ\\
+\theta&=15^\circ,\ 165^\circ,\ 195^\circ,\ 345^\circ.
+\end{aligned}
+\]
+\[\boxed{\theta=15^\circ,\ 165^\circ,\ 195^\circ,\ 345^\circ}\]''',
+ r'''\(\tan2\theta=-1\) with \(0\le2\theta\le2\pi\). Reference \(\dfrac{\pi}{4}\); tangent negative in QII, QIV:
+\[
+\begin{aligned}
+2\theta&=\frac{3\pi}{4},\ \frac{7\pi}{4}\\
+\theta&=\frac{3\pi}{8},\ \frac{7\pi}{8}.
+\end{aligned}
+\]
+\[\boxed{\theta=\tfrac{3\pi}{8},\ \tfrac{7\pi}{8}}\]''',
+ r'''Amplitude \(=2\); period \(=\pi\); phase shift \(=\dfrac{\pi}{6}\) to the right
+(rewrite \(2x-\pi/3=2\bigl(x-\pi/6\bigr)\)).''',
+ r'''\[
+\begin{aligned}
+\text{LHS}&=\frac{\sin2\theta}{1+\cos2\theta}
+=\frac{2\sin\theta\cos\theta}{2\cos^2\theta}
+=\frac{\sin\theta}{\cos\theta}
+=\tan\theta=\text{RHS}.
+\end{aligned}
+\]''',
+ r'''Treat as a quadratic in \(\sin\theta\):
+\[
+\begin{aligned}
+(2\sin\theta-1)(\sin\theta-1)&=0\\
+\sin\theta&=\dfrac12\quad\text{or}\quad\sin\theta=1.
+\end{aligned}
+\]
+\(\sin\theta=\tfrac12\Rightarrow\theta=30^\circ,150^\circ\); \(\sin\theta=1\Rightarrow\theta=90^\circ\).
+\[\boxed{\theta=30^\circ,\ 90^\circ,\ 150^\circ}\]''',
+])
+
+# Sketch blank + answer graph for Test 7 Q13
+_spec7 = {
+    'fn': lambda x: 2 * math.sin(2*x - math.pi/3),
+    'xmin': 0, 'xmax': math.pi,
+    'amp': 2, 'period': math.pi, 'step': math.pi/12,
+    'period_tex': r'\pi',
+    'caption': r'y = 2 sin(2x − π/3),  0 ≤ x ≤ π',
+    'notes': ('midline y = 0', 'phase shift = π/6 to the right'),
+}
+_xs7 = [_spec7['xmin'] + j * _spec7['step']
+        for j in range(round((_spec7['xmax']-_spec7['xmin'])/_spec7['step']) + 1)]
+trig_q[-2][12] += blank_trig_grid(_spec7['xmin'], _spec7['xmax'], _xs7,
+                                  caption=f"Sketching grid: {_spec7['caption']}")
+_pts7 = [(x, 0.0 if abs(_spec7['fn'](x)) < 1e-10 else _spec7['fn'](x)) for x in _xs7]
+_lab7 = [(x, y) for j, (x, y) in enumerate(_pts7)
+         if abs(abs(y) - _spec7['amp']) < 1e-9 or j in (0, len(_pts7)-1)]
+trig_a[-1][12] = (
+    r'Amplitude \(=2\); period \(=\pi\); phase shift \(=\dfrac{\pi}{6}\) to the right '
+    r'(since \(2x-\pi/3=2(x-\pi/6)\)).'
+    + trig_plot(_spec7['fn'], _spec7['xmin'], _spec7['xmax'],
+                -_spec7['amp']-0.6, _spec7['amp']+0.6, _pts7,
+                midline=0, amplitude=_spec7['amp'], period=_spec7['period'],
+                caption=_spec7['caption'], extra_notes=_spec7['notes'],
+                yticks=[-_spec7['amp'], 0, _spec7['amp']], xticks=_xs7,
+                label_points=_lab7)
+)
+
+trig_a.append([
+ r'(B) \(10.33\) m (\(9.6/\cos21^\circ40\'\)).',
+ r'(A) \(70^\circ\) (\(-250^\circ+360^\circ=110^\circ\) in QII; reference \(180^\circ-110^\circ=70^\circ\)).',
+ r'(B) Quadrant 2 (\(\sin>0\Rightarrow\csc>0\); \(\cos<0\Rightarrow\sec<0\)).',
+ r'(A) \(\dfrac{3\pi}{4}\) (\(495^\circ-360^\circ=135^\circ=\dfrac{3\pi}{4}\)).',
+ r'(A) \(3\cos\!\left(3x-\dfrac{\pi}{3}\right)+2\) (period \(2\pi/3\Rightarrow b=3\); right \(\pi/9\Rightarrow 3(x-\pi/9)=3x-\pi/3\)).',
+ r'(A) \(1\) (sine of difference: \(\sin\!\bigl((\pi-\theta)-(\pi/2-\theta)\bigr)=\sin(\pi/2)=1\)).',
+ r'''The \(18\) m pole is opposite \(34^\circ\) and the wire \(L\) is the hypotenuse, so \(\sin34^\circ=\dfrac{18}{L}\).
+\[
+\begin{aligned}
+L&=\frac{18}{\sin34^\circ}
+=\frac{18}{0.55919\ldots}
+=32.190\ldots
+\end{aligned}
+\]
+\[\boxed{L\approx 32.2\text{ m}}\]''',
+ r'''In Quadrant IV, \(x>0\) and \(y<0\). With \(\cos\theta=\dfrac{x}{r}=\dfrac{8}{17}\), take \(r=17\), \(x=8\).
+Then \(|y|=\sqrt{17^2-8^2}=15\), so \(y=-15\). Therefore
+\(\displaystyle\tan\theta=\dfrac{y}{x}=-\dfrac{15}{8}\).
+''' + _hard_t8_q8_svg,
+ r'''Rewrite \(\cos(2x+20^\circ)=\sin(70^\circ-2x)\), so \(\sin(3x-10^\circ)=\sin(70^\circ-2x)\).
+\[
+\begin{aligned}
+3x-10^\circ&=70^\circ-2x+360^\circ k
+\quad\text{or}\quad
+3x-10^\circ&=180^\circ-(70^\circ-2x)+360^\circ k.
+\end{aligned}
+\]
+First family: \(5x=80^\circ+360^\circ k\Rightarrow x=16^\circ+72^\circ k\). In \([0^\circ,90^\circ]\): \(x=16^\circ,\ 88^\circ\).
+Second family: \(x=120^\circ+360^\circ k\) (outside the interval for integer \(k\)).
+\[\boxed{x=16^\circ,\ 88^\circ}\]''',
+ r'''\[
+\begin{aligned}
+\cos75^\circ&=\cos(45^\circ+30^\circ)\\
+&=\cos45^\circ\cos30^\circ-\sin45^\circ\sin30^\circ\\
+&=\frac{\sqrt2}{2}\cdot\frac{\sqrt3}{2}-\frac{\sqrt2}{2}\cdot\frac12
+=\frac{\sqrt6-\sqrt2}{4}.
+\end{aligned}
+\]
+\[\boxed{\cos75^\circ=\dfrac{\sqrt6-\sqrt2}{4}}\]''',
+ r'''With \(0^\circ\le2\theta\le360^\circ\) and \(\sin2\theta=\dfrac{\sqrt3}{2}\), reference \(60^\circ\), sine positive in QI, QII:
+\[
+\begin{aligned}
+2\theta&=60^\circ,\ 120^\circ\\
+\theta&=30^\circ,\ 60^\circ.
+\end{aligned}
+\]
+\[\boxed{\theta=30^\circ,\ 60^\circ}\]''',
+ r'''Factor: \((2\cos\theta-1)(\cos\theta+1)=0\), so \(\cos\theta=\dfrac12\) or \(\cos\theta=-1\).
+\[
+\theta=\frac{\pi}{3},\ \frac{5\pi}{3}\qquad\text{or}\qquad\theta=\pi.
+\]
+\[\boxed{\theta=\tfrac{\pi}{3},\ \pi,\ \tfrac{5\pi}{3}}\]''',
+ r'''Amplitude \(=3\); period \(=2\pi\); phase shift \(=\dfrac{\pi}{4}\) to the left; reflection in the \(x\)-axis (leading minus).''',
+ r'''\[
+\begin{aligned}
+\text{LHS}&=\frac{\sin\theta}{\cos\theta}+\frac{\cos\theta}{\sin\theta}
+=\frac{\sin^2\theta+\cos^2\theta}{\sin\theta\cos\theta}
+=\frac{1}{\sin\theta\cos\theta}
+=\sec\theta\csc\theta=\text{RHS}.
+\end{aligned}
+\]''',
+ r'''Use \(\cos2\theta=2\cos^2\theta-1\), so \(\cos2\theta=\cos\theta\) becomes
+\(2\cos^2\theta-1=\cos\theta\), i.e. \(2\cos^2\theta-\cos\theta-1=0\Rightarrow(2\cos\theta+1)(\cos\theta-1)=0\).
+\[
+\cos\theta=-\dfrac12\quad\text{or}\quad\cos\theta=1
+\Rightarrow\theta=120^\circ,\ 240^\circ\quad\text{or}\quad\theta=0^\circ,\ 360^\circ.
+\]
+\[\boxed{\theta=0^\circ,\ 120^\circ,\ 240^\circ,\ 360^\circ}\]''',
+])
+
+# Sketch for Test 8 Q13
+_spec8 = {
+    'fn': lambda x: -3 * math.cos(x + math.pi/4),
+    'xmin': -math.pi, 'xmax': math.pi,
+    'amp': 3, 'period': 2*math.pi, 'step': math.pi/4,
+    'period_tex': r'2\pi',
+    'caption': r'y = −3 cos(x + π/4),  −π ≤ x ≤ π',
+    'notes': ('midline y = 0', 'phase shift = π/4 to the left', 'reflection in the x-axis'),
+}
+_xs8 = [_spec8['xmin'] + j * _spec8['step']
+        for j in range(round((_spec8['xmax']-_spec8['xmin'])/_spec8['step']) + 1)]
+trig_q[-1][12] += blank_trig_grid(_spec8['xmin'], _spec8['xmax'], _xs8,
+                                  caption=f"Sketching grid: {_spec8['caption']}")
+_pts8 = [(x, 0.0 if abs(_spec8['fn'](x)) < 1e-10 else _spec8['fn'](x)) for x in _xs8]
+_lab8 = [(x, y) for j, (x, y) in enumerate(_pts8)
+         if abs(abs(y) - _spec8['amp']) < 1e-9 or j in (0, len(_pts8)-1)]
+trig_a[-1][12] = (
+    r'Amplitude \(=3\); period \(=2\pi\); phase shift \(=\dfrac{\pi}{4}\) left; vertical reflection.'
+    + trig_plot(_spec8['fn'], _spec8['xmin'], _spec8['xmax'],
+                -_spec8['amp']-0.6, _spec8['amp']+0.6, _pts8,
+                midline=0, amplitude=_spec8['amp'], period=_spec8['period'],
+                caption=_spec8['caption'], extra_notes=_spec8['notes'],
+                yticks=[-_spec8['amp'], 0, _spec8['amp']], xticks=_xs8,
+                label_points=_lab8)
+)
+
+write_pair('trig', 'Trigonometry', '1 hour per test (allow 70–75 min for Tests 7–8)',
            '../trig/2a_Trigonometry_Exam_Sample_Public_Holiday.pdf', trig_q, trig_a, TRIG_FMT)
 
 # ---------- LIMITS + DIFF (6 tests x 18) ----------
