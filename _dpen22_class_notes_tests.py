@@ -82,24 +82,17 @@ def write_pair(slug, subject, timing, sample_href, tests_q, tests_a, fmt):
             for q, mark in zip(qs[n_mc:], long_marks)
         ]
         long_start = n_mc + 1
-        title = f'Test {i}'
-        if slug == 'trig' and i >= 7:
-            title = f'Test {i} <span style="color:#b45309;font-size:13px;">(harder)</span>'
         q_blocks.append(
-            f'<div class="test"><h3>{title}</h3>{fmt["rules"]}'
+            f'<div class="test"><h3>Test {i}</h3>{fmt["rules"]}'
             f'<h4 class="part-title">{fmt["mc_label"]}</h4><ol>\n'
             + '\n'.join(mc_items)
             + f'\n</ol><h4 class="part-title">{fmt["long_label"]}</h4><ol start="{long_start}">\n'
             + '\n'.join(long_items) + '\n</ol></div>'
         )
 
-    n_papers = len(tests_q)
-    hard_note = ''
-    if slug == 'trig' and n_papers > 6:
-        hard_note = ' Tests 7–8 are deliberately harder extension papers.'
     q_body = f'''
 <h1>DPEN022 {H.escape(subject)} — Practice Tests (Questions)</h1>
-<p class="sub">{n_papers} practice papers modelled on the official DPEN022 {H.escape(subject)} Exam Sample.{hard_note}
+<p class="sub">{len(tests_q)} practice papers modelled on the official DPEN022 {H.escape(subject)} Exam Sample.
 Timing guide: {timing}. Show full working on long-answer items. {diagram_copy}</p>
 <div class="meta"><strong>Official sample:</strong> <a href="{sample_href}">open PDF</a> · use it as the style/difficulty reference for these papers.</div>
 <div class="top-links">
@@ -117,10 +110,7 @@ Timing guide: {timing}. Show full working on long-answer items. {diagram_copy}</
         items = []
         for j, a in enumerate(ans, 1):
             items.append(f'<div class="ans"><strong>Q{j}.</strong> {a}</div>')
-        a_title = f'Test {i} — Answers'
-        if slug == 'trig' and i >= 7:
-            a_title = f'Test {i} — Answers <span style="color:#b45309;font-size:13px;">(harder)</span>'
-        a_blocks.append(f'<div class="test"><h3>{a_title}</h3>\n' + '\n'.join(items) + '\n</div>')
+        a_blocks.append(f'<div class="test"><h3>Test {i} — Answers</h3>\n' + '\n'.join(items) + '\n</div>')
 
     a_body = f'''
 <h1>DPEN022 {H.escape(subject)} — Practice Tests (Answers)</h1>
@@ -1334,7 +1324,7 @@ trig_a[-1][12] = (
                 label_points=_lab8)
 )
 
-write_pair('trig', 'Trigonometry', '1 hour per test (allow 70–75 min for Tests 7–8)',
+write_pair('trig', 'Trigonometry', '1 hour per test',
            '../trig/2a_Trigonometry_Exam_Sample_Public_Holiday.pdf', trig_q, trig_a, TRIG_FMT)
 
 # ---------- LIMITS + DIFF (6 tests x 18) ----------
