@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN100 — Mine haul-cycle project</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+ onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<style>
+:root{--navy:#1B3A5C;--orange:#FF3621;--blue:#185FA5;--bg:#fafaf8;--text:#2c2a28;--muted:#6b6762;--line:#e8e6e0;--green:#15803d;--amber:#b45309;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,"Times New Roman",serif;background:var(--bg);color:var(--text);line-height:1.65;padding:28px 18px 80px}
+.wrap{max-width:940px;margin:0 auto;background:#fff;border:1px solid var(--line);padding:28px 30px 42px;border-radius:10px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+h1{font-size:clamp(24px,3.2vw,34px);color:var(--navy);margin-bottom:8px}
+h2{font-size:20px;color:var(--navy);margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--navy)}
+h3{font-size:16px;color:var(--blue);margin:16px 0 8px}
+.sub{color:var(--muted);margin-bottom:14px}
+.tag{display:inline-block;background:var(--orange);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;margin-bottom:8px}
+.chiprow{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{display:inline-block;padding:8px 12px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;border:1px solid #c9dff7;background:#eef6ff;color:var(--blue)}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.card{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:0 0 14px}
+.q{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:12px 0}
+.q ol{margin:8px 0 0 22px}.q li{margin:5px 0}
+.deliv{background:#fff7ed;border-left:4px solid #f0b429;padding:10px 12px;margin-top:10px;border-radius:0 6px 6px 0;font-size:14px}
+.note{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 14px;margin:12px 0;font-size:14px}
+.prep{background:#eef6ff;border:1px solid #c9dff7;border-radius:10px;padding:16px 18px;margin:16px 0}
+.prep ul{margin:0 0 0 18px}.prep li{margin:4px 0}
+.ml{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ml code{background:#fff;border:1px solid #c9dff7;padding:3px 8px;border-radius:4px;font-size:12.5px;color:var(--navy)}
+code,pre{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+pre{background:#1e293b;color:#e2e8f0;padding:12px 14px;border-radius:8px;overflow-x:auto;margin:10px 0;line-height:1.45}
+table.data{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+table.data th,table.data td{border:1px solid #c9dff7;padding:7px 8px;text-align:center}
+table.data th{background:#eef6ff;color:var(--navy)}
+.meta{font-size:13px;color:var(--muted);margin:4px 0 10px}
+</style>
+</head><body><div class="wrap">
+
+<div class="eyebrow">DPEN100 · long-term skill project</div>
+<span class="tag">MINE HAUL CYCLE</span>
+<h1>Open-pit haul truck: kinematics in MATLAB</h1>
+<p class="sub">One repo, one story. A loaded truck climbs a pit ramp, dumps, and returns empty. You analyse the path like GPS ride data, build a piecewise speed profile, then add a conveyor discharge as a projectile. There is no mark scheme. The test is whether the scripts still run in six months.</p>
+<div class="chiprow">
+  <a class="chip" href="../plan-mining-40-days.html">40-day + 6-month plan</a>
+  <a class="chip on" href="mine-haul-cycle.html">This project</a>
+  <a class="chip" href="index.html">Projects hub</a>
+  <a class="chip" href="../github-setup.html">GitHub setup</a>
+  <a class="chip" href="../index.html">DPEN100 home</a>
+</div>
+
+<div class="note">
+  <strong>Not an exam project.</strong> Course Projects 1–2 exist if you later want major-assignment flavour. This file is the spine for the 40-day skill block and the six-month keep-warm. Steal MATLAB patterns from <a href="project1.html">Project 1</a> (path, grade, <code>diff</code>/<code>cumsum</code>) and <a href="project2.html">Project 2</a> (accel / cruise / brake) — rewrite them for this mine, do not copy-paste unanswered.
+</div>
+
+<div class="prep">
+<h2>The engineering picture</h2>
+<ul>
+  <li><strong>Pit floor</strong> at elevation 20 m. <strong>ROM pad / dump</strong> at about 55 m. A two-switchback ramp connects them.</li>
+  <li><strong>Loaded climb:</strong> slower, lower peak speed. <strong>Empty return:</strong> faster. Cycle time = climb + dump wait + return + load wait.</li>
+  <li><strong>Conveyor at the dump:</strong> ore leaves the head pulley as a projectile into a bin. Independent \(x\) and \(y\) motion, same as Guide 4.</li>
+  <li><strong>Kinematics only</strong> in the first 40 days: position, velocity, acceleration, path length, grade. Forces and rolling resistance wait for the six-month extensions if you want them.</li>
+</ul>
+<div class="ml"><code>linspace</code><code>diff</code><code>cumsum</code><code>sqrt</code><code>plot</code><code>plot3</code><code>subplot</code><code>yyaxis</code><code>legend</code><code>function</code><code>if</code><code>for</code><code>csvread / readmatrix</code><code>fprintf</code><code>saveas</code></div>
+</div>
+
+<h2>Given data — synthetic ramp GPS</h2>
+<p>Eastings, northings and elevation relative to the pit-floor start. Time stamps are for a <em>loaded climb at a cautious speed</em>; you will also rebuild motion from a piecewise speed law and compare.</p>
+<table class="data">
+<tr><th>\(t\) (s)</th><th>\(E\) (m)</th><th>\(N\) (m)</th><th>\(z\) (m)</th><th>Note</th></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>20</td><td>Loader</td></tr>
+<tr><td>40</td><td>90</td><td>20</td><td>24</td><td>Ramp on</td></tr>
+<tr><td>80</td><td>180</td><td>35</td><td>30</td><td></td></tr>
+<tr><td>120</td><td>240</td><td>80</td><td>36</td><td>First bend</td></tr>
+<tr><td>160</td><td>220</td><td>150</td><td>42</td><td>Switchback</td></tr>
+<tr><td>200</td><td>280</td><td>200</td><td>48</td><td></td></tr>
+<tr><td>240</td><td>360</td><td>210</td><td>53</td><td>Crest</td></tr>
+<tr><td>280</td><td>410</td><td>190</td><td>55</td><td>Dump pad</td></tr>
+</table>
+<pre>t = [0 40 80 120 160 200 240 280];
+E = [0 90 180 240 220 280 360 410];
+N = [0 20 35 80 150 200 210 190];
+z = [20 24 30 36 42 48 53 55];</pre>
+<p class="meta">Save as <code>data/ramp_climb.csv</code> with a header row once you know file I/O. Until then, hard-code the vectors.</p>
+
+<h2>Truck numbers (use as constants, not magic numbers in plots)</h2>
+<pre>g = 9.81;                 % m/s^2
+v_loaded_max = 25/3.6;    % m/s  (~25 km/h on grade)
+v_empty_max  = 40/3.6;    % m/s
+a_accel = 0.35;           % m/s^2  gentle haul-truck start
+a_brake = -0.50;          % m/s^2
+t_dump  = 40;             % s  wait at pad
+t_load  = 50;             % s  wait at loader
+payload_t = 180;          % tonnes, for later cycle-productivity printout</pre>
+
+<div class="q" id="s0">
+<h3>Stage 0 — Repo shape</h3>
+<ol>
+<li>Folder <code>mine-haul/</code> in <code>dpen100-matlab</code>: <code>scripts/</code>, <code>functions/</code>, <code>data/</code>, <code>figures/</code>.</li>
+<li><code>truck_params.m</code> returns a struct of the constants above.</li>
+<li><code>README.md</code> with one paragraph: what the model is, and “last run” date.</li>
+</ol>
+<div class="deliv"><strong>Done when</strong> MATLAB’s current folder is the repo, <code>truck_params</code> runs, and you have pushed once.</div>
+</div>
+
+<div class="q" id="s1">
+<h3>Stage 1 — Path, grade, distance (rectilinear along a 3-D centreline)</h3>
+<p>Same analysis as Project 1 Parts A–B, new numbers.</p>
+<ol type="a">
+<li><code>plot3(E,N,z)</code> of the ramp. Label units. Mark loader and dump.</li>
+<li>Horizontal grade \(G_i = 100\Delta z_i / \Delta s_{xy,i}\). Elevation and grade vs \(t\) with <code>yyaxis</code>.</li>
+<li>3-D segment lengths, cumulative \(s\) (m and km), segment speeds in km/h.</li>
+<li><code>fprintf</code> total length, mean climb speed, steepest grade.</li>
+</ol>
+<div class="deliv">Scripts <code>s1_path3d.m</code>, <code>s1_grade.m</code>, <code>s1_distance_speed.m</code> + saved figures.</div>
+</div>
+
+<div class="q" id="s2">
+<h3>Stage 2 — Piecewise speed law (you drive the kinematics)</h3>
+<p>GPS times are one possible climb. Now <em>prescribe</em> motion: accelerate to \(v_{\mathrm{loaded,max}}\), cruise, brake to rest at the dump. Use SUVAT on each piece, then stack arrays.</p>
+<ol type="a">
+<li>From Stage 1, take path length \(S\) as the 1-D coordinate \(s\).</li>
+<li>Compute \(t_{\mathrm{acc}}\), \(s_{\mathrm{acc}}\), \(t_{\mathrm{brake}}\), \(s_{\mathrm{brake}}\), cruise length. If \(S\) is too short for cruise, cut the peak speed (an <code>if</code>).</li>
+<li>Build \(t\), \(s(t)\), \(v(t)\), \(a(t)\) with <code>linspace</code> on each piece and concatenate.</li>
+<li>Plot \(s,v,a\) vs \(t\) in one <code>subplot</code> figure. Print cycle climb time.</li>
+</ol>
+<div class="deliv">Function <code>piecewise_motion.m</code> \((S, v_{\max}, a_{\mathrm{acc}}, a_{\mathrm{brake}})\) returning \(t,s,v,a\). Script <code>s2_loaded_climb.m</code> calls it.</div>
+</div>
+
+<div class="q" id="s3">
+<h3>Stage 3 — Empty return and a full cycle</h3>
+<ol type="a">
+<li>Return along the same path, \(v_{\mathrm{empty,max}}\), same accel/brake magnitudes.</li>
+<li>Insert constant-position waits \(t_{\mathrm{dump}}\) and \(t_{\mathrm{load}}\) (velocity zero).</li>
+<li>One figure: speed vs time for the whole cycle, shaded waits.</li>
+<li>Productivity: \(T_{\mathrm{cycle}}\) and \(\mathrm{tph} = 3600 \times \mathrm{payload}/T_{\mathrm{cycle}}\).</li>
+</ol>
+<div class="deliv"><code>s3_full_cycle.m</code> + <code>cycle_time.m</code> + one cycle figure.</div>
+</div>
+
+<div class="q" id="s4">
+<h3>Stage 4 — Conveyor discharge (curvilinear projectile)</h3>
+<p>Ore leaves a conveyor at \(v_0 = 3.5\,\mathrm{m/s}\), belt angle \(18^\circ\), lip 4.0 m above the bin floor, \(g=9.81\). Ignore air resistance.</p>
+<ol type="a">
+<li>Vectorised \(x(t)=(v_0\cos\theta)t\), \(y(t)=h+(v_0\sin\theta)t-\tfrac12 gt^2\), land when \(y=0\).</li>
+<li>Plot trajectory; mark lip and landing. Print time of flight and range.</li>
+<li>Optional: a second belt speed. Overlay both trajectories.</li>
+</ol>
+<div class="deliv"><code>projectile_xy.m</code> + <code>s4_conveyor.m</code>. This is Guide 4 coded, not re-derived on paper for its own sake.</div>
+</div>
+
+<div class="q" id="s5">
+<h3>Stage 5 — File I/O and a short memo</h3>
+<ol type="a">
+<li>Write <code>data/ramp_climb.csv</code> and read it with <code>readmatrix</code> (or <code>csvread</code>).</li>
+<li>Save every figure under <code>figures/</code> with <code>saveas</code>.</li>
+<li>A one-page <code>memo.md</code>: what the cycle time is, where the steepest grade is, where the projectile lands, and one thing you would measure on a real ramp next.</li>
+</ol>
+<div class="deliv">The repo runs from a single <code>run_all.m</code> that calls stages 1–4 in order.</div>
+</div>
+
+<h2>Six-month extensions (one feature per month, not a rewrite)</h2>
+<div class="card">
+<ol>
+<li><strong>Loaded vs empty comparison plot</strong> on the same axes; print \(\Delta T_{\mathrm{cycle}}\).</li>
+<li><strong>Second ramp</strong> (gentler grade, longer path). Same functions, new CSV. Which ramp wins on tph?</li>
+<li><strong>Shovel toss / waste dump</strong> as a second projectile (different \(v_0,\theta,h\)).</li>
+<li><strong>Shift file:</strong> repeat the cycle 20 times with a random extra wait 0–15 s at the dump (<code>rand</code>). Histogram of tph.</li>
+<li><strong>Animation:</strong> truck marker moving along \(E(s),N(s)\) with <code>drawnow</code> or <code>comet3</code>.</li>
+<li><strong>Freeze:</strong> run <code>run_all.m</code> on a clean MATLAB session. If it fails, that month’s job is to make it run, not to add features.</li>
+</ol>
+<p class="meta">After month 6 the unused course mock on <a href="../tests.html">tests.html</a> is optional exam practice. It is not part of this project.</p>
+</div>
+
+</div></body></html>
