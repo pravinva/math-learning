@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN103 — The Core Map: what to know cold</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+ onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+<style>
+:root{
+  --navy:#1B3A5C;--orange:#FF3621;--blue:#185FA5;--bg:#fafaf8;
+  --text:#2c2a28;--muted:#6b6762;--line:#e8e6e0;
+  --green:#15803d;--amber:#b45309;--purple:#6b5aa0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.62;padding:26px 16px 90px}
+.wrap{max-width:1040px;margin:0 auto}
+
+.hero{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px 26px;margin-bottom:18px}
+.eyebrow{font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+h1{font-size:clamp(23px,3.2vw,32px);color:var(--navy);line-height:1.18;margin-bottom:9px}
+.lede{color:#4b5563;font-size:15px}
+.chiprow{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.chip{display:inline-block;padding:7px 11px;border-radius:6px;text-decoration:none;font-size:12.5px;font-weight:600;
+      border:1px solid #c9dff7;background:#eef6ff;color:var(--blue)}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+h2{font-size:19px;color:var(--navy);margin:34px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--navy);scroll-margin-top:10px}
+h3{font-size:15.5px;color:var(--blue);margin:20px 0 8px}
+
+.spine{background:linear-gradient(135deg,#1B3A5C,#185FA5);color:#fff;border-radius:11px;padding:20px 24px;margin:16px 0}
+.spine .lbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.72;margin-bottom:7px}
+.spine .big{font-size:clamp(16px,2.4vw,21px);font-weight:600;line-height:1.45}
+.spine p{margin-top:10px;font-size:14px;opacity:.93}
+
+figure{margin:18px 0;padding:14px 10px 8px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+figure svg{display:block;margin:0 auto;max-width:100%;height:auto}
+figcaption{text-align:center;color:var(--muted);font-size:12.5px;margin-top:9px;font-style:italic}
+
+.tier{margin:26px 0 8px}
+.tier-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.tier-num{background:var(--navy);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.06em;
+          padding:3px 9px;border-radius:5px;white-space:nowrap}
+.tier-title{font-size:17px;color:var(--navy);font-weight:700}
+.tier-when{font-size:12.5px;color:var(--muted)}
+.tier-why{font-size:13.5px;color:#4b5563;margin:6px 0 12px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px}
+
+.card{background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:0 10px 10px 0;padding:15px 17px}
+.card.root{border-left-color:var(--navy)}
+.card.mech{border-left-color:var(--blue)}
+.card.fail{border-left-color:var(--orange)}
+.card.micro{border-left-color:var(--amber)}
+.card.clas{border-left-color:var(--green)}
+.card.func{border-left-color:var(--purple)}
+.card h4{font-size:15px;color:var(--navy);margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.card h4 .n{background:var(--navy);color:#fff;font-size:11px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;
+            display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700}
+.oneline{font-size:14px;margin-bottom:9px}
+.fml{background:#f8fafc;border:1px solid #e2e8f0;border-radius:7px;padding:9px 11px;margin:9px 0;overflow-x:auto;font-size:14px}
+.fml .katex{font-size:1em}
+.rowlbl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:10px}
+.card ul{margin:4px 0 0 17px;font-size:13.5px}
+.card li{margin:3px 0}
+.link-line{font-size:12.5px;margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);color:var(--muted)}
+.link-line b{color:var(--navy)}
+.say{background:#f0fdf4;border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:8px 11px;margin-top:10px;font-size:13.5px}
+.say b{color:#166534}
+
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px;background:#fff}
+th{background:var(--navy);color:#fff;padding:8px 10px;text-align:left;font-size:12.5px;font-weight:600}
+td{border-bottom:1px solid var(--line);padding:8px 10px;vertical-align:top}
+td.k{font-weight:600;color:var(--navy);white-space:nowrap}
+tr.grp td{background:#eef6ff;font-weight:700;color:var(--navy);font-size:12.5px}
+
+.pattern{background:#fff7ed;border:1px solid #fed7aa;border-left:4px solid var(--orange);border-radius:0 9px 9px 0;padding:13px 16px;margin:12px 0}
+.pattern h4{font-size:14.5px;color:#9a3412;margin-bottom:6px}
+.pattern p{font-size:13.5px;margin:5px 0}
+
+.trap{background:#fff5f5;border:1px solid #fecaca;border-radius:9px;padding:13px 16px;margin:12px 0}
+.trap ul{margin:6px 0 0 18px;font-size:13.5px}
+.trap li{margin:5px 0}
+.trap b{color:#b91c1c}
+
+.ladder{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin:12px 0}
+.rung{background:#fff;border:1px solid var(--line);border-radius:9px;padding:14px 16px}
+.rung .lv{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--blue);
+          padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:7px}
+.rung.l2 .lv{background:var(--amber)}
+.rung.l3 .lv{background:var(--green)}
+.rung h4{font-size:14.5px;color:var(--navy);margin-bottom:5px}
+.rung p{font-size:13.5px;color:#4b5563}
+
+details.q{background:#fff;border:1px solid var(--line);border-radius:8px;padding:11px 14px;margin:8px 0}
+details.q summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--navy);list-style:none}
+details.q summary::-webkit-details-marker{display:none}
+details.q summary::before{content:'▸ ';color:var(--orange)}
+details.q[open] summary::before{content:'▾ '}
+details.q .ans{margin-top:9px;padding-top:9px;border-top:1px solid var(--line);font-size:13.5px;color:#374151}
+
+.note{background:#eef6ff;border:1px solid #c9dff7;border-radius:9px;padding:13px 16px;margin:14px 0;font-size:14px}
+.note b{color:var(--navy)}
+
+.foot{text-align:center;margin-top:34px;font-size:13.5px}
+.foot a{color:var(--blue);text-decoration:none}
+
+.svg-t{font-family:'Segoe UI',Arial,sans-serif;font-size:11.5px;fill:#2c2a28}
+.svg-t.ttl{font-size:12.5px;font-weight:700;fill:#1B3A5C}
+.svg-t.wht{fill:#fff;font-weight:700;font-size:13px}
+.svg-t.sub{font-size:10.5px;fill:#6b6762}
+.svg-t.leg{font-size:10.5px;fill:#6b6762}
+
+@media(max-width:640px){
+  body{padding:16px 11px 60px}
+  .hero{padding:17px 15px}
+  .grid{grid-template-columns:1fr}
+  .card{padding:13px 14px}
+}
+@media print{
+  body{background:#fff;padding:0}
+  .chiprow{display:none}
+  .card,.pattern,.trap,figure{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <div class="eyebrow">DPEN103 · Materials in Design</div>
+  <h1>The Core Map — what to know cold</h1>
+  <p class="lede">Everything in this subject hangs off a handful of ideas. This page holds only those, in the order they build, with the links between them made visible. It is a memory scaffold, not a textbook. If you own this page, the weekly lectures become extra detail on a frame you already have.</p>
+  <div class="chiprow">
+    <a class="chip on" href="core-map.html">Core map</a>
+    <a class="chip" href="reading-the-pictures.html">Reading the pictures</a>
+    <a class="chip" href="index.html">DPEN103 home</a>
+    <a class="chip" href="week-01-deep-dive.html">Wk 1</a>
+    <a class="chip" href="week-02-deep-dive.html">Wk 2</a>
+    <a class="chip" href="week-03-deep-dive.html">Wk 3</a>
+    <a class="chip" href="callister-exact-section-notes.html">Callister map</a>
+    <a class="chip" href="../index.html">Study guides</a>
+  </div>
+</div>
+
+<div class="spine">
+  <div class="lbl">The one sentence the whole subject is built on</div>
+  <div class="big">Structure&nbsp; →&nbsp; Properties&nbsp; →&nbsp; Processing&nbsp; →&nbsp; Performance</div>
+  <p>How the atoms are arranged decides what the material does. How you make and treat it decides the arrangement. How it behaves in service decides whether you chose right. Almost every exam question is one arrow of that chain, and design questions run the whole chain backwards: performance needed → property targets → structure → material.</p>
+</div>
+
+<h2 id="map">The map</h2>
+<p class="tier-why">Read it top to bottom. The two boxes at the top are roots — nothing above them. Everything lower is a consequence. Solid arrows mean <em>builds directly on</em>. Dashed arrows mean <em>also explained by</em>.</p>
+
+<figure>
+<svg viewBox="0 0 1000 616" role="img" aria-label="Concept map of DPEN103 showing bonding and crystal packing as roots leading to mechanical response, defects, strengthening, fracture, phase diagrams, service conditions, material classes, functional properties and finally materials selection">
+  <rect x="0" y="0" width="1000" height="616" fill="#fff"/>
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#6b6762"/></marker>
+    <marker id="ahd" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#9aa3ad"/></marker>
+    <linearGradient id="sp" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1B3A5C"/><stop offset="100%" stop-color="#185FA5"/></linearGradient>
+  </defs>
+
+  <!-- spine -->
+  <rect x="30" y="14" width="940" height="44" rx="9" fill="url(#sp)"/>
+  <text class="svg-t wht" x="500" y="42" text-anchor="middle">STRUCTURE  →  PROPERTIES  →  PROCESSING  →  PERFORMANCE</text>
+
+  <g stroke="#6b6762" stroke-width="1.7" fill="none" marker-end="url(#ah)">
+    <line x1="280" y1="58" x2="280" y2="88"/>
+    <line x1="720" y1="58" x2="720" y2="88"/>
+  </g>
+
+  <!-- TIER 1 : roots -->
+  <rect x="120" y="92" width="320" height="54" rx="8" fill="#eef6ff" stroke="#1B3A5C" stroke-width="2.2"/>
+  <text class="svg-t ttl" x="280" y="114" text-anchor="middle">1 · BONDING</text>
+  <text class="svg-t sub" x="280" y="132" text-anchor="middle">metallic · ionic · covalent · secondary</text>
+
+  <rect x="560" y="92" width="320" height="54" rx="8" fill="#eef6ff" stroke="#1B3A5C" stroke-width="2.2"/>
+  <text class="svg-t ttl" x="720" y="114" text-anchor="middle">2 · CRYSTAL PACKING</text>
+  <text class="svg-t sub" x="720" y="132" text-anchor="middle">how atoms stack · how tightly they pack</text>
+
+  <!-- TIER 2 -->
+  <rect x="60" y="182" width="380" height="54" rx="8" fill="#eef6ff" stroke="#185FA5" stroke-width="2"/>
+  <text class="svg-t ttl" x="250" y="204" text-anchor="middle">3 · STRESS–STRAIN CURVE</text>
+  <text class="svg-t sub" x="250" y="222" text-anchor="middle">stiffness · yield · peak stress · stretch · toughness</text>
+
+  <rect x="560" y="182" width="380" height="54" rx="8" fill="#eef6ff" stroke="#185FA5" stroke-width="2"/>
+  <text class="svg-t ttl" x="750" y="204" text-anchor="middle">4 · DEFECTS &amp; FLAWS</text>
+  <text class="svg-t sub" x="750" y="222" text-anchor="middle">vacancies · dislocations · grain boundaries · cracks</text>
+
+  <g stroke="#6b6762" stroke-width="1.7" fill="none" marker-end="url(#ah)">
+    <line x1="270" y1="146" x2="255" y2="178"/>
+    <line x1="730" y1="146" x2="745" y2="178"/>
+  </g>
+  <g stroke="#9aa3ad" stroke-width="1.5" fill="none" marker-end="url(#ahd)" stroke-dasharray="5 4">
+    <line x1="600" y1="146" x2="420" y2="178"/>
+  </g>
+
+  <!-- TIER 3 -->
+  <rect x="40" y="272" width="280" height="58" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text class="svg-t ttl" x="180" y="294" text-anchor="middle">5 · STRENGTHENING</text>
+  <text class="svg-t sub" x="180" y="311" text-anchor="middle">block dislocations</text>
+  <text class="svg-t sub" x="180" y="324" text-anchor="middle">yield ↑ , ductility ↓</text>
+
+  <rect x="360" y="272" width="280" height="58" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text class="svg-t ttl" x="500" y="294" text-anchor="middle">6 · PHASE DIAGRAMS</text>
+  <text class="svg-t sub" x="500" y="311" text-anchor="middle">tie-line + lever rule</text>
+  <text class="svg-t sub" x="500" y="324" text-anchor="middle">= which phases, how much</text>
+
+  <rect x="680" y="272" width="280" height="58" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text class="svg-t ttl" x="820" y="294" text-anchor="middle">7 · FRACTURE</text>
+  <text class="svg-t sub" x="820" y="311" text-anchor="middle">K<tspan dy="3" font-size="8.5">I</tspan><tspan dy="-3"> = Y σ √(πa)   vs   K</tspan><tspan dy="3" font-size="8.5">IC</tspan></text>
+  <text class="svg-t sub" x="820" y="324" text-anchor="middle">flaw size rules strength</text>
+
+  <g stroke="#6b6762" stroke-width="1.7" fill="none" marker-end="url(#ah)">
+    <line x1="200" y1="236" x2="180" y2="268"/>
+    <line x1="600" y1="236" x2="260" y2="268"/>
+    <line x1="820" y1="236" x2="820" y2="268"/>
+    <line x1="356" y1="301" x2="326" y2="301"/>
+  </g>
+
+  <!-- TIER 4 -->
+  <rect x="40" y="370" width="280" height="104" rx="8" fill="#f5f0ff" stroke="#6b5aa0" stroke-width="2"/>
+  <text class="svg-t ttl" x="180" y="392" text-anchor="middle">8 · FUNCTIONAL PROPERTIES</text>
+  <text class="svg-t sub" x="180" y="414" text-anchor="middle">Electrical:  σ = n q μ</text>
+  <text class="svg-t sub" x="180" y="433" text-anchor="middle">Magnetic:  B–H loop</text>
+  <text class="svg-t sub" x="180" y="455" text-anchor="middle">both come straight from bonding</text>
+
+  <rect x="360" y="370" width="280" height="104" rx="8" fill="#f0fdf4" stroke="#15803d" stroke-width="2"/>
+  <text class="svg-t ttl" x="500" y="392" text-anchor="middle">9 · MATERIAL CLASSES</text>
+  <text class="svg-t sub" x="500" y="414" text-anchor="middle">Polymers — Tg vs service temp</text>
+  <text class="svg-t sub" x="500" y="433" text-anchor="middle">Ceramics — flaw-limited</text>
+  <text class="svg-t sub" x="500" y="452" text-anchor="middle">Composites — rule of mixtures</text>
+
+  <rect x="680" y="370" width="280" height="104" rx="8" fill="#fff1f2" stroke="#FF3621" stroke-width="2"/>
+  <text class="svg-t ttl" x="820" y="392" text-anchor="middle">10 · SERVICE CONDITIONS</text>
+  <text class="svg-t sub" x="820" y="414" text-anchor="middle">Fatigue — repeated load, S–N</text>
+  <text class="svg-t sub" x="820" y="433" text-anchor="middle">Creep — hot and slow</text>
+  <text class="svg-t sub" x="820" y="452" text-anchor="middle">Thermal — ΔL = α L₀ ΔT</text>
+
+  <!-- bonding elbow to functional -->
+  <polyline points="120,119 18,119 18,404 36,404" fill="none" stroke="#9aa3ad" stroke-width="1.5"
+            stroke-dasharray="5 4" marker-end="url(#ahd)"/>
+
+  <g stroke="#6b6762" stroke-width="1.7" fill="none" marker-end="url(#ah)">
+    <line x1="500" y1="330" x2="500" y2="366"/>
+    <line x1="820" y1="330" x2="820" y2="366"/>
+  </g>
+  <g stroke="#9aa3ad" stroke-width="1.5" fill="none" marker-end="url(#ahd)" stroke-dasharray="5 4">
+    <line x1="720" y1="330" x2="600" y2="366"/>
+  </g>
+
+  <!-- TIER 5 -->
+  <rect x="180" y="514" width="640" height="58" rx="9" fill="#1B3A5C"/>
+  <text class="svg-t wht" x="500" y="537" text-anchor="middle">11 · MATERIALS SELECTION</text>
+  <text class="svg-t" x="500" y="556" text-anchor="middle" fill="#c3ccdb">function → constraints → failure modes → shortlist → justify the rejects</text>
+
+  <g stroke="#6b6762" stroke-width="1.7" fill="none" marker-end="url(#ah)">
+    <line x1="180" y1="474" x2="300" y2="510"/>
+    <line x1="500" y1="474" x2="500" y2="510"/>
+    <line x1="820" y1="474" x2="700" y2="510"/>
+  </g>
+
+  <!-- legend -->
+  <line x1="330" y1="596" x2="370" y2="596" stroke="#6b6762" stroke-width="1.7" marker-end="url(#ah)"/>
+  <text class="svg-t leg" x="378" y="600">builds directly on</text>
+  <line x1="510" y1="596" x2="550" y2="596" stroke="#9aa3ad" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ahd)"/>
+  <text class="svg-t leg" x="558" y="600">also explained by</text>
+</svg>
+<figcaption>The whole subject on one page. Boxes 1 and 2 are the only things with no parent — learn those first and the rest has somewhere to attach. Notice that box 4 (defects and flaws) feeds three different directions: strengthening, fracture, and eventually ceramics. That is why it is worth more revision time than its lecture length suggests.</figcaption>
+</figure>
+
+<div class="note">
+<b>How to use this page.</b> Do not read it front to back like a chapter. Pick one card, cover the formula, and try the green <b>Say it cold</b> line out loud. If it comes out, move on. If it does not, open that week's deep dive for twenty minutes and come back. The cards are numbered to match the map above.
+</div>
+
+<h2 id="words">The words and symbols, in plain English</h2>
+<p class="tier-why">This subject shortens a lot of things to initials, and lecturers tend to start using them without stopping to say what they stand for. Here is the full list up front, so nothing below arrives as a surprise. Come back to this table any time a symbol stops making sense.</p>
+
+<table>
+<tr><th style="width:19%">Short form</th><th style="width:26%">What it stands for</th><th>What it actually means</th></tr>
+<tr class="grp"><td colspan="3">Words you will hear constantly</td></tr>
+<tr><td class="k">Stress, \(\sigma\)</td><td>force per unit area</td><td>How hard the material is being squeezed or pulled at a point. Force spread over area, so a thin bar is under more stress than a thick one carrying the same load.</td></tr>
+<tr><td class="k">Strain, \(\varepsilon\)</td><td>change in length ÷ original length</td><td>How much it stretched, as a fraction. It has no units. A strain of 0.01 means it got 1% longer.</td></tr>
+<tr><td class="k">\(E\)</td><td>Young's modulus, or just stiffness</td><td>How much stress it takes to stretch the material by a given amount. Steel has a high \(E\), so it barely moves. Rubber has a low one.</td></tr>
+<tr><td class="k">Elastic</td><td>—</td><td>It springs back when you let go.</td></tr>
+<tr><td class="k">Plastic</td><td>—</td><td>It stays bent. Nothing to do with plastics the material, confusingly.</td></tr>
+<tr><td class="k">Yield, \(\sigma_y\)</td><td>yield strength</td><td>The stress where it stops springing back and starts staying bent. Usually your design limit.</td></tr>
+<tr><td class="k">UTS</td><td>ultimate tensile strength</td><td>The highest stress the material reaches before it starts to fail. The peak of the curve.</td></tr>
+<tr><td class="k">Ductility</td><td>—</td><td>How far it stretches before breaking. High ductility means it bends a lot first and gives you warning.</td></tr>
+<tr><td class="k">Brittle</td><td>—</td><td>The opposite: it breaks with almost no stretching, and with no warning.</td></tr>
+<tr><td class="k">Toughness</td><td>—</td><td>How much energy it soaks up before breaking. Strong and tough are not the same thing.</td></tr>
+<tr><td class="k">Necking</td><td>—</td><td>When a bar being pulled starts thinning at one spot instead of stretching evenly. It is the beginning of the end.</td></tr>
+<tr class="grp"><td colspan="3">Structure and defects</td></tr>
+<tr><td class="k">FCC</td><td>face-centred cubic</td><td>An atom stacking pattern: cube corners plus the middle of each face. Generally the most bendable metals.</td></tr>
+<tr><td class="k">BCC</td><td>body-centred cubic</td><td>Cube corners plus one atom dead centre.</td></tr>
+<tr><td class="k">HCP</td><td>hexagonal close-packed</td><td>Stacked layers of hexagons.</td></tr>
+<tr><td class="k">APF</td><td>atomic packing factor</td><td>What fraction of the space is actually filled with atoms rather than gaps. 0.74 is the maximum possible.</td></tr>
+<tr><td class="k">Dislocation</td><td>—</td><td>A line-shaped fault in the atom pattern. It is how metals bend: the fault shuffles along and a layer slips.</td></tr>
+<tr><td class="k">Grain</td><td>—</td><td>One small crystal within the metal. A metal is a mosaic of thousands of them, all facing different ways.</td></tr>
+<tr><td class="k">Grain boundary</td><td>—</td><td>The join between two grains. Dislocations get stuck at these, which is why fine grains are stronger.</td></tr>
+<tr class="grp"><td colspan="3">Failure</td></tr>
+<tr><td class="k">\(K_I\)</td><td>stress intensity</td><td>One number combining how hard you are pulling with how big the crack is. The demand.</td></tr>
+<tr><td class="k">\(K_{IC}\)</td><td>fracture toughness</td><td>The largest stress intensity that material can survive. The limit. Easy to mix up with \(K_I\) — one is load, one is property.</td></tr>
+<tr><td class="k">Fatigue</td><td>—</td><td>Failure from a load repeating many times, at a level that is perfectly safe once.</td></tr>
+<tr><td class="k">S–N curve</td><td>stress versus number of cycles</td><td>The standard fatigue graph. That is genuinely all the name means.</td></tr>
+<tr><td class="k">Endurance limit</td><td>—</td><td>A stress low enough that the part never fails from fatigue, no matter how many cycles. Steel has one; aluminium does not.</td></tr>
+<tr><td class="k">Creep</td><td>—</td><td>Slow stretching under a steady load at high temperature.</td></tr>
+<tr class="grp"><td colspan="3">Phases and processing</td></tr>
+<tr><td class="k">Phase</td><td>—</td><td>A region with one consistent structure and composition. Ice and water are two phases of one substance.</td></tr>
+<tr><td class="k">Microstructure</td><td>—</td><td>The arrangement of phases and grains you would see under a microscope. Processing controls it; it controls properties.</td></tr>
+<tr><td class="k">Liquidus</td><td>—</td><td>On a phase diagram, the line above which everything is liquid.</td></tr>
+<tr><td class="k">Solidus</td><td>—</td><td>The line below which everything is solid. Between the two, you have a mush of both.</td></tr>
+<tr><td class="k">Solvus</td><td>—</td><td>A line showing how much of one solid will dissolve in another as temperature changes.</td></tr>
+<tr><td class="k">Tie-line</td><td>—</td><td>A horizontal line you draw across a two-phase region to read off what each phase is made of.</td></tr>
+<tr><td class="k">Lever rule</td><td>—</td><td>The arithmetic that turns a tie-line into "how much of each phase". Just mass balance.</td></tr>
+<tr><td class="k">Eutectic</td><td>—</td><td>The special mixture that melts at the lowest temperature of any mixture in the system, and freezes all at once. Solder sits near it.</td></tr>
+<tr><td class="k">Annealing</td><td>—</td><td>Heating a metal to soften it and give back ductility after it has been worked hard.</td></tr>
+<tr><td class="k">Cold work</td><td>—</td><td>Deliberately deforming a metal at room temperature to make it stronger and harder.</td></tr>
+<tr class="grp"><td colspan="3">Classes and function</td></tr>
+<tr><td class="k">\(T_g\)</td><td>glass transition temperature</td><td>Where a plastic changes from hard and glassy to soft and rubbery. Not melting — it is still solid on both sides.</td></tr>
+<tr><td class="k">\(T_m\)</td><td>melting temperature</td><td>Where it actually turns liquid.</td></tr>
+<tr><td class="k">Thermoplastic</td><td>—</td><td>A plastic you can melt and reshape repeatedly.</td></tr>
+<tr><td class="k">Thermoset</td><td>—</td><td>A plastic whose chains are chemically tied together, so it can never be re-melted.</td></tr>
+<tr><td class="k">Matrix</td><td>—</td><td>In a composite, the soft material that surrounds and holds the fibres.</td></tr>
+<tr><td class="k">\(V_f\)</td><td>fibre volume fraction</td><td>What proportion of a composite is fibre rather than matrix.</td></tr>
+<tr><td class="k">Rule of mixtures</td><td>—</td><td>Working out a composite's property as a weighted average of its two ingredients.</td></tr>
+<tr><td class="k">Carrier</td><td>—</td><td>Anything that carries electric charge through a material, usually an electron.</td></tr>
+<tr><td class="k">\(\mu\), mobility</td><td>—</td><td>How freely those carriers can move without bumping into things.</td></tr>
+<tr><td class="k">\(\rho\) vs \(R\)</td><td>resistivity vs resistance</td><td>Resistivity belongs to the material. Resistance belongs to a specific object, and needs its length and area.</td></tr>
+<tr><td class="k">B–H loop</td><td>—</td><td>A graph of the magnetism you get out (\(B\)) against the field you put in (\(H\)). Its shape names the application.</td></tr>
+<tr><td class="k">Remanence</td><td>—</td><td>Magnetism left over after you switch the field off.</td></tr>
+<tr><td class="k">Coercivity</td><td>—</td><td>How hard you must push backwards to wipe that leftover magnetism out.</td></tr>
+</table>
+
+<!-- ============ TIER 1 ============ -->
+<div class="tier">
+  <div class="tier-head">
+    <span class="tier-num">TIER 1</span>
+    <span class="tier-title">The two roots</span>
+    <span class="tier-when">Week 1 · learn before anything else</span>
+  </div>
+  <p class="tier-why">Nothing in this subject is above these. Every later explanation eventually says "because of how the atoms are bonded" or "because of how they are stacked". Get these two cheap and everything downstream costs less.</p>
+</div>
+
+<div class="grid">
+
+  <div class="card root">
+    <h4><span class="n">1</span> Bonding type</h4>
+    <p class="oneline">How atoms are held together decides the personality of the material. Four kinds, and you only need the behaviour each one predicts.</p>
+    <div class="rowlbl">Know these four</div>
+    <ul>
+      <li><b>Metallic</b> — electrons roam free. Conducts, bends rather than snaps, shiny.</li>
+      <li><b>Ionic</b> — plus and minus locked together. Hard, brittle, insulating.</li>
+      <li><b>Covalent</b> — electrons shared in fixed directions. Very stiff, very brittle, high melting point.</li>
+      <li><b>Secondary</b> (van der Waals, hydrogen) — weak stickiness between chains. Why polymers are soft and melt low.</li>
+    </ul>
+    <div class="link-line"><b>Feeds:</b> the stress–strain shape (card 3), all of card 8 (electrical and magnetic), and why polymers behave as they do (card 9a).</div>
+    <div class="say"><b>Say it cold:</b> "Metals conduct and bend because the electrons are shared loosely; ceramics insulate and snap because the bonds are locked in place."</div>
+  </div>
+
+  <div class="card root">
+    <h4><span class="n">2</span> Crystal packing</h4>
+    <p class="oneline">Metal atoms stack in a repeating pattern, like oranges in a crate. Which pattern you get changes how easily the layers can slide over each other, and that is what makes one metal easy to bend and another stiff and stubborn.</p>
+    <div class="rowlbl">The three names, spelled out</div>
+    <ul>
+      <li><b>FCC — face-centred cubic.</b> A cube with an atom at each corner and one in the middle of every face.</li>
+      <li><b>BCC — body-centred cubic.</b> A cube with an atom at each corner and one right in the centre.</li>
+      <li><b>HCP — hexagonal close-packed.</b> Layers of hexagons stacked in an ABAB pattern.</li>
+    </ul>
+    <table style="margin:10px 0">
+      <tr><th>Pattern</th><th>Atoms in the box</th><th>Neighbours each atom touches</th><th>Fraction of space filled</th></tr>
+      <tr><td class="k">FCC</td><td>4</td><td>12</td><td>0.74</td></tr>
+      <tr><td class="k">BCC</td><td>2</td><td>8</td><td>0.68</td></tr>
+      <tr><td class="k">HCP</td><td>6</td><td>12</td><td>0.74</td></tr>
+    </table>
+    <p style="font-size:13px;color:#4b5563">That last column has a formal name you will see in lectures: the <b>atomic packing factor</b>, often shortened to APF. It just means the fraction of the box that is actually atom rather than empty gap. 0.74 is the tightest that equal spheres can ever be packed, so FCC and HCP are as dense as it gets.</p>
+    <div class="fml">\[\rho=\frac{nA}{V_c N_A}\]</div>
+    <p style="font-size:13px;color:#4b5563">This works out density from the box. \(n\) is atoms in the box, \(A\) is the atomic mass, \(V_c\) is the volume of the box, and \(N_A=6.022\times10^{23}\) is Avogadro's number.</p>
+    <div class="link-line"><b>Feeds:</b> how ductile a metal is — FCC has more easy sliding planes, so FCC metals like aluminium and copper are generally the most formable. Also feeds card 4, because a defect is only meaningful once there is a pattern for it to break.</div>
+    <div class="say"><b>Say it cold:</b> "FCC fills 74% of the space and each atom touches 12 others, and it usually deforms most easily. BCC is looser at 68% with 8 neighbours."</div>
+  </div>
+
+</div>
+
+<!-- ============ TIER 2 ============ -->
+<div class="tier">
+  <div class="tier-head">
+    <span class="tier-num">TIER 2</span>
+    <span class="tier-title">The two workhorses</span>
+    <span class="tier-when">Weeks 2–3 · used in nearly every question</span>
+  </div>
+  <p class="tier-why">If you only had time for two cards in the whole subject, these are the two. The curve is where the numbers come from. Defects are where the explanations come from.</p>
+</div>
+
+<div class="grid">
+
+  <div class="card mech">
+    <h4><span class="n">3</span> The stress–strain curve</h4>
+    <p class="oneline">A map of what happens when you pull a bar until it breaks. Learn the landmarks in order and most mechanical questions are just "point at the right spot".</p>
+    <div class="fml">\[\sigma=\frac{F}{A_0}\qquad \varepsilon=\frac{\Delta L}{L_0}\qquad E=\frac{\sigma}{\varepsilon}\]</div>
+    <div class="rowlbl">The five landmarks</div>
+    <ul>
+      <li><b>The straight part</b> — this is the elastic region, where the bar springs back to its original length if you let go. Its slope is \(E\), the stiffness, properly called Young's modulus.</li>
+      <li><b>Yield, written \(\sigma_y\)</b> — the point where the bar stops springing back and starts staying bent. Because the bend in the curve is gradual, there is a standard way of pinning it down called the 0.2% offset method, which is drawn out on the pictures page.</li>
+      <li><b>The highest point</b> — the most stress the material ever carries. Its full name is the <b>ultimate tensile strength</b>, and it is almost always shortened to <b>UTS</b>. Just after this point the bar starts thinning at one spot instead of stretching evenly, which is called necking.</li>
+      <li><b>Where the curve ends</b> — how far the bar stretched before breaking. That is its ductility.</li>
+      <li><b>The area underneath</b> — the total energy the bar soaked up before breaking. That is toughness.</li>
+    </ul>
+    <div class="fml">\[U_r=\frac{\sigma_y^{\,2}}{2E}\]</div>
+    <p style="font-size:13px;color:#4b5563">\(U_r\) is <b>resilience</b>: the energy stored in the springy part only, the bit you get back. Toughness is the whole area including the permanent damage; resilience is just the triangle at the start.</p>
+    <div class="link-line"><b>Builds on:</b> cards 1–2. &nbsp;<b>Feeds:</b> everything with a number in it — fracture, fatigue, composites, thermal stress.</div>
+    <div class="say"><b>Say it cold:</b> Sketch the curve from blank paper and label elastic, yield, UTS, fracture, and shade toughness. Under 60 seconds.</div>
+  </div>
+
+  <div class="card mech">
+    <h4><span class="n">4</span> Defects and flaws</h4>
+    <p class="oneline">Real crystals are imperfect, and the imperfections are the whole story of strength. A perfect crystal would be far stronger than any real metal.</p>
+    <div class="rowlbl">Four to name</div>
+    <ul>
+      <li><b>Vacancy</b> — a missing atom. Lets atoms diffuse.</li>
+      <li><b>Dislocation</b> — a line defect. It is <em>how</em> metals bend: layers slip by moving it along.</li>
+      <li><b>Grain boundary</b> — where two crystal orientations meet. Blocks dislocations.</li>
+      <li><b>Crack / pore</b> — a big flaw. Owns card 7.</li>
+    </ul>
+    <div class="fml">\[n_v=N\exp\!\left(\frac{-Q_v}{kT}\right)\]</div>
+    <p style="font-size:13px;color:#4b5563">How many vacancies you get. \(N\) is the number of atom sites available, \(Q_v\) is the energy it costs to make one vacancy, \(k\) is Boltzmann's constant, and \(T\) is temperature in kelvin. The shape to remember is that heating creates vacancies very fast.</p>
+    <div class="fml">\[\sigma_y=\sigma_0+k_y\,d^{-1/2}\]</div>
+    <p style="font-size:13px;color:#4b5563">This one is named after the two people who found it, Hall and Petch. \(d\) is the grain size, \(\sigma_0\) is the strength you would have with no grain boundaries at all, and \(k_y\) is a constant for that material. Because \(d\) is on the bottom, <em>smaller grains give a stronger metal</em>.</p>
+    <div class="link-line"><b>Builds on:</b> card 2. &nbsp;<b>Feeds:</b> cards 5, 7, and creep in card 10.</div>
+    <div class="say"><b>Say it cold:</b> "Metals bend because dislocations glide. Anything that gets in a dislocation's way makes the metal stronger and less ductile."</div>
+  </div>
+
+</div>
+
+<!-- ============ TIER 3 ============ -->
+<div class="tier">
+  <div class="tier-head">
+    <span class="tier-num">TIER 3</span>
+    <span class="tier-title">Control and failure</span>
+    <span class="tier-when">Weeks 4–6 · the calculation core</span>
+  </div>
+  <p class="tier-why">Tier 2 says what a material is. Tier 3 says how you change it and how it lets you down. These three cards carry most of the numerical marks.</p>
+</div>
+
+<div class="grid">
+
+  <div class="card fail">
+    <h4><span class="n">5</span> Strengthening (four routes, one idea)</h4>
+    <p class="oneline">Every strengthening method does the same thing: put obstacles in front of dislocations. And every one costs ductility.</p>
+    <div class="rowlbl">The four</div>
+    <ul>
+      <li><b>Grain refinement</b> — more boundaries. Hall–Petch.</li>
+      <li><b>Solid solution</b> — foreign atoms distort the lattice.</li>
+      <li><b>Strain hardening</b> (cold work) — dislocations tangle each other.</li>
+      <li><b>Precipitation</b> — hard particles block the path.</li>
+    </ul>
+    <p style="font-size:13.5px;margin-top:8px">Going the other way: <b>annealing</b> (recovery, recrystallisation, grain growth) softens and gives ductility back.</p>
+    <div class="link-line"><b>Builds on:</b> card 4. &nbsp;<b>Related to:</b> card 6 — heat treatment is how you get the microstructure in the first place.</div>
+    <div class="say"><b>Say it cold:</b> Name all four routes and the one sentence they share, plus the tradeoff. No notes.</div>
+  </div>
+
+  <div class="card micro">
+    <h4><span class="n">6</span> Phase diagrams and the lever rule</h4>
+    <p class="oneline">A map of what you have at a given mix and temperature. Pick your composition and temperature, and the diagram tells you which phases exist and how much of each.</p>
+    <div class="rowlbl">The routine, every time</div>
+    <ul>
+      <li>Mark overall composition \(C_0\) and temperature \(T\).</li>
+      <li>One phase region? Done — it is all that phase.</li>
+      <li>Two-phase region? Draw the horizontal tie-line at that \(T\), read \(C_\alpha\) and \(C_\beta\) at its ends.</li>
+      <li>Apply the lever rule.</li>
+    </ul>
+    <div class="fml">\[W_\alpha=\frac{C_\beta-C_0}{C_\beta-C_\alpha}\qquad W_\beta=\frac{C_0-C_\alpha}{C_\beta-C_\alpha}\]</div>
+    <p style="font-size:13px;color:#4b5563">It is just mass balance: \(W_\alpha+W_\beta=1\) and \(C_0=W_\alpha C_\alpha+W_\beta C_\beta\). Each weight uses the <em>far</em> end of the tie-line.</p>
+    <div class="link-line"><b>Feeds:</b> card 5 (microstructure decides strength) and card 9 (which class you end up with).</div>
+    <div class="say"><b>Say it cold:</b> "The fraction of a phase uses the distance to the <em>opposite</em> end of the tie-line, divided by the whole line."</div>
+  </div>
+
+  <div class="card fail">
+    <h4><span class="n">7</span> Fracture — flaws decide strength</h4>
+    <p class="oneline">A material with a crack in it is not as strong as the same material without one. The crack concentrates stress at its tip, and there is a threshold past which it runs.</p>
+    <div class="fml">\[K_I=Y\sigma\sqrt{\pi a}\qquad\text{it fails when } K_I\ge K_{IC}\]</div>
+    <p style="font-size:13px;color:#4b5563">Two symbols worth naming properly, because they look alike and mean opposite things. \(K_I\) is the <b>stress intensity</b>: a single number that combines how hard you are pulling with how big the crack is. \(K_{IC}\) is the <b>fracture toughness</b>: a property of the material, the largest \(K_I\) it can survive. So one is the demand and the other is the limit. \(Y\) is a shape factor close to 1 that accounts for where the crack sits, and \(a\) is the crack size.</p>
+    <div class="fml">\[\sigma_{\text{allow}}=\frac{K_{IC}}{Y\sqrt{\pi a}}\]</div>
+    <p style="font-size:13.5px"><b>The square root is the point.</b> Make the crack four times bigger and the stress you are allowed to apply halves — it does not drop to a quarter. So a small amount of crack growth forces a big cut in working load.</p>
+    <div class="link-line"><b>Builds on:</b> card 4. &nbsp;<b>Feeds:</b> fatigue (card 10) and ceramics (card 9b) — both are this equation wearing a different hat.</div>
+    <div class="say"><b>Say it cold:</b> Write \(K_I=Y\sigma\sqrt{\pi a}\), then say what happens to allowable stress when \(a\) quadruples.</div>
+  </div>
+
+</div>
+
+<!-- ============ TIER 4 ============ -->
+<div class="tier">
+  <div class="tier-head">
+    <span class="tier-num">TIER 4</span>
+    <span class="tier-title">Service, classes, and function</span>
+    <span class="tier-when">Weeks 7 &amp; 9–12 · branches, not new foundations</span>
+  </div>
+  <p class="tier-why">These look like five new topics. They are five applications of tiers 1–3. Each card below opens by naming which earlier card it is standing on — hold onto that and the volume shrinks.</p>
+</div>
+
+<div class="grid">
+
+  <div class="card fail">
+    <h4><span class="n">10</span> Service conditions: fatigue, creep, thermal</h4>
+    <p class="oneline">Three ways a part dies without the load ever being big enough to break it on day one.</p>
+    <div class="rowlbl">Fatigue — the same load, over and over</div>
+    <p style="font-size:13.5px">A crack starts at the surface, usually at a sharp corner, and grows a tiny amount every time the load cycles. Eventually it is big enough to break the part, at a load it carried happily for years. The standard graph plots the stress against the number of cycles the part survives, and because those are labelled S and N, everyone calls it an <b>S–N curve</b>. The fixes are to lower the stress, smooth the surface finish, round off sharp corners, or squeeze the surface into compression so cracks cannot open.</p>
+    <div class="rowlbl">Creep — hot and slow</div>
+    <p style="font-size:13.5px">A part under a steady load slowly stretches over months or years, without the load ever changing. It only matters when the material is hot — roughly above \(0.4\,T_m\), where \(T_m\) is the melting temperature measured in kelvin. That is why lead creeps in your hand and steel does not. There are three stages, and the steady middle stage is the one design calculations use.</p>
+    <div class="rowlbl">Thermal</div>
+    <div class="fml">\[\Delta L=\alpha L_0\Delta T\qquad \sigma_{\text{th}}\sim E\alpha\Delta T \text{ (if constrained)}\]</div>
+    <div class="fml">\[q_x=-kA\frac{dT}{dx}\]</div>
+    <p style="font-size:13px;color:#4b5563">Free to expand → strain, little stress. Bolted down → stress.</p>
+    <div class="link-line"><b>Builds on:</b> card 7 (fatigue is crack growth), card 4 (creep needs vacancies to diffuse).</div>
+    <div class="say"><b>Say it cold:</b> "Fatigue is repeated small loads growing a crack. Creep is hot and slow. Thermal stress only appears when expansion is blocked."</div>
+  </div>
+
+  <div class="card clas">
+    <h4><span class="n">9a</span> Polymers</h4>
+    <p class="oneline">Plastics: very long chain molecules tangled together. One question governs almost everything about how they behave, and it is whether they are being used above or below their glass transition temperature.</p>
+    <p style="font-size:13px;color:#4b5563">The <b>glass transition temperature</b>, written \(T_g\), is the temperature at which a polymer changes from hard and glassy to soft and rubbery. It is not melting — the material is still solid on both sides of it. \(T_m\) is the separate, higher melting temperature where it actually flows.</p>
+    <ul>
+      <li><b>Used below \(T_g\)</b> — glassy: stiff and brittle, snaps rather than bends.</li>
+      <li><b>Used above \(T_g\)</b> — rubbery: soft, stretchy, absorbs impact.</li>
+      <li><b>Longer chains</b> — more tangling, so tougher, but also thicker when melted and therefore harder to mould.</li>
+      <li><b>More crosslinks</b> (chemical bridges tying chains together) — stiffer, and it can never be melted down again.</li>
+      <li><b>Time matters</b> — polymers slowly stretch under a steady load even at room temperature.</li>
+    </ul>
+    <div class="fml">\[DP_n=\frac{M_n}{m}\]</div>
+    <p style="font-size:13px;color:#4b5563">This gives the <b>degree of polymerisation</b> — simply how many repeat units are joined together in an average chain. \(M_n\) is the average weight of a whole chain and \(m\) is the weight of one repeat unit, so dividing gives you the count.</p>
+    <div class="link-line"><b>Builds on:</b> card 1. The chains themselves are held together by strong covalent bonds, but the chains are only stuck to each other by weak secondary bonds, and that mismatch explains nearly all polymer behaviour.</div>
+    <div class="say"><b>Say it cold:</b> "Never say anything about a polymer without first saying whether it is being used above or below its glass transition temperature."</div>
+  </div>
+
+  <div class="card clas">
+    <h4><span class="n">9b</span> Ceramics</h4>
+    <p class="oneline">Card 7 with the volume turned up. Strong bonds, no dislocation glide to relieve stress, so whatever flaw is present decides the strength.</p>
+    <div class="fml">\[\sigma_f\approx\frac{K_{IC}}{Y\sqrt{\pi a}}\]</div>
+    <p style="font-size:13px;color:#4b5563">Same equation as card 7, just rearranged and renamed. \(\sigma_f\) is the stress at which this particular piece will fracture, set by \(a\), the biggest flaw that happens to be in it.</p>
+    <ul>
+      <li>Strength is <b>not one number</b> — it scatters with the flaw population.</li>
+      <li>Much stronger in <b>compression</b> than tension, because compression does not open cracks.</li>
+      <li>Surface finish is a mechanical property lever: chipping from machining = bigger flaws = weaker part.</li>
+    </ul>
+    <div class="link-line"><b>Builds on:</b> cards 1 and 7. &nbsp;<b>Same equation</b> as fracture, applied where there is no plasticity to save you.</div>
+    <div class="say"><b>Say it cold:</b> "Two ceramic batches with identical chemistry can test differently, because strength follows the biggest flaw."</div>
+  </div>
+
+  <div class="card clas">
+    <h4><span class="n">9c</span> Composites</h4>
+    <p class="oneline">Stiff fibres carrying load inside a soft matrix that holds them in place and transfers load into them. Direction is everything.</p>
+    <div class="fml">\[E_L=E_fV_f+E_mV_m \qquad \frac{1}{E_T}=\frac{V_f}{E_f}+\frac{V_m}{E_m}\]</div>
+    <p style="font-size:13px;color:#4b5563">The subscript \(f\) means fibre and \(m\) means matrix, so \(E_f\) is the stiffness of the fibre and \(V_f\) is the fraction of the volume that is fibre. \(E_L\) is the stiffness measured <b>along</b> the fibres and \(E_T\) is the stiffness measured <b>across</b> them.</p>
+    <ul>
+      <li><b>Along the fibres</b> — a simple weighted average, and since the fibres are far stiffer, you get most of their stiffness.</li>
+      <li><b>Across the fibres</b> — much weaker, because the load has to pass through the soft matrix and the softest part always dominates.</li>
+    </ul>
+    <div class="fml">\[l_c=\frac{\sigma_f^{*}d}{2\tau_c}\]</div>
+    <p style="font-size:13px;color:#4b5563">This is the <b>critical fibre length</b>: the shortest a fibre can be and still take up its full share of the load. \(\sigma_f^{*}\) is the fibre's own strength, \(d\) is the fibre diameter, and \(\tau_c\) is how well the fibre is glued to the matrix. Fibres shorter than \(l_c\) slide out instead of breaking, so their strength is wasted.</p>
+    <div class="link-line"><b>Builds on:</b> card 3. You cannot blend two stiffnesses until you know what stiffness means, which is the slope of the stress–strain curve.</div>
+    <div class="say"><b>Say it cold:</b> "Along the fibres it is a weighted average. Across them it is far lower. And fibres shorter than the critical length do not pull their weight."</div>
+  </div>
+
+  <div class="card func">
+    <h4><span class="n">8a</span> Electrical properties</h4>
+    <p class="oneline">Straight out of card 1. Free electrons conduct; locked electrons do not.</p>
+    <div class="fml">\[\sigma=nq\mu\qquad \rho=\frac{1}{\sigma}\qquad R=\frac{\rho L}{A}\]</div>
+    <p style="font-size:13px;color:#4b5563">A "carrier" is anything that carries charge through the material, usually an electron. \(n\) is how many carriers there are, \(q\) is the charge on each one, and \(\mu\) (mobility) is how freely they can move. \(\sigma\) is conductivity, how well it conducts. \(\rho\) is resistivity, the exact opposite, and \(R\) is the resistance of one particular part with length \(L\) and cross-sectional area \(A\).</p>
+    <ul>
+      <li>Conductivity is a <b>product</b> of how many carriers and how fast they move. Adding impurities to raise \(n\) also makes the carriers bump into things more, which lowers \(\mu\), so conductivity can barely change.</li>
+      <li>\(\rho\) describes the material. \(R\) describes an actual object. Never use one where the other is wanted.</li>
+    </ul>
+    <div class="fml">\[R_H\approx-\frac{1}{nq}\]</div>
+    <p style="font-size:13px;color:#4b5563">\(R_H\) is the <b>Hall coefficient</b>. Put a current through a material in a magnetic field and the carriers get pushed sideways, producing a small voltage across the sample. Measuring it tells you how many carriers there are and whether they are negative or positive.</p>
+    <div class="link-line"><b>Builds on:</b> card 1 and nothing else. This branch does not need the mechanical chain at all, which is why it can be learned on its own.</div>
+    <div class="say"><b>Say it cold:</b> "Conductivity is how many carriers times how freely they move. Resistance puts the size and shape of the part back in."</div>
+  </div>
+
+  <div class="card func">
+    <h4><span class="n">8b</span> Magnetic properties</h4>
+    <p class="oneline">Drive a magnetic field back and forth through a material and plot what you get out against what you put in. The shape of the loop you trace answers almost every question, and a fat loop wastes energy while a thin one does not.</p>
+    <div class="fml">\[M=\chi H\qquad B=\mu_0(H+M)\]</div>
+    <p style="font-size:13px;color:#4b5563">\(H\) is the magnetic field you apply. \(M\) is how strongly the material magnetises in response. \(B\) is the total field you end up with inside it. \(\chi\) (the Greek letter chi) is susceptibility, meaning how eagerly the material responds, and \(\mu_0\) is a fixed constant of nature.</p>
+    <ul>
+      <li><b>Soft magnetic</b> — thin loop. It magnetises and demagnetises easily, so it wastes very little energy each time you flip it. Used for transformer cores, motors, and anything running on alternating current.</li>
+      <li><b>Hard magnetic</b> — fat loop. It is difficult to demagnetise, so it holds onto its field. Used for permanent magnets.</li>
+      <li><b>The area inside the loop is the energy lost as heat</b> every time you go round it once. At mains frequency that is fifty times a second, so it adds up fast. This is the number that drives the design choice.</li>
+    </ul>
+    <p style="font-size:13px;color:#4b5563">Two words you will meet on this diagram: <b>remanence</b> is how much magnetism is left when you switch the field off, and <b>coercivity</b> is how hard you have to push in the opposite direction to wipe it out.</p>
+    <div class="link-line"><b>Pairs with:</b> card 8a. Both of these are about what a material can <em>do</em>, rather than whether it will break.</div>
+    <div class="say"><b>Say it cold:</b> "Thin loop means soft, and soft is for alternating current. Fat loop means hard, and hard is for permanent magnets. The area is the energy wasted."</div>
+  </div>
+
+</div>
+
+<!-- ============ TIER 5 ============ -->
+<div class="tier">
+  <div class="tier-head">
+    <span class="tier-num">TIER 5</span>
+    <span class="tier-title">The thing it is all for</span>
+    <span class="tier-when">Weeks 8 &amp; 13 · the design question</span>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card root" style="grid-column:1/-1">
+    <h4><span class="n">11</span> Materials selection — the answer structure</h4>
+    <p class="oneline">Design questions are not "name the best material". They are constrained choices, and the marks are in the reasoning, including why you rejected things.</p>
+    <div class="rowlbl">Six steps, in this order</div>
+    <ul>
+      <li><b>Function</b> — what must the part actually do?</li>
+      <li><b>Hard constraints</b> — turn words into property targets (must not yield, must not deflect, must not corrode, must be light).</li>
+      <li><b>Failure modes</b> — yield, fracture, fatigue, creep, corrosion. Name them before comparing anything.</li>
+      <li><b>Shortlist</b> by material class and the properties that matter.</li>
+      <li><b>Screen</b> by manufacturing route and cost / lifecycle.</li>
+      <li><b>Justify</b> — say why the winner won <em>and why each loser lost</em>.</li>
+    </ul>
+    <div class="rowlbl">And the five-line structure for any calculation question</div>
+    <ul>
+      <li>Classify: is this mechanical, thermal, electrical, magnetic, phase, or composite?</li>
+      <li>State assumptions and units.</li>
+      <li>One governing equation.</li>
+      <li>Check the trend makes physical sense.</li>
+      <li>Finish with one sentence of design meaning.</li>
+    </ul>
+    <div class="say"><b>Say it cold:</b> "If I cannot say why a candidate was rejected, my selection answer is incomplete."</div>
+  </div>
+</div>
+
+<!-- ============ PATTERNS ============ -->
+<h2 id="patterns">Five patterns that keep coming back</h2>
+<p class="tier-why">These shapes repeat across unrelated topics. Learning the shape once means five topics get cheaper.</p>
+
+<div class="pattern">
+  <h4>1 · The square-root pattern — cracks</h4>
+  <p>\(\sigma \propto 1/\sqrt{a}\). Quadruple the flaw, halve the allowable stress. Appears in fracture, in ceramics, and behind fatigue life.</p>
+</div>
+<div class="pattern">
+  <h4>2 · The inverse-square-root pattern — grain size</h4>
+  <p>\(\sigma_y=\sigma_0+k_y d^{-1/2}\). Grains four times bigger → the strengthening term halves. Same maths as pattern 1, opposite direction of benefit.</p>
+</div>
+<div class="pattern">
+  <h4>3 · The exponential pattern — temperature</h4>
+  <p>\(n_v=N\exp(-Q_v/kT)\). Anything diffusion-driven — vacancies, creep, sintering, grain growth — accelerates <em>sharply</em> with temperature. In an answer, say "exponentially", not "a bit".</p>
+</div>
+<div class="pattern">
+  <h4>4 · The weighted-average pattern — mixtures</h4>
+  <p>The lever rule and the composite rule of mixtures are the same algebra: a total is split between two contributors in proportion to how much of each you have. \(C_0=W_\alpha C_\alpha+W_\beta C_\beta\) and \(E_L=E_fV_f+E_mV_m\).</p>
+</div>
+<div class="pattern">
+  <h4>5 · The obstacle pattern — strength versus ductility</h4>
+  <p>Block dislocations and yield goes up while ductility goes down. Grain refinement, alloying, cold work, precipitates — four names, one mechanism, one price. Annealing runs it backwards.</p>
+</div>
+
+<!-- ============ EQUATION SHEET ============ -->
+<h2 id="sheet">The one-page equation sheet</h2>
+<p class="tier-why">Every formula in the subject, with what it is <em>for</em>. If a formula is not on this list, it is detail, not core.</p>
+
+<table>
+<tr><th style="width:24%">Equation</th><th style="width:28%">Symbols</th><th>Use it when</th></tr>
+<tr class="grp"><td colspan="3">Structure</td></tr>
+<tr><td class="k">\(\rho=nA/(V_cN_A)\)</td><td>\(n\) atoms/cell, \(A\) atomic mass</td><td>Density from crystal geometry</td></tr>
+<tr class="grp"><td colspan="3">Mechanical</td></tr>
+<tr><td class="k">\(\sigma=F/A_0\)</td><td>\(A_0\) original area</td><td>Engineering stress</td></tr>
+<tr><td class="k">\(\varepsilon=\Delta L/L_0\)</td><td>\(L_0\) original length</td><td>Engineering strain</td></tr>
+<tr><td class="k">\(E=\sigma/\varepsilon\)</td><td>slope of the straight part</td><td>Stiffness, elastic deflection</td></tr>
+<tr><td class="k">\(\sigma_t=\sigma(1+\varepsilon)\)</td><td>true stress</td><td>Only when large plastic strain matters</td></tr>
+<tr><td class="k">\(U_r=\sigma_y^2/2E\)</td><td>resilience</td><td>Springs, recoverable energy</td></tr>
+<tr><td class="k">\(\sigma_y=\sigma_0+k_yd^{-1/2}\)</td><td>\(d\) grain size</td><td>Grain-size strengthening</td></tr>
+<tr class="grp"><td colspan="3">Failure</td></tr>
+<tr><td class="k">\(K_I=Y\sigma\sqrt{\pi a}\)</td><td>\(a\) crack size</td><td>Is the crack about to run?</td></tr>
+<tr><td class="k">\(\sigma_{\text{allow}}=K_{IC}/(Y\sqrt{\pi a})\)</td><td>\(K_{IC}\) toughness</td><td>Safe stress with a known flaw</td></tr>
+<tr><td class="k">\(n_v=N e^{-Q_v/kT}\)</td><td>\(k=8.62\times10^{-5}\) eV/K</td><td>Vacancies, diffusion, creep trend</td></tr>
+<tr class="grp"><td colspan="3">Thermal</td></tr>
+<tr><td class="k">\(\Delta L=\alpha L_0\Delta T\)</td><td>\(\alpha\) expansion coefficient</td><td>Free expansion</td></tr>
+<tr><td class="k">\(\sigma_{\text{th}}\sim E\alpha\Delta T\)</td><td>constrained</td><td>Bolted or clamped parts</td></tr>
+<tr><td class="k">\(q_x=-kA\,dT/dx\)</td><td>\(k\) conductivity</td><td>Heat flow</td></tr>
+<tr class="grp"><td colspan="3">Phases</td></tr>
+<tr><td class="k">\(W_\alpha=\dfrac{C_\beta-C_0}{C_\beta-C_\alpha}\)</td><td>tie-line ends</td><td>How much of each phase</td></tr>
+<tr class="grp"><td colspan="3">Classes</td></tr>
+<tr><td class="k">\(DP_n=M_n/m\)</td><td>chain length</td><td>Polymer molecular size</td></tr>
+<tr><td class="k">\(E_L=E_fV_f+E_mV_m\)</td><td>along fibres</td><td>Composite stiffness, longitudinal</td></tr>
+<tr><td class="k">\(1/E_T=V_f/E_f+V_m/E_m\)</td><td>across fibres</td><td>Composite stiffness, transverse</td></tr>
+<tr><td class="k">\(l_c=\sigma_f^{*}d/(2\tau_c)\)</td><td>critical length</td><td>Are the fibres long enough?</td></tr>
+<tr class="grp"><td colspan="3">Functional</td></tr>
+<tr><td class="k">\(\sigma=nq\mu\)</td><td>carriers × charge × mobility</td><td>Conductivity</td></tr>
+<tr><td class="k">\(R=\rho L/A\)</td><td>geometry included</td><td>Resistance of an actual part</td></tr>
+<tr><td class="k">\(R_H\approx-1/(nq)\)</td><td>Hall coefficient</td><td>Carrier type and density</td></tr>
+<tr><td class="k">\(B=\mu_0(H+M)\), \(M=\chi H\)</td><td>magnetisation</td><td>Magnetic response</td></tr>
+</table>
+
+<h3>Sanity numbers worth carrying</h3>
+<p class="tier-why">Not for marks — for catching an answer that is off by a thousand.</p>
+<table>
+<tr><th>Material</th><th>\(E\) (GPa)</th><th>Density (g/cm³)</th><th>Behaviour</th></tr>
+<tr><td class="k">Steel</td><td>~200</td><td>~7.8</td><td>Stiff, heavy, ductile</td></tr>
+<tr><td class="k">Aluminium</td><td>~70</td><td>~2.7</td><td>Third the stiffness, third the weight</td></tr>
+<tr><td class="k">Ceramic (alumina)</td><td>~380</td><td>~3.9</td><td>Stiffest, brittle in tension</td></tr>
+<tr><td class="k">Polymer</td><td>~1–4</td><td>~1.0</td><td>Very compliant, light, creeps</td></tr>
+<tr><td class="k">Carbon fibre</td><td>~230</td><td>~1.8</td><td>Steel stiffness at a quarter the weight</td></tr>
+</table>
+
+<!-- ============ TRAPS ============ -->
+<h2 id="traps">Traps that cost marks</h2>
+<div class="trap">
+<ul>
+  <li><b>Using the current area instead of \(A_0\).</b> Engineering stress always divides by the original area.</li>
+  <li><b>Lever rule with the near end.</b> \(W_\alpha\) uses the distance to \(C_\beta\) — the far end. Sanity check: if \(C_0\) sits close to \(C_\alpha\), then \(W_\alpha\) should be large.</li>
+  <li><b>Reading the tie-line at the wrong temperature.</b> The tie-line is horizontal, at the temperature you were given.</li>
+  <li><b>Treating crack growth as linear.</b> It is a square root. Four times the crack, half the stress.</li>
+  <li><b>Hall–Petch upside down.</b> \(d^{-1/2}\) means <em>smaller</em> grains are stronger.</li>
+  <li><b>Mixing \(\rho\) and \(R\).</b> Resistivity is the material. Resistance needs \(L\) and \(A\).</li>
+  <li><b>Discussing a polymer without a service temperature.</b> Stiff or floppy depends entirely on \(T\) versus \(T_g\).</li>
+  <li><b>Quoting one strength for a ceramic.</b> It scatters with flaw size, and compression is a different story from tension.</li>
+  <li><b>Composite stiffness in the wrong direction.</b> \(E_L\) is the impressive number; \(E_T\) is what fails in service.</li>
+  <li><b>Saying temperature "increases" diffusion.</b> Say exponentially.</li>
+  <li><b>Forgetting the design sentence.</b> Most short-answer questions want one line of "so the part should…" at the end.</li>
+</ul>
+</div>
+
+<!-- ============ PRACTICE ============ -->
+<h2 id="practice">How to practise it — the three-rung ladder</h2>
+<p class="tier-why">Same content, three depths. Do not move a card up a rung until the rung below is automatic. This is what stops revision turning into re-reading.</p>
+
+<div class="ladder">
+  <div class="rung">
+    <div class="lv">Rung 1 · Name</div>
+    <h4>Can you say it?</h4>
+    <p>Cover the card. Say the green line out loud. Write the formula and the units of every symbol. Ten cards in ten minutes.</p>
+  </div>
+  <div class="rung l2">
+    <div class="lv">Rung 2 · Use</div>
+    <h4>Can you get a number?</h4>
+    <p>One worked example per card from the weekly deep dive. Units on every line. Check the trend before you accept the answer.</p>
+  </div>
+  <div class="rung l3">
+    <div class="lv">Rung 3 · Decide</div>
+    <h4>Can you choose with it?</h4>
+    <p>Answer "which material, and why not the other one". This is where the marks live in weeks 8 and 13, and it needs rungs 1 and 2 to be free.</p>
+  </div>
+</div>
+
+<div class="note">
+<b>Spacing.</b> Re-test a card at <b>2 days, 7 days, then 21 days</b>. A card that survives 21 days is done — stop revisiting it and spend the time on the ones that keep collapsing. Keep a short list of collapsers rather than re-reading everything.
+</div>
+
+<h3>Twelve recall prompts</h3>
+<p class="tier-why">Answer out loud first, then open. If you can do all twelve without notes, the core is in place.</p>
+
+<details class="q"><summary>1. Why does a metal bend where a ceramic snaps?</summary>
+<div class="ans">Metals have delocalised electrons and planes that can slip via dislocation movement, so they deform plastically. Ceramic bonds are locked and directional with no easy dislocation glide, so stress builds at a flaw until it fractures.</div></details>
+
+<details class="q"><summary>2. Point at yield, UTS and toughness on a stress–strain curve.</summary>
+<div class="ans">Yield is where the line stops being straight (read by 0.2% offset). UTS is the highest point. Toughness is the whole area under the curve up to fracture. Resilience is only the triangle under the elastic part.</div></details>
+
+<details class="q"><summary>3. Grains grow from 10 µm to 40 µm. What happens to Hall–Petch strengthening?</summary>
+<div class="ans">Four times bigger, so \(d^{-1/2}\) scales by \(1/\sqrt{4}=0.5\). The grain-boundary contribution to yield halves.</div></details>
+
+<details class="q"><summary>4. Name the four strengthening routes and the one thing they share.</summary>
+<div class="ans">Grain refinement, solid solution, strain hardening, precipitation. All four obstruct dislocation movement, and all four trade ductility for yield strength.</div></details>
+
+<details class="q"><summary>5. A crack grows from 2 mm to 8 mm. What happens to allowable stress?</summary>
+<div class="ans">\(\sigma_{\text{allow}}=K_{IC}/(Y\sqrt{\pi a})\), so it scales by \(1/\sqrt{4}=1/2\). The allowable stress halves.</div></details>
+
+<details class="q"><summary>6. \(C_\alpha=10\), \(C_\beta=70\), \(C_0=40\) wt%. Find both phase fractions.</summary>
+<div class="ans">\(W_\alpha=(70-40)/(70-10)=30/60=0.5\) and \(W_\beta=(40-10)/60=0.5\). Half and half, which makes sense since \(C_0\) sits exactly midway.</div></details>
+
+<details class="q"><summary>7. Why does a bar heated 100 °C sometimes carry no stress and sometimes a lot?</summary>
+<div class="ans">Free to expand, the temperature change produces strain \(\Delta L=\alpha L_0\Delta T\) with little stress. Constrained, the expansion cannot happen, so stress of order \(E\alpha\Delta T\) appears instead.</div></details>
+
+<details class="q"><summary>8. Two polymers, same chemistry, one is stiff and one is floppy at room temperature. Why?</summary>
+<div class="ans">Their glass transition temperatures differ. The one with \(T_g\) above room temperature is glassy and stiff; the one with \(T_g\) below is rubbery. Crosslink density can also differ.</div></details>
+
+<details class="q"><summary>9. Doping doubles carrier density but conductivity barely moves. Explain.</summary>
+<div class="ans">\(\sigma=nq\mu\). The added dopant atoms scatter carriers, so mobility \(\mu\) falls roughly as much as \(n\) rises and the product stays similar.</div></details>
+
+<details class="q"><summary>10. \(E_f=230\) GPa, \(E_m=3\) GPa, \(V_f=0.55\). Longitudinal modulus?</summary>
+<div class="ans">\(E_L=230(0.55)+3(0.45)=126.5+1.35=127.85\) GPa. Note the matrix contributes almost nothing along the fibres.</div></details>
+
+<details class="q"><summary>11. Transformer core: soft or hard magnetic, and why?</summary>
+<div class="ans">Soft. It reverses magnetisation every cycle, and loop area is energy lost as heat per cycle, so you want a thin loop with low coercivity. Hard magnets would waste enormous energy.</div></details>
+
+<details class="q"><summary>12. Two ceramic batches, identical composition, different measured strength. Why?</summary>
+<div class="ans">Ceramic strength is flaw-controlled via \(\sigma_f\approx K_{IC}/(Y\sqrt{\pi a})\). Different surface finish or processing gives a different largest-flaw size, so measured strength scatters even with identical chemistry.</div></details>
+
+<div class="note">
+<b>If you are pre-reading before session:</b> cards 1, 2, 3 and 4 are the whole job. Everything from tier 3 down is better learned in class, where the lecture supplies the examples and the lab makes the curve real. Come back to this page each week and fill in one more card.
+</div>
+
+<p class="foot"><a href="reading-the-pictures.html">Reading the Pictures →</a> &nbsp;·&nbsp; <a href="index.html">DPEN103 home</a> &nbsp;·&nbsp; <a href="week-by-week-deep-dive.html">All weekly deep dives</a> &nbsp;·&nbsp; <a href="../index.html">Siddharth's study guides</a></p>
+
+</div>
+</body>
+</html>
