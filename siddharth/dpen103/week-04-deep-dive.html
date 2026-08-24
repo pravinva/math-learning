@@ -1,58 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DPEN103 Week 4 Deep Dive</title>
-<style>body{font-family:Arial,sans-serif;max-width:980px;margin:0 auto;padding:24px 14px;background:#fafaf8;color:#2c2a28;line-height:1.65}h1,h2,h3{color:#1B3A5C}.box{background:#fff;border:1px solid #e7e4dd;border-radius:8px;padding:12px;margin:10px 0}.quiz{background:#fffdf8;border:1px dashed #c9c3b8;border-radius:8px;padding:12px}.eq{background:#fff;border:1px solid #e7e4dd;border-radius:7px;padding:8px 10px;margin:8px 0}.call{background:#fff4e9;border-left:3px solid #FF3621;padding:10px 12px;border-radius:0 8px 8px 0;margin:10px 0}.link{color:#185FA5;text-decoration:none}
-.video-lesson{background:#eef6ff;border:1px solid #b9d7f2;border-radius:10px;padding:16px;margin:16px 0 20px}
-.video-lesson h2{margin:0 0 6px}.video-intro{margin:0 0 14px;color:#334e68}
-.video-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-.video-card{background:#fff;border:1px solid #d9e7f3;border-radius:9px;padding:12px}
-.video-card h3{margin:0 0 6px;font-size:1.05rem}.video-card p{margin:7px 0}
-.video-wrap{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:7px;background:#102a43}
-.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.watch-for{padding-left:20px;margin:8px 0}.watch-for li{margin:4px 0}
-.video-prompt{background:#fff8e8;border-left:3px solid #f0a202;padding:8px 10px;border-radius:0 6px 6px 0;margin-top:10px!important}
-@media(max-width:520px){.video-grid{grid-template-columns:1fr}.video-lesson{padding:12px}}
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN103 Week 4 — Strengthening, Fracture and Fatigue</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+ onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+<link rel="stylesheet" href="lesson.css">
 </head>
 <body>
-<h1>Week 4 Deep Dive: Strengthening + Fracture and Fatigue</h1>
-<p><strong>Outline mapping:</strong> Ch7 §7.8-7.9; Ch8 §8.1-8.8.</p>
-<section class="video-lesson" aria-labelledby="video-heading-4">
-<h2 id="video-heading-4">Watch it visually</h2>
-<p class="video-intro">Use these as a visual bridge after your first read of the lesson. Do not watch passively: read the “watch for” points first, pause to predict, then answer the recall prompt without replaying.</p>
-<div class="video-grid"><article class="video-card">
-<h3>Fracture mechanics</h3>
-<p><strong>Why this one:</strong> It shows why a small flaw can control failure even when the average stress seems safe.</p>
-<div class="video-wrap"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/SXNOj5Xb5pE" title="Fracture mechanics" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
-<p><strong>Watch for:</strong></p><ul class="watch-for"><li>Stress concentration at a crack tip.</li><li>The roles of crack size, geometry and fracture toughness.</li><li>Why inspection and allowable flaw size are design decisions.</li></ul>
-<p class="video-prompt"><strong>After watching:</strong> If crack size increases fourfold, use the square-root relationship to say what happens to allowable stress.</p>
-<p><small>Source: Taylor Sparks · <a class="link" href="https://www.youtube.com/watch?v=SXNOj5Xb5pE" target="_blank" rel="noopener">open on YouTube</a></small></p>
-</article><article class="video-card">
-<h3>Using S–N curves to predict fatigue</h3>
-<p><strong>Why this one:</strong> It matches the fatigue graph used in this lesson and demonstrates how to read life from cyclic stress.</p>
-<div class="video-wrap"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/nHr8hNObsnU" title="Using S–N curves to predict fatigue" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
-<p><strong>Watch for:</strong></p><ul class="watch-for"><li>S means stress amplitude and N means number of cycles to failure.</li><li>Lower cyclic stress usually gives longer life.</li><li>Why some materials show an endurance-limit plateau while others do not.</li></ul>
-<p class="video-prompt"><strong>After watching:</strong> Given a marked stress amplitude, trace across and down an S–N graph and state the predicted life in words.</p>
-<p><small>Source: Taylor Sparks · <a class="link" href="https://www.youtube.com/watch?v=nHr8hNObsnU" target="_blank" rel="noopener">open on YouTube</a></small></p>
-</article></div>
-</section>
-<div class="box"><h2>Full scaffold</h2><ol><li>Classify loading: static, impact, or cyclic.</li><li>If flaw/crack exists, switch to stress-intensity approach.</li><li>Compute allowable stress from KIC criterion.</li><li>For cyclic service, evaluate initiation and propagation factors.</li><li>Translate result into inspection interval or redesign choice.</li></ol></div>
-<div class="box"><h2>Core equations</h2><div class="eq">KI = Y * sigma * sqrt(pi*a)</div><div class="eq">Fracture risk when KI >= KIC</div><div class="eq">Allowable stress: sigma_allow = KIC / (Y*sqrt(pi*a))</div><p>This makes flaw size central to safe design. Doubling crack size does not just double risk; allowable stress falls with square-root relation.</p></div>
-<div class="box"><h2>Worked example</h2><p>Given KIC=40 MPa*sqrt(m), Y=1.1, a=2 mm=0.002 m:</p><p>sigma_allow = 40 / (1.1*sqrt(pi*0.002)) ≈ 459 MPa.</p><p>If crack grows to 8 mm (4x), allowable stress drops by factor 1/sqrt(4)=1/2, to about 230 MPa.</p><div class="call"><strong>Interpretation:</strong> small crack growth can force major load reduction.</div></div>
-<div class="box"><h2>Fatigue reasoning path</h2><ol><li>Determine stress range and mean stress.</li><li>Use S-N trend for baseline life.</li><li>Apply modifiers: notch, surface finish, size, environment, residual stress.</li><li>Decide design action: lower stress, improve finish, introduce compressive surface stress, or change material.</li></ol></div>
-<div class="quiz">
-  <h2>Quiz (with full worked solutions)</h2>
-  <ol>
-    <li>If crack size doubles, by what factor does allowable stress change (all else fixed)?</li>
-    <li>Why can a component fail in fatigue at stresses below yield?</li>
-    <li>Name two practical ways to increase fatigue life without changing base alloy.</li>
-  </ol>
-  <details><summary>Solution 1</summary><p>Allowable stress scales with 1/sqrt(a), so doubling a reduces allowable stress by 1/sqrt(2) (about 0.707 of original).</p></details>
-  <details><summary>Solution 2</summary><p>Cyclic loading drives crack initiation/propagation over many cycles; local crack-tip conditions can cause damage accumulation even when nominal stress is below yield.</p></details>
-  <details><summary>Solution 3</summary><p>Improve surface finish and introduce compressive residual stress (for example shot peening). Both reduce effective crack initiation/growth tendency.</p></details>
+<div class="wrap">
+
+<div class="hero">
+  <div class="eyebrow">DPEN103 · Week 4 · Materials in Design</div>
+  <h1>Strengthening, Fracture and Fatigue</h1>
+  <p class="lede">Two ways of failing that both ignore the yield strength you spent Week 2 measuring. A cracked part fails from the crack, at a stress the intact material would shrug off. A repeatedly loaded part fails from the repetition, at a stress that is perfectly safe once. Both need their own maths.</p>
+  <div class="chiprow">
+    <a class="chip" href="index.html">DPEN103 home</a>
+    <a class="chip" href="core-map.html">Core map</a>
+    <a class="chip" href="reading-the-pictures.html">Reading the pictures</a>
+    <a class="chip wk" href="week-01-deep-dive.html">Wk 1</a>
+    <a class="chip wk" href="week-02-deep-dive.html">Wk 2</a>
+    <a class="chip wk" href="week-03-deep-dive.html">Wk 3</a>
+    <a class="chip wk on" href="week-04-deep-dive.html">Wk 4</a>
+    <a class="chip wk" href="week-05-deep-dive.html">Wk 5</a>
+    <a class="chip wk" href="week-06-deep-dive.html">Wk 6</a>
+    <a class="chip wk" href="week-07-deep-dive.html">Wk 7</a>
+    <a class="chip wk" href="week-08-deep-dive.html">Wk 8</a>
+    <a class="chip wk" href="week-09-deep-dive.html">Wk 9</a>
+    <a class="chip wk" href="week-10-deep-dive.html">Wk 10</a>
+    <a class="chip wk" href="week-11-deep-dive.html">Wk 11</a>
+    <a class="chip wk" href="week-12-deep-dive.html">Wk 12</a>
+    <a class="chip wk" href="week-13-deep-dive.html">Wk 13</a>
+  </div>
 </div>
-<p><a class="link" href="week-by-week-deep-dive.html">← Back to weekly hub</a></p>
+
+<div class="spine">
+  <div class="lbl">What this week is really asking</div>
+  <div class="big">This part is below yield. Why is it going to fail anyway?</div>
+  <p>Week 2 asked how strong the material is. This week asks a harder question — how strong is <em>this particular part</em>, given the flaw it already contains and the number of load cycles ahead of it. That is usually a much smaller number.</p>
+</div>
+
+<div class="note"><b>Where this sits.</b> This is card 7 and part of card 10 of the <a href="core-map.html">core map</a>. It builds directly on the flaws from Week 3, and Week 12 applies the same fracture equation to ceramics, where it dominates everything. <span style="color:#6b6762">Textbook sections: Callister Ch7 §7.8–7.9, Ch8 §8.1–8.8.</span></div>
+
+<h2 id="words">The words and symbols, in plain English</h2>
+<p class="intro">Everything this week uses, spelled out before it is used. Come back here whenever a symbol stops making sense.</p>
+<table>
+<tr><th>Short form</th><th>What it stands for</th><th>What it actually means</th></tr>
+<tr class="grp"><td colspan="3">Fracture</td></tr>
+<tr><td class="k">Flaw / crack</td><td>—</td><td>A sharp defect. Stress concentrates enormously at its tip, which is why it matters out of all proportion to its size.</td></tr>
+<tr><td class="k">\(a\)</td><td>crack length</td><td>Half the length for a crack inside the material, the full length for one at the surface. Getting this convention wrong is a common error.</td></tr>
+<tr><td class="k">\(K_I\)</td><td>stress intensity</td><td>One number combining how hard you are pulling with how big the crack is. This is the <em>demand</em> on the material.</td></tr>
+<tr><td class="k">\(K_{IC}\)</td><td>fracture toughness</td><td>The largest stress intensity that material can survive. This is the <em>limit</em>, and it is a material property.</td></tr>
+<tr><td class="k">\(Y\)</td><td>geometry factor</td><td>A dimensionless number, usually near 1, accounting for the shape of the part and where the crack sits.</td></tr>
+<tr><td class="k">Ductile fracture</td><td>—</td><td>Tears slowly with visible deformation and necking first. Gives warning.</td></tr>
+<tr><td class="k">Brittle fracture</td><td>—</td><td>Snaps suddenly with no deformation. No warning at all.</td></tr>
+<tr class="grp"><td colspan="3">Fatigue</td></tr>
+<tr><td class="k">Fatigue</td><td>—</td><td>Failure caused by a load repeating many times, at a level that is completely safe if applied once.</td></tr>
+<tr><td class="k">Cycle</td><td>—</td><td>One complete load-and-unload. Fatigue life is counted in these.</td></tr>
+<tr><td class="k">S–N curve</td><td>stress versus number of cycles</td><td>The standard fatigue graph: cyclic stress up the side, cycles to failure along the bottom. That is genuinely all the name means.</td></tr>
+<tr><td class="k">Stress amplitude</td><td>—</td><td>Half the difference between the highest and lowest stress in a cycle. This is what drives fatigue damage.</td></tr>
+<tr><td class="k">Mean stress</td><td>—</td><td>The average level the cycling happens around. A higher mean makes the same amplitude more damaging.</td></tr>
+<tr><td class="k">Endurance limit</td><td>—</td><td>A stress low enough that the part never fails from fatigue, no matter how many cycles. Steels have one; aluminium does not.</td></tr>
+<tr><td class="k">Shot peening</td><td>—</td><td>Blasting a surface with small beads to leave it in compression, which makes it much harder for fatigue cracks to start.</td></tr>
+</table>
+
+<h2 id="ideas">The ideas, one card at a time</h2>
+<p class="intro">Cover each card and try the green line out loud before reading on. If it comes out, move to the next one.</p>
+<div class="grid">
+  <div class="card fail">
+  <h4><span class="n">1</span> Why a crack changes everything</h4>
+  <p class="oneline">Stress flows through a part rather like water through a channel. A crack forces all of it around a sharp tip, and the local stress there can be many times the average you calculated.</p>
+  <p>This is why fracture needs its own framework. Comparing average stress with yield strength tells you nothing useful about a cracked part, because the average is not what the crack tip experiences.</p>
+  <p>Sharpness matters as much as size. A long crack with a rounded end can be less dangerous than a short, sharp one, which is why drilling a hole at the end of a crack is a genuine field repair — it blunts the tip.</p>
+  <div class="link-line"><b>Feeds:</b> the equation in the next card, and every design rule about fillets, radii and avoiding sharp internal corners.</div>
+  <div class="say"><b>Say it cold:</b> "A crack concentrates stress at its tip, so the average stress in the part no longer tells you whether it is safe."</div>
+  </div>
+<div class="card fail">
+  <h4><span class="n">2</span> The fracture equation</h4>
+  <p class="oneline">One equation for the demand, one material property for the limit, and failure when the first reaches the second.</p>
+  <div class="fml">\[K_I=Y\sigma\sqrt{\pi a}\]</div>
+  <p class="whereby">\(K_I\) is stress intensity, \(Y\) is the geometry factor, \(\sigma\) the applied stress and \(a\) the crack length. Units are MPa·√m.</p>
+  <div class="fml">\[\text{Fracture when }K_I\ge K_{IC}\qquad\Rightarrow\qquad\sigma_{\text{allow}}=\frac{K_{IC}}{Y\sqrt{\pi a}}\]</div>
+  <p class="whereby">Rearranged to give the largest stress the part can carry with that crack in it.</p>
+  <p>Keep the two symbols straight, because they look almost identical and mean opposite things. \(K_I\) is what you are doing to the part — it changes if you change the load or the crack grows. \(K_{IC}\) is what the material can take, and it only changes if you change material.</p>
+  <div class="rowlbl">The shape to remember</div>
+  <ul><li>Allowable stress goes as \(1/\sqrt{a}\).</li><li>Four times the crack length halves the allowable stress.</li><li>Twice the crack length divides it by \(\sqrt2\), about 0.71.</li></ul>
+  <div class="link-line"><b>Feeds:</b> Week 12, where ceramic strength is entirely governed by this relationship, and inspection intervals in real engineering practice.</div>
+  <div class="say"><b>Say it cold:</b> "K-one is the demand and K-one-C is the limit; allowable stress falls as one over the square root of crack length."</div>
+  </div>
+<div class="card fail">
+  <h4><span class="n">3</span> Fatigue — failure by repetition</h4>
+  <p class="oneline">A load far below yield, applied enough times, will still break the part. Most in-service metal failures are this, not overload.</p>
+  <p>The sequence is always the same. A tiny crack starts, usually at a surface imperfection or a stress concentration. Each cycle pushes it a fraction further. It grows quietly for most of the life of the part, then reaches the size where the fracture equation above takes over, and the final break is instant.</p>
+  <p>That silent growth is what makes fatigue dangerous: there is no warning deflection, no visible deformation, and the final failure looks brittle even in a ductile metal.</p>
+  <div class="rowlbl">Reading the S–N curve</div>
+  <ul><li>Cyclic stress amplitude runs up the side; cycles to failure run along the bottom, on a log scale.</li><li>Lower stress, longer life — the curve falls to the right.</li><li>Steel flattens into a horizontal <b>endurance limit</b>: below that stress it survives indefinitely.</li><li>Aluminium never flattens, so there is no safe stress — only a life at a stated number of cycles.</li></ul>
+  <div class="link-line"><b>Feeds:</b> the design fixes below, and the reason Week 8 selection answers must state the loading type.</div>
+  <div class="say"><b>Say it cold:</b> "Fatigue is a crack growing quietly under repeated load below yield, and steel has an endurance limit while aluminium does not."</div>
+  </div>
+<div class="card clas">
+  <h4><span class="n">4</span> What actually fixes a fatigue problem</h4>
+  <p class="oneline">Fatigue starts at surfaces, so the effective fixes are mostly about surfaces. Notably, a stronger alloy is often the least useful change.</p>
+  <ul><li><b>Improve the surface finish.</b> Machining marks are crack starters. Polishing can extend life substantially at no material cost.</li><li><b>Put the surface into compression</b> — shot peening or rolling. A crack struggles to open against compression. This is one of the cheapest and most effective interventions available.</li><li><b>Remove stress concentrations.</b> Generous fillet radii instead of sharp internal corners. A sharp step is a crack waiting to happen.</li><li><b>Lower the stress amplitude.</b> A thicker section, or reduce the load swing. Amplitude drives the damage.</li><li><b>Change material last.</b> A higher-strength alloy is often <em>more</em> notch-sensitive, so it can perform worse in fatigue despite the better tensile numbers.</li></ul>
+  <p>The last point catches people out and makes a good exam answer. Fatigue resistance and tensile strength are related but not the same, and optimising the wrong one is a real engineering mistake.</p>
+  <div class="link-line"><b>Feeds:</b> Weeks 8 and 13, where "how would you improve this part" is exactly the question asked.</div>
+  <div class="say"><b>Say it cold:</b> "Fatigue starts at surfaces, so finish, compressive residual stress and generous radii beat a stronger alloy."</div>
+  </div>
+</div>
+
+<h2 id="watch">Watch it visually</h2>
+<p class="intro">Read the "watch for" points first, pause to predict, then answer the prompt without replaying. Watching without answering the prompt feels productive and teaches very little.</p>
+<div class="videos">
+<div class="vid">
+<h4>Fracture mechanics</h4>
+<p><b>Why this one:</b> It shows why a small flaw governs failure even when the average stress looks comfortable.</p>
+<div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/SXNOj5Xb5pE" title="Fracture mechanics" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+<p><b>Watch for:</b></p><ul><li>How stress concentrates at a crack tip.</li><li>The separate roles of crack size, geometry and fracture toughness.</li><li>Why allowable flaw size is a design decision, not an accident.</li></ul>
+<p class="after"><b>After watching:</b> If crack size grows fourfold, use the square-root relationship to state what happens to allowable stress.</p>
+<p class="src">Source: Taylor Sparks · <a href="https://www.youtube.com/watch?v=SXNOj5Xb5pE" target="_blank" rel="noopener">open on YouTube</a></p>
+</div>
+<div class="vid">
+<h4>Using S–N curves to predict fatigue</h4>
+<p><b>Why this one:</b> It matches the fatigue graph used here and reads a life straight off the curve.</p>
+<div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/nHr8hNObsnU" title="Using S–N curves to predict fatigue" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+<p><b>Watch for:</b></p><ul><li>S is stress amplitude and N is cycles to failure.</li><li>Lower cyclic stress giving longer life.</li><li>Why some materials show an endurance-limit plateau and others never do.</li></ul>
+<p class="after"><b>After watching:</b> Given a stress amplitude, trace across and down an S–N curve and state the predicted life in words.</p>
+<p class="src">Source: Taylor Sparks · <a href="https://www.youtube.com/watch?v=nHr8hNObsnU" target="_blank" rel="noopener">open on YouTube</a></p>
+</div>
+</div>
+
+<h2 id="worked">Worked examples, every step shown</h2>
+<p class="intro">Units on every line. Predict the direction of the answer before you calculate, then check the result against that prediction.</p>
+<div class="work"><h4>Worked example 1 — allowable stress with a known crack</h4>
+<div class="given"><b>Given:</b> \(K_{IC}=40\) MPa·√m, \(Y=1.1\), crack \(a=2\) mm \(=0.002\) m.</div>
+<ol><li>Rearrange: \(\sigma_{\text{allow}}=K_{IC}/(Y\sqrt{\pi a})\).</li><li>Compute the root: \(\sqrt{\pi\times0.002}=\sqrt{0.00628}=0.0793\).</li><li>Denominator: \(1.1\times0.0793=0.0872\).</li><li>\(\sigma_{\text{allow}}=40/0.0872\approx459\) MPa.</li><li>Convert the crack length to metres before anything else — millimetres here give an answer wrong by a factor of about 32.</li></ol>
+<div class="concl"><b>What it means:</b> With that flaw present the part is limited to roughly 459 MPa, regardless of what its yield strength happens to be.</div>
+</div>
+<div class="work"><h4>Worked example 2 — the crack grows</h4>
+<div class="given"><b>Given:</b> Same part, but the crack has grown from 2 mm to 8 mm.</div>
+<ol><li>The crack is four times longer, and \(\sigma_{\text{allow}}\propto1/\sqrt a\).</li><li>So it scales by \(1/\sqrt4=1/2\).</li><li>New allowable stress \(\approx459/2\approx230\) MPa.</li></ol>
+<div class="concl"><b>What it means:</b> A crack growth of 6 mm halved the load the part can carry. This is exactly why inspection intervals exist, and why "it passed inspection last year" is not a safety argument.</div>
+</div>
+<div class="work"><h4>Worked example 3 — doubling the crack</h4>
+<p style="font-size:13.5px">If crack size doubles with everything else fixed, what happens to allowable stress?</p>
+<ol><li>\(\sigma_{\text{allow}}\propto1/\sqrt a\).</li><li>Doubling \(a\) scales it by \(1/\sqrt2\approx0.707\).</li><li>So it drops to about 71% of the original — a 29% reduction.</li></ol>
+<div class="concl"><b>What it means:</b> Worth memorising the two anchor values: double the crack gives 0.71, quadruple gives 0.50. Most exam variants are one of these two.</div>
+</div>
+
+<div class="pattern"><h4>The square-root pattern</h4>
+<p>Crack length sits under a square root, so its effect is strong but not linear. This same shape appears in Week 12 for ceramics and is worth recognising instantly.</p>
+<p>Four times the crack halves the allowable stress. Nine times the crack divides it by three. The pattern is that the allowable stress scales by one over the square root of the growth factor.</p>
+<p>Compare it with the Hall–Petch relationship in Week 3, which uses the same square root in the opposite direction: smaller grains give more strength, longer cracks give less.</p></div>
+
+<h2 id="traps">Where marks get lost</h2>
+<div class="trap"><ul><li><b>Leaving crack length in millimetres.</b> \(K\) values are in MPa·√m, so \(a\) must be in metres.</li><li><b>Confusing \(K_I\) with \(K_{IC}\).</b> One is the load situation and changes as the crack grows; the other is a fixed material property.</li><li><b>Halving the allowable stress when the crack doubles.</b> Doubling gives \(1/\sqrt2\approx0.71\), not 0.5. Quadrupling gives 0.5.</li><li><b>Explaining fatigue as gradual weakening of the material.</b> The material does not weaken. A crack grows. That distinction is worth marks.</li><li><b>Recommending a stronger alloy for a fatigue problem.</b> Often the worst option, since higher-strength alloys are frequently more notch-sensitive. Fix the surface first.</li></ul></div>
+
+<h2 id="quiz">Check yourself</h2>
+<p class="intro">Answer out loud first, then open. An answer you can only recognise is not an answer you can write in an exam.</p>
+<details class="q"><summary>1. A crack grows from 2 mm to 8 mm. What happens to allowable stress?</summary>
+<div class="ans">Since \(\sigma_{\text{allow}}=K_{IC}/(Y\sqrt{\pi a})\), allowable stress scales as \(1/\sqrt a\). A fourfold crack gives \(1/\sqrt4=1/2\), so the allowable stress halves.</div></details>
+<details class="q"><summary>2. If crack size only doubles, by what factor does allowable stress change?</summary>
+<div class="ans">By \(1/\sqrt2\approx0.707\), so it falls to about 71% of its original value — not half. Halving requires a fourfold increase in crack length.</div></details>
+<details class="q"><summary>3. Why can a component fail in fatigue at stresses well below yield?</summary>
+<div class="ans">Because failure is driven by a growing crack, not by yielding. Each cycle advances a small crack that started at a surface flaw or stress concentration. Nominal stress stays below yield throughout, but once the crack reaches the size where \(K_I\) reaches \(K_{IC}\), fracture is immediate.</div></details>
+<details class="q"><summary>4. Name two ways to increase fatigue life without changing the alloy.</summary>
+<div class="ans">Improve the surface finish, since machining marks are crack initiation sites; and introduce compressive residual stress by shot peening, since a crack cannot easily open against compression. Enlarging fillet radii to cut stress concentration is a third.</div></details>
+<details class="q"><summary>5. Why is choosing a higher-strength alloy sometimes the wrong response to a fatigue failure?</summary>
+<div class="ans">Because fatigue life is governed by crack initiation and growth at the surface, not by tensile strength. Higher-strength alloys are often more notch-sensitive and less tolerant of small flaws, so the same surface defect can be more damaging. Surface finish, compressive residual stress and geometry usually deliver far more improvement per unit cost.</div></details>
+
+<div class="pager"><a href="week-03-deep-dive.html">← Week 3: Imperfections and Dislocations</a><a href="week-05-deep-dive.html">Week 5: Creep, Phase Basics and Thermal Properties →</a></div>
+
+<p class="foot"><a href="index.html">DPEN103 home</a> &nbsp;·&nbsp; <a href="core-map.html">Core map</a> &nbsp;·&nbsp; <a href="reading-the-pictures.html">Reading the pictures</a> &nbsp;·&nbsp; <a href="week-by-week-deep-dive.html">All weeks</a> &nbsp;·&nbsp; <a href="../index.html">Study guides</a></p>
+
+</div>
 </body>
 </html>

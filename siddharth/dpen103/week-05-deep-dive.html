@@ -1,51 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DPEN103 Week 5 Deep Dive</title>
-<style>body{font-family:Arial,sans-serif;max-width:980px;margin:0 auto;padding:24px 14px;background:#fafaf8;color:#2c2a28;line-height:1.65}h1,h2,h3{color:#1B3A5C}.box{background:#fff;border:1px solid #e7e4dd;border-radius:8px;padding:12px;margin:10px 0}.quiz{background:#fffdf8;border:1px dashed #c9c3b8;border-radius:8px;padding:12px}.eq{background:#fff;border:1px solid #e7e4dd;border-radius:7px;padding:8px 10px;margin:8px 0}.call{background:#fff4e9;border-left:3px solid #FF3621;padding:10px 12px;border-radius:0 8px 8px 0;margin:10px 0}.link{color:#185FA5;text-decoration:none}
-.video-lesson{background:#eef6ff;border:1px solid #b9d7f2;border-radius:10px;padding:16px;margin:16px 0 20px}
-.video-lesson h2{margin:0 0 6px}.video-intro{margin:0 0 14px;color:#334e68}
-.video-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-.video-card{background:#fff;border:1px solid #d9e7f3;border-radius:9px;padding:12px}
-.video-card h3{margin:0 0 6px;font-size:1.05rem}.video-card p{margin:7px 0}
-.video-wrap{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:7px;background:#102a43}
-.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.watch-for{padding-left:20px;margin:8px 0}.watch-for li{margin:4px 0}
-.video-prompt{background:#fff8e8;border-left:3px solid #f0a202;padding:8px 10px;border-radius:0 6px 6px 0;margin-top:10px!important}
-@media(max-width:520px){.video-grid{grid-template-columns:1fr}.video-lesson{padding:12px}}
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN103 Week 5 — Creep, Phase Basics and Thermal Properties</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+ onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+<link rel="stylesheet" href="lesson.css">
 </head>
 <body>
-<h1>Week 5 Deep Dive: Creep, Phase Basics, Thermal Properties</h1>
-<p><strong>Outline mapping:</strong> Ch8 §8.9-8.15; Ch9 §9.1-9.6; Ch19 §19.1-19.4.</p>
-<section class="video-lesson" aria-labelledby="video-heading-5">
-<h2 id="video-heading-5">Watch it visually</h2>
-<p class="video-intro">Use these as a visual bridge after your first read of the lesson. Do not watch passively: read the “watch for” points first, pause to predict, then answer the recall prompt without replaying.</p>
-<div class="video-grid"><article class="video-card">
-<h3>How materials can fail due to creep</h3>
-<p><strong>Why this one:</strong> It makes the three creep stages and the effect of high temperature easier to recognise on a graph.</p>
-<div class="video-wrap"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/nlk-JKBmw54" title="How materials can fail due to creep" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
-<p><strong>Watch for:</strong></p><ul class="watch-for"><li>Primary, steady-state and tertiary creep.</li><li>Why the steady-state slope is the creep rate.</li><li>How temperature and stress shorten service life.</li></ul>
-<p class="video-prompt"><strong>After watching:</strong> Sketch the three-stage curve and circle the region normally used for a creep-rate calculation.</p>
-<p><small>Source: Taylor Sparks · <a class="link" href="https://www.youtube.com/watch?v=nlk-JKBmw54" target="_blank" rel="noopener">open on YouTube</a></small></p>
-</article><article class="video-card">
-<h3>Origin of thermal expansion coefficient</h3>
-<p><strong>Why this one:</strong> It explains thermal expansion from the shape of the atomic bonding-energy curve instead of treating it as a fact to memorise.</p>
-<div class="video-wrap"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/UoKNO5IcZw0" title="Origin of thermal expansion coefficient" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
-<p><strong>Watch for:</strong></p><ul class="watch-for"><li>Atoms vibrate more as temperature rises.</li><li>The bonding-energy curve is not symmetric, so average spacing increases.</li><li>Why stronger, deeper bonds often give lower thermal expansion.</li></ul>
-<p class="video-prompt"><strong>After watching:</strong> Explain in two sentences why heating changes average atomic spacing even though atoms continue to vibrate around positions.</p>
-<p><small>Source: Taylor Sparks · <a class="link" href="https://www.youtube.com/watch?v=UoKNO5IcZw0" target="_blank" rel="noopener">open on YouTube</a></small></p>
-</article></div>
-</section>
-<div class="box"><h2>Full scaffold</h2><ol><li>Check whether service temperature is high enough for creep concern.</li><li>Identify creep stage controlling design life (usually steady-state).</li><li>Define phase/microstructure state before and after thermal exposure.</li><li>Compute thermal strain first, then decide whether constraints convert strain to stress.</li><li>Evaluate heat-flow direction and magnitude with conductivity equation.</li></ol></div>
-<div class="box"><h2>Core equations</h2><div class="eq">Thermal expansion: DeltaL = alpha * L0 * DeltaT</div><div class="eq">Fourier conduction (1-D): qx = -kA(dT/dx)</div><p>Thermal strain exists whenever temperature changes. Thermal stress appears only when expansion/contraction is constrained.</p></div>
-<div class="box"><h2>Worked example 1: free expansion</h2><p>L0=2 m, alpha=12e-6 /C, DeltaT=100 C:</p><p>DeltaL = 12e-6 * 2 * 100 = 2.4e-3 m = 2.4 mm.</p><p>If bar is free, this is mostly strain without large stress.</p></div>
-<div class="box"><h2>Worked example 2: constrained expansion idea</h2><p>If the same bar is fully constrained, thermal strain cannot occur freely. This creates internal stress. In linear elastic approximation, thermal stress magnitude scales with E*alpha*DeltaT.</p><div class="call"><strong>Design consequence:</strong> joints, bolts, and interfaces need stress-relief features when thermal mismatch exists.</div></div>
-<div class="quiz"><h2>Quiz (with solutions)</h2><ol><li>Why is secondary creep stage emphasized in long-service design calculations?</li><li>A part has high thermal expansion but is mounted with sliding support. What happens to thermal stress trend?</li><li>How do phase and microstructure differ, and why does the distinction matter for properties?</li></ol>
-<details><summary>Solution 1</summary><p>Secondary creep approximates stable long-term deformation rate under constant stress/temperature, so it anchors service-life predictions.</p></details>
-<details><summary>Solution 2</summary><p>Thermal strain is accommodated by sliding support, so thermal stress is greatly reduced compared with fixed-fixed restraint.</p></details>
-<details><summary>Solution 3</summary><p>Phase is a homogeneous state. Microstructure is how phases are arranged (size, shape, distribution). Same phases with different microstructures can show very different properties.</p></details></div>
-<p><a class="link" href="week-by-week-deep-dive.html">← Back to weekly hub</a></p>
+<div class="wrap">
+
+<div class="hero">
+  <div class="eyebrow">DPEN103 · Week 5 · Materials in Design</div>
+  <h1>Creep, Phase Basics and Thermal Properties</h1>
+  <p class="lede">Three topics that only look unrelated. All three are about what happens when a part is hot: it stretches slowly under load that it could hold forever when cold, it changes size, and if something stops it changing size, it generates stress out of nowhere.</p>
+  <div class="chiprow">
+    <a class="chip" href="index.html">DPEN103 home</a>
+    <a class="chip" href="core-map.html">Core map</a>
+    <a class="chip" href="reading-the-pictures.html">Reading the pictures</a>
+    <a class="chip wk" href="week-01-deep-dive.html">Wk 1</a>
+    <a class="chip wk" href="week-02-deep-dive.html">Wk 2</a>
+    <a class="chip wk" href="week-03-deep-dive.html">Wk 3</a>
+    <a class="chip wk" href="week-04-deep-dive.html">Wk 4</a>
+    <a class="chip wk on" href="week-05-deep-dive.html">Wk 5</a>
+    <a class="chip wk" href="week-06-deep-dive.html">Wk 6</a>
+    <a class="chip wk" href="week-07-deep-dive.html">Wk 7</a>
+    <a class="chip wk" href="week-08-deep-dive.html">Wk 8</a>
+    <a class="chip wk" href="week-09-deep-dive.html">Wk 9</a>
+    <a class="chip wk" href="week-10-deep-dive.html">Wk 10</a>
+    <a class="chip wk" href="week-11-deep-dive.html">Wk 11</a>
+    <a class="chip wk" href="week-12-deep-dive.html">Wk 12</a>
+    <a class="chip wk" href="week-13-deep-dive.html">Wk 13</a>
+  </div>
+</div>
+
+<div class="spine">
+  <div class="lbl">What this week is really asking</div>
+  <div class="big">What does heat do to a part that is already carrying load?</div>
+  <p>Temperature is the theme. Creep is time plus heat plus load. Thermal expansion is heat plus geometry. The connection between them is that both are driven by atoms having enough energy to move, which is the exponential from Week 3.</p>
+</div>
+
+<div class="note"><b>Where this sits.</b> Part of card 10 of the <a href="core-map.html">core map</a>, and it introduces the phase vocabulary that Week 6 turns into calculations. It inherits the vacancy exponential from Week 3. <span style="color:#6b6762">Textbook sections: Callister Ch8 §8.9–8.15, Ch9 §9.1–9.6, Ch19 §19.1–19.4.</span></div>
+
+<h2 id="words">The words and symbols, in plain English</h2>
+<p class="intro">Everything this week uses, spelled out before it is used. Come back here whenever a symbol stops making sense.</p>
+<table>
+<tr><th>Short form</th><th>What it stands for</th><th>What it actually means</th></tr>
+<tr class="grp"><td colspan="3">Creep</td></tr>
+<tr><td class="k">Creep</td><td>—</td><td>Slow, permanent stretching under a steady load at high temperature. The load never changes; the part just keeps getting longer.</td></tr>
+<tr><td class="k">Primary creep</td><td>—</td><td>The first stage. Fast at first, then slowing as the material work-hardens.</td></tr>
+<tr><td class="k">Secondary creep</td><td>—</td><td>The long steady middle stage, at a nearly constant rate. This is what design calculations use.</td></tr>
+<tr><td class="k">Tertiary creep</td><td>—</td><td>The final stage, accelerating toward rupture as the section necks and voids form.</td></tr>
+<tr><td class="k">Creep rate</td><td>—</td><td>The slope of the steady middle stage, in strain per unit time.</td></tr>
+<tr><td class="k">Stress rupture</td><td>—</td><td>Actual breaking from creep, as opposed to merely deforming too much.</td></tr>
+<tr class="grp"><td colspan="3">Thermal</td></tr>
+<tr><td class="k">\(\alpha\)</td><td>coefficient of thermal expansion</td><td>How much a material stretches per degree, per unit length. Typically around \(12\times10^{-6}\)/°C for steel.</td></tr>
+<tr><td class="k">Thermal strain</td><td>—</td><td>The size change from a temperature change. It happens whenever temperature changes.</td></tr>
+<tr><td class="k">Thermal stress</td><td>—</td><td>Stress that appears only when that size change is <em>prevented</em>. No constraint, no stress.</td></tr>
+<tr><td class="k">\(k\)</td><td>thermal conductivity</td><td>How readily heat flows through the material. Metals high, polymers and ceramics low.</td></tr>
+<tr><td class="k">Thermal shock</td><td>—</td><td>Cracking caused by rapid temperature change, when one part of an object wants to change size faster than the rest.</td></tr>
+<tr class="grp"><td colspan="3">Phase vocabulary</td></tr>
+<tr><td class="k">Phase</td><td>—</td><td>A region with one consistent structure and composition. Ice and water are two phases of one substance.</td></tr>
+<tr><td class="k">Microstructure</td><td>—</td><td>How the phases and grains are arranged — their size, shape and distribution. Processing controls it, and it controls properties.</td></tr>
+<tr><td class="k">Component</td><td>—</td><td>One of the pure substances making up the alloy. Copper and nickel are the two components of a Cu–Ni alloy.</td></tr>
+<tr><td class="k">Solubility limit</td><td>—</td><td>The most of one substance that will dissolve in another before a second phase appears.</td></tr>
+</table>
+
+<h2 id="ideas">The ideas, one card at a time</h2>
+<p class="intro">Cover each card and try the green line out loud before reading on. If it comes out, move to the next one.</p>
+<div class="grid">
+  <div class="card fail">
+  <h4><span class="n">1</span> Creep and its three stages</h4>
+  <p class="oneline">Hold a metal hot and loaded, and it slowly stretches — not because the load rose, but because atoms have enough energy to rearrange under the load they already carry.</p>
+  <div class="rowlbl">The curve, left to right</div>
+  <ul><li><b>Primary</b> — starts quickly, then slows as the material work-hardens against its own deformation.</li><li><b>Secondary</b> — a long straight stretch at nearly constant rate, where hardening and softening balance. Almost all of the service life sits here.</li><li><b>Tertiary</b> — accelerates away as voids form and the section thins, ending in rupture.</li></ul>
+  <p>Design uses the secondary slope because it is steady, predictable, and covers the vast majority of the life. If a question asks which region to measure, it is this one.</p>
+  <p>Creep needs heat, and "hot" is relative to the melting point of that material — roughly above 40% of it in kelvin. Lead creeps in a warm room. Steel does not care until it is glowing. Polymers creep at room temperature, which is why a plastic shelf sags over a summer.</p>
+  <div class="link-line"><b>Feeds:</b> Week 7, where polymer creep at everyday temperatures is a routine design problem, and Week 8 material selection for anything hot.</div>
+  <div class="say"><b>Say it cold:</b> "Creep is slow stretching under steady load when hot, and design uses the straight secondary stage."</div>
+  </div>
+<div class="card mech">
+  <h4><span class="n">2</span> Thermal expansion — strain without stress</h4>
+  <p class="oneline">Heat something and it grows. On its own, that produces no stress at all. Stress only appears when something refuses to let it grow.</p>
+  <div class="fml">\[\Delta L=\alpha L_0\Delta T\]</div>
+  <p class="whereby">\(\Delta L\) is the change in length, \(\alpha\) the expansion coefficient, \(L_0\) the original length and \(\Delta T\) the temperature change.</p>
+  <p>Keep the two cases completely separate in your head, because exam questions are built on the distinction:</p>
+  <ul><li><b>Free to expand</b> — the part changes length, and the stress stays essentially zero.</li><li><b>Fully constrained</b> — the length cannot change, so the strain that wanted to happen turns into stress instead, of order \(E\alpha\Delta T\).</li></ul>
+  <div class="fml">\[\sigma_{\text{thermal}}\approx E\alpha\Delta T\]</div>
+  <p class="whereby">The stress in a fully constrained bar. Note that a stiffer material makes this worse, not better.</p>
+  <p>That last point is counterintuitive and worth holding onto: for thermal stress, high stiffness is a liability. Steel generates more thermal stress than aluminium for the same restrained temperature change, despite expanding less.</p>
+  <div class="link-line"><b>Feeds:</b> joint design everywhere — expansion loops in pipework, gaps in rails and bridges, sliding supports.</div>
+  <div class="say"><b>Say it cold:</b> "Free to expand means strain and no stress; fully constrained means no strain and stress of about E alpha delta T."</div>
+  </div>
+<div class="card mech">
+  <h4><span class="n">3</span> Heat flow and thermal shock</h4>
+  <p class="oneline">Conductivity decides how fast heat moves through a material, and how fast it moves decides whether the object survives a sudden temperature change.</p>
+  <div class="fml">\[q_x=-kA\frac{dT}{dx}\]</div>
+  <p class="whereby">Fourier's law in one dimension: \(q_x\) is heat flow rate, \(k\) thermal conductivity, \(A\) the area and \(dT/dx\) the temperature gradient. The minus sign only says heat flows from hot to cold.</p>
+  <p>Thermal shock follows from combining this with the previous card. Plunge a hot object into cold water and the surface cools and tries to contract while the interior is still hot and large. The surface is restrained by the interior, goes into tension, and if the material is brittle it cracks.</p>
+  <p>This is why ceramics fail thermal shock so readily: low conductivity means a steep temperature gradient, and near-zero ductility means the resulting stress cannot be relieved by yielding. A metal in the same situation simply deforms a little.</p>
+  <div class="link-line"><b>Feeds:</b> Week 12 ceramics, where thermal shock resistance is a headline design property.</div>
+  <div class="say"><b>Say it cold:</b> "Low conductivity plus brittleness gives poor thermal shock resistance, because the gradient makes stress the material cannot yield away."</div>
+  </div>
+<div class="card micro">
+  <h4><span class="n">4</span> Phase vocabulary — the setup for Week 6</h4>
+  <p class="oneline">Two words that get used interchangeably in conversation and mean quite different things here. Week 6 is much easier if this distinction is already solid.</p>
+  <ul><li><b>Phase</b> — a region that is uniform in structure and composition throughout. Ice and liquid water are two phases of the same substance.</li><li><b>Microstructure</b> — how those phases are actually arranged: how big the regions are, what shape, how distributed.</li></ul>
+  <p>The reason this matters is that two samples can contain identical phases in identical proportions and still behave completely differently, because the arrangement differs. Same ingredients, different cake. Steel is the standard demonstration — the same iron and carbon, cooled at different rates, gives soft pearlite or hard martensite.</p>
+  <p>So when a question asks what changed after a heat treatment, "the phases" and "the microstructure" are different claims, and often only the second is true.</p>
+  <div class="link-line"><b>Feeds:</b> Week 6 entirely, where phase diagrams let you predict which phases appear and in what amounts.</div>
+  <div class="say"><b>Say it cold:</b> "A phase is a uniform region; microstructure is how the phases are arranged, and the arrangement controls properties."</div>
+  </div>
+</div>
+
+<h2 id="watch">Watch it visually</h2>
+<p class="intro">Read the "watch for" points first, pause to predict, then answer the prompt without replaying. Watching without answering the prompt feels productive and teaches very little.</p>
+<div class="videos">
+<div class="vid">
+<h4>How materials can fail due to creep</h4>
+<p><b>Why this one:</b> It makes the three stages recognisable on a real curve rather than an idealised sketch.</p>
+<div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/nlk-JKBmw54" title="How materials can fail due to creep" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+<p><b>Watch for:</b></p><ul><li>Primary, secondary and tertiary creep and what changes between them.</li><li>Why the secondary slope is the number design uses.</li><li>How raising temperature or stress shortens life.</li></ul>
+<p class="after"><b>After watching:</b> Sketch the three-stage curve and circle the region used for a creep-rate calculation.</p>
+<p class="src">Source: Taylor Sparks · <a href="https://www.youtube.com/watch?v=nlk-JKBmw54" target="_blank" rel="noopener">open on YouTube</a></p>
+</div>
+<div class="vid">
+<h4>Origin of the thermal expansion coefficient</h4>
+<p><b>Why this one:</b> It derives expansion from the shape of the bonding-energy curve instead of asking you to accept it.</p>
+<div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/UoKNO5IcZw0" title="Origin of the thermal expansion coefficient" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+<p><b>Watch for:</b></p><ul><li>Atoms vibrating harder as temperature rises.</li><li>The bonding-energy well being asymmetric, so the average spacing shifts.</li><li>Why deeper, stronger bonds generally give lower expansion.</li></ul>
+<p class="after"><b>After watching:</b> Explain in two sentences why heating increases average atomic spacing even though atoms just vibrate about a position.</p>
+<p class="src">Source: Taylor Sparks · <a href="https://www.youtube.com/watch?v=UoKNO5IcZw0" target="_blank" rel="noopener">open on YouTube</a></p>
+</div>
+</div>
+
+<h2 id="worked">Worked examples, every step shown</h2>
+<p class="intro">Units on every line. Predict the direction of the answer before you calculate, then check the result against that prediction.</p>
+<div class="work"><h4>Worked example 1 — free expansion</h4>
+<div class="given"><b>Given:</b> \(L_0=2\) m, \(\alpha=12\times10^{-6}\)/°C, \(\Delta T=100\) °C, bar free to move.</div>
+<ol><li>\(\Delta L=\alpha L_0\Delta T=12\times10^{-6}\times2\times100\).</li><li>\(\Delta L=2.4\times10^{-3}\) m \(=2.4\) mm.</li><li>The bar is unrestrained, so this is pure strain and the stress is essentially zero.</li></ol>
+<div class="concl"><b>What it means:</b> 2.4 mm sounds trivial until you picture a 2 m gap that was designed as 1 mm. Most thermal design is about leaving somewhere for this to go.</div>
+</div>
+<div class="work"><h4>Worked example 2 — the same bar, fully constrained</h4>
+<div class="given"><b>Given:</b> Same bar and temperature rise, but now held rigidly at both ends. \(E=210\) GPa.</div>
+<ol><li>The bar cannot lengthen, so the thermal strain that wanted to occur is suppressed.</li><li>The suppressed strain is \(\varepsilon=\alpha\Delta T=12\times10^{-6}\times100=1.2\times10^{-3}\).</li><li>That strain appears as stress: \(\sigma=E\varepsilon=210\times10^9\times1.2\times10^{-3}=252\) MPa.</li><li>Compare with a typical structural steel yield of around 250 MPa — this alone is enough to yield the bar.</li></ol>
+<div class="concl"><b>What it means:</b> A 100 °C rise, which is not dramatic, is enough to yield a fully restrained steel bar. Note that the length dropped out entirely: constrained thermal stress does not depend on how long the bar is.</div>
+</div>
+<div class="work"><h4>Worked example 3 — why a sliding support changes the answer</h4>
+<p style="font-size:13.5px">A part has high thermal expansion but is mounted on a sliding support. What happens to thermal stress?</p>
+<ol><li>The sliding support lets the part change length freely.</li><li>Thermal strain is therefore accommodated rather than suppressed.</li><li>With little suppressed strain there is little thermal stress — dramatically less than the fixed-fixed case.</li></ol>
+<div class="concl"><b>What it means:</b> This is the whole design principle. You cannot stop a material expanding, so you give it somewhere to go: sliding bearings, expansion joints, pipe loops, gaps between rails.</div>
+</div>
+
+<h2 id="traps">Where marks get lost</h2>
+<div class="trap"><ul><li><b>Calculating thermal stress for a part that is free to move.</b> No constraint means essentially no stress. Read the mounting description first.</li><li><b>Thinking a stiffer material reduces thermal stress.</b> The opposite — \(\sigma\approx E\alpha\Delta T\) rises with \(E\).</li><li><b>Using the tertiary creep slope.</b> Design uses the steady secondary stage; tertiary means the part is already failing.</li><li><b>Treating "hot" as an absolute.</b> Creep depends on temperature relative to the melting point. Room temperature is hot for a polymer and cold for steel.</li><li><b>Using phase and microstructure as synonyms.</b> Same phases, different arrangement, very different properties.</li></ul></div>
+
+<h2 id="quiz">Check yourself</h2>
+<p class="intro">Answer out loud first, then open. An answer you can only recognise is not an answer you can write in an exam.</p>
+<details class="q"><summary>1. Why is secondary creep the stage used in long-service design calculations?</summary>
+<div class="ans">Because it is the long steady-rate middle stage where hardening and softening balance, and it accounts for nearly all of the service life. Its constant slope can be extrapolated to predict deformation over years. Primary is too short and still changing, and tertiary means failure has already begun.</div></details>
+<details class="q"><summary>2. A part has high thermal expansion but sits on a sliding support. What happens to thermal stress?</summary>
+<div class="ans">It is greatly reduced. Thermal stress only appears when expansion is prevented. The sliding support allows the part to change length freely, so the thermal strain is accommodated instead of converted into stress, unlike a fixed-fixed mounting.</div></details>
+<details class="q"><summary>3. How do phase and microstructure differ, and why does it matter?</summary>
+<div class="ans">A phase is a region uniform in structure and composition. Microstructure is how the phases are arranged — their size, shape and distribution. It matters because identical phases in identical proportions can give very different properties depending on arrangement, which is exactly how heat treatment of steel works.</div></details>
+<details class="q"><summary>4. A steel bar is fully restrained and heated 100 °C. Estimate the stress. \(E=210\) GPa, \(\alpha=12\times10^{-6}\)/°C.</summary>
+<div class="ans">\(\sigma\approx E\alpha\Delta T=210\times10^9\times12\times10^{-6}\times100=252\) MPa. That is around the yield strength of ordinary structural steel, so a modest restrained temperature rise can yield it. The bar length does not enter the calculation.</div></details>
+<details class="q"><summary>5. Why do ceramics survive thermal shock so much worse than metals?</summary>
+<div class="ans">Two reasons combining. Their low thermal conductivity creates a steep temperature gradient, so the surface contracts hard while the interior is still hot, putting the surface in tension. And having almost no ductility, they cannot relieve that stress by yielding as a metal would, so it goes straight into cracking from an existing surface flaw.</div></details>
+
+<div class="pager"><a href="week-04-deep-dive.html">← Week 4: Strengthening, Fracture and Fatigue</a><a href="week-06-deep-dive.html">Week 6: Binary Phase Diagrams and the Lever Rule →</a></div>
+
+<p class="foot"><a href="index.html">DPEN103 home</a> &nbsp;·&nbsp; <a href="core-map.html">Core map</a> &nbsp;·&nbsp; <a href="reading-the-pictures.html">Reading the pictures</a> &nbsp;·&nbsp; <a href="week-by-week-deep-dive.html">All weeks</a> &nbsp;·&nbsp; <a href="../index.html">Study guides</a></p>
+
+</div>
 </body>
 </html>
