@@ -607,7 +607,7 @@ page(
          ("practice", "Practice"), ("next", "Next week")],
     body=week_a_body,
     previous="MATH142_Week0_Lay_of_the_Land.html",
-    next_page="MATH142_Ext2Proofs_WeekB_InductionInequalities.html",
+    next_page="MATH142_Week1_Integration_Techniques.html",
     practice_count=len(week_a_practice),
 )
 
@@ -620,8 +620,8 @@ page(
          ("induction", "Induction template"), ("series", "Sums and divisibility"),
          ("inductineq", "Induction inequalities"), ("practice", "Practice"), ("bridge", "MATH142 bridge")],
     body=week_b_body,
-    previous="MATH142_Ext2Proofs_WeekA_NatureOfProof.html",
-    next_page="MATH142_Week1_Integration_Techniques.html",
+    previous="MATH142_Week10_Limits_LHopital.html",
+    next_page="MATH142_Week11_Sequences_Series_ConvergenceTests.html",
     practice_count=len(week_b_practice),
 )
 
