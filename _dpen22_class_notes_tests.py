@@ -67,6 +67,28 @@ def write_pair(slug, subject, timing, sample_href, tests_q, tests_a, fmt):
         if slug == 'trig'
         else 'Diagrams are provided where the sample uses graphs.'
     )
+    extra_question_links = {
+        'trig': (
+            '  <a href="trig-identity-sheet.html">Identity Sheet</a>\n'
+            '  <a href="trig-identity-proofs-questions.html">Identity Proof Tests (11 × 10)</a>\n'
+        ),
+        'limits-diff': (
+            '  <a href="differentiation-focused-questions.html">Focused Differentiation Questions</a>\n'
+            '  <a href="differentiation-focused-answers.html">Focused Worked Answers</a>\n'
+        ),
+        'integration': (
+            '  <a href="integration-focused-questions.html">Focused Integration Questions</a>\n'
+            '  <a href="integration-focused-answers.html">Focused Worked Answers</a>\n'
+        ),
+    }.get(slug, '')
+    extra_answer_links = {
+        'trig': (
+            '  <a href="trig-identity-sheet.html">Identity Sheet</a>\n'
+            '  <a href="trig-identity-proofs-answers.html">Identity Proofs — Worked Answers</a>\n'
+        ),
+        'limits-diff': extra_question_links,
+        'integration': extra_question_links,
+    }.get(slug, '')
     assert n_mc + len(long_marks) == total
     q_blocks = []
     for i, qs in enumerate(tests_q, 1):
@@ -97,6 +119,7 @@ Timing guide: {timing}. Show full working on long-answer items. {diagram_copy}</
 <div class="meta"><strong>Official sample:</strong> <a href="{sample_href}">open PDF</a> · use it as the style/difficulty reference for these papers.</div>
 <div class="top-links">
   <a href="{slug}-answers.html">Open Separate Answers</a>
+{extra_question_links.rstrip()}
   <a href="../index.html">Class Notes Hub</a>
   <a href="../../index.html">DPEN22 Index</a>
 </div>
@@ -117,12 +140,32 @@ Timing guide: {timing}. Show full working on long-answer items. {diagram_copy}</
 <p class="sub">Separate worked answers for the {len(tests_a)} {H.escape(subject)} practice papers.</p>
 <div class="top-links">
   <a href="{slug}-questions.html">Back to Questions</a>
+{extra_answer_links.rstrip()}
   <a href="../index.html">Class Notes Hub</a>
   <a href="../../index.html">DPEN22 Index</a>
 </div>
 {''.join(a_blocks)}
 '''
-    (TESTS / f'{slug}-answers.html').write_text(page(f'DPEN022 {subject} Practice Tests — Answers', a_body))
+    answer_path = TESTS / f'{slug}-answers.html'
+    # The limits/differentiation page has hand-expanded worked solutions for
+    # Tests 1–6. Keep those and regenerate only the extension papers.
+    if slug == 'limits-diff' and answer_path.exists():
+        existing = answer_path.read_text()
+        if "<span class='rule'>" in existing:
+            first_extension = existing.find('<div class="test"><h3>Test 7')
+            close = existing.rfind('</div></body></html>')
+            cut = first_extension if first_extension >= 0 else close
+            preserved = existing[:cut]
+            preserved = preserved.replace(
+                'all 6 practice papers (108 questions)',
+                f'all {len(tests_a)} practice papers ({len(tests_a) * total} questions)',
+            )
+            extension = ''.join(a_blocks[6:]).replace(' — Answers</h3>', ' — Worked Solutions</h3>')
+            answer_path.write_text(preserved + extension + '\n</div></body></html>\n')
+        else:
+            answer_path.write_text(page(f'DPEN022 {subject} Practice Tests — Answers', a_body))
+    else:
+        answer_path.write_text(page(f'DPEN022 {subject} Practice Tests — Answers', a_body))
 
 
 TRIG_FMT = {
@@ -1327,7 +1370,7 @@ trig_a[-1][12] = (
 write_pair('trig', 'Trigonometry', '1 hour per test',
            '../trig/2a_Trigonometry_Exam_Sample_Public_Holiday.pdf', trig_q, trig_a, TRIG_FMT)
 
-# ---------- LIMITS + DIFF (6 tests x 18) ----------
+# ---------- LIMITS + DIFF (8 tests x 18) ----------
 # Sample tags:
 # MC1 Limits, MC2 powers, MC3 powers rules 1-5, MC4 any fn rules 1-5,
 # MC5 mixed, MC6 tangent powers
@@ -1337,7 +1380,7 @@ write_pair('trig', 'Trigonometry', '1 hour per test',
 # L16(3) mixed, L17(3) tangent any, L18(3) application of tangent
 ld_q = [
 [
- (r'[Limits] \(\displaystyle\lim_{x\to-2}\dfrac{x^3+2}{x^2+5}=\)',
+ (r'[Limits] \(\displaystyle\lim_{x\to-2}\dfrac{x^3+8}{x^2+5}=\)',
   ['(A) \(0\)','(B) \(-\infty\)','(C) \(-2\)','(D) \(4\)','(E) DNE']),
  (r'[Powers of \(x\)] For \(f(x)=x^2-6x-1\), \(f\'(x)=0\) when \(x=\)',
   ['(A) \(-1\)','(B) \(6\)','(C) \(-3\)','(D) \(3\)','(E) \(0\)']),
@@ -1358,7 +1401,7 @@ ld_q = [
  r'[Derivative at a point] Find \(f\'(1)\) for \(f(x)=e^{x^2+2}\).',
  r'[Any function] Differentiate \(y=\dfrac{\ln(2x)}{x}\) and simplify.',
  r'[Logarithms] Find \(f\'(2)\) if \(f(x)=\ln(2x-3)\).',
- r'[Trigonometric] Find \(y\'\left(\dfrac{\pi}{6}\right)\) for \(y=\tan(2\pi x)\).',
+ r'[Trigonometric] Find \(y\'\left(\dfrac{1}{6}\right)\) for \(y=\tan(2\pi x)\).',
  r'[Mixed] Differentiate \(y=e^{-x}(x^2-1)\) and simplify.',
  r'[Tangent] Find the equation of the tangent to \(y=x^3-3x\) at \(x=2\).',
  r'[Application of tangent] Find the point(s) on \(y=\dfrac12 x^2+9x+4\) where the tangent is parallel to \(y=3x-1\).',
@@ -1624,6 +1667,285 @@ ld_a = [
  r'\(y\'=3x^2-1=2\Rightarrow x=\pm1\); tangents \(y=2x\mp\tfrac23\) wait: at \(x=1\), \(y=0\), \(y=2x-2\); at \(x=-1\), \(y=0\), \(y=2x+2\).',
 ],
 ]
+
+# Tests 7–8 use denser algebra and closely matched distractors. Each MC item
+# still has exactly one correct answer.
+ld_q.extend([
+[
+ (r'[Limits] \(\displaystyle\lim_{x\to0}\dfrac{\sqrt{1+x}-\sqrt{1-x}}{x}=\)',
+  [r'(A) \(0\)', r'(B) \(\dfrac12\)', r'(C) \(1\)', r'(D) \(2\)', r'(E) DNE']),
+ (r'[Powers of \(x\)] On \(x>0\), \(f(x)=x+\dfrac4x\) has a stationary point when',
+  [r'(A) \(x=-2\)', r'(B) \(x=2\)', r'(C) \(x=\pm2\)', r'(D) \(x=4\)', r'(E) \(x=\sqrt2\)']),
+ (r'[Rules 1–5] The fully simplified derivative of \(y=\dfrac{x^2-1}{x^2+1}\) is',
+  [r'(A) \(\dfrac{2x}{x^2+1}\)', r'(B) \(\dfrac{4x}{(x^2+1)^2}\)',
+   r'(C) \(\dfrac{-4x}{(x^2+1)^2}\)', r'(D) \(\dfrac{2x(x^2-1)}{(x^2+1)^2}\)',
+   r'(E) \(\dfrac{4x^2}{(x^2+1)^2}\)']),
+ (r'[Any function] If \(y=\ln\sqrt{x^2+1}\), then \(y\'=\)',
+  [r'(A) \(\dfrac{2x}{x^2+1}\)', r'(B) \(\dfrac{x}{\sqrt{x^2+1}}\)',
+   r'(C) \(\dfrac{x}{x^2+1}\)', r'(D) \(\dfrac1{2(x^2+1)}\)',
+   r'(E) \(\dfrac1{\sqrt{x^2+1}}\)']),
+ (r'[Mixed] For \(y=e^{2x}\cos(3x)\), \(y\'=\)',
+  [r'(A) \(e^{2x}(2\cos3x-3\sin3x)\)', r'(B) \(e^{2x}(2\cos3x+3\sin3x)\)',
+   r'(C) \(e^{2x}(\cos3x-3\sin3x)\)', r'(D) \(e^{2x}(3\cos3x-2\sin3x)\)',
+   r'(E) \(2e^{2x}(\cos3x-\sin3x)\)']),
+ (r'[Tangent] The tangent to \(y=x\ln x\) at \(x=e^{-1}\) is',
+  [r'(A) \(y=0\)', r'(B) \(y=-e^{-1}\)', r'(C) \(y=x-e^{-1}\)',
+   r'(D) \(y=e^{-1}\)', r'(E) \(y=-x-e^{-1}\)']),
+ r'[Limits] The graph below has a removable discontinuity at \(x=2\). State '
+ r'\(\displaystyle\lim_{x\to2}f(x)\), state \(f(2)\), and decide whether \(f\) is continuous at \(x=2\).'
+ + limit_removable(xmin=-1, xmax=5, ymin=-2, ymax=5, hole_x=2, hole_y=3, filled_y=-1,
+                   caption='Graph of y = f(x) near x = 2'),
+ r'[Limits] Evaluate: (a) \(\displaystyle\lim_{x\to2}\dfrac{x^3-8}{\sqrt{x+2}-2}\) '
+ r'(b) \(\displaystyle\lim_{x\to\infty}\left(\sqrt{9x^2+1}-3x\right)\).',
+ r'[Powers of \(x\)] For \(x>0\), let \(f(x)=x^{5/2}-5x^{1/2}\). Find all stationary '
+ r'points and classify each using a sign test or the second derivative.',
+ r'[Rules 1–5] Differentiate \(y=\dfrac{(2x-1)^3}{x^2+1}\) and simplify fully.',
+ r'[2nd derivative] If \(y=x^2e^x\), find \(y\'\'\), then solve \(y\'\'=0\).',
+ r'[Derivative at a point] For \(f(x)=\ln(x^2+e^x)\), find \(f\'(0)\).',
+ r'[Any function] Differentiate \(y=\dfrac{e^x}{x^2+1}\) and simplify.',
+ r'[Logarithms] If \(f(x)=\ln(\ln x)\), find \(f\'(e)\).',
+ r'[Trigonometric] If \(y=\sin^2(3x)\), find the exact value of \(y\'\) at \(x=\dfrac{\pi}{12}\).',
+ r'[Mixed] Differentiate \(y=(x^2+1)e^{-2x}\) and factorise your answer.',
+ r'[Tangent] Find the equation of the tangent to \(y=\ln(x^2+1)\) at \(x=1\).',
+ r'[Application of tangent] Find every point on \(y=x^3-3x^2+2\) where the tangent '
+ r'is parallel to \(y=3x+1\). Give exact coordinates.',
+],
+[
+ (r'[Limits] \(\displaystyle\lim_{x\to0}\dfrac{e^{2x}-1}{x}=\)',
+  [r'(A) \(0\)', r'(B) \(1\)', r'(C) \(2\)', r'(D) \(e^2\)', r'(E) DNE']),
+ (r'[Powers of \(x\)] For \(f(x)=x^2e^{-x}\), the stationary \(x\)-values are',
+  [r'(A) \(0\) only', r'(B) \(2\) only', r'(C) \(0,2\)', r'(D) \(-2,0\)',
+   r'(E) \(0,e^2\)']),
+ (r'[Rules 1–5] The fully simplified derivative of \(y=\dfrac{3x+1}{(x^2+1)^2}\) is',
+  [r'(A) \(\dfrac{-9x^2-4x+3}{(x^2+1)^3}\)',
+   r'(B) \(\dfrac{-9x^2+4x+3}{(x^2+1)^3}\)',
+   r'(C) \(\dfrac{3-12x^2}{(x^2+1)^3}\)',
+   r'(D) \(\dfrac{3x+1-4x}{(x^2+1)^3}\)',
+   r'(E) \(\dfrac{-9x^2-4x+3}{(x^2+1)^2}\)']),
+ (r'[Any function] For \(x>0\), if \(y=\ln\!\left(\dfrac{x}{x+1}\right)\), then \(y\'=\)',
+  [r'(A) \(\dfrac1x+\dfrac1{x+1}\)', r'(B) \(\dfrac1{x(x+1)}\)',
+   r'(C) \(-\dfrac1{x(x+1)}\)', r'(D) \(\dfrac1{x+1}\)',
+   r'(E) \(\dfrac{2x+1}{x(x+1)}\)']),
+ (r'[Mixed] For \(y=e^{-x}\sin(2x)\), \(y\'=\)',
+  [r'(A) \(e^{-x}(2\cos2x-\sin2x)\)', r'(B) \(e^{-x}(2\cos2x+\sin2x)\)',
+   r'(C) \(e^{-x}(\cos2x-2\sin2x)\)', r'(D) \(e^x(2\cos2x-\sin2x)\)',
+   r'(E) \(e^{-x}(2\sin2x-\cos2x)\)']),
+ (r'[Tangent] The tangent to \(y=\dfrac{e^x}{x}\) at \(x=1\) is',
+  [r'(A) \(y=e\)', r'(B) \(y=ex\)', r'(C) \(y=e(x-1)\)',
+   r'(D) \(y=x+e-1\)', r'(E) \(y=e(x+1)\)']),
+ r'[Limits] The graph below approaches \(2\) from both sides at \(x=-1\), but its '
+ r'filled point is at height \(4\). Find the limit and explain why the function is not continuous there.'
+ + limit_removable(xmin=-4, xmax=3, ymin=-1, ymax=5, hole_x=-1, hole_y=2, filled_y=4,
+                   caption='Graph of y = f(x) near x = −1'),
+ r'[Limits] Evaluate: (a) \(\displaystyle\lim_{x\to0}\dfrac{\sin(5x)}{\sin(2x)}\) '
+ r'(b) \(\displaystyle\lim_{x\to\infty}x\left(\sqrt{x^2+4}-x\right)\).',
+ r'[Powers of \(x\)] For \(x>0\), let \(f(x)=2x^{3/2}+3x^{-1/2}\). Find and classify '
+ r'its stationary point, giving the \(x\)-coordinate exactly.',
+ r'[Rules 1–5] Differentiate \(y=\dfrac{(\ln x)^2}{x}\) and factorise the numerator.',
+ r'[2nd derivative] Find \(y\'\'\) for \(y=e^x\sin x\).',
+ r'[Derivative at a point] For \(f(x)=\ln(1+e^{2x})\), find \(f\'(0)\).',
+ r'[Any function] Differentiate \(y=\dfrac{\tan(3x)}{x^2+1}\).',
+ r'[Logarithms] For \(x>1\), let \(f(x)=\ln\!\left(\dfrac{x^2+1}{x^2-1}\right)\). '
+ r'Find the exact value of \(f\'(\sqrt2)\).',
+ r'[Trigonometric] If \(y=e^{\sin x}\), find the exact value of \(y\'(\pi)\).',
+ r'[Mixed] Differentiate \(y=x^2\ln x\,e^{-x}\) and factorise your answer.',
+ r'[Tangent] Find the equation of the tangent to \(y=\dfrac{x}{x+1}\) at \(x=1\).',
+ r'[Application of tangent] A particle has displacement \(s(t)=te^{-t}\), \(t\ge0\). '
+ r'Find when it is at rest and its acceleration at that instant.',
+],
+])
+
+ld_a.extend([
+[
+ r'''(C). Rationalise:
+\[
+\frac{\sqrt{1+x}-\sqrt{1-x}}x
+=\frac{2x}{x\left(\sqrt{1+x}+\sqrt{1-x}\right)}
+\longrightarrow \frac{2}{2}=1.
+\]''',
+ r'''(B). \(f'(x)=1-\dfrac4{x^2}=0\Rightarrow x^2=4\). Since \(x>0\), \(\boxed{x=2}\).''',
+ r'''(B). By the quotient rule,
+\[
+y'=\frac{2x(x^2+1)-2x(x^2-1)}{(x^2+1)^2}
+=\boxed{\frac{4x}{(x^2+1)^2}}.
+\]''',
+ r'''(C). Since \(y=\tfrac12\ln(x^2+1)\),
+\[
+y'=\frac12\frac{2x}{x^2+1}=\boxed{\frac{x}{x^2+1}}.
+\]''',
+ r'''(A). Product and chain rules give
+\[
+y'=2e^{2x}\cos3x-3e^{2x}\sin3x
+=\boxed{e^{2x}(2\cos3x-3\sin3x)}.
+\]''',
+ r'''(B). Here \(y(e^{-1})=-e^{-1}\) and \(y'=\ln x+1\), so \(y'(e^{-1})=0\).
+The tangent is \(\boxed{y=-e^{-1}}\).''',
+ r'''\[
+\lim_{x\to2}f(x)=3,\qquad f(2)=-1.
+\]
+The two-sided limit exists, but it is not equal to the function value. Therefore \(f\) is not continuous at \(x=2\).''',
+ r'''(a) Factor and rationalise:
+\[
+\frac{x^3-8}{\sqrt{x+2}-2}
+=\frac{(x-2)(x^2+2x+4)(\sqrt{x+2}+2)}{x-2}
+\longrightarrow 12(4)=\boxed{48}.
+\]
+(b) Rationalising gives
+\[
+\sqrt{9x^2+1}-3x=\frac1{\sqrt{9x^2+1}+3x}\longrightarrow\boxed0.
+\]''',
+ r'''\[
+f'(x)=\frac52x^{3/2}-\frac52x^{-1/2}
+=\frac52x^{-1/2}(x^2-1).
+\]
+For \(x>0\), the only stationary value is \(x=1\), where \(f(1)=-4\).
+The derivative changes from negative to positive, so \(\boxed{(1,-4)}\) is a local minimum.''',
+ r'''\[
+\begin{aligned}
+y'&=\frac{6(2x-1)^2(x^2+1)-2x(2x-1)^3}{(x^2+1)^2}\\
+&=\boxed{\frac{2(2x-1)^2(x^2+x+3)}{(x^2+1)^2}}.
+\end{aligned}
+\]''',
+ r'''\[
+y'=e^x(x^2+2x),\qquad
+y''=e^x(x^2+4x+2).
+\]
+Since \(e^x\ne0\), solve \(x^2+4x+2=0\):
+\[
+\boxed{x=-2\pm\sqrt2}.
+\]''',
+ r'''\[
+f'(x)=\frac{2x+e^x}{x^2+e^x},
+\qquad f'(0)=\frac1{1}=\boxed1.
+\]''',
+ r'''\[
+y'=\frac{e^x(x^2+1)-2xe^x}{(x^2+1)^2}
+=\boxed{\frac{e^x(x-1)^2}{(x^2+1)^2}}.
+\]''',
+ r'''\[
+f'(x)=\frac1{x\ln x},\qquad
+f'(e)=\boxed{\frac1e}.
+\]''',
+ r'''\[
+y'=6\sin3x\cos3x=3\sin6x.
+\]
+At \(x=\pi/12\), \(6x=\pi/2\), so \(\boxed{y'=3}\).''',
+ r'''\[
+y'=2xe^{-2x}-2(x^2+1)e^{-2x}
+=\boxed{2e^{-2x}(x-x^2-1)}.
+\]''',
+ r'''At \(x=1\), the point is \((1,\ln2)\), and
+\[
+y'=\frac{2x}{x^2+1}\Rightarrow y'(1)=1.
+\]
+Thus \(\boxed{y-\ln2=x-1}\).''',
+ r'''Parallel tangents require
+\[
+3x^2-6x=3\Rightarrow x^2-2x-1=0
+\Rightarrow x=1\pm\sqrt2.
+\]
+Using \(x^2=2x+1\) in \(y=x^3-3x^2+2\) gives \(y=1-x\). Hence the points are
+\[
+\boxed{(1+\sqrt2,-\sqrt2)\ \text{and}\ (1-\sqrt2,\sqrt2)}.
+\]''',
+],
+[
+ r'''(C). Using \(\displaystyle\lim_{u\to0}\frac{e^u-1}{u}=1\),
+\[
+\frac{e^{2x}-1}{x}=2\frac{e^{2x}-1}{2x}\longrightarrow\boxed2.
+\]''',
+ r'''(C). \(f'(x)=e^{-x}(2x-x^2)=xe^{-x}(2-x)\). Since \(e^{-x}\ne0\),
+\(\boxed{x=0,2}\).''',
+ r'''(A). Write \(y=(3x+1)(x^2+1)^{-2}\):
+\[
+y'=3(x^2+1)^{-2}-4x(3x+1)(x^2+1)^{-3}
+=\boxed{\frac{-9x^2-4x+3}{(x^2+1)^3}}.
+\]''',
+ r'''(B). Expand the logarithm and simplify:
+\[
+y'=\frac1x-\frac1{x+1}=\boxed{\frac1{x(x+1)}}.
+\]''',
+ r'''(A). Product and chain rules give
+\[
+y'=-e^{-x}\sin2x+2e^{-x}\cos2x
+=\boxed{e^{-x}(2\cos2x-\sin2x)}.
+\]''',
+ r'''(A). At \(x=1\), \(y=e\), while
+\[
+y'=\frac{e^x(x-1)}{x^2}\Rightarrow y'(1)=0.
+\]
+Thus the tangent is \(\boxed{y=e}\).''',
+ r'''\[
+\lim_{x\to-1}f(x)=2,\qquad f(-1)=4.
+\]
+The limit and function value differ, so \(f\) is not continuous at \(x=-1\).''',
+ r'''(a) Using the standard sine limit,
+\[
+\frac{\sin5x}{\sin2x}
+=\frac{\sin5x}{5x}\frac{2x}{\sin2x}\frac52
+\longrightarrow\boxed{\frac52}.
+\]
+(b) Rationalise:
+\[
+x(\sqrt{x^2+4}-x)
+=\frac{4x}{\sqrt{x^2+4}+x}
+=\frac4{\sqrt{1+4/x^2}+1}\longrightarrow\boxed2.
+\]''',
+ r'''\[
+f'(x)=3x^{1/2}-\frac32x^{-3/2}
+=\frac32x^{-3/2}(2x^2-1).
+\]
+Thus \(x=1/\sqrt2\). The derivative changes from negative to positive, so this is a local minimum.
+\[
+\boxed{x=\frac1{\sqrt2}}.
+\]''',
+ r'''\[
+y'=\frac{x(2\ln x/x)-(\ln x)^2}{x^2}
+=\boxed{\frac{\ln x(2-\ln x)}{x^2}}.
+\]''',
+ r'''\[
+y'=e^x(\sin x+\cos x),\qquad
+y''=e^x(\sin x+\cos x)+e^x(\cos x-\sin x)
+=\boxed{2e^x\cos x}.
+\]''',
+ r'''\[
+f'(x)=\frac{2e^{2x}}{1+e^{2x}},
+\qquad f'(0)=\frac2{2}=\boxed1.
+\]''',
+ r'''\[
+y'=\boxed{\frac{3\sec^2(3x)(x^2+1)-2x\tan(3x)}{(x^2+1)^2}}.
+\]''',
+ r'''\[
+f'(x)=\frac{2x}{x^2+1}-\frac{2x}{x^2-1}
+=\frac{-4x}{(x^2+1)(x^2-1)}.
+\]
+At \(x=\sqrt2\), \(\boxed{f'(\sqrt2)=-\dfrac{4\sqrt2}{3}}\).''',
+ r'''\[
+y'=e^{\sin x}\cos x,\qquad
+y'(\pi)=e^0(-1)=\boxed{-1}.
+\]''',
+ r'''\[
+\begin{aligned}
+y'&=e^{-x}(2x\ln x+x)-x^2\ln x\,e^{-x}\\
+&=\boxed{xe^{-x}\bigl(2\ln x+1-x\ln x\bigr)}.
+\end{aligned}
+\]''',
+ r'''At \(x=1\), \(y=\tfrac12\), and \(y'=\dfrac1{(x+1)^2}\), so the slope is \(\tfrac14\).
+\[
+\boxed{y-\frac12=\frac14(x-1)}
+\]
+(equivalently \(y=\tfrac14x+\tfrac14\)).''',
+ r'''\[
+v(t)=s'(t)=e^{-t}(1-t).
+\]
+Thus the particle is at rest at \(\boxed{t=1}\). Its acceleration is
+\[
+a(t)=v'(t)=e^{-t}(t-2),
+\qquad \boxed{a(1)=-e^{-1}}.
+\]''',
+],
+])
+
 write_pair('limits-diff', 'Limits & Differentiation', '1 hour 20 minutes per test',
            '../limits-diff/2a_Differentiation_Exam_Sample.pdf', ld_q, ld_a, DIFF_FMT)
 
