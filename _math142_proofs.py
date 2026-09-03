@@ -112,7 +112,7 @@ week_a_practice = [
 week_a_body = r"""
 <section id="source"><div class="section-title"><span class="tag">Start</span> Textbook map and goal</div>
 <div class="source-box"><span class="box-label">Primary source</span><p>Steve Howard, <em>HSC Mathematics Extension 2</em> (December 2021), Chapter 1: pp. 7–43 for language, direct proof, contrapositive, contradiction, equivalence and disproof; pp. 44–76 continue into inequalities and AM–GM.</p>
-<p><a href="../dpen22/HSC-Mathematics-Extension-2-Textbook-v9-2021-12-03.pdf#page=7" target="_blank">Open the local textbook at Chapter 1 ↗</a></p></div>
+<p><a href="../dpen22/HSC-Mathematics-Extension-2-Textbook-v9-2021-12-03.pdf#page=8" target="_blank">Open the local textbook at Chapter 1 ↗</a></p></div>
 <div class="prose"><p>The goal is not to memorise ceremonial words. It is to make every claim traceable: what is assumed, what must be shown, why each step follows, and where the conclusion is reached.</p></div></section>
 
 <section id="language"><div class="section-title"><span class="tag">01</span> Statements, implication and quantifiers</div>
@@ -132,6 +132,7 @@ week_a_body = r"""
 <div class="video-box"><span class="box-label">Watch first</span><div class="video-row">
 __VIDEO_A1__
 __VIDEO_A2__
+__VIDEO_A3__
 </div></div>
 <div class="prose"><p><strong>Contrapositive:</strong> to prove $P\Rightarrow Q$, prove the equivalent statement $\neg Q\Rightarrow\neg P$. This is ideal when the negation of $Q$ has a useful algebraic form.</p>
 <p><strong>Contradiction:</strong> assume the claim is false, then derive an impossibility: a number is both odd and even, a reduced fraction has a common factor, or a quantity is simultaneously $&lt;a$ and $\ge a$.</p></div>
@@ -151,16 +152,22 @@ __PRACTICE_A__</section>
 week_a_body = (
     week_a_body
     .replace("__VIDEO_A1__", video(
-        "Proof by Contrapositive — method and first example",
-        "Dr. Trefor Bazett · Discrete Mathematics",
-        "0YqZIHFmVzg",
-        "Shows why proving not-Q implies not-P can be cleaner than attacking P implies Q directly.",
+        "Language and Symbols of Proof",
+        "Toby McGrath · HSC Extension 2 Mathematics",
+        "6qWlsXAc-EY",
+        "Statements, implications, quantifiers and the formal language used throughout the NSW course.",
     ))
     .replace("__VIDEO_A2__", video(
-        "Proof by Contradiction (1 of 2): How does it work?",
-        "Eddie Woo · Wootube",
-        "rV9esU9gHO8",
-        "An Australian classroom explanation of assuming the negation and forcing an impossibility.",
+        "Number Proofs",
+        "Toby McGrath · HSC Extension 2 Mathematics",
+        "SswASU4aUH0",
+        "Direct algebraic proof with the integer definitions used in the worked examples below.",
+    ))
+    .replace("__VIDEO_A3__", video(
+        "Proof by Contradiction and Counterexamples",
+        "Toby McGrath · HSC Extension 2 Mathematics",
+        "-oqqqtg9J0g",
+        "Exact syllabus coverage of contradiction and disproving universal claims.",
     ))
     .replace("__PRACTICE_A__", "".join(
         practice(i, q, s) for i, (q, s) in enumerate(week_a_practice, 1)
@@ -200,7 +207,7 @@ week_b_practice = [
 week_b_body = r"""
 <section id="source"><div class="section-title"><span class="tag">Start</span> Textbook map and goal</div>
 <div class="source-box"><span class="box-label">Primary source</span><p>Steve Howard, Chapter 1.5–1.6 (inequality proofs and AM–GM, pp. 44–76) and Chapter 3 (further mathematical induction, pp. 215–245).</p>
-<p><a href="../dpen22/HSC-Mathematics-Extension-2-Textbook-v9-2021-12-03.pdf#page=44" target="_blank">Open inequality proofs ↗</a> · <a href="../dpen22/HSC-Mathematics-Extension-2-Textbook-v9-2021-12-03.pdf#page=215" target="_blank">Open further induction ↗</a></p></div></section>
+<p><a href="../dpen22/HSC-Mathematics-Extension-2-Textbook-v9-2021-12-03.pdf#page=45" target="_blank">Open inequality proofs ↗</a> · <a href="../dpen22/HSC-Mathematics-Extension-2-Textbook-v9-2021-12-03.pdf#page=216" target="_blank">Open further induction ↗</a></p></div></section>
 
 <section id="inequalities"><div class="section-title"><span class="tag">01</span> Inequality proof toolkit</div>
 <div class="prose"><p>Most algebraic inequality proofs transform the difference between two sides into an expression known to be non-negative. The engine is usually a square:</p>
@@ -217,6 +224,7 @@ week_b_body = r"""
 <div class="video-box"><span class="box-label">Watch first</span><div class="video-row">
 __VIDEO_B1__
 __VIDEO_B2__
+__VIDEO_B3__
 </div></div>
 <table><thead><tr><th>Part</th><th>What to write</th><th>Purpose</th></tr></thead><tbody>
 <tr><td>1. Proposition</td><td>Define $P(n)$ and its domain.</td><td>States the exact claim.</td></tr>
@@ -245,16 +253,22 @@ __PRACTICE_B__</section>
 week_b_body = (
     week_b_body
     .replace("__VIDEO_B1__", video(
-        "Proof by induction",
-        "Khan Academy",
-        "wblW_M_HVQ8",
-        "A clear first pass through the base case, hypothesis and inductive step for a finite sum.",
+        "Inequality Proofs",
+        "Toby McGrath · HSC Extension 2 Mathematics",
+        "fKPGXBz05tI",
+        "NSW syllabus-aligned techniques for proving inequalities from sound algebraic steps.",
     ))
     .replace("__VIDEO_B2__", video(
-        "Mathematical Induction Practice Problems",
-        "The Organic Chemistry Tutor",
-        "tHNVX3e9zd0",
-        "Worked induction examples with the algebra written out carefully.",
+        "Further Induction Proofs",
+        "Toby McGrath · HSC Extension 2 Mathematics",
+        "qzKHER_SbRg",
+        "The first Extension 2 lesson on moving beyond elementary induction proofs.",
+    ))
+    .replace("__VIDEO_B3__", video(
+        "Applications of Mathematical Induction",
+        "Toby McGrath · HSC Extension 2 Mathematics",
+        "QQq7lWERixs",
+        "Applies induction beyond routine finite-sum identities.",
     ))
     .replace("__PRACTICE_B__", "".join(
         practice(i, q, s) for i, (q, s) in enumerate(week_b_practice, 1)
