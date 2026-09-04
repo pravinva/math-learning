@@ -1480,7 +1480,7 @@ ld_q = [
  r'[Limits] Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to2}\dfrac{x^3-8}{x-2}\) (b) \(\displaystyle\lim_{x\to\infty}\dfrac{4x^3-1}{2x^3+5}\).',
  r'[Powers of \(x\)] Differentiate \(y=x^{5/2}+3x^{-2}\).',
  r'[Rules 1–5] Differentiate \(y=(3x-2)^4\).',
- r'[2nd derivative] Find \(y\'\'\) for \(y=\sqrt{x-1}\), leaving your answer in exact index or surd form.',
+ r'[2nd derivative] Find \(y\'\'\) for \(y=\sqrt{x-1}\).',
  r'[Derivative at a point] Find \(f\'(0)\) for \(f(x)=e^{3x}\cos x\).',
  r'[Any function] Differentiate \(y=\dfrac{2x-1}{x+3}\).',
  r'[Logarithms] Find \(f\'(1)\) if \(f(x)=\ln(3x+1)\).',
@@ -1558,7 +1558,7 @@ ld_a = [
  r'(a) \(4\) (b) \(\dfrac{3}{2}\).',
  r'\(\dfrac{1}{2\sqrt{x}}+\dfrac{3}{2}\sqrt{x}\).',
  r'\(f\'(x)=4x+1\).',
- r'\(y\'\'=-\dfrac14(x-1)^{-3/2}\).',
+ r'\(y\'\'=-\dfrac{1}{4(x-1)\sqrt{x-1}}\).',
  r'\(f\'(1)=2e^{3}\).',
  r'\(y\'=\dfrac{1-\ln(2x)}{x^2}\).',
  r'\(f\'(2)=2\).',
@@ -1618,7 +1618,7 @@ ld_a = [
  r'(a) \(12\) (b) \(2\).',
  r'\(\dfrac52 x^{3/2}-6x^{-3}\).',
  r'\(12(3x-2)^3\).',
- r'\(y\'\'=-\dfrac14(x-1)^{-3/2}\).',
+ r'\(y\'\'=-\dfrac{1}{4(x-1)\sqrt{x-1}}\).',
  r'\(3\).',
  r'\(y\'=\dfrac{7}{(x+3)^2}\).',
  r'\(\dfrac34\).',
@@ -1689,7 +1689,7 @@ ld_q.extend([
   [r'(A) \(e^{2x}(2\cos3x-3\sin3x)\)', r'(B) \(e^{2x}(2\cos3x+3\sin3x)\)',
    r'(C) \(e^{2x}(\cos3x-3\sin3x)\)', r'(D) \(e^{2x}(3\cos3x-2\sin3x)\)',
    r'(E) \(2e^{2x}(\cos3x-\sin3x)\)']),
- (r'[Tangent] The tangent to \(y=x\ln x\) at \(x=e^{-1}\) is',
+ (r'[Tangent] The tangent to \(y=x\ln x\) at \(x=e^{-1}\), written in gradient-intercept form, is',
   [r'(A) \(y=0\)', r'(B) \(y=-e^{-1}\)', r'(C) \(y=x-e^{-1}\)',
    r'(D) \(y=e^{-1}\)', r'(E) \(y=-x-e^{-1}\)']),
  r'[Limits] The graph below has a removable discontinuity at \(x=2\). State '
@@ -1705,11 +1705,11 @@ ld_q.extend([
  r'[Derivative at a point] For \(f(x)=\ln(x^2+e^x)\), find \(f\'(0)\).',
  r'[Any function] Differentiate \(y=\dfrac{e^x}{x^2+1}\) and simplify.',
  r'[Logarithms] If \(f(x)=\ln(\ln x)\), find \(f\'(e)\).',
- r'[Trigonometric] If \(y=\sin^2(3x)\), find the exact value of \(y\'\) at \(x=\dfrac{\pi}{12}\).',
+ r'[Trigonometric] If \(y=\sin^2(3x)\), find the value of \(y\'\) at \(x=\dfrac{\pi}{12}\).',
  r'[Mixed] Differentiate \(y=(x^2+1)e^{-2x}\) and factorise your answer.',
  r'[Tangent] Find the equation of the tangent to \(y=\ln(x^2+1)\) at \(x=1\).',
  r'[Application of tangent] Find every point on \(y=x^3-3x^2+2\) where the tangent '
- r'is parallel to \(y=3x+1\). Give exact coordinates.',
+ r'is parallel to \(y=3x+1\).',
 ],
 [
  (r'[Limits] \(\displaystyle\lim_{x\to0}\dfrac{e^{2x}-1}{x}=\)',
@@ -1731,7 +1731,7 @@ ld_q.extend([
   [r'(A) \(e^{-x}(2\cos2x-\sin2x)\)', r'(B) \(e^{-x}(2\cos2x+\sin2x)\)',
    r'(C) \(e^{-x}(\cos2x-2\sin2x)\)', r'(D) \(e^x(2\cos2x-\sin2x)\)',
    r'(E) \(e^{-x}(2\sin2x-\cos2x)\)']),
- (r'[Tangent] The tangent to \(y=\dfrac{e^x}{x}\) at \(x=1\) is',
+ (r'[Tangent] The tangent to \(y=\dfrac{e^x}{x}\) at \(x=1\), written in gradient-intercept form, is',
   [r'(A) \(y=e\)', r'(B) \(y=ex\)', r'(C) \(y=e(x-1)\)',
    r'(D) \(y=x+e-1\)', r'(E) \(y=e(x+1)\)']),
  r'[Limits] The graph below approaches \(2\) from both sides at \(x=-1\), but its '
@@ -1741,14 +1741,14 @@ ld_q.extend([
  r'[Limits] Evaluate: (a) \(\displaystyle\lim_{x\to0}\dfrac{\sin(5x)}{\sin(2x)}\) '
  r'(b) \(\displaystyle\lim_{x\to\infty}x\left(\sqrt{x^2+4}-x\right)\).',
  r'[Powers of \(x\)] For \(x>0\), let \(f(x)=2x^{3/2}+3x^{-1/2}\). Find and classify '
- r'its stationary point, giving the \(x\)-coordinate exactly.',
+ r'its stationary point.',
  r'[Rules 1–5] Differentiate \(y=\dfrac{(\ln x)^2}{x}\) and factorise the numerator.',
  r'[2nd derivative] Find \(y\'\'\) for \(y=e^x\sin x\).',
  r'[Derivative at a point] For \(f(x)=\ln(1+e^{2x})\), find \(f\'(0)\).',
  r'[Any function] Differentiate \(y=\dfrac{\tan(3x)}{x^2+1}\).',
  r'[Logarithms] For \(x>1\), let \(f(x)=\ln\!\left(\dfrac{x^2+1}{x^2-1}\right)\). '
- r'Find the exact value of \(f\'(\sqrt2)\).',
- r'[Trigonometric] If \(y=e^{\sin x}\), find the exact value of \(y\'(\pi)\).',
+ r'Find the value of \(f\'(\sqrt2)\).',
+ r'[Trigonometric] If \(y=e^{\sin x}\), find the value of \(y\'(\pi)\).',
  r'[Mixed] Differentiate \(y=x^2\ln x\,e^{-x}\) and factorise your answer.',
  r'[Tangent] Find the equation of the tangent to \(y=\dfrac{x}{x+1}\) at \(x=1\).',
  r'[Application of tangent] A particle has displacement \(s(t)=te^{-t}\), \(t\ge0\). '
@@ -1756,28 +1756,37 @@ ld_q.extend([
 ],
 ])
 
-# Match the official sample by stating the expected form as part of each
-# question. These directions describe only the final form; they deliberately
-# avoid naming a method or differentiation rule.
+# Match the official sample by assigning one unambiguous requested form to
+# each relevant question. Never offer alternatives such as "index or surd".
+_EXACT = r'Leave your answer in exact form.'
+_EXACT_EACH = r'Leave each answer in exact form. If a limit does not exist, state this clearly.'
+_INDEX = r'Leave your answer in index form.'
+_SURD = r'Leave your answer in surd form.'
+_SIMPLIFY = r'Simplify your answer fully.'
+_GRADIENT_INTERCEPT = r'Write your answer in gradient-intercept form \(y=mx+b\).'
+
 _diff_format_directions = [
-    None,
-    None,
-    None,
-    None,
-    None,
-    r'Give the tangent equation in gradient-intercept form \(y=mx+b\), using exact coefficients.',
-    None,
-    r'Give each answer in exact, fully simplified form. If a limit does not exist, state this clearly.',
-    r'Leave fractional powers in exact index or surd form. Give any requested coordinates and classifications exactly.',
-    r'Give the final derivative in fully simplified exact form.',
-    r'Give the second derivative in fully simplified exact form, and give any requested roots exactly.',
-    r'Leave the final value in exact form.',
-    r'Give the final derivative in fully simplified exact form.',
-    r'Leave the final value in exact, fully simplified form.',
-    r'Leave the final value in exact form; do not use a decimal approximation.',
-    r'Give the final derivative in fully simplified exact form.',
-    r'Write the final tangent equation in gradient-intercept form \(y=mx+b\), using exact coefficients.',
-    r'Give all requested times, coordinates, equations, or values exactly.',
+    # Test 4
+    [None, None, None, None, None, _GRADIENT_INTERCEPT, None, _EXACT_EACH,
+     _INDEX, _SIMPLIFY, _SURD, _EXACT, _SIMPLIFY, _EXACT, _EXACT,
+     _SIMPLIFY, _GRADIENT_INTERCEPT, _EXACT],
+    # Test 5
+    [None, None, None, None, None, _GRADIENT_INTERCEPT, None, _EXACT_EACH,
+     _INDEX, _SIMPLIFY, _SIMPLIFY, _EXACT, _SIMPLIFY, _EXACT, _SURD,
+     _SIMPLIFY, _GRADIENT_INTERCEPT, _EXACT],
+    # Test 6
+    [None, None, None, None, None, _GRADIENT_INTERCEPT, None, _EXACT_EACH,
+     _INDEX, _SIMPLIFY, _SIMPLIFY, _EXACT, _SIMPLIFY, _EXACT, _EXACT,
+     _SIMPLIFY, _GRADIENT_INTERCEPT, _GRADIENT_INTERCEPT],
+    # Test 7
+    [None, None, None, None, None, _GRADIENT_INTERCEPT, None, _EXACT_EACH,
+     _EXACT, None,
+     r'Simplify \(y\'\'\) fully and leave the roots of \(y\'\'=0\) in surd form.',
+     _EXACT, _SIMPLIFY, _EXACT, _EXACT, None, _GRADIENT_INTERCEPT, _SURD],
+    # Test 8
+    [None, None, None, None, None, _GRADIENT_INTERCEPT, None, _EXACT_EACH,
+     _SURD, None, _SIMPLIFY, _EXACT, _SIMPLIFY, _SURD, _EXACT, None,
+     _GRADIENT_INTERCEPT, _EXACT],
 ]
 
 
@@ -1790,13 +1799,14 @@ def _add_diff_format_direction(question, direction):
     else:
         text = question
     lower = text.lower()
+    direction_lower = direction.lower()
     # Do not repeat an instruction that is already explicit in the question.
     if (
-        ('gradient-intercept' in direction and 'gradient-intercept' in lower)
-        or ('surd or index' in direction and ('surd' in lower or 'exactly' in lower))
-        or ('fully simplified' in direction and ('simplif' in lower or 'factoris' in lower))
-        or ('exact form' in direction and 'exact' in lower)
-        or ('values exactly' in direction and 'exact' in lower)
+        ('gradient-intercept' in direction_lower and 'gradient-intercept' in lower)
+        or ('surd form' in direction_lower and 'surd form' in lower)
+        or ('index form' in direction_lower and 'index form' in lower)
+        or ('exact form' in direction_lower and 'exact' in lower)
+        or ('simplify' in direction_lower and ('simplif' in lower or 'factoris' in lower))
     ):
         return question
     if isinstance(question, tuple):
@@ -1808,11 +1818,12 @@ def _add_diff_format_direction(question, direction):
     return text + ' ' + direction
 
 
-for _test in ld_q[3:8]:
-    assert len(_test) == len(_diff_format_directions) == 18
+assert len(_diff_format_directions) == 5
+for _test, _directions in zip(ld_q[3:8], _diff_format_directions):
+    assert len(_test) == len(_directions) == 18
     _test[:] = [
         _add_diff_format_direction(question, direction)
-        for question, direction in zip(_test, _diff_format_directions)
+        for question, direction in zip(_test, _directions)
     ]
 
 ld_a.extend([
@@ -1957,7 +1968,7 @@ f'(x)=3x^{1/2}-\frac32x^{-3/2}
 \]
 Thus \(x=1/\sqrt2\). The derivative changes from negative to positive, so this is a local minimum.
 \[
-\boxed{x=\frac1{\sqrt2}}.
+\boxed{x=\frac{\sqrt2}{2}}.
 \]''',
  r'''\[
 y'=\frac{x(2\ln x/x)-(\ln x)^2}{x^2}
