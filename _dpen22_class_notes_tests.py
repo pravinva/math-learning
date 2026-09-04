@@ -1706,7 +1706,7 @@ ld_q.extend([
  r'[Any function] Differentiate \(y=\dfrac{e^x}{x^2+1}\) and simplify.',
  r'[Logarithms] If \(f(x)=\ln(\ln x)\), find \(f\'(e)\).',
  r'[Trigonometric] If \(y=\sin^2(3x)\), find the value of \(y\'\) at \(x=\dfrac{\pi}{12}\).',
- r'[Mixed] Differentiate \(y=(x^2+1)e^{-2x}\) and factorise your answer.',
+ r'[Mixed] Differentiate \(y=(x^2+1)e^{-2x}\) and simplify your answer if necessary.',
  r'[Tangent] Find the equation of the tangent to \(y=\ln(x^2+1)\) at \(x=1\).',
  r'[Application of tangent] Find every point on \(y=x^3-3x^2+2\) where the tangent '
  r'is parallel to \(y=3x+1\).',
@@ -1742,14 +1742,14 @@ ld_q.extend([
  r'(b) \(\displaystyle\lim_{x\to\infty}x\left(\sqrt{x^2+4}-x\right)\).',
  r'[Powers of \(x\)] For \(x>0\), let \(f(x)=2x^{3/2}+3x^{-1/2}\). Find and classify '
  r'its stationary point.',
- r'[Rules 1–5] Differentiate \(y=\dfrac{(\ln x)^2}{x}\) and factorise the numerator.',
+ r'[Rules 1–5] Differentiate \(y=\dfrac{(\ln x)^2}{x}\) and simplify your answer if necessary.',
  r'[2nd derivative] Find \(y\'\'\) for \(y=e^x\sin x\).',
  r'[Derivative at a point] For \(f(x)=\ln(1+e^{2x})\), find \(f\'(0)\).',
  r'[Any function] Differentiate \(y=\dfrac{\tan(3x)}{x^2+1}\).',
  r'[Logarithms] For \(x>1\), let \(f(x)=\ln\!\left(\dfrac{x^2+1}{x^2-1}\right)\). '
  r'Find the value of \(f\'(\sqrt2)\).',
  r'[Trigonometric] If \(y=e^{\sin x}\), find the value of \(y\'(\pi)\).',
- r'[Mixed] Differentiate \(y=x^2\ln x\,e^{-x}\) and factorise your answer.',
+ r'[Mixed] Differentiate \(y=x^2\ln x\,e^{-x}\) and simplify your answer if necessary.',
  r'[Tangent] Find the equation of the tangent to \(y=\dfrac{x}{x+1}\) at \(x=1\).',
  r'[Application of tangent] A particle has displacement \(s(t)=te^{-t}\), \(t\ge0\). '
  r'Find when it is at rest and its acceleration at that instant.',
