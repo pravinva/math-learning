@@ -1473,7 +1473,8 @@ ld_q = [
   [r'(A) \(x=-6\)',r'(B) \(x=3\)',r'(C) \(x=-3\)',r'(D) \(x=6\)',r'(E) \(x=0\)']),
  (r'[Tangent] Tangent to \(y=x^2-4x\) at \(x=3\):',
   [r'(A) \(y=2x-9\)',r'(B) \(y=2x-3\)',r'(C) \(y=6x-15\)',r'(D) \(y=2x+3\)',r'(E) \(y=-2x+3\)']),
- r'[Limits] Consider the graph drawn below. Explain whether \(\displaystyle\lim_{x\to2}f(x)\) can exist if \(f(2)\) is undefined. Justify.'
+ r'[Limits] Use the graph to state \(\displaystyle\lim_{x\to2}f(x)\) and \(f(2)\). '
+ r'Hence determine whether \(f\) is continuous at \(x=2\), and justify your conclusion.'
  + limit_removable(xmin=-1, xmax=5, ymin=-1, ymax=5, hole_x=2, hole_y=3, filled_y=1,
                    caption='Graph of y = f(x)  (open circle: limit candidate; filled: f(2))'),
  r'[Limits] Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to2}\dfrac{x^3-8}{x-2}\) (b) \(\displaystyle\lim_{x\to\infty}\dfrac{4x^3-1}{2x^3+5}\).',
@@ -1506,7 +1507,7 @@ ld_q = [
  r'[Limits] Evaluate, if they exist: (a) \(\displaystyle\lim_{x\to1}\dfrac{x^2+x-2}{x-1}\) (b) \(\displaystyle\lim_{x\to\infty}\dfrac{7x-1}{2x+5}\).',
  r'[Powers of \(x\)] Find \(\dfrac{dy}{dx}\) for \(y=x^{3/2}-4x^{-1}\).',
  r'[Rules 1–5] Differentiate \(y=(5-2x)^6\).',
- r'[2nd derivative] Find \(y\'\'\) for \(y=x^3e^{x}\) at a simplified form (first find \(y\'\)).',
+ r'[2nd derivative] Find \(y\'\) and \(y\'\'\) for \(y=x^3e^{x}\).',
  r'[Derivative at a point] Find \(f\'(1)\) for \(f(x)=(x^2+1)^4\).',
  r'[Any function] Differentiate \(y=\dfrac{\sin x}{x}\).',
  r'[Logarithms] Find \(f\'(2)\) if \(f(x)=\ln(x^2-3)\).',
@@ -1526,7 +1527,7 @@ ld_q = [
   [r'(A) \(\dfrac{-3}{(x-1)^2}\)',r'(B) \(\dfrac{3}{(x-1)^2}\)',r'(C) \(\dfrac{2}{x-1}\)',r'(D) \(\dfrac{-1}{(x-1)^2}\)',r'(E) other']),
  (r'[Mixed] Derivative of \(y=\sin x\cos x\) is',
   [r'(A) \(\cos2x\)',r'(B) \(\sin2x\)',r'(C) \(1\)',r'(D) \(-\cos2x\)',r'(E) \(\tfrac12\sin2x\)']),
- (r'[Tangent] Tangent to \(y=2^x\) is not required; instead tangent to \(y=e^{x}\) at \(x=0\) is',
+ (r'[Tangent] The equation of the tangent to \(y=e^{x}\) at \(x=0\), written in gradient-intercept form, is',
   [r'(A) \(y=x\)',r'(B) \(y=x+1\)',r'(C) \(y=e x\)',r'(D) \(y=1\)',r'(E) \(y=ex+1\)']),
  r'[Limits] The graph below approaches the same height from both sides at \(x=3\) (LHL \(=\) RHL \(=2\)), with \(f(3)\) possibly different. Does \(\displaystyle\lim_{x\to3}f(x)\) exist? Justify.'
  + limit_removable(xmin=-1, xmax=6, ymin=-1, ymax=5, hole_x=3, hole_y=2, filled_y=4,
@@ -1541,7 +1542,7 @@ ld_q = [
  r'[Trigonometric] Find \(f\'\left(\dfrac{\pi}{4}\right)\) for \(f(x)=\tan x\).',
  r'[Mixed] Differentiate \(y=\dfrac{e^{x}}{\sin x}\).',
  r'[Tangent] Find the equation of the tangent to \(y=x^2+1\) at \(x=-1\).',
- r'[Application of tangent] Find the equation of the tangent to \(y=x^3-x\) that is parallel to \(y=2x\).',
+ r'[Application of tangent] Find the equations of all tangents to \(y=x^3-x\) that are parallel to \(y=2x\).',
 ],
 ]
 
@@ -1613,7 +1614,7 @@ ld_a = [
  r'(B) \(8\sin4x\cos4x\) (equivalently \(4\sin8x\) via double-angle identity).',
  r'(A) \(x=-6\).',
  r'(A) \(y=2x-9\).',
- r'Yes; limit depends on nearby values.',
+ r'\(\displaystyle\lim_{x\to2}f(x)=3\), while \(f(2)=1\). Since these values are unequal, \(f\) is not continuous at \(x=2\).',
  r'(a) \(12\) (b) \(2\).',
  r'\(\dfrac52 x^{3/2}-6x^{-3}\).',
  r'\(12(3x-2)^3\).',
@@ -1754,6 +1755,55 @@ ld_q.extend([
  r'Find when it is at rest and its acceleration at that instant.',
 ],
 ])
+
+# The official sample repeatedly tells students exactly what form their answer
+# must take. Apply the same marking-focused instruction to every question in
+# Tests 4–8, while preserving the mathematical content and distractors.
+_diff_requirements = [
+    r'Select one answer. Give the finite exact value of the limit, or select DNE if the two-sided limit does not exist.',
+    r'Select every stationary \(x\)-value allowed by the stated domain. If the question asks for the condition used, select the equation that must be solved first.',
+    r'Select the fully simplified derivative. Equivalent unsimplified expressions are not accepted unless they simplify to the selected form.',
+    r'Select the fully simplified exact derivative, applying all required product, quotient, chain, logarithmic, or trigonometric rules.',
+    r'Select the fully simplified exact result. Check carefully for every factor introduced by the product, quotient, or chain rule.',
+    r'Select the complete tangent equation in gradient-intercept form \(y=mx+b\), with exact coefficients.',
+    r'State the left-hand and right-hand limits separately, then state the two-sided limit. Compare the limit with the plotted function value when one is shown, and state clearly whether the function is continuous.',
+    r'Show the algebraic method used for each part. Give each limit in exact form; if a finite real limit does not exist, state DNE and explain why.',
+    r'Show the derivative used. Give all requested stationary values or coordinates exactly, and include the requested classification. Leave fractional powers in exact index or surd form; do not use decimals.',
+    r'State the differentiation rule or rules used, show the derivative, and simplify the final answer fully.',
+    r'Show both the first and second derivatives. Simplify \(y\'\'\) fully, leaving any radicals in exact surd or index form, then solve any requested equation exactly.',
+    r'Name the main differentiation rule used and show the substitution of the given \(x\)-value. Leave the final answer in exact form.',
+    r'Show the required differentiation rule and simplify the final derivative fully; do not leave an avoidable complex fraction.',
+    r'Use the logarithm laws first when they simplify the work. Show the derivative and leave the requested value in exact form.',
+    r'Show the chain, product, or quotient rule as required. Give the final value in exact form using standard angle values; no decimals.',
+    r'Show every required product, quotient, and chain-rule factor. Simplify or factorise the final derivative exactly as requested.',
+    r'Find the point and gradient first. Write the final tangent equation in gradient-intercept form \(y=mx+b\), with exact coefficients.',
+    r'Differentiate to form the required gradient, velocity, or acceleration equation. Find every solution in the stated domain and give all requested points or values exactly.',
+]
+
+
+def _add_diff_requirement(question, requirement):
+    note = (
+        '<span class="answer-requirement" style="display:block;margin:7px 0 3px;padding:6px 9px;'
+        'background:#fff8e8;border-left:3px solid #d97706;color:#713f12;font-size:13.5px;'
+        f'line-height:1.45;"><strong>Answer requirement:</strong> {requirement}</span>'
+    )
+    if isinstance(question, tuple):
+        stem, choices = question
+        return stem + note, choices
+    # Keep a graph immediately after its written instructions rather than
+    # separating the requirement from the question by a long SVG block.
+    figure_at = question.find('<div class="fig">')
+    if figure_at >= 0:
+        return question[:figure_at] + note + question[figure_at:]
+    return question + note
+
+
+for _test in ld_q[3:8]:
+    assert len(_test) == len(_diff_requirements) == 18
+    _test[:] = [
+        _add_diff_requirement(question, requirement)
+        for question, requirement in zip(_test, _diff_requirements)
+    ]
 
 ld_a.extend([
 [
