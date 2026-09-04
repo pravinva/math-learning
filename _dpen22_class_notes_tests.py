@@ -1638,7 +1638,7 @@ ld_a = [
  r'(a) \(3\) (b) \(\dfrac72\).',
  r'\(\dfrac32 x^{1/2}+4x^{-2}\).',
  r'\(-12(5-2x)^5\).',
- r'\(y\'=e^{x}(x^3+3x^2)\); \(y\'\'=e^{x}(x^3+6x^2+6x)\).',
+ r'\(y\'=x^2e^x(x+3)\); \(y\'\'=xe^x(x^2+6x+6)\).',
  r'\(32\).',
  r'\(\dfrac{x\cos x-\sin x}{x^2}\).',
  r'\(4\).',
@@ -1883,7 +1883,7 @@ y''=e^x(x^2+4x+2).
 \]
 Since \(e^x\ne0\), solve \(x^2+4x+2=0\):
 \[
-\boxed{x=-2\pm\sqrt2}.
+\boxed{x=-2\pm\sqrt2}\qquad\text{(surd form)}.
 \]''',
  r'''\[
 f'(x)=\frac{2x+e^x}{x^2+e^x},
@@ -1917,7 +1917,8 @@ Thus \(\boxed{y=x+\ln2-1}\), in gradient-intercept form.''',
 \]
 Using \(x^2=2x+1\) in \(y=x^3-3x^2+2\) gives \(y=1-x\). Hence the points are
 \[
-\boxed{(1+\sqrt2,-\sqrt2)\ \text{and}\ (1-\sqrt2,\sqrt2)}.
+\boxed{(1+\sqrt2,-\sqrt2)\ \text{and}\ (1-\sqrt2,\sqrt2)}
+\qquad\text{(surd form)}.
 \]''',
 ],
 [
@@ -1967,8 +1968,15 @@ f'(x)=3x^{1/2}-\frac32x^{-3/2}
 =\frac32x^{-3/2}(2x^2-1).
 \]
 Thus \(x=1/\sqrt2\). The derivative changes from negative to positive, so this is a local minimum.
+At \(x=\sqrt2/2\),
 \[
-\boxed{x=\frac{\sqrt2}{2}}.
+f(x)=2\left(\frac{\sqrt2}{2}\right)^{3/2}
+ +3\left(\frac{\sqrt2}{2}\right)^{-1/2}
+=4\sqrt[4]{2}.
+\]
+\[
+\boxed{\left(\frac{\sqrt2}{2},\,4\sqrt[4]{2}\right)
+\text{ is a local minimum}}\qquad\text{(surd form)}.
 \]''',
  r'''\[
 y'=\frac{x(2\ln x/x)-(\ln x)^2}{x^2}
@@ -1990,7 +1998,10 @@ y'=\boxed{\frac{3\sec^2(3x)(x^2+1)-2x\tan(3x)}{(x^2+1)^2}}.
 f'(x)=\frac{2x}{x^2+1}-\frac{2x}{x^2-1}
 =\frac{-4x}{(x^2+1)(x^2-1)}.
 \]
-At \(x=\sqrt2\), \(\boxed{f'(\sqrt2)=-\dfrac{4\sqrt2}{3}}\).''',
+At \(x=\sqrt2\),
+\[
+\boxed{f'(\sqrt2)=-\dfrac{4\sqrt2}{3}}\qquad\text{(surd form)}.
+\]''',
  r'''\[
 y'=e^{\sin x}\cos x,\qquad
 y'(\pi)=e^0(-1)=\boxed{-1}.
@@ -2003,9 +2014,11 @@ y'&=e^{-x}(2x\ln x+x)-x^2\ln x\,e^{-x}\\
 \]''',
  r'''At \(x=1\), \(y=\tfrac12\), and \(y'=\dfrac1{(x+1)^2}\), so the slope is \(\tfrac14\).
 \[
-\boxed{y-\frac12=\frac14(x-1)}
+y-\frac12=\frac14(x-1)
+\quad\Longrightarrow\quad
+\boxed{y=\frac14x+\frac14}.
 \]
-(equivalently \(y=\tfrac14x+\tfrac14\)).''',
+This is gradient-intercept form.''',
  r'''\[
 v(t)=s'(t)=e^{-t}(1-t).
 \]
