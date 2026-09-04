@@ -1664,8 +1664,8 @@ ld_a = [
  r'\(1\).',
  r'\(2\).',
  r'\(\dfrac{e^{x}(\sin x-\cos x)}{\sin^2 x}\).',
- r'\(y=-2x-1\).',
- r'\(y\'=3x^2-1=2\Rightarrow x=\pm1\); tangents \(y=2x\mp\tfrac23\) wait: at \(x=1\), \(y=0\), \(y=2x-2\); at \(x=-1\), \(y=0\), \(y=2x+2\).',
+ r'\(y=-2x\).',
+ r'\(y\'=3x^2-1=2\Rightarrow x=\pm1\). At both points \(y=0\), so the tangent equations are \(y=2x-2\) and \(y=2x+2\).',
 ],
 ]
 
@@ -1699,7 +1699,7 @@ ld_q.extend([
  r'[Limits] Evaluate: (a) \(\displaystyle\lim_{x\to2}\dfrac{x^3-8}{\sqrt{x+2}-2}\) '
  r'(b) \(\displaystyle\lim_{x\to\infty}\left(\sqrt{9x^2+1}-3x\right)\).',
  r'[Powers of \(x\)] For \(x>0\), let \(f(x)=x^{5/2}-5x^{1/2}\). Find all stationary '
- r'points and classify each using a sign test or the second derivative.',
+ r'points and classify each as a local maximum or local minimum.',
  r'[Rules 1–5] Differentiate \(y=\dfrac{(2x-1)^3}{x^2+1}\) and simplify fully.',
  r'[2nd derivative] If \(y=x^2e^x\), find \(y\'\'\), then solve \(y\'\'=0\).',
  r'[Derivative at a point] For \(f(x)=\ln(x^2+e^x)\), find \(f\'(0)\).',
@@ -1756,53 +1756,63 @@ ld_q.extend([
 ],
 ])
 
-# The official sample repeatedly tells students exactly what form their answer
-# must take. Apply the same marking-focused instruction to every question in
-# Tests 4–8, while preserving the mathematical content and distractors.
-_diff_requirements = [
-    r'Select one answer. Give the finite exact value of the limit, or select DNE if the two-sided limit does not exist.',
-    r'Select every stationary \(x\)-value allowed by the stated domain. If the question asks for the condition used, select the equation that must be solved first.',
-    r'Select the fully simplified derivative. Equivalent unsimplified expressions are not accepted unless they simplify to the selected form.',
-    r'Select the fully simplified exact derivative, applying all required product, quotient, chain, logarithmic, or trigonometric rules.',
-    r'Select the fully simplified exact result. Check carefully for every factor introduced by the product, quotient, or chain rule.',
-    r'Select the complete tangent equation in gradient-intercept form \(y=mx+b\), with exact coefficients.',
-    r'State the left-hand and right-hand limits separately, then state the two-sided limit. Compare the limit with the plotted function value when one is shown, and state clearly whether the function is continuous.',
-    r'Show the algebraic method used for each part. Give each limit in exact form; if a finite real limit does not exist, state DNE and explain why.',
-    r'Show the derivative used. Give all requested stationary values or coordinates exactly, and include the requested classification. Leave fractional powers in exact index or surd form; do not use decimals.',
-    r'State the differentiation rule or rules used, show the derivative, and simplify the final answer fully.',
-    r'Show both the first and second derivatives. Simplify \(y\'\'\) fully, leaving any radicals in exact surd or index form, then solve any requested equation exactly.',
-    r'Name the main differentiation rule used and show the substitution of the given \(x\)-value. Leave the final answer in exact form.',
-    r'Show the required differentiation rule and simplify the final derivative fully; do not leave an avoidable complex fraction.',
-    r'Use the logarithm laws first when they simplify the work. Show the derivative and leave the requested value in exact form.',
-    r'Show the chain, product, or quotient rule as required. Give the final value in exact form using standard angle values; no decimals.',
-    r'Show every required product, quotient, and chain-rule factor. Simplify or factorise the final derivative exactly as requested.',
-    r'Find the point and gradient first. Write the final tangent equation in gradient-intercept form \(y=mx+b\), with exact coefficients.',
-    r'Differentiate to form the required gradient, velocity, or acceleration equation. Find every solution in the stated domain and give all requested points or values exactly.',
+# Match the official sample by stating the expected form as part of each
+# question. These directions describe only the final form; they deliberately
+# avoid naming a method or differentiation rule.
+_diff_format_directions = [
+    None,
+    None,
+    None,
+    None,
+    None,
+    r'Give the tangent equation in gradient-intercept form \(y=mx+b\), using exact coefficients.',
+    None,
+    r'Give each answer in exact, fully simplified form. If a limit does not exist, state this clearly.',
+    r'Leave fractional powers in exact index or surd form. Give any requested coordinates and classifications exactly.',
+    r'Give the final derivative in fully simplified exact form.',
+    r'Give the second derivative in fully simplified exact form, leaving radicals in surd or index form.',
+    r'Leave the final value in exact form.',
+    r'Give the final derivative in fully simplified exact form.',
+    r'Leave the final value in exact, fully simplified form.',
+    r'Leave the final value in exact form; do not use a decimal approximation.',
+    r'Give the final derivative in fully simplified exact form, or factorised form where requested.',
+    r'Write the final tangent equation in gradient-intercept form \(y=mx+b\), using exact coefficients.',
+    r'Give all requested times, coordinates, equations, or values exactly.',
 ]
 
 
-def _add_diff_requirement(question, requirement):
-    note = (
-        '<span class="answer-requirement" style="display:block;margin:7px 0 3px;padding:6px 9px;'
-        'background:#fff8e8;border-left:3px solid #d97706;color:#713f12;font-size:13.5px;'
-        f'line-height:1.45;"><strong>Answer requirement:</strong> {requirement}</span>'
-    )
+def _add_diff_format_direction(question, direction):
+    if direction is None:
+        return question
     if isinstance(question, tuple):
         stem, choices = question
-        return stem + note, choices
-    # Keep a graph immediately after its written instructions rather than
-    # separating the requirement from the question by a long SVG block.
-    figure_at = question.find('<div class="fig">')
+        text = stem
+    else:
+        text = question
+    lower = text.lower()
+    # Do not repeat an instruction that is already explicit in the question.
+    if (
+        ('gradient-intercept' in direction and 'gradient-intercept' in lower)
+        or ('surd or index' in direction and ('surd' in lower or 'exactly' in lower))
+        or ('fully simplified' in direction and ('simplif' in lower or 'factoris' in lower))
+        or ('exact form' in direction and 'exact' in lower)
+        or ('values exactly' in direction and 'exact' in lower)
+    ):
+        return question
+    if isinstance(question, tuple):
+        return f'{text} {direction}', choices
+    # Keep graph directions before the SVG so the full question reads naturally.
+    figure_at = text.find('<div class="fig">')
     if figure_at >= 0:
-        return question[:figure_at] + note + question[figure_at:]
-    return question + note
+        return text[:figure_at] + ' ' + direction + text[figure_at:]
+    return text + ' ' + direction
 
 
 for _test in ld_q[3:8]:
-    assert len(_test) == len(_diff_requirements) == 18
+    assert len(_test) == len(_diff_format_directions) == 18
     _test[:] = [
-        _add_diff_requirement(question, requirement)
-        for question, requirement in zip(_test, _diff_requirements)
+        _add_diff_format_direction(question, direction)
+        for question, direction in zip(_test, _diff_format_directions)
     ]
 
 ld_a.extend([
@@ -1888,7 +1898,7 @@ y'=2xe^{-2x}-2(x^2+1)e^{-2x}
 \[
 y'=\frac{2x}{x^2+1}\Rightarrow y'(1)=1.
 \]
-Thus \(\boxed{y-\ln2=x-1}\).''',
+Thus \(\boxed{y=x+\ln2-1}\), in gradient-intercept form.''',
  r'''Parallel tangents require
 \[
 3x^2-6x=3\Rightarrow x^2-2x-1=0
