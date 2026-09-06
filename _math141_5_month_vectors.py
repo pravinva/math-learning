@@ -500,17 +500,29 @@ month_4 = [
         v_1&v_2&v_3
         \end{vmatrix}.
         \]
-        Why is the middle sign negative?""",
+        Match the three components with signed area projections on the
+        \(yz,zx,xy\) coordinate planes. Why does writing the middle minor in
+        \(xz\) order produce an outside minus sign?""",
         r"""<p>Cofactor expansion along the first row gives
         \[
         (u_2v_3-u_3v_2)\mathbf i
         -(u_1v_3-u_3v_1)\mathbf j
         +(u_1v_2-u_2v_1)\mathbf k.
         \]</p>
-        <p>The cofactor signs alternate \(+,-,+\) across the first row. The middle
-        minus is part of the determinant's orientation bookkeeping. Omitting it
-        usually produces a vector that fails
-        the perpendicularity check.</p>""",
+        <p>The \(\mathbf i\)-component is the \(yz\) signed area
+        \(\det\!\begin{pmatrix}u_2&u_3\\v_2&v_3\end{pmatrix}\). The
+        \(\mathbf j\)-component is the \(zx\) signed area
+        \[
+        \det\!\begin{pmatrix}u_3&u_1\\v_3&v_1\end{pmatrix}
+        =u_3v_1-u_1v_3.
+        \]
+        The displayed cofactor minor uses \(xz\) order, whose determinant has the
+        opposite sign, so the outside minus restores \(zx\) orientation. The
+        \(\mathbf k\)-component is the \(xy\) signed area. The cyclic order
+        \(yz,zx,xy\) matches
+        \(\mathbf j\times\mathbf k=\mathbf i\),
+        \(\mathbf k\times\mathbf i=\mathbf j\), and
+        \(\mathbf i\times\mathbf j=\mathbf k\).</p>""",
     ),
     (
         r"""Use the determinant pattern to calculate
@@ -580,10 +592,15 @@ month_4 = [
         \mathbf a\cdot(\mathbf b\times\mathbf c)=6.
         \]
         Hence the volume is \(|6|=6\).</p>
-        <p>The cross product supplies a normal whose length is the base parallelogram's
-        area. Dotting with \(\mathbf a\) keeps only the component of \(\mathbf a\)
-        perpendicular to that base: its signed height. Their product is base area
-        times height.</p>""",
+        <p>Here \(\|\mathbf b\times\mathbf c\|=2\sqrt{10}\) is the base area. Its unit
+        normal is
+        \(\widehat{\mathbf n}=(\mathbf b\times\mathbf c)/(2\sqrt{10})\), so the signed
+        height is
+        \[
+        \mathbf a\cdot\widehat{\mathbf n}=\frac{3}{\sqrt{10}}.
+        \]
+        Therefore base area times signed height is
+        \(2\sqrt{10}(3/\sqrt{10})=6\), matching the scalar triple product.</p>""",
     ),
     (
         r"""What happens to
@@ -1049,6 +1066,115 @@ Expanding along the first row uses the sign pattern \(+,-,+\):
 The entries \(\mathbf i,\mathbf j,\mathbf k\) turn the three scalar cofactors into the
 three components of one vector.</p>
 
+<h4>A visual route from elimination to oriented area</h4>
+<div class="story-step">
+<h5>1. Begin with the object produced by the cross product</h5>
+<p>The two vectors \(\mathbf a,\mathbf b\) span a parallelogram. Their cross product
+\(\mathbf a\times\mathbf b\) packages two measurements into one arrow: its length is
+the parallelogram's area, and its direction records the oriented normal chosen by the
+right-hand rule.</p>
+<p>A third vector creates a volume calculation:
+\[
+V=\left|\mathbf c\cdot(\mathbf a\times\mathbf b)\right|.
+\]
+For non-parallel \(\mathbf a,\mathbf b\), let
+\(\mathbf A=\mathbf a\times\mathbf b\) and
+\(\widehat{\mathbf n}=\mathbf A/\|\mathbf A\|\). The signed perpendicular height is
+\(h=\mathbf c\cdot\widehat{\mathbf n}\), so
+\[
+\mathbf c\cdot\mathbf A=\|\mathbf A\|h.
+\]
+The scalar triple product therefore multiplies base area by signed height. Parallel
+\(\mathbf a,\mathbf b\) give \(\mathbf A=\mathbf0\), a collapsed base and zero
+volume.</p>
+</div>
+
+<div class="story-step">
+<h5>2. Read the components as three shadows</h5>
+<p>Picture the parallelogram as a tilted sheet inside a glass room. Its shadow on the
+\(yz\)-wall gives the signed \(x\)-component:
+\[
+(\mathbf a\times\mathbf b)_x
+=\det\begin{pmatrix}a_2&a_3\\b_2&b_3\end{pmatrix}.
+\]
+Its shadow on the \(zx\)-wall gives the signed \(y\)-component:
+\[
+(\mathbf a\times\mathbf b)_y
+=\det\begin{pmatrix}a_3&a_1\\b_3&b_1\end{pmatrix}.
+\]
+Its shadow on the \(xy\)-wall gives the signed \(z\)-component:
+\[
+(\mathbf a\times\mathbf b)_z
+=\det\begin{pmatrix}a_1&a_2\\b_1&b_2\end{pmatrix}.
+\]
+These three signed shadow areas are exactly the \(x,y,z\) components of the area
+vector. A component measures how strongly the area vector points toward the normal of
+that coordinate wall.</p>
+</div>
+
+<div class="story-step">
+<h5>3. The middle sign preserves the cyclic orientation</h5>
+<p>The positively oriented coordinate walls follow the cycle
+\[
+yz,\qquad zx,\qquad xy,
+\]
+because
+\(\mathbf j\times\mathbf k=\mathbf i\),
+\(\mathbf k\times\mathbf i=\mathbf j\), and
+\(\mathbf i\times\mathbf j=\mathbf k\).
+The \(y\)-component therefore uses \(zx\) order:
+\[
+a_3b_1-a_1b_3.
+\]
+Cofactor expansion deletes the middle column and displays the surviving columns in
+\(xz\) order, giving \(a_1b_3-a_3b_1\). Reversing \(xz\) to \(zx\) changes the sign.
+This is the source of the minus sign attached to the \(\mathbf j\)-minor.</p>
+</div>
+
+<div class="story-step">
+<h5>4. The algebraic pattern appeared before modern vector notation</h5>
+<p>Determinant methods grew from elimination. Seki Takakazu used determinant-like
+arrays in 1683 while eliminating unknowns from polynomial equations, and Leibniz used
+related coefficient expressions for simultaneous linear equations in 1693. The
+modern matrix viewpoint arrived much later.</p>
+<p>The \(2\times2\) expression can already be seen in
+\[
+ax+by=p,\qquad cx+dy=q.
+\]
+Multiply the first equation by \(d\), the second by \(b\), and subtract:
+\[
+(ad-bc)x=dp-bq.
+\]
+The quantity \(ad-bc\) emerges as the coefficient that survives elimination. Its zero
+or nonzero value controls whether this elimination can isolate \(x\).</p>
+<p>In 1773, Lagrange used component expressions now recognised as dot- and
+cross-product formulas while studying tetrahedra and rotation. Hamilton's quaternion
+algebra in 1843 later combined scalar and vector parts in one product. Gibbs and
+Heaviside separated those parts into the dot and cross products used in modern vector
+analysis during the late nineteenth century.</p>
+</div>
+
+<div class="story-step">
+<h5>5. Permutation parity controls every sign</h5>
+<p>A determinant pairs entries using different column orders. Each swap in an order
+reverses the sign. An even number of swaps gives a positive term; an odd number gives
+a negative term. Along the first row of a \(3\times3\) determinant, moving columns
+\(1,2,3\) into the first position takes \(0,1,2\) swaps. Their signs are therefore
+\[
++,\quad-,\quad+.
+\]
+This is the cofactor checkerboard rule
+\((-1)^{i+j}\) viewed through permutation parity.</p>
+<p>Algebra records orientation through the order of columns. Geometry records
+orientation through the order of axes. The determinant and cross product share their
+sign laws because both encode alternating, oriented area.</p>
+<p class="source-note">Historical reading:
+<a href="https://mathshistory.st-andrews.ac.uk/HistTopics/Matrices_and_determinants/"
+target="_blank" rel="noopener">MacTutor: Matrices and determinants</a> and
+<a href="http://math.ucv.ro/~niculescu/articles/2012/LagrangeApril12.pdf"
+target="_blank" rel="noopener">Lagrange's identity and its 1773 setting</a>.</p>
+</div>
+
 <h4>Multilinear and alternating</h4>
 <p><strong>Multilinear</strong> means scaling or adding an input scales or adds the
 result in that input. <strong>Alternating</strong> means swapping two inputs reverses
@@ -1061,10 +1187,14 @@ area.</p>
 \[
 \mathbf a\cdot(\mathbf b\times\mathbf c).
 \]
-The cross product supplies oriented base area, and the dot product
-extracts the perpendicular height. Its absolute value gives ordinary volume. A zero
-triple product means the three vectors are <strong>coplanar</strong>: they lie in one
-plane through the origin.</p>
+Let \(\mathbf A=\mathbf b\times\mathbf c\) be the oriented base-area vector and
+\(\widehat{\mathbf n}=\mathbf A/\|\mathbf A\|\) its unit normal. The signed height is
+\(h=\mathbf a\cdot\widehat{\mathbf n}\), which gives
+\[
+\mathbf a\cdot\mathbf A=\|\mathbf A\|h.
+\]
+Its absolute value gives ordinary volume. A zero triple product means the three
+vectors are <strong>coplanar</strong>: they lie in one plane through the origin.</p>
 <p>After calculating a cross product, check
 \(\mathbf u\cdot(\mathbf u\times\mathbf v)=0\) and
 \(\mathbf v\cdot(\mathbf u\times\mathbf v)=0\).</p>"""
@@ -1201,9 +1331,11 @@ diagram_4 = r"""
   \]
   <div class="signs"><b>+</b><b>−</b><b>+</b></div></div>
   <div class="det-arrow">means</div>
-  <div class="det-panel"><span class="det-title">The geometry</span>
-  <p>linear in each input</p><p>zero when parallel</p><p>sign flips when order flips</p><p>length = area</p></div>
-<figcaption>The determinant notation is compact because determinant behaviour already matches oriented area.</figcaption>
+  <div class="det-panel"><span class="det-title">Three signed shadows</span>
+  <p><strong>\(yz\)-area</strong> \(\longrightarrow\) \(x\)-component</p>
+  <p><strong>\(zx\)-area</strong> \(\longrightarrow\) \(y\)-component</p>
+  <p><strong>\(xy\)-area</strong> \(\longrightarrow\) \(z\)-component</p></div>
+<figcaption>The cross product collects three projected \(2\times2\) determinant areas into one oriented area vector.</figcaption>
 </figure>"""
 
 diagram_5 = r"""
@@ -1251,7 +1383,7 @@ header{background:var(--ink);color:#fff;padding:54px 24px 44px;border-bottom:7px
 .topnav-inner{max-width:980px;margin:auto;padding:10px 20px;display:flex;gap:8px;overflow-x:auto}.topnav a{white-space:nowrap;text-decoration:none;color:var(--blue);border:1px solid var(--line);border-radius:7px;padding:7px 11px;font-size:13px}.topnav a:hover{border-color:var(--red);color:var(--red)}
 main{max-width:980px;margin:auto;padding:40px 20px 90px}.how{background:#fff;border:1px solid var(--line);border-left:5px solid var(--red);padding:20px 24px;border-radius:10px;margin-bottom:44px}.how h2{margin:0 0 7px;font-size:22px}.how h3{margin:18px 0 6px;font-size:17px;color:var(--blue)}.how p{margin:7px 0}
 .month{scroll-margin-top:76px;margin:0 0 78px}.month-heading{display:flex;gap:20px;align-items:flex-start;border-bottom:3px solid var(--ink);padding-bottom:15px}.month-number{background:var(--red);color:#fff;padding:6px 10px;border-radius:5px;white-space:nowrap;margin-top:5px}.month-heading h2{font-size:clamp(26px,4vw,38px);line-height:1.1;margin:0}.month-heading p{margin:6px 0 0;color:var(--muted)}
-.lens{font-size:17px;max-width:820px;margin:24px auto;min-width:0}.lens h3{font-size:23px;margin:0 0 10px;color:var(--blue)}.lens h4{font-size:17px;color:var(--blue);margin:24px 0 7px;padding-top:14px;border-top:1px solid var(--line)}.lens p{margin:12px 0}.lens ul{margin:10px 0;padding-left:24px}.lens li{margin:8px 0}.lens mjx-container[display="true"]{display:block;max-width:100%;overflow-x:auto;overflow-y:hidden}
+.lens{font-size:17px;max-width:820px;margin:24px auto;min-width:0}.lens h3{font-size:23px;margin:0 0 10px;color:var(--blue)}.lens h4{font-size:17px;color:var(--blue);margin:24px 0 7px;padding-top:14px;border-top:1px solid var(--line)}.lens h5{font-size:16px;color:var(--ink);margin:0 0 8px}.lens p{margin:12px 0}.lens ul{margin:10px 0;padding-left:24px}.lens li{margin:8px 0}.lens mjx-container[display="true"]{display:block;max-width:100%;overflow-x:auto;overflow-y:hidden}.story-step{margin:13px 0;padding:15px 17px;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:7px;background:#fbfcfe}.story-step p:first-of-type{margin-top:6px}.source-note{font-size:13px;color:var(--muted)}.source-note a{color:var(--blue)}
 .diagram-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin:24px 0;overflow-x:auto;box-shadow:0 3px 16px rgba(27,36,49,.06)}.diagram-card svg{display:block;width:100%;min-width:650px;height:auto}.diagram-card figcaption{font-size:13px;color:var(--muted);text-align:center;padding:8px 10px 2px}.svg-label,.svg-note,.svg-strong{font-family:Barlow,sans-serif;fill:#526170}.svg-label{font-size:15px}.svg-note{font-size:14px}.svg-strong{font-size:16px;font-weight:700;fill:#1B3A5C}
 .cadence{background:#eaf2f9;border-left:4px solid var(--blue);padding:13px 16px;border-radius:6px;margin:24px 0;font-size:14px}.cadence strong{color:var(--blue)}
 .set-heading{display:flex;gap:14px;align-items:baseline;margin:34px 0 14px}.set-heading span{color:var(--red)}.set-heading h3{margin:0;font-size:21px}
@@ -1344,10 +1476,12 @@ PREREQUISITE_ORDER = [
     ("angular velocity", "<strong>Rotational velocity:</strong>", "A rigid body has angular velocity"),
     ("two-dimensional determinant", "=ad-bc", "In the cross-product determinant"),
     ("minors and cofactors", "its <strong>minor</strong>", "why may the first row contain"),
-    ("cofactor expansion", "Expanding along the first row", "Why is the middle sign negative"),
+    ("cofactor expansion", "Expanding along the first row", "Match the three components"),
+    ("projected area components", "Read the components as three shadows", "Match the three components"),
+    ("middle cofactor sign", "The middle sign preserves the cyclic orientation", "outside minus sign"),
     ("multilinearity", "<strong>Multilinear</strong>", "what deeper determinant properties"),
     ("scalar triple product", "Its signed volume is", "Find the volume of the parallelepiped"),
-    ("coplanarity criterion", "means the three vectors are <strong>coplanar</strong>", "are coplanar using"),
+    ("coplanarity criterion", "zero triple product means the three", "are coplanar using"),
     ("line-plane angle", r"acute angle \(\beta\) between the line and plane", "find the acute angle between the"),
     ("point-line distance", r"the distance from \(P\) to", "Find the shortest distance from"),
     ("minimum-force torque", "smallest force magnitude", "smallest-magnitude force"),
