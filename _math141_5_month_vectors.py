@@ -1195,6 +1195,72 @@ Let \(\mathbf A=\mathbf b\times\mathbf c\) be the oriented base-area vector and
 \]
 Its absolute value gives ordinary volume. A zero triple product means the three
 vectors are <strong>coplanar</strong>: they lie in one plane through the origin.</p>
+
+<figure class="concept-figure parallelepiped-figure">
+<div class="p-diagram-layout">
+<svg viewBox="0 0 640 420" role="img" aria-labelledby="paraTitle paraDesc">
+<title id="paraTitle">Labelled parallelepiped showing base area and perpendicular height</title>
+<desc id="paraDesc">Vectors b and c span the blue base. Vector a reaches the translated top face. Its perpendicular component has signed height h along the unit normal. The cross product b cross c is the oriented base-area vector.</desc>
+<defs>
+  <marker id="pNavy" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#1B3A5C"/></marker>
+  <marker id="pRed" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#E24A33"/></marker>
+  <marker id="pGreen" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#2f7d5b"/></marker>
+  <marker id="pPurple" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#6d4bb5"/></marker>
+</defs>
+<rect width="640" height="420" rx="14" fill="#fbfcfe"/>
+
+<!-- faces -->
+<polygon points="95,350 365,350 485,255 215,255" fill="#dceaf6" stroke="#7890aa" stroke-width="2"/>
+<polygon points="95,350 215,255 310,105 190,200" fill="#e8f2ec" stroke="#7890aa" stroke-width="2"/>
+<polygon points="95,350 365,350 460,200 190,200" fill="#f8e7e3" fill-opacity=".72" stroke="#7890aa" stroke-width="2"/>
+<polygon points="365,350 485,255 580,105 460,200" fill="#eee9f8" fill-opacity=".72" stroke="#7890aa" stroke-width="2"/>
+<polygon points="190,200 460,200 580,105 310,105" fill="#fff0ec" stroke="#7890aa" stroke-width="2"/>
+
+<!-- hidden and construction edges -->
+<line x1="215" y1="255" x2="485" y2="255" stroke="#7890aa" stroke-width="2" stroke-dasharray="7 6"/>
+<line x1="215" y1="255" x2="310" y2="105" stroke="#7890aa" stroke-width="2" stroke-dasharray="7 6"/>
+<line x1="95" y1="350" x2="190" y2="285" stroke="#2f7d5b" stroke-width="2.5" stroke-dasharray="7 5"/>
+<line x1="190" y1="285" x2="190" y2="200" stroke="#E24A33" stroke-width="3" stroke-dasharray="7 5"/>
+<path d="M190 270h15v15" fill="none" stroke="#6d4bb5" stroke-width="2"/>
+
+<!-- defining vectors -->
+<line x1="95" y1="350" x2="365" y2="350" stroke="#1B3A5C" stroke-width="5" marker-end="url(#pNavy)"/>
+<line x1="95" y1="350" x2="215" y2="255" stroke="#E24A33" stroke-width="5" marker-end="url(#pRed)"/>
+<line x1="95" y1="350" x2="190" y2="200" stroke="#2f7d5b" stroke-width="5" marker-end="url(#pGreen)"/>
+<line x1="330" y1="300" x2="330" y2="78" stroke="#6d4bb5" stroke-width="4" marker-end="url(#pPurple)"/>
+
+<!-- labels -->
+<text x="222" y="378" class="p-label p-navy">b</text>
+<text x="225" y="292" class="p-label p-red">c</text>
+<text x="119" y="246" class="p-label p-green">a</text>
+<text x="215" y="340" class="p-note p-green">a∥ in base</text>
+<text x="205" y="245" class="p-label p-red">h</text>
+<text x="344" y="93" class="p-note p-purple">b × c</text>
+<text x="75" y="377" class="p-note">O</text>
+</svg>
+
+<div class="p-diagram-key">
+  <h5>What each label measures</h5>
+  <p><span class="p-swatch base"></span><strong>Base:</strong> \(\mathbf b,\mathbf c\) span the blue parallelogram.</p>
+  <p><span class="p-swatch area"></span><strong>Area vector:</strong> \(\mathbf b\times\mathbf c\) points along the unit normal \(\widehat{\mathbf n}\) and has length equal to base area.</p>
+  <p><span class="p-swatch height"></span><strong>Height:</strong> \(h=\mathbf a\cdot\widehat{\mathbf n}\) is the signed perpendicular component of \(\mathbf a\).</p>
+  <p><span class="p-swatch shift"></span><strong>Third edge:</strong> \(\mathbf a\) shifts every base point to the top face.</p>
+  <p><span class="p-swatch top"></span><strong>Top face:</strong> a translated copy of the base parallelogram.</p>
+  <div class="p-volume">
+  \[
+  \begin{aligned}
+  \text{signed volume}
+  &=\|\mathbf b\times\mathbf c\|h\\
+  &=\mathbf a\cdot(\mathbf b\times\mathbf c),\\
+  V&=\left|\mathbf a\cdot(\mathbf b\times\mathbf c)\right|.
+  \end{aligned}
+  \]
+  </div>
+</div>
+</div>
+<figcaption>The slanted edge \(\mathbf a\) splits into an in-base component and a perpendicular component. Only the perpendicular component contributes to volume.</figcaption>
+</figure>
+
 <p>After calculating a cross product, check
 \(\mathbf u\cdot(\mathbf u\times\mathbf v)=0\) and
 \(\mathbf v\cdot(\mathbf u\times\mathbf v)=0\).</p>"""
@@ -1383,7 +1449,7 @@ header{background:var(--ink);color:#fff;padding:54px 24px 44px;border-bottom:7px
 .topnav-inner{max-width:980px;margin:auto;padding:10px 20px;display:flex;gap:8px;overflow-x:auto}.topnav a{white-space:nowrap;text-decoration:none;color:var(--blue);border:1px solid var(--line);border-radius:7px;padding:7px 11px;font-size:13px}.topnav a:hover{border-color:var(--red);color:var(--red)}
 main{max-width:980px;margin:auto;padding:40px 20px 90px}.how{background:#fff;border:1px solid var(--line);border-left:5px solid var(--red);padding:20px 24px;border-radius:10px;margin-bottom:44px}.how h2{margin:0 0 7px;font-size:22px}.how h3{margin:18px 0 6px;font-size:17px;color:var(--blue)}.how p{margin:7px 0}
 .month{scroll-margin-top:76px;margin:0 0 78px}.month-heading{display:flex;gap:20px;align-items:flex-start;border-bottom:3px solid var(--ink);padding-bottom:15px}.month-number{background:var(--red);color:#fff;padding:6px 10px;border-radius:5px;white-space:nowrap;margin-top:5px}.month-heading h2{font-size:clamp(26px,4vw,38px);line-height:1.1;margin:0}.month-heading p{margin:6px 0 0;color:var(--muted)}
-.lens{font-size:17px;max-width:820px;margin:24px auto;min-width:0}.lens h3{font-size:23px;margin:0 0 10px;color:var(--blue)}.lens h4{font-size:17px;color:var(--blue);margin:24px 0 7px;padding-top:14px;border-top:1px solid var(--line)}.lens h5{font-size:16px;color:var(--ink);margin:0 0 8px}.lens p{margin:12px 0}.lens ul{margin:10px 0;padding-left:24px}.lens li{margin:8px 0}.lens mjx-container[display="true"]{display:block;max-width:100%;overflow-x:auto;overflow-y:hidden}.story-step{margin:13px 0;padding:15px 17px;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:7px;background:#fbfcfe}.story-step p:first-of-type{margin-top:6px}.source-note{font-size:13px;color:var(--muted)}.source-note a{color:var(--blue)}
+.lens{font-size:17px;max-width:820px;margin:24px auto;min-width:0}.lens h3{font-size:23px;margin:0 0 10px;color:var(--blue)}.lens h4{font-size:17px;color:var(--blue);margin:24px 0 7px;padding-top:14px;border-top:1px solid var(--line)}.lens h5{font-size:16px;color:var(--ink);margin:0 0 8px}.lens p{margin:12px 0}.lens ul{margin:10px 0;padding-left:24px}.lens li{margin:8px 0}.lens mjx-container[display="true"]{display:block;max-width:100%;overflow-x:auto;overflow-y:hidden}.story-step{margin:13px 0;padding:15px 17px;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:7px;background:#fbfcfe}.story-step p:first-of-type{margin-top:6px}.source-note{font-size:13px;color:var(--muted)}.source-note a{color:var(--blue)}.concept-figure{margin:22px 0;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:0 3px 16px rgba(27,36,49,.06)}.p-diagram-layout{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(220px,1fr);gap:16px;align-items:center}.p-diagram-layout svg{display:block;width:100%;height:auto;min-width:0}.p-label,.p-note,.p-strong{font-family:Barlow,sans-serif}.p-label{font-size:17px;font-weight:700}.p-note{font-size:14px}.p-strong{font-size:15px;font-weight:700;fill:var(--blue)}.p-navy{fill:var(--blue)}.p-red{fill:var(--red)}.p-green{fill:var(--green)}.p-purple{fill:#6d4bb5}.p-diagram-key{padding:14px;border-radius:9px;background:#f5f7fa}.p-diagram-key p{font-size:14px;line-height:1.45;margin:10px 0}.p-swatch{display:inline-block;width:10px;height:10px;margin-right:7px;border-radius:2px}.p-swatch.base{background:#9fc4df}.p-swatch.area{background:#6d4bb5}.p-swatch.height{background:var(--red)}.p-swatch.shift{background:var(--green)}.p-swatch.top{background:#f3b7aa}.p-volume{margin-top:12px;padding:8px;border-top:1px solid var(--line);font-size:14px}.concept-figure figcaption{padding:10px 8px 2px;text-align:center;font-size:13px;color:var(--muted)}
 .diagram-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin:24px 0;overflow-x:auto;box-shadow:0 3px 16px rgba(27,36,49,.06)}.diagram-card svg{display:block;width:100%;min-width:650px;height:auto}.diagram-card figcaption{font-size:13px;color:var(--muted);text-align:center;padding:8px 10px 2px}.svg-label,.svg-note,.svg-strong{font-family:Barlow,sans-serif;fill:#526170}.svg-label{font-size:15px}.svg-note{font-size:14px}.svg-strong{font-size:16px;font-weight:700;fill:#1B3A5C}
 .cadence{background:#eaf2f9;border-left:4px solid var(--blue);padding:13px 16px;border-radius:6px;margin:24px 0;font-size:14px}.cadence strong{color:var(--blue)}
 .set-heading{display:flex;gap:14px;align-items:baseline;margin:34px 0 14px}.set-heading span{color:var(--red)}.set-heading h3{margin:0;font-size:21px}
@@ -1394,7 +1460,7 @@ main{max-width:980px;margin:auto;padding:40px 20px 90px}.how{background:#fff;bor
 .determinant-picture figcaption{grid-column:1/-1}.choice-question{max-width:280px;margin:8px auto 18px;padding:11px 14px;border:2px solid var(--blue);border-radius:9px;text-align:center;font-weight:700;color:var(--blue)}.choice-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.choice-cell{display:flex;min-height:126px;padding:13px 9px;border:2px solid var(--blue);border-radius:9px;background:#eaf2f9;text-align:center;flex-direction:column;justify-content:center;align-items:center}.choice-cell.red{border-color:var(--red);background:#fff0ec}.choice-cell span{font-size:13px;color:var(--muted)}.choice-cell strong{margin:4px 0;font:700 14px "Roboto Mono",monospace;text-transform:uppercase;color:var(--blue)}.choice-cell.red strong{color:var(--red)}.choice-cell small{font-size:12px;line-height:1.3;color:var(--muted)}
 .controls{position:fixed;right:18px;bottom:18px;display:flex;gap:7px;z-index:30}.controls button{border:0;border-radius:7px;padding:9px 12px;background:var(--ink);color:#fff;font-family:Barlow;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.18)}.controls button:last-child{background:var(--red)}
 footer{border-top:1px solid var(--line);padding:25px 0;margin-top:35px;color:var(--muted)}footer a{color:var(--blue)}
-@media(max-width:700px){header{padding-top:38px}.hero>p{font-size:16px}.month-heading{display:block}.month-number{display:inline-block;margin-bottom:11px}.solution{padding:15px}.question summary{padding:14px}.determinant-picture{display:block}.det-arrow{text-align:center;margin:10px}.controls{right:10px;bottom:10px}.controls button{font-size:12px;padding:8px}.diagram-card svg{min-width:0}.diagram-card .svg-label{font-size:24px}.diagram-card .svg-note{font-size:22px}.diagram-card .svg-strong{font-size:24px}.choice-grid{grid-template-columns:1fr 1fr}.choice-cell{min-height:112px}.choice-cell:last-child{grid-column:1/-1}}
+@media(max-width:700px){header{padding-top:38px}.hero>p{font-size:16px}.month-heading{display:block}.month-number{display:inline-block;margin-bottom:11px}.solution{padding:15px}.question summary{padding:14px}.determinant-picture{display:block}.det-arrow{text-align:center;margin:10px}.controls{right:10px;bottom:10px}.controls button{font-size:12px;padding:8px}.diagram-card svg{min-width:0}.diagram-card .svg-label{font-size:24px}.diagram-card .svg-note{font-size:22px}.diagram-card .svg-strong{font-size:24px}.choice-grid{grid-template-columns:1fr 1fr}.choice-cell{min-height:112px}.choice-cell:last-child{grid-column:1/-1}.p-diagram-layout{grid-template-columns:1fr}.parallelepiped-figure .p-label{font-size:24px}.parallelepiped-figure .p-note{font-size:21px}.parallelepiped-figure .p-strong{font-size:21px}.p-diagram-key{padding:12px}.p-volume{font-size:13px}}
 @media print{.topnav,.controls{display:none}.question .solution{display:block}.question{break-inside:avoid}body{background:#fff}header{background:#fff;color:#000;border-bottom:3px solid #000}.hero>p,.eyebrow{color:#333}}
 </style>
 </head>
