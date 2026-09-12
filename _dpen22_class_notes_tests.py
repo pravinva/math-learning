@@ -2053,22 +2053,22 @@ int_q = [
   ['(A) one integral only','(B) split where \(f\) changes sign','(C) ignore negatives','(D) differentiate','(E) none']),
  (r'[Exp/log/trig] \(\displaystyle\int 3\cos\!\left(\dfrac{x}{3}\right)dx=\)',
   [r'(A) \(9\sin(x/3)+C\)',r'(B) \(3\sin(x/3)+C\)',r'(C) \(\sin(3x)+C\)',r'(D) \(\tfrac13\sin(x/3)+C\)',r'(E) \(-3\sin(x/3)+C\)']),
- (r'[Substitution] For \(\displaystyle\int(6x-2)\sqrt{3x^2-2x}\,dx\), a good substitution is',
-  [r'(A) \(u=6x-2\)',r'(B) \(u=3x^2-2x\)',r'(C) \(u=\sqrt{x}\)',r'(D) \(u=3x\)',r'(E) \(u=x^2\)']),
+ (r'[Substitution] \(\displaystyle\int(6x-2)\sqrt{3x^2-2x}\,dx=\)',
+  [r'(A) \(\tfrac23(3x^2-2x)^{3/2}+C\)',r'(B) \(\tfrac13(3x^2-2x)^{3/2}+C\)',r'(C) \(2(3x^2-2x)^{1/2}+C\)',r'(D) \(\tfrac23(6x-2)^{3/2}+C\)',r'(E) \((3x^2-2x)^{3/2}+C\)']),
  r'[Applications of primitive] If \(\dfrac{dy}{dx}=1+3x\) and the curve passes through \((4,10)\), find \(y\).',
  r'[Power of \(x\)] Find \(\displaystyle\int(9x^5+3x^2)\,dx\) in positive-index form.',
  r'[Power of \(x\)] Find \(\displaystyle\int\left(3x^3-\dfrac{4}{x}\right)dx\).',
  r'[Area] Find the area between \(y=x-x^2\) and the \(x\)-axis from \(0\) to \(1\).'
  + area_under(lambda x: x - x*x, 0, 1, xmin=-0.3, xmax=1.4, ymin=-0.3, ymax=0.5,
               caption='y = x − x²', shade_label='area'),
- r'[Area] Use algebra to show that \(y=x^2\) and \(y=2-x^2\) meet at \((\pm1,1)\), then find the area of the region bounded by the graphs shown below.'
+ r'[Area] Show that \(y=x^2\) and \(y=2-x^2\) meet at \((\pm1,1)\), then find the area of the region bounded by the graphs shown below.'
  + area_between(lambda x: x*x, lambda x: 2 - x*x, -1, 1, xmin=-1.8, xmax=1.8, ymin=-0.4, ymax=2.4,
                 caption='y = x² and y = 2 − x²', label_f='y = x²', label_g='y = 2 − x²'),
  r'[Exp/log/trig] Find \(\displaystyle\int(e^{2x}+4x)\,dx\).',
  r'[Exp/log/trig] Find \(\displaystyle\int\dfrac{1}{5+x}\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{\pi/2}(1-\sin2x)\,dx\).',
- r'[Substitution] Use \(u=x^2-3\) to evaluate \(\displaystyle\int 2x(x^2-3)^3\,dx\).',
- r'[Substitution] Use substitution to evaluate \(\displaystyle\int\dfrac{2x}{\sqrt{x^2+9}}\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int 2x(x^2-3)^3\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int\dfrac{2x}{\sqrt{x^2+9}}\,dx\).',
 ],
 [
  (r'[Primitive] Best first step for \(\displaystyle\int(x+1)^2\,dx\)?',
@@ -2081,8 +2081,8 @@ int_q = [
   ['(A) \(8/3\)','(B) \(16/3\)','(C) \(4\)','(D) \(8\)','(E) \(2\)']),
  (r'[Exp/log/trig] \(\displaystyle\int e^{3x}\,dx=\)',
   [r'(A) \(3e^{3x}+C\)',r'(B) \(\tfrac13 e^{3x}+C\)',r'(C) \(e^{3x}+C\)',r'(D) \(e^{x}/3+C\)',r'(E) \(-3e^{3x}+C\)']),
- (r'[Substitution] Best \(u\) for \(\displaystyle\int x e^{x^2}\,dx\)',
-  [r'(A) \(u=x\)',r'(B) \(u=x^2\)',r'(C) \(u=e^{x}\)',r'(D) \(u=xe^{x}\)',r'(E) \(u=2x\)']),
+ (r'[Substitution] \(\displaystyle\int x e^{x^2}\,dx=\)',
+  [r'(A) \(e^{x^2}+C\)',r'(B) \(\tfrac12e^{x^2}+C\)',r'(C) \(x e^{x^2}+C\)',r'(D) \(\tfrac12e^{2x}+C\)',r'(E) \(x^2e^{x^2}+C\)']),
  r'[Applications of primitive] Gradient \(\dfrac{dy}{dx}=2x-5\), curve through \((3,1)\). Find the equation of the curve.',
  r'[Power of \(x\)] \(\displaystyle\int\left(x^4-\dfrac{1}{x^2}\right)dx\).',
  r'[Power of \(x\)] \(\displaystyle\int_1^{4}\dfrac{1}{\sqrt{x}}\,dx\).',
@@ -2095,8 +2095,8 @@ int_q = [
  r'[Exp/log/trig] \(\displaystyle\int(3\cos2x-2\sin x)\,dx\).',
  r'[Exp/log/trig] Find \(\displaystyle\int 5e^{-x}\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{1}(e^{x}+2x)\,dx\).',
- r'[Substitution] For \(\displaystyle\int\cos2x\cdot(2\sin2x)^3\,dx\), choose \(u\) and finish.',
- r'[Substitution] Use substitution to evaluate \(\displaystyle\int\dfrac{\cos x}{\sin x}\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int\cos2x\cdot(2\sin2x)^3\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int\dfrac{\cos x}{\sin x}\,dx\).',
 ],
 [
  (r'[Primitive] Best first step for \(\displaystyle\int\dfrac{x^2+1}{x}\,dx\)?',
@@ -2109,8 +2109,8 @@ int_q = [
   [r'(A) \(e-1\)',r'(B) \(e\)',r'(C) \(1\)',r'(D) \(e+1\)',r'(E) \(1/e\)']),
  (r'[Exp/log/trig] \(\displaystyle\int\sin(3x)\,dx=\)',
   [r'(A) \(-\tfrac13\cos3x+C\)',r'(B) \(\tfrac13\cos3x+C\)',r'(C) \(-\cos3x+C\)',r'(D) \(3\cos3x+C\)',r'(E) \(\sin3x+C\)']),
- (r'[Substitution] For \(\displaystyle\int\dfrac{4x}{x^2+1}\,dx\), a good \(u\) is',
-  [r'(A) \(u=4x\)',r'(B) \(u=x^2+1\)',r'(C) \(u=x\)',r'(D) \(u=\ln x\)',r'(E) \(u=x^2\)']),
+ (r'[Substitution] \(\displaystyle\int\dfrac{4x}{x^2+1}\,dx=\)',
+  [r'(A) \(4\ln(x^2+1)+C\)',r'(B) \(2\ln(x^2+1)+C\)',r'(C) \(\ln(x^2+1)+C\)',r'(D) \(\dfrac{2}{x^2+1}+C\)',r'(E) \(2(x^2+1)^2+C\)']),
  r'[Applications of primitive] Curve with \(\dfrac{dy}{dx}=\dfrac{1}{x}\) through \((e,2)\). Find \(y\).',
  r'[Power of \(x\)] \(\displaystyle\int\left(6x^{1/2}-x^{-1/2}\right)dx\).',
  r'[Power of \(x\)] \(\displaystyle\int_{-2}^{1}(3x^2)\,dx\).',
@@ -2123,8 +2123,8 @@ int_q = [
  r'[Exp/log/trig] \(\displaystyle\int\dfrac{4}{2x+1}\,dx\).',
  r'[Exp/log/trig] \(\displaystyle\int(2\sec^2 x-3\cos x)\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{\pi/4}\sec^2 x\,dx\).',
- r'[Substitution] Use substitution to find \(\displaystyle\int\dfrac{x}{x^2+1}\,dx\).',
- r'[Substitution] Use substitution to evaluate \(\displaystyle\int(3x-1)(3x^2-2x)^4\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int\dfrac{x}{x^2+1}\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int(3x-1)(3x^2-2x)^4\,dx\).',
 ],
 [
  (r'[Primitive] Best first step for \(\displaystyle\int\left(2+\dfrac{1}{x}\right)^2 dx\)?',
@@ -2133,12 +2133,12 @@ int_q = [
   [r'(A) \(\ln|x|+C\)',r'(B) \(-\dfrac{1}{x}+C\)',r'(C) \(\dfrac{1}{x}+C\)',r'(D) \(x^{-3}/(-3)+C\)',r'(E) \(2/x+C\)']),
  (r'[Definite] \(\displaystyle\int_0^{2}(x^2+1)\,dx=\)',
   ['(A) \(8/3\)','(B) \(14/3\)','(C) \(4\)','(D) \(6\)','(E) \(10/3\)']),
- (r'[Area] Area between \(y=2x\) and \(y=x^2\) from their positive intersection points equals',
+ (r'[Area] Area between \(y=2x\) and \(y=x^2\) between their intersection points equals',
   ['(A) \(2/3\)','(B) \(4/3\)','(C) \(1\)','(D) \(8/3\)','(E) \(2\)']),
  (r'[Exp/log/trig] \(\displaystyle\int\cos\!\left(\dfrac{x}{2}\right)dx=\)',
   [r'(A) \(2\sin(x/2)+C\)',r'(B) \(\tfrac12\sin(x/2)+C\)',r'(C) \(-\sin(x/2)+C\)',r'(D) \(2\cos(x/2)+C\)',r'(E) \(\sin x+C\)']),
- (r'[Substitution] For \(\displaystyle\int\sin x\cos x\,dx\), a good substitution is',
-  [r'(A) \(u=\sin x\)',r'(B) \(u=x\)',r'(C) \(u=\tan x\)',r'(D) \(u=\sec x\)',r'(E) \(u=\cos^2 x\)']),
+ (r'[Substitution] \(\displaystyle\int\sin x\cos x\,dx=\)',
+  [r'(A) \(\tfrac12\sin^2x+C\)',r'(B) \(\sin^2x+C\)',r'(C) \(\tfrac12\sin x\cos x+C\)',r'(D) \(\tan x+C\)',r'(E) \(\tfrac12\cos^2x+C\)']),
  r'[Applications of primitive] If \(y\'=4x^3-2\) and \(y(1)=5\), find \(y\).',
  r'[Power of \(x\)] \(\displaystyle\int\left(x^{3}-\dfrac{2}{x^{3}}\right)dx\).',
  r'[Power of \(x\)] \(\displaystyle\int_0^{1}(4x^3-1)\,dx\).',
@@ -2151,8 +2151,8 @@ int_q = [
  r'[Exp/log/trig] \(\displaystyle\int(2e^{x}-3\sin x)\,dx\).',
  r'[Exp/log/trig] \(\displaystyle\int\dfrac{3}{x}\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{\pi/2}\cos2x\,dx\).',
- r'[Substitution] Use substitution to evaluate \(\displaystyle\int\dfrac{6x}{x^2+4}\,dx\).',
- r'[Substitution] Use substitution to evaluate \(\displaystyle\int 2\cos x\sin^5 x\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int\dfrac{6x}{x^2+4}\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int 2\cos x\sin^5 x\,dx\).',
 ],
 [
  (r'[Primitive] Best first step for \(\displaystyle\int x(x+2)\,dx\)?',
@@ -2165,8 +2165,8 @@ int_q = [
   ['(A) one integral of \(x^2-1\)','(B) take absolute value / split at roots','(C) ignore negatives','(D) differentiate','(E) none']),
  (r'[Exp/log/trig] \(\displaystyle\int\dfrac{1}{x}\,dx=\)',
   [r'(A) \(x+C\)',r'(B) \(\ln|x|+C\)',r'(C) \(1/x+C\)',r'(D) \(e^{x}+C\)',r'(E) \(x\ln x+C\)']),
- (r'[Substitution] For \(\displaystyle\int\dfrac{2x}{x^2+5}\,dx\), a good \(u\) is',
-  [r'(A) \(u=2x\)',r'(B) \(u=x^2+5\)',r'(C) \(u=x^2\)',r'(D) \(u=\ln x\)',r'(E) \(u=5\)']),
+ (r'[Substitution] \(\displaystyle\int\dfrac{2x}{x^2+5}\,dx=\)',
+  [r'(A) \(2\ln(x^2+5)+C\)',r'(B) \(\ln(x^2+5)+C\)',r'(C) \(\dfrac{1}{x^2+5}+C\)',r'(D) \(\ln(2x)+C\)',r'(E) \((x^2+5)^2+C\)']),
  r'[Applications of primitive] \(\dfrac{dy}{dx}=3x^2-4\), through \((1,2)\). Find \(y\).',
  r'[Power of \(x\)] Find \(\displaystyle\int\left(5x^4-\dfrac{3}{x^2}\right)dx\).',
  r'[Power of \(x\)] Evaluate \(\displaystyle\int_1^{8}x^{-2/3}\,dx\).',
@@ -2179,8 +2179,8 @@ int_q = [
  r'[Exp/log/trig] Find \(\displaystyle\int(4\cos x-e^{x})\,dx\).',
  r'[Exp/log/trig] Find \(\displaystyle\int\dfrac{2}{3x+1}\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{\pi/6}\sin3x\,dx\).',
- r'[Substitution] Use substitution to evaluate \(\displaystyle\int\dfrac{x}{\sqrt{x^2+1}}\,dx\).',
- r'[Substitution] Use substitution to evaluate \(\displaystyle\int 3\sin x\cos^2 x\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int\dfrac{x}{\sqrt{x^2+1}}\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int 3\sin x\cos^2 x\,dx\).',
 ],
 [
  (r'[Primitive] Best first step for \(\displaystyle\int\left(\sqrt{x}-\dfrac{1}{\sqrt{x}}\right)^2 dx\)?',
@@ -2193,8 +2193,8 @@ int_q = [
   ['(A) \(2/3\)','(B) \(4/3\)','(C) \(1\)','(D) \(2\)','(E) \(8/3\)']),
  (r'[Exp/log/trig] \(\displaystyle\int 2\sec^2 x\,dx=\)',
   [r'(A) \(2\tan x+C\)',r'(B) \(2\sec x+C\)',r'(C) \(\tan x+C\)',r'(D) \(2\sin x+C\)',r'(E) \(-\!2\cos x+C\)']),
- (r'[Substitution] For \(\displaystyle\int(4x-1)(2x^2-x)^5\,dx\), a good \(u\) is',
-  [r'(A) \(u=4x-1\)',r'(B) \(u=2x^2-x\)',r'(C) \(u=x^2\)',r'(D) \(u=2x\)',r'(E) \(u=(2x^2-x)^5\)']),
+ (r'[Substitution] \(\displaystyle\int(4x-1)(2x^2-x)^5\,dx=\)',
+  [r'(A) \((2x^2-x)^6+C\)',r'(B) \(\tfrac16(2x^2-x)^6+C\)',r'(C) \(\tfrac15(2x^2-x)^5+C\)',r'(D) \(\tfrac16(4x-1)^6+C\)',r'(E) \(\tfrac16(2x^2-x)^5+C\)']),
  r'[Applications of primitive] \(\dfrac{dy}{dx}=e^{x}+2\), through \((0,3)\). Find \(y\).',
  r'[Power of \(x\)] Find \(\displaystyle\int\left(x^{-3}+4x\right)dx\).',
  r'[Power of \(x\)] Evaluate \(\displaystyle\int_{-1}^{2}(x^2-x)\,dx\).',
@@ -2207,119 +2207,817 @@ int_q = [
  r'[Exp/log/trig] Find \(\displaystyle\int\left(3e^{2x}-\sin x\right)dx\).',
  r'[Exp/log/trig] Find \(\displaystyle\int\dfrac{5}{x}\,dx\).',
  r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{\ln2}e^{x}\,dx\).',
- r'[Substitution] Use substitution to evaluate \(\displaystyle\int\dfrac{4x}{(x^2+1)^2}\,dx\).',
- r'[Substitution] Use substitution to evaluate \(\displaystyle\int\cos x\,e^{\sin x}\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int\dfrac{4x}{(x^2+1)^2}\,dx\).',
+ r'[Substitution] Evaluate \(\displaystyle\int\cos x\,e^{\sin x}\,dx\).',
 ],
 ]
 
+def _remove_integration_category(question):
+    """Remove the internal topic tag from the student-facing question."""
+    if isinstance(question, tuple):
+        stem, choices = question
+    else:
+        stem = question
+    if stem.startswith('['):
+        closing_bracket = stem.find(']')
+        if closing_bracket >= 0:
+            stem = stem[closing_bracket + 1:].lstrip()
+    return (stem, choices) if isinstance(question, tuple) else stem
+
+
+for _integration_test in int_q:
+    _integration_test[:] = [
+        _remove_integration_category(question) for question in _integration_test
+    ]
+
 int_a = [
 [
- r'(B) Expand first.',
- r'(A) \(\tfrac23 x^{3/2}+\ln|x|+C\).',
- r'(E) \(27/2\).',
- r'(B) Split on sign changes.',
- r'(A) \(9\sin(x/3)+C\).',
- r'(B) \(u=3x^2-2x\).',
- r'\(y=x+\tfrac32 x^2-18\).',
- r'\(\tfrac32 x^6+x^3+C\).',
- r'\(\tfrac34 x^4-4\ln|x|+C\).',
- r'\(\dfrac16\).',
- r'Area \(=\dfrac{8}{3}\).',
- r'\(\tfrac12 e^{2x}+2x^2+C\).',
- r'\(\ln|5+x|+C\).',
- r'\(\dfrac{\pi}{2}-1\).',
- r'\(\tfrac12(x^2-3)^4+C\).',
- r'\(2\sqrt{x^2+9}+C\).',
+ r'''Expand the square:
+\[
+\left(x-\frac3x\right)^2=x^2-6+\frac9{x^2}.
+\]
+The integral is then a sum of powers of \(x\), so the correct first step is
+\(\boxed{\text{(B) Expand}}\).''',
+ r'''Write \(\sqrt{x}=x^{1/2}\). The power rule applies to this term, while
+\(1/x\) has a logarithmic primitive:
+\[
+\int\left(x^{1/2}+\frac1x\right)dx
+=\frac{x^{3/2}}{3/2}+\ln|x|+C
+=\frac23x^{3/2}+\ln|x|+C.
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''An antiderivative is
+\[
+\int(2x^3+2)\,dx=\frac{x^4}{2}+2x.
+\]
+Therefore
+\[
+\left[\frac{x^4}{2}+2x\right]_{-1}^{2}
+=\left(8+4\right)-\left(\frac12-2\right)
+=\frac{27}{2}.
+\]
+Thus the answer is \(\boxed{\text{(E)}}\).''',
+ r'''Factor the function to locate its zeros:
+\[
+x^3-4x^2-x+4=(x-4)(x-1)(x+1).
+\]
+The graph crosses the axis at \(x=-1,1,4\), so its sign changes across the
+bounded regions. Geometric area requires \(\int |f(x)|\,dx\), which must be
+split at the sign changes. Thus the answer is \(\boxed{\text{(B)}}\).''',
+ r'''Since
+\[
+\frac{d}{dx}\sin\left(\frac{x}{3}\right)
+=\frac13\cos\left(\frac{x}{3}\right),
+\]
+the required coefficient is \(9\):
+\[
+\int3\cos\left(\frac{x}{3}\right)dx
+=9\sin\left(\frac{x}{3}\right)+C.
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''Let \(u=3x^2-2x\). Then \(du=(6x-2)\,dx\), so
+\[
+\int(6x-2)\sqrt{3x^2-2x}\,dx
+=\int u^{1/2}\,du
+=\frac23u^{3/2}+C.
+\]
+Therefore
+\[
+\boxed{\frac23(3x^2-2x)^{3/2}+C},
+\]
+which is answer \(\boxed{\text{(A)}}\).''',
+ r'''Integrate the gradient:
+\[
+y=\int(1+3x)\,dx=x+\frac32x^2+C.
+\]
+Use the point \((4,10)\):
+\[
+10=4+\frac32(4)^2+C=28+C,
+\qquad C=-18.
+\]
+Therefore
+\[
+\boxed{y=x+\frac32x^2-18}.
+\]''',
+ r'''Apply the power rule term by term:
+\[
+\int(9x^5+3x^2)\,dx
+=9\frac{x^6}{6}+3\frac{x^3}{3}+C
+=\boxed{\frac32x^6+x^3+C}.
+\]''',
+ r'''Separate the two terms. The \(1/x\) term produces a logarithm:
+\[
+\int\left(3x^3-\frac4x\right)dx
+=3\frac{x^4}{4}-4\ln|x|+C.
+\]
+Hence
+\[
+\boxed{\frac34x^4-4\ln|x|+C}.
+\]''',
+ r'''On \(0\le x\le1\), \(x-x^2=x(1-x)\ge0\), so the area is
+\[
+A=\int_0^1(x-x^2)\,dx
+=\left[\frac{x^2}{2}-\frac{x^3}{3}\right]_0^1
+=\frac12-\frac13.
+\]
+Thus \(\boxed{A=\frac16}\).''',
+ r'''The upper curve is \(2-x^2\) and the lower curve is \(x^2\). Their
+intersections satisfy
+\[
+x^2=2-x^2\;\Longrightarrow\;x^2=1,
+\]
+giving \((\pm1,1)\). Therefore
+\[
+\begin{aligned}
+A&=\int_{-1}^{1}\big[(2-x^2)-x^2\big]\,dx\\
+&=\left[2x-\frac23x^3\right]_{-1}^{1}
+=\frac83.
+\end{aligned}
+\]
+Hence \(\boxed{A=\frac83}\).''',
+ r'''Integrate each term:
+\[
+\int(e^{2x}+4x)\,dx
+=\frac12e^{2x}+2x^2+C.
+\]
+Therefore
+\[
+\boxed{\frac12e^{2x}+2x^2+C}.
+\]''',
+ r'''Let \(u=x+5\), so \(du=dx\). Then
+\[
+\int\frac1{x+5}\,dx=\int\frac1u\,du
+=\ln|u|+C.
+\]
+Thus
+\[
+\boxed{\ln|x+5|+C}.
+\]''',
+ r'''An antiderivative is
+\[
+\int(1-\sin2x)\,dx=x+\frac12\cos2x.
+\]
+Consequently
+\[
+\begin{aligned}
+\int_0^{\pi/2}(1-\sin2x)\,dx
+&=\left[x+\frac12\cos2x\right]_0^{\pi/2}\\
+&=\left(\frac\pi2-\frac12\right)-\frac12
+=\frac\pi2-1.
+\end{aligned}
+\]
+Therefore \(\boxed{\frac\pi2-1}\).''',
+ r'''Let \(u=x^2-3\). Then \(du=2x\,dx\), so
+\[
+\int2x(x^2-3)^3\,dx
+=\int u^3\,du
+=\frac{u^4}{4}+C.
+\]
+Substituting back gives
+\[
+\boxed{\frac14(x^2-3)^4+C}.
+\]''',
+ r'''Let \(u=x^2+9\), so \(du=2x\,dx\). Then
+\[
+\int\frac{2x}{\sqrt{x^2+9}}\,dx
+=\int u^{-1/2}\,du
+=2u^{1/2}+C.
+\]
+Therefore
+\[
+\boxed{2\sqrt{x^2+9}+C}.
+\]''',
 ],
 [
- r'(A) Expand.',
- r'(A) \(\tfrac23 x^{3/2}+C\).',
- r'(B) \(1\).',
- r'(B) \(16/3\).',
- r'(B) \(\tfrac13 e^{3x}+C\).',
- r'(B) \(u=x^2\).',
- r'\(y=x^2-5x+7\).',
- r'\(\tfrac15 x^5+\dfrac{1}{x}+C\).',
- r'\(2\).',
- r'\(\dfrac{32}{3}\).',
- r'\(\dfrac16\).',
- r'\(\tfrac32\sin2x+2\cos x+C\).',
- r'\(-5e^{-x}+C\).',
- r'\(e-\tfrac12\).',
- r'\(u=\sin2x\Rightarrow \tfrac18\sin^4(2x)+C\).',
- r'\(\ln|\sin x|+C\).',
+ r'''Expanding gives
+\[
+(x+1)^2=x^2+2x+1,
+\]
+which can be integrated term by term. Thus the correct first step is
+\(\boxed{\text{(A) Expand}}\).''',
+ r'''By the power rule,
+\[
+\int x^{1/2}\,dx
+=\frac{x^{3/2}}{3/2}+C
+=\frac23x^{3/2}+C.
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''Since \(\int\cos x\,dx=\sin x\),
+\[
+\int_0^{\pi/2}\cos x\,dx
+=\left[\sin x\right]_0^{\pi/2}
+=1-0=1.
+\]
+Thus the answer is \(\boxed{\text{(B)}}\).''',
+ r'''The function is nonnegative on \([0,4]\), so
+\[
+A=\int_0^4\sqrt{x}\,dx
+=\left[\frac23x^{3/2}\right]_0^4
+=\frac23(8)=\frac{16}{3}.
+\]
+Thus the answer is \(\boxed{\text{(B)}}\).''',
+ r'''Because \(\frac{d}{dx}(3x)=3\),
+\[
+\int e^{3x}\,dx=\frac13e^{3x}+C.
+\]
+Thus the answer is \(\boxed{\text{(B)}}\).''',
+ r'''Let \(u=x^2\), so \(du=2x\,dx\). Then
+\[
+\int xe^{x^2}\,dx
+=\frac12\int e^u\,du
+=\frac12e^u+C.
+\]
+Thus
+\[
+\boxed{\frac12e^{x^2}+C},
+\]
+which is answer \(\boxed{\text{(B)}}\).''',
+ r'''Integrate the gradient:
+\[
+y=\int(2x-5)\,dx=x^2-5x+C.
+\]
+Use \((3,1)\):
+\[
+1=9-15+C,\qquad C=7.
+\]
+Therefore
+\[
+\boxed{y=x^2-5x+7}.
+\]''',
+ r'''Rewrite \(1/x^2=x^{-2}\) and apply the power rule:
+\[
+\int(x^4-x^{-2})\,dx
+=\frac{x^5}{5}+\frac1x+C.
+\]
+Thus
+\[
+\boxed{\frac15x^5+\frac1x+C}.
+\]''',
+ r'''Rewrite the integrand as \(x^{-1/2}\):
+\[
+\int_1^4x^{-1/2}\,dx
+=\left[2x^{1/2}\right]_1^4
+=2(2)-2(1)=2.
+\]
+Therefore \(\boxed{2}\).''',
+ r'''The positive region extends from the roots \(x=-2\) to \(x=2\):
+\[
+\begin{aligned}
+A&=\int_{-2}^{2}(4-x^2)\,dx\\
+&=\left[4x-\frac{x^3}{3}\right]_{-2}^{2}
+=\frac{32}{3}.
+\end{aligned}
+\]
+Hence \(\boxed{A=\frac{32}{3}}\).''',
+ r'''On \([0,1]\), \(x\ge x^2\). Therefore
+\[
+A=\int_0^1(x-x^2)\,dx
+=\left[\frac{x^2}{2}-\frac{x^3}{3}\right]_0^1
+=\frac16.
+\]
+Thus \(\boxed{A=\frac16}\).''',
+ r'''Integrate term by term:
+\[
+\int(3\cos2x-2\sin x)\,dx
+=\frac32\sin2x+2\cos x+C.
+\]
+Therefore
+\[
+\boxed{\frac32\sin2x+2\cos x+C}.
+\]''',
+ r'''Since \(\frac{d}{dx}(e^{-x})=-e^{-x}\),
+\[
+\int5e^{-x}\,dx=-5e^{-x}+C.
+\]
+Hence \(\boxed{-5e^{-x}+C}\).''',
+ r'''An antiderivative is \(e^x+x^2\). Thus
+\[
+\int_0^1(e^x+2x)\,dx
+=\left[e^x+x^2\right]_0^1
+=(e+1)-1=e.
+\]
+Therefore \(\boxed{e}\).''',
+ r'''Let \(u=2\sin2x\). Then \(du=4\cos2x\,dx\), so
+\[
+\begin{aligned}
+\int\cos2x(2\sin2x)^3\,dx
+&=\frac14\int u^3\,du\\
+&=\frac{u^4}{16}+C
+=\sin^4(2x)+C.
+\end{aligned}
+\]
+Therefore \(\boxed{\sin^4(2x)+C}\).''',
+ r'''Let \(u=\sin x\), so \(du=\cos x\,dx\). Then
+\[
+\int\frac{\cos x}{\sin x}\,dx
+=\int\frac1u\,du
+=\ln|u|+C.
+\]
+Thus \(\boxed{\ln|\sin x|+C}\).''',
 ],
 [
- r'(A) Expand/split.',
- r'(B) \(\tfrac{1}{12}(2x+1)^6+C\).',
- r'(A) \(0\).',
- r'(A) \(e-1\).',
- r'(A) \(-\tfrac13\cos3x+C\).',
- r'(B) \(u=x^2+1\).',
- r'\(y=\ln|x|+1\).',
- r'\(4x^{3/2}-2x^{1/2}+C\).',
- r'\(9\).',
- r'\(2\).',
- r'Intersections \(x=0,2\); area \(=\dfrac{8}{3}\).',
- r'\(2\ln|2x+1|+C\).',
- r'\(2\tan x-3\sin x+C\).',
- r'\(1\).',
- r'\(\tfrac12\ln(x^2+1)+C\).',
- r'\(\tfrac1{10}(3x^2-2x)^5+C\).',
+ r'''Split the fraction:
+\[
+\frac{x^2+1}{x}=x+\frac1x.
+\]
+Both resulting terms have standard primitives, so the correct first step is
+\(\boxed{\text{(A) Expand/split}}\).''',
+ r'''Let \(u=2x+1\), so \(du=2\,dx\). Then
+\[
+\int(2x+1)^5dx
+=\frac12\int u^5du
+=\frac{u^6}{12}+C.
+\]
+Hence \(\boxed{\frac1{12}(2x+1)^6+C}\), answer
+\(\boxed{\text{(B)}}\).''',
+ r'''An antiderivative is \(x^3-x\). Therefore
+\[
+\int_0^1(3x^2-1)\,dx
+=\left[x^3-x\right]_0^1=0.
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''The function is positive, so its area is
+\[
+\int_0^1e^x\,dx
+=\left[e^x\right]_0^1=e-1.
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''Since \(\frac{d}{dx}\cos3x=-3\sin3x\),
+\[
+\int\sin3x\,dx=-\frac13\cos3x+C.
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''Let \(u=x^2+1\), so \(du=2x\,dx\). Then
+\[
+\int\frac{4x}{x^2+1}\,dx
+=2\int\frac1u\,du
+=2\ln|u|+C.
+\]
+Since \(x^2+1>0\),
+\[
+\boxed{2\ln(x^2+1)+C},
+\]
+which is answer \(\boxed{\text{(B)}}\).''',
+ r'''Integrate the gradient:
+\[
+y=\int\frac1x\,dx=\ln|x|+C.
+\]
+The point \((e,2)\) gives
+\[
+2=\ln e+C=1+C,\qquad C=1.
+\]
+Therefore \(\boxed{y=\ln|x|+1}\).''',
+ r'''Apply the power rule:
+\[
+\begin{aligned}
+\int(6x^{1/2}-x^{-1/2})\,dx
+&=6\left(\frac23x^{3/2}\right)
+-2x^{1/2}+C\\
+&=\boxed{4x^{3/2}-2x^{1/2}+C}.
+\end{aligned}
+\]''',
+ r'''An antiderivative of \(3x^2\) is \(x^3\). Hence
+\[
+\int_{-2}^{1}3x^2\,dx
+=\left[x^3\right]_{-2}^{1}
+=1-(-8)=9.
+\]
+Therefore \(\boxed{9}\).''',
+ r'''The sine curve is nonnegative on \([0,\pi]\):
+\[
+A=\int_0^\pi\sin x\,dx
+=\left[-\cos x\right]_0^\pi
+=1-(-1)=2.
+\]
+Thus \(\boxed{A=2}\).''',
+ r'''Find the intersections:
+\[
+x^2=4x-x^2
+\;\Longrightarrow\;2x(x-2)=0,
+\]
+so \(x=0,2\). The upper curve is \(4x-x^2\), giving
+\[
+\begin{aligned}
+A&=\int_0^2\big[(4x-x^2)-x^2\big]\,dx\\
+&=\left[2x^2-\frac23x^3\right]_0^2
+=\frac83.
+\end{aligned}
+\]
+Therefore \(\boxed{A=\frac83}\).''',
+ r'''Let \(u=2x+1\), so \(du=2\,dx\):
+\[
+\int\frac4{2x+1}\,dx
+=2\int\frac1u\,du
+=2\ln|u|+C.
+\]
+Thus \(\boxed{2\ln|2x+1|+C}\).''',
+ r'''Use the standard primitives of \(\sec^2x\) and \(\cos x\):
+\[
+\int(2\sec^2x-3\cos x)\,dx
+=2\tan x-3\sin x+C.
+\]
+Therefore \(\boxed{2\tan x-3\sin x+C}\).''',
+ r'''Since an antiderivative of \(\sec^2x\) is \(\tan x\),
+\[
+\int_0^{\pi/4}\sec^2x\,dx
+=\left[\tan x\right]_0^{\pi/4}
+=1-0=1.
+\]
+Thus \(\boxed{1}\).''',
+ r'''Let \(u=x^2+1\). Then \(du=2x\,dx\), so
+\[
+\int\frac{x}{x^2+1}\,dx
+=\frac12\int\frac1u\,du
+=\frac12\ln|u|+C.
+\]
+Since \(x^2+1>0\),
+\[
+\boxed{\frac12\ln(x^2+1)+C}.
+\]''',
+ r'''Let \(u=3x^2-2x\). Since \(du=(6x-2)\,dx=2(3x-1)\,dx\),
+\[
+\int(3x-1)(3x^2-2x)^4\,dx
+=\frac12\int u^4\,du
+=\frac{u^5}{10}+C.
+\]
+Therefore \(\boxed{\frac1{10}(3x^2-2x)^5+C}\).''',
 ],
 [
- r'(A) Expand.',
- r'(B) \(-1/x+C\).',
- r'(B) \(14/3\).',
- r'(B) \(4/3\).',
- r'(A) \(2\sin(x/2)+C\).',
- r'(A) \(u=\sin x\).',
- r'\(y=x^4-2x+6\).',
- r'\(\tfrac14 x^4+\dfrac{1}{x^2}+C\).',
- r'\(0\).',
- r'\(\dfrac16\).',
- r'Intersections \(0,2\); area \(=\dfrac43\).',
- r'\(2e^{x}+3\cos x+C\).',
- r'\(3\ln|x|+C\).',
- r'\(0\).',
- r'\(3\ln(x^2+4)+C\).',
- r'\(\tfrac13\sin^6 x+C\).',
+ r'''Expand the square:
+\[
+\left(2+\frac1x\right)^2=4+\frac4x+\frac1{x^2}.
+\]
+The three terms can then be integrated separately, so the correct first
+step is \(\boxed{\text{(A) Expand}}\).''',
+ r'''Rewrite the integrand as \(x^{-2}\):
+\[
+\int x^{-2}\,dx
+=\frac{x^{-1}}{-1}+C
+=-\frac1x+C.
+\]
+Thus the answer is \(\boxed{\text{(B)}}\).''',
+ r'''An antiderivative is \(x^3/3+x\). Therefore
+\[
+\int_0^2(x^2+1)\,dx
+=\left[\frac{x^3}{3}+x\right]_0^2
+=\frac83+2=\frac{14}{3}.
+\]
+Thus the answer is \(\boxed{\text{(B)}}\).''',
+ r'''The curves meet where
+\[
+2x=x^2\;\Longrightarrow\;x(x-2)=0,
+\]
+so the bounded interval is \([0,2]\). Since \(2x\) is above \(x^2\),
+\[
+\int_0^2(2x-x^2)\,dx
+=\left[x^2-\frac{x^3}{3}\right]_0^2
+=\frac43.
+\]
+Thus the answer is \(\boxed{\text{(B)}}\).''',
+ r'''Because
+\[
+\frac{d}{dx}\sin\left(\frac x2\right)
+=\frac12\cos\left(\frac x2\right),
+\]
+\[
+\int\cos\left(\frac x2\right)dx
+=2\sin\left(\frac x2\right)+C.
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''Let \(u=\sin x\), so \(du=\cos x\,dx\). Then
+\[
+\int\sin x\cos x\,dx
+=\int u\,du
+=\frac12u^2+C.
+\]
+Thus
+\[
+\boxed{\frac12\sin^2x+C},
+\]
+which is answer \(\boxed{\text{(A)}}\).''',
+ r'''Integrate the derivative:
+\[
+y=\int(4x^3-2)\,dx=x^4-2x+C.
+\]
+Using \(y(1)=5\),
+\[
+5=1-2+C,\qquad C=6.
+\]
+Hence \(\boxed{y=x^4-2x+6}\).''',
+ r'''Rewrite \(2/x^3=2x^{-3}\):
+\[
+\int(x^3-2x^{-3})\,dx
+=\frac14x^4+x^{-2}+C.
+\]
+Therefore \(\boxed{\frac14x^4+\frac1{x^2}+C}\).''',
+ r'''An antiderivative is \(x^4-x\), so
+\[
+\int_0^1(4x^3-1)\,dx
+=\left[x^4-x\right]_0^1=0.
+\]
+Thus \(\boxed{0}\).''',
+ r'''On \(0\le x\le1\), \(\sqrt{x}\ge x\). Hence
+\[
+\begin{aligned}
+A&=\int_0^1(\sqrt{x}-x)\,dx\\
+&=\left[\frac23x^{3/2}-\frac12x^2\right]_0^1
+=\frac23-\frac12=\frac16.
+\end{aligned}
+\]
+Therefore \(\boxed{A=\frac16}\).''',
+ r'''The intersections satisfy \(x^2=2x\), so \(x=0,2\). The line is
+above the parabola on this interval:
+\[
+A=\int_0^2(2x-x^2)\,dx
+=\left[x^2-\frac{x^3}{3}\right]_0^2
+=\frac43.
+\]
+Thus \(\boxed{A=\frac43}\).''',
+ r'''Integrate each term:
+\[
+\int(2e^x-3\sin x)\,dx
+=2e^x+3\cos x+C.
+\]
+Therefore \(\boxed{2e^x+3\cos x+C}\).''',
+ r'''Use the logarithmic primitive:
+\[
+\int\frac3x\,dx=3\ln|x|+C.
+\]
+Hence \(\boxed{3\ln|x|+C}\).''',
+ r'''An antiderivative of \(\cos2x\) is \(\frac12\sin2x\):
+\[
+\int_0^{\pi/2}\cos2x\,dx
+=\left[\frac12\sin2x\right]_0^{\pi/2}
+=0.
+\]
+Therefore \(\boxed{0}\).''',
+ r'''Let \(u=x^2+4\), so \(du=2x\,dx\). Then
+\[
+\int\frac{6x}{x^2+4}\,dx
+=3\int\frac1u\,du
+=3\ln|u|+C.
+\]
+Since \(x^2+4>0\),
+\[
+\boxed{3\ln(x^2+4)+C}.
+\]''',
+ r'''Let \(u=\sin x\), so \(du=\cos x\,dx\):
+\[
+\int2\cos x\sin^5x\,dx
+=2\int u^5\,du
+=\frac13u^6+C.
+\]
+Thus \(\boxed{\frac13\sin^6x+C}\).''',
 ],
 [
- r'(A) Expand.',
- r'(A) \(2x^{1/2}+\tfrac14 x^4+C\).',
- r'(C) \(2\).',
- r'(B) take absolute value / split at roots.',
- r'(B) \(\ln|x|+C\).',
- r'(B) \(u=x^2+5\).',
- r'\(y=x^3-4x+5\).',
- r'\(x^5+\dfrac{3}{x}+C\).',
- r'\([3x^{1/3}]_1^8=6-3=3\).',
- r'\(\dfrac92\).',
- r'Intersections \(0,1\); area \(=\dfrac14\).',
- r'\(4\sin x-e^{x}+C\).',
- r'\(\tfrac23\ln|3x+1|+C\).',
- r'\(\tfrac13\).',
- r'\(\sqrt{x^2+1}+C\).',
- r'\(-\cos^3 x+C\).',
+ r'''Expand the product:
+\[
+x(x+2)=x^2+2x.
+\]
+This can be integrated term by term, so the correct first step is
+\(\boxed{\text{(A) Expand}}\).''',
+ r'''Apply the power rule to both terms:
+\[
+\int(x^{-1/2}+x^3)\,dx
+=2x^{1/2}+\frac14x^4+C.
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''An antiderivative of \(3x^2\) is \(x^3\):
+\[
+\int_{-1}^{1}3x^2\,dx
+=\left[x^3\right]_{-1}^{1}
+=1-(-1)=2.
+\]
+Thus the answer is \(\boxed{\text{(C)}}\).''',
+ r'''On \([-1,1]\), \(x^2-1\le0\). A direct integral would give signed
+area, so geometric area requires
+\[
+\int_{-1}^{1}|x^2-1|\,dx
+=\int_{-1}^{1}(1-x^2)\,dx.
+\]
+Thus the correct choice is \(\boxed{\text{(B)}}\).''',
+ r'''The power rule excludes the exponent \(-1\). Its standard primitive is
+\[
+\int\frac1x\,dx=\ln|x|+C.
+\]
+Thus the answer is \(\boxed{\text{(B)}}\).''',
+ r'''Let \(u=x^2+5\), so \(du=2x\,dx\). Then
+\[
+\int\frac{2x}{x^2+5}\,dx
+=\int\frac1u\,du
+=\ln|u|+C.
+\]
+Since \(x^2+5>0\),
+\[
+\boxed{\ln(x^2+5)+C},
+\]
+which is answer \(\boxed{\text{(B)}}\).''',
+ r'''Integrate the gradient:
+\[
+y=\int(3x^2-4)\,dx=x^3-4x+C.
+\]
+Using the point \((1,2)\),
+\[
+2=1-4+C,\qquad C=5.
+\]
+Therefore \(\boxed{y=x^3-4x+5}\).''',
+ r'''Rewrite \(3/x^2=3x^{-2}\):
+\[
+\int(5x^4-3x^{-2})\,dx
+=x^5+3x^{-1}+C.
+\]
+Thus \(\boxed{x^5+\frac3x+C}\).''',
+ r'''By the power rule,
+\[
+\int x^{-2/3}\,dx=3x^{1/3}.
+\]
+Therefore
+\[
+\int_1^8x^{-2/3}\,dx
+=\left[3x^{1/3}\right]_1^8
+=3(2)-3(1)=3.
+\]
+Hence \(\boxed{3}\).''',
+ r'''The curve \(3x-x^2=x(3-x)\) is nonnegative between its roots
+\(0\) and \(3\). Thus
+\[
+\begin{aligned}
+A&=\int_0^3(3x-x^2)\,dx\\
+&=\left[\frac32x^2-\frac13x^3\right]_0^3
+=\frac{27}{2}-9=\frac92.
+\end{aligned}
+\]
+Therefore \(\boxed{A=\frac92}\).''',
+ r'''For \(x\ge0\),
+\[
+x=x^3\;\Longrightarrow\;x(x-1)(x+1)=0,
+\]
+so the relevant intersections are \(x=0,1\). Since \(x\ge x^3\) on
+\([0,1]\),
+\[
+A=\int_0^1(x-x^3)\,dx
+=\left[\frac12x^2-\frac14x^4\right]_0^1
+=\frac14.
+\]
+Thus \(\boxed{A=\frac14}\).''',
+ r'''Integrate term by term:
+\[
+\int(4\cos x-e^x)\,dx
+=4\sin x-e^x+C.
+\]
+Therefore \(\boxed{4\sin x-e^x+C}\).''',
+ r'''Let \(u=3x+1\), so \(du=3\,dx\). Then
+\[
+\int\frac2{3x+1}\,dx
+=\frac23\int\frac1u\,du
+=\frac23\ln|u|+C.
+\]
+Thus \(\boxed{\frac23\ln|3x+1|+C}\).''',
+ r'''An antiderivative is \(-\frac13\cos3x\). Hence
+\[
+\begin{aligned}
+\int_0^{\pi/6}\sin3x\,dx
+&=\left[-\frac13\cos3x\right]_0^{\pi/6}\\
+&=0-\left(-\frac13\right)=\frac13.
+\end{aligned}
+\]
+Therefore \(\boxed{\frac13}\).''',
+ r'''Let \(u=x^2+1\), so \(du=2x\,dx\):
+\[
+\int\frac{x}{\sqrt{x^2+1}}\,dx
+=\frac12\int u^{-1/2}\,du
+=u^{1/2}+C.
+\]
+Thus \(\boxed{\sqrt{x^2+1}+C}\).''',
+ r'''Let \(u=\cos x\), so \(du=-\sin x\,dx\). Then
+\[
+\int3\sin x\cos^2x\,dx
+=-3\int u^2\,du
+=-u^3+C.
+\]
+Therefore \(\boxed{-\cos^3x+C}\).''',
 ],
 [
- r'(A) Expand.',
- r'(A) \(\tfrac12 x^4-\ln|x|+C\).',
- r'(B) \(12\).',
- r'(B) \(4/3\).',
- r'(A) \(2\tan x+C\).',
- r'(B) \(u=2x^2-x\).',
- r'\(y=e^{x}+2x+2\).',
- r'\(-\dfrac{1}{2x^2}+2x^2+C\).',
- r'\(\dfrac32\).',
- r'\(1\).',
- r'Intersections \(0,3\); area \(=\dfrac92\).',
- r'\(\tfrac32 e^{2x}+\cos x+C\).',
- r'\(5\ln|x|+C\).',
- r'\(1\).',
- r'\(-\dfrac{2}{x^2+1}+C\).',
- r'\(e^{\sin x}+C\).',
+ r'''Expand the square:
+\[
+\left(\sqrt{x}-\frac1{\sqrt{x}}\right)^2
+=x-2+\frac1x.
+\]
+The resulting terms have standard primitives, so the correct first step is
+\(\boxed{\text{(A) Expand}}\).''',
+ r'''Integrate term by term:
+\[
+\int\left(2x^3-\frac1x\right)dx
+=\frac12x^4-\ln|x|+C.
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''An antiderivative is \(x^2+x\). Therefore
+\[
+\int_0^3(2x+1)\,dx
+=\left[x^2+x\right]_0^3
+=9+3=12.
+\]
+Thus the answer is \(\boxed{\text{(B)}}\).''',
+ r'''The positive region lies between the roots \(-1\) and \(1\):
+\[
+\begin{aligned}
+A&=\int_{-1}^{1}(1-x^2)\,dx\\
+&=\left[x-\frac{x^3}{3}\right]_{-1}^{1}
+=\frac43.
+\end{aligned}
+\]
+Thus the answer is \(\boxed{\text{(B)}}\).''',
+ r'''Since \(\int\sec^2x\,dx=\tan x\),
+\[
+\int2\sec^2x\,dx=2\tan x+C.
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''Let \(u=2x^2-x\), so \(du=(4x-1)\,dx\). Then
+\[
+\int(4x-1)(2x^2-x)^5\,dx
+=\int u^5\,du
+=\frac16u^6+C.
+\]
+Therefore
+\[
+\boxed{\frac16(2x^2-x)^6+C},
+\]
+which is answer \(\boxed{\text{(B)}}\).''',
+ r'''Integrate the gradient:
+\[
+y=\int(e^x+2)\,dx=e^x+2x+C.
+\]
+Using \((0,3)\),
+\[
+3=e^0+C=1+C,\qquad C=2.
+\]
+Therefore \(\boxed{y=e^x+2x+2}\).''',
+ r'''Apply the power rule:
+\[
+\int(x^{-3}+4x)\,dx
+=-\frac12x^{-2}+2x^2+C.
+\]
+Thus \(\boxed{-\frac1{2x^2}+2x^2+C}\).''',
+ r'''An antiderivative is \(x^3/3-x^2/2\). Therefore
+\[
+\begin{aligned}
+\int_{-1}^{2}(x^2-x)\,dx
+&=\left[\frac{x^3}{3}-\frac{x^2}{2}\right]_{-1}^{2}\\
+&=\frac23-\left(-\frac56\right)=\frac32.
+\end{aligned}
+\]
+Hence \(\boxed{\frac32}\).''',
+ r'''The cosine curve is nonnegative on the interval:
+\[
+A=\int_0^{\pi/2}\cos x\,dx
+=\left[\sin x\right]_0^{\pi/2}
+=1.
+\]
+Thus \(\boxed{A=1}\).''',
+ r'''The intersections satisfy
+\[
+x^2=3x\;\Longrightarrow\;x(x-3)=0,
+\]
+so \(x=0,3\). The line lies above the parabola between them:
+\[
+\begin{aligned}
+A&=\int_0^3(3x-x^2)\,dx\\
+&=\left[\frac32x^2-\frac13x^3\right]_0^3
+=\frac92.
+\end{aligned}
+\]
+Therefore \(\boxed{A=\frac92}\).''',
+ r'''Integrate each term:
+\[
+\int(3e^{2x}-\sin x)\,dx
+=\frac32e^{2x}+\cos x+C.
+\]
+Thus \(\boxed{\frac32e^{2x}+\cos x+C}\).''',
+ r'''Use the logarithmic primitive:
+\[
+\int\frac5x\,dx=5\ln|x|+C.
+\]
+Hence \(\boxed{5\ln|x|+C}\).''',
+ r'''An antiderivative of \(e^x\) is \(e^x\):
+\[
+\int_0^{\ln2}e^x\,dx
+=\left[e^x\right]_0^{\ln2}
+=2-1=1.
+\]
+Therefore \(\boxed{1}\).''',
+ r'''Let \(u=x^2+1\), so \(du=2x\,dx\) and \(4x\,dx=2\,du\):
+\[
+\int\frac{4x}{(x^2+1)^2}\,dx
+=2\int u^{-2}\,du
+=-\frac2u+C.
+\]
+Thus \(\boxed{-\frac2{x^2+1}+C}\).''',
+ r'''Let \(u=\sin x\), so \(du=\cos x\,dx\). Then
+\[
+\int\cos x\,e^{\sin x}\,dx
+=\int e^u\,du=e^u+C.
+\]
+Therefore \(\boxed{e^{\sin x}+C}\).''',
 ],
 ]
 write_pair('integration', 'Integration', '1 hour 20 minutes per test',
