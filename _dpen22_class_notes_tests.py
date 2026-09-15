@@ -2143,7 +2143,7 @@ int_q = [
  r'[Applications of primitive] If \(y\'=4x^3-2\) and \(y(1)=5\), find \(y\).',
  r'[Power of \(x\)] \(\displaystyle\int\left(x^{3}-\dfrac{2}{x^{3}}\right)dx\).',
  r'[Power of \(x\)] \(\displaystyle\int_0^{1}(4x^3-1)\,dx\).',
- r'[Area] Sketch the parabola \(y=x^2-1\), marking its \(x\)-intercepts. Hence find the total area between the parabola and the \(x\)-axis from \(x=-2\) to \(x=2\).',
+ r'[Area] Find the total area between the parabola \(y=x^2-1\) and the \(x\)-axis from \(x=-2\) to \(x=2\). Hint: You need to graph the parabola and mark its \(x\)-intercepts.',
  r'[Area] Find the area between \(y=x^2\) and \(y=2x\).'
  + area_between(lambda x: x*x, lambda x: 2*x, 0, 2, xmin=-0.3, xmax=2.4, ymin=-0.3, ymax=4.3,
                 caption='y = x² and y = 2x', label_f='y = x²', label_g='y = 2x'),
@@ -2169,7 +2169,7 @@ int_q = [
  r'[Applications of primitive] \(\dfrac{dy}{dx}=3x^2-4\), through \((1,2)\). Find \(y\).',
  r'[Power of \(x\)] Find \(\displaystyle\int\left(5x^4-\dfrac{3}{x^2}\right)dx\).',
  r'[Power of \(x\)] Evaluate \(\displaystyle\int_1^{8}x^{-2/3}\,dx\).',
- r'[Area] Sketch the parabola \(y=x^2-4\), marking its \(x\)-intercepts. Hence find the total area between the parabola and the \(x\)-axis from \(x=-3\) to \(x=3\).',
+ r'[Area] Find the total area between the parabola \(y=x^2-4\) and the \(x\)-axis from \(x=-3\) to \(x=3\). Hint: You need to graph the parabola and mark its \(x\)-intercepts.',
  r'[Area] Show the intersections of \(y=x\) and \(y=x^3\) for \(x\ge0\), then find the enclosed area on \([0,1]\).'
  + area_between(lambda x: x, lambda x: x**3, 0, 1, xmin=-0.2, xmax=1.3, ymin=-0.2, ymax=1.2,
                 caption='y = x and y = x³', label_f='y = x', label_g='y = x³'),
@@ -2195,7 +2195,7 @@ int_q = [
  r'[Applications of primitive] \(\dfrac{dy}{dx}=e^{x}+2\), through \((0,3)\). Find \(y\).',
  r'[Power of \(x\)] Find \(\displaystyle\int\left(x^{-3}+4x\right)dx\).',
  r'[Power of \(x\)] Evaluate \(\displaystyle\int_{-1}^{2}(x^2-x)\,dx\).',
- r'[Area] Sketch the parabola \(y=3x-x^2\), marking its \(x\)-intercepts. Hence find the total area between the parabola and the \(x\)-axis from \(x=-1\) to \(x=4\).',
+ r'[Area] Find the total area between the parabola \(y=3x-x^2\) and the \(x\)-axis from \(x=-1\) to \(x=4\). Hint: You need to graph the parabola and mark its \(x\)-intercepts.',
  r'[Area] Find the area enclosed by \(y=x^2\) and \(y=3x\).'
  + area_between(lambda x: x*x, lambda x: 3*x, 0, 3, xmin=-0.4, xmax=3.4, ymin=-0.4, ymax=9.5,
                 caption='y = x² and y = 3x', label_f='y = x²', label_g='y = 3x'),
