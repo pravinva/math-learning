@@ -25,7 +25,7 @@ ol>li{margin:10px 0;line-height:1.65;}
 .top-links a{margin-right:12px;text-decoration:none;color:#185FA5;font-weight:600;}
 .ans{background:#f0fdf4;border-left:4px solid #15803d;padding:10px 12px;margin:8px 0 14px;overflow-x:auto;}
 .katex-display{overflow-x:auto;overflow-y:hidden;padding-bottom:2px;}
-@media(max-width:520px){.ans .katex{font-size:.92em;}}
+@media(max-width:520px){.ans .katex{font-size:.92em;}.ans .fig svg text{font-size:13px!important;}}
 .mark{color:#6b7280;font-size:13px;}
 .paper-rules{background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:10px 14px;margin:10px 0 16px;font-size:14px;}
 .paper-rules ul{margin:6px 0 0 20px;padding:0;}
@@ -33,6 +33,7 @@ ol>li{margin:10px 0;line-height:1.65;}
 .part-title{margin:16px 0 6px;color:#1B3A5C;font-size:16px;border-bottom:1px solid #d1d5db;padding-bottom:5px;}
 .question-mark{display:block;text-align:right;color:#4b5563;font-size:13px;font-weight:600;margin-top:4px;}
 .fig{margin:8px 0 4px;}
+.ans .fig svg text{paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round;}
 """
 
 def page(title, body, katex=True):
@@ -2142,9 +2143,7 @@ int_q = [
  r'[Applications of primitive] If \(y\'=4x^3-2\) and \(y(1)=5\), find \(y\).',
  r'[Power of \(x\)] \(\displaystyle\int\left(x^{3}-\dfrac{2}{x^{3}}\right)dx\).',
  r'[Power of \(x\)] \(\displaystyle\int_0^{1}(4x^3-1)\,dx\).',
- r'[Area] Find the area between \(y=\sqrt{x}\) and \(y=x\) from \(0\) to \(1\).'
- + area_between(math.sqrt, lambda x: x, 0, 1, xmin=-0.2, xmax=1.3, ymin=-0.2, ymax=1.2,
-                caption='y = √x and y = x', label_f='y = √x', label_g='y = x'),
+ r'[Area] Sketch the parabola \(y=x^2-1\), marking its \(x\)-intercepts. Hence find the total area between the parabola and the \(x\)-axis from \(x=-2\) to \(x=2\).',
  r'[Area] Find the area between \(y=x^2\) and \(y=2x\).'
  + area_between(lambda x: x*x, lambda x: 2*x, 0, 2, xmin=-0.3, xmax=2.4, ymin=-0.3, ymax=4.3,
                 caption='y = x² and y = 2x', label_f='y = x²', label_g='y = 2x'),
@@ -2170,9 +2169,7 @@ int_q = [
  r'[Applications of primitive] \(\dfrac{dy}{dx}=3x^2-4\), through \((1,2)\). Find \(y\).',
  r'[Power of \(x\)] Find \(\displaystyle\int\left(5x^4-\dfrac{3}{x^2}\right)dx\).',
  r'[Power of \(x\)] Evaluate \(\displaystyle\int_1^{8}x^{-2/3}\,dx\).',
- r'[Area] Find the area under \(y=3x-x^2\) from \(x=0\) to \(x=3\).'
- + area_under(lambda x: 3*x - x*x, 0, 3, xmin=-0.4, xmax=3.4, ymin=-0.4, ymax=2.8,
-              caption='y = 3x − x²', shade_label='area'),
+ r'[Area] Sketch the parabola \(y=x^2-4\), marking its \(x\)-intercepts. Hence find the total area between the parabola and the \(x\)-axis from \(x=-3\) to \(x=3\).',
  r'[Area] Show the intersections of \(y=x\) and \(y=x^3\) for \(x\ge0\), then find the enclosed area on \([0,1]\).'
  + area_between(lambda x: x, lambda x: x**3, 0, 1, xmin=-0.2, xmax=1.3, ymin=-0.2, ymax=1.2,
                 caption='y = x and y = x³', label_f='y = x', label_g='y = x³'),
@@ -2198,9 +2195,7 @@ int_q = [
  r'[Applications of primitive] \(\dfrac{dy}{dx}=e^{x}+2\), through \((0,3)\). Find \(y\).',
  r'[Power of \(x\)] Find \(\displaystyle\int\left(x^{-3}+4x\right)dx\).',
  r'[Power of \(x\)] Evaluate \(\displaystyle\int_{-1}^{2}(x^2-x)\,dx\).',
- r'[Area] Find the area under \(y=\cos x\) from \(0\) to \(\dfrac{\pi}{2}\).'
- + area_under(math.cos, 0, math.pi/2, xmin=-0.3, xmax=math.pi/2 + 0.4, ymin=-0.3, ymax=1.3,
-              caption='y = cos x', shade_label='area'),
+ r'[Area] Sketch the parabola \(y=3x-x^2\), marking its \(x\)-intercepts. Hence find the total area between the parabola and the \(x\)-axis from \(x=-1\) to \(x=4\).',
  r'[Area] Find the area enclosed by \(y=x^2\) and \(y=3x\).'
  + area_between(lambda x: x*x, lambda x: 3*x, 0, 3, xmin=-0.4, xmax=3.4, ymin=-0.4, ymax=9.5,
                 caption='y = x² and y = 3x', label_f='y = x²', label_g='y = 3x'),
@@ -2320,7 +2315,7 @@ A=\int_0^1(x-x^2)\,dx
 =\left[\frac{x^2}{2}-\frac{x^3}{3}\right]_0^1
 =\frac12-\frac13.
 \]
-Thus \(\boxed{A=\frac16}\).''',
+Thus \(\boxed{A=\frac16\text{ units}^2}\).''',
  r'''The upper curve is \(2-x^2\) and the lower curve is \(x^2\). Their
 intersections satisfy
 \[
@@ -2334,7 +2329,7 @@ A&=\int_{-1}^{1}\big[(2-x^2)-x^2\big]\,dx\\
 =\frac83.
 \end{aligned}
 \]
-Hence \(\boxed{A=\frac83}\).''',
+Hence \(\boxed{A=\frac83\text{ units}^2}\).''',
  r'''Integrate each term:
 \[
 \int(e^{2x}+4x)\,dx
@@ -2413,7 +2408,7 @@ Thus the answer is \(\boxed{\text{(B)}}\).''',
 \[
 A=\int_0^4\sqrt{x}\,dx
 =\left[\frac23x^{3/2}\right]_0^4
-=\frac23(8)=\frac{16}{3}.
+=\frac23(8)=\frac{16}{3}\text{ units}^2.
 \]
 Thus the answer is \(\boxed{\text{(B)}}\).''',
  r'''Because \(\frac{d}{dx}(3x)=3\),
@@ -2468,14 +2463,14 @@ A&=\int_{-2}^{2}(4-x^2)\,dx\\
 =\frac{32}{3}.
 \end{aligned}
 \]
-Hence \(\boxed{A=\frac{32}{3}}\).''',
+Hence \(\boxed{A=\frac{32}{3}\text{ units}^2}\).''',
  r'''On \([0,1]\), \(x\ge x^2\). Therefore
 \[
 A=\int_0^1(x-x^2)\,dx
 =\left[\frac{x^2}{2}-\frac{x^3}{3}\right]_0^1
 =\frac16.
 \]
-Thus \(\boxed{A=\frac16}\).''',
+Thus \(\boxed{A=\frac16\text{ units}^2}\).''',
  r'''Integrate term by term:
 \[
 \int(3\cos2x-2\sin x)\,dx
@@ -2539,7 +2534,7 @@ Thus the answer is \(\boxed{\text{(A)}}\).''',
  r'''The function is positive, so its area is
 \[
 \int_0^1e^x\,dx
-=\left[e^x\right]_0^1=e-1.
+=\left[e^x\right]_0^1=(e-1)\text{ units}^2.
 \]
 Thus the answer is \(\boxed{\text{(A)}}\).''',
  r'''Since \(\frac{d}{dx}\cos3x=-3\sin3x\),
@@ -2589,7 +2584,7 @@ A=\int_0^\pi\sin x\,dx
 =\left[-\cos x\right]_0^\pi
 =1-(-1)=2.
 \]
-Thus \(\boxed{A=2}\).''',
+Thus \(\boxed{A=2\text{ units}^2}\).''',
  r'''Find the intersections:
 \[
 x^2=4x-x^2
@@ -2603,7 +2598,7 @@ A&=\int_0^2\big[(4x-x^2)-x^2\big]\,dx\\
 =\frac83.
 \end{aligned}
 \]
-Therefore \(\boxed{A=\frac83}\).''',
+Therefore \(\boxed{A=\frac83\text{ units}^2}\).''',
  r'''Let \(u=2x+1\), so \(du=2\,dx\):
 \[
 \int\frac4{2x+1}\,dx
@@ -2671,7 +2666,7 @@ so the bounded interval is \([0,2]\). Since \(2x\) is above \(x^2\),
 \[
 \int_0^2(2x-x^2)\,dx
 =\left[x^2-\frac{x^3}{3}\right]_0^2
-=\frac43.
+=\frac43\text{ units}^2.
 \]
 Thus the answer is \(\boxed{\text{(B)}}\).''',
  r'''Because
@@ -2716,15 +2711,30 @@ Therefore \(\boxed{\frac14x^4+\frac1{x^2}+C}\).''',
 =\left[x^4-x\right]_0^1=0.
 \]
 Thus \(\boxed{0}\).''',
- r'''On \(0\le x\le1\), \(\sqrt{x}\ge x\). Hence
+ r'''The \(x\)-intercepts satisfy
+\[
+x^2-1=0\;\Longrightarrow\;x=-1,1.
+\]
+The parabola opens upwards, with vertex \((0,-1)\). Its sketch is:'''
+ + area_under(lambda x: x*x - 1, -2, 2, xmin=-2.5, xmax=2.5,
+              ymin=-1.6, ymax=3.6, caption='',
+              shade_label='', roots=(-1, 1), label_endpoints=False,
+              root_coordinates=True, aria_label='Graph of y = x² − 1')
+ + r'''The curve is below the axis on \([-1,1]\), so that section must have
+its sign reversed:
 \[
 \begin{aligned}
-A&=\int_0^1(\sqrt{x}-x)\,dx\\
-&=\left[\frac23x^{3/2}-\frac12x^2\right]_0^1
-=\frac23-\frac12=\frac16.
+A={}&\int_{-2}^{-1}(x^2-1)\,dx\\
+&-\int_{-1}^{1}(x^2-1)\,dx\\
+&+\int_{1}^{2}(x^2-1)\,dx\\
+={}&2\int_1^2(x^2-1)\,dx\\
+&+\int_{-1}^{1}(1-x^2)\,dx\\
+={}&2\left[\frac{x^3}{3}-x\right]_1^2\\
+&+\left[x-\frac{x^3}{3}\right]_{-1}^{1}\\
+={}&2\left(\frac43\right)+\frac43=4.
 \end{aligned}
 \]
-Therefore \(\boxed{A=\frac16}\).''',
+Therefore \(\boxed{A=4\text{ units}^2}\).''',
  r'''The intersections satisfy \(x^2=2x\), so \(x=0,2\). The line is
 above the parabola on this interval:
 \[
@@ -2732,7 +2742,7 @@ A=\int_0^2(2x-x^2)\,dx
 =\left[x^2-\frac{x^3}{3}\right]_0^2
 =\frac43.
 \]
-Thus \(\boxed{A=\frac43}\).''',
+Thus \(\boxed{A=\frac43\text{ units}^2}\).''',
  r'''Integrate each term:
 \[
 \int(2e^x-3\sin x)\,dx
@@ -2838,16 +2848,30 @@ Therefore
 =3(2)-3(1)=3.
 \]
 Hence \(\boxed{3}\).''',
- r'''The curve \(3x-x^2=x(3-x)\) is nonnegative between its roots
-\(0\) and \(3\). Thus
+ r'''The \(x\)-intercepts satisfy
+\[
+x^2-4=0\;\Longrightarrow\;x=-2,2.
+\]
+The parabola opens upwards, with vertex \((0,-4)\). Its sketch is:'''
+ + area_under(lambda x: x*x - 4, -3, 3, xmin=-3.5, xmax=3.5,
+              ymin=-5, ymax=7.9, caption='',
+              shade_label='', roots=(-2, 2), label_endpoints=False,
+              root_coordinates=True, aria_label='Graph of y = x² − 4')
+ + r'''The curve is below the axis on \([-2,2]\). Therefore
 \[
 \begin{aligned}
-A&=\int_0^3(3x-x^2)\,dx\\
-&=\left[\frac32x^2-\frac13x^3\right]_0^3
-=\frac{27}{2}-9=\frac92.
+A={}&\int_{-3}^{-2}(x^2-4)\,dx\\
+&-\int_{-2}^{2}(x^2-4)\,dx\\
+&+\int_{2}^{3}(x^2-4)\,dx\\
+={}&2\int_2^3(x^2-4)\,dx\\
+&+\int_{-2}^{2}(4-x^2)\,dx\\
+={}&2\left[\frac{x^3}{3}-4x\right]_2^3\\
+&+\left[4x-\frac{x^3}{3}\right]_{-2}^{2}\\
+={}&2\left(\frac73\right)+\frac{32}{3}
+=\frac{46}{3}.
 \end{aligned}
 \]
-Therefore \(\boxed{A=\frac92}\).''',
+Therefore \(\boxed{A=\frac{46}{3}\text{ units}^2}\).''',
  r'''For \(x\ge0\),
 \[
 x=x^3\;\Longrightarrow\;x(x-1)(x+1)=0,
@@ -2859,7 +2883,7 @@ A=\int_0^1(x-x^3)\,dx
 =\left[\frac12x^2-\frac14x^4\right]_0^1
 =\frac14.
 \]
-Thus \(\boxed{A=\frac14}\).''',
+Thus \(\boxed{A=\frac14\text{ units}^2}\).''',
  r'''Integrate term by term:
 \[
 \int(4\cos x-e^x)\,dx
@@ -2923,7 +2947,7 @@ Thus the answer is \(\boxed{\text{(B)}}\).''',
 \begin{aligned}
 A&=\int_{-1}^{1}(1-x^2)\,dx\\
 &=\left[x-\frac{x^3}{3}\right]_{-1}^{1}
-=\frac43.
+=\frac43\text{ units}^2.
 \end{aligned}
 \]
 Thus the answer is \(\boxed{\text{(B)}}\).''',
@@ -2967,13 +2991,33 @@ Thus \(\boxed{-\frac1{2x^2}+2x^2+C}\).''',
 \end{aligned}
 \]
 Hence \(\boxed{\frac32}\).''',
- r'''The cosine curve is nonnegative on the interval:
+ r'''The \(x\)-intercepts satisfy
 \[
-A=\int_0^{\pi/2}\cos x\,dx
-=\left[\sin x\right]_0^{\pi/2}
-=1.
+3x-x^2=x(3-x)=0\;\Longrightarrow\;x=0,3.
 \]
-Thus \(\boxed{A=1}\).''',
+The parabola opens downwards, with vertex
+\(\left(\frac32,\frac94\right)\). Its sketch is:'''
+ + area_under(lambda x: 3*x - x*x, -1, 4, xmin=-1.5, xmax=4.5,
+              ymin=-5, ymax=4.9, caption='',
+              shade_label='', roots=(0, 3), label_endpoints=False,
+              root_coordinates=True,
+              root_label_offsets=((28, 32), (0, -12)),
+              aria_label='Graph of y = 3x − x²')
+ + r'''The curve is below the axis on \([-1,0]\) and \([3,4]\), so those
+two sections must have their signs reversed:
+\[
+\begin{aligned}
+A={}&-\int_{-1}^{0}(3x-x^2)\,dx\\
+&+\int_{0}^{3}(3x-x^2)\,dx\\
+&-\int_{3}^{4}(3x-x^2)\,dx\\
+={}&\int_{-1}^{0}(x^2-3x)\,dx\\
+&+\int_{0}^{3}(3x-x^2)\,dx\\
+&+\int_{3}^{4}(x^2-3x)\,dx\\
+={}&\frac{11}{6}+\frac92+\frac{11}{6}
+=\frac{49}{6}.
+\end{aligned}
+\]
+Therefore \(\boxed{A=\frac{49}{6}\text{ units}^2}\).''',
  r'''The intersections satisfy
 \[
 x^2=3x\;\Longrightarrow\;x(x-3)=0,
@@ -2986,7 +3030,7 @@ A&=\int_0^3(3x-x^2)\,dx\\
 =\frac92.
 \end{aligned}
 \]
-Therefore \(\boxed{A=\frac92}\).''',
+Therefore \(\boxed{A=\frac92\text{ units}^2}\).''',
  r'''Integrate each term:
 \[
 \int(3e^{2x}-\sin x)\,dx

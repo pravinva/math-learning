@@ -54,11 +54,12 @@ def _axes(sx, sy, xmin, xmax, ymin, ymax, pw, ph):
     return ''.join(parts), ax_x, ax_y
 
 
-def _wrap(inner, caption=''):
+def _wrap(inner, caption='', aria_label=None):
     cap = _text(ML, 14, caption, size=12, fill=NAVY, anchor='start', weight='bold') if caption else ''
+    accessible_label = caption if aria_label is None else aria_label
     return (
         f'<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" '
-        f'preserveAspectRatio="xMidYMid meet" role="img" aria-label="{_esc(caption)}" '
+        f'preserveAspectRatio="xMidYMid meet" role="img" aria-label="{_esc(accessible_label)}" '
         'style="width:100%;max-width:420px;height:auto;background:#fff;border:1px solid #d1d5db;'
         'border-radius:6px;margin:8px 0 4px;">'
         f'{cap}{inner}</svg></div>'
@@ -180,7 +181,9 @@ def limit_one_sided(*, xmin=-0.5, xmax=4, ymin=-4, ymax=2, caption='Graph of y =
 
 
 def area_under(fn, a, b, *, xmin=None, xmax=None, ymin=None, ymax=None,
-               caption='', shade_label='shaded region', n=220):
+               caption='', shade_label='shaded region', roots=(),
+               label_endpoints=True, root_coordinates=False,
+               root_label_offsets=(), aria_label=None, n=220):
     """Shade area between curve and x-axis from a to b (absolute: only where curve ≥ 0 by default)."""
     xs_f, ys_f = _sample(fn, a, b, n)
     if xmin is None:
@@ -213,11 +216,29 @@ def area_under(fn, a, b, *, xmin=None, xmax=None, ymin=None, ymax=None,
     marks = (
         f'<line x1="{sx(a):.1f}" y1="{ax_y-4:.1f}" x2="{sx(a):.1f}" y2="{ax_y+4:.1f}" stroke="{ORANGE}" stroke-width="1.6"/>'
         + f'<line x1="{sx(b):.1f}" y1="{ax_y-4:.1f}" x2="{sx(b):.1f}" y2="{ax_y+4:.1f}" stroke="{ORANGE}" stroke-width="1.6"/>'
-        + _text(sx(a), ax_y + 14, _fmt(a), size=11, fill=ORANGE)
-        + _text(sx(b), ax_y + 14, _fmt(b), size=11, fill=ORANGE)
-        + _text((sx(a) + sx(b)) / 2, sy(max(ys_f)) - 10, shade_label, size=11, fill=NAVY)
     )
-    return _wrap(axes + shade + curve + marks, caption)
+    if label_endpoints:
+        marks += _text(sx(a), ax_y + 14, _fmt(a), size=11, fill=ORANGE)
+        marks += _text(sx(b), ax_y + 14, _fmt(b), size=11, fill=ORANGE)
+    if shade_label:
+        marks += _text(
+            (sx(a) + sx(b)) / 2, sy(max(ys_f)) - 10,
+            shade_label, size=11, fill=NAVY,
+        )
+    for index, root in enumerate(roots):
+        if a <= root <= b:
+            marks += f'<circle cx="{sx(root):.1f}" cy="{ax_y:.1f}" r="3.8" fill="{NAVY}"/>'
+            if root_coordinates:
+                dx, dy = (
+                    root_label_offsets[index]
+                    if index < len(root_label_offsets)
+                    else (0, -12)
+                )
+                marks += _text(
+                    sx(root) + dx, ax_y + dy, f'({_fmt(root)}, 0)',
+                    size=11, fill=NAVY,
+                )
+    return _wrap(axes + shade + curve + marks, caption, aria_label)
 
 
 def area_between(f, g, a, b, *, xmin=None, xmax=None, ymin=None, ymax=None,
