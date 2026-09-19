@@ -242,7 +242,9 @@ def area_under(fn, a, b, *, xmin=None, xmax=None, ymin=None, ymax=None,
 
 
 def area_between(f, g, a, b, *, xmin=None, xmax=None, ymin=None, ymax=None,
-                 caption='', label_f='y = f(x)', label_g='y = g(x)', n=220):
+                 caption='', label_f='y = f(x)', label_g='y = g(x)',
+                 intersection_label_offsets=(),
+                 label_f_offset=(-4, -6), label_g_offset=(-4, 14), n=220):
     """Shade region between two curves from a to b."""
     xs, ys_f, ys_g = [], [], []
     for i in range(n + 1):
@@ -282,13 +284,29 @@ def area_between(f, g, a, b, *, xmin=None, xmax=None, ymin=None, ymax=None,
     c2 = _polyline(sx, sy, xs2, ys2, ORANGE)
     # intersection markers
     marks = ''
-    for x in (a, b):
+    for index, x in enumerate((a, b)):
         y = f(x)
         marks += f'<circle cx="{sx(x):.1f}" cy="{sy(y):.1f}" r="3.8" fill="{NAVY}"/>'
-        marks += _text(sx(x), sy(y) - 10, f'({_fmt(x)}, {_fmt(y)})', size=10, fill=NAVY)
+        dx, dy = (
+            intersection_label_offsets[index]
+            if index < len(intersection_label_offsets)
+            else (0, -10)
+        )
+        marks += _text(
+            sx(x) + dx, sy(y) + dy, f'({_fmt(x)}, {_fmt(y)})',
+            size=10, fill=NAVY,
+        )
     labels = (
-        _text(sx(xs1[-1]) - 4, sy(ys1[-1]) - 6, label_f, size=11, fill=BLUE, anchor='end')
-        + _text(sx(xs2[-1]) - 4, sy(ys2[-1]) + 14, label_g, size=11, fill=ORANGE, anchor='end')
+        _text(
+            sx(xs1[-1]) + label_f_offset[0],
+            sy(ys1[-1]) + label_f_offset[1],
+            label_f, size=11, fill=BLUE, anchor='end',
+        )
+        + _text(
+            sx(xs2[-1]) + label_g_offset[0],
+            sy(ys2[-1]) + label_g_offset[1],
+            label_g, size=11, fill=ORANGE, anchor='end',
+        )
     )
     return _wrap(axes + shade + c1 + c2 + marks + labels, caption)
 

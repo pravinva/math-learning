@@ -25,7 +25,7 @@ ol>li{margin:10px 0;line-height:1.65;}
 .top-links a{margin-right:12px;text-decoration:none;color:#185FA5;font-weight:600;}
 .ans{background:#f0fdf4;border-left:4px solid #15803d;padding:10px 12px;margin:8px 0 14px;overflow-x:auto;}
 .katex-display{overflow-x:auto;overflow-y:hidden;padding-bottom:2px;}
-@media(max-width:520px){.ans .katex{font-size:.92em;}.ans .fig svg text{font-size:13px!important;}.test7-area-graph .fig svg text{font-size:15px!important;}}
+@media(max-width:520px){.ans .katex{font-size:.92em;}.ans .fig svg text{font-size:13px!important;}.test6-area-graph .fig svg text,.test7-area-graph .fig svg text{font-size:15px!important;}}
 .mark{color:#6b7280;font-size:13px;}
 .paper-rules{background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:10px 14px;margin:10px 0 16px;font-size:14px;}
 .paper-rules ul{margin:6px 0 0 20px;padding:0;}
@@ -2181,30 +2181,36 @@ int_q = [
  r'[Substitution] Evaluate \(\displaystyle\int 3\sin x\cos^2 x\,dx\).',
 ],
 [
- (r'[Primitive] Best first step for \(\displaystyle\int\left(\sqrt{x}-\dfrac{1}{\sqrt{x}}\right)^2 dx\)?',
-  ['(A) Expand','(B) Substitution first','(C) Parts','(D) Differentiate','(E) none']),
- (r'[Power of \(x\)] \(\displaystyle\int\left(2x^{3}-\dfrac{1}{x}\right)dx=\)',
+ (r'[Primitive] What is the best first step when finding the primitive function \(\displaystyle\int\left(\sqrt{x}-\dfrac{1}{\sqrt{x}}\right)^2 dx\)?',
+  ['(A) Expand the expression','(B) Use substitution first','(C) Use integration by parts','(D) Differentiate the expression','(E) None of the above']),
+ (r'[Power of \(x\)] Which of the following is the primitive function of \(\displaystyle 2x^{3}-\dfrac{1}{x}\)?',
   [r'(A) \(\tfrac12 x^4-\ln|x|+C\)',r'(B) \(6x^2+\dfrac{1}{x^2}+C\)',r'(C) \(\tfrac12 x^4+\ln|x|+C\)',r'(D) \(2x^4-\ln|x|+C\)',r'(E) other']),
- (r'[Definite] \(\displaystyle\int_0^{3}(2x+1)\,dx=\)',
+ (r'[Definite] What is the exact value of \(\displaystyle\int_0^{3}(2x+1)\,dx\)?',
   ['(A) \(9\)','(B) \(12\)','(C) \(15\)','(D) \(6\)','(E) \(10\)']),
- (r'[Area] Area between \(y=1-x^2\) and the \(x\)-axis (positive region) equals',
+ (r'[Area] The parabola \(y=1-x^2\) crosses the \(x\)-axis at \(x=-1\) and \(x=1\). What is the exact area of the region bounded by the parabola and the \(x\)-axis?',
   ['(A) \(2/3\)','(B) \(4/3\)','(C) \(1\)','(D) \(2\)','(E) \(8/3\)']),
- (r'[Exp/log/trig] \(\displaystyle\int 2\sec^2 x\,dx=\)',
+ (r'[Exp/log/trig] Which of the following is the primitive function of \(\displaystyle 2\sec^2 x\)?',
   [r'(A) \(2\tan x+C\)',r'(B) \(2\sec x+C\)',r'(C) \(\tan x+C\)',r'(D) \(2\sin x+C\)',r'(E) \(-\!2\cos x+C\)']),
- (r'[Substitution] \(\displaystyle\int(4x-1)(2x^2-x)^5\,dx=\)',
+ (r'[Substitution] Which of the following is the primitive function of \(\displaystyle (4x-1)(2x^2-x)^5\)?',
   [r'(A) \((2x^2-x)^6+C\)',r'(B) \(\tfrac16(2x^2-x)^6+C\)',r'(C) \(\tfrac15(2x^2-x)^5+C\)',r'(D) \(\tfrac16(4x-1)^6+C\)',r'(E) \(\tfrac16(2x^2-x)^5+C\)']),
- r'[Applications of primitive] \(\dfrac{dy}{dx}=e^{x}+2\), through \((0,3)\). Find \(y\).',
- r'[Power of \(x\)] Find \(\displaystyle\int\left(x^{-3}+4x\right)dx\).',
- r'[Power of \(x\)] Evaluate \(\displaystyle\int_{-1}^{2}(x^2-x)\,dx\).',
- r'[Area] Find the total area between the parabola \(y=3x-x^2\) and the \(x\)-axis from \(x=-1\) to \(x=4\). Hint: You need to graph the parabola and mark its \(x\)-intercepts.',
- r'[Area] Find the area enclosed by \(y=x^2\) and \(y=3x\).'
- + area_between(lambda x: x*x, lambda x: 3*x, 0, 3, xmin=-0.4, xmax=3.4, ymin=-0.4, ymax=9.5,
-                caption='y = x² and y = 3x', label_f='y = x²', label_g='y = 3x'),
- r'[Exp/log/trig] Find \(\displaystyle\int\left(3e^{2x}-\sin x\right)dx\).',
- r'[Exp/log/trig] Find \(\displaystyle\int\dfrac{5}{x}\,dx\).',
- r'[Definite exp/log/trig] Evaluate \(\displaystyle\int_0^{\ln2}e^{x}\,dx\).',
- r'[Substitution] Evaluate \(\displaystyle\int\dfrac{4x}{(x^2+1)^2}\,dx\).',
- r'[Substitution] Evaluate \(\displaystyle\int\cos x\,e^{\sin x}\,dx\).',
+ r'[Applications of primitive] The gradient function of a curve is \(\dfrac{dy}{dx}=e^x+2\). If the curve passes through the point \((0,3)\), find the equation of the curve.',
+ r'[Power of \(x\)] Find the indefinite integral \(\displaystyle\int\left(x^{-3}+4x\right)dx\). Write your final answer in positive-index form.',
+ r'[Power of \(x\)] Find the exact value of \(\displaystyle\int_{-1}^{2}(x^2-x)\,dx\).',
+ r'[Area] Find the total area between the parabola \(y=3x-x^2\) and the \(x\)-axis from \(x=-1\) to \(x=4\). Give your answer in units squared. Hint: You need to graph the parabola, mark its \(x\)-intercepts and split the area at each intercept.',
+ r'[Area] Use algebra to show that the graphs \(y=x^2\) and \(y=3x\) intersect at \((0,0)\) and \((3,9)\). Then calculate the exact area, in units squared, of the region bounded by the two graphs shown below.'
+ + r'<div class="test6-area-graph">'
+ + area_between(lambda x: x*x, lambda x: 3*x, 0, 3,
+                xmin=-0.4, xmax=3.4, ymin=-0.4, ymax=12.5,
+                caption='y = x² and y = 3x',
+                label_f='y = x²', label_g='y = 3x',
+                intersection_label_offsets=((0, -10), (0, 18)),
+                label_g_offset=(-4, -10))
+ + r'</div>',
+ r'[Exp/log/trig] Find the indefinite integral \(\displaystyle\int\left(3e^{2x}-\sin x\right)dx\). Include the constant of integration in your answer.',
+ r'[Exp/log/trig] Find the indefinite integral \(\displaystyle\int\dfrac{5}{x}\,dx\). Include the constant of integration and the appropriate absolute-value notation in your answer.',
+ r'[Definite exp/log/trig] Find the exact value of \(\displaystyle\int_0^{\ln2}e^{x}\,dx\).',
+ r'[Substitution] Use substitution to evaluate \(\displaystyle\int\dfrac{4x}{(x^2+1)^2}\,dx\). Show all necessary working and write your final answer using positive indices.',
+ r'[Substitution] Find \(\displaystyle\int\cos x\,e^{\sin x}\,dx\) by substitution. Show all necessary working and include the constant of integration.',
 ],
 [
  (r'[Primitive] What is the best first step when finding the primitive function \(\displaystyle\int\left(2x-\dfrac5x\right)^2dx\)?',
@@ -2993,9 +2999,11 @@ Thus the answer is \(\boxed{\text{(B)}}\).''',
 Thus the answer is \(\boxed{\text{(A)}}\).''',
  r'''Let \(u=2x^2-x\), so \(du=(4x-1)\,dx\). Then
 \[
-\int(4x-1)(2x^2-x)^5\,dx
-=\int u^5\,du
-=\frac16u^6+C.
+\begin{aligned}
+I&=\int(4x-1)(2x^2-x)^5\,dx\\
+&=\int u^5\,du\\
+&=\frac16u^6+C.
+\end{aligned}
 \]
 Therefore
 \[
