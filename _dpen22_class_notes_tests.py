@@ -1657,7 +1657,7 @@ ld_a = [
  r'(B) \(y=x+1\).',
  r'Yes; LHL=RHL=2.',
  r'(a) \(4\) (b) \(\dfrac13\).',
- r'\(10x^{2/3}+3x^{-4}\).',
+ r'\(10x^{2/3}+\dfrac{3}{x^4}\).',
  r'\(-2(4x+1)^{-3/2}\).',
  r'\(y\'=\dfrac{2}{2x+1}\); \(y\'\'=\dfrac{-4}{(2x+1)^2}\).',
  r'\(12\).',
@@ -1762,6 +1762,7 @@ ld_q.extend([
 _EXACT = r'Leave your answer in exact form.'
 _EXACT_EACH = r'Leave each answer in exact form. If a limit does not exist, state this clearly.'
 _INDEX = r'Leave your answer in index form.'
+_POSITIVE_INDEX = r'Leave your answer in positive-index form.'
 _SURD = r'Leave your answer in surd form.'
 _SIMPLIFY = r'Simplify your answer fully.'
 _GRADIENT_INTERCEPT = r'Write your answer in gradient-intercept form \(y=mx+b\).'
@@ -1777,7 +1778,7 @@ _diff_format_directions = [
      _SIMPLIFY, _GRADIENT_INTERCEPT, _EXACT],
     # Test 6
     [None, None, None, None, None, _GRADIENT_INTERCEPT, None, _EXACT_EACH,
-     _INDEX, _SIMPLIFY, _SIMPLIFY, _EXACT, _SIMPLIFY, _EXACT, _EXACT,
+     _POSITIVE_INDEX, _SIMPLIFY, _SIMPLIFY, _EXACT, _SIMPLIFY, _EXACT, _EXACT,
      _SIMPLIFY, _GRADIENT_INTERCEPT, _GRADIENT_INTERCEPT],
     # Test 7
     [None, None, None, None, None, _GRADIENT_INTERCEPT, None, _EXACT_EACH,
