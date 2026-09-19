@@ -25,7 +25,7 @@ ol>li{margin:10px 0;line-height:1.65;}
 .top-links a{margin-right:12px;text-decoration:none;color:#185FA5;font-weight:600;}
 .ans{background:#f0fdf4;border-left:4px solid #15803d;padding:10px 12px;margin:8px 0 14px;overflow-x:auto;}
 .katex-display{overflow-x:auto;overflow-y:hidden;padding-bottom:2px;}
-@media(max-width:520px){.ans .katex{font-size:.92em;}.ans .fig svg text{font-size:13px!important;}}
+@media(max-width:520px){.ans .katex{font-size:.92em;}.ans .fig svg text{font-size:13px!important;}.test7-area-graph .fig svg text{font-size:15px!important;}}
 .mark{color:#6b7280;font-size:13px;}
 .paper-rules{background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:10px 14px;margin:10px 0 16px;font-size:14px;}
 .paper-rules ul{margin:6px 0 0 20px;padding:0;}
@@ -2206,6 +2206,40 @@ int_q = [
  r'[Substitution] Evaluate \(\displaystyle\int\dfrac{4x}{(x^2+1)^2}\,dx\).',
  r'[Substitution] Evaluate \(\displaystyle\int\cos x\,e^{\sin x}\,dx\).',
 ],
+[
+ (r'[Primitive] What is the best first step when finding the primitive function \(\displaystyle\int\left(2x-\dfrac5x\right)^2dx\)?',
+  [r'(A) Use substitution',r'(B) Expand the expression',r'(C) Differentiate the expression',r'(D) Find a common denominator',r'(E) None of the above']),
+ (r'[Power of \(x\)] Which of the following is the primitive function of \(\displaystyle 4x^{3/2}-\dfrac3{x^2}\)?',
+  [r'(A) \(\dfrac85x^{5/2}+\dfrac3x+C\)',r'(B) \(\dfrac52x^{5/2}-\dfrac3x+C\)',r'(C) \(\dfrac85x^{5/2}-\dfrac3x+C\)',r'(D) \(6x^{1/2}+\dfrac3x+C\)',r'(E) \(\dfrac85x^{3/2}+\dfrac3x+C\)']),
+ (r'[Definite] What is the exact value of \(\displaystyle\int_{-2}^{1}(3x^2+2x-1)\,dx\)?',
+  [r'(A) \(-3\)',r'(B) \(0\)',r'(C) \(3\)',r'(D) \(6\)',r'(E) \(9\)']),
+ (r'[Area] The graph of \(f(x)=x^2-2x\) crosses the \(x\)-axis at \(x=0\) and \(x=2\). Which integral expression correctly calculates the total area between the graph and the \(x\)-axis from \(x=-1\) to \(x=3\)?',
+  [r'(A) \(\displaystyle\int_{-1}^{0}f(x)\,dx-\int_{0}^{2}f(x)\,dx+\int_{2}^{3}f(x)\,dx\)',
+   r'(B) \(\displaystyle\int_{-1}^{3}f(x)\,dx\)',
+   r'(C) \(\displaystyle-\int_{-1}^{0}f(x)\,dx+\int_{0}^{2}f(x)\,dx-\int_{2}^{3}f(x)\,dx\)',
+   r'(D) \(\displaystyle\int_{-1}^{0}f(x)\,dx+\int_{0}^{2}f(x)\,dx+\int_{2}^{3}f(x)\,dx\)',
+   r'(E) None of the above']),
+ (r'[Exp/log/trig] Which of the following is the primitive function of \(\displaystyle 4\sin(2x)\)?',
+  [r'(A) \(2\cos(2x)+C\)',r'(B) \(-2\cos(2x)+C\)',r'(C) \(-8\cos(2x)+C\)',r'(D) \(2\sin(2x)+C\)',r'(E) \(4\cos x+C\)']),
+ (r'[Substitution] Which substitution converts \(\displaystyle\int(6x+3)(3x^2+3x-2)^4\,dx\) directly into a constant multiple of \(\displaystyle\int u^4\,du\)?',
+  [r'(A) \(u=6x+3\)',r'(B) \(u=3x^2+3x-2\)',r'(C) \(u=(3x^2+3x-2)^4\)',r'(D) \(u=x^2+x\)',r'(E) \(u=3x-2\)']),
+ r'[Applications of primitive] The gradient function of a curve is \(\dfrac{dy}{dx}=3x^2-4x+2\). If the curve passes through the point \((2,5)\), find the equation of the curve.',
+ r'[Power of \(x\)] Find the indefinite integral \(\displaystyle\int\left(8x^3-\dfrac6{x^4}+\dfrac3{\sqrt{x}}\right)dx\). Write your final answer in positive-index form.',
+ r'[Power of \(x\)] Find \(\displaystyle\int\left(5x^{3/2}-2x^{-1/2}\right)dx\). Write your final answer in both surd form and positive-index form.',
+ r'[Area] Find the total area between the parabola \(y=x^2-2x-3\) and the \(x\)-axis from \(x=-2\) to \(x=4\). Give your answer in units squared. Hint: You need to graph the parabola, mark its \(x\)-intercepts and split the area at each intercept.',
+ r'[Area] Use algebra to show that the graphs \(y=x^2\) and \(y=6x-x^2\) intersect at \((0,0)\) and \((3,9)\). Then calculate the exact area, in units squared, of the region bounded by the two graphs shown below.'
+ + r'<div class="test7-area-graph">'
+ + area_between(lambda x: x*x, lambda x: 6*x - x*x, 0, 3,
+                xmin=-0.5, xmax=3.5, ymin=-0.5, ymax=13.5,
+                caption='y = x² and y = 6x − x²',
+                label_f='y = x²', label_g='y = 6x − x²')
+ + r'</div>',
+ r'[Exp/log/trig] Find the indefinite integral \(\displaystyle\int\left(3e^{2x}+\dfrac4{2x+1}\right)dx\). Include the constant of integration in your answer.',
+ r'[Exp/log/trig] Find the indefinite integral \(\displaystyle\int\left(5\sec^2x-2\cos3x\right)dx\). Include the constant of integration in your answer.',
+ r'[Definite exp/log/trig] Find the exact value of \(\displaystyle\int_0^{\pi/3}(2\cos x+\sin2x)\,dx\).',
+ r'[Substitution] Use substitution to evaluate \(\displaystyle\int\dfrac{4x}{(x^2+5)^3}\,dx\). Show all necessary working and write your final answer using positive indices.',
+ r'[Substitution] Find \(\displaystyle\int3x^2e^{x^3+1}\,dx\) by substitution. Show all necessary working and include the constant of integration.',
+],
 ]
 
 def _remove_integration_category(question):
@@ -3063,6 +3097,232 @@ Thus \(\boxed{-\frac2{x^2+1}+C}\).''',
 =\int e^u\,du=e^u+C.
 \]
 Therefore \(\boxed{e^{\sin x}+C}\).''',
+],
+[
+ r'''Expand the square before integrating:
+\[
+\left(2x-\frac5x\right)^2
+=4x^2-20+\frac{25}{x^2}.
+\]
+The expanded expression is a sum of powers with standard primitives. Therefore
+the best first step is \(\boxed{\text{(B) Expand the expression}}\).''',
+ r'''Rewrite \(3/x^2\) as \(3x^{-2}\) and integrate term by term:
+\[
+\begin{aligned}
+I&=\int\left(4x^{3/2}-3x^{-2}\right)dx\\
+&=4\left(\frac{x^{5/2}}{5/2}\right)
+-3\left(\frac{x^{-1}}{-1}\right)+C\\
+&=\frac85x^{5/2}+\frac3x+C.
+\end{aligned}
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''An antiderivative is
+\[
+F(x)=x^3+x^2-x.
+\]
+Hence
+\[
+\begin{aligned}
+\int_{-2}^{1}(3x^2+2x-1)\,dx
+&=\left[x^3+x^2-x\right]_{-2}^{1}\\
+&=(1)-(-2)=3.
+\end{aligned}
+\]
+Therefore the exact value is \(\boxed{3}\), answer \(\boxed{\text{(C)}}\).''',
+ r'''Factor the function:
+\[
+f(x)=x^2-2x=x(x-2).
+\]
+The upward-opening parabola is positive on \([-1,0]\), negative on \([0,2]\)
+and positive on \([2,3]\). Geometric area therefore requires
+\[
+\begin{aligned}
+A={}&\int_{-1}^{0}f(x)\,dx-\int_{0}^{2}f(x)\,dx\\
+&+\int_{2}^{3}f(x)\,dx.
+\end{aligned}
+\]
+Thus the correct expression is \(\boxed{\text{(A)}}\). As a check, the three
+regions each have area \(4/3\), giving \(4\text{ units}^2\) in total.''',
+ r'''Since
+\[
+\frac{d}{dx}\cos(2x)=-2\sin(2x),
+\]
+\[
+\int4\sin(2x)\,dx=-2\cos(2x)+C.
+\]
+Therefore the answer is \(\boxed{\text{(B)}}\).''',
+ r'''The expression inside the fourth power has derivative
+\[
+\frac{d}{dx}(3x^2+3x-2)=6x+3,
+\]
+which is the factor multiplying it. Hence
+\[
+\boxed{u=3x^2+3x-2},
+\]
+so the correct answer is \(\boxed{\text{(B)}}\).''',
+ r'''Integrate the gradient function:
+\[
+\begin{aligned}
+y&=\int(3x^2-4x+2)\,dx\\
+&=x^3-2x^2+2x+C.
+\end{aligned}
+\]
+The curve passes through \((2,5)\), so
+\[
+\begin{aligned}
+5&=2^3-2(2^2)+2(2)+C\\
+&=4+C,\qquad C=1.
+\end{aligned}
+\]
+Therefore the equation of the curve is
+\[
+\boxed{y=x^3-2x^2+2x+1}.
+\]''',
+ r'''Rewrite the integrand using powers:
+\[
+8x^3-6x^{-4}+3x^{-1/2}.
+\]
+Applying the power rule gives
+\[
+\begin{aligned}
+I&=\int\left(8x^3-6x^{-4}+3x^{-1/2}\right)dx\\
+&=2x^4+2x^{-3}+6x^{1/2}+C.
+\end{aligned}
+\]
+Move the negative power to the denominator. In positive-index form,
+\[
+\boxed{2x^4+\frac2{x^3}+6x^{1/2}+C}.
+\]''',
+ r'''Apply the power rule:
+\[
+\begin{aligned}
+I&=\int\left(5x^{3/2}-2x^{-1/2}\right)dx\\
+&=5\left(\frac{x^{5/2}}{5/2}\right)
+-2\left(\frac{x^{1/2}}{1/2}\right)+C\\
+&=2x^{5/2}-4x^{1/2}+C.
+\end{aligned}
+\]
+Thus the positive-index form is
+\[
+\boxed{2x^{5/2}-4x^{1/2}+C}.
+\]
+Since \(x^{5/2}=x^2\sqrt{x}\) and \(x^{1/2}=\sqrt{x}\), the surd form is
+\[
+\boxed{2x^2\sqrt{x}-4\sqrt{x}+C}.
+\]''',
+ r'''First find the \(x\)-intercepts:
+\[
+x^2-2x-3=(x+1)(x-3)=0,
+\]
+so \(x=-1,3\). The parabola opens upwards and has turning point
+\((1,-4)\). A suitable sketch is:'''
+ + area_under(lambda x: x*x - 2*x - 3, -2, 4,
+              xmin=-2.5, xmax=4.5, ymin=-5, ymax=7.9,
+              caption='', shade_label='', roots=(-1, 3),
+              label_endpoints=False, root_coordinates=True,
+              aria_label='Graph of y = x² − 2x − 3')
+ + r'''The curve lies below the \(x\)-axis on \([-1,3]\), so the middle
+integral must have its sign reversed:
+\[
+\begin{aligned}
+A={}&\int_{-2}^{-1}(x^2-2x-3)\,dx\\
+&-\int_{-1}^{3}(x^2-2x-3)\,dx\\
+&+\int_{3}^{4}(x^2-2x-3)\,dx.
+\end{aligned}
+\]
+Using
+\[
+F(x)=\frac{x^3}{3}-x^2-3x,
+\]
+the two outer regions each have area \(7/3\), while the middle region has
+area \(32/3\). Therefore
+\[
+A=\frac73+\frac{32}{3}+\frac73
+=\boxed{\frac{46}{3}\text{ units}^2}.
+\]''',
+ r'''Set the equations equal to find the intersections:
+\[
+\begin{aligned}
+x^2&=6x-x^2\\
+2x^2-6x&=0\\
+2x(x-3)&=0.
+\end{aligned}
+\]
+Thus \(x=0,3\), giving the points \((0,0)\) and \((3,9)\). Between these
+points, \(6x-x^2\) is the upper curve and \(x^2\) is the lower curve:
+\[
+\begin{aligned}
+A&=\int_0^3\big[(6x-x^2)-x^2\big]\,dx\\
+&=\int_0^3(6x-2x^2)\,dx\\
+&=\left[3x^2-\frac23x^3\right]_0^3\\
+&=27-18=9.
+\end{aligned}
+\]
+Therefore \(\boxed{A=9\text{ units}^2}\).''',
+ r'''Integrate each term. For the rational term, let \(u=2x+1\), so
+\(du=2\,dx\):
+\[
+\begin{aligned}
+I&=\int\left(3e^{2x}+\frac4{2x+1}\right)dx\\
+&=\frac32e^{2x}+2\ln|2x+1|+C.
+\end{aligned}
+\]
+Hence
+\[
+\boxed{\frac32e^{2x}+2\ln|2x+1|+C}.
+\]''',
+ r'''Use the standard primitives
+\(\int\sec^2x\,dx=\tan x\) and
+\(\int\cos(3x)\,dx=\frac13\sin(3x)\):
+\[
+\begin{aligned}
+I&=\int(5\sec^2x-2\cos3x)\,dx\\
+&=5\tan x-\frac23\sin3x+C.
+\end{aligned}
+\]
+Therefore
+\[
+\boxed{5\tan x-\frac23\sin3x+C}.
+\]''',
+ r'''An antiderivative is
+\[
+2\sin x-\frac12\cos2x.
+\]
+Therefore
+\[
+\begin{aligned}
+I&=\int_0^{\pi/3}(2\cos x+\sin2x)\,dx\\
+&=\left[2\sin x-\frac12\cos2x\right]_0^{\pi/3}\\
+&=\left(\sqrt3+\frac14\right)-\left(-\frac12\right)\\
+&=\sqrt3+\frac34.
+\end{aligned}
+\]
+Thus the exact value is
+\[
+\boxed{\sqrt3+\frac34}.
+\]''',
+ r'''Let \(u=x^2+5\), so \(du=2x\,dx\) and \(4x\,dx=2\,du\). Then
+\[
+\begin{aligned}
+\int\frac{4x}{(x^2+5)^3}\,dx
+&=2\int u^{-3}\,du\\
+&=-u^{-2}+C.
+\end{aligned}
+\]
+Writing the final answer with positive indices gives
+\[
+\boxed{-\frac1{(x^2+5)^2}+C}.
+\]''',
+ r'''Let \(u=x^3+1\). Then \(du=3x^2\,dx\), so
+\[
+\int3x^2e^{x^3+1}\,dx
+=\int e^u\,du
+=e^u+C.
+\]
+Substituting back,
+\[
+\boxed{e^{x^3+1}+C}.
+\]''',
 ],
 ]
 write_pair('integration', 'Integration', '1 hour 20 minutes per test',
