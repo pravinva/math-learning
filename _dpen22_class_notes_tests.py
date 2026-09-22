@@ -25,7 +25,7 @@ ol>li{margin:10px 0;line-height:1.65;}
 .top-links a{margin-right:12px;text-decoration:none;color:#185FA5;font-weight:600;}
 .ans{background:#f0fdf4;border-left:4px solid #15803d;padding:10px 12px;margin:8px 0 14px;overflow-x:auto;}
 .katex-display{overflow-x:auto;overflow-y:hidden;padding-bottom:2px;}
-@media(max-width:520px){.ans .katex{font-size:.92em;}.ans .fig svg text{font-size:13px!important;}.test6-area-graph .fig svg text,.test7-area-graph .fig svg text{font-size:15px!important;}}
+@media(max-width:520px){.ans .katex{font-size:.92em;}.ans .fig svg text{font-size:13px!important;}.test6-area-graph .fig svg text,.test7-area-graph .fig svg text,.test8-area-graph .fig svg text{font-size:15px!important;}}
 .mark{color:#6b7280;font-size:13px;}
 .paper-rules{background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:10px 14px;margin:10px 0 16px;font-size:14px;}
 .paper-rules ul{margin:6px 0 0 20px;padding:0;}
@@ -2196,7 +2196,7 @@ int_q = [
  r'[Applications of primitive] The gradient function of a curve is \(\dfrac{dy}{dx}=e^x+2\). If the curve passes through the point \((0,3)\), find the equation of the curve.',
  r'[Power of \(x\)] Find the indefinite integral \(\displaystyle\int\left(x^{-3}+4x\right)dx\). Write your final answer in positive-index form.',
  r'[Power of \(x\)] Find the exact value of \(\displaystyle\int_{-1}^{2}(x^2-x)\,dx\).',
- r'[Area] Find the total area between the parabola \(y=3x-x^2\) and the \(x\)-axis from \(x=-1\) to \(x=4\). Give your answer in units squared. Hint: You need to graph the parabola, mark its \(x\)-intercepts and split the area at each intercept.',
+ r'[Area] Sketch the parabola \(y=3x-x^2\) from \(x=-1\) to \(x=4\), clearly marking its \(x\)-intercepts. Use your sketch to identify the regions above and below the \(x\)-axis, then find the total geometrical area by taking absolute values where necessary. Give your answer in units squared.',
  r'[Area] Use algebra to show that the graphs \(y=x^2\) and \(y=3x\) intersect at \((0,0)\) and \((3,9)\). Then calculate the exact area, in units squared, of the region bounded by the two graphs shown below.'
  + r'<div class="test6-area-graph">'
  + area_between(lambda x: x*x, lambda x: 3*x, 0, 3,
@@ -2232,7 +2232,7 @@ int_q = [
  r'[Applications of primitive] The gradient function of a curve is \(\dfrac{dy}{dx}=3x^2-4x+2\). If the curve passes through the point \((2,5)\), find the equation of the curve.',
  r'[Power of \(x\)] Find the indefinite integral \(\displaystyle\int\left(8x^3-\dfrac6{x^4}+\dfrac3{\sqrt{x}}\right)dx\). Write your final answer in positive-index form.',
  r'[Power of \(x\)] Find \(\displaystyle\int\left(5x^{3/2}-2x^{-1/2}\right)dx\). Write your final answer in both surd form and positive-index form.',
- r'[Area] Find the total area between the parabola \(y=x^2-2x-3\) and the \(x\)-axis from \(x=-2\) to \(x=4\). Give your answer in units squared. Hint: You need to graph the parabola, mark its \(x\)-intercepts and split the area at each intercept.',
+ r'[Area] Sketch the parabola \(y=x^2-2x-3\) from \(x=-2\) to \(x=4\), clearly marking its \(x\)-intercepts. Use your sketch to identify the regions above and below the \(x\)-axis, then find the total geometrical area by taking absolute values where necessary. Give your answer in units squared.',
  r'[Area] Use algebra to show that the graphs \(y=x^2\) and \(y=6x-x^2\) intersect at \((0,0)\) and \((3,9)\). Then calculate the exact area, in units squared, of the region bounded by the two graphs shown below.'
  + r'<div class="test7-area-graph">'
  + area_between(lambda x: x*x, lambda x: 6*x - x*x, 0, 3,
@@ -2245,6 +2245,43 @@ int_q = [
  r'[Definite exp/log/trig] Find the exact value of \(\displaystyle\int_0^{\pi/3}(2\cos x+\sin2x)\,dx\).',
  r'[Substitution] Use substitution to evaluate \(\displaystyle\int\dfrac{4x}{(x^2+5)^3}\,dx\). Show all necessary working and write your final answer using positive indices.',
  r'[Substitution] Find \(\displaystyle\int3x^2e^{x^3+1}\,dx\) by substitution. Show all necessary working and include the constant of integration.',
+],
+[
+ (r'[Primitive] What is the best first step when finding the primitive function \(\displaystyle\int\left(x+\dfrac2x\right)^2dx\)?',
+  [r'(A) Use substitution',r'(B) Expand the expression',r'(C) Use integration by parts',r'(D) Differentiate the expression',r'(E) None of the above']),
+ (r'[Power of \(x\)] Which of the following is the primitive function of \(\displaystyle 3x^{1/2}+\dfrac4{x^3}\)?',
+  [r'(A) \(2x^{3/2}-\dfrac2{x^2}+C\)',r'(B) \(\dfrac32x^2-\dfrac{12}{x^4}+C\)',r'(C) \(2x^{3/2}+\dfrac2{x^2}+C\)',r'(D) \(6x^{-1/2}-x^{-2}+C\)',r'(E) \(2x^{1/2}-\dfrac2{x^2}+C\)']),
+ (r'[Definite] What is the exact value of \(\displaystyle\int_{-1}^{2}(2x^2-3x+1)\,dx\)?',
+  [r'(A) \(\dfrac32\)',r'(B) \(3\)',r'(C) \(\dfrac92\)',r'(D) \(6\)',r'(E) \(\dfrac{19}{6}\)']),
+ (r'[Area] The parabola \(f(x)=4-x^2\) crosses the \(x\)-axis at \(x=-2\) and \(x=2\). Which integral expression correctly calculates the total geometrical area between the graph and the \(x\)-axis from \(x=-3\) to \(x=3\)?',
+  [r'(A) \(\displaystyle\left|\int_{-3}^{-2}f(x)\,dx\right|+\left|\int_{-2}^{2}f(x)\,dx\right|+\left|\int_{2}^{3}f(x)\,dx\right|\)',
+   r'(B) \(\displaystyle\int_{-3}^{3}f(x)\,dx\)',
+   r'(C) \(\displaystyle\int_{-3}^{-2}f(x)\,dx-\int_{-2}^{2}f(x)\,dx+\int_{2}^{3}f(x)\,dx\)',
+   r'(D) \(\displaystyle-\int_{-3}^{3}f(x)\,dx\)',
+   r'(E) None of the above']),
+ (r'[Exp/log/trig] Which of the following is the primitive function of \(\displaystyle 6\cos(3x)\)?',
+  [r'(A) \(18\sin(3x)+C\)',r'(B) \(2\sin(3x)+C\)',r'(C) \(-2\sin(3x)+C\)',r'(D) \(6\sin x+C\)',r'(E) \(-18\sin(3x)+C\)']),
+ (r'[Substitution] Which substitution converts \(\displaystyle\int(8x-4)(2x^2-2x+5)^6\,dx\) directly into a constant multiple of \(\displaystyle\int u^6\,du\)?',
+  [r'(A) \(u=8x-4\)',r'(B) \(u=2x^2-2x+5\)',r'(C) \(u=(2x^2-2x+5)^6\)',r'(D) \(u=x^2-x\)',r'(E) \(u=2x+5\)']),
+ r'[Applications of primitive] The gradient function of a curve is \(\dfrac{dy}{dx}=4x^3-6x+1\). If the curve passes through the point \((1,3)\), find the equation of the curve.',
+ r'[Power of \(x\)] Find the indefinite integral \(\displaystyle\int\left(6x^2+\dfrac4{x^3}-\dfrac5{\sqrt{x}}\right)dx\). Write your final answer in positive-index form.',
+ r'[Power of \(x\)] Find \(\displaystyle\int\left(3x^{1/2}+x^{-3/2}\right)dx\). Write your final answer in both surd form and positive-index form.',
+ r'[Area] Sketch the parabola \(y=2+x-x^2\) from \(x=-2\) to \(x=3\), clearly marking its \(x\)-intercepts. Use your sketch to identify the regions above and below the \(x\)-axis, then find the total geometrical area by taking absolute values where necessary. Give your answer in units squared.',
+ r'[Area] Use algebra to show that the graphs \(y=x^2\) and \(y=4x-x^2\) intersect at \((0,0)\) and \((2,4)\). Then calculate the exact area, in units squared, of the region bounded by the two graphs shown below.'
+ + r'<div class="test8-area-graph">'
+ + area_between(lambda x: x*x, lambda x: 4*x - x*x, 0, 2,
+                xmin=-0.4, xmax=2.6, ymin=-0.4, ymax=7.5,
+                caption='',
+                label_f='y = x²', label_g='y = 4x − x²',
+                intersection_label_offsets=((0, -10), (0, 18)),
+                label_g_offset=(-4, -10),
+                aria_label='Graph of y = x² and y = 4x − x²')
+ + r'</div>',
+ r'[Exp/log/trig] Find the indefinite integral \(\displaystyle\int\left(4e^{-2x}+\dfrac3{3x+2}\right)dx\). Include the constant of integration and the appropriate absolute-value notation in your answer.',
+ r'[Exp/log/trig] Find the indefinite integral \(\displaystyle\int\left(3\csc^2x+4\sin2x\right)dx\). Include the constant of integration in your answer.',
+ r'[Definite exp/log/trig] Find the exact value of \(\displaystyle\int_0^{\pi/4}(2\sin x+2\cos2x)\,dx\).',
+ r'[Substitution] Use substitution to evaluate \(\displaystyle\int\dfrac{6x}{(x^2+4)^2}\,dx\). Show all necessary working and write your final answer using positive indices.',
+ r'[Substitution] Find \(\displaystyle\int2x e^{x^2-3}\,dx\) by substitution. Show all necessary working and include the constant of integration.',
 ],
 ]
 
@@ -3047,10 +3084,14 @@ The parabola opens downwards, with vertex
               root_label_offsets=((28, 32), (0, -12)),
               aria_label='Graph of y = 3x − x²')
  + r'''The curve is below the axis on \([-1,0]\) and \([3,4]\), so those
-two sections must have their signs reversed:
+two signed integrals are negative. Geometrical area cannot be negative, so
+take the absolute value of each region:
 \[
 \begin{aligned}
-A={}&-\int_{-1}^{0}(3x-x^2)\,dx\\
+A={}&\left|\int_{-1}^{0}(3x-x^2)\,dx\right|\\
+&+\left|\int_{0}^{3}(3x-x^2)\,dx\right|\\
+&+\left|\int_{3}^{4}(3x-x^2)\,dx\right|\\
+={}&-\int_{-1}^{0}(3x-x^2)\,dx\\
 &+\int_{0}^{3}(3x-x^2)\,dx\\
 &-\int_{3}^{4}(3x-x^2)\,dx\\
 ={}&\int_{-1}^{0}(x^2-3x)\,dx\\
@@ -3230,10 +3271,14 @@ so \(x=-1,3\). The parabola opens upwards and has turning point
               label_endpoints=False, root_coordinates=True,
               aria_label='Graph of y = x² − 2x − 3')
  + r'''The curve lies below the \(x\)-axis on \([-1,3]\), so the middle
-integral must have its sign reversed:
+signed integral is negative. Geometrical area cannot be negative, so take
+the absolute value of each region:
 \[
 \begin{aligned}
-A={}&\int_{-2}^{-1}(x^2-2x-3)\,dx\\
+A={}&\left|\int_{-2}^{-1}(x^2-2x-3)\,dx\right|\\
+&+\left|\int_{-1}^{3}(x^2-2x-3)\,dx\right|\\
+&+\left|\int_{3}^{4}(x^2-2x-3)\,dx\right|\\
+={}&\int_{-2}^{-1}(x^2-2x-3)\,dx\\
 &-\int_{-1}^{3}(x^2-2x-3)\,dx\\
 &+\int_{3}^{4}(x^2-2x-3)\,dx.
 \end{aligned}
@@ -3330,6 +3375,233 @@ Writing the final answer with positive indices gives
 Substituting back,
 \[
 \boxed{e^{x^3+1}+C}.
+\]''',
+],
+[
+ r'''Expand the square:
+\[
+\left(x+\frac2x\right)^2=x^2+4+\frac4{x^2}.
+\]
+The resulting expression is a sum of standard powers, so the best first step
+is \(\boxed{\text{(B) Expand the expression}}\).''',
+ r'''Rewrite \(4/x^3\) as \(4x^{-3}\) and integrate term by term:
+\[
+\begin{aligned}
+I&=\int\left(3x^{1/2}+4x^{-3}\right)dx\\
+&=2x^{3/2}-2x^{-2}+C\\
+&=2x^{3/2}-\frac2{x^2}+C.
+\end{aligned}
+\]
+Thus the answer is \(\boxed{\text{(A)}}\).''',
+ r'''An antiderivative is
+\[
+F(x)=\frac23x^3-\frac32x^2+x.
+\]
+Therefore
+\[
+\begin{aligned}
+I&=F(2)-F(-1)\\
+&=\frac43-\left(-\frac{19}{6}\right)
+=\frac92.
+\end{aligned}
+\]
+Hence the exact value is \(\boxed{\frac92}\), answer \(\boxed{\text{(C)}}\).''',
+ r'''The downward-opening parabola is below the \(x\)-axis on
+\([-3,-2]\) and \([2,3]\), and above it on \([-2,2]\). Since geometrical
+area cannot be negative, each signed integral must be replaced by its
+absolute value:
+\[
+\begin{aligned}
+A={}&\left|\int_{-3}^{-2}f(x)\,dx\right|
++\left|\int_{-2}^{2}f(x)\,dx\right|\\
+&+\left|\int_{2}^{3}f(x)\,dx\right|.
+\end{aligned}
+\]
+Thus the correct expression is \(\boxed{\text{(A)}}\). As a check, the total
+area is
+\[
+\frac73+\frac{32}{3}+\frac73
+=\frac{46}{3}\text{ units}^2.
+\]''',
+ r'''Since
+\[
+\frac{d}{dx}\sin(3x)=3\cos(3x),
+\]
+\[
+\int6\cos(3x)\,dx=2\sin(3x)+C.
+\]
+Therefore the answer is \(\boxed{\text{(B)}}\).''',
+ r'''The inner expression has derivative
+\[
+\frac{d}{dx}(2x^2-2x+5)=4x-2,
+\]
+and \(8x-4=2(4x-2)\). Thus
+\[
+\boxed{u=2x^2-2x+5}
+\]
+converts the integral directly into \(2\int u^6\,du\). The correct answer is
+\(\boxed{\text{(B)}}\).''',
+ r'''Integrate the gradient function:
+\[
+\begin{aligned}
+y&=\int(4x^3-6x+1)\,dx\\
+&=x^4-3x^2+x+C.
+\end{aligned}
+\]
+Using the point \((1,3)\),
+\[
+\begin{aligned}
+3&=1-3+1+C\\
+&=-1+C,\\
+C&=4.
+\end{aligned}
+\]
+Therefore
+\[
+\boxed{y=x^4-3x^2+x+4}.
+\]''',
+ r'''Rewrite the integrand as
+\[
+6x^2+4x^{-3}-5x^{-1/2}.
+\]
+The power rule gives
+\[
+\begin{aligned}
+I&=2x^3-2x^{-2}-10x^{1/2}+C.
+\end{aligned}
+\]
+Move the negative power to the denominator. In positive-index form,
+\[
+\boxed{2x^3-\frac2{x^2}-10x^{1/2}+C}.
+\]''',
+ r'''Apply the power rule:
+\[
+\begin{aligned}
+I&=2x^{3/2}-2x^{-1/2}+C.
+\end{aligned}
+\]
+The positive-index form is
+\[
+\boxed{2x^{3/2}-\frac2{x^{1/2}}+C}.
+\]
+Since \(x^{3/2}=x\sqrt{x}\) and \(x^{1/2}=\sqrt{x}\), the surd form is
+\[
+\boxed{2x\sqrt{x}-\frac2{\sqrt{x}}+C}.
+\]''',
+ r'''First find the \(x\)-intercepts:
+\[
+2+x-x^2=-(x-2)(x+1)=0,
+\]
+so \(x=-1,2\). The parabola opens downwards and has turning point
+\(\left(\frac12,\frac94\right)\). A suitable sketch is:'''
+ + area_under(lambda x: 2 + x - x*x, -2, 3,
+              xmin=-2.5, xmax=3.5, ymin=-5, ymax=4.9,
+              caption='', shade_label='', roots=(-1, 2),
+              label_endpoints=False, root_coordinates=True,
+              aria_label='Graph of y = 2 + x − x²')
+ + r'''The curve lies below the \(x\)-axis on \([-2,-1]\) and \([2,3]\).
+Each definite integral is a signed area, so take absolute values to obtain
+positive geometrical areas:
+\[
+\begin{aligned}
+A={}&\left|\int_{-2}^{-1}(2+x-x^2)\,dx\right|\\
+&+\left|\int_{-1}^{2}(2+x-x^2)\,dx\right|\\
+&+\left|\int_{2}^{3}(2+x-x^2)\,dx\right|.
+\end{aligned}
+\]
+Using
+\[
+F(x)=2x+\frac{x^2}{2}-\frac{x^3}{3},
+\]
+the two outer regions each have area \(11/6\), while the middle region has
+area \(9/2\). Therefore
+\[
+A=\frac{11}{6}+\frac92+\frac{11}{6}
+=\boxed{\frac{49}{6}\text{ units}^2}.
+\]''',
+ r'''Set the equations equal:
+\[
+\begin{aligned}
+x^2&=4x-x^2\\
+2x^2-4x&=0\\
+2x(x-2)&=0.
+\end{aligned}
+\]
+Thus \(x=0,2\), giving the intersections \((0,0)\) and \((2,4)\). The upper
+curve is \(y=4x-x^2\), so
+\[
+\begin{aligned}
+A&=\int_0^2\big[(4x-x^2)-x^2\big]\,dx\\
+&=\int_0^2(4x-2x^2)\,dx\\
+&=\left[2x^2-\frac23x^3\right]_0^2\\
+&=8-\frac{16}{3}=\frac83.
+\end{aligned}
+\]
+Therefore \(\boxed{A=\frac83\text{ units}^2}\).''',
+ r'''Integrate each term. For the rational term, let \(u=3x+2\), so
+\(du=3\,dx\):
+\[
+\begin{aligned}
+I&=4\int e^{-2x}\,dx\\
+&\quad+3\int\frac{dx}{3x+2}\\
+&=-2e^{-2x}+\ln|3x+2|+C.
+\end{aligned}
+\]
+Hence
+\[
+\boxed{-2e^{-2x}+\ln|3x+2|+C}.
+\]''',
+ r'''Use
+\(\int\csc^2x\,dx=-\cot x\) and
+\(\int\sin(2x)\,dx=-\frac12\cos(2x)\):
+\[
+\begin{aligned}
+I&=3\int\csc^2x\,dx\\
+&\quad+4\int\sin2x\,dx\\
+&=-3\cot x-2\cos2x+C.
+\end{aligned}
+\]
+Therefore
+\[
+\boxed{-3\cot x-2\cos2x+C}.
+\]''',
+ r'''An antiderivative is
+\[
+-2\cos x+\sin2x.
+\]
+Therefore
+\[
+\begin{aligned}
+I&=\left[-2\cos x+\sin2x\right]_0^{\pi/4}\\
+&=(-\sqrt2+1)-(-2)\\
+&=3-\sqrt2.
+\end{aligned}
+\]
+Thus the exact value is
+\[
+\boxed{3-\sqrt2}.
+\]''',
+ r'''Let \(u=x^2+4\), so \(du=2x\,dx\) and \(6x\,dx=3\,du\). Then
+\[
+\begin{aligned}
+\int\frac{6x}{(x^2+4)^2}\,dx
+&=3\int u^{-2}\,du\\
+&=-3u^{-1}+C.
+\end{aligned}
+\]
+Writing the answer with positive indices gives
+\[
+\boxed{-\frac3{x^2+4}+C}.
+\]''',
+ r'''Let \(u=x^2-3\), so \(du=2x\,dx\). Then
+\[
+\int2x e^{x^2-3}\,dx
+=\int e^u\,du
+=e^u+C.
+\]
+Substituting back,
+\[
+\boxed{e^{x^2-3}+C}.
 \]''',
 ],
 ]

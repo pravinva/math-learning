@@ -244,7 +244,8 @@ def area_under(fn, a, b, *, xmin=None, xmax=None, ymin=None, ymax=None,
 def area_between(f, g, a, b, *, xmin=None, xmax=None, ymin=None, ymax=None,
                  caption='', label_f='y = f(x)', label_g='y = g(x)',
                  intersection_label_offsets=(),
-                 label_f_offset=(-4, -6), label_g_offset=(-4, 14), n=220):
+                 label_f_offset=(-4, -6), label_g_offset=(-4, 14),
+                 aria_label=None, n=220):
     """Shade region between two curves from a to b."""
     xs, ys_f, ys_g = [], [], []
     for i in range(n + 1):
@@ -308,7 +309,7 @@ def area_between(f, g, a, b, *, xmin=None, xmax=None, ymin=None, ymax=None,
             label_g, size=11, fill=ORANGE, anchor='end',
         )
     )
-    return _wrap(axes + shade + c1 + c2 + marks + labels, caption)
+    return _wrap(axes + shade + c1 + c2 + marks + labels, caption, aria_label)
 
 
 def _fmt(v):
