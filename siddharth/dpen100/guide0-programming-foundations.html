@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPEN100 — Guide 0: Programming Foundations Before MATLAB</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1B3A5C;--orange:#FF3621;--blue:#185FA5;--blue-lt:#E6F1FB;--green:#16734f;--green-lt:#E1F5EE;--amber:#7A4800;--amber-lt:#FAEEDA;--purple:#3C3489;--purple-lt:#EEEDFE;--coral:#8a2f1a;--coral-lt:#FAECE7;--paper:#fff;--bg:#fafaf8;--soft:#F6F5F2;--line:#e8e6e0;--text:#2c2a28;--muted:#6b6762;--sidebar:272px;--content:820px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);background:var(--navy);position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+.brand{padding:19px 20px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.brand-kicker{font-size:10px;font-weight:600;letter-spacing:.1em;color:rgba(255,255,255,.43);text-transform:uppercase;margin-bottom:4px}
+.brand-title{font-family:'Crimson Pro',Georgia,serif;font-size:17px;font-weight:600;color:#fff;line-height:1.25}
+.brand-sub{font-size:11px;color:rgba(255,255,255,.42);line-height:1.45;margin-top:3px}
+.back{padding:10px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.back a{color:rgba(255,255,255,.55);font-size:11px;text-decoration:none}
+.back a:hover{color:#fff}
+.guide-row{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:5px;flex-wrap:wrap}
+.guide-pill{font-size:10px;padding:3px 8px;border:1px solid rgba(255,255,255,.2);border-radius:4px;color:rgba(255,255,255,.55);text-decoration:none}
+.guide-pill.current{background:var(--orange);border-color:var(--orange);color:#fff}
+.progress-wrap{padding:9px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.progress-label{font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.07em;margin-bottom:5px}
+.progress-track{height:3px;background:rgba(255,255,255,.12);border-radius:2px}
+.progress-fill{height:100%;width:0;background:var(--orange);border-radius:2px;transition:width .3s}
+.nav-section{padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-label{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.28);padding:4px 20px;text-transform:uppercase}
+.nav-link{display:flex;align-items:center;gap:9px;width:100%;padding:7px 20px;border:0;background:none;color:rgba(255,255,255,.6);font-family:inherit;font-size:12px;line-height:1.35;text-align:left;cursor:pointer}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-link.active{color:#fff;background:rgba(255,255,255,.1);border-left:2px solid var(--orange);padding-left:18px}
+.nav-num{min-width:20px;padding:1px 5px;border-radius:3px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.55);font-size:10px;text-align:center}
+.nav-link.active .nav-num{background:var(--orange);color:#fff}
+.main{margin-left:var(--sidebar);flex:1;min-width:0}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 40px;background:#fff;border-bottom:1px solid var(--line)}
+.breadcrumb{flex:1;min-width:0;font-size:12px;color:var(--muted)}.breadcrumb span{color:var(--navy);font-weight:600}
+.top-actions{display:flex;flex-shrink:0;gap:7px}
+.btn{padding:6px 11px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--muted);font:12px 'DM Sans',sans-serif;cursor:pointer}
+.btn:hover{border-color:var(--navy);color:var(--navy)}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.content{max-width:var(--content);margin:0 auto;padding:42px 40px 80px}
+.page{display:none!important}.page.active{display:block!important;animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{margin-bottom:25px;padding-bottom:20px;border-bottom:2px solid var(--line)}
+.hero-kicker{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--orange);margin-bottom:5px}
+.hero h1{font-family:'Crimson Pro',Georgia,serif;font-size:clamp(31px,5vw,40px);line-height:1.1;color:var(--navy);margin-bottom:8px}
+.hero p{font-size:15px;line-height:1.7;color:var(--muted)}
+.reassure{padding:16px 18px;margin:0 0 20px;background:var(--green-lt);border-left:4px solid var(--green);border-radius:0 9px 9px 0;color:#124c39;font-size:14px;line-height:1.75}
+.reassure strong{font-weight:600}
+.learning-loop{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:16px 0 22px}
+.loop-step{position:relative;padding:11px 7px;background:#fff;border:1px solid var(--line);border-radius:8px;text-align:center}
+.loop-step:not(:last-child)::after{content:"→";position:absolute;right:-8px;top:50%;transform:translateY(-50%);z-index:2;color:var(--orange);font-weight:600}
+.loop-n{display:block;color:var(--orange);font-size:10px;font-weight:600;letter-spacing:.05em}
+.loop-word{display:block;color:var(--navy);font-size:13px;font-weight:600;margin-top:2px}
+.lesson-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.lesson-card{padding:15px;background:#fff;border:1px solid var(--line);border-radius:10px;cursor:pointer;transition:.15s}
+.lesson-card:hover{border-color:var(--orange);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.lesson-no{font-size:10px;font-weight:600;letter-spacing:.07em;color:var(--orange);margin-bottom:4px}
+.lesson-title{font-family:'Crimson Pro',serif;font-size:18px;font-weight:600;color:var(--navy);line-height:1.2}
+.lesson-desc{font-size:12.5px;color:var(--muted);line-height:1.55;margin-top:4px}
+.objective{padding:13px 16px;margin-bottom:20px;background:var(--blue-lt);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;color:#0d3d73;font-size:14px;line-height:1.7}
+.objective strong{font-weight:600}
+.block{margin:10px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.block-head{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;border:0;background:#fff;font-family:inherit;text-align:left;cursor:pointer}
+.block-head:hover{background:var(--soft)}
+.tag{flex-shrink:0;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.04em}
+.tag.idea{background:var(--blue-lt);color:var(--blue)}.tag.try{background:var(--green-lt);color:var(--green)}.tag.words{background:var(--purple-lt);color:var(--purple)}.tag.care{background:var(--amber-lt);color:var(--amber)}
+.block-title{flex:1;color:var(--text);font-size:14px;font-weight:600}
+.chev{font-size:11px;color:var(--muted);transition:transform .2s}.chev.open{transform:rotate(90deg)}
+.block-body{display:none;min-width:0;padding:16px 18px 18px;border-top:1px solid var(--line);background:var(--soft);font-size:14px;line-height:1.78}
+.block-body.open{display:block}
+.block-body p{margin-bottom:10px}.block-body p:last-child{margin-bottom:0}
+.block-body ul,.block-body ol{padding-left:22px;margin:8px 0 12px}.block-body li{margin:5px 0}
+.code-label{display:inline-block;margin:11px 0 -11px;padding:5px 12px;background:#141d28;color:#9aa7b8;border-radius:8px 8px 0 0;font:10px 'JetBrains Mono',monospace}
+.code{max-width:100%;margin:10px 0;padding:13px 15px;overflow-x:auto;border-radius:8px;background:#1e2a38;color:#e6edf3;white-space:pre;font:12.5px/1.7 'JetBrains Mono',monospace}
+.code .com{color:#7d8da3}.code .fun{color:#7aa2f7}.code .num{color:#e0af68}.code .txt{color:#9ece6a}.code .key{color:#ff9d7a}
+code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:#edf0f4;color:var(--navy);padding:1px 5px;border-radius:3px}
+.worked{min-width:0;margin:12px 0;padding:13px 15px;background:#fff;border:1px solid var(--line);border-radius:8px}
+.worked-label{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.say{margin:11px 0;padding:11px 13px;background:var(--purple-lt);border-left:3px solid #7F77DD;border-radius:0 7px 7px 0;color:var(--purple);font-size:13px;line-height:1.7}
+.say strong{font-weight:600}
+.note{margin:11px 0;padding:10px 13px;border-left:3px solid var(--green);border-radius:0 7px 7px 0;background:var(--green-lt);color:#124c39;font-size:13px;line-height:1.7}
+.warning{margin:11px 0;padding:10px 13px;border-left:3px solid #EF9F27;border-radius:0 7px 7px 0;background:var(--amber-lt);color:var(--amber);font-size:13px;line-height:1.7}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.flow-item{position:relative;padding:11px 6px;border:1px solid var(--line);border-radius:8px;background:#fff;text-align:center}
+.flow-item:not(:last-child)::after{content:"→";position:absolute;right:-9px;top:50%;transform:translateY(-50%);color:var(--orange);font-weight:600;z-index:2}
+.flow-item strong{display:block;color:var(--navy);font-size:13px}.flow-item span{font-size:11px;color:var(--muted)}
+.terms{width:100%;display:block;overflow-x:auto;border-collapse:collapse;margin:10px 0;font-size:13px}
+.terms th{padding:7px 10px;background:var(--navy);color:#fff;text-align:left;font-size:11px}.terms td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;background:#fff}.terms tr:nth-child(even) td{background:var(--soft)}
+.practice{margin-top:20px;border:1.5px solid var(--orange);border-radius:10px;overflow:hidden}
+.practice-head{display:flex;justify-content:space-between;gap:10px;padding:9px 14px;background:var(--orange);color:#fff}
+.practice-title{font-size:12px;font-weight:600}.practice-hint{font-size:11px;color:rgba(255,255,255,.75)}
+.practice-items{display:flex;flex-direction:column;gap:7px;padding:12px 14px;background:#fffaf8}
+.q{overflow:hidden;border:1px solid var(--line);border-radius:8px;background:#fff}
+.q-head{display:flex;align-items:flex-start;gap:9px;width:100%;padding:10px 12px;border:0;background:#fff;text-align:left;font-family:inherit;cursor:pointer}
+.q-head:hover{background:var(--soft)}
+.q-num{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--orange);color:#fff;font-size:10px;font-weight:600}
+.q-text{flex:1;min-width:0;font-size:13px;line-height:1.55;color:var(--text)}
+.q-arrow{font-size:10px;color:var(--muted);transition:transform .2s}.q-arrow.open{transform:rotate(90deg)}
+.answer{display:none;padding:10px 13px 12px;border-top:1px solid var(--line);background:var(--green-lt);color:#124c39;font-size:13px;line-height:1.65}.answer.open{display:block}
+.page-nav{display:flex;justify-content:space-between;gap:10px;margin-top:30px;padding-top:19px;border-top:1px solid var(--line)}
+.page-btn{display:inline-flex;align-items:center;padding:8px 14px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--text);font-size:13px;text-decoration:none;cursor:pointer}
+.page-btn:hover{border-color:var(--navy);color:var(--navy)}.page-btn.next{margin-left:auto;background:var(--navy);border-color:var(--navy);color:#fff}
+.checklist{list-style:none!important;padding:0!important}.checklist li{position:relative;padding:8px 10px 8px 36px;margin:5px 0!important;background:#fff;border:1px solid var(--line);border-radius:7px}.checklist li::before{content:"□";position:absolute;left:12px;color:var(--orange);font-size:17px;line-height:1}
+.github-task{margin:20px 0;padding:16px 17px;background:#fff;border:2px solid var(--navy);border-radius:10px}
+.github-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.github-label{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--orange)}
+.github-file{font:11px 'JetBrains Mono',monospace;color:#fff;background:var(--navy);padding:4px 8px;border-radius:5px}
+.github-task h3{font-family:'Crimson Pro',serif;font-size:21px;color:var(--navy);margin-bottom:5px}
+.github-task p{font-size:13px;line-height:1.7;margin-bottom:8px}
+.commit-msg{padding:8px 10px;background:var(--blue-lt);border-radius:6px;color:#0d3d73;font-size:12.5px}
+@media(max-width:768px){.sidebar{display:none}.main{width:100%;margin-left:0}.topbar{padding:9px 12px}.breadcrumb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top-actions{gap:5px}.top-actions .btn{padding:6px 8px}.top-actions .btn:first-child{font-size:0}.top-actions .btn:first-child::after{content:"Expand";font-size:11px}.content{width:100%;max-width:100%;padding:24px 16px 55px}.lesson-grid{grid-template-columns:minmax(0,1fr)}.learning-loop{grid-template-columns:1fr}.loop-step:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-13px;transform:translateX(-50%)}.flow{grid-template-columns:1fr}.flow-item:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-14px;transform:translateX(-50%)}.block-body{padding:14px 12px 16px}.worked{padding:12px 11px}.page-nav{flex-wrap:wrap}.page-btn{font-size:12px}.terms{white-space:normal}}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="brand">
+    <div class="brand-kicker">DPEN100 · Guide 0</div>
+    <div class="brand-title">Programming Foundations</div>
+    <div class="brand-sub">A gentle beginning before MATLAB coursework</div>
+  </div>
+  <div class="back"><a href="index.html">← Back to DPEN100 Hub</a></div>
+  <div class="guide-row">
+    <span class="guide-pill current">0. Start</span>
+    <a class="guide-pill" href="guide1-matlab-fundamentals.html">1. MATLAB</a>
+    <a class="guide-pill" href="guide2-control-functions.html">2. Control</a>
+    <a class="guide-pill" href="guide3-plotting-io-python.html">3. Viz/IO</a>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">LESSONS VISITED</div>
+    <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Begin here</div>
+    <button class="nav-link active" onclick="goTo('home')"><span class="nav-num">↑</span> Welcome &amp; study method</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Programming foundations</div>
+    <button class="nav-link" onclick="goTo('calculate')"><span class="nav-num">1</span> Calculate &amp; observe</button>
+    <button class="nav-link" onclick="goTo('variables')"><span class="nav-num">2</span> Values &amp; variables</button>
+    <button class="nav-link" onclick="goTo('output')"><span class="nav-num">3</span> Displaying results</button>
+    <button class="nav-link" onclick="goTo('scripts')"><span class="nav-num">4</span> Scripts &amp; errors</button>
+    <button class="nav-link" onclick="goTo('memory')"><span class="nav-num">5</span> Memory, bits &amp; bytes</button>
+    <button class="nav-link" onclick="goTo('types')"><span class="nav-num">6</span> Data types—gently</button>
+    <button class="nav-link" onclick="goTo('explain')"><span class="nav-num">7</span> Explain your code</button>
+  </div>
+</nav>
+
+<main class="main">
+  <div class="topbar">
+    <div class="breadcrumb">DPEN100 &nbsp;›&nbsp; Guide 0 &nbsp;›&nbsp; <span id="crumb">Welcome</span></div>
+    <div class="top-actions">
+      <button class="btn" onclick="expandAll()">Expand this lesson</button>
+      <button class="btn primary" onclick="goTo('calculate')">Start →</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <section class="page active" id="page-home">
+      <div class="hero">
+        <div class="hero-kicker">Before Guide 1 · No programming assumed</div>
+        <h1>Programming Foundations Before MATLAB</h1>
+        <p>Seven short lessons that begin with ordinary calculations and gradually introduce variables, output, scripts, memory and data types. Every lesson ends with a small MATLAB file to run, explain, commit and push to your existing GitHub repository.</p>
+      </div>
+      <div class="reassure">
+        <strong>Siddharth, you are not “behind” or bad at programming.</strong> MATLAB lessons often assume that words such as <em>variable</em>, <em>memory</em>, <em>data type</em> and <em>execute</em> are already familiar. These lessons build that missing bridge carefully. There is no need to understand everything on the first reading. Run each example, change one value, and explain what you observed.
+      </div>
+      <div class="worked">
+        <div class="worked-label">Use the same five-step learning cycle every time</div>
+        <div class="learning-loop">
+          <div class="loop-step"><span class="loop-n">STEP 1</span><span class="loop-word">Predict</span></div>
+          <div class="loop-step"><span class="loop-n">STEP 2</span><span class="loop-word">Run</span></div>
+          <div class="loop-step"><span class="loop-n">STEP 3</span><span class="loop-word">Observe</span></div>
+          <div class="loop-step"><span class="loop-n">STEP 4</span><span class="loop-word">Explain</span></div>
+          <div class="loop-step"><span class="loop-n">STEP 5</span><span class="loop-word">Change</span></div>
+        </div>
+        <p><strong>Predict</strong> what the code will do. <strong>Run</strong> it in MATLAB. <strong>Observe</strong> the Command Window and Workspace. <strong>Explain</strong> it using the new vocabulary. Then <strong>change</strong> one value and predict again.</p>
+      </div>
+      <div class="lesson-grid">
+        <div class="lesson-card" onclick="goTo('calculate')"><div class="lesson-no">LESSON 1</div><div class="lesson-title">Calculate &amp; Observe</div><div class="lesson-desc">Use MATLAB as a calculator and learn expression, operator, result, <code>ans</code> and semicolon.</div></div>
+        <div class="lesson-card" onclick="goTo('variables')"><div class="lesson-no">LESSON 2</div><div class="lesson-title">Values &amp; Variables</div><div class="lesson-desc">Give values useful names and understand assignment from right to left.</div></div>
+        <div class="lesson-card" onclick="goTo('output')"><div class="lesson-no">LESSON 3</div><div class="lesson-title">Displaying Results</div><div class="lesson-desc">Start with <code>disp</code>, then build one friendly <code>fprintf</code> message.</div></div>
+        <div class="lesson-card" onclick="goTo('scripts')"><div class="lesson-no">LESSON 4</div><div class="lesson-title">Scripts &amp; Errors</div><div class="lesson-desc">Save instructions in an <code>.m</code> file, run them in order and read simple errors calmly.</div></div>
+        <div class="lesson-card" onclick="goTo('memory')"><div class="lesson-no">LESSON 5</div><div class="lesson-title">Memory, Bits &amp; Bytes</div><div class="lesson-desc">Connect the Workspace to RAM before learning the small amount of binary you need.</div></div>
+        <div class="lesson-card" onclick="goTo('types')"><div class="lesson-no">LESSON 6</div><div class="lesson-title">Data Types—Gently</div><div class="lesson-desc">Recognise numbers, text and true/false values without memorising extreme limits.</div></div>
+        <div class="lesson-card" onclick="goTo('explain')"><div class="lesson-no">LESSON 7</div><div class="lesson-title">Explain Your Code</div><div class="lesson-desc">Use correct beginner terminology to explain a complete calculation script.</div></div>
+      </div>
+      <div class="note"><strong>What is deliberately postponed?</strong> Huge numeric limits, detailed floating-point bit fields, two's complement, compiler optimisation and hexadecimal. Those topics are available later in Guide 1, after the basic actions have meaning.</div>
+      <div class="github-task">
+        <div class="github-head"><span class="github-label">DAILY WORK HABIT</span><span class="github-file">one working .m file per lesson</span></div>
+        <h3>Your repository becomes a learning diary</h3>
+        <p>You already know how to push to GitHub, so these lessons do not repeat the setup. For each lesson, create the named file inside your existing repository, predict before running, record a short observation in MATLAB comments, make sure the final script runs from top to bottom, then commit and push it.</p>
+        <ul class="checklist">
+          <li>Write a prediction in a <code>%</code> comment before running.</li>
+          <li>Run the whole file—not only isolated lines.</li>
+          <li>Correct errors and keep the final committed version working.</li>
+          <li>Add two or three comments explaining what you observed.</li>
+          <li>Commit with the suggested message and push to GitHub.</li>
+        </ul>
+      </div>
+      <div class="page-nav"><span></span><button class="page-btn next" onclick="goTo('calculate')">Lesson 1: Calculate &amp; Observe →</button></div>
+    </section>
+
+    <section class="page" id="page-calculate">
+      <div class="hero">
+        <div class="hero-kicker">Lesson 1 · First contact with code</div>
+        <h1>Calculate and Observe</h1>
+        <p>Begin with something familiar: arithmetic. The aim is not to memorise commands. It is to notice that MATLAB receives an instruction, performs it and shows a result.</p>
+      </div>
+      <div class="objective"><strong>By the end:</strong> you can enter an arithmetic expression, identify its operators and operands, explain where an unnamed result goes, and describe what a semicolon changes.</div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">IDEA</span><span class="block-title">A program is a sequence of precise instructions</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>A computer does not guess what you intended. It follows instructions. A small engineering program usually follows this pattern:</p>
+          <div class="flow">
+            <div class="flow-item"><strong>Input</strong><span>starting information</span></div>
+            <div class="flow-item"><strong>Store</strong><span>keep useful values</span></div>
+            <div class="flow-item"><strong>Process</strong><span>perform operations</span></div>
+            <div class="flow-item"><strong>Output</strong><span>show the result</span></div>
+          </div>
+          <p>For now, MATLAB will receive a calculation as its input, process the arithmetic and display the output.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag try">TRY IT</span><span class="block-title">Use the Command Window as a calculator</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>Click after the <code>&gt;&gt;</code> prompt in MATLAB's Command Window. Type each line and press Enter.</p>
+          <div class="code"><span class="num">2 + 3</span>
+<span class="num">10 - 4</span>
+<span class="num">6 * 7</span>
+<span class="num">20 / 5</span>
+<span class="num">3^2</span></div>
+          <p>An <strong>expression</strong> is code that MATLAB can evaluate to produce a value. In <code>6 * 7</code>, the values 6 and 7 are the <strong>operands</strong>, and <code>*</code> is the multiplication <strong>operator</strong>. The value 42 is the <strong>result</strong>.</p>
+          <div class="say"><strong>Say it precisely:</strong> “MATLAB evaluates the arithmetic expression <code>6 * 7</code> and displays the resulting value, 42.”</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">IDEA</span><span class="block-title"><code>ans</code> and the semicolon</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>If you do not give a result a name, MATLAB places the latest unnamed result in a special variable called <code>ans</code>.</p>
+          <div class="code"><span class="num">10 / 4</span>
+<span class="com">% MATLAB displays: ans = 2.5000</span></div>
+          <p>Now compare these two lines:</p>
+          <div class="code"><span class="num">5 + 3</span>
+<span class="num">5 + 3;</span></div>
+          <p>Both calculations run. The semicolon only <strong>suppresses automatic output</strong>. It does not cancel the calculation.</p>
+          <div class="warning"><strong>Common misunderstanding:</strong> “Nothing appeared” does not mean “nothing happened.” A semicolon tells MATLAB not to display the result automatically.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag try">GUIDED</span><span class="block-title">Calculate an average speed</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>A vehicle travels 120 km in 2.5 hours. Average speed is distance divided by time.</p>
+          <div class="code"><span class="num">120 / 2.5</span></div>
+          <p>Before pressing Enter, predict whether the answer should be greater or less than 120. Then run it. MATLAB returns 48.</p>
+          <div class="say"><strong>Explain:</strong> “The expression divides the distance value by the time value. MATLAB evaluates the expression and displays an average speed of 48 kilometres per hour.”</div>
+          <p>Change 120 to 150. Predict first, then run the changed expression.</p>
+        </div>
+      </div>
+
+      <div class="practice">
+        <div class="practice-head"><span class="practice-title">Check your understanding</span><span class="practice-hint">Answer before revealing</span></div>
+        <div class="practice-items">
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">A</span><span class="q-text">In <code>12 + 5</code>, identify the operator and the operands.</span><span class="q-arrow">▶</span></button><div class="answer">The operator is <code>+</code>. The operands are the values 12 and 5. MATLAB evaluates the expression to produce 17.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">B</span><span class="q-text">What does MATLAB do with an unnamed result?</span><span class="q-arrow">▶</span></button><div class="answer">MATLAB normally assigns the latest unnamed result to the special variable <code>ans</code>.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">C</span><span class="q-text">Does a semicolon stop a calculation from running?</span><span class="q-arrow">▶</span></button><div class="answer">No. The statement still executes. The semicolon only suppresses automatic display in the Command Window.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">D</span><span class="q-text">Predict the result of <code>2 + 3 * 4</code>. Why?</span><span class="q-arrow">▶</span></button><div class="answer">The result is 14. MATLAB follows operator precedence: multiplication is evaluated before addition, so it calculates 3 × 4 = 12, then 2 + 12 = 14.</div></div>
+        </div>
+      </div>
+      <div class="github-task">
+        <div class="github-head"><span class="github-label">LESSON 1 · GITHUB DELIVERABLE</span><span class="github-file">day01_calculations.m</span></div>
+        <h3>Build a calculation notebook</h3>
+        <p>Create this script in your repository. Complete the prediction comments before running it. Afterwards, replace each observation prompt with one sentence describing what MATLAB actually displayed.</p>
+        <div class="code"><span class="com">% Day 1 — calculations in MATLAB</span>
+<span class="com">% Prediction for 2 + 3:</span>
+<span class="num">2 + 3</span>
+
+<span class="com">% Prediction for 2 + 3 * 4:</span>
+<span class="num">2 + 3 * 4</span>
+
+<span class="com">% Prediction for average speed:</span>
+<span class="num">120 / 2.5</span>
+
+<span class="com">% Observation: What name held the latest unnamed result?</span>
+<span class="com">% Observation: What changed when I added a semicolon?</span></div>
+        <ul class="checklist">
+          <li>Run every expression and compare each result with your prediction.</li>
+          <li>Add one expression of your own using parentheses.</li>
+          <li>Explain <code>operator</code>, <code>operand</code>, <code>expression</code> and <code>result</code> in comments.</li>
+          <li>Save, commit and push the working file.</li>
+        </ul>
+        <div class="commit-msg"><strong>Suggested commit:</strong> <code>Add day 1 MATLAB calculation practice</code></div>
+      </div>
+      <div class="page-nav"><button class="page-btn" onclick="goTo('home')">← Welcome</button><button class="page-btn next" onclick="goTo('variables')">Lesson 2: Values &amp; Variables →</button></div>
+    </section>
+
+    <section class="page" id="page-variables">
+      <div class="hero">
+        <div class="hero-kicker">Lesson 2 · Giving information useful names</div>
+        <h1>Values, Variables and Assignment</h1>
+        <p>A calculation becomes reusable when its important values have names. This lesson separates four words that beginners often mix together: literal, value, variable and assignment.</p>
+      </div>
+      <div class="objective"><strong>By the end:</strong> you can explain an assignment statement from right to left and predict how changing one variable changes a later calculation.</div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">IDEA</span><span class="block-title">A variable is a name used to refer to a value</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code"><span class="num">distance = 120;</span></div>
+          <p>This line contains several different ideas:</p>
+          <table class="terms">
+            <thead><tr><th>Part</th><th>Correct term</th><th>Meaning here</th></tr></thead>
+            <tbody>
+              <tr><td><code>distance</code></td><td>Variable name</td><td>The name the program will use to refer to the stored value.</td></tr>
+              <tr><td><code>120</code></td><td>Numeric literal</td><td>A value written directly in the source code.</td></tr>
+              <tr><td><code>=</code></td><td>Assignment operator</td><td>Assigns the result on the right to the name on the left.</td></tr>
+              <tr><td>Whole line</td><td>Assignment statement</td><td>One complete instruction to MATLAB.</td></tr>
+            </tbody>
+          </table>
+          <div class="say"><strong>Say:</strong> “This statement assigns the numeric value 120 to the variable named <code>distance</code>.”</div>
+          <p>In beginner language, it is acceptable to imagine a labelled container. Just remember that the variable name and its current value are not the same thing.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">RULE</span><span class="block-title">Evaluate the right-hand side first</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code"><span class="num">distance = 120;</span>
+<span class="num">time = 2.5;</span>
+<span class="num">averageSpeed = distance / time;</span></div>
+          <p>MATLAB handles the final line in this order:</p>
+          <ol>
+            <li>Find the current values of <code>distance</code> and <code>time</code>.</li>
+            <li>Evaluate the expression <code>distance / time</code>.</li>
+            <li>Obtain the result 48.</li>
+            <li>Assign 48 to the variable <code>averageSpeed</code>.</li>
+          </ol>
+          <div class="say"><strong>Say:</strong> “MATLAB evaluates the expression on the right-hand side first, then assigns the resulting value to the variable on the left-hand side.”</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag try">TRY IT</span><span class="block-title">A variable can receive a new value</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code"><span class="num">count = 5;</span>
+<span class="num">count = count + 1;</span></div>
+          <p>This would look impossible as an algebraic equation, but it is not an equation. It is an assignment instruction.</p>
+          <ol>
+            <li>Read the current value of <code>count</code>, which is 5.</li>
+            <li>Evaluate <code>count + 1</code>, producing 6.</li>
+            <li>Assign the new value 6 back to <code>count</code>.</li>
+          </ol>
+          <p>The old value is replaced. The variable now refers to 6.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag try">GUIDED</span><span class="block-title">Rectangle calculation with meaningful names</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code"><span class="num">lengthMetres = 8;</span>
+<span class="num">widthMetres = 5;</span>
+<span class="num">areaSquareMetres = lengthMetres * widthMetres;</span></div>
+          <p>Meaningful names make the calculation easier to read. Variable names must begin with a letter, cannot contain spaces and are case-sensitive.</p>
+          <div class="note"><strong>Good names communicate purpose:</strong> <code>timeSeconds</code> is clearer than <code>t</code> when a beginner is learning. Short mathematical names become useful later when their meaning is already clear.</div>
+          <p>Change <code>widthMetres</code> to 6. Predict the new area, run all three statements and observe the Workspace.</p>
+        </div>
+      </div>
+
+      <div class="practice">
+        <div class="practice-head"><span class="practice-title">Check your understanding</span><span class="practice-hint">Use complete sentences</span></div>
+        <div class="practice-items">
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">A</span><span class="q-text">Explain <code>mass = 10;</code> using the words “assigns,” “value” and “variable.”</span><span class="q-arrow">▶</span></button><div class="answer">“The statement assigns the numeric value 10 to the variable named <code>mass</code>.”</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">B</span><span class="q-text">After <code>x = 4; x = x * 3;</code>, what value does <code>x</code> contain?</span><span class="q-arrow">▶</span></button><div class="answer"><code>x</code> contains 12. MATLAB reads the old value 4, evaluates 4 × 3, then assigns the result 12 back to <code>x</code>.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">C</span><span class="q-text">Which is a clearer beginner variable name: <code>a</code> or <code>accelerationMetresPerSecond2</code>? Why?</span><span class="q-arrow">▶</span></button><div class="answer"><code>accelerationMetresPerSecond2</code> is clearer because it communicates both the quantity and its units. In a familiar formula, <code>a</code> may later be reasonable, but its meaning should be documented.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">D</span><span class="q-text">Why is <code>total cost = 20;</code> invalid MATLAB syntax?</span><span class="q-arrow">▶</span></button><div class="answer">Variable names cannot contain spaces. Use a valid name such as <code>totalCost</code> or <code>total_cost</code>.</div></div>
+        </div>
+      </div>
+      <div class="github-task">
+        <div class="github-head"><span class="github-label">LESSON 2 · GITHUB DELIVERABLE</span><span class="github-file">day02_variables.m</span></div>
+        <h3>Store and update meaningful values</h3>
+        <p>Type this script rather than copying it blindly. Before running, write the values you expect for <code>averageSpeed</code>, <code>areaSquareMetres</code> and the final <code>count</code>.</p>
+        <div class="code"><span class="com">% Day 2 — variables and assignment</span>
+<span class="num">distanceKm = 120;</span>
+<span class="num">timeHours = 2.5;</span>
+<span class="num">averageSpeed = distanceKm / timeHours;</span>
+
+<span class="num">lengthMetres = 8;</span>
+<span class="num">widthMetres = 5;</span>
+<span class="num">areaSquareMetres = lengthMetres * widthMetres;</span>
+
+<span class="num">count = 5;</span>
+<span class="num">count = count + 1;</span>
+
+<span class="com">% Prediction:</span>
+<span class="com">% Observation:</span>
+<span class="com">% Explanation of the final count assignment:</span></div>
+        <ul class="checklist">
+          <li>Run the complete script and inspect the Workspace.</li>
+          <li>Change one input and predict which later variable will change.</li>
+          <li>Write one precise assignment explanation in a comment.</li>
+          <li>Save, commit and push the working file.</li>
+        </ul>
+        <div class="commit-msg"><strong>Suggested commit:</strong> <code>Add day 2 variables and assignment practice</code></div>
+      </div>
+      <div class="page-nav"><button class="page-btn" onclick="goTo('calculate')">← Lesson 1</button><button class="page-btn next" onclick="goTo('output')">Lesson 3: Displaying Results →</button></div>
+    </section>
+
+    <section class="page" id="page-output">
+      <div class="hero">
+        <div class="hero-kicker">Lesson 3 · Communicating a result</div>
+        <h1>Displaying Results Clearly</h1>
+        <p>A useful program should communicate what its answer means. Begin with <code>disp</code>; then use <code>fprintf</code> when you need text, units and controlled decimal places.</p>
+      </div>
+      <div class="objective"><strong>By the end:</strong> you can distinguish storing a value from displaying it, use <code>disp</code>, and explain the important parts of one <code>fprintf</code> statement.</div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">IDEA</span><span class="block-title">Storing and displaying are different actions</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code"><span class="num">area = 40;</span>
+<span class="fun">disp</span>(area)</div>
+          <p>The first statement stores a value under the name <code>area</code>. The second statement calls the <code>disp</code> function and asks it to display that value.</p>
+          <p>A <strong>function</strong> is a named piece of code that performs a task. Information supplied inside parentheses is called an <strong>input argument</strong>. Here, <code>area</code> is the input argument passed to <code>disp</code>.</p>
+          <div class="say"><strong>Say:</strong> “The <code>disp</code> function receives the value stored in <code>area</code> and displays it in the Command Window.”</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag try">TRY IT</span><span class="block-title">Display text and a number</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code"><span class="fun">disp</span>(<span class="txt">"The calculated area is:"</span>)
+<span class="fun">disp</span>(area)</div>
+          <p>Text inside double quotation marks is a MATLAB <code>string</code>. The quotation marks mark where the text begins and ends; they are not displayed as part of the message.</p>
+          <div class="note"><strong>Use <code>disp</code> first.</strong> It is simple and keeps attention on the calculation. Introduce formatted output only after storing and displaying values feel comfortable.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">NEXT STEP</span><span class="block-title">Build one <code>fprintf</code> statement slowly</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code"><span class="fun">fprintf</span>(<span class="txt">'The area is %.2f square metres.\n'</span>, area);</div>
+          <p>Read the statement in parts:</p>
+          <ul>
+            <li><code>fprintf</code> is the function being called.</li>
+            <li>The quoted text is the <strong>format string</strong>.</li>
+            <li><code>%.2f</code> is a placeholder for a floating-point value displayed with two digits after the decimal point.</li>
+            <li><code>\n</code> moves the cursor to a new line after the message.</li>
+            <li><code>area</code> supplies the value for the placeholder.</li>
+          </ul>
+          <p>If <code>area</code> contains 40, the output is:</p>
+          <div class="code">The area is 40.00 square metres.</div>
+          <div class="warning"><strong>Formatting is not storage.</strong> <code>%.2f</code> controls how the value appears in this output. It does not change the variable's data type or permanently round the stored value.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag try">GUIDED</span><span class="block-title">A complete average-speed calculation</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code"><span class="num">distanceKm = 120;</span>
+<span class="num">timeHours = 2.5;</span>
+<span class="num">averageSpeed = distanceKm / timeHours;</span>
+
+<span class="fun">fprintf</span>(<span class="txt">'Average speed = %.1f km/h\n'</span>, averageSpeed);</div>
+          <p>Run the four statements. Change the distance to 150 km and predict the output before running them again.</p>
+          <div class="say"><strong>Explain:</strong> “The final statement calls <code>fprintf</code>. The format string contains a placeholder requesting one decimal place, and <code>averageSpeed</code> provides the value inserted at that position.”</div>
+        </div>
+      </div>
+
+      <div class="practice">
+        <div class="practice-head"><span class="practice-title">Check your understanding</span><span class="practice-hint">Focus on purpose</span></div>
+        <div class="practice-items">
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">A</span><span class="q-text">What is the difference between <code>x = 5;</code> and <code>disp(x)</code>?</span><span class="q-arrow">▶</span></button><div class="answer"><code>x = 5;</code> assigns and stores a value under the name <code>x</code>. <code>disp(x)</code> reads that value and displays it. Displaying a value is not the same action as storing it.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">B</span><span class="q-text">What does <code>%.1f</code> request in an <code>fprintf</code> format string?</span><span class="q-arrow">▶</span></button><div class="answer">It requests a floating-point value displayed with one digit after the decimal point.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">C</span><span class="q-text">Does <code>fprintf('%.2f', x)</code> convert <code>x</code> permanently into a different data type?</span><span class="q-arrow">▶</span></button><div class="answer">No. It only controls the appearance of this output. The stored variable and its class remain unchanged.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">D</span><span class="q-text">What is the purpose of <code>\n</code>?</span><span class="q-arrow">▶</span></button><div class="answer"><code>\n</code> inserts a newline, so later output starts on the next line.</div></div>
+        </div>
+      </div>
+      <div class="github-task">
+        <div class="github-head"><span class="github-label">LESSON 3 · GITHUB DELIVERABLE</span><span class="github-file">day03_output.m</span></div>
+        <h3>Produce readable engineering output</h3>
+        <p>Create a script that displays the same calculated value in three ways. Observe what each method communicates to the reader.</p>
+        <div class="code"><span class="com">% Day 3 — displaying results</span>
+<span class="num">distanceKm = 120;</span>
+<span class="num">timeHours = 2.5;</span>
+<span class="num">averageSpeed = distanceKm / timeHours;</span>
+
+<span class="fun">disp</span>(averageSpeed)
+<span class="fun">disp</span>(<span class="txt">"The average speed is:"</span>)
+<span class="fun">disp</span>(averageSpeed)
+<span class="fun">fprintf</span>(<span class="txt">'Average speed = %.1f km/h\n'</span>, averageSpeed);
+
+<span class="com">% Observation: Which output is easiest to understand, and why?</span>
+<span class="com">% Explanation: What does %.1f control?</span></div>
+        <ul class="checklist">
+          <li>Run the file and compare all three output styles.</li>
+          <li>Change <code>%.1f</code> to <code>%.2f</code> and describe only the display change.</li>
+          <li>Add a second <code>fprintf</code> line reporting the journey time.</li>
+          <li>Save, commit and push the working file.</li>
+        </ul>
+        <div class="commit-msg"><strong>Suggested commit:</strong> <code>Add day 3 MATLAB output practice</code></div>
+      </div>
+      <div class="page-nav"><button class="page-btn" onclick="goTo('variables')">← Lesson 2</button><button class="page-btn next" onclick="goTo('scripts')">Lesson 4: Scripts &amp; Errors →</button></div>
+    </section>
+
+    <section class="page" id="page-scripts">
+      <div class="hero">
+        <div class="hero-kicker">Lesson 4 · Saving and running instructions</div>
+        <h1>Scripts, Execution and Errors</h1>
+        <p>The Command Window is useful for experiments. A script lets you save a sequence of instructions, run it again and improve it without retyping every line.</p>
+      </div>
+      <div class="objective"><strong>By the end:</strong> you can create and run an <code>.m</code> script, explain top-to-bottom execution, describe MATLAB's beginner-level execution process, and distinguish three kinds of errors.</div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">IDEA</span><span class="block-title">What an <code>.m</code> file contains</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>An <code>.m</code> file is a text file containing MATLAB <strong>source code</strong>. Source code is the human-readable set of instructions written by the programmer.</p>
+          <ol>
+            <li>Open MATLAB's Editor.</li>
+            <li>Create a new script.</li>
+            <li>Type the code below.</li>
+            <li>Save it as <code>average_speed.m</code>.</li>
+            <li>Press Run.</li>
+          </ol>
+          <div class="code-label">average_speed.m</div>
+          <div class="code"><span class="com">% Calculate and display average speed</span>
+<span class="num">distanceKm = 120;</span>
+<span class="num">timeHours = 2.5;</span>
+<span class="num">averageSpeed = distanceKm / timeHours;</span>
+
+<span class="fun">fprintf</span>(<span class="txt">'Average speed = %.1f km/h\n'</span>, averageSpeed);</div>
+          <p>MATLAB normally executes a script from the first statement to the last statement. A line beginning with <code>%</code> is a <strong>comment</strong> for the human reader; MATLAB does not execute it as an instruction.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag words">WORDS</span><span class="block-title">Write, save, run and execute</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <table class="terms">
+            <thead><tr><th>Word</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>Write</td><td>Create or edit the source-code instructions.</td></tr>
+              <tr><td>Save</td><td>Store the <code>.m</code> file on the computer's drive.</td></tr>
+              <tr><td>Run</td><td>Ask MATLAB to perform the script's instructions.</td></tr>
+              <tr><td>Execute</td><td>Perform an instruction. “Run” and “execute” are closely related in this context.</td></tr>
+              <tr><td>Output</td><td>Information the program displays, returns or writes.</td></tr>
+            </tbody>
+          </table>
+          <div class="say"><strong>Say:</strong> “I saved the source code in an <code>.m</code> file. When I run the script, MATLAB executes its statements from top to bottom.”</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag care">GENTLE DETAIL</span><span class="block-title">Does MATLAB compile the script?</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>You do not need a separate compile button for an ordinary MATLAB script. When you press Run, MATLAB first <strong>parses</strong> the code: it examines the structure and identifies names, operators and function calls. It then executes the statements.</p>
+          <p>MATLAB may automatically compile frequently used operations internally using <strong>just-in-time compilation</strong>. That is an implementation detail; MATLAB manages it for you.</p>
+          <div class="note"><strong>The useful beginner sequence is:</strong> write → save → run → observe → debug. Detailed compiler theory can wait.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">IDEA</span><span class="block-title">An error is information, not a judgement</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>Every programmer produces errors. Debugging means locating and correcting the cause.</p>
+          <table class="terms">
+            <thead><tr><th>Kind</th><th>What it means</th><th>Small example</th></tr></thead>
+            <tbody>
+              <tr><td>Syntax error</td><td>The code does not follow MATLAB's grammar.</td><td><code>x = (2 + 3;</code> has an unmatched parenthesis.</td></tr>
+              <tr><td>Runtime error</td><td>The code can be read, but a problem occurs while it executes.</td><td>Using a variable name that has not been created.</td></tr>
+              <tr><td>Logic error</td><td>The code runs, but the instructions express the wrong calculation.</td><td>Multiplying distance by time when the formula requires division.</td></tr>
+            </tbody>
+          </table>
+          <div class="worked">
+            <div class="worked-label">Read this error calmly</div>
+            <div class="code"><span class="num">mass = 10;</span>
+<span class="num">acceleration = 9.81;</span>
+<span class="num">force = mas * acceleration;</span></div>
+            <p>MATLAB cannot recognise <code>mas</code> because the created variable is named <code>mass</code>. Correct the spelling and run the script again.</p>
+            <div class="say"><strong>Say:</strong> “The statement refers to an undefined variable because <code>mass</code> was misspelled as <code>mas</code>.”</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="practice">
+        <div class="practice-head"><span class="practice-title">Check your understanding</span><span class="practice-hint">Errors are clues</span></div>
+        <div class="practice-items">
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">A</span><span class="q-text">What is source code?</span><span class="q-arrow">▶</span></button><div class="answer">Source code is the human-readable set of program instructions written in a language such as MATLAB and saved in a file.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">B</span><span class="q-text">What happens to a line beginning with <code>%</code>?</span><span class="q-arrow">▶</span></button><div class="answer">It is treated as a comment for the reader. MATLAB does not execute the comment as a program instruction.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">C</span><span class="q-text">A script runs but calculates the wrong formula. Which broad error category is this?</span><span class="q-arrow">▶</span></button><div class="answer">It is a logic error: the code is valid and executes, but the instructions do not express the intended calculation.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">D</span><span class="q-text">Must a beginner manually compile an ordinary MATLAB script before running it?</span><span class="q-arrow">▶</span></button><div class="answer">No. MATLAB parses and executes the script when it is run, and it manages any internal just-in-time compilation automatically.</div></div>
+        </div>
+      </div>
+      <div class="github-task">
+        <div class="github-head"><span class="github-label">LESSON 4 · GITHUB DELIVERABLE</span><span class="github-file">day04_debugged_script.m</span></div>
+        <h3>Find an error and leave a working script</h3>
+        <p>Begin with the misspelling below, run it once and read MATLAB's message. Then correct it. The final version pushed to GitHub must run successfully.</p>
+        <div class="code"><span class="com">% Day 4 — scripts and debugging</span>
+<span class="num">massKg = 10;</span>
+<span class="num">acceleration = 9.81;</span>
+<span class="num">forceNewtons = masKg * acceleration;</span>  <span class="com">% deliberate error</span>
+
+<span class="fun">fprintf</span>(<span class="txt">'Force = %.2f N\n'</span>, forceNewtons);
+
+<span class="com">% Error MATLAB reported:</span>
+<span class="com">% Cause of the error:</span>
+<span class="com">% Correction I made:</span></div>
+        <ul class="checklist">
+          <li>Run the incorrect version and read the complete error message.</li>
+          <li>Correct <code>masKg</code> to <code>massKg</code>.</li>
+          <li>Complete the three debugging comments in your own words.</li>
+          <li>Run the corrected file from the first line to the last.</li>
+          <li>Commit and push only after the final version works.</li>
+        </ul>
+        <div class="commit-msg"><strong>Suggested commit:</strong> <code>Add day 4 script debugging exercise</code></div>
+      </div>
+      <div class="page-nav"><button class="page-btn" onclick="goTo('output')">← Lesson 3</button><button class="page-btn next" onclick="goTo('memory')">Lesson 5: Memory, Bits &amp; Bytes →</button></div>
+    </section>
+
+    <section class="page" id="page-memory">
+      <div class="hero">
+        <div class="hero-kicker">Lesson 5 · Only after using variables</div>
+        <h1>Memory, Bits and Bytes</h1>
+        <p>Now that variables are visible in the Workspace, “memory” can refer to something concrete. Binary is introduced only far enough to explain why computers count storage in bits and bytes.</p>
+      </div>
+      <div class="objective"><strong>By the end:</strong> you can distinguish a saved file from a Workspace variable, use <code>whos</code>, explain bit and byte, and convert a few small binary numbers.</div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">IDEA</span><span class="block-title">Storage is not the same as working memory</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>Your <code>average_speed.m</code> file is saved on long-term storage, normally an SSD. It remains there after MATLAB closes.</p>
+          <p>When the script runs, MATLAB creates values such as <code>distanceKm</code> and <code>averageSpeed</code> in its current working memory, or RAM. MATLAB shows these values in the Workspace.</p>
+          <div class="worked">
+            <div class="worked-label">Helpful first analogy</div>
+            <p><strong>Storage is a filing cabinet.</strong> Files remain there until they are deleted.</p>
+            <p><strong>RAM is the working desk.</strong> It holds information being used now. Closing MATLAB normally clears its current Workspace unless you deliberately save the data.</p>
+          </div>
+          <div class="say"><strong>Say:</strong> “The <code>.m</code> source file is stored on the drive. Running it creates variables in MATLAB's Workspace, which uses working memory.”</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag try">TRY IT</span><span class="block-title">Inspect variables with <code>whos</code></span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code"><span class="num">distanceKm = 120;</span>
+<span class="num">timeHours = 2.5;</span>
+<span class="num">averageSpeed = distanceKm / timeHours;</span>
+<span class="fun">whos</span></div>
+          <p><code>whos</code> reports information such as:</p>
+          <ul>
+            <li><strong>Name:</strong> the variable name.</li>
+            <li><strong>Size:</strong> its dimensions, such as 1 × 1 for one scalar value.</li>
+            <li><strong>Bytes:</strong> approximately how much memory its stored data occupies.</li>
+            <li><strong>Class:</strong> MATLAB's name for its data type.</li>
+          </ul>
+          <p>Try <code>clear timeHours</code>, then run <code>whos</code> again. <code>clear</code> removes the variable from the Workspace; it does not delete your saved script.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">MINIMUM BINARY</span><span class="block-title">What are bits and bytes?</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>Electronic circuits can reliably distinguish between two states. We represent those states using the symbols 0 and 1.</p>
+          <ul>
+            <li>One binary digit is one <strong>bit</strong>.</li>
+            <li>Eight bits form one <strong>byte</strong>.</li>
+            <li><em>n</em> bits can form 2<sup><em>n</em></sup> different patterns.</li>
+          </ul>
+          <p>Binary place values grow by powers of 2:</p>
+          <table class="terms">
+            <thead><tr><th>Binary place</th><th>8</th><th>4</th><th>2</th><th>1</th></tr></thead>
+            <tbody><tr><td><code>1101</code></td><td>1</td><td>1</td><td>0</td><td>1</td></tr></tbody>
+          </table>
+          <p>Therefore:</p>
+          <div class="worked"><code>1101</code> in binary means 1(8) + 1(4) + 0(2) + 1(1) = 13 in decimal.</div>
+          <div class="note"><strong>This is enough for now.</strong> You do not need binary multiplication, two's complement or manual floating-point encoding before learning ordinary MATLAB programming.</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">WHY IT MATTERS</span><span class="block-title">Why more bits allow more possibilities</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>One bit has two patterns: <code>0</code> and <code>1</code>. Two bits have four patterns: <code>00</code>, <code>01</code>, <code>10</code> and <code>11</code>. Eight bits have 2<sup>8</sup> = 256 patterns.</p>
+          <p>A pattern has no meaning by itself. A data type supplies the interpretation. A pattern might represent a number, a letter, part of an image or something else.</p>
+          <p>For a few scalar variables, memory usage is not an important practical concern. It becomes meaningful for large arrays. One million values stored with 8 bytes each require about 8 million bytes of data.</p>
+        </div>
+      </div>
+
+      <div class="practice">
+        <div class="practice-head"><span class="practice-title">Check your understanding</span><span class="practice-hint">Keep the model simple</span></div>
+        <div class="practice-items">
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">A</span><span class="q-text">What is the difference between the saved script and a Workspace variable?</span><span class="q-arrow">▶</span></button><div class="answer">The script is a source-code file saved on long-term storage. A Workspace variable is a currently available value created while MATLAB is running and held in working memory.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">B</span><span class="q-text">How many bits are in one byte?</span><span class="q-arrow">▶</span></button><div class="answer">Eight bits form one byte.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">C</span><span class="q-text">Convert <code>101</code> from binary to decimal.</span><span class="q-arrow">▶</span></button><div class="answer">The place values are 4, 2 and 1, so 101<sub>2</sub> = 1(4) + 0(2) + 1(1) = 5<sub>10</sub>.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">D</span><span class="q-text">Does <code>clear x</code> delete the <code>.m</code> file that created <code>x</code>?</span><span class="q-arrow">▶</span></button><div class="answer">No. It removes <code>x</code> from the current Workspace. It does not delete the saved source file.</div></div>
+        </div>
+      </div>
+      <div class="github-task">
+        <div class="github-head"><span class="github-label">LESSON 5 · GITHUB DELIVERABLE</span><span class="github-file">day05_workspace_memory.m</span></div>
+        <h3>Observe what MATLAB holds in the Workspace</h3>
+        <p>Run the script and use the <code>whos</code> output as evidence for your comments. You do not need to memorise the reported byte counts.</p>
+        <div class="code"><span class="com">% Day 5 — Workspace, memory, bits and bytes</span>
+<span class="num">distanceKm = 120;</span>
+<span class="num">timeHours = 2.5;</span>
+<span class="num">averageSpeed = distanceKm / timeHours;</span>
+
+<span class="fun">whos</span>
+
+<span class="com">% Observation: Which variables appeared in the Workspace?</span>
+<span class="com">% Observation: What class and byte count did MATLAB report?</span>
+<span class="com">% Explanation: The .m file is stored on...</span>
+<span class="com">% Explanation: The variables currently exist in...</span>
+<span class="com">% Binary check: 1101 means ... in decimal.</span></div>
+        <ul class="checklist">
+          <li>Run the script and inspect both the Command Window and Workspace.</li>
+          <li>Complete every observation using what MATLAB actually reports.</li>
+          <li>Use <code>clear timeHours</code> in the Command Window and observe what disappears.</li>
+          <li>Run the script again and explain why <code>timeHours</code> returns.</li>
+          <li>Save, commit and push the working file.</li>
+        </ul>
+        <div class="commit-msg"><strong>Suggested commit:</strong> <code>Add day 5 Workspace and memory observations</code></div>
+      </div>
+      <div class="page-nav"><button class="page-btn" onclick="goTo('scripts')">← Lesson 4</button><button class="page-btn next" onclick="goTo('types')">Lesson 6: Data Types—Gently →</button></div>
+    </section>
+
+    <section class="page" id="page-types">
+      <div class="hero">
+        <div class="hero-kicker">Lesson 6 · Meaning before numeric limits</div>
+        <h1>Data Types—Gently</h1>
+        <p>A data type first answers a practical question: “What kind of information is this value?” It is not necessary to memorise enormous ranges before using ordinary numbers.</p>
+      </div>
+      <div class="objective"><strong>By the end:</strong> you can use <code>class</code>, recognise ordinary numeric, text and logical values, and explain why <code>%d</code> is not itself a data type.</div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">IDEA</span><span class="block-title">A type tells MATLAB how to interpret a value</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>A data type influences how information is represented, what operations make sense, how much memory is used, and what range or precision is available.</p>
+          <div class="code"><span class="num">age = 18;</span>
+<span class="num">temperature = 23.6;</span>
+<span class="num">studentName = <span class="txt">"Siddharth"</span>;</span>
+<span class="num">labCompleted = <span class="key">true</span>;</span></div>
+          <table class="terms">
+            <thead><tr><th>Variable</th><th>Kind of information</th><th>MATLAB class</th></tr></thead>
+            <tbody>
+              <tr><td><code>age</code></td><td>Numeric value</td><td><code>double</code> by default</td></tr>
+              <tr><td><code>temperature</code></td><td>Numeric value</td><td><code>double</code> by default</td></tr>
+              <tr><td><code>studentName</code></td><td>Text</td><td><code>string</code></td></tr>
+              <tr><td><code>labCompleted</code></td><td>True/false value</td><td><code>logical</code></td></tr>
+            </tbody>
+          </table>
+          <p>Check each one using <code>class(age)</code>, <code>class(studentName)</code> and so on.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">IMPORTANT</span><span class="block-title">A whole-looking value can still be a <code>double</code></span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code"><span class="num">x = 25;</span>
+<span class="fun">class</span>(x)        <span class="com">% returns 'double'</span>
+
+<span class="num">y = <span class="fun">int64</span>(25);</span>
+<span class="fun">class</span>(y)        <span class="com">% returns 'int64'</span></div>
+          <p>The value 25 has no fractional part, but MATLAB still uses its default numeric type, <code>double</code>, unless you deliberately request another class.</p>
+          <p><code>int64</code> is a signed 64-bit integer type for whole numbers. A beginner does not need to memorise its enormous exact limits. Use it only when the task or data specifically requires that type.</p>
+          <div class="say"><strong>Say:</strong> “The variable contains an integer-valued number, but MATLAB stores it as a <code>double</code> by default.”</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag care">TERMINOLOGY</span><span class="block-title">What does “float” mean in MATLAB?</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p><strong>Floating point</strong> is a general method for representing numbers over a very wide range, including values with fractional parts. Some programming languages have a type literally named <code>float</code>.</p>
+          <p>MATLAB's ordinary floating-point classes are:</p>
+          <ul>
+            <li><code>double</code>: 64-bit floating point and MATLAB's default numeric class.</li>
+            <li><code>single</code>: 32-bit floating point, using less memory but providing less precision.</li>
+          </ul>
+          <p>For normal beginner calculations, use MATLAB's default <code>double</code>. The detailed sign, exponent and fraction fields are explained later in <a href="guide1-matlab-fundamentals.html#datatypes">Guide 1</a> and are not required to complete this lesson.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">DO NOT MIX UP</span><span class="block-title">Output format versus stored type</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code"><span class="num">score = 95;</span>
+<span class="fun">fprintf</span>(<span class="txt">'Score: %d\n'</span>, score);</div>
+          <p><code>%d</code> is an output-format instruction inside the format string. It tells <code>fprintf</code> how to present a compatible integer-valued result. It does not declare <code>score</code> to be an <code>int64</code> variable.</p>
+          <p>Use <code>class(score)</code> to ask about the stored type. Use the placeholders inside <code>fprintf</code> to control the displayed output.</p>
+          <div class="warning"><strong>Do not learn by forcing extreme failures.</strong> Assigning a number beyond the largest finite <code>double</code> normally produces <code>Inf</code>, but this boundary case is not useful preparation for ordinary beginner scripts.</div>
+        </div>
+      </div>
+
+      <div class="practice">
+        <div class="practice-head"><span class="practice-title">Check your understanding</span><span class="practice-hint">No range memorisation</span></div>
+        <div class="practice-items">
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">A</span><span class="q-text">What class does MATLAB normally use for <code>x = 5;</code>?</span><span class="q-arrow">▶</span></button><div class="answer">MATLAB normally stores the value as a <code>double</code>, even though 5 has no fractional part.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">B</span><span class="q-text">What function reports the class of a variable?</span><span class="q-arrow">▶</span></button><div class="answer"><code>class(x)</code> reports the class of <code>x</code>. <code>whos</code> reports the classes and memory details of Workspace variables.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">C</span><span class="q-text">Is <code>float</code> MATLAB's usual 32-bit class name?</span><span class="q-arrow">▶</span></button><div class="answer">No. “Floating point” is the general representation. MATLAB calls its 32-bit floating-point class <code>single</code> and its 64-bit class <code>double</code>.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">D</span><span class="q-text">Does using <code>%d</code> in <code>fprintf</code> change a variable into <code>int64</code>?</span><span class="q-arrow">▶</span></button><div class="answer">No. <code>%d</code> controls output formatting. It does not change the stored variable's data type.</div></div>
+        </div>
+      </div>
+      <div class="github-task">
+        <div class="github-head"><span class="github-label">LESSON 6 · GITHUB DELIVERABLE</span><span class="github-file">day06_data_types.m</span></div>
+        <h3>Inspect ordinary values instead of memorising limits</h3>
+        <p>Create values representing a student record, then ask MATLAB what class each one has.</p>
+        <div class="code"><span class="com">% Day 6 — observing data types</span>
+<span class="num">studentName = <span class="txt">"Siddharth"</span>;</span>
+<span class="num">age = 18;</span>
+<span class="num">temperature = 23.6;</span>
+<span class="num">labCompleted = <span class="key">true</span>;</span>
+<span class="num">explicitWholeNumber = <span class="fun">int64</span>(18);</span>
+
+<span class="fun">class</span>(studentName)
+<span class="fun">class</span>(age)
+<span class="fun">class</span>(temperature)
+<span class="fun">class</span>(labCompleted)
+<span class="fun">class</span>(explicitWholeNumber)
+<span class="fun">whos</span>
+
+<span class="com">% Observation: Why are age and temperature both double?</span>
+<span class="com">% Explanation: Why does %d not declare an int64 variable?</span></div>
+        <ul class="checklist">
+          <li>Predict every class before running the script.</li>
+          <li>Compare your predictions with <code>class</code> and <code>whos</code>.</li>
+          <li>Answer both final questions in complete comment sentences.</li>
+          <li>Add one new logical variable of your own.</li>
+          <li>Save, commit and push the working file.</li>
+        </ul>
+        <div class="commit-msg"><strong>Suggested commit:</strong> <code>Add day 6 MATLAB data type observations</code></div>
+      </div>
+      <div class="page-nav"><button class="page-btn" onclick="goTo('memory')">← Lesson 5</button><button class="page-btn next" onclick="goTo('explain')">Lesson 7: Explain Your Code →</button></div>
+    </section>
+
+    <section class="page" id="page-explain">
+      <div class="hero">
+        <div class="hero-kicker">Lesson 7 · Thinking and speaking like a beginner programmer</div>
+        <h1>Explain Your Code Clearly</h1>
+        <p>Technical vocabulary is not decoration. It lets you describe exactly what the program does, identify mistakes and ask useful questions when you need help.</p>
+      </div>
+      <div class="objective"><strong>By the end:</strong> you can explain a short <code>.m</code> file using purpose, inputs, variables, expressions, processing and output—and know when you are ready for Guide 1.</div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag words">WORDS</span><span class="block-title">Replace vague phrases with precise beginner language</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <table class="terms">
+            <thead><tr><th>Vague wording</th><th>Clearer programming wording</th></tr></thead>
+            <tbody>
+              <tr><td>“It puts 5 in x.”</td><td>“It assigns the value 5 to the variable <code>x</code>.”</td></tr>
+              <tr><td>“It does the maths.”</td><td>“It evaluates the arithmetic expression.”</td></tr>
+              <tr><td>“It remembers the answer.”</td><td>“It stores the result in the variable.”</td></tr>
+              <tr><td>“It prints it.”</td><td>“It displays formatted output in the Command Window.”</td></tr>
+              <tr><td>“The code is broken.”</td><td>“MATLAB reports an undefined-variable error on line 4.”</td></tr>
+              <tr><td>“That decimal thing.”</td><td>“That value is stored using the <code>double</code> floating-point class.”</td></tr>
+            </tbody>
+          </table>
+          <p>You do not need to sound advanced. You need to name the part you are discussing: value, variable, expression, statement, function, argument, output or error.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag try">MODEL</span><span class="block-title">Walk through a complete script</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <div class="code-label">rectangle_report.m</div>
+          <div class="code"><span class="com">% Calculate the area of a rectangle</span>
+<span class="num">lengthMetres = 8;</span>
+<span class="num">widthMetres = 5;</span>
+<span class="num">areaSquareMetres = lengthMetres * widthMetres;</span>
+
+<span class="fun">fprintf</span>(<span class="txt">'Area = %.2f square metres\n'</span>, areaSquareMetres);</div>
+          <div class="worked">
+            <div class="worked-label">A strong beginner explanation</div>
+            <p>“This script calculates and displays the area of a rectangle. The first comment describes the purpose of the script. The next two assignment statements store the rectangle's length and width in meaningfully named variables. MATLAB stores these ordinary numeric values as doubles by default.</p>
+            <p>The expression <code>lengthMetres * widthMetres</code> multiplies the two values. MATLAB assigns the result to <code>areaSquareMetres</code>. Finally, the script calls <code>fprintf</code> to display a message containing the result and its units. The <code>%.2f</code> placeholder displays the value with two digits after the decimal point.”</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">STRUCTURE</span><span class="block-title">Seven prompts for explaining any beginner script</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <ol>
+            <li><strong>Purpose:</strong> What problem does the script solve?</li>
+            <li><strong>Inputs:</strong> What starting information does it use?</li>
+            <li><strong>Variables:</strong> What names store the important values?</li>
+            <li><strong>Processing:</strong> Which expressions or functions produce new values?</li>
+            <li><strong>Order:</strong> In what sequence do the statements execute?</li>
+            <li><strong>Output:</strong> What result is displayed, returned or saved?</li>
+            <li><strong>Assumptions or errors:</strong> What input is expected, and what could go wrong?</li>
+          </ol>
+          <div class="say"><strong>Useful sentence starters:</strong> “This script calculates…”, “This statement assigns…”, “MATLAB evaluates…”, “The function receives…”, “The result is stored…”, and “The final statement displays…”</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag try">FINAL TASK</span><span class="block-title">Write, change and explain your own version</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>Create <code>journey_report.m</code>. Do not copy the completed answer immediately. Build it one line at a time.</p>
+          <ol>
+            <li>Create a variable for a journey distance of 175 km.</li>
+            <li>Create a variable for a journey time of 2.8 hours.</li>
+            <li>Calculate the average speed.</li>
+            <li>Display a sentence with the answer to one decimal place and the unit km/h.</li>
+            <li>Run <code>whos</code> and identify each variable's class.</li>
+            <li>Change the time to 3.2 hours and predict whether the speed rises or falls.</li>
+            <li>Explain the finished script aloud using the seven prompts above.</li>
+          </ol>
+          <div class="worked">
+            <div class="worked-label">Reveal only after attempting it</div>
+            <div class="code"><span class="com">% Calculate average speed for a journey</span>
+<span class="num">distanceKm = 175;</span>
+<span class="num">timeHours = 2.8;</span>
+<span class="num">averageSpeed = distanceKm / timeHours;</span>
+
+<span class="fun">fprintf</span>(<span class="txt">'Average speed = %.1f km/h\n'</span>, averageSpeed);
+<span class="fun">whos</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="practice">
+        <div class="practice-head"><span class="practice-title">Ready-for-Guide-1 checklist</span><span class="practice-hint">You may revisit any lesson</span></div>
+        <div class="practice-items">
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">✓</span><span class="q-text">Can you identify a literal, variable, expression and assignment statement in a short script?</span><span class="q-arrow">▶</span></button><div class="answer">If yes, give one example of each from <code>journey_report.m</code>. If not, revisit Lesson 2 and explain each line aloud.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">✓</span><span class="q-text">Can you explain the difference between saving a file, storing a variable and displaying a value?</span><span class="q-arrow">▶</span></button><div class="answer">Saving writes the <code>.m</code> source file to long-term storage. Assignment stores a value under a variable name in the current MATLAB session. Displaying sends readable output to the Command Window.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">✓</span><span class="q-text">Can you use <code>class</code> and <code>whos</code> without needing to memorise every data-type limit?</span><span class="q-arrow">▶</span></button><div class="answer">That is the correct goal. You should be able to inspect a variable and describe its type. Extreme numeric limits can be learned later when they solve a real problem.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">✓</span><span class="q-text">Can you read a simple MATLAB error, identify the named line or variable and try one correction?</span><span class="q-arrow">▶</span></button><div class="answer">You are ready to continue even if you still need help. Debugging is an ordinary part of programming, not something mastered before programming begins.</div></div>
+        </div>
+      </div>
+      <div class="github-task">
+        <div class="github-head"><span class="github-label">LESSON 7 · FINAL GITHUB DELIVERABLE</span><span class="github-file">day07_journey_report.m</span></div>
+        <h3>Finish with a script you can explain aloud</h3>
+        <p>Use the journey task above as the starting point, but add your own comments. The repository evidence should show both working code and your growing technical vocabulary.</p>
+        <ul class="checklist">
+          <li>Include a purpose comment at the beginning.</li>
+          <li>Use meaningful variable names that include units where helpful.</li>
+          <li>Calculate average speed and display it with units.</li>
+          <li>Use <code>whos</code> to inspect the final Workspace.</li>
+          <li>Add comments identifying one literal, variable, expression, assignment statement, function and argument.</li>
+          <li>Run the entire script successfully.</li>
+          <li>Explain it aloud using purpose → inputs → processing → output.</li>
+          <li>Commit and push the final file.</li>
+        </ul>
+        <div class="commit-msg"><strong>Suggested commit:</strong> <code>Complete programming foundations journey report</code></div>
+      </div>
+      <div class="reassure" style="margin-top:20px"><strong>You do not need perfect recall before moving on.</strong> If you can write the journey script, change its inputs and explain its lines with reasonable terminology, continue to Guide 1. Return here whenever a foundational word becomes unclear.</div>
+      <div class="page-nav"><button class="page-btn" onclick="goTo('types')">← Lesson 6</button><a class="page-btn next" href="guide1-matlab-fundamentals.html">Continue to Guide 1 →</a></div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+const PAGES=['home','calculate','variables','output','scripts','memory','types','explain'];
+const NAMES={home:'Welcome',calculate:'1. Calculate & Observe',variables:'2. Values & Variables',output:'3. Displaying Results',scripts:'4. Scripts & Errors',memory:'5. Memory, Bits & Bytes',types:'6. Data Types—Gently',explain:'7. Explain Your Code'};
+let visited=new Set(['home']);
+function goTo(id){
+  const target=document.getElementById('page-'+id);
+  if(!target)return;
+  PAGES.forEach(p=>document.getElementById('page-'+p)?.classList.remove('active'));
+  target.classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(link=>{
+    link.classList.remove('active');
+    if(link.getAttribute('onclick')?.includes("'"+id+"'"))link.classList.add('active');
+  });
+  document.getElementById('crumb').textContent=NAMES[id]||id;
+  visited.add(id);
+  document.getElementById('progress').style.width=Math.round(visited.size/PAGES.length*100)+'%';
+  window.scrollTo(0,0);
+  history.replaceState(null,'','#'+id);
+}
+function toggleBlock(head){
+  const body=head.nextElementSibling,chev=head.querySelector('.chev'),open=body.classList.contains('open');
+  body.classList.toggle('open',!open);chev.classList.toggle('open',!open);head.setAttribute('aria-expanded',String(!open));
+}
+function toggleAnswer(head){
+  const answer=head.nextElementSibling,arrow=head.querySelector('.q-arrow'),open=answer.classList.contains('open');
+  answer.classList.toggle('open',!open);arrow.classList.toggle('open',!open);head.setAttribute('aria-expanded',String(!open));
+}
+function expandAll(){
+  const page=document.querySelector('.page.active');
+  page.querySelectorAll('.block-body').forEach(body=>{body.classList.add('open');body.previousElementSibling.querySelector('.chev').classList.add('open');});
+  page.querySelectorAll('.answer').forEach(answer=>{answer.classList.add('open');answer.previousElementSibling.querySelector('.q-arrow').classList.add('open');});
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.block-head,.q-head').forEach(button=>button.setAttribute('aria-expanded','false'));
+  const hash=location.hash.replace(/^#/,'');
+  if(PAGES.includes(hash))goTo(hash);
+  else document.getElementById('progress').style.width=Math.round(1/PAGES.length*100)+'%';
+});
+</script>
+</body>
+</html>
