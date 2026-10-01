@@ -182,7 +182,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:#edf0f4;co
         <div class="lesson-card" onclick="goTo('variables')"><div class="lesson-no">LESSON 2</div><div class="lesson-title">Values &amp; Variables</div><div class="lesson-desc">Give values useful names and understand assignment from right to left.</div></div>
         <div class="lesson-card" onclick="goTo('output')"><div class="lesson-no">LESSON 3</div><div class="lesson-title">Displaying Results</div><div class="lesson-desc">Start with <code>disp</code>, then build one friendly <code>fprintf</code> message.</div></div>
         <div class="lesson-card" onclick="goTo('scripts')"><div class="lesson-no">LESSON 4</div><div class="lesson-title">Scripts &amp; Errors</div><div class="lesson-desc">Save instructions in an <code>.m</code> file, run them in order and read simple errors calmly.</div></div>
-        <div class="lesson-card" onclick="goTo('memory')"><div class="lesson-no">LESSON 5</div><div class="lesson-title">Memory, Bits &amp; Bytes</div><div class="lesson-desc">Connect the Workspace to RAM before learning the small amount of binary you need.</div></div>
+        <div class="lesson-card" onclick="goTo('memory')"><div class="lesson-no">LESSON 5</div><div class="lesson-title">Memory, Bits &amp; Bytes</div><div class="lesson-desc">Connect the Workspace to the computer's temporary working memory before learning the small amount of binary you need.</div></div>
         <div class="lesson-card" onclick="goTo('types')"><div class="lesson-no">LESSON 6</div><div class="lesson-title">Data Types—Gently</div><div class="lesson-desc">Recognise numbers, text and true/false values without memorising extreme limits.</div></div>
         <div class="lesson-card" onclick="goTo('explain')"><div class="lesson-no">LESSON 7</div><div class="lesson-title">Explain Your Code</div><div class="lesson-desc">Use correct beginner terminology to explain a complete calculation script.</div></div>
       </div>
@@ -415,7 +415,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:#edf0f4;co
         <h1>Displaying Results Clearly</h1>
         <p>A useful program should communicate what its answer means. Begin with <code>disp</code>; then use <code>fprintf</code> when you need text, units and controlled decimal places.</p>
       </div>
-      <div class="objective"><strong>By the end:</strong> you can distinguish storing a value from displaying it, use <code>disp</code>, and explain the important parts of one <code>fprintf</code> statement.</div>
+      <div class="objective"><strong>By the end:</strong> you can distinguish storing a value from displaying it, use <code>disp</code>, explain floating-point values and newlines, and describe the important parts of one <code>fprintf</code> statement.</div>
 
       <div class="block">
         <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">IDEA</span><span class="block-title">Storing and displaying are different actions</span><span class="chev">▶</span></button>
@@ -439,9 +439,60 @@ code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:#edf0f4;co
       </div>
 
       <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">BEFORE %f</span><span class="block-title">What is a floating-point value?</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>Some quantities are not whole numbers. A temperature might be 23.6°C, a journey might take 2.5 hours, and a calculated area might be 12.75 square metres. A computer needs a way to represent both the whole part and the fractional part of these values.</p>
+          <p>A <strong>floating-point value</strong> is a computer's practical representation of a number that may contain a fractional part and may be very large or very small. The name “floating point” refers to the way the number's point can effectively move as the size of the number changes. You do not need to understand its internal bits yet.</p>
+          <div class="code"><span class="num">temperature = 23.6;</span>
+<span class="fun">class</span>(temperature)    <span class="com">% MATLAB reports 'double'</span>
+
+<span class="num">area = 40;</span>
+<span class="fun">class</span>(area)           <span class="com">% MATLAB also reports 'double'</span></div>
+          <p>MATLAB normally stores numbers you type as the floating-point class <code>double</code>. Therefore, <code>temperature</code> is a floating-point value. Surprisingly, <code>area</code> is also stored as a <code>double</code>, even though its current value, 40, happens to be a whole number.</p>
+          <div class="worked">
+            <div class="worked-label">A concrete example</div>
+            <p>Suppose a vehicle travels 120 km in 2.5 hours:</p>
+            <div class="code"><span class="num">averageSpeed = 120 / 2.5;</span>   <span class="com">% result: 48</span>
+<span class="fun">class</span>(averageSpeed)          <span class="com">% 'double'</span></div>
+            <p>The calculated value is 48, but MATLAB still stores it using its ordinary floating-point class, <code>double</code>. “Floating point” describes the computer representation, not whether MATLAB happens to display a decimal point.</p>
+          </div>
+          <div class="note"><strong>Terminology:</strong> “floating point” is the general kind of numeric representation. MATLAB calls its usual 64-bit floating-point class <code>double</code> and its smaller 32-bit class <code>single</code>. MATLAB does not normally use a numeric class literally named <code>float</code>.</div>
+          <div class="say"><strong>Say:</strong> “The value 23.6 is stored as a <code>double</code>, MATLAB's default floating-point numeric class.”</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">BEFORE \n</span><span class="block-title">What is a newline?</span><span class="chev">▶</span></button>
+        <div class="block-body">
+          <p>Text output is arranged in horizontal <strong>lines</strong>. A <strong>newline</strong> is an invisible control instruction that ends the current line and makes the next output begin at the left side of the following line. It is similar to pressing Enter while typing a document.</p>
+          <p>Inside an <code>fprintf</code> format string, MATLAB represents this instruction using <code>\n</code>. The backslash tells MATLAB that the following letter has a special meaning. Together, <code>\n</code> is called an <strong>escape sequence</strong>. MATLAB performs the newline instruction; it does not normally print a backslash followed by the letter <code>n</code>.</p>
+          <div class="worked">
+            <div class="worked-label">Without newlines</div>
+            <div class="code"><span class="fun">fprintf</span>(<span class="txt">'Speed = 48 km/h'</span>);
+<span class="fun">fprintf</span>(<span class="txt">'Calculation complete'</span>);</div>
+            <p>The second message starts immediately after the first:</p>
+            <div class="code">Speed = 48 km/hCalculation complete</div>
+          </div>
+          <div class="worked">
+            <div class="worked-label">With newlines</div>
+            <div class="code"><span class="fun">fprintf</span>(<span class="txt">'Speed = 48 km/h\n'</span>);
+<span class="fun">fprintf</span>(<span class="txt">'Calculation complete\n'</span>);</div>
+            <p>Each <code>\n</code> ends its line, so the output is easier to read:</p>
+            <div class="code">Speed = 48 km/h
+Calculation complete</div>
+          </div>
+          <p>Placing <code>\n</code> at the end of the final message also ensures that MATLAB's next output or command prompt begins on a fresh line.</p>
+          <div class="warning"><strong>Do not confuse <code>\n</code> with a semicolon.</strong> A semicolon after a MATLAB statement suppresses automatic output. A <code>\n</code> inside an <code>fprintf</code> format string deliberately creates a line break in the text that you are printing.</div>
+          <div class="say"><strong>Say:</strong> “The escape sequence <code>\n</code> inserts a newline, ending the current output line so later output begins on the next line.”</div>
+        </div>
+      </div>
+
+      <div class="block">
         <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">NEXT STEP</span><span class="block-title">Build one <code>fprintf</code> statement slowly</span><span class="chev">▶</span></button>
         <div class="block-body">
           <div class="code"><span class="fun">fprintf</span>(<span class="txt">'The area is %.2f square metres.\n'</span>, area);</div>
+          <p>Now the <code>f</code> in <code>%.2f</code> has a meaning: it tells <code>fprintf</code> to insert a floating-point numeric value and show it in ordinary decimal notation.</p>
+          <p>The <code>\n</code> also has a known purpose: after the area message is displayed, it ends that output line.</p>
           <p>Read the statement in parts:</p>
           <ul>
             <li><code>fprintf</code> is the function being called.</li>
@@ -476,6 +527,8 @@ code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:#edf0f4;co
           <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">B</span><span class="q-text">What does <code>%.1f</code> request in an <code>fprintf</code> format string?</span><span class="q-arrow">▶</span></button><div class="answer">It requests a floating-point value displayed with one digit after the decimal point.</div></div>
           <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">C</span><span class="q-text">Does <code>fprintf('%.2f', x)</code> convert <code>x</code> permanently into a different data type?</span><span class="q-arrow">▶</span></button><div class="answer">No. It only controls the appearance of this output. The stored variable and its class remain unchanged.</div></div>
           <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">D</span><span class="q-text">What is the purpose of <code>\n</code>?</span><span class="q-arrow">▶</span></button><div class="answer"><code>\n</code> inserts a newline, so later output starts on the next line.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">E</span><span class="q-text">If <code>area = 40;</code>, can <code>area</code> still contain a floating-point value even though 40 is a whole number?</span><span class="q-arrow">▶</span></button><div class="answer">Yes. MATLAB stores an ordinary numeric literal such as 40 as a <code>double</code> by default. Floating point describes how MATLAB represents the value, not whether the displayed value currently has a visible fractional part.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">F</span><span class="q-text">What is the difference between ending a statement with <code>;</code> and putting <code>\n</code> inside an <code>fprintf</code> format string?</span><span class="q-arrow">▶</span></button><div class="answer">The semicolon suppresses MATLAB's automatic display of a statement's result. The <code>\n</code> escape sequence deliberately inserts a line break in text produced by <code>fprintf</code>.</div></div>
         </div>
       </div>
       <div class="github-task">
@@ -493,10 +546,12 @@ code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:#edf0f4;co
 <span class="fun">fprintf</span>(<span class="txt">'Average speed = %.1f km/h\n'</span>, averageSpeed);
 
 <span class="com">% Observation: Which output is easiest to understand, and why?</span>
-<span class="com">% Explanation: What does %.1f control?</span></div>
+<span class="com">% Explanation: What does %.1f control?</span>
+<span class="com">% Explanation: What does \n do?</span></div>
         <ul class="checklist">
           <li>Run the file and compare all three output styles.</li>
           <li>Change <code>%.1f</code> to <code>%.2f</code> and describe only the display change.</li>
+          <li>Temporarily remove <code>\n</code>, add another <code>disp</code> or <code>fprintf</code> line, and observe where its output begins. Then restore <code>\n</code>.</li>
           <li>Add a second <code>fprintf</code> line reporting the journey time.</li>
           <li>Save, commit and push the working file.</li>
         </ul>
@@ -630,14 +685,21 @@ code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:#edf0f4;co
       <div class="block">
         <button class="block-head" onclick="toggleBlock(this)"><span class="tag idea">IDEA</span><span class="block-title">Storage is not the same as working memory</span><span class="chev">▶</span></button>
         <div class="block-body">
-          <p>Your <code>average_speed.m</code> file is saved on long-term storage, normally an SSD. It remains there after MATLAB closes.</p>
-          <p>When the script runs, MATLAB creates values such as <code>distanceKm</code> and <code>averageSpeed</code> in its current working memory, or RAM. MATLAB shows these values in the Workspace.</p>
+          <p>A computer needs somewhere to keep files even when it is turned off. This is called <strong>long-term storage</strong>. Your photographs, documents, installed programs and saved MATLAB <code>.m</code> files all live on a storage device.</p>
+          <div class="worked">
+            <div class="worked-label">What does SSD mean?</div>
+            <p><strong>SSD</strong> stands for <strong>solid-state drive</strong>. It is a storage device inside most modern computers. It stores files electronically and has no moving mechanical parts. A saved file remains on the SSD when MATLAB closes or the computer is switched off.</p>
+            <p>An older kind of storage device is an <strong>HDD</strong>, or <strong>hard disk drive</strong>. It stores information on spinning magnetic disks. Both SSDs and HDDs perform the same important beginner-level job: they keep files for later.</p>
+            <p>You do not need to know which model is inside your computer. In Windows, the main storage device often appears as the <code>C:</code> drive. A folder in that drive can contain your MATLAB repository and files such as <code>average_speed.m</code>.</p>
+          </div>
+          <p>Your <code>average_speed.m</code> file is therefore saved on long-term storage—usually an SSD in a modern computer. It remains there after MATLAB closes.</p>
+          <p>When the script runs, MATLAB also needs a fast temporary working area. This is <strong>RAM</strong>, which stands for <strong>random-access memory</strong>. MATLAB creates current values such as <code>distanceKm</code> and <code>averageSpeed</code> in RAM and shows them in the Workspace. These temporary Workspace values normally disappear when MATLAB closes unless you deliberately save them.</p>
           <div class="worked">
             <div class="worked-label">Helpful first analogy</div>
-            <p><strong>Storage is a filing cabinet.</strong> Files remain there until they are deleted.</p>
-            <p><strong>RAM is the working desk.</strong> It holds information being used now. Closing MATLAB normally clears its current Workspace unless you deliberately save the data.</p>
+            <p><strong>The SSD or HDD is like a filing cabinet.</strong> Files remain there for later, even after the working day ends.</p>
+            <p><strong>RAM is like the working desk.</strong> It holds information being used right now and is cleared when the computer session ends.</p>
           </div>
-          <div class="say"><strong>Say:</strong> “The <code>.m</code> source file is stored on the drive. Running it creates variables in MATLAB's Workspace, which uses working memory.”</div>
+          <div class="say"><strong>Say:</strong> “The <code>.m</code> source file is kept on long-term storage, usually an SSD. Running it creates temporary variables in MATLAB's Workspace, which uses RAM.”</div>
         </div>
       </div>
 
@@ -692,9 +754,10 @@ code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:#edf0f4;co
         <div class="practice-head"><span class="practice-title">Check your understanding</span><span class="practice-hint">Keep the model simple</span></div>
         <div class="practice-items">
           <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">A</span><span class="q-text">What is the difference between the saved script and a Workspace variable?</span><span class="q-arrow">▶</span></button><div class="answer">The script is a source-code file saved on long-term storage. A Workspace variable is a currently available value created while MATLAB is running and held in working memory.</div></div>
-          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">B</span><span class="q-text">How many bits are in one byte?</span><span class="q-arrow">▶</span></button><div class="answer">Eight bits form one byte.</div></div>
-          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">C</span><span class="q-text">Convert <code>101</code> from binary to decimal.</span><span class="q-arrow">▶</span></button><div class="answer">The place values are 4, 2 and 1, so 101<sub>2</sub> = 1(4) + 0(2) + 1(1) = 5<sub>10</sub>.</div></div>
-          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">D</span><span class="q-text">Does <code>clear x</code> delete the <code>.m</code> file that created <code>x</code>?</span><span class="q-arrow">▶</span></button><div class="answer">No. It removes <code>x</code> from the current Workspace. It does not delete the saved source file.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">B</span><span class="q-text">What is an SSD, and what happens to a file stored there when MATLAB closes?</span><span class="q-arrow">▶</span></button><div class="answer">An SSD is a solid-state drive: an electronic long-term storage device. A saved file remains on it after MATLAB closes and after the computer is switched off.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">C</span><span class="q-text">How many bits are in one byte?</span><span class="q-arrow">▶</span></button><div class="answer">Eight bits form one byte.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">D</span><span class="q-text">Convert <code>101</code> from binary to decimal.</span><span class="q-arrow">▶</span></button><div class="answer">The place values are 4, 2 and 1, so 101<sub>2</sub> = 1(4) + 0(2) + 1(1) = 5<sub>10</sub>.</div></div>
+          <div class="q"><button class="q-head" onclick="toggleAnswer(this)"><span class="q-num">E</span><span class="q-text">Does <code>clear x</code> delete the <code>.m</code> file that created <code>x</code>?</span><span class="q-arrow">▶</span></button><div class="answer">No. It removes <code>x</code> from the current Workspace in RAM. It does not delete the saved source file from long-term storage.</div></div>
         </div>
       </div>
       <div class="github-task">
