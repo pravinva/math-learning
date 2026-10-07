@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENGG100 MATLAB from Zero</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1B2431; --red:#FF3621; --ink:#1B2431; --muted:#5B6576;
+  --paper:#FBFCFD; --line:rgba(27,36,49,.06); --line2:rgba(27,36,49,.11);
+  --code:#EEF1F5; --comment:#6E7A8A; --ok:#1F7A4D; --okbg:#E6F4EC;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:Barlow,system-ui,sans-serif;color:var(--ink);font-size:17px;line-height:1.6;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--line2) 1px,transparent 1px),linear-gradient(90deg,var(--line2) 1px,transparent 1px),
+    linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px;
+}
+.app{display:grid;grid-template-columns:270px 1fr;min-height:100%}
+nav{background:var(--navy);color:#fff;padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+nav h1{font-size:20px;line-height:1.25;margin:0 22px 4px;font-weight:700}
+nav .sub{font-size:14px;color:#AEB7C4;margin:0 22px 18px}
+.course-links{display:flex;gap:7px;flex-wrap:wrap;margin:0 22px 18px}
+.course-links a{font-size:12px;color:#D7DCE3;text-decoration:none;border:1px solid rgba(255,255,255,.22);border-radius:4px;padding:4px 8px}
+.course-links a:hover{color:#fff;border-color:rgba(255,255,255,.55)}
+.prog{margin:0 22px 20px}
+.bar{height:6px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--red);transition:width .3s}
+.prog small{display:block;color:#AEB7C4;font-size:13px;margin-top:6px}
+nav ol{list-style:none;margin:0;padding:0;counter-reset:m}
+nav li button{
+  all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:flex;gap:10px;align-items:baseline;
+  padding:9px 22px;font-size:15.5px;color:#D7DCE3;border-left:3px solid transparent
+}
+nav li button:hover{background:rgba(255,255,255,.06)}
+nav li button:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+nav li button.active{color:#fff;border-left-color:var(--red);background:rgba(255,255,255,.08)}
+nav li .n{font-family:'Roboto Mono',monospace;font-size:12px;color:#8C96A5;min-width:18px}
+nav li .tick{margin-left:auto;color:var(--red);font-size:13px;visibility:hidden}
+nav li button.done .tick{visibility:visible}
+main{padding:44px 6vw 80px;max-width:980px}
+section{display:none}
+section.show{display:block}
+.kicker{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--red)}
+h2{font-size:34px;line-height:1.15;margin:4px 0 14px;font-weight:700}
+h3{font-size:21px;margin:34px 0 8px;font-weight:600}
+p,li{max-width:70ch}
+.lead{font-size:19px;color:#2F3A4B}
+code{font-family:'Roboto Mono',monospace;font-size:.88em;background:var(--code);padding:1px 5px;border-radius:3px}
+pre{
+  font-family:'Roboto Mono',monospace;font-size:14.5px;line-height:1.55;background:var(--code);
+  border-left:3px solid var(--navy);padding:14px 16px;margin:14px 0;overflow-x:auto;border-radius:0 4px 4px 0
+}
+pre .c{color:var(--comment)}
+pre.out{background:#fff;border:1px solid var(--line2);border-left:3px solid var(--comment)}
+.key{border:1px solid var(--navy);background:#fff;padding:14px 18px;margin:20px 0;border-radius:4px}
+.key strong{color:var(--red)}
+.warn{border-left:3px solid var(--red);background:#FFF4F2;padding:12px 16px;margin:18px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;background:#fff;font-size:15.5px}
+.tw{overflow-x:auto}
+th,td{border:1px solid var(--line2);padding:8px 12px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+td:first-child{font-family:'Roboto Mono',monospace;white-space:nowrap}
+.q{background:#fff;border:1px solid var(--line2);border-top:3px solid var(--red);padding:14px 18px;margin:16px 0;border-radius:0 0 4px 4px}
+.q p{margin:0 0 6px}
+.q button,.btn{
+  font:inherit;font-size:15px;font-weight:600;cursor:pointer;border:1px solid var(--navy);
+  background:#fff;color:var(--navy);padding:6px 14px;border-radius:4px
+}
+.q button:hover,.btn:hover{background:var(--navy);color:#fff}
+.q button:focus-visible,.btn:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.ans{display:none;margin-top:10px;padding:10px 14px;background:var(--okbg);border-left:3px solid var(--ok)}
+.ans.open{display:block}
+.ans pre{background:#fff;margin:8px 0}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:44px;padding-top:20px;border-top:1px solid var(--line2);flex-wrap:wrap}
+.jump{all:unset;cursor:pointer;font-family:'Roboto Mono',monospace;color:var(--red);text-decoration:underline;padding:0 4px}.jump:focus-visible{outline:2px solid var(--red)}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff}
+.btn.primary:hover{background:#D92A17;border-color:#D92A17}
+.btn.donebtn.isdone{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+/* logical indexing lab */
+.lab{background:#fff;border:1px solid var(--navy);padding:18px;margin:22px 0;border-radius:4px}
+.lab .row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;align-items:center}
+.lab .lbl{font-family:'Roboto Mono',monospace;font-size:14px;min-width:120px;color:var(--muted)}
+.cell{
+  font-family:'Roboto Mono',monospace;width:58px;text-align:center;padding:8px 0;border:1.5px solid var(--navy);
+  border-radius:3px;transition:background .25s,color .25s,opacity .25s
+}
+.cell.on{background:var(--red);border-color:var(--red);color:#fff}
+.cell.off{opacity:.35}
+.cell.bit{border-style:dashed}
+.cell.bit.t{border-style:solid;border-color:var(--red);color:var(--red);font-weight:600}
+.conds{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.conds button{font-family:'Roboto Mono',monospace;font-size:13.5px;font-weight:500}
+.conds button.sel{background:var(--navy);color:#fff}
+.lab pre{margin:10px 0 0}
+svg.plot{width:100%;max-width:560px;height:auto;background:#fff;border:1px solid var(--line2);display:block;margin:14px 0}
+
+pre.pc{border-left:3px dashed var(--red);background:#fff;font-size:14px}
+.prob{background:#fff;border:1px solid var(--navy);padding:18px 20px;margin:26px 0;border-radius:4px}
+.prob h3{margin:0 0 6px}
+.tag{display:inline-block;font-size:13px;font-weight:600;padding:1px 8px;border-radius:3px;margin-left:8px;vertical-align:middle}
+.tag.s{background:#E6F4EC;color:var(--ok)}.tag.c{background:#E8ECF2;color:var(--navy)}.tag.x{background:#FFE9E5;color:#B8230F}
+.practises{color:var(--muted);font-size:15px;margin:0 0 12px}
+.prob > button{font:inherit;font-size:15px;font-weight:600;cursor:pointer;border:1px solid var(--navy);background:#fff;color:var(--navy);padding:6px 14px;border-radius:4px;margin:6px 8px 0 0}
+.prob > button:hover{background:var(--navy);color:#fff}
+.prob > button:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.prob > .ans{background:#F6F8FB;border-left:3px solid var(--navy)}
+.prob > .ans h4{margin:4px 0 4px;font-size:16px}
+ol.steps li{margin-bottom:6px}
+svg.flow{width:100%;max-width:560px;height:auto;display:block;margin:16px 0;background:#fff;border:1px solid var(--line2)}
+svg.flow text{font-family:Barlow,sans-serif;font-size:13px;fill:#1B2431}
+@media (max-width:820px){
+  html,body,.app,nav,main,section{width:100%;max-width:100%;min-width:0}
+  .app{grid-template-columns:1fr}
+  nav{position:static;height:auto;padding:18px 0 10px}
+  nav ol{display:flex;width:100%;max-width:100%;min-width:0;overflow-x:auto;padding:0 12px}
+  nav li button{white-space:nowrap;border-left:none;border-bottom:3px solid transparent;padding:8px 12px}
+  nav li button.active{border-bottom-color:var(--red)}
+  main{padding:28px 18px 60px}
+  pre,.tw,.lab,.prob,svg{max-width:100%;min-width:0}
+  h2{font-size:28px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<nav aria-label="Lessons">
+  <h1>MATLAB from Zero</h1>
+  <p class="sub">ENGG100 / DPEN100 foundations. No programming experience assumed.</p>
+  <div class="course-links">
+    <a href="index.html">← DPEN100 hub</a>
+    <a href="guide0-programming-foundations.html">Next: Programming Foundations →</a>
+  </div>
+  <div class="prog"><div class="bar"><span id="bar"></span></div><small id="progtxt"></small></div>
+  <ol id="navlist"></ol>
+</nav>
+<main id="main">
+
+<!-- 1 -->
+<section data-title="What a program is">
+<div class="kicker">Lesson 1 of 13</div>
+<h2>What a program is</h2>
+<p class="lead">A program is a list of instructions the computer follows from top to bottom, one line at a time. MATLAB is a calculator that can also remember results, repeat steps, and make decisions.</p>
+<p>Almost everything in ENGG100 comes down to three ideas:</p>
+<div class="key">
+<p><strong>Store</strong> values so you can use them later. Lessons 2 and 3 cover this: variables and data types.</p>
+<p><strong>Organise</strong> many values together. Lesson 4: vectors and matrices.</p>
+<p style="margin:0"><strong>Control</strong> which instructions run and how often. Lessons 5 and 6: decisions, and loops that repeat lines.</p>
+</div>
+<p>Functions (named commands that do a job, such as <code>sqrt</code> for square root; Lesson 7) and plotting are tools built on top of those three. When a new term appears, ask which of the three it belongs to. That gives it a place to sit in your head.</p>
+
+<h3>Two places to type</h3>
+<p><b>Command Window.</b> Type one line, press Enter, get an answer immediately. Use it like a calculator and for experimenting.</p>
+<p><b>Editor (a script, saved as a <code>.m</code> file).</b> A saved list of instructions. Press Run and MATLAB runs every line in order. Lab tasks and assessments go here.</p>
+<pre>3 + 4 * 2          <span class="c">% MATLAB follows normal maths order: * before +</span>
+sqrt(81)           <span class="c">% square root</span>
+pi                 <span class="c">% MATLAB already knows pi</span></pre>
+<pre class="out">ans = 11
+ans = 9
+ans = 3.1416</pre>
+<p><b>Comments.</b> Anything after a <code>%</code> on a line is a comment: a note for people reading the code. MATLAB ignores it. The grey text in the code boxes on this page is comments. Use them in your own scripts to say what each step does.</p>
+<p><b>Built-in.</b> <code>sqrt</code> and <code>pi</code> are built in: they come with MATLAB, ready to use, so you never write them yourself.</p>
+
+<h3>Housekeeping commands</h3>
+<div class="tw"><table>
+<tr><th>Command</th><th>What it does</th></tr>
+<tr><td>clc</td><td>Clears the Command Window text. Variables are untouched.</td></tr>
+<tr><td>clear</td><td>Deletes every variable. <code>clear x</code> deletes only <code>x</code>.</td></tr>
+<tr><td>close all</td><td>Closes every figure window.</td></tr>
+<tr><td>help name</td><td>Short explanation in the Command Window: <code>help sqrt</code>.</td></tr>
+<tr><td>doc name</td><td>Full documentation page with examples.</td></tr>
+</table></div>
+<p>Start every script with this line, so leftover variables from a previous run cannot affect the new one:</p>
+<pre>clc; clear; close all;</pre>
+<h3>Errors are information</h3>
+<p>Red text does not mean you broke anything. It is MATLAB telling you which line it could not understand and why. Read the last line of the message first.</p>
+<pre>y * 2</pre>
+<pre class="out">Unrecognized function or variable 'y'.</pre>
+<p>Translation: you used the name <code>y</code> before storing anything in it.</p>
+<p>Two words you will hear often. <b>Syntax</b> is MATLAB's rules for spelling and punctuation, like grammar for code. A <b>syntax error</b> means a rule was broken: a missing bracket, a misspelled name, a missing <code>end</code>. A <b>bug</b> is any mistake in a program, and <b>debugging</b> means finding and fixing it.</p>
+
+<div class="q"><p>Type this in the Command Window. What does MATLAB show?</p>
+<pre>(3 + 4) * 2</pre>
+<button>Show answer</button>
+<div class="ans"><code>ans = 14</code>. Brackets force the addition to happen first, exactly as in maths.</div></div>
+</section>
+
+<!-- 2 -->
+<section data-title="Variables">
+<div class="kicker">Lesson 2 of 13 / Store</div>
+<h2>Variables: labelled boxes</h2>
+<p class="lead">A variable is a labelled box that holds a value. You make one by writing a name, an equals sign, and a value.</p>
+<pre>x = 5              <span class="c">% put 5 into a box labelled x</span>
+speed = 12.5       <span class="c">% names can be words</span>
+area = speed * 2   <span class="c">% use boxes to fill other boxes</span></pre>
+
+<div class="key"><p style="margin:0">In MATLAB, <strong>=</strong> means <strong>store</strong>. It does not mean "is equal to". The right side is worked out first, then the result is put in the box on the left.</p></div>
+<p>Storing a value in a variable this way is called <b>assignment</b>.</p>
+<p>That is why this line, which is nonsense in maths, makes perfect sense in a program:</p>
+<pre>x = x + 1          <span class="c">% take what is in x, add 1, put the result back in x</span></pre>
+
+<h3>The semicolon</h3>
+<p>A semicolon at the end of a line stops MATLAB from printing the result. The value is still stored.</p>
+<pre>a = 10;            <span class="c">% stored, nothing printed</span>
+a                  <span class="c">% typing just the name shows the contents</span></pre>
+<p>Semicolons (or commas) also let you put several short commands on one line. Each one still runs in order, left to right:</p>
+<pre>x = 2; y = 3; z = x + y</pre>
+
+<h3>Naming rules</h3>
+<ul>
+<li>Start with a letter. Letters, digits and underscores only: <code>v_max</code>, <code>t2</code>.</li>
+<li>Case matters: <code>Speed</code> and <code>speed</code> are two different boxes.</li>
+<li>Do not reuse names MATLAB already uses, such as <code>sum</code>, <code>max</code>, or <code>i</code>. You will hide the built-in tool.</li>
+</ul>
+<p>The <b>Workspace</b> panel lists every box that currently exists and what is in it. <code>ans</code> is the automatic box for results you did not name.</p>
+
+<h3>Seeing what is in the boxes</h3>
+<pre>disp(x)            <span class="c">% shows only the value, without "x ="</span>
+disp('Done')       <span class="c">% shows text</span>
+who                <span class="c">% lists the names of all variables</span>
+whos               <span class="c">% names plus size and type of each</span></pre>
+<p><code>disp</code> is the simplest way to show results from a script. Lesson 3 covers <code>fprintf</code> for formatted output.</p>
+<div class="q"><p>What is in <code>b</code> at the end?</p>
+<pre>a = 3;
+b = a * 2;
+a = 10;</pre>
+<button>Show answer</button>
+<div class="ans"><code>b = 6</code>. When line 2 ran, <code>a</code> held 3, so 6 went into <code>b</code>. Changing <code>a</code> afterwards does not go back and update <code>b</code>. Lines run once, in order.</div></div>
+
+<div class="q"><p>What is in <code>x</code> at the end?</p>
+<pre>x = 4;
+x = x + 1;
+x = x * 2;</pre>
+<button>Show answer</button>
+<div class="ans"><code>x = 10</code>. 4, then 5, then 10.</div></div>
+</section>
+
+<!-- 3 -->
+<section data-title="Data types">
+<div class="kicker">Lesson 3 of 13 / Store</div>
+<h2>Data types: why they exist</h2>
+<p class="lead">Inside the computer, every value is stored as a pattern of 1s and 0s. The same pattern could mean a number, a letter, or a yes/no. The data type is the label that tells MATLAB how to read the pattern and which operations make sense.</p>
+<p>Think of <code>1/2</code> written on paper. It could be a fraction or a date. You need to know which before you can do anything with it. Types settle that question.</p>
+
+<h3>The types you need now</h3>
+<div class="tw"><table>
+<tr><th>Type</th><th>What it holds</th><th>Example</th></tr>
+<tr><td>double</td><td>Numbers. The default for anything numeric.</td><td><code>x = 9.81</code></td></tr>
+<tr><td>char</td><td>Text in single quotes. A row of individual characters.</td><td><code>name = 'beam'</code></td></tr>
+<tr><td>string</td><td>Text in double quotes. Treated as one piece of text.</td><td><code>name = "beam"</code></td></tr>
+<tr><td>logical</td><td>Yes/no answers: <code>true</code> (1) or <code>false</code> (0).</td><td><code>ok = 5 > 3</code></td></tr>
+<tr><td>cell</td><td>A container holding mixed types together.</td><td><code>c = {5, 'hi'}</code></td></tr>
+</table></div>
+<p>Ask MATLAB what type something is with <code>class</code>:</p>
+<pre>class(42)          <span class="c">% 'double'</span>
+class('42')        <span class="c">% 'char'</span>
+class(42 > 10)     <span class="c">% 'logical'</span></pre>
+
+<h3>What goes wrong without types</h3>
+<pre>'5' + 1</pre>
+<pre class="out">ans = 54</pre>
+<p>Not 6. The text <code>'5'</code> is stored as character code 53, so MATLAB added 1 to 53. This is the reason types matter: the value looks like a number to you, but MATLAB sees a character. Convert explicitly when you need to:</p>
+<pre>str2double('5') + 1    <span class="c">% text to number: 6</span>
+num2str(6)             <span class="c">% number to text: '6'</span></pre>
+
+<h3>Formatted output: fprintf</h3>
+<p><code>fprintf</code> prints text with values slotted in. Each <b>format specifier</b> marks a slot and says which type goes there, which is why it sits in the data types lesson.</p>
+<div class="tw"><table>
+<tr><th>Specifier</th><th>Fills the slot with</th><th>Example output</th></tr>
+<tr><td>%d</td><td>A whole number</td><td><code>12</code></td></tr>
+<tr><td>%f</td><td>A decimal number (6 decimal places by default)</td><td><code>9.810000</code></td></tr>
+<tr><td>%.2f</td><td>A decimal number to 2 places</td><td><code>9.81</code></td></tr>
+<tr><td>%8.2f</td><td>2 places, padded to 8 characters wide (lines up columns)</td><td><code>&nbsp;&nbsp;&nbsp;&nbsp;9.81</code></td></tr>
+<tr><td>%e</td><td>Scientific notation: the number written as a value times a power of 10. <code>e+03</code> means &times;10<sup>3</sup>, so <code>2.5e+03</code> is 2500. Used for very large or very small numbers.</td><td><code>9.810000e+00</code></td></tr>
+<tr><td>%s</td><td>Text. <code>%10s</code> pads text to 10 characters, useful for table headings</td><td><code>beam</code></td></tr>
+<tr><td>\n</td><td>New line (not a slot)</td><td></td></tr>
+</table></div>
+<pre>fprintf('Speed: %d m/s\n', 12)
+fprintf('g = %.2f m/s^2\n', 9.81)
+fprintf('%s scored %d\n', 'Sid', 82)    <span class="c">% slots filled left to right</span></pre>
+<pre class="out">Speed: 12 m/s
+g = 9.81 m/s^2
+Sid scored 82</pre>
+<div class="warn">Forget <code>\n</code> and the next output continues on the same line. Put a decimal into <code>%d</code> and MATLAB switches to scientific notation: <code>fprintf('%d', 2.5)</code> prints <code>2.500000e+00</code>.</div>
+
+<h3>sprintf and input</h3>
+<pre>msg = sprintf('Area = %.1f', 12.566)   <span class="c">% same as fprintf, but stores the text instead of printing it</span>
+r = input('Enter radius: ');           <span class="c">% waits for a number to be typed</span>
+name = input('Your name: ', 's');      <span class="c">% the 's' makes it accept text</span></pre>
+<div class="q"><p>Give the type of each:</p>
+<pre>class(7)
+class('7')
+class(7 == 7)</pre>
+<button>Show answer</button>
+<div class="ans"><code>'double'</code>, <code>'char'</code>, <code>'logical'</code>. A comparison always produces a logical.</div></div>
+
+<div class="q"><p>Square brackets join pieces of text. What does this produce?</p>
+<pre>v = 12;
+msg = ['Speed: ' num2str(v) ' m/s']</pre>
+<button>Show answer</button>
+<div class="ans"><code>msg = 'Speed: 12 m/s'</code>. <code>num2str</code> turned 12 into text so it could be joined with the other text.</div></div>
+<div class="q"><p>Write one line that prints <code>Radius 2.50 m gives area 19.63 m^2</code> using <code>r = 2.5</code>.</p>
+<button>Show answer</button>
+<div class="ans"><pre>fprintf('Radius %.2f m gives area %.2f m^2\n', r, pi*r^2)</pre>Two slots, two values, filled in order. <code>r</code> is a single number here, so <code>r^2</code> is fine.</div></div>
+</section>
+
+<!-- 4 -->
+<section data-title="Vectors and matrices">
+<div class="kicker">Lesson 4 of 13 / Organise</div>
+<h2>Vectors and matrices</h2>
+<p class="lead">MATLAB stands for MATrix LABoratory. MATLAB treats every value as a matrix, even a single number. Once you know that, most of the brackets start to make sense.</p>
+<div class="key">
+<p>A <strong>vector</strong> is a list of numbers in a single row or a single column.</p>
+<p>A <strong>matrix</strong> is a grid of numbers arranged in rows and columns. A vector is a matrix with only one row or one column.</p>
+<p style="margin:0">Size is written <strong>rows × columns</strong>. A 2×3 matrix has 2 rows and 3 columns. A row of four numbers is 1×4. A single number is 1×1, sometimes called a <strong>scalar</strong>. Rows and columns are the two <strong>dimensions</strong> of a matrix.</p>
+</div>
+
+<h3>Building them: square brackets</h3>
+<pre>r = [1 2 3]          <span class="c">% row: separate with spaces (or commas)</span>
+c = [1; 2; 3]        <span class="c">% column: semicolon means "new row"</span>
+A = [1 2 3; 4 5 6]   <span class="c">% 2 rows, 3 columns</span>
+r'                   <span class="c">% apostrophe: turns the row into a column</span></pre>
+<p>Swapping rows and columns with <code>'</code> is called <b>transposing</b>.</p>
+
+<h3>Ranges: the colon</h3>
+<pre>1:5                  <span class="c">% 1 2 3 4 5</span>
+0:2:10               <span class="c">% start:step:stop gives 0 2 4 6 8 10</span>
+linspace(0, 1, 5)    <span class="c">% 5 evenly spaced points: 0 0.25 0.5 0.75 1</span></pre>
+
+<h3>Picking items out: round brackets</h3>
+<p>Round brackets after a variable name mean "give me the item at this position". Counting starts at 1, not 0. Each item in a vector or matrix is called an <b>element</b>. Its position number is its <b>index</b>, and picking elements by position is called <b>indexing</b>.</p>
+<pre>v = [10 20 30 40 50];
+v(2)                 <span class="c">% 20</span>
+v(end)               <span class="c">% 50: end means the last position</span>
+v(2:4)               <span class="c">% 20 30 40</span>
+v(2:end)             <span class="c">% 20 30 40 50: from position 2 to the last</span>
+A(2, 3)              <span class="c">% row 2, column 3: 6</span>
+A(:, 1)              <span class="c">% a lone colon means "all": every row of column 1</span>
+v(2) = 99;           <span class="c">% change one item</span></pre>
+<p>The position inside the brackets can be a variable instead of a typed number. MATLAB looks up what is in the variable and uses that as the position:</p>
+<pre>v = [10 20 30 40 50];
+i = 4;
+v(i)                 <span class="c">% same as v(4): 40</span></pre>
+<p>You will need this soon: some functions tell you a position, and you use that number to pick an item.</p>
+
+<h3>The dot: element-wise operations</h3>
+<p>Because everything is a matrix, <code>*</code>, <code>/</code> and <code>^</code> follow the matrix rules from your maths course: <b>matrix multiplication</b>, <b>matrix division</b> and <b>matrix power</b>. Those rules combine whole rows with whole columns. They do not simply pair up matching items.</p>
+<p>Most engineering calculations want the simple version: element 1 with element 1, element 2 with element 2, and so on. For that, put a dot in front of the symbol. Working item by item like this is called <b>element-wise</b>.</p>
+<pre>t = [1 2 3];
+t .* t               <span class="c">% 1 4 9   (each times itself)</span>
+t .^ 2               <span class="c">% 1 4 9   (each squared)</span>
+t ^ 2                <span class="c">% error: a 1x3 matrix cannot be matrix-squared</span></pre>
+<div class="key"><p style="margin:0">Rule of thumb: if you mean <strong>"do this to every number"</strong>, use <code>.*</code> <code>./</code> <code>.^</code>. Plain <code>+</code> and <code>-</code> are already element-wise.</p></div>
+
+<h3>Inspecting a matrix</h3>
+<pre>A = [1 2 3; 4 5 6];
+size(A)          <span class="c">% 2 3  (rows, columns)</span>
+length(A)        <span class="c">% 3    (the larger of rows and columns)</span>
+numel(A)         <span class="c">% 6    (total number of items)</span>
+isempty([])      <span class="c">% 1    (true: nothing in it)</span>
+zeros(2,3)       <span class="c">% 2x3 matrix of zeros, often used to set up a results box</span>
+ones(1,4)        <span class="c">% 1 1 1 1</span></pre>
+
+<h3>Maths on whole vectors</h3>
+<p>These all take a vector and work on every item, or summarise the vector into one number.</p>
+<div class="tw"><table>
+<tr><th>Function</th><th>Result for v = [4 -1 7 2]</th></tr>
+<tr><td>sum(v)</td><td>12</td></tr>
+<tr><td>mean(v)</td><td>3</td></tr>
+<tr><td>max(v), min(v)</td><td>7, -1</td></tr>
+<tr><td>sort(v)</td><td>-1 2 4 7  (<code>sort(v, 'descend')</code> reverses)</td></tr>
+<tr><td>abs(v)</td><td>4 1 7 2</td></tr>
+<tr><td>sqrt, exp</td><td>Square root, e<sup>x</sup>, applied to each item</td></tr>
+<tr><td>log, log10</td><td>Natural log (ln), base-10 log</td></tr>
+<tr><td>round(2.567, 2)</td><td>2.57  (<code>round(2.5)</code> is 3)</td></tr>
+<tr><td>floor, ceil</td><td>Round down, round up: <code>floor(2.9)</code> is 2</td></tr>
+<tr><td>mod(17, 5)</td><td>2 (remainder). <code>mod(n, 2) == 0</code> tests for even.</td></tr>
+<tr><td>0/0</td><td><code>NaN</code>, short for "Not a Number": the result of a calculation with no answer</td></tr>
+</table></div>
+
+
+<h3>Functions that give back more than one answer</h3>
+<p>So far every function has given back one result. Some give back more. <code>max</code> works out two things every time it runs: the largest value, and the position where it was found. How many of those you receive depends on how many boxes you put on the left of the <code>=</code>.</p>
+<pre>v = [4 -1 7 2];
+
+m = max(v)           <span class="c">% one box: you get only the value</span>
+[m, i] = max(v)      <span class="c">% two boxes: value, then position</span></pre>
+<pre class="out">m = 7
+
+m = 7
+i = 3</pre>
+<div class="key"><p style="margin:0">On the <strong>left</strong> of <code>=</code>, square brackets do not build a vector. They are a list of <strong>boxes to receive the outputs</strong>, filled in order. The order is fixed by the function: for <code>max</code> and <code>min</code>, value first, position second. The names are your choice.</p></div>
+<p>Why the position is useful: it lets you find the matching item in another list. If <code>v</code> holds the stresses of four rods in rod order, position 3 means rod 3:</p>
+<pre>stress = [19.89 19.10 19.45 19.49];
+[sMax, rod] = max(stress)      <span class="c">% sMax = 19.89, rod = 1</span></pre>
+<p>If you only want the position, put <code>~</code> in the first slot. It means "I don't need this output":</p>
+<pre>[~, rod] = max(stress)         <span class="c">% rod = 1, value discarded</span></pre>
+<p><code>min</code> and <code>sort</code> work the same way. <code>help max</code> lists the outputs of any function, in order.</p>
+
+<h3>Printing a table: stacking rows</h3>
+<p>Given a vector, <code>fprintf</code> reuses its pattern until every value is used, so one line prints a whole list:</p>
+<pre>fprintf('%d\n', [5 10 15])     <span class="c">% one value per line</span></pre>
+<p>To print two or more lists side by side, stack them as rows of a matrix with <code>;</code>. <code>fprintf</code> reads a matrix <b>column by column</b>, so each column, which is one item from every list, fills one line of the pattern:</p>
+<pre>speeds = [10 20 30];
+times  = [2 4 5];
+fprintf('%d m/s for %d s\n', [speeds; times])</pre>
+<pre class="out">10 m/s for 2 s
+20 m/s for 4 s
+30 m/s for 5 s</pre>
+<p>The stacked matrix is <code>[10 20 30; 2 4 5]</code>. Its first column is 10, 2, which fills the first line, and so on.</p>
+<div class="q"><p>Given <code>v = 10:10:50</code>, what are <code>v(3)</code>, <code>v(end)</code> and <code>v(2:4)</code>?</p>
+<button>Show answer</button>
+<div class="ans"><code>v</code> is <code>10 20 30 40 50</code>. So 30, 50, and <code>20 30 40</code>.</div></div>
+
+<div class="q"><p>Given <code>A = [1 2 3; 4 5 6]</code>, what is <code>A(:, 2)</code>?</p>
+<button>Show answer</button>
+<div class="ans">Every row of column 2, as a column:<pre>2
+5</pre></div></div>
+
+<div class="q"><p>You have distances <code>d = [100 200 300]</code> and times <code>t = [10 20 25]</code>. Write one line for the speed of each trip.</p>
+<button>Show answer</button>
+<div class="ans"><code>s = d ./ t</code> gives <code>10 10 12</code>. Without the dot, <code>d / t</code> attempts a matrix division and gives back a single number, which is not what you want.</div></div>
+<div class="q"><p>For <code>v = [3 1 2]</code>, what does <code>[s, i] = sort(v)</code> give?</p>
+<button>Show answer</button>
+<div class="ans"><code>s = 1 2 3</code> and <code>i = 2 3 1</code>: the positions the sorted values came from.</div></div>
+<div class="q"><p>For <code>v = [8 3 12 5]</code>, what do these give?</p>
+<pre>[m, i] = min(v)
+[~, p] = max(v)</pre>
+<button>Show answer</button>
+<div class="ans"><code>m = 3</code>, <code>i = 2</code>, then <code>p = 3</code>. In the second line the largest value (12) is discarded and only its position is kept.</div></div>
+<div class="q"><p>Times are <code>t = [0 1 2 3]</code> and heights are <code>h = [0 4 6 5]</code>. Write two lines that find the greatest height and the time it happened.</p>
+<button>Show answer</button>
+<div class="ans"><pre>[hMax, i] = max(h);    <span class="c">% hMax = 6, i = 3</span>
+tAtMax = t(i)          <span class="c">% t(3) = 2</span></pre>The position from <code>h</code> picks the matching item from <code>t</code>, because both lists are in the same order.</div></div>
+<div class="q"><p>What prints?</p>
+<pre>fprintf('%d-', [1 2 3]); fprintf('\n')</pre>
+<button>Show answer</button>
+<div class="ans"><code>1-2-3-</code>. The pattern <code>%d-</code> is reused for each value, then the second call ends the line.</div></div>
+</section>
+
+<!-- 5 -->
+<section data-title="Logicals">
+<div class="kicker">Lesson 5 of 13 / Control</div>
+<h2>Logicals: yes/no answers</h2>
+<p class="lead">A comparison asks MATLAB a question. The answer is a logical value: 1 for true, 0 for false. A program uses these answers to make decisions and to pick out values from a list.</p>
+<pre>x = 7;
+x > 5                <span class="c">% 1  (true)</span>
+x == 3               <span class="c">% 0  (false)</span></pre>
+
+<p>Symbols that compare or combine values are called <b>operators</b>. <code>+</code> and <code>*</code> are operators too.</p>
+<div class="tw"><table>
+<tr><th>Operator</th><th>Question it asks</th></tr>
+<tr><td>==</td><td>Equal? (Two signs. One sign stores.)</td></tr>
+<tr><td>~=</td><td>Not equal? The tilde <code>~</code> means NOT.</td></tr>
+<tr><td>&lt;  &gt;  &lt;=  &gt;=</td><td>Less, greater, or equal versions</td></tr>
+<tr><td>&amp;</td><td>AND: both true?</td></tr>
+<tr><td>|</td><td>OR: at least one true?</td></tr>
+<tr><td>~</td><td>NOT: flip true and false</td></tr>
+</table></div>
+
+<h3>On a vector: one answer per item</h3>
+<p>Ask a question of a whole vector and you get a vector of answers. Use that vector of answers inside round brackets and MATLAB keeps only the items marked 1. This is called logical indexing. You will use it whenever you need "only the values that pass a test".</p>
+
+<div class="lab" id="lab">
+<p style="margin:0 0 4px"><b>Try it.</b> Pick a condition and watch which marks survive.</p>
+<div class="conds" id="conds"></div>
+<div class="row"><span class="lbl">marks</span><span id="rowVals" style="display:contents"></span></div>
+<div class="row"><span class="lbl" id="condLbl">marks &gt; 60</span><span id="rowBits" style="display:contents"></span></div>
+<pre id="labOut"></pre>
+</div>
+
+<pre>marks = [45 82 67 91 38];
+marks(marks > 60)        <span class="c">% 82 67 91</span>
+sum(marks > 60)          <span class="c">% 3: counts the 1s, so 3 students passed 60</span>
+marks(marks &lt; 50) = 50;  <span class="c">% replace every mark under 50 with 50</span></pre>
+<h3>Logical helpers</h3>
+<pre>v = [3 8 1 9 4];
+find(v &gt; 4)          <span class="c">% 2 4: the positions, not the values</span>
+find(v &gt; 4, 1)       <span class="c">% 2: the second input 1 means "only the first match"</span>
+any(v &gt; 8)           <span class="c">% 1: is at least one true?</span>
+all(v &gt; 0)           <span class="c">% 1: are all true?</span>
+strcmp('steel', 'steel')   <span class="c">% 1: compare two pieces of text</span></pre>
+<p>Use <code>strcmp</code> for text, not <code>==</code>. Text is a row of characters, so <code>'abc' == 'abd'</code> compares letter by letter and gives <code>1 1 0</code>, and texts of different lengths cause an error.</p>
+<div class="warn">Inside <code>if</code> and <code>while</code> conditions on single values, you will also see <code>&amp;&amp;</code> and <code>||</code>. They mean the same AND/OR, but stop checking as soon as the answer is known. Use the doubled versions there, the single versions on vectors.</div>
+
+<div class="q"><p>With <code>x = 7</code>, what do these give?</p>
+<pre>(x > 5) &amp; (x &lt; 10)
+~(x == 7)</pre>
+<button>Show answer</button>
+<div class="ans"><code>1</code> (both true) and <code>0</code> (x == 7 is true, NOT flips it).</div></div>
+
+<div class="q"><p>Given <code>v = [3 8 1 9 4]</code>, predict each:</p>
+<pre>v &gt; 4
+v(v &gt; 4)
+sum(v &gt; 4)</pre>
+<button>Show answer</button>
+<div class="ans"><code>0 1 0 1 0</code>, then <code>8 9</code>, then <code>2</code>.</div></div>
+</section>
+
+<!-- 6 -->
+<section data-title="Decisions and loops">
+<div class="kicker">Lesson 6 of 13 / Control</div>
+<h2>Decisions and loops</h2>
+<p class="lead">So far every line runs once, top to bottom. <b>Control flow</b> means controlling that order: <code>if</code> chooses which lines run, and a <b>loop</b> repeats lines. Each section starts with a special word (<code>if</code>, <code>for</code>, <code>while</code>) and closes with <code>end</code>. The lines between the start and the <code>end</code> are called a <b>block</b>.</p>
+
+<h3>if, elseif and else: one answer out of several</h3>
+<p>Think of a row of doors with a question written on each. MATLAB walks past them in order. It goes through the first door whose answer is "yes" and ignores all the doors after it.</p>
+<ul>
+<li><code>if</code> is the first door. It asks the first question.</li>
+<li><code>elseif</code> means "otherwise, if". It asks another question, but MATLAB only gets to it when every question above it was answered "no".</li>
+<li><code>else</code> is the last door and has no question on it. It is for "anything else": whatever got a "no" from every other door ends up here.</li>
+</ul>
+<pre>temp = 25;
+if temp &gt; 30
+    disp('Hot')
+elseif temp &gt; 20
+    disp('Warm')
+else
+    disp('Cold')
+end</pre>
+<p>Follow it with <code>temp = 25</code>. Is 25 more than 30? No, move on. Is 25 more than 20? Yes, so it prints <code>Warm</code>, skips everything else, and jumps to <code>end</code>.</p>
+<p>With <code>temp = 10</code>, both questions get "no", so it falls through to <code>else</code> and prints <code>Cold</code>.</p>
+
+<h4>Why not just write separate ifs?</h4>
+<pre>if temp &gt; 30
+    disp('Hot')
+end
+if temp &gt; 20
+    disp('Warm')
+end</pre>
+<p>With <code>temp = 35</code> this prints both <code>Hot</code> and <code>Warm</code>, because each <code>if</code> is checked on its own. Joining them with <code>elseif</code> makes them one decision, so only one answer comes out.</p>
+
+<h4>The rules</h4>
+<ul>
+<li>One <code>if</code>, at the start.</li>
+<li>As many <code>elseif</code>s as you need, or none.</li>
+<li>At most one <code>else</code>, always last, and it never has a question.</li>
+<li>If there is no <code>else</code> and every answer is "no", nothing runs. That is allowed.</li>
+</ul>
+
+<div class="q"><p>Using the Hot / Warm / Cold code above, what prints for each temperature?</p>
+<pre>temp = 31
+temp = 30
+temp = 21
+temp = 20</pre>
+<button>Show answer</button>
+<div class="ans"><code>Hot</code>, <code>Warm</code>, <code>Warm</code>, <code>Cold</code>.<br>
+30 is not more than 30, so the first question says no; 30 is more than 20, so <code>Warm</code>.<br>
+20 is not more than 20, so both questions say no and <code>else</code> prints <code>Cold</code>. Watch the numbers right on the edge: <code>&gt;</code> and <code>&gt;=</code> give different answers there.</div></div>
+
+<div class="q"><p>This code has no <code>else</code>. What prints when <code>speed = 40</code>?</p>
+<pre>if speed &gt; 100
+    disp('Too fast')
+elseif speed &gt; 60
+    disp('Fast')
+end</pre>
+<button>Show answer</button>
+<div class="ans">Nothing. Both questions say no, and there is no <code>else</code> door to catch it, so MATLAB goes straight to <code>end</code>.</div></div>
+
+<h3>for: repeat a known number of times</h3>
+<pre>for k = 1:5
+    disp(k)               <span class="c">% runs 5 times; k is 1, then 2, ... then 5</span>
+end</pre>
+
+<h3>Looping through a list</h3>
+<p>The loop variable is just a number, so it can be used as a position (Lesson 4). This visits each item of a list in turn:</p>
+<pre>marks = [92 47 68];
+for k = 1:numel(marks)    <span class="c">% k is 1, 2, 3</span>
+    m = marks(k);         <span class="c">% the k-th mark</span>
+    fprintf('Student %d scored %d\n', k, m);
+end</pre>
+<p>Use this when each item needs its own decision or text output. If the same formula applies to every item, a vector operation is shorter and needs no loop.</p>
+
+<h3>while: repeat until a condition fails</h3>
+<pre>total = 0;
+n = 0;
+while total &lt; 20
+    n = n + 1;
+    total = total + n;    <span class="c">% 1, 3, 6, 10, 15, 21</span>
+end</pre>
+<div class="warn">If the condition never becomes false, a <code>while</code> loop runs forever. This is called an <b>infinite loop</b>. Press <b>Ctrl+C</b> in the Command Window to stop it.</div>
+
+<div class="key"><p style="margin:0">Choosing: you know <strong>how many times</strong> in advance, use <code>for</code>. You know <strong>when to stop</strong> but not how many times, use <code>while</code>. You need to <strong>pick between options</strong>, use <code>if</code>.</p></div>
+
+<h3>Leaving a loop early</h3>
+<pre>for k = 1:100
+    if k^2 &gt; 50
+        break                 <span class="c">% stop the whole loop now</span>
+    end
+end                           <span class="c">% k is 8 here (64 &gt; 50)</span>
+
+for k = 1:6
+    if mod(k, 2) == 0
+        continue              <span class="c">% skip the rest of this pass, go to the next k</span>
+    end
+    disp(k)                   <span class="c">% shows 1, 3, 5</span>
+end</pre>
+<h3>The accumulator pattern</h3>
+<p>Start a box at zero, add to it inside a loop. To accumulate means to build up, so a box used this way is called an <b>accumulator</b>. You will use it a lot.</p>
+<pre>total = 0;
+for k = 1:4
+    total = total + k;
+end</pre>
+
+<div class="q"><p>What is <code>total</code> after the accumulator example above?</p>
+<button>Show answer</button>
+<div class="ans"><code>10</code>. 0+1 = 1, 1+2 = 3, 3+3 = 6, 6+4 = 10.</div></div>
+<div class="q"><p>What are <code>n</code> and <code>total</code> after the <code>while</code> example?</p>
+<button>Show answer</button>
+<div class="ans"><code>n = 6</code>, <code>total = 21</code>. After n = 5 the total is 15, still under 20, so it loops once more. Then 21 fails the condition and the loop stops.</div></div>
+<div class="q"><p>Rewrite the accumulator without a loop, using a vector.</p>
+<button>Show answer</button>
+<div class="ans"><code>total = sum(1:4)</code>. MATLAB often lets a vector operation replace a loop. Learn the loop first, then look for this shortcut.</div></div>
+</section>
+
+<!-- 7 -->
+<section data-title="Functions">
+<div class="kicker">Lesson 7 of 13 / Tools</div>
+<h2>Functions: named machines</h2>
+<p class="lead">A function takes inputs, does a fixed job, and hands back outputs. Programmers say a function <b>returns</b> its outputs. You have been using them already: <code>sqrt(81)</code>, <code>sum(v)</code>, <code>class(x)</code>. Round brackets after a function name hold its inputs.</p>
+
+<h3>Writing your own</h3>
+<p>Save this in a file called <code>circleArea.m</code>. The file name must match the function name.</p>
+<pre>function A = circleArea(r)
+    <span class="c">% A is the output, r is the input</span>
+    A = pi * r.^2;
+end</pre>
+<pre>circleArea(2)              <span class="c">% 12.5664</span>
+circleArea([1 2 3])        <span class="c">% works on a vector thanks to .^</span></pre>
+<p>Variables created inside a function are private to it. The function only sees its inputs and only returns its outputs. This is deliberate: a function cannot accidentally change or overwrite the variables in your script, so you can reuse it anywhere safely.</p>
+
+<h3>Writing a function with several outputs</h3>
+<p>Lesson 4 showed that <code>max</code> can give back two answers. Now you can see how that is built: list the outputs in square brackets on the first line.</p>
+<pre>function [total, average] = summary(v)
+    total = sum(v);
+    average = mean(v);
+end</pre>
+<pre>t = summary([2 4 6])             <span class="c">% one box: only total (12)</span>
+[t, a] = summary([2 4 6])        <span class="c">% two boxes: total 12, average 4</span>
+[~, a] = summary([2 4 6])        <span class="c">% only the average</span></pre>
+<p>The built-in <code>max</code> is defined the same way, as if its first line were <code>function [value, position] = max(v)</code>. Whoever uses the function chooses how many outputs to collect, from the left.</p>
+
+<h3>One function inside another</h3>
+<p>The input to a function can be the result of another function. Code placed inside other code like this is called <b>nested</b>, like boxes packed inside boxes. MATLAB works from the inside out: the inner function runs first, and its result becomes the input of the outer one.</p>
+<pre>sqrt(abs(-16))                   <span class="c">% abs(-16) is 16, then sqrt(16) is 4</span>
+num2str(find([3 8 9] &gt; 4))       <span class="c">% find gives 2 3, num2str turns that into text '2  3'</span></pre>
+<p>If a line with one function inside another confuses you, split it into steps, storing each inner result in a variable first:</p>
+<pre>a = abs(-16);        <span class="c">% inner step first: 16</span>
+b = sqrt(a)          <span class="c">% then the outer step: 4</span></pre>
+<p>Both versions do the same thing. The same applies to loops and <code>if</code> blocks: an <code>if</code> inside a <code>for</code> loop (Problem 6) is nested too.</p>
+
+<h3>Script or function?</h3>
+<p>A script is a sequence of steps that works on whatever is in the Workspace. A function is a reusable tool with defined inputs and outputs. Lab tasks usually have a script that calls one or more functions.</p>
+<p>Stuck on any built-in function? Type <code>help sqrt</code> or <code>doc sqrt</code>.</p>
+
+<div class="q"><p>Write a function that converts Celsius to Fahrenheit (F = C × 9/5 + 32). What does it return for 100?</p>
+<button>Show answer</button>
+<div class="ans">File <code>toFahrenheit.m</code>:<pre>function f = toFahrenheit(c)
+    f = c * 9/5 + 32;
+end</pre><code>toFahrenheit(100)</code> returns <code>212</code>.</div></div>
+<div class="q"><p>What does <code>[~, pos] = min([7 3 5 3])</code> give?</p>
+<button>Show answer</button>
+<div class="ans"><code>pos = 2</code>. The smallest value 3 appears first at position 2; the value itself is discarded by <code>~</code>.</div></div>
+</section>
+
+<!-- 8 -->
+<section data-title="Plotting and files">
+<div class="kicker">Lesson 8 of 13 / Tools</div>
+<h2>Plotting and files</h2>
+<p class="lead">A plot is two vectors of the same length: one for x positions, one for y. MATLAB joins the points with lines.</p>
+<pre>x = linspace(0, 2*pi, 100);   <span class="c">% 100 x values from 0 to 2*pi</span>
+y = sin(x);                   <span class="c">% one y value for each x</span>
+plot(x, y)
+xlabel('x (rad)')
+ylabel('sin(x)')
+title('Sine wave')
+grid on</pre>
+<svg class="plot" id="sine" viewBox="0 0 560 240" role="img" aria-label="Sine wave from 0 to 2 pi"></svg>
+
+<h3>More than one line</h3>
+<pre>hold on                       <span class="c">% keep the current plot, draw on top</span>
+plot(x, cos(x), 'r--')        <span class="c">% red dashed line</span>
+legend('sin', 'cos')
+hold off</pre>
+<p>The text in quotes sets style by combining codes: colour (<code>r</code> red, <code>b</code> blue, <code>k</code> black), line (<code>-</code> solid, <code>--</code> dashed) and marker (<code>o</code> circle, <code>*</code> star). So <code>'r*'</code> is red stars with no line, and <code>'o-'</code> is circles joined by a solid line.</p>
+<p>Extra settings come as a <b>name-value pair</b>: a setting name in quotes, then its value.</p>
+<pre>plot(2, 5, 'r*', 'MarkerSize', 12)     <span class="c">% one red star, drawn larger than default</span>
+plot(x, y, 'LineWidth', 2)             <span class="c">% thicker line</span></pre>
+
+<h3>Controlling figures</h3>
+<pre>figure                        <span class="c">% open a new, empty figure window</span>
+subplot(2, 1, 1)              <span class="c">% grid of 2 rows, 1 column; draw in panel 1</span>
+plot(x, sin(x))
+subplot(2, 1, 2)              <span class="c">% now draw in panel 2</span>
+plot(x, cos(x))
+xlim([0 2*pi])                <span class="c">% set x-axis range</span>
+ylim([-1.5 1.5])              <span class="c">% set y-axis range</span>
+axis equal                    <span class="c">% same scale on both axes (circles look round)</span></pre>
+
+<h3>Getting data in and out</h3>
+<p>Lab data usually arrives as a spreadsheet or CSV file. The file must be in MATLAB's <b>Current Folder</b> (the panel on the left) or you must give its full path.</p>
+<pre>data = readmatrix('readings.csv');   <span class="c">% numbers from a CSV or Excel file into a matrix</span>
+t = data(:, 1);                      <span class="c">% column 1: time</span>
+v = data(:, 2);                      <span class="c">% column 2: velocity</span>
+writematrix([t v], 'results.csv');   <span class="c">% write a matrix out to a file</span>
+save('run1.mat', 't', 'v')           <span class="c">% save variables in MATLAB's own format</span>
+load('run1.mat')                     <span class="c">% bring them back into the Workspace</span></pre>
+<div class="q"><p>Why does this fail, and how do you fix it?</p>
+<pre>x = 0:0.1:2;
+y = x^2;</pre>
+<button>Show answer</button>
+<div class="ans"><code>x</code> is a vector, so <code>x^2</code> asks for matrix squaring, which is impossible for a 1×21 matrix. Use <code>y = x.^2</code> to square each value. Forgetting this dot is a very common mistake when plotting.</div></div>
+<div class="q"><p>Plot <code>y = 3e<sup>-t</sup></code> for t from 0 to 5.</p>
+<button>Show answer</button>
+<div class="ans"><pre>t = linspace(0, 5, 100);
+y = 3 * exp(-t);
+plot(t, y)
+xlabel('t'), ylabel('y')</pre></div></div>
+<div class="q"><p><code>readings.csv</code> has time in column 1 and temperature in column 2. Write a script that loads it and prints the highest temperature and when it happened.</p>
+<button>Show answer</button>
+<div class="ans"><pre>clc; clear; close all;
+data = readmatrix('readings.csv');
+[Tmax, i] = max(data(:, 2));
+fprintf('Max %.1f degrees at t = %.1f s\n', Tmax, data(i, 1))</pre>The position from <code>max</code> picks the matching time from column 1.</div></div>
+</section>
+
+<!-- method -->
+<section data-title="Solving a problem">
+<div class="kicker">Lesson 9 of 13 / Method</div>
+<h2>How to approach a problem</h2>
+<p class="lead">You now know the pieces. The hard part is knowing which pieces a question needs. Beginners often get stuck because they start typing MATLAB before they understand the problem. So follow the same five steps every time, and leave the typing until last.</p>
+<div class="key">
+<ol class="steps" style="margin:0;padding-left:20px">
+<li><strong>Break it down</strong> on paper: Given, Find, Rules.</li>
+<li><strong>Solve one case by hand.</strong></li>
+<li><strong>Choose the tool</strong> from the pattern in the question.</li>
+<li><strong>Write pseudocode</strong>: the plan in plain English.</li>
+<li><strong>Translate line by line</strong>, run, and check against the hand answer.</li>
+</ol></div>
+
+<h3>Step 1: Break it down</h3>
+<p>Write three headings and fill them from the question. <b>Given</b>: the inputs and their units. <b>Find</b>: what the answer must contain. <b>Rules</b>: formulas, conversions, conditions. Underline every number and every "for each", "if", "until" in the question as you read.</p>
+
+<h3>Step 2: Solve one case by hand</h3>
+<p>If you cannot do one case on paper, you cannot instruct a computer to do it. The hand answer is also your test: the program must reproduce it.</p>
+
+<h3>Step 3: Choose the tool</h3>
+<div class="tw"><table>
+<tr><th>What you notice in the question</th><th>Tool</th></tr>
+<tr><td style="font-family:Barlow;white-space:normal">"each", "every", "corresponding", a list of values, the same formula for every item</td><td>Vectors with <code>.*</code> <code>./</code> <code>.^</code></td></tr>
+<tr><td style="font-family:Barlow;white-space:normal">"how many", "which ones", "above", "below"</td><td>Logicals: <code>sum(v &gt; x)</code>, <code>find</code>, <code>v(v &gt; x)</code></td></tr>
+<tr><td style="font-family:Barlow;white-space:normal">Different rules for different cases ("if", "otherwise", grade bands)</td><td><code>if</code> / <code>elseif</code></td></tr>
+<tr><td style="font-family:Barlow;white-space:normal">A decision or text result needed for every item in a list</td><td><code>for</code> loop with <code>if</code> inside</td></tr>
+<tr><td style="font-family:Barlow;white-space:normal">"until", "keep going while", count unknown in advance</td><td><code>while</code> loop</td></tr>
+<tr><td style="font-family:Barlow;white-space:normal">A calculation you will reuse, or the question says "write a function"</td><td><code>function</code></td></tr>
+<tr><td style="font-family:Barlow;white-space:normal">"plot", "graph", "show how X changes with Y"</td><td><code>linspace</code> + <code>plot</code></td></tr>
+</table></div>
+
+<h3>Step 4: Pseudocode</h3>
+<p>Pseudocode is the plan written in structured plain English, without MATLAB's exact spelling and punctuation (its syntax). It splits the work into two smaller problems: deciding <i>what</i> to do, then deciding <i>how to type it</i>. Each pseudocode line usually becomes one or two lines of MATLAB. There is no fixed grammar; keep one action per line and indent what sits inside a loop or decision.</p>
+<pre class="pc">store loads and diameters as lists
+radius = each diameter / 2
+area = pi * each radius squared
+stress = each load / its matching area
+show radius, area, stress with units
+find the rod with the largest stress and show it</pre>
+
+<h3>Flowcharts</h3>
+<p>A flowchart is the same plan drawn as a diagram. It is most helpful when there are decisions or loops, because the branches and the loop-back arrow are easier to follow drawn than written. A straight sequence of calculations needs only pseudocode. An <b>algorithm</b> is a step-by-step method for solving a problem; pseudocode and flowcharts are two ways of writing one down. ENGG100 includes algorithm design, so expect to be asked for both.</p>
+<div class="tw"><table>
+<tr><th>Shape</th><th>Meaning</th></tr>
+<tr><td style="font-family:Barlow">Oval</td><td>Start or End</td></tr>
+<tr><td style="font-family:Barlow">Parallelogram</td><td>Input or output (read data, print results)</td></tr>
+<tr><td style="font-family:Barlow">Rectangle</td><td>Calculation, or storing a value in a variable</td></tr>
+<tr><td style="font-family:Barlow">Diamond</td><td>Decision: one way in, a Yes and a No way out</td></tr>
+<tr><td style="font-family:Barlow">Arrow</td><td>Order of steps; an arrow pointing back up is a loop</td></tr>
+</table></div>
+<p>Example: check each rod against an allowable stress and print OK or FAIL.</p>
+<svg class="flow" viewBox="0 0 560 520" role="img" aria-label="Flowchart of a rod safety check loop"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B2431"/></marker></defs><polyline points="260,46 260,62" fill="none" stroke="#1B2431" stroke-width="1.5" marker-end="url(#ah)"/><polyline points="260,98 260,118" fill="none" stroke="#1B2431" stroke-width="1.5" marker-end="url(#ah)"/><polyline points="260,154 260,174" fill="none" stroke="#1B2431" stroke-width="1.5" marker-end="url(#ah)"/><polyline points="260,210 260,227" fill="none" stroke="#1B2431" stroke-width="1.5" marker-end="url(#ah)"/><polyline points="260,301 260,337" fill="none" stroke="#1B2431" stroke-width="1.5" marker-end="url(#ah)"/><text x="272" y="324" text-anchor="start" >Yes</text><polyline points="348,265 414,265" fill="none" stroke="#1B2431" stroke-width="1.5" marker-end="url(#ah)"/><text x="380" y="257" text-anchor="middle" >No</text><polyline points="172,375 140,375" fill="none" stroke="#1B2431" stroke-width="1.5" marker-end="url(#ah)"/><text x="158" y="367" text-anchor="middle" >Yes</text><polyline points="348,375 382,375" fill="none" stroke="#1B2431" stroke-width="1.5" marker-end="url(#ah)"/><text x="364" y="367" text-anchor="middle" >No</text><polyline points="78,393 78,460 173,460" fill="none" stroke="#1B2431" stroke-width="1.5" marker-end="url(#ah)"/><polyline points="438,393 438,460 347,460" fill="none" stroke="#1B2431" stroke-width="1.5" marker-end="url(#ah)"/><polyline points="260,478 260,500 6,500 6,265 170,265" fill="none" stroke="#1B2431" stroke-width="1.5" marker-end="url(#ah)"/><ellipse cx="260" cy="28" rx="44" ry="18" fill="#fff" stroke="#1B2431" stroke-width="1.5"/><text x="260" y="32" text-anchor="middle" >Start</text><polygon points="145,62 395,62 375,98 125,98" fill="#fff" stroke="#1B2431" stroke-width="1.5"/><text x="260" y="84" text-anchor="middle" >Input loads, diameters, limit</text><rect x="160" y="118" width="200" height="36" fill="#fff" stroke="#1B2431" stroke-width="1.5"/><text x="260" y="140" text-anchor="middle" >stress = loads ./ areas</text><rect x="200" y="174" width="120" height="36" fill="#fff" stroke="#1B2431" stroke-width="1.5"/><text x="260" y="196" text-anchor="middle" >k = 1</text><polygon points="260,229 348,265 260,301 172,265" fill="#FFF4F2" stroke="#FF3621" stroke-width="1.5"/><text x="260" y="269" text-anchor="middle" >k &lt;= 4 ?</text><polygon points="260,337 348,375 260,413 172,375" fill="#FFF4F2" stroke="#FF3621" stroke-width="1.5"/><text x="260" y="379" text-anchor="middle" >stress(k) &gt; limit ?</text><polygon points="33,357 143,357 123,393 13,393" fill="#fff" stroke="#1B2431" stroke-width="1.5"/><text x="78" y="379" text-anchor="middle" >Print FAIL</text><polygon points="393,357 503,357 483,393 373,393" fill="#fff" stroke="#1B2431" stroke-width="1.5"/><text x="438" y="379" text-anchor="middle" >Print OK</text><rect x="175" y="442" width="170" height="36" fill="#fff" stroke="#1B2431" stroke-width="1.5"/><text x="260" y="464" text-anchor="middle" >k = k + 1</text><ellipse cx="460" cy="265" rx="44" ry="18" fill="#fff" stroke="#1B2431" stroke-width="1.5"/><text x="460" y="269" text-anchor="middle" >End</text></svg>
+<pre class="pc">input loads, diameters, limit
+calculate stress for all rods
+for each rod k from 1 to 4
+    if stress(k) &gt; limit
+        print FAIL
+    otherwise
+        print OK
+end</pre>
+<p>Read the flowchart and the pseudocode side by side: the first diamond and the loop-back arrow are the <code>for</code> loop; the second diamond is the <code>if</code>.</p>
+
+<h3>Paper or screen?</h3>
+<p>Paper for steps 1 to 4. It is faster to sketch, cross out and draw arrows by hand. Move to MATLAB only once the plan is clear.</p>
+
+<h3>Worked example: stress in four rods</h3>
+<p>An engineering test applies loads of 1000, 1500, 2200 and 3000 N to four circular rods with diameters 8, 10, 12 and 14 mm. Write one script that calculates the radius, cross-sectional area (A = &pi;r<sup>2</sup>) and stress (load / area) for every rod, reported in MPa (1 N/mm<sup>2</sup> = 1 MPa). Predict the rod with the greatest stress, explain why matrix power or division would not work, and compare the result with the prediction.</p>
+
+<h4>1. Break it down</h4>
+<div class="tw"><table>
+<tr><th>Given</th><th>Find</th><th>Rules</th></tr>
+<tr><td style="font-family:Barlow;white-space:normal">Loads 1000, 1500, 2200, 3000 N<br>Diameters 8, 10, 12, 14 mm</td><td style="white-space:normal">Radius, area, stress for each rod; the rod with the greatest stress</td><td style="white-space:normal">r = d/2, A = &pi;r<sup>2</sup>, &sigma; = F/A, N/mm<sup>2</sup> = MPa</td></tr>
+</table></div>
+<h4>2. One case by hand</h4>
+<p>Rod 1: r = 4 mm, A = &pi; &times; 16 = 50.27 mm<sup>2</sup>, &sigma; = 1000 / 50.27 = 19.89 MPa.</p>
+<h4>3. Choose the tool</h4>
+<p>Four rods, the same three formulas, and no rod depends on another. "Corresponding" says the two lists line up item by item, which is exactly what <code>.*</code> and <code>./</code> do. Vectors, no loop needed.</p>
+<h4>Prediction</h4>
+<p>The trap is to pick rod 4 because it carries the largest load. Area grows with the <i>square</i> of the diameter, so compare load / d<sup>2</sup>: rod 1 gives 1000/64 = 15.6, rod 2 gives 15.0, rods 3 and 4 give 15.3. Rod 1 should have the greatest stress despite carrying the smallest load.</p>
+<h4>4. Pseudocode</h4>
+<p>As shown in Step 4 above.</p>
+<h4>5. Code</h4>
+<pre>clc; clear; close all;
+
+<span class="c">% PREDICTION: area grows with diameter squared, so compare load/d^2:</span>
+<span class="c">% rod 1 = 15.6, rod 2 = 15.0, rod 3 = 15.3, rod 4 = 15.3.</span>
+<span class="c">% Rod 1 should have the greatest stress despite the smallest load.</span>
+
+loads_N      = [1000 1500 2200 3000];   <span class="c">% applied loads (N)</span>
+diameters_mm = [8 10 12 14];            <span class="c">% rod diameters (mm)</span>
+
+radii_mm   = diameters_mm / 2;          <span class="c">% dividing by one number needs no dot</span>
+areas_mm2  = pi * (radii_mm .^ 2);      <span class="c">% .^ squares each radius separately</span>
+stress_MPa = loads_N ./ areas_mm2;      <span class="c">% ./ divides each load by its own area</span>
+
+<span class="c">% WHY ELEMENT-WISE:</span>
+<span class="c">% radii_mm^2 is matrix power (radii_mm * radii_mm). A 1x4 times a 1x4</span>
+<span class="c">% is undefined, so MATLAB gives an error.</span>
+<span class="c">% loads_N / areas_mm2 is matrix division, a different maths operation</span>
+<span class="c">% that gives back ONE number instead of four stresses.</span>
+
+rodNumbers = 1:4;
+fprintf('Rod   Radius (mm)   Area (mm^2)   Stress (MPa)\n');
+fprintf('%3d %13.1f %13.2f %14.2f\n', [rodNumbers; radii_mm; areas_mm2; stress_MPa]);
+<span class="c">% fprintf reads the stacked matrix column by column, so each column = one rod</span>
+
+[maxStress, rodIndex] = max(stress_MPa);
+fprintf('Greatest stress: rod %d at %.2f MPa\n', rodIndex, maxStress);
+
+<span class="c">% RESULT: rod 1 has the greatest stress (19.89 MPa), matching the prediction.</span>
+<span class="c">% Rod 2 has the lowest (19.10 MPa).</span></pre>
+<pre class="out">Rod   Radius (mm)   Area (mm^2)   Stress (MPa)
+  1           4.0         50.27          19.89
+  2           5.0         78.54          19.10
+  3           6.0        113.10          19.45
+  4           7.0        153.94          19.49
+Greatest stress: rod 1 at 19.89 MPa</pre>
+<h4>Check</h4>
+<p>Rod 1 matches the hand calculation. The Workspace shows <code>radii_mm</code>, <code>areas_mm2</code> and <code>stress_MPa</code> as 1&times;4 double, confirming all four rods were processed in single expressions.</p>
+</section>
+
+<!-- practice -->
+<section data-title="Practice problems">
+<div class="kicker">Lesson 10 of 13 / Practice</div>
+<h2>Practice problems</h2>
+<p class="lead">Ten problems, from a single calculation to a full analysis. Each one uses the routine from Lesson 9.</p>
+<div class="key"><p style="margin:0">Attempt each problem on paper first. If stuck, open <strong>one</strong> step only: often the thinking is enough to unblock you, and you can write the plan and code yourself. Compare your output with the solution, then try the Check suggestion.</p></div>
+<div class="prob">
+<h3>Problem 1: Speed conversion<span class="tag s">Starter</span></h3>
+<p>A car travels at 72 km/h. Convert this to m/s and print the result with units.</p>
+<p class="practises">Practises: variables, a formula, <code>fprintf</code></p>
+<button>Show the thinking</button>
+<div class="ans"><h4>Break it down</h4><p>Given: 72 km/h. Find: speed in m/s. Rule: 1 km = 1000 m, 1 h = 3600 s, so multiply by 1000 and divide by 3600.</p>
+<h4>By hand</h4><p>72 &times; 1000 / 3600 = 20 m/s.</p>
+<h4>Tool</h4><p>One value, one formula: two variables and an <code>fprintf</code>. Nothing repeats, so no vectors or loops.</p></div>
+<button>Show the plan</button>
+<div class="ans"><pre class="pc">store the speed in km/h
+convert to m/s
+print both with units</pre></div>
+<button>Show the solution</button>
+<div class="ans"><pre>clc; clear;
+speed_kmh = 72;                         <span class="c">% given (km/h)</span>
+speed_ms  = speed_kmh * 1000 / 3600;    <span class="c">% km to m, h to s</span>
+fprintf('%.1f km/h = %.1f m/s\n', speed_kmh, speed_ms);</pre><pre class="out">72.0 km/h = 20.0 m/s</pre><h4>Check</h4><p>Matches the hand answer. The variable names carry their units, so the conversion is easy to read.</p></div>
+</div>
+<div class="prob">
+<h3>Problem 2: Converting a list of speeds<span class="tag s">Starter</span></h3>
+<p>A speed sign survey records 36, 54, 72, 90 and 108 km/h. Convert every reading to m/s and print a two-column table.</p>
+<p class="practises">Practises: vectors, dividing a list by a single number, printing a table with <code>fprintf</code></p>
+<button>Show the thinking</button>
+<div class="ans"><h4>Break it down</h4><p>Given: five speeds in km/h. Find: each in m/s. Rule: divide by 3.6 (same as &times;1000/3600).</p>
+<h4>By hand</h4><p>36 / 3.6 = 10 m/s.</p>
+<h4>Tool</h4><p>"Every reading" plus the same formula for each: a vector. The divisor 3.6 is a single number, so plain <code>/</code> works; a dot is only needed when two vectors meet.</p></div>
+<button>Show the plan</button>
+<div class="ans"><pre class="pc">store the speeds as a list
+divide every speed by 3.6
+print each pair on its own line</pre></div>
+<button>Show the solution</button>
+<div class="ans"><pre>speeds_kmh = [36 54 72 90 108];
+speeds_ms  = speeds_kmh / 3.6;          <span class="c">% vector / single number: no dot needed</span>
+fprintf('%6.0f km/h = %5.1f m/s\n', [speeds_kmh; speeds_ms]);
+<span class="c">% stacking two rows gives fprintf one column per reading</span></pre><pre class="out">    36 km/h =  10.0 m/s
+    54 km/h =  15.0 m/s
+    72 km/h =  20.0 m/s
+    90 km/h =  25.0 m/s
+   108 km/h =  30.0 m/s</pre><h4>Check</h4><p>The first row matches the hand answer, and 72 km/h agrees with Problem 1.</p></div>
+</div>
+<div class="prob">
+<h3>Problem 3: Kinetic energy of three objects<span class="tag s">Starter</span></h3>
+<p>Three objects have masses 2, 5 and 10 kg and speeds 3, 4 and 2 m/s respectively. Calculate the kinetic energy of each (KE = &frac12;mv<sup>2</sup>) and report which object has the most.</p>
+<p class="practises">Practises: two vectors combined element by element, <code>max</code> with position</p>
+<button>Show the thinking</button>
+<div class="ans"><h4>Break it down</h4><p>Given: masses and matching speeds. Find: three KE values and the largest. Rule: KE = 0.5 m v<sup>2</sup>.</p>
+<h4>By hand</h4><p>Object 1: 0.5 &times; 2 &times; 3<sup>2</sup> = 9 J.</p>
+<h4>Tool</h4><p>"Respectively" means the lists line up item by item: vectors. Two vectors meet in one formula, so both the square and the multiplication need dots: <code>v.^2</code> and <code>m .* ...</code>. "Which has the most" means <code>max</code> with its second output, the position.</p></div>
+<button>Show the plan</button>
+<div class="ans"><pre class="pc">store masses and speeds as lists
+KE = 0.5 * each mass * its speed squared
+print KE for each object
+find the largest KE and its position, print it</pre></div>
+<button>Show the solution</button>
+<div class="ans"><pre>m_kg  = [2 5 10];
+v_ms  = [3 4 2];
+KE_J  = 0.5 * m_kg .* v_ms.^2;          <span class="c">% .^ squares each speed, .* pairs each mass</span>
+
+fprintf('Object %d: KE = %.1f J\n', [1:3; KE_J]);
+[KEmax, idx] = max(KE_J);
+fprintf('Most energy: object %d (%.1f J)\n', idx, KEmax);</pre><pre class="out">Object 1: KE = 9.0 J
+Object 2: KE = 40.0 J
+Object 3: KE = 20.0 J
+Most energy: object 2 (40.0 J)</pre><h4>Check</h4><p>Object 1 matches the hand answer. The heaviest object does not have the most energy, because speed is squared. Writing <code>m_kg * v_ms^2</code> would give an error, since <code>^</code> and <code>*</code> without dots are matrix operations.</p></div>
+</div>
+<div class="prob">
+<h3>Problem 4: Temperature log statistics<span class="tag c">Core</span></h3>
+<p>A sensor logs temperatures of 21.5, 23.0, 24.8, 26.1, 25.4 and 22.9 &deg;C. Report the mean, the maximum and which reading it was, the minimum, the range (max minus min), and how many readings exceeded 25 &deg;C and at which positions.</p>
+<p class="practises">Practises: summary functions, logicals for counting, <code>find</code></p>
+<button>Show the thinking</button>
+<div class="ans"><h4>Break it down</h4><p>Given: six readings. Find: five summary results. Rules: range = max &minus; min; "exceeded 25" is a comparison.</p>
+<h4>By hand</h4><p>Sum = 143.7, mean = 143.7 / 6 = 23.95. Max 26.1 (reading 4), min 21.5, range 4.6. Above 25: 26.1 and 25.4, so 2 readings, positions 4 and 5.</p>
+<h4>Tool</h4><p>Summaries of a list: <code>mean</code>, <code>max</code>, <code>min</code>. "How many above" is a comparison producing a logical vector; <code>sum</code> counts its 1s and <code>find</code> gives their positions. Avoid naming a variable <code>range</code>, which is a built-in function name.</p></div>
+<button>Show the plan</button>
+<div class="ans"><pre class="pc">store readings as a list
+mean, max (with position), min
+range = max - min
+hot = readings above 25 (yes/no for each)
+count the yeses, list their positions
+print everything with units</pre></div>
+<button>Show the solution</button>
+<div class="ans"><pre>T_C = [21.5 23.0 24.8 26.1 25.4 22.9];
+
+[Tmax, iMax] = max(T_C);
+Tmin   = min(T_C);
+Trange = Tmax - Tmin;
+isHot  = T_C &gt; 25;                     <span class="c">% 0 0 0 1 1 0</span>
+
+fprintf('Mean: %.2f C\n', mean(T_C));
+fprintf('Max: %.1f C at reading %d\n', Tmax, iMax);
+fprintf('Min: %.1f C\n', Tmin);
+fprintf('Range: %.1f C\n', Trange);
+fprintf('Readings above 25 C: %d (positions %s)\n', sum(isHot), num2str(find(isHot)));
+<span class="c">% num2str(find(isHot)): find runs first, num2str turns the positions into text for %s</span></pre><pre class="out">Mean: 23.95 C
+Max: 26.1 C at reading 4
+Min: 21.5 C
+Range: 4.6 C
+Readings above 25 C: 2 (positions 4  5)</pre><h4>Check</h4><p>All five results match the hand working. Storing the comparison in <code>isHot</code> once and reusing it avoids typing the condition twice.</p></div>
+</div>
+<div class="prob">
+<h3>Problem 5: Grade from a mark<span class="tag c">Core</span></h3>
+<p>Write a script that takes a mark out of 100 and prints the grade: HD for 85 and above, D for 75 to 84, C for 65 to 74, P for 50 to 64, F below 50. Test it with a mark of 73.</p>
+<p class="practises">Practises: <code>if</code> / <code>elseif</code> / <code>else</code>, order of conditions</p>
+<button>Show the thinking</button>
+<div class="ans"><h4>Break it down</h4><p>Given: one mark. Find: one grade. Rules: five bands with boundaries 85, 75, 65, 50.</p>
+<h4>By hand</h4><p>73 is below 85 and 75, but at least 65: grade C.</p>
+<h4>Tool</h4><p>Different results for different cases: <code>if</code> / <code>elseif</code>. Check from the highest band down. MATLAB stops at the first true condition, so if you test <code>mark &gt;= 50</code> first, 73 would wrongly get P. Test the boundaries too: 85, 84, 50 and 49 are where mistakes show up.</p></div>
+<button>Show the plan</button>
+<div class="ans"><pre class="pc">get the mark
+if mark is at least 85, grade is HD
+otherwise if at least 75, grade is D
+otherwise if at least 65, grade is C
+otherwise if at least 50, grade is P
+otherwise grade is F
+print mark and grade</pre></div>
+<button>Show the solution</button>
+<div class="ans"><pre>mark = 73;
+
+if mark &gt;= 85
+    grade = 'HD';
+elseif mark &gt;= 75
+    grade = 'D';
+elseif mark &gt;= 65
+    grade = 'C';
+elseif mark &gt;= 50
+    grade = 'P';
+else
+    grade = 'F';
+end
+
+fprintf('Mark %%d gives grade %%s\n', mark, grade);</pre><pre class="out">Mark 73 gives grade C</pre><h4>Check</h4><p>Matches the hand answer. Change <code>mark</code> to 85, 84, 50 and 49 and confirm HD, D, P and F.</p></div>
+</div>
+<div class="prob">
+<h3>Problem 6: Grading a whole class<span class="tag c">Core</span></h3>
+<p>Marks for five students are 92, 47, 68, 75 and 55. Print each student number with their mark and grade (same bands as Problem 5), then the number of students who failed.</p>
+<p class="practises">Practises: a <code>for</code> loop with an <code>if</code> inside, combining loop and vector methods</p>
+<button>Show the thinking</button>
+<div class="ans"><h4>Break it down</h4><p>Given: five marks. Find: a grade per student and a fail count. Rules: the bands from Problem 5.</p>
+<h4>By hand</h4><p>92 HD, 47 F, 68 C, 75 D, 55 P. One fail.</p>
+<h4>Tool</h4><p>The grade rule is an <code>if</code> chain, and an <code>if</code> needs one true/false answer, not five. So loop over the students and run the Problem 5 logic on one mark at a time. The fail count needs no loop: <code>sum(marks &lt; 50)</code>. Notice that you already wrote the inside of the loop in Problem 5. Reusing what you have already solved is a big part of programming.</p></div>
+<button>Show the plan</button>
+<div class="ans"><pre class="pc">store marks as a list
+for each student k
+    take mark k
+    work out grade (Problem 5 rules)
+    print student number, mark, grade
+end
+count marks below 50, print the count</pre></div>
+<button>Show the solution</button>
+<div class="ans"><pre>marks = [92 47 68 75 55];
+
+for k = 1:numel(marks)
+    m = marks(k);                       <span class="c">% one mark at a time</span>
+    if m &gt;= 85
+        grade = 'HD';
+    elseif m &gt;= 75
+        grade = 'D';
+    elseif m &gt;= 65
+        grade = 'C';
+    elseif m &gt;= 50
+        grade = 'P';
+    else
+        grade = 'F';
+    end
+    fprintf('Student %d: %d (%s)\n', k, m, grade);
+end
+
+fprintf('Number of fails: %d\n', sum(marks &lt; 50));   <span class="c">% vector method, no loop</span></pre><pre class="out">Student 1: 92 (HD)
+Student 2: 47 (F)
+Student 3: 68 (C)
+Student 4: 75 (D)
+Student 5: 55 (P)
+Number of fails: 1</pre><h4>Check</h4><p>Every grade matches the hand list. Using <code>numel(marks)</code> instead of 5 means the script still works when more students are added.</p></div>
+</div>
+<div class="prob">
+<h3>Problem 7: Bouncing ball<span class="tag c">Core</span></h3>
+<p>A ball dropped from 10 m rebounds to 70% of its previous height on each bounce. How many bounces until the rebound height falls below 0.5 m? Print the count and the final rebound height.</p>
+<p class="practises">Practises: <code>while</code> loops, updating a variable, a counter</p>
+<button>Show the thinking</button>
+<div class="ans"><h4>Break it down</h4><p>Given: start height 10 m, factor 0.7, threshold 0.5 m. Find: bounce count and last height. Rule: new height = 0.7 &times; old height.</p>
+<h4>By hand</h4><p>7, 4.9, 3.43, 2.40, 1.68, 1.18, 0.82, 0.58, 0.40. The 9th rebound is the first below 0.5 m. Check with logs: 10 &times; 0.7<sup>n</sup> &lt; 0.5 gives n &gt; ln(0.05) / ln(0.7) = 8.4, so n = 9.</p>
+<h4>Tool</h4><p>"Until" and an unknown number of repetitions: <code>while</code>. Two boxes change each pass: the height (updated) and the bounce count (counter, starts at 0, adds 1).</p></div>
+<button>Show the plan</button>
+<div class="ans"><pre class="pc">height = 10, bounces = 0
+while height is at least 0.5
+    height = 0.7 * height
+    bounces = bounces + 1
+end
+print bounces and height</pre></div>
+<button>Show the solution</button>
+<div class="ans"><pre>h_m = 10;
+bounces = 0;
+
+while h_m &gt;= 0.5                       <span class="c">% keep going while still at or above 0.5 m</span>
+    h_m = 0.7 * h_m;
+    bounces = bounces + 1;
+end
+
+fprintf('Bounces: %d, last rebound height: %.3f m\n', bounces, h_m);</pre><pre class="out">Bounces: 9, last rebound height: 0.404 m</pre><h4>Check</h4><p>Matches both the hand list and the log check. If the loop never ends (for example a factor of 1.0), press Ctrl+C.</p></div>
+</div>
+<div class="prob">
+<h3>Problem 8: Section properties function<span class="tag x">Stretch</span></h3>
+<p>Write a function <code>sectionProps</code> that takes a rod diameter and returns both the cross-sectional area A = &pi;d<sup>2</sup>/4 and the second moment of area I = &pi;d<sup>4</sup>/64. Use it in a script for diameters of 20, 40 and 60 mm and print a table.</p>
+<p class="practises">Practises: writing a function with two outputs, making a function work on vectors</p>
+<button>Show the thinking</button>
+<div class="ans"><h4>Break it down</h4><p>Given: diameters. Find: A and I for each. Rules: the two formulas above, units mm<sup>2</sup> and mm<sup>4</sup>.</p>
+<h4>By hand</h4><p>d = 20: A = &pi; &times; 400 / 4 = 314.16 mm<sup>2</sup>; I = &pi; &times; 160000 / 64 = 7854.0 mm<sup>4</sup>.</p>
+<h4>Tool</h4><p>The question says "write a function". Input: d. Outputs: A and I, so the first line is <code>function [A, I] = sectionProps(d)</code>. Use <code>.^</code> inside so the same function works for one diameter or a whole vector.</p></div>
+<button>Show the plan</button>
+<div class="ans"><pre class="pc">FUNCTION sectionProps(d)
+    A = pi * each d squared / 4
+    I = pi * each d to the 4th / 64
+    return A and I
+
+SCRIPT
+store diameters as a list
+call sectionProps to get A and I
+print a table of d, A, I</pre></div>
+<button>Show the solution</button>
+<div class="ans"><pre><span class="c">% ---- file: sectionProps.m ----</span>
+function [A, I] = sectionProps(d)
+    <span class="c">% d in mm; A in mm^2; I in mm^4</span>
+    A = pi * d.^2 / 4;
+    I = pi * d.^4 / 64;
+end
+
+<span class="c">% ---- file: main script ----</span>
+clc; clear;
+d_mm = [20 40 60];
+[A_mm2, I_mm4] = sectionProps(d_mm);      <span class="c">% two outputs, two names</span>
+
+fprintf('%6s %12s %14s\n', 'd (mm)', 'A (mm^2)', 'I (mm^4)');
+fprintf('%6d %12.2f %14.1f\n', [d_mm; A_mm2; I_mm4]);</pre><pre class="out">d (mm)     A (mm^2)       I (mm^4)
+    20       314.16         7854.0
+    40      1256.64       125663.7
+    60      2827.43       636172.5</pre><h4>Check</h4><p>The first row matches the hand answer. Doubling d multiplies A by 4 and I by 16, which the table shows (314 to 1257, 7854 to 125664): a useful sanity check on the powers. The file name must be <code>sectionProps.m</code>. If you keep the function in the script file instead, it must go at the very end.</p></div>
+</div>
+<div class="prob">
+<h3>Problem 9: Ball thrown upward<span class="tag x">Stretch</span></h3>
+<p>A ball is thrown straight up from the ground at 20 m/s. Its height is h = v<sub>0</sub>t &minus; &frac12;gt<sup>2</sup> with g = 9.81 m/s<sup>2</sup>. Plot height against time from launch until it lands, mark the highest point, and print the flight time and maximum height.</p>
+<p class="practises">Practises: <code>linspace</code>, element-wise formulas over time, <code>max</code>, plotting with a marker</p>
+<button>Show the thinking</button>
+<div class="ans"><h4>Break it down</h4><p>Given: v<sub>0</sub> = 20, g = 9.81. Find: a plot, flight time, max height and when. Rules: the height formula; it lands when h = 0.</p>
+<h4>By hand</h4><p>h = 0 gives t(v<sub>0</sub> &minus; &frac12;gt) = 0, so t = 2v<sub>0</sub>/g = 4.08 s. The peak is halfway, t = 2.04 s, at height v<sub>0</sub><sup>2</sup>/(2g) = 20.39 m.</p>
+<h4>Tool</h4><p>"Plot against time": make a time vector with <code>linspace</code> from 0 to the landing time, then apply the formula to every time at once (<code>t.^2</code> needs the dot). The highest point is <code>max</code> with its position, used to pick the matching time. An odd number of points (201) puts one point exactly at the midpoint.</p></div>
+<button>Show the plan</button>
+<div class="ans"><pre class="pc">v0 = 20, g = 9.81
+landing time = 2 * v0 / g
+t = 201 times from 0 to landing time
+h = height formula for every t
+find largest h and its position
+print flight time, max height and its time
+plot h against t, mark the peak, label axes</pre></div>
+<button>Show the solution</button>
+<div class="ans"><pre>clc; clear; close all;
+v0 = 20;  g = 9.81;
+
+t_land = 2 * v0 / g;
+t = linspace(0, t_land, 201);
+h = v0 * t - 0.5 * g * t.^2;              <span class="c">% t.^2: square each time</span>
+
+[hMax, i] = max(h);
+fprintf('Flight time: %.2f s\n', t_land);
+fprintf('Max height: %.2f m at t = %.2f s\n', hMax, t(i));
+
+plot(t, h)
+hold on
+plot(t(i), hMax, 'ro')                    <span class="c">% red circle at the peak</span>
+hold off
+xlabel('Time (s)'); ylabel('Height (m)');
+title('Ball thrown upward at 20 m/s'); grid on</pre><pre class="out">Flight time: 4.08 s
+Max height: 20.39 m at t = 2.04 s</pre><h4>Check</h4><p>Both values match the hand calculation. The plot should be a symmetric arch starting and ending at zero; if it dips below zero, the time range is too long.</p></div>
+</div>
+<div class="prob">
+<h3>Problem 10: Finding the end of the linear region<span class="tag x">Stretch</span></h3>
+<p>A tensile test gives loads of 0, 2, 4, 6, 8, 10 and 12 kN with extensions of 0, 0.10, 0.21, 0.30, 0.41, 0.62 and 0.95 mm. Stiffness at each point is load / extension. Take the initial stiffness as the mean of the first four non-zero points. Find the first load where stiffness drops below 90% of the initial value, print it, and plot load against extension with that point marked.</p>
+<p class="practises">Practises: everything together: indexing ranges, element-wise division, logicals, <code>find</code>, index offsets, plotting</p>
+<button>Show the thinking</button>
+<div class="ans"><h4>Break it down</h4><p>Given: two matching lists. Find: the load where behaviour stops being linear, and a plot. Rules: k = load / extension; initial k = mean of first four; threshold = 0.9 &times; initial.</p>
+<h4>By hand</h4><p>Skip the first point (0/0 is undefined). k = 20.00, 19.05, 20.00, 19.51, 16.13, 12.63 kN/mm. Initial = (20 + 19.05 + 20 + 19.51)/4 = 19.64. Threshold = 17.68. First below: 16.13, at 10 kN.</p>
+<h4>Tool</h4><p>Split it into the problems you have already solved: element-wise division (Problem 3), a summary with <code>mean</code> (Problem 4), a condition with <code>find</code> (Problem 4), a plot with a marker (Problem 9). <code>find(..., 1)</code> returns only the first match. One new trap: <code>k</code> starts at data point 2, so position 5 in <code>k</code> is position 6 in the original data. That offset of 1 must be added back.</p></div>
+<button>Show the plan</button>
+<div class="ans"><pre class="pc">store loads and extensions
+k = load / extension for points 2 to end
+k0 = mean of first four k values
+idx = first position where k is below 0.9 * k0
+data position = idx + 1 (k skipped point 1)
+print stiffness list, k0, and the load at that point
+plot load vs extension, mark that point</pre></div>
+<button>Show the solution</button>
+<div class="ans"><pre>clc; clear; close all;
+load_kN = [0 2 4 6 8 10 12];
+ext_mm  = [0 0.10 0.21 0.30 0.41 0.62 0.95];
+
+k  = load_kN(2:end) ./ ext_mm(2:end);    <span class="c">% skip point 1: 0/0 gives NaN (Not a Number)</span>
+k0 = mean(k(1:4));                        <span class="c">% initial stiffness</span>
+idx = find(k &lt; 0.9 * k0, 1);             <span class="c">% first point below 90%</span>
+p   = idx + 1;                            <span class="c">% shift back to data position</span>
+
+fprintf('Stiffness (kN/mm): '); fprintf('%.2f ', k); fprintf('\n');
+fprintf('Initial stiffness: %.2f kN/mm\n', k0);
+fprintf('Linear behaviour ends near %d kN (extension %.2f mm)\n', load_kN(p), ext_mm(p));
+
+plot(ext_mm, load_kN, 'o-')
+hold on
+plot(ext_mm(p), load_kN(p), 'r*', 'MarkerSize', 12)
+hold off
+xlabel('Extension (mm)'); ylabel('Load (kN)');
+title('Tensile test'); grid on</pre><pre class="out">Stiffness (kN/mm): 20.00 19.05 20.00 19.51 16.13 12.63 
+Initial stiffness: 19.64 kN/mm
+Linear behaviour ends near 10 kN (extension 0.62 mm)</pre><h4>Check</h4><p>Matches the hand working at every stage. Forgetting the <code>+ 1</code> would report 8 kN, a wrong answer that still looks reasonable; checking against the hand result is what catches it. With real lab data, replace the two lists with <code>data = readmatrix('test.csv')</code> and take the columns.</p></div>
+</div>
+</section>
+
+<!-- 9 -->
+<section data-title="Symbol decoder">
+<div class="kicker">Lesson 11 of 13 / Reference</div>
+<h2>Symbol decoder</h2>
+<p class="lead">Every symbol from the previous lessons in one place. Keep this page open while you write code.</p>
+<div class="tw"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Example</th></tr>
+<tr><td>=</td><td>Store the right side in the box on the left</td><td><code>x = 5</code></td></tr>
+<tr><td>==</td><td>Ask "equal?" Answer is logical</td><td><code>x == 5</code></td></tr>
+<tr><td>[ ]</td><td>Build a vector or matrix, or join text</td><td><code>[1 2 3]</code></td></tr>
+<tr><td>( )</td><td>Pick items out, or give inputs to a function</td><td><code>v(2)</code>, <code>sqrt(9)</code></td></tr>
+<tr><td>{ }</td><td>Cell container holding mixed types</td><td><code>c = {5, 'hi'}</code>, <code>c{2}</code></td></tr>
+<tr><td>;</td><td>End of line: don't print. Inside [ ]: new row</td><td><code>[1 2; 3 4]</code></td></tr>
+<tr><td>,</td><td>Separate items or inputs</td><td><code>max(a, b)</code></td></tr>
+<tr><td>:</td><td>Range, or "all" when alone</td><td><code>1:5</code>, <code>A(:,1)</code></td></tr>
+<tr><td>end</td><td>Close a block, or the last position</td><td><code>v(end)</code></td></tr>
+<tr><td>~</td><td>NOT, or discard an output</td><td><code>~ok</code>, <code>[~, i] = max(v)</code></td></tr>
+<tr><td>~=</td><td>Not equal</td><td><code>x ~= 0</code></td></tr>
+<tr><td>&amp;  |</td><td>AND, OR on vectors</td><td><code>v &gt; 2 &amp; v &lt; 8</code></td></tr>
+<tr><td>&amp;&amp;  ||</td><td>AND, OR on single values in if / while</td><td><code>if a &gt; 0 &amp;&amp; b &gt; 0</code></td></tr>
+<tr><td>.*  ./  .^</td><td>Element-by-element operation</td><td><code>t.^2</code></td></tr>
+<tr><td>*  /  ^</td><td>Matrix operation</td><td><code>A * B</code></td></tr>
+<tr><td>'</td><td>Transpose (rows become columns), or wrap char text</td><td><code>v'</code>, <code>'text'</code></td></tr>
+<tr><td>" "</td><td>Wrap string text</td><td><code>"text"</code></td></tr>
+<tr><td>%</td><td>Comment: MATLAB ignores the rest of the line</td><td><code>% note</code></td></tr>
+<tr><td>...</td><td>Continue the instruction on the next line</td><td><code>y = a + ...</code></td></tr>
+</table></div>
+
+</section>
+
+<!-- 10 -->
+<section data-title="Command reference">
+<div class="kicker">Lesson 12 of 13 / Reference</div>
+<h2>Command reference</h2>
+<p class="lead">Every command from the lessons, grouped by job. The last column says which lesson explains it.</p>
+<div class="tw"><table>
+<tr><th>Command</th><th>What it does</th><th>Lesson</th></tr>
+<tr><th colspan="3">Housekeeping and help</th></tr>
+<tr><td>clc</td><td>Clear Command Window text</td><td>1</td></tr>
+<tr><td>clear / clear x</td><td>Delete all variables / only x</td><td>1</td></tr>
+<tr><td>close all</td><td>Close all figures</td><td>1</td></tr>
+<tr><td>help f / doc f</td><td>Short help / full documentation for f</td><td>1</td></tr>
+<tr><td>who / whos</td><td>List variables / with size and type</td><td>2</td></tr>
+<tr><th colspan="3">Showing and reading values</th></tr>
+<tr><td>disp(x)</td><td>Show a value or text</td><td>2</td></tr>
+<tr><td>fprintf(fmt, ...)</td><td>Print formatted text: %d %f %.2f %e %s \n</td><td>3</td></tr>
+<tr><td>sprintf(fmt, ...)</td><td>Like fprintf, but returns the text</td><td>3</td></tr>
+<tr><td>input(message)</td><td>Ask for a number; add 's' for text</td><td>3</td></tr>
+<tr><th colspan="3">Types and conversion</th></tr>
+<tr><td>class(x)</td><td>Name of x's type</td><td>3</td></tr>
+<tr><td>num2str(n)</td><td>Number to text</td><td>3</td></tr>
+<tr><td>str2double(s)</td><td>Text to number</td><td>3</td></tr>
+<tr><td>strcmp(a, b)</td><td>Are two texts identical?</td><td>5</td></tr>
+<tr><th colspan="3">Building and inspecting</th></tr>
+<tr><td>a:step:b</td><td>Range of values</td><td>4</td></tr>
+<tr><td>linspace(a, b, n)</td><td>n evenly spaced points from a to b</td><td>4</td></tr>
+<tr><td>zeros(r, c) / ones(r, c)</td><td>Matrix of 0s / 1s</td><td>4</td></tr>
+<tr><td>size / length / numel</td><td>Rows and columns / larger of the two / number of items</td><td>4</td></tr>
+<tr><td>isempty(x)</td><td>True if x has no items</td><td>4</td></tr>
+<tr><th colspan="3">Maths on vectors</th></tr>
+<tr><td>sum / mean</td><td>Total / average</td><td>4</td></tr>
+<tr><td>max / min</td><td>Largest / smallest, optionally with position</td><td>4</td></tr>
+<tr><td>sort(v)</td><td>Ascending order; 'descend' for reverse</td><td>4</td></tr>
+<tr><td>abs, sqrt, exp</td><td>Absolute value, square root, e^x</td><td>4</td></tr>
+<tr><td>log / log10</td><td>Natural log / base-10 log</td><td>4</td></tr>
+<tr><td>round / floor / ceil</td><td>Nearest / down / up</td><td>4</td></tr>
+<tr><td>mod(a, b)</td><td>Remainder of a divided by b</td><td>4</td></tr>
+<tr><th colspan="3">Logical helpers</th></tr>
+<tr><td>find(cond)</td><td>Positions where cond is true</td><td>5</td></tr>
+<tr><td>any / all</td><td>At least one true / every one true</td><td>5</td></tr>
+<tr><th colspan="3">Control flow</th></tr>
+<tr><td>if / elseif / else</td><td>Choose a path</td><td>6</td></tr>
+<tr><td>for / while</td><td>Repeat a set number of times / until false</td><td>6</td></tr>
+<tr><td>break / continue</td><td>Leave the loop / skip to next pass</td><td>6</td></tr>
+<tr><td>function</td><td>Define a reusable function in its own .m file</td><td>7</td></tr>
+<tr><th colspan="3">Plotting</th></tr>
+<tr><td>plot(x, y, style)</td><td>Line plot</td><td>8</td></tr>
+<tr><td>xlabel / ylabel / title</td><td>Label axes and plot</td><td>8</td></tr>
+<tr><td>legend / grid on</td><td>Name lines / show grid</td><td>8</td></tr>
+<tr><td>hold on / hold off</td><td>Draw over / replace current plot</td><td>8</td></tr>
+<tr><td>figure / subplot(r, c, k)</td><td>New window / panel k of an r by c grid</td><td>8</td></tr>
+<tr><td>xlim / ylim / axis equal</td><td>Axis ranges / equal scaling</td><td>8</td></tr>
+<tr><th colspan="3">Files</th></tr>
+<tr><td>readmatrix(file)</td><td>Read numbers from CSV or Excel</td><td>8</td></tr>
+<tr><td>writematrix(M, file)</td><td>Write a matrix to a file</td><td>8</td></tr>
+<tr><td>save / load</td><td>Store / restore variables in a .mat file</td><td>8</td></tr>
+</table></div>
+<h3>Where next</h3>
+<p>With these lessons in place, move on to the ENGG100 / DPEN100 study guide modules, which build file access, structures, and the exam-style problems on this foundation. MathWorks' free <b>MATLAB Onramp</b> course is good extra practice: it checks each step as you type.</p>
+</section>
+
+<!-- glossary -->
+<section data-title="Words you'll hear">
+<div class="kicker">Lesson 13 of 13 / Reference</div>
+<h2>Words you'll hear</h2>
+<p class="lead">Lecturers, tutors and videos often use these words without explaining them. Here is each one in plain English, with the lesson that explains it. Click a lesson number to go there.</p>
+<div class="tw"><table>
+<tr><th>Word</th><th>Meaning</th><th>Lesson</th></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Accumulator</td><td>A variable that starts at zero and is added to inside a loop, building up a total.</td><td><button class="jump" data-l="6">6</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Algorithm</td><td>A step-by-step method for solving a problem.</td><td><button class="jump" data-l="9">9</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Assignment</td><td>Storing a value in a variable with <code>=</code>.</td><td><button class="jump" data-l="2">2</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Block</td><td>The lines between a starting word (<code>if</code>, <code>for</code>, <code>while</code>, <code>function</code>) and its <code>end</code>.</td><td><button class="jump" data-l="6">6</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Bug / debugging</td><td>A mistake in a program / finding and fixing it.</td><td><button class="jump" data-l="1">1</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Built-in</td><td>Comes with MATLAB, ready to use: <code>sqrt</code>, <code>max</code>, <code>pi</code>.</td><td><button class="jump" data-l="1">1</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Command Window</td><td>The place to type one line and get an answer immediately.</td><td><button class="jump" data-l="1">1</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Comment</td><td>Text after <code>%</code>: a note for people, ignored by MATLAB.</td><td><button class="jump" data-l="1">1</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Condition</td><td>A question with a true/false answer, such as <code>x &gt; 5</code>, used by <code>if</code> and <code>while</code>.</td><td><button class="jump" data-l="5">5</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Control flow</td><td>Controlling which lines run and how many times.</td><td><button class="jump" data-l="6">6</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Data type</td><td>The label telling MATLAB what a value is: number, text, true/false.</td><td><button class="jump" data-l="3">3</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Dimension</td><td>One direction of a matrix. Rows are the first, columns the second.</td><td><button class="jump" data-l="4">4</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Element</td><td>One item in a vector or matrix.</td><td><button class="jump" data-l="4">4</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Element-wise</td><td>Working item by item: element 1 with element 1, and so on. Uses <code>.*</code> <code>./</code> <code>.^</code>.</td><td><button class="jump" data-l="4">4</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Flowchart</td><td>A diagram of the steps in a program, using standard shapes.</td><td><button class="jump" data-l="9">9</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Format specifier</td><td>A slot in <code>fprintf</code> text, such as <code>%d</code>, saying what kind of value goes there.</td><td><button class="jump" data-l="3">3</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Function</td><td>A named command that takes inputs, does a job, and returns outputs.</td><td><button class="jump" data-l="7">7</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Index / indexing</td><td>A position number in a vector / picking items by position, as in <code>v(3)</code>.</td><td><button class="jump" data-l="4">4</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Infinite loop</td><td>A loop whose stopping condition never happens, so it runs forever. Stop it with Ctrl+C.</td><td><button class="jump" data-l="6">6</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Input / output</td><td>What goes into a function / what comes back out.</td><td><button class="jump" data-l="7">7</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Logical</td><td>A true/false value, stored as 1 or 0.</td><td><button class="jump" data-l="5">5</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Logical indexing</td><td>Using a list of true/false values to keep only the matching items: <code>v(v &gt; 4)</code>.</td><td><button class="jump" data-l="5">5</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Loop</td><td>Code that repeats: <code>for</code> or <code>while</code>.</td><td><button class="jump" data-l="6">6</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Matrix</td><td>A grid of numbers in rows and columns.</td><td><button class="jump" data-l="4">4</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Matrix multiplication / division / power</td><td>The maths-course rules used by <code>*</code> <code>/</code> <code>^</code>, which combine whole rows and columns.</td><td><button class="jump" data-l="4">4</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Name-value pair</td><td>An extra setting given as a name in quotes followed by its value: <code>'MarkerSize', 12</code>.</td><td><button class="jump" data-l="8">8</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">NaN</td><td>"Not a Number": the result of a calculation with no answer, such as 0/0.</td><td><button class="jump" data-l="4">4</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Nested</td><td>Code placed inside other code: a function inside a function, or an <code>if</code> inside a loop.</td><td><button class="jump" data-l="7">7</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Operator</td><td>A symbol that calculates, compares or combines values: <code>+</code> <code>==</code> <code>&amp;</code>.</td><td><button class="jump" data-l="5">5</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Pseudocode</td><td>A program plan written in plain English, without MATLAB's spelling and punctuation.</td><td><button class="jump" data-l="9">9</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Return</td><td>What a function does when it hands back its outputs.</td><td><button class="jump" data-l="7">7</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Scalar</td><td>A single number (a 1×1 matrix).</td><td><button class="jump" data-l="4">4</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Scientific notation</td><td>A number written as a value times a power of 10: <code>2.5e+03</code> is 2500.</td><td><button class="jump" data-l="3">3</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Script</td><td>A saved <code>.m</code> file containing instructions that run in order.</td><td><button class="jump" data-l="1">1</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">String / char</td><td>Two ways of storing text: <code>"double quotes"</code> / <code>'single quotes'</code>.</td><td><button class="jump" data-l="3">3</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Syntax / syntax error</td><td>MATLAB's rules for spelling and punctuation / an error from breaking them.</td><td><button class="jump" data-l="1">1</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Transpose</td><td>Swap rows and columns, with <code>'</code>.</td><td><button class="jump" data-l="4">4</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Variable</td><td>A named box that stores a value.</td><td><button class="jump" data-l="2">2</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Vector</td><td>A list of numbers in a single row or column.</td><td><button class="jump" data-l="4">4</button></td></tr>
+<tr><td style="font-family:Barlow;font-weight:600">Workspace</td><td>The panel listing every variable that currently exists.</td><td><button class="jump" data-l="2">2</button></td></tr>
+</table></div>
+</section>
+
+<div class="foot">
+  <button class="btn" id="prev">Previous</button>
+  <button class="btn donebtn" id="done">Mark as done</button>
+  <button class="btn primary" id="next">Next</button>
+</div>
+</main>
+</div>
+
+<script>
+(function(){
+  var secs=[].slice.call(document.querySelectorAll('main section'));
+  var nav=document.getElementById('navlist');
+  var KEY='engg100-zero-done';
+  var done={};
+  try{done=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){done={}}
+  var cur=0;
+  secs.forEach(function(s,i){
+    var li=document.createElement('li'),b=document.createElement('button');
+    b.innerHTML='<span class="n">'+(i+1)+'</span><span>'+s.dataset.title+'</span><span class="tick">done</span>';
+    b.onclick=function(){go(i)};
+    li.appendChild(b);nav.appendChild(li);
+  });
+  var btns=nav.querySelectorAll('button');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
+  function refresh(){
+    var n=0;
+    secs.forEach(function(s,i){
+      s.classList.toggle('show',i===cur);
+      btns[i].classList.toggle('active',i===cur);
+      btns[i].classList.toggle('done',!!done[i]);
+      if(done[i])n++;
+    });
+    document.getElementById('bar').style.width=(100*n/secs.length)+'%';
+    document.getElementById('progtxt').textContent=n+' of '+secs.length+' lessons done';
+    var d=document.getElementById('done');
+    d.textContent=done[cur]?'Done':'Mark as done';
+    d.classList.toggle('isdone',!!done[cur]);
+    document.getElementById('prev').disabled=cur===0;
+    document.getElementById('next').style.visibility=cur===secs.length-1?'hidden':'visible';
+  }
+  function go(i){cur=i;refresh();window.scrollTo(0,0)}
+  document.getElementById('prev').onclick=function(){if(cur>0)go(cur-1)};
+  document.getElementById('next').onclick=function(){if(cur<secs.length-1)go(cur+1)};
+  document.getElementById('done').onclick=function(){done[cur]=!done[cur];save();refresh()};
+  document.querySelectorAll('.q button, .prob > button').forEach(function(b){
+    var label=b.textContent;
+    b.onclick=function(){
+      var a=b.nextElementSibling,open=a.classList.toggle('open');
+      b.textContent=open?label.replace('Show','Hide'):label;
+    };
+  });
+  document.querySelectorAll('.jump').forEach(function(b){b.onclick=function(){go(+b.dataset.l-1)}});
+  refresh();
+
+  // logical indexing lab
+  var marks=[45,82,67,91,38];
+  var conds=[
+    ['marks > 60',function(m){return m>60}],
+    ['marks >= 50 & marks < 80',function(m){return m>=50&&m<80}],
+    ['marks == 91',function(m){return m===91}],
+    ['~(marks > 60)',function(m){return !(m>60)}],
+    ['marks < 50 | marks > 90',function(m){return m<50||m>90}]
+  ];
+  var cbox=document.getElementById('conds'),vals=document.getElementById('rowVals'),
+      bits=document.getElementById('rowBits'),out=document.getElementById('labOut'),lbl=document.getElementById('condLbl');
+  marks.forEach(function(m){
+    var v=document.createElement('span');v.className='cell';v.textContent=m;vals.appendChild(v);
+    var b=document.createElement('span');b.className='cell bit';bits.appendChild(b);
+  });
+  function run(k){
+    var f=conds[k][1],keep=[];
+    [].forEach.call(cbox.children,function(b,i){b.classList.toggle('sel',i===k)});
+    lbl.textContent=conds[k][0].length>14?'condition':conds[k][0];
+    marks.forEach(function(m,i){
+      var t=f(m);
+      vals.children[i].className='cell '+(t?'on':'off');
+      bits.children[i].className='cell bit'+(t?' t':'');
+      bits.children[i].textContent=t?1:0;
+      if(t)keep.push(m);
+    });
+    out.textContent='>> marks('+conds[k][0]+')\nans = '+(keep.length?keep.join('  '):'1×0 empty double row vector')
+      +'\n\n>> sum('+conds[k][0]+')\nans = '+keep.length;
+  }
+  conds.forEach(function(c,i){
+    var b=document.createElement('button');b.className='btn';b.textContent=c[0];b.onclick=function(){run(i)};cbox.appendChild(b);
+  });
+  run(0);
+
+  // sine plot
+  var svg=document.getElementById('sine'),NS='http://www.w3.org/2000/svg';
+  var L=50,R=540,T=20,B=200,mid=(T+B)/2;
+  function el(n,a){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e}
+  for(var g=0;g<=4;g++){var gx=L+(R-L)*g/4;el('line',{x1:gx,y1:T,x2:gx,y2:B,stroke:'#E3E7EC'})}
+  [-1,-.5,0,.5,1].forEach(function(v){var gy=mid-v*(B-T)/2;el('line',{x1:L,y1:gy,x2:R,y2:gy,stroke:v===0?'#B8C0CB':'#E3E7EC'});
+    var t=el('text',{x:L-8,y:gy+4,'text-anchor':'end','font-size':11,fill:'#5B6576','font-family':'Roboto Mono'});t.textContent=v});
+  ['0','π/2','π','3π/2','2π'].forEach(function(s,i){var t=el('text',{x:L+(R-L)*i/4,y:B+16,'text-anchor':'middle','font-size':11,fill:'#5B6576','font-family':'Roboto Mono'});t.textContent=s});
+  var pts=[];for(var i=0;i<100;i++){var x=2*Math.PI*i/99;pts.push((L+(R-L)*i/99).toFixed(1)+','+(mid-Math.sin(x)*(B-T)/2).toFixed(1))}
+  el('polyline',{points:pts.join(' '),fill:'none',stroke:'#1B2431','stroke-width':2});
+  var tt=el('text',{x:(L+R)/2,y:B+34,'text-anchor':'middle','font-size':12,fill:'#1B2431','font-family':'Barlow'});tt.textContent='x (rad)';
+})();
+</script>
+</body>
+</html>
