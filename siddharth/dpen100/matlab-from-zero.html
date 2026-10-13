@@ -158,7 +158,7 @@ svg.flow text{font-family:Barlow,sans-serif;font-size:13px;fill:#1B2431}
 <h3>Two places to type</h3>
 <p><b>Command Window.</b> Type one line, press Enter, get an answer immediately. Use it like a calculator and for experimenting.</p>
 <p><b>Editor (a script, saved as a <code>.m</code> file).</b> A saved list of instructions. Press Run and MATLAB runs every line in order. Lab tasks and assessments go here.</p>
-<p>A <b>built-in</b> is a tool that comes with MATLAB. The function <code>sqrt(number)</code> returns a square root, and the built-in constant <code>pi</code> stores MATLAB's value of \(\pi\). You can use both without writing them yourself.</p>
+<p>A <b>built-in</b> is a tool that comes with MATLAB. The function <code>sqrt(number)</code> returns a square root, and the built-in constant <code>pi</code> stores MATLAB's value of &pi;. You can use both without writing them yourself.</p>
 <pre>3 + 4 * 2          <span class="c">% MATLAB follows normal maths order: * before +</span>
 sqrt(81)           <span class="c">% square root</span>
 pi                 <span class="c">% MATLAB already knows pi</span></pre>
@@ -591,6 +591,22 @@ for k = 1:numel(marks)    <span class="c">% k is 1, 2, 3</span>
 end</pre>
 <p>Use this when each item needs its own decision or text output. If the same formula applies to every item, a vector operation is shorter and needs no loop.</p>
 
+<h3>Nested loops: one loop inside another</h3>
+<p>A <b>nested loop</b> is a loop placed inside another loop. For each single pass of the outer loop, the inner loop completes all of its passes.</p>
+<pre>for row = 1:2
+    for column = 1:3
+        fprintf('row %d, column %d\n', row, column);
+    end
+end</pre>
+<p>The outer loop has 2 passes. During each outer pass, the inner loop has 3 passes, so the <code>fprintf</code> statement executes 2 &times; 3 = 6 times. The order is:</p>
+<pre class="out">row 1, column 1
+row 1, column 2
+row 1, column 3
+row 2, column 1
+row 2, column 2
+row 2, column 3</pre>
+<div class="key"><p style="margin:0"><strong>Trace from the inside out.</strong> Hold the outer-loop value fixed, run the inner loop from beginning to end, and only then advance the outer loop. For loop ranges with fixed lengths, multiply their numbers of passes to find how many times the innermost statement executes.</p></div>
+
 <h3>while: repeat until a condition fails</h3>
 <pre>total = 0;
 n = 0;
@@ -631,6 +647,63 @@ end</pre>
 <div class="q"><p>Rewrite the accumulator without a loop, using a vector.</p>
 <button>Show answer</button>
 <div class="ans"><code>total = sum(1:4)</code>. MATLAB often lets a vector operation replace a loop. Learn the loop first, then look for this shortcut.</div></div>
+
+<h3>Practice: trace the loops before running them</h3>
+<p>For every question below, work on paper first. Write the current values after each pass of the inner loop, predict the final answer, and only then run the code in MATLAB.</p>
+
+<div class="q"><p><strong>1. Counting inner-loop visits.</strong> What are <code>visits</code>, <code>i</code> and <code>j</code> after this script finishes?</p>
+<pre>visits = 0;
+for i = 1:3
+    for j = 1:2
+        visits = visits + 1;
+    end
+end</pre>
+<button>Show answer</button>
+<div class="ans"><code>visits = 6</code>, <code>i = 3</code> and <code>j = 2</code>. The inner statement runs 3 &times; 2 = 6 times. When both loops finish, their loop variables retain their final values.</div></div>
+
+<div class="q"><p><strong>2. Accumulating products.</strong> What is <code>total</code> at the end?</p>
+<pre>total = 0;
+for i = 1:3
+    for j = 1:2
+        total = total + i * j;
+    end
+end</pre>
+<button>Show answer</button>
+<div class="ans"><code>total = 18</code>. For <code>i = 1</code>, the additions are 1 and 2; for <code>i = 2</code>, they are 2 and 4; for <code>i = 3</code>, they are 3 and 6. Therefore 0 + 1 + 2 + 2 + 4 + 3 + 6 = 18.</div></div>
+
+<div class="q"><p><strong>3. Filling a matrix.</strong> What matrix is stored in <code>A</code> after both loops finish?</p>
+<pre>A = zeros(2, 3);
+for row = 1:2
+    for column = 1:3
+        A(row, column) = 10 * row + column;
+    end
+end</pre>
+<button>Show answer</button>
+<div class="ans"><pre>A =
+    11    12    13
+    21    22    23</pre>The row number supplies the tens digit and the column number supplies the ones digit. Each of the six matrix positions is assigned once.</div></div>
+
+<div class="q"><p><strong>4. A decision inside two loops.</strong> What are <code>count</code>, <code>i</code> and <code>j</code> at the end?</p>
+<pre>count = 0;
+for i = 1:4
+    for j = 1:3
+        if i + j &gt; 4
+            count = count + 1;
+        end
+    end
+end</pre>
+<button>Show answer</button>
+<div class="ans"><code>count = 6</code>, <code>i = 4</code> and <code>j = 3</code>. The successful pairs are (2,3), (3,2), (3,3), (4,1), (4,2) and (4,3).</div></div>
+
+<div class="q"><p><strong>5. Updating one value repeatedly.</strong> What is <code>x</code> after the loops finish?</p>
+<pre>x = 1;
+for i = 1:3
+    for j = 1:2
+        x = x + i + j;
+    end
+end</pre>
+<button>Show answer</button>
+<div class="ans"><code>x = 22</code>. Starting from 1, the six additions are 2, 3, 3, 4, 4 and 5. Their total is 21, so the final value is 1 + 21 = 22.</div></div>
 </section>
 
 <!-- 7 -->
@@ -1261,7 +1334,7 @@ Linear behaviour ends near 10 kN (extension 0.62 mm)</pre><h4>Check</h4><p>Match
 <tr><td>strcmp(a, b)</td><td>Are two texts identical?</td><td>5</td></tr>
 <tr><th colspan="3">Built-in values</th></tr>
 <tr><td>ans</td><td>Automatic variable for the latest unnamed result</td><td>1</td></tr>
-<tr><td>pi</td><td>MATLAB's stored value of \(\pi\)</td><td>1</td></tr>
+<tr><td>pi</td><td>MATLAB's stored value of &pi;</td><td>1</td></tr>
 <tr><td>NaN</td><td>"Not a Number": an undefined numeric result such as 0/0</td><td>4</td></tr>
 <tr><th colspan="3">Building and inspecting</th></tr>
 <tr><td>a:step:b</td><td>Range of values</td><td>4</td></tr>
