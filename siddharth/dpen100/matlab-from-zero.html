@@ -650,6 +650,10 @@ end</pre>
 
 <h3>Practice: trace the loops before running them</h3>
 <p>For every question below, work on paper first. Write the current values after each pass of the inner loop, predict the final answer, and only then run the code in MATLAB.</p>
+<div class="key">
+<p><strong>How to count nested loops:</strong> make one row in a trace table every time the statement inside the inner loop executes. Keep the outer-loop value fixed while the inner loop runs through all its values. When the inner loop finishes, advance the outer loop once and restart the inner loop from its first value.</p>
+<p style="margin:0">For <code>i = 1:3</code> and <code>j = 1:2</code>, the ordered pairs are <code>(1,1)</code>, <code>(1,2)</code>, <code>(2,1)</code>, <code>(2,2)</code>, <code>(3,1)</code>, <code>(3,2)</code>. There are 3 outer passes and 2 inner passes per outer pass, so the innermost statement executes 3 &times; 2 = 6 times.</p>
+</div>
 
 <div class="q"><p><strong>1. Counting inner-loop visits.</strong> What are <code>visits</code>, <code>i</code> and <code>j</code> after this script finishes?</p>
 <pre>visits = 0;
@@ -659,7 +663,19 @@ for i = 1:3
     end
 end</pre>
 <button>Show answer</button>
-<div class="ans"><code>visits = 6</code>, <code>i = 3</code> and <code>j = 2</code>. The inner statement runs 3 &times; 2 = 6 times. When both loops finish, their loop variables retain their final values.</div></div>
+<div class="ans">
+<p><code>visits</code> begins at 0. The statement <code>visits = visits + 1</code> executes once for every <code>(i,j)</code> pair:</p>
+<div class="tw"><table>
+<tr><th>Execution</th><th>i</th><th>j</th><th>visits before</th><th>Calculation</th><th>visits after</th></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>0</td><td>0 + 1</td><td>1</td></tr>
+<tr><td>2</td><td>1</td><td>2</td><td>1</td><td>1 + 1</td><td>2</td></tr>
+<tr><td>3</td><td>2</td><td>1</td><td>2</td><td>2 + 1</td><td>3</td></tr>
+<tr><td>4</td><td>2</td><td>2</td><td>3</td><td>3 + 1</td><td>4</td></tr>
+<tr><td>5</td><td>3</td><td>1</td><td>4</td><td>4 + 1</td><td>5</td></tr>
+<tr><td>6</td><td>3</td><td>2</td><td>5</td><td>5 + 1</td><td>6</td></tr>
+</table></div>
+<p>The inner loop runs twice for each of the three outer-loop values, giving 6 executions. MATLAB leaves loop variables at the last values they received, so the final values are <strong><code>visits = 6</code>, <code>i = 3</code> and <code>j = 2</code></strong>.</p>
+</div></div>
 
 <div class="q"><p><strong>2. Accumulating products.</strong> What is <code>total</code> at the end?</p>
 <pre>total = 0;
@@ -669,7 +685,19 @@ for i = 1:3
     end
 end</pre>
 <button>Show answer</button>
-<div class="ans"><code>total = 18</code>. For <code>i = 1</code>, the additions are 1 and 2; for <code>i = 2</code>, they are 2 and 4; for <code>i = 3</code>, they are 3 and 6. Therefore 0 + 1 + 2 + 2 + 4 + 3 + 6 = 18.</div></div>
+<div class="ans">
+<p><code>total</code> begins at 0. On each inner pass, MATLAB first calculates <code>i * j</code>, then adds that product to the previous value of <code>total</code>:</p>
+<div class="tw"><table>
+<tr><th>Execution</th><th>i</th><th>j</th><th>i * j</th><th>total before</th><th>total after</th></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+<tr><td>2</td><td>1</td><td>2</td><td>2</td><td>1</td><td>3</td></tr>
+<tr><td>3</td><td>2</td><td>1</td><td>2</td><td>3</td><td>5</td></tr>
+<tr><td>4</td><td>2</td><td>2</td><td>4</td><td>5</td><td>9</td></tr>
+<tr><td>5</td><td>3</td><td>1</td><td>3</td><td>9</td><td>12</td></tr>
+<tr><td>6</td><td>3</td><td>2</td><td>6</td><td>12</td><td>18</td></tr>
+</table></div>
+<p>Notice that <code>j</code> restarts at 1 whenever <code>i</code> advances. The products added are 1, 2, 2, 4, 3 and 6. Therefore the final value is <strong><code>total = 18</code></strong>.</p>
+</div></div>
 
 <div class="q"><p><strong>3. Filling a matrix.</strong> What matrix is stored in <code>A</code> after both loops finish?</p>
 <pre>A = zeros(2, 3);
@@ -679,9 +707,22 @@ for row = 1:2
     end
 end</pre>
 <button>Show answer</button>
-<div class="ans"><pre>A =
+<div class="ans">
+<p><code>zeros(2,3)</code> first creates two rows and three columns filled with zeros. Each loop pair selects one position using <code>A(row,column)</code>:</p>
+<div class="tw"><table>
+<tr><th>Execution</th><th>row</th><th>column</th><th>Calculation</th><th>Position changed</th></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>10(1) + 1 = 11</td><td>A(1,1) becomes 11</td></tr>
+<tr><td>2</td><td>1</td><td>2</td><td>10(1) + 2 = 12</td><td>A(1,2) becomes 12</td></tr>
+<tr><td>3</td><td>1</td><td>3</td><td>10(1) + 3 = 13</td><td>A(1,3) becomes 13</td></tr>
+<tr><td>4</td><td>2</td><td>1</td><td>10(2) + 1 = 21</td><td>A(2,1) becomes 21</td></tr>
+<tr><td>5</td><td>2</td><td>2</td><td>10(2) + 2 = 22</td><td>A(2,2) becomes 22</td></tr>
+<tr><td>6</td><td>2</td><td>3</td><td>10(2) + 3 = 23</td><td>A(2,3) becomes 23</td></tr>
+</table></div>
+<p>While <code>row = 1</code>, the inner loop fills the entire first row. It then restarts with <code>column = 1</code> while <code>row = 2</code> and fills the second row. The final matrix is:</p>
+<pre>A =
     11    12    13
-    21    22    23</pre>The row number supplies the tens digit and the column number supplies the ones digit. Each of the six matrix positions is assigned once.</div></div>
+    21    22    23</pre>
+</div></div>
 
 <div class="q"><p><strong>4. A decision inside two loops.</strong> What are <code>count</code>, <code>i</code> and <code>j</code> at the end?</p>
 <pre>count = 0;
@@ -693,7 +734,25 @@ for i = 1:4
     end
 end</pre>
 <button>Show answer</button>
-<div class="ans"><code>count = 6</code>, <code>i = 4</code> and <code>j = 3</code>. The successful pairs are (2,3), (3,2), (3,3), (4,1), (4,2) and (4,3).</div></div>
+<div class="ans">
+<p>There are 4 &times; 3 = 12 <code>(i,j)</code> pairs. The counter increases only when <code>i + j &gt; 4</code> is true. Because the operator is <code>&gt;</code>, a sum exactly equal to 4 does <em>not</em> count.</p>
+<div class="tw"><table>
+<tr><th>Execution</th><th>i</th><th>j</th><th>i + j</th><th>Greater than 4?</th><th>count after</th></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>2</td><td>No</td><td>0</td></tr>
+<tr><td>2</td><td>1</td><td>2</td><td>3</td><td>No</td><td>0</td></tr>
+<tr><td>3</td><td>1</td><td>3</td><td>4</td><td>No</td><td>0</td></tr>
+<tr><td>4</td><td>2</td><td>1</td><td>3</td><td>No</td><td>0</td></tr>
+<tr><td>5</td><td>2</td><td>2</td><td>4</td><td>No</td><td>0</td></tr>
+<tr><td>6</td><td>2</td><td>3</td><td>5</td><td>Yes</td><td>1</td></tr>
+<tr><td>7</td><td>3</td><td>1</td><td>4</td><td>No</td><td>1</td></tr>
+<tr><td>8</td><td>3</td><td>2</td><td>5</td><td>Yes</td><td>2</td></tr>
+<tr><td>9</td><td>3</td><td>3</td><td>6</td><td>Yes</td><td>3</td></tr>
+<tr><td>10</td><td>4</td><td>1</td><td>5</td><td>Yes</td><td>4</td></tr>
+<tr><td>11</td><td>4</td><td>2</td><td>6</td><td>Yes</td><td>5</td></tr>
+<tr><td>12</td><td>4</td><td>3</td><td>7</td><td>Yes</td><td>6</td></tr>
+</table></div>
+<p>The condition succeeds for six pairs: (2,3), (3,2), (3,3), (4,1), (4,2) and (4,3). The final values are <strong><code>count = 6</code>, <code>i = 4</code> and <code>j = 3</code></strong>.</p>
+</div></div>
 
 <div class="q"><p><strong>5. Updating one value repeatedly.</strong> What is <code>x</code> after the loops finish?</p>
 <pre>x = 1;
@@ -703,7 +762,19 @@ for i = 1:3
     end
 end</pre>
 <button>Show answer</button>
-<div class="ans"><code>x = 22</code>. Starting from 1, the six additions are 2, 3, 3, 4, 4 and 5. Their total is 21, so the final value is 1 + 21 = 22.</div></div>
+<div class="ans">
+<p>The assignment <code>x = x + i + j</code> reads the current value of <code>x</code>, adds the current loop values, and stores the new result back in <code>x</code>. The next pass begins with that updated value:</p>
+<div class="tw"><table>
+<tr><th>Execution</th><th>i</th><th>j</th><th>x before</th><th>Calculation</th><th>x after</th></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1 + 1 + 1</td><td>3</td></tr>
+<tr><td>2</td><td>1</td><td>2</td><td>3</td><td>3 + 1 + 2</td><td>6</td></tr>
+<tr><td>3</td><td>2</td><td>1</td><td>6</td><td>6 + 2 + 1</td><td>9</td></tr>
+<tr><td>4</td><td>2</td><td>2</td><td>9</td><td>9 + 2 + 2</td><td>13</td></tr>
+<tr><td>5</td><td>3</td><td>1</td><td>13</td><td>13 + 3 + 1</td><td>17</td></tr>
+<tr><td>6</td><td>3</td><td>2</td><td>17</td><td>17 + 3 + 2</td><td>22</td></tr>
+</table></div>
+<p>The amount added on the six passes is 2, 3, 3, 4, 4 and 5. These additions total 21, and <code>x</code> began at 1. Therefore the final value is <strong><code>x = 22</code></strong>.</p>
+</div></div>
 </section>
 
 <!-- 7 -->
