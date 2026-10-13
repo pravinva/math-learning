@@ -605,7 +605,50 @@ row 1, column 3
 row 2, column 1
 row 2, column 2
 row 2, column 3</pre>
-<div class="key"><p style="margin:0"><strong>Trace from the inside out.</strong> Hold the outer-loop value fixed, run the inner loop from beginning to end, and only then advance the outer loop. For loop ranges with fixed lengths, multiply their numbers of passes to find how many times the innermost statement executes.</p></div>
+<div class="key"><p style="margin:0"><strong>Trace from the inside out.</strong> Hold the outer-loop value fixed, run the inner loop from beginning to end, and only then advance the outer loop.</p></div>
+
+<h3>A fast manual technique for counting loops</h3>
+<p>Do not begin by tracing every calculation. First count how many values each loop variable receives. Use this four-step worksheet:</p>
+<ol class="steps">
+<li><strong>Expand each range.</strong> Write the actual values beside the loop. For example, <code>2:2:8</code> means 2, 4, 6, 8, so it has 4 passes.</li>
+<li><strong>Check whether the inner range is fixed or changing.</strong> A fixed range such as <code>j = 1:3</code> always has 3 passes. A changing range such as <code>j = 1:i</code> has a different number for each outer pass.</li>
+<li><strong>Count executions.</strong> Multiply fixed independent counts. Add the per-row counts when the inner range depends on the outer variable.</li>
+<li><strong>Only then trace values.</strong> If a variable changes inside the loop, add columns for its contribution, value before and value after.</li>
+</ol>
+
+<h4>Case 1: both loop ranges are fixed—multiply</h4>
+<pre>for i = 1:3       <span class="c">% 3 values: 1, 2, 3</span>
+    for j = 1:2   <span class="c">% 2 values every time: 1, 2</span>
+        statement
+    end
+end</pre>
+<p>The innermost statement runs <strong>3 outer passes &times; 2 inner passes = 6 times</strong>. This multiplication works because the inner loop has the same two values for every value of <code>i</code>.</p>
+
+<h4>Case 2: the inner range depends on the outer loop—add</h4>
+<pre>for i = 1:4
+    for j = 1:i
+        statement
+    end
+end</pre>
+<div class="tw"><table>
+<tr><th>Outer value i</th><th>Inner values j = 1:i</th><th>Executions in this outer pass</th><th>Running count</th></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>2</td><td>1, 2</td><td>2</td><td>3</td></tr>
+<tr><td>3</td><td>1, 2, 3</td><td>3</td><td>6</td></tr>
+<tr><td>4</td><td>1, 2, 3, 4</td><td>4</td><td>10</td></tr>
+</table></div>
+<p>Here you must add the changing inner counts: <strong>1 + 2 + 3 + 4 = 10 executions</strong>. Multiplying 4 by one fixed inner count would be wrong because no single fixed inner count exists.</p>
+
+<h4>Case 3: an if statement filters the pairs—make a small grid</h4>
+<p>First count all loop pairs. Then write the outer values down the side, the inner values across the top, and mark the cells where the condition is true. The number of marked cells is the number of times the statement inside the <code>if</code> executes.</p>
+<div class="tw"><table>
+<tr><th>i \ j</th><th>1</th><th>2</th><th>3</th><th>True cells in row</th></tr>
+<tr><td>1</td><td>1+1 &gt; 4? No</td><td>1+2 &gt; 4? No</td><td>1+3 &gt; 4? No</td><td>0</td></tr>
+<tr><td>2</td><td>2+1 &gt; 4? No</td><td>2+2 &gt; 4? No</td><td>2+3 &gt; 4? Yes</td><td>1</td></tr>
+<tr><td>3</td><td>3+1 &gt; 4? No</td><td>3+2 &gt; 4? Yes</td><td>3+3 &gt; 4? Yes</td><td>2</td></tr>
+<tr><td>4</td><td>4+1 &gt; 4? Yes</td><td>4+2 &gt; 4? Yes</td><td>4+3 &gt; 4? Yes</td><td>3</td></tr>
+</table></div>
+<p>Add the final column: <strong>0 + 1 + 2 + 3 = 6 true pairs</strong>. This is faster and less error-prone than trying to remember twelve decisions mentally.</p>
 
 <h3>while: repeat until a condition fails</h3>
 <pre>total = 0;
@@ -825,6 +868,85 @@ end</pre><code>toFahrenheit(100)</code> returns <code>212</code>.</div></div>
 <div class="q"><p>What does <code>[~, pos] = min([7 3 5 3])</code> give?</p>
 <button>Show answer</button>
 <div class="ans"><code>pos = 2</code>. The smallest value 3 appears first at position 2; the value itself is discarded by <code>~</code>.</div></div>
+
+<h3>Practice: trace function inputs and outputs</h3>
+<p>For each question, identify the input first, follow the statements inside the function from top to bottom, and only then assign the returned output. Treat every function call as a fresh use of the named machine.</p>
+
+<div class="q"><p><strong>1. Calling a function twice.</strong> Assume this function is saved as <code>adjust.m</code>. What are <code>a</code> and <code>b</code>?</p>
+<pre>function y = adjust(x)
+    doubled = 2 * x;
+    y = doubled + 3;
+end
+
+a = adjust(4);
+b = adjust(a);</pre>
+<button>Show answer</button>
+<div class="ans">
+<p>First call: the input <code>x</code> receives 4. Therefore <code>doubled = 8</code> and the function returns <code>y = 11</code>, so <code>a = 11</code>.</p>
+<p>Second call: MATLAB now calls the function again with the current value of <code>a</code>, so <code>x = 11</code>. It calculates <code>doubled = 22</code> and returns <code>y = 25</code>, so <strong><code>b = 25</code></strong>.</p>
+</div></div>
+
+<div class="q"><p><strong>2. A function receiving a vector.</strong> Assume the function is saved as <code>transform.m</code>. What is stored in <code>answer</code>, and why is the dot needed?</p>
+<pre>function y = transform(x)
+    y = x.^2 - 1;
+end
+
+answer = transform([1 2 3]);</pre>
+<button>Show answer</button>
+<div class="ans">
+<div class="tw"><table>
+<tr><th>x</th><th>x.^2</th><th>x.^2 - 1</th></tr>
+<tr><td>1</td><td>1</td><td>0</td></tr>
+<tr><td>2</td><td>4</td><td>3</td></tr>
+<tr><td>3</td><td>9</td><td>8</td></tr>
+</table></div>
+<p>The final value is <strong><code>answer = [0 3 8]</code></strong>. The operator <code>.^</code> squares each vector element separately. Plain <code>^</code> would request matrix power and would fail for this 1&times;3 vector.</p>
+</div></div>
+
+<div class="q"><p><strong>3. Collecting one or two outputs.</strong> Assume the function is saved as <code>both.m</code>. What are <code>x</code>, <code>p</code> and <code>q</code>?</p>
+<pre>function [sumValue, difference] = both(a, b)
+    sumValue = a + b;
+    difference = a - b;
+end
+
+x = both(7, 2);
+[p, q] = both(7, 2);</pre>
+<button>Show answer</button>
+<div class="ans">
+<p>The function always calculates the sum as its first output and the difference as its second output.</p>
+<ul>
+<li><code>x = both(7,2)</code> collects only the first output, so <code>x = 9</code>.</li>
+<li><code>[p,q] = both(7,2)</code> collects both outputs in order, so <code>p = 9</code> and <code>q = 5</code>.</li>
+</ul>
+<p>The final values are <strong><code>x = 9</code>, <code>p = 9</code> and <code>q = 5</code></strong>.</p>
+</div></div>
+
+<div class="q"><p><strong>4. Functions nested inside functions.</strong> What value is returned?</p>
+<pre>result = sqrt(abs(-25) + 11);</pre>
+<button>Show answer</button>
+<div class="ans">
+<p>MATLAB works from the innermost function outward:</p>
+<ol>
+<li><code>abs(-25)</code> returns 25.</li>
+<li>The surrounding expression becomes <code>25 + 11</code>, which is 36.</li>
+<li><code>sqrt(36)</code> returns 6.</li>
+</ol>
+<p>Therefore <strong><code>result = 6</code></strong>.</p>
+</div></div>
+
+<div class="q"><p><strong>5. Local variables and the script Workspace.</strong> Assume the function is saved as <code>changeValue.m</code>. What are <code>x</code> and <code>y</code> after the call?</p>
+<pre>function output = changeValue(inputValue)
+    inputValue = inputValue + 5;
+    output = 2 * inputValue;
+end
+
+x = 10;
+y = changeValue(x);</pre>
+<button>Show answer</button>
+<div class="ans">
+<p>The value 10 is copied into the function input. Inside the function, the local variable <code>inputValue</code> becomes 15, and the function returns <code>output = 30</code>. This returned value is assigned to <code>y</code>.</p>
+<p>Changing the local input does not change the script variable that supplied its value. Therefore the final values are <strong><code>x = 10</code> and <code>y = 30</code></strong>.</p>
+</div></div>
 </section>
 
 <!-- 8 -->
@@ -906,6 +1028,80 @@ xlabel('t'), ylabel('y')</pre></div></div>
 data = readmatrix('readings.csv');
 [Tmax, i] = max(data(:, 2));
 fprintf('Max %.1f degrees at t = %.1f s\n', Tmax, data(i, 1))</pre>The position from <code>max</code> picks the matching time from column 1.</div></div>
+
+<h3>Practice: predict the plotted data before running it</h3>
+<p>A MATLAB plot joins coordinate pairs. Before worrying about colours or labels, write the actual <code>x</code> and <code>y</code> vectors and pair their elements by position.</p>
+
+<div class="q"><p><strong>1. From linspace to coordinates.</strong> What are <code>x</code> and <code>y</code>, and which five points are plotted?</p>
+<pre>x = linspace(0, 4, 5);
+y = x.^2;
+plot(x, y)</pre>
+<button>Show answer</button>
+<div class="ans">
+<p><code>linspace(0,4,5)</code> includes both endpoints and creates five evenly spaced values, so <code>x = [0 1 2 3 4]</code>. Squaring each value gives <code>y = [0 1 4 9 16]</code>.</p>
+<div class="tw"><table>
+<tr><th>Position</th><th>x</th><th>y</th><th>Point</th></tr>
+<tr><td>1</td><td>0</td><td>0</td><td>(0,0)</td></tr>
+<tr><td>2</td><td>1</td><td>1</td><td>(1,1)</td></tr>
+<tr><td>3</td><td>2</td><td>4</td><td>(2,4)</td></tr>
+<tr><td>4</td><td>3</td><td>9</td><td>(3,9)</td></tr>
+<tr><td>5</td><td>4</td><td>16</td><td>(4,16)</td></tr>
+</table></div>
+<p>MATLAB plots these five points in order and joins neighbouring points with straight line segments.</p>
+</div></div>
+
+<div class="q"><p><strong>2. Matching vector lengths.</strong> Why does this plot fail, and give two different ways to fix it.</p>
+<pre>x = 0:1:4;
+y = [0 1 4 9];
+plot(x, y)</pre>
+<button>Show answer</button>
+<div class="ans">
+<p><code>x</code> contains five values: 0, 1, 2, 3 and 4. <code>y</code> contains only four values. MATLAB cannot form one coordinate pair for every position, so <code>plot(x,y)</code> reports that the vectors must have compatible lengths.</p>
+<ul>
+<li>If the intended x-values stop at 3, use <code>x = 0:1:3</code>.</li>
+<li>If the intended curve is <i>y</i> = <i>x</i><sup>2</sup> through x = 4, keep the five x-values and calculate <code>y = x.^2</code>, which supplies the missing value 16.</li>
+</ul>
+</div></div>
+
+<div class="q"><p><strong>3. Reading a line style.</strong> Describe exactly what this command requests.</p>
+<pre>plot(t, h, 'r--o', 'LineWidth', 2)</pre>
+<button>Show answer</button>
+<div class="ans">
+<ul>
+<li><code>t</code> supplies the horizontal coordinates and <code>h</code> supplies the matching vertical coordinates.</li>
+<li><code>r</code> requests red.</li>
+<li><code>--</code> requests a dashed line.</li>
+<li><code>o</code> requests a circle marker at each data point.</li>
+<li>The name-value pair <code>'LineWidth', 2</code> makes the line thicker.</li>
+</ul>
+<p>The result is a thick red dashed line with circular markers.</p>
+</div></div>
+
+<div class="q"><p><strong>4. Why did the first line disappear?</strong> What is wrong, and what complete sequence keeps and identifies both curves?</p>
+<pre>plot(x, sin(x))
+plot(x, cos(x), 'r--')</pre>
+<button>Show answer</button>
+<div class="ans">
+<p>By default, a new <code>plot</code> command replaces the current plot. The second command therefore removes the sine curve. Use <code>hold on</code> before adding the second line, then add a legend and restore normal behaviour:</p>
+<pre>plot(x, sin(x))
+hold on
+plot(x, cos(x), 'r--')
+legend('sin', 'cos')
+hold off</pre>
+</div></div>
+
+<div class="q"><p><strong>5. Plotting columns and finding the peak.</strong> What points are plotted, and what are <code>highest</code>, <code>position</code> and <code>timeAtHighest</code>?</p>
+<pre>data = [0 20; 1 23; 2 25; 3 22];
+time = data(:, 1);
+temperature = data(:, 2);
+plot(time, temperature)
+[highest, position] = max(temperature);
+timeAtHighest = time(position);</pre>
+<button>Show answer</button>
+<div class="ans">
+<p>Column 1 supplies times <code>[0;1;2;3]</code> and column 2 supplies temperatures <code>[20;23;25;22]</code>. The plotted points are (0,20), (1,23), (2,25) and (3,22).</p>
+<p><code>max</code> finds 25 at position 3. That position selects the matching third time value, 2. Therefore <strong><code>highest = 25</code>, <code>position = 3</code> and <code>timeAtHighest = 2</code></strong>.</p>
+</div></div>
 </section>
 
 <!-- method -->
@@ -1028,6 +1224,70 @@ fprintf('Greatest stress: rod %d at %.2f MPa\n', rodIndex, maxStress);
 Greatest stress: rod 1 at 19.89 MPa</pre>
 <h4>Check</h4>
 <p>Rod 1 matches the hand calculation. The Workspace shows <code>radii_mm</code>, <code>areas_mm2</code> and <code>stress_MPa</code> as 1&times;4 double, confirming all four rods were processed in single expressions.</p>
+
+<h3>Practice: choose the tool before writing code</h3>
+<p>Do not write MATLAB yet. For each problem, identify <strong>Given, Find and Rules</strong>, choose the main programming tool, and write short pseudocode. Reveal the answer only after making your own plan.</p>
+
+<div class="q"><p><strong>1. Same formula for matching lists.</strong> Three forces are 10, 20 and 30 N, and their matching travel distances are 2, 3 and 4 m. Calculate the work for each case using work = force &times; distance, then report the largest result.</p>
+<button>Show answer</button>
+<div class="ans">
+<p><strong>Given:</strong> a force list and a corresponding distance list. <strong>Find:</strong> three work values and the largest one. <strong>Rule:</strong> multiply each force by its matching distance.</p>
+<p><strong>Tool:</strong> vectors with <code>.*</code>, followed by <code>max</code>. The word “matching” means element 1 belongs with element 1 and so on; no loop is required.</p>
+<pre class="pc">store forces and distances as matching vectors
+work = each force * its matching distance
+find largest work and its position
+display all work values and the largest</pre>
+</div></div>
+
+<div class="q"><p><strong>2. Repeat until a threshold.</strong> A tank contains 100 L. Each cycle removes 15 L. Count how many complete cycles occur before the remaining volume first falls below 25 L, and report that remaining volume.</p>
+<button>Show answer</button>
+<div class="ans">
+<p><strong>Given:</strong> starting volume 100 L, removal 15 L per cycle, threshold 25 L. <strong>Find:</strong> cycle count and final volume. <strong>Rule:</strong> subtract 15 during every cycle.</p>
+<p><strong>Tool:</strong> a <code>while</code> loop, because the wording says “before it first falls below” and the required number of repetitions is determined by an evolving condition.</p>
+<pre class="pc">volume = 100
+cycles = 0
+while volume is at least 25
+    subtract 15 from volume
+    add 1 to cycles
+end
+display cycles and remaining volume</pre>
+<p>A hand trace gives 85, 70, 55, 40, 25, then 10 L. This check helps you decide carefully whether the condition should use <code>&gt;</code> or <code>&gt;=</code>.</p>
+</div></div>
+
+<div class="q"><p><strong>3. A decision for every item.</strong> Temperatures are 68, 74, 91, 83 and 105 &deg;C. For every reading, print “LOW” below 70, “OK” from 70 through 90 inclusive, and “HIGH” above 90. Then count the HIGH readings.</p>
+<button>Show answer</button>
+<div class="ans">
+<p><strong>Given:</strong> a vector of five temperatures and three classification rules. <strong>Find:</strong> one text result per reading and a HIGH count.</p>
+<p><strong>Tool:</strong> a <code>for</code> loop because every item needs separate text output, with an <code>if / elseif / else</code> decision inside. A vector comparison and <code>sum</code> can count readings above 90 efficiently.</p>
+<pre class="pc">store temperatures as a vector
+for each position
+    take the temperature at that position
+    if below 70, print LOW
+    otherwise if at most 90, print OK
+    otherwise print HIGH
+end
+count temperatures above 90 and display the count</pre>
+</div></div>
+
+<div class="q"><p><strong>4. A reusable calculation and a graph.</strong> Height is given by <code>h = v0*t - 0.5*g*t.^2</code>. Design a reusable function that accepts time values and an initial speed, returns matching heights, and is then used by a script to plot height against time.</p>
+<button>Show answer</button>
+<div class="ans">
+<p><strong>Given:</strong> time values, initial speed and gravitational acceleration. <strong>Find:</strong> a reusable height calculation and a labelled graph.</p>
+<p><strong>Tool:</strong> a function because the calculation should be reusable; <code>linspace</code> for a time vector; element-wise power for all times; and <code>plot</code> with axis labels, title and grid.</p>
+<pre class="pc">FUNCTION heightFromTime(time, initialSpeed)
+    store g
+    height = formula applied to every time
+    return height
+
+SCRIPT
+create a time vector with linspace
+call heightFromTime
+plot time against height
+add axis labels, title and grid</pre>
+<p>The function needs <code>t.^2</code>, not <code>t^2</code>, because it must square every time value separately.</p>
+</div></div>
+
+<div class="key"><p style="margin:0">After these planning exercises, Lesson 10 provides ten complete programming problems with staged thinking, pseudocode, solutions and checks.</p></div>
 </section>
 
 <!-- practice -->
