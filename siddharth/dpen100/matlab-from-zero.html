@@ -508,6 +508,116 @@ v(v &gt; 4)
 sum(v &gt; 4)</pre>
 <button>Show answer</button>
 <div class="ans"><code>0 1 0 1 0</code>, then <code>8 9</code>, then <code>2</code>.</div></div>
+
+<h3>Practice: build logical results one element at a time</h3>
+<p>For vector questions, make one table row per element. Evaluate the left comparison, evaluate the right comparison, then combine the two logical answers. This prevents boundary mistakes with <code>&lt;</code> versus <code>&lt;=</code> and <code>&gt;</code> versus <code>&gt;=</code>.</p>
+
+<div class="q"><p><strong>1. Checking a range and its boundaries.</strong> What is stored in <code>inRange</code>, how many values pass, and which values are selected?</p>
+<pre>v = [49 50 64 65 85];
+inRange = (v &gt;= 50) &amp; (v &lt; 65);
+count = sum(inRange);
+selected = v(inRange);</pre>
+<button>Show answer</button>
+<div class="ans">
+<div class="tw"><table>
+<tr><th>v</th><th>v &gt;= 50</th><th>v &lt; 65</th><th>Both true?</th></tr>
+<tr><td>49</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>50</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>64</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>65</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>85</td><td>1</td><td>0</td><td>0</td></tr>
+</table></div>
+<p>Therefore <strong><code>inRange = [0 1 1 0 0]</code></strong>. Summing its two true values gives <strong><code>count = 2</code></strong>, and logical indexing keeps the corresponding values, so <strong><code>selected = [50 64]</code></strong>.</p>
+<p>The lower boundary 50 is included because of <code>&gt;=</code>. The upper boundary 65 is excluded because the second comparison uses <code>&lt;</code>, not <code>&lt;=</code>.</p>
+</div></div>
+
+<div class="q"><p><strong>2. Combining two vector comparisons.</strong> Predict <code>inside</code>.</p>
+<pre>values = [2 5 8 11];
+inside = (values &gt;= 5) &amp; (values &lt;= 10);</pre>
+<button>Show answer</button>
+<div class="ans">
+<div class="tw"><table>
+<tr><th>Value</th><th>At least 5?</th><th>At most 10?</th><th>AND result</th></tr>
+<tr><td>2</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>5</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>8</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>11</td><td>1</td><td>0</td><td>0</td></tr>
+</table></div>
+<p><strong><code>inside = [0 1 1 0]</code></strong>. The <code>&amp;</code> combines matching logical elements. A position is true only when both comparisons at that position are true.</p>
+</div></div>
+
+<div class="q"><p><strong>3. Changing only selected elements.</strong> What are <code>hot</code>, <code>originalHotValues</code> and the final <code>T</code>?</p>
+<pre>T = [18 25 31 22];
+hot = T &gt; 24;
+originalHotValues = T(hot);
+T(hot) = T(hot) - 2;</pre>
+<button>Show answer</button>
+<div class="ans">
+<p>The comparison gives <code>hot = [0 1 1 0]</code>, because only 25 and 31 are greater than 24. Therefore <code>originalHotValues = [25 31]</code>.</p>
+<p>The assignment on the final line changes only positions 2 and 3. Their new values are 23 and 29; positions 1 and 4 are untouched. The final vector is <strong><code>T = [18 23 29 22]</code></strong>.</p>
+</div></div>
+
+<div class="q"><p><strong>4. Positions, any and all.</strong> Predict every result.</p>
+<pre>v = [4 7 10 3];
+isEven = mod(v, 2) == 0;
+positions = find(isEven);
+atLeastOne = any(isEven);
+everyValue = all(isEven);</pre>
+<button>Show answer</button>
+<div class="ans">
+<p><code>mod(v,2)</code> gives the remainders <code>[0 1 0 1]</code>. Comparing those remainders with zero gives <strong><code>isEven = [1 0 1 0]</code></strong>.</p>
+<ul>
+<li><code>find</code> returns the true positions, so <strong><code>positions = [1 3]</code></strong>.</li>
+<li>At least one element is true, so <strong><code>atLeastOne = 1</code></strong>.</li>
+<li>Not every element is true, so <strong><code>everyValue = 0</code></strong>.</li>
+</ul>
+</div></div>
+
+<div class="q"><p><strong>5. OR followed by NOT.</strong> What are <code>outside</code>, <code>inside</code> and <code>kept</code>?</p>
+<pre>x = [-2 0 3 7];
+outside = (x &lt; 0) | (x &gt; 5);
+inside = ~outside;
+kept = x(inside);</pre>
+<button>Show answer</button>
+<div class="ans">
+<div class="tw"><table>
+<tr><th>x</th><th>x &lt; 0</th><th>x &gt; 5</th><th>outside: OR</th><th>inside: NOT</th></tr>
+<tr><td>-2</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+<tr><td>3</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+<tr><td>7</td><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+</table></div>
+<p><strong><code>outside = [1 0 0 1]</code></strong>. NOT flips every bit, so <strong><code>inside = [0 1 1 0]</code></strong>. Logical indexing then keeps positions 2 and 3, giving <strong><code>kept = [0 3]</code></strong>.</p>
+</div></div>
+
+<div class="q"><p><strong>6. A complete sensor check.</strong> Find the safe readings, their positions and the three summary results.</p>
+<pre>readings = [68 72 91 105 87 76];
+safe = (readings &gt;= 70) &amp; (readings &lt;= 90);
+safeValues = readings(safe);
+safePositions = find(safe);
+safeCount = sum(safe);
+hasCriticalValue = any(readings &gt; 100);
+allPositive = all(readings &gt; 0);</pre>
+<button>Show answer</button>
+<div class="ans">
+<div class="tw"><table>
+<tr><th>Position</th><th>Reading</th><th>&gt;= 70?</th><th>&lt;= 90?</th><th>safe</th></tr>
+<tr><td>1</td><td>68</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>2</td><td>72</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>3</td><td>91</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>4</td><td>105</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>5</td><td>87</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>6</td><td>76</td><td>1</td><td>1</td><td>1</td></tr>
+</table></div>
+<ul>
+<li><code>safe = [0 1 0 0 1 1]</code></li>
+<li><code>safeValues = [72 87 76]</code></li>
+<li><code>safePositions = [2 5 6]</code></li>
+<li><code>safeCount = 3</code></li>
+<li><code>hasCriticalValue = 1</code>, because 105 is greater than 100</li>
+<li><code>allPositive = 1</code>, because every reading is above zero</li>
+</ul>
+</div></div>
 </section>
 
 <!-- 6 -->
