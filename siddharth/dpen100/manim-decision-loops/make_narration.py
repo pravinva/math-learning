@@ -141,6 +141,27 @@ NARRATION = {
         "Break already left the bay loop, so that pass never begins, and a "
         "honest table does not invent it."
     ),
+    "count_intro": (
+        "Now count the loops. Start with the outer loop. Floor takes the values "
+        "one and two, so the outer loop runs two times."
+    ),
+    "count_full": (
+        "If nothing stopped early, each floor would try all four bays. "
+        "Two floors times four bays is eight possible inner passes."
+    ),
+    "count_continue": (
+        "Continue does not remove a pass. Bay two on each floor still began, "
+        "so those two passes are still counted. Continue only skips the display."
+    ),
+    "count_break": (
+        "Break does remove passes. On floor two, break happened at bay three, "
+        "so bay four never began. Eight minus one gives seven inner passes."
+    ),
+    "count_total": (
+        "Check it against the table. Seven inner passes means seven rows. "
+        "Two rows were continue, and one row was the break, so the pair "
+        "display ran seven minus three, which is four times."
+    ),
     "recap": (
         "The rhythm is slow and strict. Fix one outer value. Run inner values "
         "in order. Test each if. Continue means next inner value. Break means "

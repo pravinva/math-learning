@@ -600,34 +600,89 @@ class DecisionLoops(Scene):
             include_outer_lines=True,
             line_config={"color": "#355574", "stroke_width": 1.3},
             element_to_mobject_config={"font_size": 19, "color": INK},
-            h_buff=0.35,
+            h_buff=0.3,
             v_buff=0.16,
-        ).scale(0.78).shift(0.18 * UP)
+        ).scale(0.95).to_edge(RIGHT, buff=0.3).shift(0.25 * UP)
         rows = table.get_rows()
-        missing = Text("(2, 4) is absent: that pass never starts", font_size=23, color=CORAL)
-        missing.next_to(table, DOWN, buff=0.22)
+        missing = Text("(2, 4) is absent: that pass never starts", font_size=20, color=CORAL)
+        missing.next_to(table, DOWN, buff=0.25)
+
+        code, code_lines = self.code_block(
+            [
+                "for floor = 1:2",
+                "    for bay = 1:4",
+                "        if bay == 2",
+                "            continue",
+                "        end",
+                "        if floor == 2 && bay == 3",
+                "            disp('Truck! Leaving floor 2')",
+                "            break",
+                "        end",
+                "        disp([floor bay])",
+                "    end",
+                "end",
+            ],
+            font_size=15,
+        )
+        code.to_edge(LEFT, buff=0.3).shift(0.25 * UP)
+        line_marker = SurroundingRectangle(
+            code_lines[L_FOR_FLOOR], color=YELLOW, fill_color=YELLOW, fill_opacity=0.12, buff=0.05
+        )
+
         duration = self.speak(
             "trace_intro",
             "One paper row per pass that begins: floor, bay, condition, action.",
         )
-        self.play(Write(heading), Create(table.get_horizontal_lines()), Create(table.get_vertical_lines()), run_time=1.5)
-        self.play(FadeIn(table.get_entries()), run_time=1.6)
+        self.play(
+            Write(heading),
+            FadeIn(code),
+            Create(table.get_horizontal_lines()),
+            Create(table.get_vertical_lines()),
+            run_time=1.6,
+        )
+        self.play(FadeIn(rows[0]), Create(line_marker), run_time=0.9)
         row_marker = SurroundingRectangle(
             rows[1], color=YELLOW, fill_color=YELLOW, fill_opacity=0.08, buff=0.06
         )
         self.play(Create(row_marker), run_time=0.6)
-        self.hold(duration, 3.7)
+        self.hold(duration, 3.1)
+
+        # Each step: (code line, line colour, table cells written at that step)
+        def normal_path(row):
+            return [
+                (L_FOR_BAY, YELLOW, [rows[row][0], rows[row][1]]),
+                (L_IF_BAY2, YELLOW, []),
+                (L_IF_TRUCK, YELLOW, [rows[row][2]]),
+                (L_DISP_PAIR, GREEN, [rows[row][3]]),
+            ]
+
+        def continue_path(row):
+            return [
+                (L_FOR_BAY, YELLOW, [rows[row][0], rows[row][1]]),
+                (L_IF_BAY2, CORAL, [rows[row][2]]),
+                (L_CONTINUE, CORAL, [rows[row][3]]),
+            ]
+
+        truck_path = [
+            (L_FOR_BAY, YELLOW, [rows[7][0], rows[7][1]]),
+            (L_IF_BAY2, YELLOW, []),
+            (L_IF_TRUCK, YELLOW, [rows[7][2]]),
+            (L_DISP_TRUCK, YELLOW, []),
+            (L_BREAK, CORAL, [rows[7][3]]),
+            (L_END_BAY, CORAL, []),
+        ]
+        floor_two_start = [(L_FOR_FLOOR, BLUE, [])] + normal_path(5)
 
         table_beats = [
-            ("trace_11", "Floor 1, bay 1. Neither if. Display 1 1.", 1, YELLOW),
-            ("trace_12", "Floor 1, bay 2. Continue. Still write the row.", 2, CORAL),
-            ("trace_13", "Floor 1, bay 3. Display 1 3.", 3, YELLOW),
-            ("trace_14", "Floor 1, bay 4. Display 1 4. Inner values done.", 4, YELLOW),
-            ("trace_21", "Floor 2, bay 1. Inner loop restarts. Display 2 1.", 5, YELLOW),
-            ("trace_22", "Floor 2, bay 2. Continue again. Write the row.", 6, CORAL),
-            ("trace_23", "Floor 2, bay 3. Truck message, then break.", 7, GREEN),
+            ("trace_11", "Floor 1, bay 1. Neither if. Display 1 1.", 1, YELLOW, normal_path(1)),
+            ("trace_12", "Floor 1, bay 2. Continue. Still write the row.", 2, CORAL, continue_path(2)),
+            ("trace_13", "Floor 1, bay 3. Display 1 3.", 3, YELLOW, normal_path(3)),
+            ("trace_14", "Floor 1, bay 4. Display 1 4. Inner values done.", 4, YELLOW, normal_path(4)),
+            ("trace_21", "Floor 2, bay 1. Inner loop restarts. Display 2 1.", 5, YELLOW, floor_two_start),
+            ("trace_22", "Floor 2, bay 2. Continue again. Write the row.", 6, CORAL, continue_path(6)),
+            ("trace_23", "Floor 2, bay 3. Truck message, then break.", 7, GREEN, truck_path),
         ]
-        for key, caption, row_index, color in table_beats:
+        for key, caption, row_index, color, steps in table_beats:
             target = SurroundingRectangle(
                 rows[row_index],
                 color=color,
@@ -637,15 +692,105 @@ class DecisionLoops(Scene):
             )
             self.play(Transform(row_marker, target), run_time=0.45)
             duration = self.speak(key, caption)
-            self.hold(duration, 0.0)
+            # Spread the code steps across the spoken line so the highlight
+            # moves at the same pace as the voice.
+            slot = max(duration * 0.9 / len(steps), 0.9)
+            step_time = min(0.8, slot)
+            used = 0.0
+            for line_index, line_color, cells in steps:
+                anims = [FadeIn(cell) for cell in cells]
+                used += self.sync_step(
+                    line_marker, code_lines, line_index,
+                    extra_anims=anims, run_time=step_time, color=line_color,
+                )
+                pause = slot - step_time
+                if pause > 0.05:
+                    self.wait(pause)
+                    used += pause
+            self.hold(duration, used)
 
         duration = self.speak(
             "trace_missing",
             "No row for 2, 4. Break already left the bay loop. Do not invent it.",
         )
+        break_arrow = CurvedArrow(
+            code_lines[L_BREAK].get_right(),
+            code_lines[L_END_BAY].get_right(),
+            angle=-PI / 2,
+            color=CORAL,
+        )
+        self.play(Create(break_arrow), run_time=1.0)
         self.play(Write(missing), run_time=1.1)
         self.play(Indicate(missing, color=CORAL), run_time=1.0)
+        self.hold(duration, 3.1)
+
+        # Counting the passes
+        self.clear_stage()
+        heading = self.title("Count the loop passes", "Possible passes, minus the ones break prevents")
+        grid, cells = self.bay_grid()
+        grid.scale(0.8).to_edge(LEFT, buff=0.6).shift(0.35 * UP)
+        maths = VGroup()
+        maths_anchor = grid.get_right() + RIGHT * 0.8 + UP * 1.3
+
+        def add_line(text, color=INK, size=26):
+            line = Text(text, font_size=size, color=color)
+            if len(maths) == 0:
+                line.move_to(maths_anchor, aligned_edge=LEFT)
+            else:
+                line.next_to(maths[-1], DOWN, aligned_edge=LEFT, buff=0.28)
+            maths.add(line)
+            return line
+
+        duration = self.speak("count_intro", "Outer loop: floor = 1, 2. That is 2 outer passes.")
+        self.play(Write(heading), FadeIn(grid), run_time=1.5)
+        outer = add_line("outer passes = 2", BLUE)
+        self.play(
+            Write(outer),
+            *[Indicate(grid[i][0], color=BLUE) for i in range(2)],
+            run_time=1.4,
+        )
+        self.hold(duration, 2.9)
+
+        duration = self.speak("count_full", "Without break: 2 floors × 4 bays = 8 possible inner passes.")
+        self.play(
+            LaggedStart(
+                *[cells[(f, b)][0].animate.set_stroke(YELLOW, width=4) for f in (1, 2) for b in range(1, 5)],
+                lag_ratio=0.18,
+            ),
+            run_time=2.6,
+        )
+        full = add_line("2 × 4 = 8 possible", YELLOW)
+        self.play(Write(full), run_time=1.0)
+        self.hold(duration, 3.6)
+
+        duration = self.speak("count_continue", "Continue still counts: bay 2 began on both floors.")
+        self.play(
+            *[cells[(f, 2)][0].animate.set_stroke(CORAL, width=4).set_fill("#3A1D26") for f in (1, 2)],
+            run_time=1.0,
+        )
+        cont = add_line("continue: still counted (2 passes)", CORAL, size=23)
+        self.play(Write(cont), run_time=1.1)
         self.hold(duration, 2.1)
+
+        duration = self.speak("count_break", "Break stops bay 4 on floor 2. 8 − 1 = 7 inner passes.")
+        cross = Cross(cells[(2, 4)], stroke_color=CORAL, stroke_width=5)
+        self.play(Create(cross), cells[(2, 4)][0].animate.set_stroke(MUTED, width=2), run_time=1.0)
+        brk = add_line("break: 8 − 1 = 7 inner passes", GREEN)
+        self.play(Write(brk), run_time=1.1)
+        self.hold(duration, 2.1)
+
+        duration = self.speak("count_total", "7 passes = 7 table rows. Displays = 7 − 2 − 1 = 4.")
+        total_box = VGroup(
+            Text("inner passes = 7 = table rows", font_size=24, color=INK),
+            Text("pair displays = 7 − 2 − 1 = 4", font_size=24, color=GREEN),
+            Text("outer passes = 2", font_size=24, color=BLUE),
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
+        frame = SurroundingRectangle(total_box, color=PURPLE, fill_color=PANEL, fill_opacity=0.95, buff=0.25, corner_radius=0.12)
+        summary = VGroup(frame, total_box).next_to(grid, DOWN, buff=0.45).align_to(grid, LEFT)
+        self.play(FadeIn(frame), run_time=0.5)
+        for line in total_box:
+            self.play(Write(line), run_time=1.0)
+        self.hold(duration, 3.5)
 
         self.clear_stage()
         heading = self.title("The tracing rhythm", "Slow the program down in your mind")
