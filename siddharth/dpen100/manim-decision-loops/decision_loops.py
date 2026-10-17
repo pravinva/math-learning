@@ -602,18 +602,50 @@ class DecisionLoops(Scene):
             element_to_mobject_config={"font_size": 19, "color": INK},
             h_buff=0.35,
             v_buff=0.16,
-        ).scale(0.82).shift(0.12 * UP)
+        ).scale(0.78).shift(0.18 * UP)
+        rows = table.get_rows()
         missing = Text("(2, 4) is absent: that pass never starts", font_size=23, color=CORAL)
-        missing.next_to(table, DOWN, buff=0.2)
+        missing.next_to(table, DOWN, buff=0.22)
         duration = self.speak(
-            "trace",
-            "Write only attempted pairs. Two comma four never begins.",
+            "trace_intro",
+            "One paper row per pass that begins: floor, bay, condition, action.",
         )
-        self.play(Write(heading), Create(table.get_horizontal_lines()), Create(table.get_vertical_lines()), run_time=1.4)
+        self.play(Write(heading), Create(table.get_horizontal_lines()), Create(table.get_vertical_lines()), run_time=1.5)
         self.play(FadeIn(table.get_entries()), run_time=1.6)
+        row_marker = SurroundingRectangle(
+            rows[1], color=YELLOW, fill_color=YELLOW, fill_opacity=0.08, buff=0.06
+        )
+        self.play(Create(row_marker), run_time=0.6)
+        self.hold(duration, 3.7)
+
+        table_beats = [
+            ("trace_11", "Floor 1, bay 1. Neither if. Display 1 1.", 1, YELLOW),
+            ("trace_12", "Floor 1, bay 2. Continue. Still write the row.", 2, CORAL),
+            ("trace_13", "Floor 1, bay 3. Display 1 3.", 3, YELLOW),
+            ("trace_14", "Floor 1, bay 4. Display 1 4. Inner values done.", 4, YELLOW),
+            ("trace_21", "Floor 2, bay 1. Inner loop restarts. Display 2 1.", 5, YELLOW),
+            ("trace_22", "Floor 2, bay 2. Continue again. Write the row.", 6, CORAL),
+            ("trace_23", "Floor 2, bay 3. Truck message, then break.", 7, GREEN),
+        ]
+        for key, caption, row_index, color in table_beats:
+            target = SurroundingRectangle(
+                rows[row_index],
+                color=color,
+                fill_color=color,
+                fill_opacity=0.10,
+                buff=0.06,
+            )
+            self.play(Transform(row_marker, target), run_time=0.45)
+            duration = self.speak(key, caption)
+            self.hold(duration, 0.0)
+
+        duration = self.speak(
+            "trace_missing",
+            "No row for 2, 4. Break already left the bay loop. Do not invent it.",
+        )
         self.play(Write(missing), run_time=1.1)
-        self.play(Indicate(table.get_rows()[-1], color=YELLOW), Indicate(missing, color=CORAL), run_time=1.3)
-        self.hold(duration, 5.4)
+        self.play(Indicate(missing, color=CORAL), run_time=1.0)
+        self.hold(duration, 2.1)
 
         self.clear_stage()
         heading = self.title("The tracing rhythm", "Slow the program down in your mind")

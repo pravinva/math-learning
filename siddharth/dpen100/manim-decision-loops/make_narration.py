@@ -104,9 +104,42 @@ NARRATION = {
         "its next value. Break ends the nearest loop completely. Here that is "
         "the bay loop, not the floor loop."
     ),
-    "trace": (
-        "On paper, write one row for every pair that actually begins. "
-        "Do not write two comma four. Break means that pass never starts."
+    "trace_intro": (
+        "Now copy the run onto paper as a table. One row for every pass that "
+        "actually begins. Write floor, then bay, then the condition result, "
+        "then the action. Do not invent rows for pairs the loop never starts."
+    ),
+    "trace_11": (
+        "First row. Floor one, bay one. Neither if is true, so the action is "
+        "display one, one."
+    ),
+    "trace_12": (
+        "Second row. Floor one, bay two. The bay-equals-two condition is true. "
+        "The action is continue. The pair is still written, because this pass did begin."
+    ),
+    "trace_13": (
+        "Third row. Floor one, bay three. Neither condition is true. Display one, three."
+    ),
+    "trace_14": (
+        "Fourth row. Floor one, bay four. Display one, four. That finishes every "
+        "inner value for floor one."
+    ),
+    "trace_21": (
+        "Fifth row. Floor becomes two, and the inner loop starts again. "
+        "Floor two, bay one. Display two, one."
+    ),
+    "trace_22": (
+        "Sixth row. Floor two, bay two. Continue again. Write the row. "
+        "Then move to the next bay."
+    ),
+    "trace_23": (
+        "Seventh row. Floor two, bay three. The truck condition is true. "
+        "Write the message, then break. Break is the action on this row."
+    ),
+    "trace_missing": (
+        "Look at what is missing. There is no row for two comma four. "
+        "Break already left the bay loop, so that pass never begins, and a "
+        "honest table does not invent it."
     ),
     "recap": (
         "The rhythm is slow and strict. Fix one outer value. Run inner values "
@@ -247,8 +280,12 @@ def main() -> None:
 
     print(f"Using Vertex AI Gemini 3.8 Flash TTS via ADC (project: {PROJECT}, voice: {VOICE})")
     for name, text in NARRATION.items():
-        raw = AUDIO_DIR / f"{name}-raw.wav"
         wav = AUDIO_DIR / f"{name}.wav"
+        if wav.is_file():
+            durations[name] = round(duration(wav), 3)
+            print(f"  {name:12} {durations[name]:6.2f}s  (kept)")
+            continue
+        raw = AUDIO_DIR / f"{name}-raw.wav"
         data, mime = generate_speech_vertex(token, text)
         write_wav(raw, data, mime)
         to_manim_wav(raw, wav)
