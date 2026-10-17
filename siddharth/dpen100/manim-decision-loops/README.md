@@ -23,8 +23,8 @@ source .venv/bin/activate
 pip install manim==0.21.0
 ```
 
-Generate the narration with the built-in Australian English voice, then
-render at 720p:
+Generate the narration with Vertex AI Gemini TTS (Australian male, ADC
+on `gcp-sandbox-field-eng`), then render at 720p:
 
 ```bash
 python make_narration.py
