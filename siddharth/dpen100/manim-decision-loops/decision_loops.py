@@ -86,13 +86,20 @@ class DecisionLoops(Scene):
             self.play(*[FadeOut(item) for item in removable], run_time=0.55)
 
     def code_block(self, lines, font_size=22):
+        # Manim Text() strips leading whitespace, so indent by shifting
+        # each line instead of putting spaces in the string.
+        stripped = [line.lstrip(" ") or " " for line in lines]
+        indents = [len(line) - len(line.lstrip(" ")) for line in lines]
         texts = VGroup(
             *[
-                Text(line, font="Menlo", font_size=font_size, color=INK)
-                for line in lines
+                Text(body, font="Menlo", font_size=font_size, color=INK)
+                for body in stripped
             ]
         )
         texts.arrange(DOWN, aligned_edge=LEFT, buff=0.13)
+        unit = Text("0", font="Menlo", font_size=font_size).width
+        for mob, n in zip(texts, indents):
+            mob.shift(RIGHT * n * unit)
         bg = RoundedRectangle(
             corner_radius=0.14,
             width=texts.width + 0.5,
@@ -284,16 +291,16 @@ class DecisionLoops(Scene):
         code, code_lines = self.code_block(
             [
                 "for floor = 1:2",
-                "  for bay = 1:4",
-                "    if bay == 2",
-                "      continue",
+                "    for bay = 1:4",
+                "        if bay == 2",
+                "            continue",
+                "        end",
+                "        if floor == 2 && bay == 3",
+                "            disp('Truck! Leaving floor 2')",
+                "            break",
+                "        end",
+                "        disp([floor bay])",
                 "    end",
-                "    if floor == 2 && bay == 3",
-                "      disp('Truck! Leaving floor 2')",
-                "      break",
-                "    end",
-                "    disp([floor bay])",
-                "  end",
                 "end",
             ],
             font_size=18,
