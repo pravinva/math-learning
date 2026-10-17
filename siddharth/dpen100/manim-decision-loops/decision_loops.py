@@ -85,6 +85,18 @@ class DecisionLoops(Scene):
         if removable:
             self.play(*[FadeOut(item) for item in removable], run_time=0.55)
 
+    def sync_step(self, line_marker, code_lines, line_index, extra_anims=None, run_time=0.35, color=YELLOW):
+        """Move the code-line marker and, in the same beat, animate the grid
+        (pointer position, cell stroke colour, ...) so the two stay in sync."""
+        target = SurroundingRectangle(
+            code_lines[line_index], color=color, fill_color=color, fill_opacity=0.12, buff=0.05
+        )
+        anims = [Transform(line_marker, target)]
+        if extra_anims:
+            anims.extend(extra_anims)
+        self.play(*anims, run_time=run_time)
+        return run_time
+
     def code_block(self, lines, font_size=22):
         # Manim Text() strips leading whitespace, so indent by shifting
         # each line instead of putting spaces in the string.
@@ -311,25 +323,38 @@ class DecisionLoops(Scene):
         line_marker = SurroundingRectangle(
             code_lines[0], color=YELLOW, fill_color=YELLOW, fill_opacity=0.1, buff=0.05
         )
+        pointer = Triangle(color=YELLOW, fill_color=YELLOW, fill_opacity=1).scale(0.09)
+        pointer.rotate(-PI / 2).next_to(cells[(1, 1)], LEFT, buff=0.1)
+        # Line numbers inside `code_lines`, used to keep the code highlight
+        # and the grid pointer/cell colours moving together.
+        L_FOR_FLOOR, L_FOR_BAY = 0, 1
+        L_IF_BAY2, L_CONTINUE = 2, 3
+        L_IF_TRUCK, L_DISP_TRUCK, L_BREAK = 5, 6, 7
+        L_DISP_PAIR, L_END_BAY = 9, 10
         duration = self.begin_voice(
             "read_code",
             "Choose floor, choose bay, test each if in order, perform the action, then loop back.",
         )
-        self.play(Write(heading), FadeIn(code), FadeIn(grid), Create(line_marker), run_time=1.5)
-        for index in [1, 2, 5, 9, 10, 1]:
-            target = SurroundingRectangle(
-                code_lines[index],
-                color=YELLOW,
-                fill_color=YELLOW,
-                fill_opacity=0.1,
-                buff=0.05,
-            )
-            self.play(Transform(line_marker, target), run_time=0.55)
-        self.finish_voice(duration, 4.8)
+        self.play(Write(heading), FadeIn(code), FadeIn(grid), FadeIn(pointer), Create(line_marker), run_time=1.5)
+        # Walk one generic bay to show the shape of the code, then loop back
+        # to the next bay so the pointer and the highlight move together.
+        self.sync_step(line_marker, code_lines, L_FOR_BAY, run_time=0.5)
+        self.sync_step(line_marker, code_lines, L_IF_BAY2, run_time=0.45)
+        self.sync_step(line_marker, code_lines, L_IF_TRUCK, run_time=0.45)
+        self.sync_step(
+            line_marker, code_lines, L_DISP_PAIR,
+            extra_anims=[cells[(1, 1)][0].animate.set_stroke(GREEN, width=4)],
+            run_time=0.5, color=GREEN,
+        )
+        self.sync_step(line_marker, code_lines, L_END_BAY, run_time=0.4)
+        self.sync_step(
+            line_marker, code_lines, L_FOR_BAY,
+            extra_anims=[pointer.animate.next_to(cells[(1, 2)], LEFT, buff=0.1)],
+            run_time=0.5,
+        )
+        self.finish_voice(duration, 2.8)
 
-        # 5. Trace floor one
-        pointer = Triangle(color=YELLOW, fill_color=YELLOW, fill_opacity=1).scale(0.09)
-        pointer.rotate(-PI / 2).next_to(cells[(1, 1)], LEFT, buff=0.1)
+        # 5. Trace floor one — code highlight and grid cell move together
         output = VGroup(
             Text("OUTPUT", font_size=20, color=MUTED),
             Text("", font="Menlo", font_size=21, color=GREEN),
@@ -339,63 +364,124 @@ class DecisionLoops(Scene):
             "floor_one",
             "Floor 1 path: display bay 1; skip bay 2; display bays 3 and 4.",
         )
-        self.play(FadeIn(pointer), FadeIn(output[0]), run_time=0.5)
+        self.play(
+            pointer.animate.next_to(cells[(1, 1)], LEFT, buff=0.1),
+            FadeIn(output[0]),
+            run_time=0.5,
+        )
         lines = []
         animation_time = 0.5
-        for bay, action, color in [
-            (1, "     1     1", GREEN),
-            (2, None, CORAL),
-            (3, "     1     3", GREEN),
-            (4, "     1     4", GREEN),
-        ]:
-            self.play(pointer.animate.next_to(cells[(1, bay)], LEFT, buff=0.1), run_time=0.35)
-            self.play(cells[(1, bay)][0].animate.set_stroke(color, width=4), run_time=0.35)
-            animation_time += 0.7
-            if action:
-                lines.append(action)
-                new_output = Text("\n".join(lines), font="Menlo", font_size=20, color=GREEN)
-                new_output.next_to(output[0], DOWN, aligned_edge=LEFT, buff=0.1)
-                self.play(Transform(output[1], new_output), run_time=0.35)
-                animation_time += 0.35
-            else:
+        for bay in (1, 2, 3, 4):
+            cell = cells[(1, bay)]
+            animation_time += self.sync_step(
+                line_marker, code_lines, L_IF_BAY2,
+                extra_anims=[pointer.animate.next_to(cell, LEFT, buff=0.1)],
+                run_time=0.4,
+            )
+            if bay == 2:
+                animation_time += self.sync_step(
+                    line_marker, code_lines, L_CONTINUE,
+                    extra_anims=[cell[0].animate.set_stroke(CORAL, width=4).set_fill("#3A1D26")],
+                    run_time=0.35, color=CORAL,
+                )
                 skip = Text("continue → next bay", font_size=18, color=CORAL)
-                skip.next_to(cells[(1, 2)], DOWN, buff=0.1)
+                skip.next_to(cell, DOWN, buff=0.1)
                 self.play(FadeIn(skip), run_time=0.25)
                 self.play(FadeOut(skip), run_time=0.25)
                 animation_time += 0.5
+                animation_time += self.sync_step(line_marker, code_lines, L_FOR_BAY, run_time=0.3)
+                continue
+            animation_time += self.sync_step(line_marker, code_lines, L_IF_TRUCK, run_time=0.3)
+            animation_time += self.sync_step(
+                line_marker, code_lines, L_DISP_PAIR,
+                extra_anims=[cell[0].animate.set_stroke(GREEN, width=4)],
+                run_time=0.4, color=GREEN,
+            )
+            lines.append(f"     1     {bay}")
+            new_output = Text("\n".join(lines), font="Menlo", font_size=20, color=GREEN)
+            new_output.next_to(output[0], DOWN, aligned_edge=LEFT, buff=0.1)
+            self.play(Transform(output[1], new_output), run_time=0.3)
+            animation_time += 0.3
+            animation_time += self.sync_step(line_marker, code_lines, L_FOR_BAY, run_time=0.3)
         self.finish_voice(duration, animation_time)
 
-        # 6. Trace floor two and break
+        # 6. Trace floor two — same sync, then show break leaving only the bay loop
         duration = self.begin_voice(
             "floor_two",
             "Floor 2 path: display bay 1; skip bay 2; truck at bay 3; break before bay 4.",
         )
-        animation_time = 0
-        for bay, action, color in [
-            (1, "     2     1", GREEN),
-            (2, None, CORAL),
-            (3, "Truck! Leaving floor 2", YELLOW),
-        ]:
-            self.play(pointer.animate.next_to(cells[(2, bay)], LEFT, buff=0.1), run_time=0.4)
-            self.play(cells[(2, bay)][0].animate.set_stroke(color, width=4), run_time=0.4)
-            animation_time += 0.8
-            if action:
-                lines.append(action)
+        animation_time = self.sync_step(
+            line_marker, code_lines, L_FOR_FLOOR,
+            extra_anims=[pointer.animate.next_to(cells[(2, 1)], LEFT, buff=0.1)],
+            run_time=0.4,
+        )
+        broke = False
+        for bay in (1, 2, 3, 4):
+            cell = cells[(2, bay)]
+            animation_time += self.sync_step(
+                line_marker, code_lines, L_IF_BAY2,
+                extra_anims=[pointer.animate.next_to(cell, LEFT, buff=0.1)],
+                run_time=0.4,
+            )
+            if bay == 2:
+                animation_time += self.sync_step(
+                    line_marker, code_lines, L_CONTINUE,
+                    extra_anims=[cell[0].animate.set_stroke(CORAL, width=4).set_fill("#3A1D26")],
+                    run_time=0.35, color=CORAL,
+                )
+                skip = Text("continue → next bay", font_size=18, color=CORAL)
+                skip.next_to(cell, DOWN, buff=0.1)
+                self.play(FadeIn(skip), run_time=0.25)
+                self.play(FadeOut(skip), run_time=0.25)
+                animation_time += 0.5
+                animation_time += self.sync_step(line_marker, code_lines, L_FOR_BAY, run_time=0.3)
+                continue
+            animation_time += self.sync_step(line_marker, code_lines, L_IF_TRUCK, run_time=0.3)
+            if bay == 3:
+                animation_time += self.sync_step(
+                    line_marker, code_lines, L_DISP_TRUCK,
+                    extra_anims=[cell[0].animate.set_stroke(YELLOW, width=4)],
+                    run_time=0.4, color=YELLOW,
+                )
+                lines.append("Truck! Leaving floor 2")
                 new_output = Text("\n".join(lines), font="Menlo", font_size=17, color=GREEN)
                 new_output.next_to(output[0], DOWN, aligned_edge=LEFT, buff=0.08)
-                self.play(Transform(output[1], new_output), run_time=0.4)
-                animation_time += 0.4
-        cross = Cross(cells[(2, 4)], stroke_color=CORAL, stroke_width=5)
-        never = Text("never reached", font_size=17, color=CORAL).next_to(cells[(2, 4)], DOWN, buff=0.08)
-        self.play(Create(cross), FadeIn(never), run_time=0.7)
-        break_arrow = CurvedArrow(
-            code_lines[7].get_right(),
-            code_lines[10].get_right(),
-            angle=-PI / 2,
-            color=CORAL,
-        )
-        self.play(Create(break_arrow), run_time=0.7)
-        animation_time += 1.4
+                self.play(Transform(output[1], new_output), run_time=0.35)
+                animation_time += 0.35
+                # break fires here, inside the bay loop, and jumps straight
+                # past the rest of this loop — not the outer floor loop.
+                animation_time += self.sync_step(
+                    line_marker, code_lines, L_BREAK, run_time=0.4, color=CORAL,
+                )
+                animation_time += self.sync_step(
+                    line_marker, code_lines, L_END_BAY, run_time=0.4, color=CORAL,
+                )
+                broke = True
+                break
+            animation_time += self.sync_step(
+                line_marker, code_lines, L_DISP_PAIR,
+                extra_anims=[cell[0].animate.set_stroke(GREEN, width=4)],
+                run_time=0.4, color=GREEN,
+            )
+            lines.append(f"     2     {bay}")
+            new_output = Text("\n".join(lines), font="Menlo", font_size=17, color=GREEN)
+            new_output.next_to(output[0], DOWN, aligned_edge=LEFT, buff=0.08)
+            self.play(Transform(output[1], new_output), run_time=0.3)
+            animation_time += 0.3
+            animation_time += self.sync_step(line_marker, code_lines, L_FOR_BAY, run_time=0.3)
+
+        if broke:
+            cross = Cross(cells[(2, 4)], stroke_color=CORAL, stroke_width=5)
+            never = Text("never reached", font_size=17, color=CORAL).next_to(cells[(2, 4)], DOWN, buff=0.08)
+            self.play(Create(cross), FadeIn(never), run_time=0.7)
+            break_arrow = CurvedArrow(
+                code_lines[L_BREAK].get_right(),
+                code_lines[L_END_BAY].get_right(),
+                angle=-PI / 2,
+                color=CORAL,
+            )
+            self.play(Create(break_arrow), run_time=0.7)
+            animation_time += 1.4
         self.finish_voice(duration, animation_time)
 
         # 7. Compare the two control commands
