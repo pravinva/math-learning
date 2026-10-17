@@ -24,11 +24,12 @@ pip install manim==0.21.0
 ```
 
 Generate the narration with Vertex AI Gemini TTS (Australian male, ADC
-on `gcp-sandbox-field-eng`), then render at 720p:
+on `gcp-sandbox-field-eng`), then render at 720p without cache so every
+pass keeps its voice clip:
 
 ```bash
 python make_narration.py
-manim -qm decision_loops.py DecisionLoops
+manim -qm --disable_caching decision_loops.py DecisionLoops
 ```
 
 The generated video is:

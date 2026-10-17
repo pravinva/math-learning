@@ -29,51 +29,89 @@ STYLE = (
 
 NARRATION = {
     "intro": (
-        "A loop can look like a wall of code, but the computer is only ever "
-        "following one instruction at a time. To understand it, keep your "
-        "attention on the current values, and trace the arrows."
+        "A loop looks like a wall of code, but the computer only ever follows "
+        "one instruction at a time. Keep your eye on the current values, and "
+        "trace each pass in order."
     ),
-    "single_if": (
-        "In a for loop, the loop variable receives one value on each pass. "
-        "An if statement inside the loop asks its question again for every "
-        "new value. Here, bay two is closed, so that pass follows a different path."
+    "single_intro": (
+        "First, one loop. Bay will be one, then two, then three, then four. "
+        "The if question is asked again on every pass."
     ),
-    "nested": (
-        "A nested loop is like an odometer with two wheels. The outer loop "
-        "chooses a floor. While that floor stays fixed, the inner loop visits "
-        "every bay. Only after the inner loop finishes does the floor change."
+    "single_bay1": (
+        "Pass one. Bay is one. The if is false, so continue does not run. "
+        "Display one."
+    ),
+    "single_bay2": (
+        "Pass two. Bay is two. The if is true. Continue skips display, and "
+        "jumps to the next bay. This pass is skipped, not ended."
+    ),
+    "single_bay3": (
+        "Pass three. Bay is three. The if is false. Display three."
+    ),
+    "single_bay4": (
+        "Pass four. Bay is four. Display four. Now the loop has no values left, "
+        "so it ends."
+    ),
+    "nested_intro": (
+        "Now nest the loops. Think of an odometer. Floor is the outer wheel. "
+        "Bay is the inner wheel. Floor stays fixed while bay runs all the way around."
+    ),
+    "nested_floor1": (
+        "Floor is one. Hold that outer value. The inner loop now visits bay one, "
+        "bay two, bay three, and bay four. Only then may the floor change."
+    ),
+    "nested_floor2": (
+        "The inner loop has finished, so floor becomes two. Bay starts again at "
+        "one, then two, three, and four. The outer loop does not skip ahead."
     ),
     "read_code": (
-        "Read nested-loop code from the outside in. Floor becomes one. Bay "
-        "then begins at one. At each bay, test the conditions from top to "
-        "bottom. When the pass ends, return to the inner for line for the next bay."
+        "Read this code from the outside in. Choose a floor. Then choose a bay. "
+        "Test if bay is two. Then test the truck condition. Then display the pair. "
+        "When the pass ends, return to the inner for line for the next bay."
     ),
-    "floor_one": (
-        "On floor one, bay one reaches the display instruction. Bay two makes "
-        "the first condition true. Continue skips everything below it for this "
-        "pass, then bay becomes three. Bays three and four are displayed."
+    "f1_bay1": (
+        "Floor one, bay one. Bay is not two, and there is no truck. "
+        "Display one, one."
     ),
-    "floor_two": (
-        "When floor becomes two, the bay loop starts again at one. Bay one is "
-        "displayed, and bay two is skipped. At bay three, both parts of the "
-        "truck condition are true. The message is displayed, then break leaves "
-        "the bay loop. Bay four is never reached."
+    "f1_bay2": (
+        "Floor one, bay two. The first if is true. Continue skips display, "
+        "and the inner loop tries the next bay. Floor is still one."
+    ),
+    "f1_bay3": (
+        "Floor one, bay three. Both ifs are false. Display one, three."
+    ),
+    "f1_bay4": (
+        "Floor one, bay four. Display one, four. The inner loop is finished, "
+        "so we go back to the outer for, and floor may change."
+    ),
+    "f2_bay1": (
+        "Floor becomes two. The bay loop starts again at one. "
+        "Display two, one."
+    ),
+    "f2_bay2": (
+        "Floor two, bay two. Continue again. Skip display. Next bay."
+    ),
+    "f2_bay3": (
+        "Floor two, bay three. The truck condition is true. Print the message. "
+        "Break ends the bay loop only. Display of two, three never runs."
+    ),
+    "f2_never": (
+        "Bay four on floor two never starts. Control returns to the floor loop. "
+        "There is no floor three, so the program stops."
     ),
     "controls": (
-        "Continue and break do different jobs. Continue skips the rest of only "
-        "the current pass, so the same loop tries its next value. Break ends "
-        "the nearest loop completely. Here it ends the bay loop, not the outer floor loop."
+        "Continue skips the rest of only this pass, then the same loop tries "
+        "its next value. Break ends the nearest loop completely. Here that is "
+        "the bay loop, not the floor loop."
     ),
     "trace": (
-        "On paper, make one row for every pair that is actually attempted. "
-        "Write the floor and bay first, evaluate the conditions, then record "
-        "the action. Do not write the pair two comma four, because break means "
-        "that pass never begins."
+        "On paper, write one row for every pair that actually begins. "
+        "Do not write two comma four. Break means that pass never starts."
     ),
     "recap": (
-        "Remember the rhythm. Fix one outer value. Run the inner values in "
-        "order. Test each if from top to bottom. Continue means next inner "
-        "value. Break means leave the inner loop. A trace table makes the flow visible."
+        "The rhythm is slow and strict. Fix one outer value. Run inner values "
+        "in order. Test each if. Continue means next inner value. Break means "
+        "leave the inner loop."
     ),
 }
 
@@ -223,6 +261,47 @@ def main() -> None:
         json.dumps(durations, indent=2) + "\n"
     )
     print(f"Total narration: {sum(durations.values()):.2f}s")
+
+
+def mix_into_video(video: Path, cues_path: Path, output: Path) -> None:
+    cues = json.loads(cues_path.read_text())
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(video)]
+    filters = []
+    labels = []
+    for index, cue in enumerate(cues):
+        wav = AUDIO_DIR / f"{cue['key']}.wav"
+        cmd += ["-i", str(wav)]
+        delay_ms = max(int(round(float(cue["t"]) * 1000)), 0)
+        label = f"a{index}"
+        filters.append(
+            f"[{index + 1}:a]adelay={delay_ms}|{delay_ms},"
+            f"aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo[{label}]"
+        )
+        labels.append(f"[{label}]")
+    mix = (
+        "".join(labels)
+        + f"amix=inputs={len(cues)}:duration=longest:dropout_transition=0:normalize=0,"
+        + "loudnorm=I=-14:TP=-1.5:LRA=11,"
+        + "aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo[aout]"
+    )
+    cmd += [
+        "-filter_complex",
+        ";".join(filters + [mix]),
+        "-map",
+        "0:v:0",
+        "-map",
+        "[aout]",
+        "-c:v",
+        "copy",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "192k",
+        "-movflags",
+        "+faststart",
+        str(output),
+    ]
+    subprocess.run(cmd, check=True)
 
 
 if __name__ == "__main__":
