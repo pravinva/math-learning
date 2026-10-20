@@ -1,0 +1,2715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENGG100 Pseudocode and Flowcharts</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1B2431; --red:#FF3621; --redtext:#C4260F; --redbtn:#D92A17; --ink:#1B2431; --muted:#5B6576;
+  --paper:#FBFCFD; --line:rgba(27,36,49,.06); --line2:rgba(27,36,49,.11);
+  --code:#EEF1F5; --comment:#526072; --ok:#1F7A4D; --okbg:#E6F4EC;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:Barlow,system-ui,sans-serif;color:var(--ink);font-size:17px;line-height:1.6;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--line2) 1px,transparent 1px),linear-gradient(90deg,var(--line2) 1px,transparent 1px),
+    linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px;
+}
+.app{display:grid;grid-template-columns:270px 1fr;min-height:100%}
+nav{background:var(--navy);color:#fff;padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+nav h1{font-size:20px;line-height:1.25;margin:0 22px 4px;font-weight:700}
+nav .sub{font-size:14px;color:#AEB7C4;margin:0 22px 18px}
+.course-links{display:flex;gap:7px;flex-wrap:wrap;margin:0 22px 18px}
+.course-links a{font-size:12px;color:#D7DCE3;text-decoration:none;border:1px solid rgba(255,255,255,.22);border-radius:4px;padding:4px 8px}
+.course-links a:hover{color:#fff;border-color:rgba(255,255,255,.55)}
+.prog{margin:0 22px 20px}
+.bar{height:6px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--red);transition:width .3s}
+.prog small{display:block;color:#AEB7C4;font-size:13px;margin-top:6px}
+nav ol{list-style:none;margin:0;padding:0}
+nav li button{
+  all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:flex;gap:10px;align-items:baseline;
+  padding:8px 22px;font-size:15px;color:#D7DCE3;border-left:3px solid transparent
+}
+nav li button:hover{background:rgba(255,255,255,.06)}
+nav li button:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+nav li button.active{color:#fff;border-left-color:var(--red);background:rgba(255,255,255,.08)}
+nav li .n{font-family:'Roboto Mono',monospace;font-size:12px;color:#AEB7C4;min-width:18px}
+nav li .tick{margin-left:auto;color:var(--red);font-size:13px;visibility:hidden}
+nav li button.done .tick{visibility:visible}
+main{padding:44px 6vw 80px;max-width:1000px}
+section{display:none}
+section.show{display:block}
+.kicker{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--redtext)}
+h2{font-size:34px;line-height:1.15;margin:4px 0 14px;font-weight:700}
+h3{font-size:21px;margin:34px 0 8px;font-weight:600}
+h4{font-size:17px;margin:18px 0 6px}
+p,li{max-width:72ch}
+.lead{font-size:19px;color:#2F3A4B}
+code{font-family:'Roboto Mono',monospace;font-size:.88em;background:var(--code);padding:1px 5px;border-radius:3px}
+pre{
+  font-family:'Roboto Mono',monospace;font-size:14.5px;line-height:1.55;background:var(--code);
+  border-left:3px solid var(--navy);padding:14px 16px;margin:14px 0;overflow-x:auto;border-radius:0 4px 4px 0
+}
+pre .c{color:var(--comment)}
+pre.out{background:#fff;border:1px solid var(--line2);border-left:3px solid var(--comment)}
+pre.pc{border-left:3px dashed var(--red);background:#fff;font-size:14px}
+pre.pc b{color:var(--redtext);font-weight:600}
+.key{border:1px solid var(--navy);background:#fff;padding:14px 18px;margin:20px 0;border-radius:4px}
+.key strong{color:var(--redtext)}
+.warn{border-left:3px solid var(--red);background:#FFF4F2;padding:12px 16px;margin:18px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;background:#fff;font-size:15.5px}
+.tw{overflow-x:auto}
+th,td{border:1px solid var(--line2);padding:8px 12px;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:600}
+th code{background:rgba(255,255,255,.16);color:#fff}
+td.m{font-family:'Roboto Mono',monospace;font-size:14px;white-space:nowrap}
+table.trace td{font-family:'Roboto Mono',monospace;font-size:14px;text-align:center}
+table.trace th{text-align:center}
+.q{background:#fff;border:1px solid var(--line2);border-top:3px solid var(--red);padding:14px 18px;margin:16px 0;border-radius:0 0 4px 4px}
+.q p{margin:0 0 6px}
+.q button,.btn,.prob > button{
+  font:inherit;font-size:15px;font-weight:600;cursor:pointer;border:1px solid var(--navy);
+  background:#fff;color:var(--navy);padding:6px 14px;border-radius:4px
+}
+.prob > button{margin:6px 8px 0 0}
+.q button:hover,.btn:hover,.prob > button:hover{background:var(--navy);color:#fff}
+.q button:focus-visible,.btn:focus-visible,.prob > button:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.ans{display:none;margin-top:10px;padding:10px 14px;background:var(--okbg);border-left:3px solid var(--ok)}
+.ans.open{display:block}
+.ans pre{background:#fff;margin:8px 0}
+.prob{background:#fff;border:1px solid var(--navy);padding:18px 20px;margin:26px 0;border-radius:4px}
+.prob h3{margin:0 0 6px}
+.prob > .ans{background:#F6F8FB;border-left:3px solid var(--navy)}
+.prob > .ans h4{margin:4px 0 4px;font-size:16px}
+.tag{display:inline-block;font-size:13px;font-weight:600;padding:1px 8px;border-radius:3px;margin-left:8px;vertical-align:middle}
+.tag.s{background:#E6F4EC;color:var(--ok)}.tag.c{background:#E8ECF2;color:var(--navy)}.tag.x{background:#FFE9E5;color:#B8230F}
+.practises{color:var(--muted);font-size:15px;margin:0 0 12px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:44px;padding-top:20px;border-top:1px solid var(--line2);flex-wrap:wrap}
+.jump{all:unset;cursor:pointer;font-family:'Roboto Mono',monospace;color:var(--redtext);text-decoration:underline;padding:0 4px}.jump:focus-visible{outline:2px solid var(--red)}
+.btn.primary{background:var(--redbtn);border-color:var(--redbtn);color:#fff}
+.btn.primary:hover{background:#B8230F;border-color:#B8230F}
+.btn.donebtn.isdone{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.cols > div{min-width:0}
+.cols h4{margin:8px 0 0}
+.fc{overflow-x:auto}
+svg.flow{display:block;max-width:100%;height:auto;margin:14px 0;background:#fff;border:1px solid var(--line2)}
+svg.flow text{font-family:Barlow,sans-serif;font-size:13px;fill:#1B2431}
+svg.flow text.yn{font-size:12px;font-weight:700;fill:#C4260F}
+svg.sym{display:block}
+svg.sym text{font-family:Barlow,sans-serif;font-size:13px;fill:#1B2431}
+td.symcell{width:170px;background:#fff}
+ol.steps li{margin-bottom:6px}
+@media (max-width:820px){
+  html,body,.app,nav,main,section{width:100%;max-width:100%;min-width:0}
+  .app{grid-template-columns:1fr}
+  nav{position:static;height:auto;padding:18px 0 10px}
+  nav ol{display:flex;width:100%;max-width:100%;min-width:0;overflow-x:auto;padding:0 12px}
+  nav li button{white-space:nowrap;border-left:none;border-bottom:3px solid transparent;padding:8px 12px}
+  nav li button.active{border-bottom-color:var(--red)}
+  main{padding:28px 18px 60px}
+  pre,.tw,.prob,svg{max-width:100%;min-width:0}
+  .cols{grid-template-columns:1fr}
+  h2{font-size:28px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<nav aria-label="Lessons">
+  <h1>Pseudocode &amp; Flowcharts</h1>
+  <p class="sub">ENGG100 / DPEN100. Plan the program first, then write the MATLAB.</p>
+  <div class="course-links">
+    <a href="index.html">← DPEN100 hub</a>
+    <a href="practicals/p03.html">Practical 3</a>
+    <a href="matlab-from-zero.html">MATLAB from Zero</a>
+  </div>
+  <div class="prog"><div class="bar"><span id="bar"></span></div><small id="progtxt"></small></div>
+  <ol id="navlist"></ol>
+</nav>
+<main id="main">
+
+<!-- 1 -->
+<section data-title="Why plan first">
+<div class="kicker">Lesson 1 / Method</div>
+<h2>Why plan before you code</h2>
+<p class="lead">Before you write a single line of MATLAB, write down <i>what</i> the program must do, in what order, and where it must decide or repeat. That plan is called an <b>algorithm</b>. Pseudocode and flowcharts are the two standard ways of writing an algorithm down.</p>
+
+<p>An <b>algorithm</b> is a finite list of precise steps that turns inputs into the required outputs. A cooking recipe is an algorithm for people. A MATLAB script is an algorithm for the computer. Pseudocode and flowcharts sit in between: precise enough that anyone could turn them into code, but free of MATLAB's punctuation rules.</p>
+
+<div class="tw"><table>
+<tr><th>Form</th><th>What it looks like</th><th>Best for</th></tr>
+<tr><td><b>Structure plan / pseudocode</b></td><td>Numbered or indented lines of structured English: <code>INPUT r</code>, <code>area = pi × r²</code>, <code>IF … END IF</code>.</td><td>Quick to write, easy to translate line by line into MATLAB. Long calculations.</td></tr>
+<tr><td><b>Flowchart</b></td><td>A diagram of standard shapes joined by arrows.</td><td>Seeing decisions, branches and loops at a glance. Explaining logic to others.</td></tr>
+<tr><td><b>MATLAB code</b></td><td>The exact instructions with MATLAB syntax.</td><td>Running on the computer.</td></tr>
+</table></div>
+<p>The Hahn &amp; Valentine textbook used in Practical 3 calls the pseudocode a <b>structure plan</b>. The two names mean the same thing in ENGG100.</p>
+
+<h3>Where planning sits in program design</h3>
+<p>Practical 3 lists the seven steps of the <b>program design process</b>. Pseudocode and flowcharts are step 3, and they are what make steps 4 and 5 easy:</p>
+<ol class="steps">
+<li><b>Problem statement.</b> Say clearly what has to be solved.</li>
+<li><b>Analysis.</b> Identify the inputs, the outputs and the formulas or rules that connect them.</li>
+<li><b>Design.</b> Write the algorithm as a structure plan (pseudocode) and/or a flowchart.</li>
+<li><b>Implementation.</b> Translate the plan into MATLAB.</li>
+<li><b>Testing.</b> Run cases whose answers you already know, including every branch.</li>
+<li><b>Documentation.</b> Comments, a header, and instructions for the user.</li>
+<li><b>Maintenance.</b> Fix and extend the program later.</li>
+</ol>
+
+<h3>Input, Processing, Output</h3>
+<p>Almost every engineering program has the same three stages. Before you plan, fill in an <b>IPO table</b>. Practical 3 calls the middle stage "Operations".</p>
+<div class="tw"><table>
+<tr><th>Input</th><th>Processing (Operations)</th><th>Output</th></tr>
+<tr><td>Plate length <code>L</code> and width <code>W</code> in metres</td><td><code>A = L × W</code></td><td>Area <code>A</code> in m²</td></tr>
+</table></div>
+<p>The same plan as pseudocode and as a flowchart:</p>
+<div class="cols">
+<div><h4>Pseudocode</h4>
+<pre class="pc"><b>INPUT</b> L, W
+A = L × W
+<b>DISPLAY</b> A</pre>
+<h4>MATLAB</h4>
+<pre>L = input('Length (m): ');
+W = input('Width (m): ');
+A = L * W;
+fprintf('Area = %.2f m^2\n', A)</pre></div>
+<div><h4>Flowchart</h4><div class="fc" data-fc="l1"></div></div>
+</div>
+
+<div class="key">
+<p style="margin:0"><strong>Why bother?</strong> Planning separates two hard problems: <i>what</i> the steps are, and <i>how to type them</i> in MATLAB. A logic mistake is much easier to see in a ten-line plan than in fifty lines of code. ENGG100 tests and assignments also ask for pseudocode or flowcharts directly, and award marks for them even if your code is not perfect.</p>
+</div>
+
+<div class="q"><p>For a program that converts a speed in km/h into m/s, write the IPO table.</p>
+<button>Show answer</button>
+<div class="ans">Input: speed <code>v_kmh</code> in km/h. Processing: <code>v_ms = v_kmh / 3.6</code> (because 1 km/h = 1000 m / 3600 s). Output: <code>v_ms</code> in m/s.</div></div>
+<div class="q"><p>Which step of the program design process are you doing when you choose test values such as 0 and 100?</p>
+<button>Show answer</button>
+<div class="ans">Step 5, testing. You choose the test values during design, though, so you know what answers to expect before you run the code.</div></div>
+</section>
+
+<!-- 2 -->
+<section data-title="Writing pseudocode">
+<div class="kicker">Lesson 2 / Method</div>
+<h2>Writing good pseudocode</h2>
+<p class="lead">Pseudocode is structured plain English. There is no single official grammar, but markers expect it to be precise, ordered, and easy to turn into code. A few conventions make that happen.</p>
+
+<h3>The seven rules</h3>
+<ol class="steps">
+<li><b>One action per line.</b> Each line should become one or two lines of MATLAB.</li>
+<li><b>Write keywords in capitals</b>: <code>INPUT</code>, <code>DISPLAY</code>, <code>IF</code>, <code>ELSE</code>, <code>FOR</code>, <code>WHILE</code>, <code>END</code>. They stand out from your variable names.</li>
+<li><b>Indent</b> everything that sits inside a decision or a loop, exactly as you will in MATLAB.</li>
+<li><b>Close every block</b>: <code>END IF</code>, <code>END FOR</code>, <code>END WHILE</code>. Then nobody has to guess where the block stops.</li>
+<li><b>Use the variable names you will use in the code</b>, with units on the first mention: <code>INPUT d (mm)</code>.</li>
+<li><b>No MATLAB punctuation.</b> No semicolons, no <code>fprintf</code> format strings, no <code>'%.2f'</code>. Write <code>DISPLAY stress</code>, not <code>fprintf('%.2f\n', stress);</code>.</li>
+<li><b>Be specific.</b> "Calculate the answer" earns nothing. "area = pi × r²" is a plan.</li>
+</ol>
+
+<h3>Keyword reference</h3>
+<div class="tw"><table>
+<tr><th>Pseudocode</th><th>Meaning</th><th>MATLAB</th></tr>
+<tr><td class="m">INPUT x</td><td>Get a value from the user, or say a value is given</td><td><code>x = input('x: ');</code> or <code>x = 5;</code></td></tr>
+<tr><td class="m">DISPLAY x</td><td>Show a result (also written OUTPUT or PRINT)</td><td><code>disp(x)</code> or <code>fprintf</code></td></tr>
+<tr><td class="m">x = expression</td><td>Calculate and store (some books write SET x TO … or x ← …)</td><td><code>x = expression;</code></td></tr>
+<tr><td class="m">IF cond THEN … END IF</td><td>Run the block only when the condition is true</td><td><code>if cond … end</code></td></tr>
+<tr><td class="m">ELSE IF cond THEN</td><td>Next test, checked only if every earlier test was false</td><td><code>elseif cond</code></td></tr>
+<tr><td class="m">ELSE</td><td>What to do when every test was false</td><td><code>else</code></td></tr>
+<tr><td class="m">CASE x OF … OTHERWISE</td><td>Choose by matching one value</td><td><code>switch x, case …, otherwise</code></td></tr>
+<tr><td class="m">FOR k = 1 TO n</td><td>Repeat a known number of times</td><td><code>for k = 1:n … end</code></td></tr>
+<tr><td class="m">FOR k = a TO b STEP s</td><td>Counted loop with a step</td><td><code>for k = a:s:b</code></td></tr>
+<tr><td class="m">WHILE cond … END WHILE</td><td>Repeat as long as the condition stays true</td><td><code>while cond … end</code></td></tr>
+<tr><td class="m">FUNCTION y = name(x)</td><td>A named, reusable sub-program</td><td><code>function y = name(x)</code></td></tr>
+<tr><td class="m">CALL name(x)</td><td>Use a function</td><td><code>y = name(x);</code></td></tr>
+<tr><td class="m">EXIT LOOP</td><td>Leave the nearest loop immediately</td><td><code>break</code></td></tr>
+</table></div>
+<p><b>Comparisons.</b> Inside <code>IF</code> and <code>WHILE</code> this page writes MATLAB-style tests: <code>==</code>, <code>~=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, and the words <code>AND</code>, <code>OR</code>, <code>NOT</code>. The textbook writes <code>If a = 0 then</code>; that is also fine, because an <code>IF</code> line can only be a test. Pick one style and use it the whole way through.</p>
+
+<h3>Two styles you will see</h3>
+<p>Both are acceptable in ENGG100. The book's structure plans are numbered. Keyword pseudocode is indented. Here is Practical 3's Fahrenheit to Celsius plan both ways.</p>
+<div class="cols">
+<div><h4>Numbered structure plan (book style)</h4>
+<pre class="pc">1. Initialise Fahrenheit temperature F
+2. Calculate Celsius: C = (F − 32) × 5/9
+3. Display C
+4. Stop</pre></div>
+<div><h4>Keyword pseudocode</h4>
+<pre class="pc"><b>INPUT</b> F
+C = (F − 32) × 5 / 9
+<b>DISPLAY</b> C</pre></div>
+</div>
+
+<h3>Stepwise refinement: Level 1, then Level 2</h3>
+<p>For a bigger problem, do not try to write every detail at once. Write a short <b>Level 1</b> plan of the big steps first. Then <b>refine</b> each step into a <b>Level 2</b> plan with enough detail to code. This is <b>top-down design</b>, and it is exactly what Practical 3 Q2 asks for.</p>
+<p>Problem: a list of six test marks is given. Report the average, the number of passes (50 or more), and the highest mark.</p>
+<div class="cols">
+<div><h4>Level 1</h4>
+<pre class="pc">1. Input the marks
+2. Calculate the average
+3. Count the passes
+4. Find the highest mark
+5. Display the results</pre></div>
+<div><h4>Level 2</h4>
+<pre class="pc"><b>INPUT</b> marks (list of 6)
+n = number of marks
+total = 0
+passes = 0
+best = marks(1)
+<b>FOR</b> k = 1 <b>TO</b> n
+    total = total + marks(k)
+    <b>IF</b> marks(k) &gt;= 50 <b>THEN</b>
+        passes = passes + 1
+    <b>END IF</b>
+    <b>IF</b> marks(k) &gt; best <b>THEN</b>
+        best = marks(k)
+    <b>END IF</b>
+<b>END FOR</b>
+average = total / n
+<b>DISPLAY</b> average, passes, best</pre></div>
+</div>
+<p>Notice that Level 2 merged steps 2, 3 and 4 into one loop. Refinement is allowed to rearrange the big steps once you see the detail.</p>
+
+<h3>Bad pseudocode, fixed</h3>
+<div class="tw"><table>
+<tr><th>Weak</th><th>Problem</th><th>Better</th></tr>
+<tr><td class="m">work out the stress</td><td>Too vague. Which formula?</td><td class="m">stress = F / A</td></tr>
+<tr><td class="m">fprintf('%.1f\n',s);</td><td>That is MATLAB, not a plan</td><td class="m">DISPLAY s</td></tr>
+<tr><td class="m">loop through the list</td><td>Loop over what, from where to where?</td><td class="m">FOR k = 1 TO n</td></tr>
+<tr><td class="m">if too hot say so</td><td>No threshold, no exact output</td><td class="m">IF T &gt; 100 THEN DISPLAY "Overheat"</td></tr>
+<tr><td class="m">repeat until done</td><td>"Done" is not a testable condition</td><td class="m">WHILE error &gt;= 0.001</td></tr>
+</table></div>
+
+<div class="q"><p>Rewrite as proper pseudocode: <i>"get the radius, find the area and show it if it's big"</i>, where big means more than 100 m².</p>
+<button>Show answer</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> r (m)
+area = pi × r²
+<b>IF</b> area &gt; 100 <b>THEN</b>
+    <b>DISPLAY</b> area
+<b>END IF</b></pre></div></div>
+<div class="q"><p>What is wrong with this pseudocode? <code>FOR k = 1 TO 10</code> / <code>total = total + k</code> / <code>DISPLAY total</code></p>
+<button>Show answer</button>
+<div class="ans">Two problems. <code>total</code> is never set to 0 before the loop, so its first value is unknown (MATLAB would give an error). And there is no <code>END FOR</code>, so you cannot tell whether <code>DISPLAY total</code> runs ten times or once. Add <code>total = 0</code> before the loop and <code>END FOR</code> before the display.</div></div>
+</section>
+
+<!-- 3 -->
+<section data-title="Flowchart symbols & rules">
+<div class="kicker">Lesson 3 / Method</div>
+<h2>Flowchart symbols and drawing rules</h2>
+<p class="lead">A flowchart is the algorithm drawn as standard shapes joined by arrows. The shapes carry meaning, so using the wrong shape is marked as an error, just like a spelling mistake in code.</p>
+
+<h3>The standard symbols</h3>
+<div class="tw"><table>
+<tr><th>Symbol</th><th>Name</th><th>Use it for</th><th>MATLAB it becomes</th></tr>
+<tr><td class="symcell"><span data-sym="term"></span></td><td><b>Terminator</b> (oval)</td><td>Start and Stop. Exactly one Start; normally one Stop.</td><td>Top and bottom of the script</td></tr>
+<tr><td class="symcell"><span data-sym="io"></span></td><td><b>Input/Output</b> (parallelogram)</td><td>Reading data in, or displaying, printing, plotting results.</td><td><code>input</code>, <code>disp</code>, <code>fprintf</code>, <code>plot</code></td></tr>
+<tr><td class="symcell"><span data-sym="proc"></span></td><td><b>Process</b> (rectangle)</td><td>A calculation or storing a value. One way in, one way out.</td><td><code>x = …;</code></td></tr>
+<tr><td class="symcell"><span data-sym="dec"></span></td><td><b>Decision</b> (diamond)</td><td>A yes/no question. One way in, exactly two labelled ways out.</td><td><code>if</code>, <code>elseif</code>, the test of a <code>while</code> or <code>for</code></td></tr>
+<tr><td class="symcell"><span data-sym="call"></span></td><td><b>Predefined process</b> (rectangle with side bars)</td><td>Calling a function or sub-program that has its own flowchart.</td><td><code>y = myFunction(x);</code></td></tr>
+<tr><td class="symcell"><span data-sym="con"></span></td><td><b>Connector</b> (small circle)</td><td>Joins two parts of a chart that would need a long or crossing arrow, or that continue on another page. Matching letters pair up.</td><td>Nothing; it is only a drawing aid</td></tr>
+<tr><td class="symcell"><span data-sym="arrow"></span></td><td><b>Flowline</b> (arrow)</td><td>The order of steps. An arrow that points back up is a loop.</td><td>Line order; <code>end</code> of a loop</td></tr>
+</table></div>
+
+<h3>Drawing rules markers check</h3>
+<ol class="steps">
+<li><b>Start at the top with one Start oval.</b> Flow goes top to bottom, and left to right for side branches.</li>
+<li><b>Every arrow has an arrowhead.</b> A line without direction is ambiguous.</li>
+<li><b>A decision diamond contains a question</b> such as <code>T &gt; 100 ?</code>, never a calculation such as <code>area = pi × r²</code>.</li>
+<li><b>Every diamond has exactly two exits, labelled Yes and No</b> (or True and False). For three or more outcomes, chain several diamonds.</li>
+<li><b>Process and input/output boxes have one arrow in and one arrow out.</b></li>
+<li><b>Every path must reach Stop.</b> Trace each branch with your finger to check.</li>
+<li><b>A loop is an arrow back to a point just before its decision</b>, and something inside the loop must change the tested variable. Otherwise the loop never ends.</li>
+<li><b>Branches rejoin.</b> After an IF, the Yes and No paths meet again before the next step.</li>
+<li><b>Avoid crossing lines.</b> Use connectors if you must.</li>
+<li><b>Keep text short</b> and use the same variable names as the pseudocode and code.</li>
+</ol>
+
+<h3>An example using every symbol</h3>
+<p>Read a diameter; if it is positive, call a function that computes the circle area and show it, otherwise report an error.</p>
+<div class="fc" data-fc="l3"></div>
+
+<h3>Paper or software?</h3>
+<p>In tests, draw on paper. Use a pencil, and draw the main column of shapes down the middle first. Put side branches to the right, then add the arrows last. Leave space: crowded flowcharts lose marks for readability. For assignments, <a href="https://app.diagrams.net" target="_blank" rel="noopener">diagrams.net</a> (free), PowerPoint or Word shapes, Lucidchart and Visio all have these exact symbols. MATLAB itself does not draw program flowcharts.</p>
+
+<div class="q"><p>Which symbol do you use for each step? (a) <code>Read the diameter from the keyboard</code> (b) <code>area = pi*r^2</code> (c) <code>Is the temperature above 100?</code> (d) <code>Plot stress against strain</code> (e) <code>Call the function stressCheck</code></p>
+<button>Show answer</button>
+<div class="ans">(a) parallelogram (input). (b) rectangle (process). (c) diamond (decision). (d) parallelogram (output: a plot is output). (e) predefined process, the rectangle with side bars.</div></div>
+<div class="q"><p>A student writes <code>x = x + 1</code> inside a diamond. Why is that wrong, and what should it be?</p>
+<button>Show answer</button>
+<div class="ans">A diamond must ask a yes/no question. <code>x = x + 1</code> is an assignment that changes a value, so it belongs in a process rectangle. If they meant "is x equal to x + 1?", that question is always No and makes no sense.</div></div>
+</section>
+
+<!-- 4 -->
+<section data-title="Structure 1: sequence">
+<div class="kicker">Lesson 4 / Control structures</div>
+<h2>Sequence: one step after another</h2>
+<p class="lead">Every algorithm is built from only three structures: <b>sequence</b>, <b>selection</b> (decisions) and <b>repetition</b> (loops). Each has one way in and one way out, so they stack and nest like building blocks. This is called <b>structured programming</b>.</p>
+<p>A sequence runs every step once, in order, with no branches. Most sequence programs follow the IPO pattern: inputs, then calculations, then outputs.</p>
+
+<h3>Worked example: power in a resistor</h3>
+<p>Given a voltage <code>V</code> (volts) across a resistor <code>R</code> (ohms), calculate the current <code>I = V / R</code> and the power <code>P = V × I</code>.</p>
+<div class="cols">
+<div><h4>Pseudocode</h4>
+<pre class="pc"><b>INPUT</b> V (V), R (ohm)
+I = V / R
+P = V × I
+<b>DISPLAY</b> I, P</pre>
+<h4>MATLAB</h4>
+<pre>V = input('Voltage (V): ');
+R = input('Resistance (ohm): ');
+I = V / R;        <span class="c">% Ohm's law</span>
+P = V * I;        <span class="c">% power in watts</span>
+fprintf('I = %.3f A, P = %.2f W\n', I, P)</pre>
+<p>Check: V = 12, R = 4 gives I = 3 A, P = 36 W.</p></div>
+<div><h4>Flowchart</h4><div class="fc" data-fc="seq_power"></div></div>
+</div>
+
+<h3>Order matters</h3>
+<p>In a sequence, a value must be calculated before it is used. Swap the two process boxes above and the program uses <code>I</code> before it exists. MATLAB would stop with <code>Unrecognized function or variable 'I'</code>. When you draw a sequence, check each box: <i>is every value on the right-hand side already known?</i></p>
+
+<h3>Several calculations in one box?</h3>
+<p>You may group closely related calculations in one rectangle, one per line, when they form one logical step. Do not hide a decision inside a rectangle, though. If a step involves "if", it needs a diamond.</p>
+
+<h3>Vectors are still one step</h3>
+<p>In MATLAB, <code>stress = loads ./ areas</code> processes every rod at once. In a flowchart that is still <b>one</b> process box. You only draw a loop if your code actually uses a loop.</p>
+
+<div class="q"><p>Put these steps in a correct order: <code>DISPLAY v</code>, <code>v = d / t</code>, <code>INPUT d, t</code>.</p>
+<button>Show answer</button>
+<div class="ans"><code>INPUT d, t</code>, then <code>v = d / t</code>, then <code>DISPLAY v</code>. Input, processing, output.</div></div>
+</section>
+
+<!-- 5 -->
+<section data-title="Structure 2: decisions">
+<div class="kicker">Lesson 5 / Control structures</div>
+<h2>Selection: making decisions</h2>
+<p class="lead">A decision chooses which steps run. In a flowchart it is a diamond with a Yes exit and a No exit. In pseudocode it is an <code>IF</code> block. In MATLAB it is <code>if</code>, <code>elseif</code>, <code>else</code> or <code>switch</code>. There are five patterns to know.</p>
+<p>On this page, the Yes branch of a decision goes to the right and the No branch continues downwards. Both then rejoin. Some textbooks draw it the other way round; either is fine if the labels are clear.</p>
+
+<h3>Pattern 1: single IF (do something extra, or nothing)</h3>
+<div class="cols">
+<div><pre class="pc"><b>INPUT</b> speed, limit
+<b>IF</b> speed &gt; limit <b>THEN</b>
+    <b>DISPLAY</b> "Slow down"
+<b>END IF</b>
+<b>DISPLAY</b> speed</pre>
+<pre>if speed &gt; limit
+    disp('Slow down')
+end
+disp(speed)</pre>
+<p>The No branch has nothing on it, so the line goes straight down to the join.</p></div>
+<div><div class="fc" data-fc="if1"></div></div>
+</div>
+
+<h3>Pattern 2: IF … ELSE (one of two)</h3>
+<div class="cols">
+<div><pre class="pc"><b>INPUT</b> mark
+<b>IF</b> mark &gt;= 50 <b>THEN</b>
+    <b>DISPLAY</b> "Pass"
+<b>ELSE</b>
+    <b>DISPLAY</b> "Fail"
+<b>END IF</b></pre>
+<pre>if mark &gt;= 50
+    disp('Pass')
+else
+    disp('Fail')
+end</pre></div>
+<div><div class="fc" data-fc="if2"></div></div>
+</div>
+
+<h3>Pattern 3: IF … ELSE IF … ELSE (one of many)</h3>
+<p>UOW grade bands: HD 85 or more, D 75 or more, C 65 or more, P 50 or more, otherwise F. The tests are checked from the top, and <b>only the first true branch runs</b>. That is why the order matters: test the highest band first.</p>
+<div class="cols">
+<div><pre class="pc"><b>INPUT</b> mark
+<b>IF</b> mark &gt;= 85 <b>THEN</b>
+    grade = "HD"
+<b>ELSE IF</b> mark &gt;= 75 <b>THEN</b>
+    grade = "D"
+<b>ELSE IF</b> mark &gt;= 65 <b>THEN</b>
+    grade = "C"
+<b>ELSE IF</b> mark &gt;= 50 <b>THEN</b>
+    grade = "P"
+<b>ELSE</b>
+    grade = "F"
+<b>END IF</b>
+<b>DISPLAY</b> grade</pre>
+<pre>if mark &gt;= 85
+    grade = 'HD';
+elseif mark &gt;= 75
+    grade = 'D';
+elseif mark &gt;= 65
+    grade = 'C';
+elseif mark &gt;= 50
+    grade = 'P';
+else
+    grade = 'F';
+end
+disp(grade)</pre></div>
+<div><div class="fc" data-fc="chain"></div>
+<p>Four diamonds for five outcomes. In general, <b>n outcomes need n − 1 diamonds</b>.</p></div>
+</div>
+<div class="warn"><b>Why the order matters.</b> If you test <code>mark &gt;= 50</code> first, a mark of 92 is "P", because 92 ≥ 50 is true and the later tests are never reached. When the bands overlap like this, test the strictest condition first.</div>
+
+<h3>Pattern 4: nested IF (a decision inside a branch)</h3>
+<p>Use nesting when the second question only makes sense after the first. Here a stress check only matters if a load is applied.</p>
+<div class="cols">
+<div><pre class="pc"><b>INPUT</b> load, stress, limit
+<b>IF</b> load &gt; 0 <b>THEN</b>
+    <b>IF</b> stress &gt; limit <b>THEN</b>
+        <b>DISPLAY</b> "FAIL"
+    <b>ELSE</b>
+        <b>DISPLAY</b> "OK"
+    <b>END IF</b>
+<b>ELSE</b>
+    <b>DISPLAY</b> "No load"
+<b>END IF</b></pre>
+<pre>if load &gt; 0
+    if stress &gt; limit
+        disp('FAIL')
+    else
+        disp('OK')
+    end
+else
+    disp('No load')
+end</pre></div>
+<div><div class="fc" data-fc="nested"></div></div>
+</div>
+
+<h3>Compound conditions: AND, OR, NOT</h3>
+<p>One diamond can test a combined condition. In MATLAB, <code>AND</code> is <code>&amp;&amp;</code>, <code>OR</code> is <code>||</code> and <code>NOT</code> is <code>~</code>. A comfortable room is 18 to 26 °C inclusive, with humidity below 60%:</p>
+<div class="cols">
+<div><pre class="pc"><b>INPUT</b> T, H
+<b>IF</b> T &gt;= 18 <b>AND</b> T &lt;= 26 <b>AND</b> H &lt; 60 <b>THEN</b>
+    <b>DISPLAY</b> "Comfortable"
+<b>ELSE</b>
+    <b>DISPLAY</b> "Adjust HVAC"
+<b>END IF</b></pre>
+<pre>if T &gt;= 18 &amp;&amp; T &lt;= 26 &amp;&amp; H &lt; 60
+    disp('Comfortable')
+else
+    disp('Adjust HVAC')
+end</pre>
+<p>Write <code>T &gt;= 18 AND T &lt;= 26</code>, never <code>18 &lt;= T &lt;= 26</code>. MATLAB reads the second form as <code>(18 &lt;= T) &lt;= 26</code>, which is always true.</p></div>
+<div><div class="fc" data-fc="and1"></div></div>
+</div>
+
+<h3>Pattern 5: CASE / switch (choose by matching one value)</h3>
+<p>When one variable is compared with several exact values, <code>switch</code> is tidier than a chain of <code>elseif</code>. A flowchart has no special switch shape: draw it as a chain of "is it equal to …?" diamonds.</p>
+<div class="cols">
+<div><pre class="pc"><b>INPUT</b> mode
+<b>CASE</b> mode <b>OF</b>
+    1: <b>DISPLAY</b> "Pump off"
+    2: <b>DISPLAY</b> "Low speed"
+    3: <b>DISPLAY</b> "High speed"
+    <b>OTHERWISE</b>: <b>DISPLAY</b> "Invalid mode"
+<b>END CASE</b></pre>
+<pre>switch mode
+    case 1
+        disp('Pump off')
+    case 2
+        disp('Low speed')
+    case 3
+        disp('High speed')
+    otherwise
+        disp('Invalid mode')
+end</pre></div>
+<div><div class="fc" data-fc="switch1"></div></div>
+</div>
+
+<div class="q"><p>How many diamonds does a flowchart need to sort a value into 6 categories with an IF / ELSE IF chain?</p>
+<button>Show answer</button>
+<div class="ans">5. The last category is whatever is left when every test is No, so it needs no diamond of its own.</div></div>
+<div class="q"><p>In the comfort example, what does the program display for T = 26, H = 60?</p>
+<button>Show answer</button>
+<div class="ans">"Adjust HVAC". T = 26 passes <code>T &lt;= 26</code>, but <code>H &lt; 60</code> is false when H is exactly 60, and AND needs every part to be true. Boundary values like this are exactly what testers check.</div></div>
+</section>
+
+<!-- 6 -->
+<section data-title="Structure 3: loops">
+<div class="kicker">Lesson 6 / Control structures</div>
+<h2>Repetition: loops</h2>
+<p class="lead">A loop repeats a block of steps. In a flowchart a loop is a decision whose Yes branch runs the body and then an arrow goes back up to the decision. Every loop has three parts: <b>initialise</b> before the loop, <b>test</b> at the diamond, and <b>update</b> inside the body.</p>
+
+<h3>Counted loop: FOR</h3>
+<p>Use <code>FOR</code> when you know how many times to repeat before the loop starts. MATLAB's <code>for k = 1:n</code> hides the three parts, but the flowchart shows them: <code>k = 1</code> (initialise), <code>k &lt;= n ?</code> (test) and <code>k = k + 1</code> (update).</p>
+<p>Problem: add up 1 + 2 + … + n.</p>
+<div class="cols">
+<div><pre class="pc"><b>INPUT</b> n
+total = 0
+<b>FOR</b> k = 1 <b>TO</b> n
+    total = total + k
+<b>END FOR</b>
+<b>DISPLAY</b> total</pre>
+<pre>n = input('n: ');
+total = 0;              <span class="c">% initialise the accumulator</span>
+for k = 1:n
+    total = total + k;
+end
+disp(total)</pre>
+<p>Check: n = 100 gives 5050.</p></div>
+<div><div class="fc" data-fc="for_sum"></div></div>
+</div>
+<div class="key"><p style="margin:0"><strong>Hexagon notation.</strong> Some books draw a FOR loop as one six-sided box containing <code>k = 1 to n</code>. The expanded diamond version above shows exactly what the computer does and is always accepted, so it is the safer choice in a test.</p></div>
+
+<h3>Condition loop: WHILE</h3>
+<p>Use <code>WHILE</code> when you do not know in advance how many repeats are needed: you know the condition to keep going. A water tank starts empty and gains 0.8 m of depth per minute. How many minutes until it is at least 5 m deep?</p>
+<div class="cols">
+<div><pre class="pc">level = 0
+minutes = 0
+<b>WHILE</b> level &lt; 5
+    level = level + 0.8
+    minutes = minutes + 1
+<b>END WHILE</b>
+<b>DISPLAY</b> minutes, level</pre>
+<pre>level = 0;
+minutes = 0;
+while level &lt; 5
+    level = level + 0.8;
+    minutes = minutes + 1;
+end
+fprintf('%d minutes, level %.1f m\n', minutes, level)</pre>
+<p>Output: <code>7 minutes, level 5.6 m</code>. After 6 minutes the level is 4.8, still below 5, so the loop runs once more.</p></div>
+<div><div class="fc" data-fc="while_tank"></div></div>
+</div>
+<div class="warn"><b>Infinite loops.</b> If nothing inside the body changes the tested variable, the condition never becomes false and the program never stops. In MATLAB press <b>Ctrl+C</b> to break out. In your flowchart, check that the loop body contains an update.</div>
+
+<h3>Sentinel loop: keep reading until a stop value</h3>
+<p>A <b>sentinel</b> is a special value that means "no more data", such as −1 for readings that can never be negative. Read the first value <i>before</i> the loop, and the next value as the <i>last</i> step inside it.</p>
+<div class="cols">
+<div><pre class="pc">count = 0
+total = 0
+<b>INPUT</b> x
+<b>WHILE</b> x &gt;= 0
+    total = total + x
+    count = count + 1
+    <b>INPUT</b> x
+<b>END WHILE</b>
+<b>IF</b> count &gt; 0 <b>THEN</b>
+    <b>DISPLAY</b> total / count
+<b>ELSE</b>
+    <b>DISPLAY</b> "No data"
+<b>END IF</b></pre>
+<pre>count = 0; total = 0;
+x = input('Reading (negative to stop): ');
+while x &gt;= 0
+    total = total + x;
+    count = count + 1;
+    x = input('Reading (negative to stop): ');
+end
+if count &gt; 0
+    fprintf('Average = %.2f\n', total / count)
+else
+    disp('No data')
+end</pre></div>
+<div><div class="fc" data-fc="sentinel"></div></div>
+</div>
+
+<h3>Choosing the loop</h3>
+<div class="tw"><table>
+<tr><th>The question says …</th><th>Use</th></tr>
+<tr><td>"for each", "every item", "n times", "from 1 to 10"</td><td><code>FOR</code></td></tr>
+<tr><td>"until", "while", "as long as", "how many … before", accuracy or tolerance</td><td><code>WHILE</code></td></tr>
+<tr><td>"keep asking until a valid value", "enter −1 to stop"</td><td><code>WHILE</code> with input before the loop and at the end of the body</td></tr>
+</table></div>
+
+<h3>Two patterns used everywhere</h3>
+<p><b>Accumulator:</b> start at 0 (or 1 for a product) before the loop, add (or multiply) inside it. <b>Counter:</b> start at 0, add 1 each time something happens. Both must be initialised <i>before</i> the loop. If you set <code>total = 0</code> inside the loop, it is reset on every pass.</p>
+
+<div class="q"><p>In the tank example, which line is the initialise step, which is the test, and which is the update?</p>
+<button>Show answer</button>
+<div class="ans">Initialise: <code>level = 0</code> (and <code>minutes = 0</code>). Test: <code>level &lt; 5</code>. Update: <code>level = level + 0.8</code>. The update is what eventually makes the test false.</div></div>
+<div class="q"><p>How many times does the body of <code>FOR k = 3 TO 12 STEP 3</code> run, and what values does k take?</p>
+<button>Show answer</button>
+<div class="ans">4 times: k = 3, 6, 9, 12. In MATLAB it is <code>for k = 3:3:12</code>.</div></div>
+</section>
+
+<!-- 7 -->
+<section data-title="Loops with decisions">
+<div class="kicker">Lesson 7 / Combining structures</div>
+<h2>Loops with decisions inside</h2>
+<p class="lead">Most real tasks combine the structures: <i>for each reading, decide something</i>. Because every structure has one way in and one way out, you can place a whole IF block inside a loop body, or a loop inside an IF branch.</p>
+
+<h3>Count the items that meet a condition</h3>
+<p>Count how many temperature readings exceed a limit.</p>
+<div class="cols">
+<div><pre class="pc"><b>INPUT</b> temps, limit
+n = length(temps)
+count = 0
+<b>FOR</b> k = 1 <b>TO</b> n
+    <b>IF</b> temps(k) &gt; limit <b>THEN</b>
+        count = count + 1
+    <b>END IF</b>
+<b>END FOR</b>
+<b>DISPLAY</b> count</pre>
+<pre>temps = [72 85 91 66 88 79];
+limit = 80;
+n = length(temps);
+count = 0;
+for k = 1:n
+    if temps(k) &gt; limit
+        count = count + 1;
+    end
+end
+disp(count)          <span class="c">% 3</span></pre>
+<p>The vectorised MATLAB shortcut is <code>count = sum(temps &gt; limit)</code>. Learn the loop first; then you understand what the shortcut does.</p></div>
+<div><div class="fc" data-fc="count_above"></div></div>
+</div>
+
+<h3>Search: stop when found</h3>
+<p>Find the position of the first value equal to a target. The structured way is a <code>WHILE</code> loop with a <b>flag</b> variable <code>found</code>, so that the loop stops as soon as the value is found.</p>
+<div class="cols">
+<div><pre class="pc"><b>INPUT</b> v, target
+k = 1
+found = false
+<b>WHILE</b> k &lt;= length(v) <b>AND NOT</b> found
+    <b>IF</b> v(k) == target <b>THEN</b>
+        found = true
+    <b>ELSE</b>
+        k = k + 1
+    <b>END IF</b>
+<b>END WHILE</b>
+<b>IF</b> found <b>THEN</b>
+    <b>DISPLAY</b> "Found at", k
+<b>ELSE</b>
+    <b>DISPLAY</b> "Not found"
+<b>END IF</b></pre>
+<pre>v = [4 9 2 9]; target = 9;
+k = 1; found = false;
+while k &lt;= length(v) &amp;&amp; ~found
+    if v(k) == target
+        found = true;
+    else
+        k = k + 1;
+    end
+end
+if found
+    fprintf('Found at position %d\n', k)   <span class="c">% 2</span>
+else
+    disp('Not found')
+end</pre></div>
+<div><div class="fc" data-fc="search"></div></div>
+</div>
+<div class="key"><p style="margin:0"><strong>What about <code>break</code>?</strong> MATLAB can also leave a <code>for</code> loop early with <code>break</code>; in pseudocode write <code>EXIT LOOP</code>. In a flowchart, the Yes arrow of the "found?" diamond goes straight to the first box <i>after</i> the loop instead of back to the loop test. Both versions are accepted; the flag version keeps one entry and one exit, which is easier to trace.</p></div>
+
+<h3>Nested loops</h3>
+<p>A loop inside a loop: the inner loop runs completely for every single pass of the outer loop. In the flowchart, the inner loop sits wholly inside the outer loop's body, and its loop-back arrow is inside the outer one. See problems C12 and E5 in the practice sets.</p>
+
+<div class="q"><p>In the counting example, what goes wrong if <code>count = 0</code> is moved inside the loop, just before the IF?</p>
+<button>Show answer</button>
+<div class="ans">The counter is reset to 0 on every pass, so at the end it can only be 0 or 1, depending only on the last reading. Initialisation belongs before the loop.</div></div>
+</section>
+
+<!-- 8 -->
+<section data-title="Functions & top-down design">
+<div class="kicker">Lesson 8 / Modular design</div>
+<h2>Functions and top-down design</h2>
+<p class="lead">Large programs are split into <b>modules</b>: a main program that calls smaller functions. Each function has its own flowchart. In the main flowchart, a call is drawn as a predefined-process box (a rectangle with side bars).</p>
+
+<h3>How to draw a function</h3>
+<ul>
+<li>The Start oval names the function and its inputs: <code>Start circleArea(d)</code>.</li>
+<li>The Stop oval says what it returns: <code>Return A</code>.</li>
+<li>Inside, use the usual symbols. A function normally does <b>not</b> use <code>input</code> or display output; it gets values through its inputs and gives results back through its outputs.</li>
+</ul>
+
+<h3>Example: total area of several circular plates</h3>
+<div class="cols">
+<div><h4>Main program</h4>
+<pre class="pc"><b>INPUT</b> d (list of diameters)
+total = 0
+<b>FOR</b> k = 1 <b>TO</b> length(d)
+    A = <b>CALL</b> circleArea(d(k))
+    <b>DISPLAY</b> k, A
+    total = total + A
+<b>END FOR</b>
+<b>DISPLAY</b> total</pre>
+<div class="fc" data-fc="fn_main"></div></div>
+<div><h4>Function</h4>
+<pre class="pc"><b>FUNCTION</b> A = circleArea(d)
+    r = d / 2
+    A = pi × r²
+<b>END FUNCTION</b></pre>
+<div class="fc" data-fc="fn_def"></div></div>
+</div>
+<pre><span class="c">% main.m</span>
+d = [8 10 12];              <span class="c">% mm</span>
+total = 0;
+for k = 1:length(d)
+    A = circleArea(d(k));
+    fprintf('Plate %d: %.2f mm^2\n', k, A)
+    total = total + A;
+end
+fprintf('Total: %.2f mm^2\n', total)   <span class="c">% 241.90</span>
+
+<span class="c">% circleArea.m  (its own file, or a local function at the end of the script)</span>
+function A = circleArea(d)
+r = d / 2;
+A = pi * r^2;
+end</pre>
+
+<h3>Top-down design</h3>
+<p>Start from the Level 1 plan. Any step that is big, or used more than once, becomes a function. Then plan each function on its own. This is the same idea as stepwise refinement from Lesson 2, applied to the program's structure.</p>
+
+<div class="q"><p>Why should <code>circleArea</code> not contain <code>d = input('Diameter: ')</code>?</p>
+<button>Show answer</button>
+<div class="ans">The diameter arrives as the input argument, so asking again would ignore the value passed in. It would also stop the main loop from reusing the function for each plate without pausing for the keyboard. Keep input and output in the main program.</div></div>
+</section>
+
+<!-- 9 -->
+<section data-title="Practical 3 step by step">
+<div class="kicker">Lesson 9 / Worked examples from Practical 3</div>
+<h2>Practical 3, step by step</h2>
+<p class="lead">This lesson takes the three planning tasks from <a href="practicals/p03.html">Practical 3</a> and works through each one completely: analysis, structure plan, flowchart, MATLAB and tests.</p>
+
+<h3>Q2. Fahrenheit to Celsius: multi-level structure plan</h3>
+<p><b>Analysis.</b> Input: F in °F. Operation: C = (F − 32) × 5/9. Output: C in °C.</p>
+<div class="cols">
+<div><h4>Level 1</h4>
+<pre class="pc">1. Initialise Fahrenheit temperature
+2. Calculate and display Celsius temperature
+3. Stop</pre>
+<h4>Level 2</h4>
+<pre class="pc">1. <b>INPUT</b> F
+2. C = (F − 32) × 5 / 9
+3. <b>DISPLAY</b> C
+4. Stop</pre>
+<h4>MATLAB</h4>
+<pre><span class="c">% f2c.m  Convert Fahrenheit to Celsius</span>
+F = input('Temperature in F: ');   <span class="c">% Input</span>
+C = (F - 32) * 5 / 9;              <span class="c">% Operations</span>
+fprintf('%.1f F = %.1f C\n', F, C) <span class="c">% Output</span></pre></div>
+<div><h4>Flowchart</h4><div class="fc" data-fc="p3_fc"></div>
+<h4>Tests</h4>
+<div class="tw"><table>
+<tr><th>F</th><th>Expected C</th><th>Why this test</th></tr>
+<tr><td>32</td><td>0</td><td>Freezing point</td></tr>
+<tr><td>212</td><td>100</td><td>Boiling point</td></tr>
+<tr><td>−40</td><td>−40</td><td>The two scales cross here</td></tr>
+</table></div></div>
+</div>
+<p>Level 1 says <i>what</i>; Level 2 says <i>how</i>. Step 2 of Level 1 ("calculate and display") became two lines at Level 2 because it was really two actions.</p>
+
+<h3>Q3. Vertical motion under gravity (throw.m)</h3>
+<p><b>Analysis.</b> Inputs: g = 9.81 m/s², u = 60 m/s, times t from 0 to 12.3 s in steps of 0.01 s. Operation: s = ut − ½gt² for every t. Output: a labelled plot of s against t.</p>
+<div class="cols">
+<div><pre class="pc"><b>INPUT</b> g = 9.81, u = 60
+t = 0 to 12.3 in steps of 0.01  (a vector)
+s = u·t − ½·g·t²  (for every t, element by element)
+<b>DISPLAY</b> plot of s against t, with title, axis labels, grid</pre>
+<pre><span class="c">% throw.m  Displacement of a stone thrown upwards</span>
+g = 9.81;                 <span class="c">% gravity (m/s^2)</span>
+u = 60;                   <span class="c">% launch speed (m/s)</span>
+t = 0:0.01:12.3;          <span class="c">% time values (s)</span>
+s = u*t - g/2*t.^2;       <span class="c">% .^ squares every element</span>
+plot(t, s, 'k', 'LineWidth', 3), grid
+title('Vertical motion under gravity')
+xlabel('time (s)'), ylabel('vertical displacement (m)')</pre>
+<p>There is no loop in the flowchart, because the vector <code>t</code> and the element-wise <code>.^</code> do every time value in one step. Test: the peak should be at t = u/g ≈ 6.12 s with s = u²/(2g) ≈ 183.5 m, and s should return to 0 at t ≈ 12.23 s.</p></div>
+<div><div class="fc" data-fc="p3_throw"></div></div>
+</div>
+
+<h3>Q5. Quadratic equation: every decision box</h3>
+<p><b>Analysis.</b> Inputs: coefficients a, b, c of ax² + bx + c = 0. Outputs: the root(s) or a message. The rules split into cases:</p>
+<ul>
+<li>a = 0: it is not a quadratic. If b ≠ 0 it is linear, x = −c/b. If b = 0 too, then c = 0 means every x works (indeterminate) and c ≠ 0 means no solution.</li>
+<li>a ≠ 0: use the discriminant d = b² − 4ac. d &lt; 0 gives complex roots, d = 0 one equal root, d &gt; 0 two real roots.</li>
+</ul>
+<div class="cols">
+<div><h4>Pseudocode</h4>
+<pre class="pc"><b>INPUT</b> a, b, c
+<b>IF</b> a == 0 <b>THEN</b>
+    <b>IF</b> b == 0 <b>THEN</b>
+        <b>IF</b> c == 0 <b>THEN</b>
+            <b>DISPLAY</b> "Solution indeterminate"
+        <b>ELSE</b>
+            <b>DISPLAY</b> "There is no solution"
+        <b>END IF</b>
+    <b>ELSE</b>
+        x = −c / b
+        <b>DISPLAY</b> "Linear:", x
+    <b>END IF</b>
+<b>ELSE</b>
+    d = b² − 4ac
+    <b>IF</b> d &lt; 0 <b>THEN</b>
+        re = −b / (2a)
+        im = √(−d) / (2a)
+        <b>DISPLAY</b> "Complex roots", re ± im·i
+    <b>ELSE IF</b> d == 0 <b>THEN</b>
+        x = −b / (2a)
+        <b>DISPLAY</b> "Equal roots", x
+    <b>ELSE</b>
+        x1 = (−b + √d) / (2a)
+        x2 = (−b − √d) / (2a)
+        <b>DISPLAY</b> x1, x2
+    <b>END IF</b>
+<b>END IF</b></pre></div>
+<div><h4>MATLAB</h4>
+<pre>a = input('a: ');
+b = input('b: ');
+c = input('c: ');
+if a == 0
+    if b == 0
+        if c == 0
+            disp('Solution indeterminate')
+        else
+            disp('There is no solution')
+        end
+    else
+        x = -c / b;
+        fprintf('Linear: x = %.4f\n', x)
+    end
+else
+    d = b^2 - 4*a*c;
+    if d &lt; 0
+        re = -b / (2*a);
+        im = sqrt(-d) / (2*a);
+        fprintf('Complex: %.4f +/- %.4fi\n', re, im)
+    elseif d == 0
+        x = -b / (2*a);
+        fprintf('Equal roots: x = %.4f\n', x)
+    else
+        x1 = (-b + sqrt(d)) / (2*a);
+        x2 = (-b - sqrt(d)) / (2*a);
+        fprintf('x1 = %.4f, x2 = %.4f\n', x1, x2)
+    end
+end</pre></div>
+</div>
+<h4>Flowchart</h4>
+<div class="fc" data-fc="p3_quad"></div>
+<p>Count the diamonds: three for the a = 0 side and two for the discriminant side. Six possible outcomes need five decisions, exactly as the n − 1 rule predicts.</p>
+<h4>Test table: one test per outcome</h4>
+<div class="tw"><table>
+<tr><th>a, b, c</th><th>Branch taken</th><th>Expected output</th></tr>
+<tr><td>0, 0, 0</td><td>a = 0, b = 0, c = 0</td><td>Solution indeterminate</td></tr>
+<tr><td>0, 0, 5</td><td>a = 0, b = 0, c ≠ 0</td><td>There is no solution</td></tr>
+<tr><td>0, 2, −4</td><td>a = 0, b ≠ 0</td><td>Linear: x = 2</td></tr>
+<tr><td>1, 2, 5</td><td>d = −16 &lt; 0</td><td>Complex: −1 ± 2i</td></tr>
+<tr><td>1, −4, 4</td><td>d = 0</td><td>Equal roots: x = 2</td></tr>
+<tr><td>1, −3, 2</td><td>d = 1 &gt; 0</td><td>x1 = 2, x2 = 1</td></tr>
+</table></div>
+
+<h3>Q4. Testing the projectile program</h3>
+<p>Step 6 of the design process. A good test set has a known answer for each case: v₀ = 0 (range 0); θ = 45° on flat ground (range v₀²/g, the maximum); θ = 90° (range 0, flight time 2v₀/g); and a check that the landing time matches y(t) = 0. Lesson 10 shows how to choose test cases systematically.</p>
+</section>
+
+<!-- 10 -->
+<section data-title="Desk checking & testing">
+<div class="kicker">Lesson 10 / Checking</div>
+<h2>Desk checking with trace tables</h2>
+<p class="lead">Before you trust a plan, run it by hand. A <b>trace table</b> (or desk check) has one column for each variable, one for the condition being tested, and one for output. Add a row every time a value changes.</p>
+
+<h3>Worked trace</h3>
+<p>What does this algorithm display?</p>
+<div class="cols">
+<div><pre class="pc">total = 0
+k = 1
+<b>WHILE</b> total &lt;= 30
+    total = total + k
+    k = k + 2
+<b>END WHILE</b>
+<b>DISPLAY</b> total, k</pre>
+<div class="tw"><table class="trace">
+<tr><th>Pass</th><th>total &lt;= 30 ?</th><th>total</th><th>k</th></tr>
+<tr><td>start</td><td></td><td>0</td><td>1</td></tr>
+<tr><td>1</td><td>0 ≤ 30 Yes</td><td>1</td><td>3</td></tr>
+<tr><td>2</td><td>1 ≤ 30 Yes</td><td>4</td><td>5</td></tr>
+<tr><td>3</td><td>4 ≤ 30 Yes</td><td>9</td><td>7</td></tr>
+<tr><td>4</td><td>9 ≤ 30 Yes</td><td>16</td><td>9</td></tr>
+<tr><td>5</td><td>16 ≤ 30 Yes</td><td>25</td><td>11</td></tr>
+<tr><td>6</td><td>25 ≤ 30 Yes</td><td>36</td><td>13</td></tr>
+<tr><td>end</td><td>36 ≤ 30 No</td><td>36</td><td>13</td></tr>
+</table></div>
+<p>Output: <code>36 13</code>. The last odd number added was 11, but <code>k</code> had already been updated to 13 before the test failed. Trace tables catch this kind of "one past the end" surprise.</p></div>
+<div><div class="fc" data-fc="odd_sum"></div></div>
+</div>
+
+<h3>How to trace a flowchart</h3>
+<ol class="steps">
+<li>Write every variable as a column heading. Add a column for the decision and one for output.</li>
+<li>Put your finger on Start and follow the arrows.</li>
+<li>At a process box, write the new value in its column. Cross out or move down; never overwrite.</li>
+<li>At a diamond, write the actual comparison with numbers (<code>16 ≤ 30</code>) and the answer, then follow that arrow.</li>
+<li>Stop when you reach Stop. Compare the output with your hand calculation.</li>
+</ol>
+
+<h3>Choosing test data</h3>
+<div class="tw"><table>
+<tr><th>Kind of test</th><th>Example for "pass if mark ≥ 50"</th></tr>
+<tr><td>Normal value in each branch</td><td>70 (pass), 30 (fail)</td></tr>
+<tr><td>Boundary: exactly on the line, and one each side</td><td>50, 49, 51</td></tr>
+<tr><td>Extremes</td><td>0 and 100</td></tr>
+<tr><td>Invalid input</td><td>−5, 120, if the program is meant to reject them</td></tr>
+<tr><td>Loops: zero, one and many passes</td><td>Empty list, one item, ten items</td></tr>
+</table></div>
+<p>Rule of thumb: <b>every arrow in the flowchart should be followed by at least one test.</b></p>
+
+<div class="q"><p>Trace: <code>x = 1</code>; <code>FOR k = 1 TO 4</code>: <code>x = x × 3</code>; <code>END FOR</code>; <code>DISPLAY x</code>.</p>
+<button>Show answer</button>
+<div class="ans">x: 1 → 3 → 9 → 27 → 81. Output <code>81</code>, which is 3⁴.</div></div>
+</section>
+
+<!-- 11 -->
+<section data-title="Common mistakes">
+<div class="kicker">Lesson 11 / Checking</div>
+<h2>Common mistakes and how to fix them</h2>
+<p class="lead">These are the errors markers see most often in ENGG100 pseudocode and flowcharts. Check your work against this list before you hand it in.</p>
+<div class="tw"><table>
+<tr><th>Mistake</th><th>Why it is wrong</th><th>Fix</th></tr>
+<tr><td>No Start or Stop oval</td><td>Nobody can tell where the algorithm begins and ends</td><td>One Start at the top, Stop at the bottom</td></tr>
+<tr><td>Calculation inside a diamond</td><td>A diamond must be a yes/no question</td><td>Move it to a rectangle; ask a question in the diamond</td></tr>
+<tr><td>Diamond with one exit, or unlabelled exits</td><td>The reader cannot tell which way is Yes</td><td>Two exits, labelled Yes and No</td></tr>
+<tr><td>Input or display in a rectangle</td><td>Wrong symbol</td><td>Input and output use the parallelogram</td></tr>
+<tr><td>Loop with no update</td><td>Infinite loop: the test never changes</td><td>Update the tested variable inside the body</td></tr>
+<tr><td>Loop-back arrow to the wrong place</td><td>Re-initialises the counter, or skips the test</td><td>Arrow returns to just above the loop's diamond, below the initialisation</td></tr>
+<tr><td>Accumulator not initialised, or initialised inside the loop</td><td>Unknown start value, or reset every pass</td><td><code>total = 0</code> before the loop</td></tr>
+<tr><td>IF / ELSE IF in the wrong order</td><td>A broad test catches values meant for later branches</td><td>Test the strictest condition first</td></tr>
+<tr><td><code>&lt;</code> where <code>&lt;=</code> was needed</td><td>Off-by-one: misses the boundary value</td><td>Trace the boundary case</td></tr>
+<tr><td>Branches that never rejoin</td><td>Paths dangle and never reach Stop</td><td>Join Yes and No paths before the next step</td></tr>
+<tr><td>MATLAB syntax in pseudocode</td><td>Pseudocode should be language-neutral</td><td><code>DISPLAY x</code>, not <code>fprintf(...)</code></td></tr>
+<tr><td>Vague steps</td><td>"Calculate result" cannot be coded</td><td>Write the actual formula</td></tr>
+<tr><td>Missing END IF / END FOR</td><td>Block boundaries unclear</td><td>Close every block and indent its contents</td></tr>
+<tr><td>Different names in plan and code</td><td>Confusing to check against each other</td><td>Use the same names everywhere</td></tr>
+</table></div>
+</section>
+
+<!-- 12 -->
+<section data-title="Exam technique">
+<div class="kicker">Lesson 12 / Assessment</div>
+<h2>Exam and assignment technique</h2>
+<p class="lead">Questions usually say "Write pseudocode for…", "Draw a flowchart for…", "Convert this flowchart to MATLAB", or "What does this algorithm output?". Each has a reliable method.</p>
+
+<h3>"Write pseudocode / draw a flowchart for…" (about 10 minutes)</h3>
+<ol class="steps">
+<li><b>Underline</b> every input, output, number and rule word ("each", "if", "until", "otherwise") in the question.</li>
+<li><b>Write the IPO table</b> in the margin: Given, Find, Rules.</li>
+<li><b>Choose structures</b>: "each" means a FOR loop, "if/otherwise" a decision, "until" a WHILE loop.</li>
+<li><b>Write the pseudocode skeleton</b> with the blocks first (<code>FOR … END FOR</code>), then fill in the lines.</li>
+<li><b>Draw the flowchart from the pseudocode</b>, one shape per line, main column first.</li>
+<li><b>Trace one test case</b> through it, and check every path reaches Stop.</li>
+</ol>
+
+<h3>What marks are usually given for</h3>
+<ul>
+<li>Start and Stop present.</li>
+<li>Correct symbol for each step.</li>
+<li>Inputs read before they are used; outputs displayed.</li>
+<li>Correct conditions, including boundaries (≥ versus &gt;).</li>
+<li>Loops initialised, tested and updated, and returning to the right place.</li>
+<li>Decision exits labelled; branches rejoin.</li>
+<li>Neat, readable layout with consistent names.</li>
+</ul>
+
+<h3>"Convert this MATLAB to a flowchart"</h3>
+<div class="tw"><table>
+<tr><th>MATLAB line</th><th>Draw</th></tr>
+<tr><td><code>x = input(…)</code>, <code>disp</code>, <code>fprintf</code>, <code>plot</code></td><td>Parallelogram</td></tr>
+<tr><td><code>x = …;</code> (any calculation)</td><td>Rectangle</td></tr>
+<tr><td><code>if</code> / <code>elseif</code></td><td>One diamond per test; <code>else</code> is the final No path</td></tr>
+<tr><td><code>switch</code> with n cases</td><td>Chain of n equality diamonds; <code>otherwise</code> is the final No path</td></tr>
+<tr><td><code>for k = a:s:b</code></td><td><code>k = a</code> rectangle, <code>k &lt;= b ?</code> diamond, body, <code>k = k + s</code> rectangle, arrow back</td></tr>
+<tr><td><code>while cond</code></td><td>Diamond <code>cond ?</code>, Yes into body, arrow back, No out</td></tr>
+<tr><td><code>y = myFunc(x)</code></td><td>Predefined-process box</td></tr>
+<tr><td><code>end</code></td><td>Nothing; it is where branches rejoin or the loop arrow goes back</td></tr>
+</table></div>
+
+<h3>"Convert this flowchart to MATLAB"</h3>
+<p>Go shape by shape from Start. When you meet a diamond, ask: <i>does any arrow come back up to this diamond?</i> If yes, it is a loop (<code>while</code>, or <code>for</code> if it has a counter pattern). If no, it is an <code>if</code>. Write the <code>end</code> where the branches rejoin or where the loop arrow leaves.</p>
+
+<h3>"What does this output?"</h3>
+<p>Do not guess from the shape of the code. Draw a trace table (Lesson 10) and fill it in row by row. Most errors come from forgetting that the update happens before the test.</p>
+</section>
+
+<!-- 13 -->
+<section data-title="Practice A: sequence">
+<div class="kicker">Practice set A / Sequence problems</div>
+<h2>Practice A: sequence (IPO) problems</h2>
+<p class="lead">For each problem, write the IPO table, then the pseudocode, then draw the flowchart, then the MATLAB. Reveal each part only after you have done it yourself. Use the check values to test your code.</p>
+
+<div class="prob"><h3>A1. Rectangular plate <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: IPO, two calculations</p>
+<p>Input the length and width of a rectangular steel plate in metres. Calculate and display its area and perimeter.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> L, W (m)
+A = L × W
+P = 2 × (L + W)
+<b>DISPLAY</b> A, P</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="A1"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>L = input('Length (m): ');
+W = input('Width (m): ');
+A = L * W;
+P = 2 * (L + W);
+fprintf('Area = %.2f m^2, perimeter = %.2f m\n', A, P)</pre><p>Check: L = 2, W = 3 gives A = 6 m², P = 10 m.</p></div>
+</div>
+
+<div class="prob"><h3>A2. Average speed <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: unit conversion inside a sequence</p>
+<p>A car travels a distance in kilometres in a time given in minutes. Display the average speed in km/h and in m/s.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> dist_km, time_min
+time_h = time_min / 60
+v_kmh = dist_km / time_h
+v_ms = v_kmh / 3.6
+<b>DISPLAY</b> v_kmh, v_ms</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="A2"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>dist_km  = input('Distance (km): ');
+time_min = input('Time (min): ');
+time_h = time_min / 60;
+v_kmh  = dist_km / time_h;
+v_ms   = v_kmh / 3.6;
+fprintf('%.1f km/h = %.1f m/s\n', v_kmh, v_ms)</pre><p>Check: 30 km in 20 min gives 90 km/h = 25 m/s.</p></div>
+</div>
+
+<div class="prob"><h3>A3. Circle from a diameter <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: order of calculations</p>
+<p>Input a pipe diameter <code>d</code>. Display the radius, cross-sectional area and circumference.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> d
+r = d / 2
+A = pi × r²
+C = pi × d
+<b>DISPLAY</b> r, A, C</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="A3"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>d = input('Diameter: ');
+r = d / 2;
+A = pi * r^2;
+C = pi * d;
+fprintf('r = %.2f, A = %.2f, C = %.2f\n', r, A, C)</pre><p>Check: d = 10 gives r = 5, A = 78.54, C = 31.42.</p></div>
+</div>
+
+<div class="prob"><h3>A4. Water pressure at depth <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: constants as a separate step</p>
+<p>The pressure under water is P = ρgh with ρ = 1000 kg/m³ and g = 9.81 m/s². Input the depth h in metres and display P in Pa and in kPa.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc">rho = 1000, g = 9.81
+<b>INPUT</b> h (m)
+P = rho × g × h
+P_kPa = P / 1000
+<b>DISPLAY</b> P, P_kPa</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="A4"></div><p>Setting constants is a process (rectangle), not an input, because the user does not type them.</p></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>rho = 1000;  g = 9.81;
+h = input('Depth (m): ');
+P = rho * g * h;
+P_kPa = P / 1000;
+fprintf('P = %.0f Pa = %.2f kPa\n', P, P_kPa)</pre><p>Check: h = 12 gives 117720 Pa = 117.72 kPa.</p></div>
+</div>
+
+<div class="prob"><h3>A5. Mechanical energy <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: several outputs</p>
+<p>Input mass m (kg), speed v (m/s) and height h (m). Display the kinetic energy ½mv², the potential energy mgh, and their total.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc">g = 9.81
+<b>INPUT</b> m, v, h
+KE = 0.5 × m × v²
+PE = m × g × h
+E = KE + PE
+<b>DISPLAY</b> KE, PE, E</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="A5"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>g = 9.81;
+m = input('Mass (kg): ');
+v = input('Speed (m/s): ');
+h = input('Height (m): ');
+KE = 0.5 * m * v^2;
+PE = m * g * h;
+E = KE + PE;
+fprintf('KE = %.1f J, PE = %.1f J, total = %.1f J\n', KE, PE, E)</pre><p>Check: m = 2, v = 3, h = 5 gives KE = 9 J, PE = 98.1 J, total 107.1 J.</p></div>
+</div>
+
+<div class="prob"><h3>A6. Feet and inches to metres <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: combining inputs before converting</p>
+<p>Input a height as feet and inches (two numbers). Display it in metres. 1 ft = 12 in, 1 in = 0.0254 m.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> feet, inches
+total_in = 12 × feet + inches
+metres = total_in × 0.0254
+<b>DISPLAY</b> metres</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="A6"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>feet   = input('Feet: ');
+inches = input('Inches: ');
+total_in = 12 * feet + inches;
+metres = total_in * 0.0254;
+fprintf('%.3f m\n', metres)</pre><p>Check: 5 ft 10 in = 70 in = 1.778 m.</p></div>
+</div>
+
+<div class="prob"><h3>A7. Seconds to hours, minutes, seconds <span class="tag c">Core</span></h3>
+<p class="practises">Practises: <code>floor</code> and <code>mod</code></p>
+<p>A data logger reports elapsed time as a whole number of seconds. Display it as hours, minutes and seconds. <code>floor(x)</code> rounds down; <code>mod(a, b)</code> is the remainder after dividing a by b.</p>
+<button>Show hints</button>
+<div class="ans">Whole hours = floor(total / 3600). The seconds left over are mod(total, 3600). Repeat the same idea with 60 for minutes.</div>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> total_s
+h = floor(total_s / 3600)
+left = mod(total_s, 3600)
+m = floor(left / 60)
+s = mod(left, 60)
+<b>DISPLAY</b> h, m, s</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="A7"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>total_s = input('Seconds: ');
+h = floor(total_s / 3600);
+left = mod(total_s, 3600);
+m = floor(left / 60);
+s = mod(left, 60);
+fprintf('%d h %d min %d s\n', h, m, s)</pre><p>Check: 3725 s = 1 h 2 min 5 s. Avoid calling the variable <code>rem</code>; that is the name of a MATLAB function.</p></div>
+</div>
+
+<div class="prob"><h3>A8. Weighted final mark <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: one formula with several inputs</p>
+<p>A subject has two tests worth 20% and 30%, and an exam worth 50%. Input the three marks (each out of 100) and display the final mark.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> t1, t2, exam
+final = 0.2 × t1 + 0.3 × t2 + 0.5 × exam
+<b>DISPLAY</b> final</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="A8"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>t1 = input('Test 1: ');
+t2 = input('Test 2: ');
+exam = input('Exam: ');
+final = 0.2*t1 + 0.3*t2 + 0.5*exam;
+fprintf('Final mark = %.1f\n', final)</pre><p>Check: 70, 80, 90 gives 14 + 24 + 45 = 83.</p></div>
+</div>
+
+<div class="prob"><h3>A9. Swap two values <span class="tag c">Core</span></h3>
+<p class="practises">Practises: why order matters in assignment</p>
+<p>Input a and b, swap their values so that a holds the old b and b holds the old a, and display both. Why does <code>a = b</code> followed by <code>b = a</code> not work?</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> a, b
+temp = a
+a = b
+b = temp
+<b>DISPLAY</b> a, b</pre><p><code>a = b</code> overwrites the old value of a, so <code>b = a</code> just copies b back to itself. Both end up equal to the old b. A temporary variable keeps the old a safe.</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="A9"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>a = input('a: ');
+b = input('b: ');
+temp = a;
+a = b;
+b = temp;
+fprintf('a = %g, b = %g\n', a, b)</pre><p>Check: a = 3, b = 7 gives a = 7, b = 3.</p></div>
+</div>
+
+<div class="prob"><h3>A10. Projectile summary <span class="tag x">Stretch</span></h3>
+<p class="practises">Practises: degrees to radians, longer sequence</p>
+<p>A ball is launched from flat ground at speed v₀ (m/s) and angle θ (degrees). Display the flight time T = 2v₀sinθ/g, the range R = v₀²sin(2θ)/g and the maximum height H = (v₀sinθ)²/(2g), with g = 9.81.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc">g = 9.81
+<b>INPUT</b> v0, theta (degrees)
+th = theta × pi / 180
+T = 2 × v0 × sin(th) / g
+R = v0² × sin(2 × th) / g
+H = (v0 × sin(th))² / (2 × g)
+<b>DISPLAY</b> T, R, H</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="A10"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>g = 9.81;
+v0 = input('Launch speed (m/s): ');
+theta = input('Angle (degrees): ');
+th = theta * pi / 180;          <span class="c">% sin needs radians (or use sind)</span>
+T = 2 * v0 * sin(th) / g;
+R = v0^2 * sin(2*th) / g;
+H = (v0 * sin(th))^2 / (2*g);
+fprintf('T = %.2f s, R = %.2f m, H = %.2f m\n', T, R, H)</pre><p>Check: v₀ = 20, θ = 30 gives T = 2.04 s, R = 35.31 m, H = 5.10 m.</p></div>
+</div>
+</section>
+
+<!-- 14 -->
+<section data-title="Practice B: decisions">
+<div class="kicker">Practice set B / Decision problems</div>
+<h2>Practice B: decisions</h2>
+<p class="lead">Decide first which pattern fits: single IF, IF/ELSE, an ELSE IF chain, nested IFs, or CASE. Then plan and draw. Every answer lists test values that reach every branch.</p>
+
+<div class="prob"><h3>B1. Even or odd <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: IF/ELSE, <code>mod</code></p>
+<p>Input a whole number and display whether it is even or odd.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> n
+<b>IF</b> mod(n, 2) == 0 <b>THEN</b>
+    <b>DISPLAY</b> "even"
+<b>ELSE</b>
+    <b>DISPLAY</b> "odd"
+<b>END IF</b></pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="B1"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>n = input('Whole number: ');
+if mod(n, 2) == 0
+    disp('even')
+else
+    disp('odd')
+end</pre><p>Tests: 8 (even), 7 (odd), 0 (even).</p></div>
+</div>
+
+<div class="prob"><h3>B2. Absolute value without abs <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: single IF with nothing on the No branch</p>
+<p>Input x. If it is negative, make it positive. Display the result. Do not use <code>abs</code>.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> x
+<b>IF</b> x &lt; 0 <b>THEN</b>
+    x = −x
+<b>END IF</b>
+<b>DISPLAY</b> x</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="B2"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>x = input('x: ');
+if x &lt; 0
+    x = -x;
+end
+disp(x)</pre><p>Tests: −4 → 4, 6 → 6, 0 → 0.</p></div>
+</div>
+
+<div class="prob"><h3>B3. Largest of three <span class="tag c">Core</span></h3>
+<p class="practises">Practises: the "running maximum" idea with two separate IFs</p>
+<p>Input three numbers a, b, c and display the largest. Do not use <code>max</code>.</p>
+<button>Show hints</button>
+<div class="ans">Assume a is the largest so far. Then compare b with it, and then c. Two simple IFs in sequence are much easier than nesting every combination.</div>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> a, b, c
+big = a
+<b>IF</b> b &gt; big <b>THEN</b>
+    big = b
+<b>END IF</b>
+<b>IF</b> c &gt; big <b>THEN</b>
+    big = c
+<b>END IF</b>
+<b>DISPLAY</b> big</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="B3"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>a = input('a: '); b = input('b: '); c = input('c: ');
+big = a;
+if b &gt; big
+    big = b;
+end
+if c &gt; big
+    big = c;
+end
+disp(big)</pre><p>Tests: (4, 9, 7) → 9; (9, 4, 7) → 9; (4, 7, 9) → 9; (5, 5, 5) → 5.</p></div>
+</div>
+
+<div class="prob"><h3>B4. State of water <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: three outcomes, two diamonds</p>
+<p>Input a temperature in °C (at sea-level pressure). Display "Steam" at 100 or above, "Ice" at 0 or below, otherwise "Liquid water".</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> T
+<b>IF</b> T &gt;= 100 <b>THEN</b>
+    <b>DISPLAY</b> "Steam"
+<b>ELSE IF</b> T &lt;= 0 <b>THEN</b>
+    <b>DISPLAY</b> "Ice"
+<b>ELSE</b>
+    <b>DISPLAY</b> "Liquid water"
+<b>END IF</b></pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="B4"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>T = input('Temperature (C): ');
+if T &gt;= 100
+    disp('Steam')
+elseif T &lt;= 0
+    disp('Ice')
+else
+    disp('Liquid water')
+end</pre><p>Tests: 120, 100 (Steam), 0, −5 (Ice), 25 (Liquid water).</p></div>
+</div>
+
+<div class="prob"><h3>B5. Grade with input checking <span class="tag c">Core</span></h3>
+<p class="practises">Practises: validating input first, long ELSE IF chain</p>
+<p>Extend the grade example from Lesson 5: if the mark is below 0 or above 100, display "Invalid"; otherwise display HD, D, C, P or F.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> mark
+<b>IF</b> mark &lt; 0 <b>OR</b> mark &gt; 100 <b>THEN</b>
+    <b>DISPLAY</b> "Invalid"
+<b>ELSE IF</b> mark &gt;= 85 <b>THEN</b>
+    <b>DISPLAY</b> "HD"
+<b>ELSE IF</b> mark &gt;= 75 <b>THEN</b>
+    <b>DISPLAY</b> "D"
+<b>ELSE IF</b> mark &gt;= 65 <b>THEN</b>
+    <b>DISPLAY</b> "C"
+<b>ELSE IF</b> mark &gt;= 50 <b>THEN</b>
+    <b>DISPLAY</b> "P"
+<b>ELSE</b>
+    <b>DISPLAY</b> "F"
+<b>END IF</b></pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="B5"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>mark = input('Mark: ');
+if mark &lt; 0 || mark &gt; 100
+    disp('Invalid')
+elseif mark &gt;= 85
+    disp('HD')
+elseif mark &gt;= 75
+    disp('D')
+elseif mark &gt;= 65
+    disp('C')
+elseif mark &gt;= 50
+    disp('P')
+else
+    disp('F')
+end</pre><p>Tests: −1 and 101 (Invalid), 85 (HD), 84 (D), 65 (C), 50 (P), 49 (F).</p></div>
+</div>
+
+<div class="prob"><h3>B6. Tiered electricity bill <span class="tag c">Core</span></h3>
+<p class="practises">Practises: different formulas in each branch</p>
+<p>The first 100 kWh cost $0.25 each; every kWh above 100 costs $0.32. Input the usage and display the cost.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> u (kWh)
+<b>IF</b> u &lt;= 100 <b>THEN</b>
+    cost = 0.25 × u
+<b>ELSE</b>
+    cost = 25 + 0.32 × (u − 100)
+<b>END IF</b>
+<b>DISPLAY</b> cost</pre><p>25 is the cost of the first 100 kWh (100 × 0.25).</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="B6"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>u = input('Usage (kWh): ');
+if u &lt;= 100
+    cost = 0.25 * u;
+else
+    cost = 25 + 0.32 * (u - 100);
+end
+fprintf('Cost = $%.2f\n', cost)</pre><p>Tests: 80 → $20.00, 100 → $25.00, 250 → $73.00.</p></div>
+</div>
+
+<div class="prob"><h3>B7. Triangle checker <span class="tag x">Stretch</span></h3>
+<p class="practises">Practises: nested decisions, AND/OR</p>
+<p>Input three side lengths. If they cannot form a triangle (each pair of sides must add to more than the third), display "Not a triangle". Otherwise display "Equilateral" (all equal), "Isosceles" (exactly two equal) or "Scalene".</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> a, b, c
+<b>IF</b> a + b &gt; c <b>AND</b> a + c &gt; b <b>AND</b> b + c &gt; a <b>THEN</b>
+    <b>IF</b> a == b <b>AND</b> b == c <b>THEN</b>
+        <b>DISPLAY</b> "Equilateral"
+    <b>ELSE IF</b> a == b <b>OR</b> b == c <b>OR</b> a == c <b>THEN</b>
+        <b>DISPLAY</b> "Isosceles"
+    <b>ELSE</b>
+        <b>DISPLAY</b> "Scalene"
+    <b>END IF</b>
+<b>ELSE</b>
+    <b>DISPLAY</b> "Not a triangle"
+<b>END IF</b></pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="B7"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>a = input('a: '); b = input('b: '); c = input('c: ');
+if a+b &gt; c &amp;&amp; a+c &gt; b &amp;&amp; b+c &gt; a
+    if a == b &amp;&amp; b == c
+        disp('Equilateral')
+    elseif a == b || b == c || a == c
+        disp('Isosceles')
+    else
+        disp('Scalene')
+    end
+else
+    disp('Not a triangle')
+end</pre><p>Tests: (3, 3, 3) Equilateral; (5, 5, 8) Isosceles; (3, 4, 5) Scalene; (1, 2, 5) Not a triangle.</p></div>
+</div>
+
+<div class="prob"><h3>B8. Leap year <span class="tag c">Core</span></h3>
+<p class="practises">Practises: order of tests</p>
+<p>A year is a leap year if it is divisible by 400, or divisible by 4 but not by 100. Input a year and display whether it is a leap year.</p>
+<button>Show hints</button>
+<div class="ans">Test the most specific rule first: 400, then 100, then 4. Testing 4 first would wrongly make 1900 a leap year.</div>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> year
+<b>IF</b> mod(year, 400) == 0 <b>THEN</b>
+    leap = true
+<b>ELSE IF</b> mod(year, 100) == 0 <b>THEN</b>
+    leap = false
+<b>ELSE IF</b> mod(year, 4) == 0 <b>THEN</b>
+    leap = true
+<b>ELSE</b>
+    leap = false
+<b>END IF</b>
+<b>DISPLAY</b> leap</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="B8"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>year = input('Year: ');
+if mod(year, 400) == 0
+    leap = true;
+elseif mod(year, 100) == 0
+    leap = false;
+elseif mod(year, 4) == 0
+    leap = true;
+else
+    leap = false;
+end
+if leap
+    disp('Leap year')
+else
+    disp('Not a leap year')
+end</pre><p>Tests: 2000 leap, 1900 not, 2024 leap, 2023 not.</p></div>
+</div>
+
+<div class="prob"><h3>B9. Safety factor check <span class="tag c">Core</span></h3>
+<p class="practises">Practises: calculate, then classify</p>
+<p>The safety factor is SF = yield strength / working stress. Display "Fails" if SF &lt; 1, "Marginal" if 1 ≤ SF &lt; 1.5, otherwise "Safe". Also display SF.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> yield, stress (MPa)
+SF = yield / stress
+<b>DISPLAY</b> SF
+<b>IF</b> SF &lt; 1 <b>THEN</b>
+    <b>DISPLAY</b> "Fails"
+<b>ELSE IF</b> SF &lt; 1.5 <b>THEN</b>
+    <b>DISPLAY</b> "Marginal"
+<b>ELSE</b>
+    <b>DISPLAY</b> "Safe"
+<b>END IF</b></pre><p>The second test only needs <code>SF &lt; 1.5</code>: the program reaches it only if <code>SF &lt; 1</code> was false.</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="B9"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>yieldS = input('Yield strength (MPa): ');
+stress = input('Working stress (MPa): ');
+SF = yieldS / stress;
+fprintf('SF = %.2f\n', SF)
+if SF &lt; 1
+    disp('Fails')
+elseif SF &lt; 1.5
+    disp('Marginal')
+else
+    disp('Safe')
+end</pre><p>Tests: 250/300 → 0.83 Fails; 250/200 → 1.25 Marginal; 250/100 → 2.5 Safe. (<code>yield</code> is a MATLAB function name, so the code uses <code>yieldS</code>.)</p></div>
+</div>
+
+<div class="prob"><h3>B10. Material density with CASE <span class="tag c">Core</span></h3>
+<p class="practises">Practises: CASE / switch, a flag variable</p>
+<p>Input a material name ("steel", "aluminium" or "copper") and a volume in m³. Using densities 7850, 2700 and 8960 kg/m³, display the mass. For any other name display "Unknown material".</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> material, V
+known = true
+<b>CASE</b> material <b>OF</b>
+    "steel":     rho = 7850
+    "aluminium": rho = 2700
+    "copper":    rho = 8960
+    <b>OTHERWISE</b>:   known = false
+<b>END CASE</b>
+<b>IF</b> known <b>THEN</b>
+    m = rho × V
+    <b>DISPLAY</b> m
+<b>ELSE</b>
+    <b>DISPLAY</b> "Unknown material"
+<b>END IF</b></pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="B10"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>material = input('Material: ', 's');   <span class="c">% 's' reads text</span>
+V = input('Volume (m^3): ');
+known = true;
+switch material
+    case 'steel'
+        rho = 7850;
+    case 'aluminium'
+        rho = 2700;
+    case 'copper'
+        rho = 8960;
+    otherwise
+        known = false;
+end
+if known
+    fprintf('Mass = %.2f kg\n', rho * V)
+else
+    disp('Unknown material')
+end</pre><p>Tests: steel, 0.002 → 15.70 kg; copper, 0.001 → 8.96 kg; wood → Unknown material.</p></div>
+</div>
+
+<div class="prob"><h3>B11. Pump control with a dead band <span class="tag x">Stretch</span></h3>
+<p class="practises">Practises: a chain with an empty ELSE</p>
+<p>A sump pump switches ON when the water level falls below 1.0 m and OFF when it rises above 3.5 m. Between those levels it keeps whatever state it was already in. Input the level and the current state <code>pumpOn</code> (true/false) and display the new state.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> level, pumpOn
+<b>IF</b> level &lt; 1.0 <b>THEN</b>
+    pumpOn = true
+<b>ELSE IF</b> level &gt; 3.5 <b>THEN</b>
+    pumpOn = false
+<b>END IF</b>
+<b>DISPLAY</b> pumpOn</pre><p>No ELSE is needed: between 1.0 and 3.5 nothing changes. In the flowchart, the final No arrow goes straight to the join.</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="B11"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>level  = input('Level (m): ');
+pumpOn = input('Pump currently on? (true/false): ');
+if level &lt; 1.0
+    pumpOn = true;
+elseif level &gt; 3.5
+    pumpOn = false;
+end
+if pumpOn
+    disp('Pump ON')
+else
+    disp('Pump OFF')
+end</pre><p>Tests: 0.8, false → ON; 4.0, true → OFF; 2.0, true → ON (unchanged); 2.0, false → OFF (unchanged).</p></div>
+</div>
+</section>
+
+<!-- 15 -->
+<section data-title="Practice C: loops">
+<div class="kicker">Practice set C / Loop problems</div>
+<h2>Practice C: loops</h2>
+<p class="lead">For each loop, name the three parts before you draw: what is initialised, what is tested, and what is updated. Then decide FOR or WHILE.</p>
+
+<div class="prob"><h3>C1. Count to ten <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: the basic counted loop</p>
+<p>Display the numbers 1 to 10, one per line.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>FOR</b> k = 1 <b>TO</b> 10
+    <b>DISPLAY</b> k
+<b>END FOR</b></pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C1"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>for k = 1:10
+    disp(k)
+end</pre></div>
+</div>
+
+<div class="prob"><h3>C2. Sum of squares <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: accumulator</p>
+<p>Input n and display 1² + 2² + … + n².</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> n
+total = 0
+<b>FOR</b> k = 1 <b>TO</b> n
+    total = total + k²
+<b>END FOR</b>
+<b>DISPLAY</b> total</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C2"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>n = input('n: ');
+total = 0;
+for k = 1:n
+    total = total + k^2;
+end
+disp(total)</pre><p>Check: n = 10 gives 385. Vector version: <code>sum((1:n).^2)</code>.</p></div>
+</div>
+
+<div class="prob"><h3>C3. Factorial <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: product accumulator starting at 1</p>
+<p>Input n and display n! = 1 × 2 × … × n.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> n
+f = 1
+<b>FOR</b> k = 1 <b>TO</b> n
+    f = f × k
+<b>END FOR</b>
+<b>DISPLAY</b> f</pre><p>A product starts at 1, not 0. Starting at 0 would make every answer 0.</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C3"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>n = input('n: ');
+f = 1;
+for k = 1:n
+    f = f * k;
+end
+disp(f)</pre><p>Check: 5! = 120; 0! = 1 (the loop runs zero times). MATLAB's built-in is <code>factorial(n)</code>.</p></div>
+</div>
+
+<div class="prob"><h3>C4. Times table <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: output inside a loop</p>
+<p>Input m and display its times table from 1 to 12 in the form <code>7 x 3 = 21</code>.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> m
+<b>FOR</b> k = 1 <b>TO</b> 12
+    <b>DISPLAY</b> m, "x", k, "=", m × k
+<b>END FOR</b></pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C4"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>m = input('Which table? ');
+for k = 1:12
+    fprintf('%d x %d = %d\n', m, k, m*k)
+end</pre></div>
+</div>
+
+<div class="prob"><h3>C5. Total load by hand <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: looping over a vector with an index</p>
+<p>A vector holds the loads on a beam: <code>loads = [12 7 30 5]</code> kN. Use a loop (not <code>sum</code>) to find the total.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> loads
+total = 0
+<b>FOR</b> k = 1 <b>TO</b> length(loads)
+    total = total + loads(k)
+<b>END FOR</b>
+<b>DISPLAY</b> total</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C5"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>loads = [12 7 30 5];
+total = 0;
+for k = 1:length(loads)
+    total = total + loads(k);
+end
+fprintf('Total = %g kN\n', total)   <span class="c">% 54</span></pre></div>
+</div>
+
+<div class="prob"><h3>C6. Doubling an investment <span class="tag c">Core</span></h3>
+<p class="practises">Practises: WHILE with an unknown number of passes</p>
+<p>$1000 earns 5% interest per year, compounded yearly. How many whole years until the balance first reaches at least $2000? Display the years and the final balance.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc">balance = 1000
+years = 0
+<b>WHILE</b> balance &lt; 2000
+    balance = balance × 1.05
+    years = years + 1
+<b>END WHILE</b>
+<b>DISPLAY</b> years, balance</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C6"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>balance = 1000;
+years = 0;
+while balance &lt; 2000
+    balance = balance * 1.05;
+    years = years + 1;
+end
+fprintf('%d years, balance $%.2f\n', years, balance)</pre><p>Check: 15 years, $2078.93. After 14 years it is $1979.93, still short.</p></div>
+</div>
+
+<div class="prob"><h3>C7. Newton's law of cooling <span class="tag c">Core</span></h3>
+<p class="practises">Practises: WHILE with a physical model</p>
+<p>A part leaves an oven at 90 °C in a 20 °C room. Each minute its temperature drops by 10% of the difference from the room: T = T − 0.1(T − 20). How many minutes until it is below 40 °C and safe to handle?</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc">T = 90
+minutes = 0
+<b>WHILE</b> T &gt;= 40
+    T = T − 0.1 × (T − 20)
+    minutes = minutes + 1
+<b>END WHILE</b>
+<b>DISPLAY</b> minutes, T</pre><p>The loop continues while it is <i>not yet</i> safe, so the test is <code>T &gt;= 40</code>: the opposite of the stopping condition "below 40".</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C7"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>T = 90;
+minutes = 0;
+while T &gt;= 40
+    T = T - 0.1 * (T - 20);
+    minutes = minutes + 1;
+end
+fprintf('%d minutes, T = %.2f C\n', minutes, T)</pre><p>Check: 12 minutes, T = 39.77 °C.</p></div>
+</div>
+
+<div class="prob"><h3>C8. Sentinel: count and largest <span class="tag c">Core</span></h3>
+<p class="practises">Practises: sentinel loop, input before and inside the loop</p>
+<p>Read sensor readings one at a time until −1 is entered. Display how many readings there were and the largest. If the first value is −1, display "No readings".</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc">count = 0
+<b>INPUT</b> x
+big = x
+<b>WHILE</b> x ~= −1
+    count = count + 1
+    <b>IF</b> x &gt; big <b>THEN</b>
+        big = x
+    <b>END IF</b>
+    <b>INPUT</b> x
+<b>END WHILE</b>
+<b>IF</b> count &gt; 0 <b>THEN</b>
+    <b>DISPLAY</b> count, big
+<b>ELSE</b>
+    <b>DISPLAY</b> "No readings"
+<b>END IF</b></pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C8"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>count = 0;
+x = input('Reading (-1 to stop): ');
+big = x;
+while x ~= -1
+    count = count + 1;
+    if x &gt; big
+        big = x;
+    end
+    x = input('Reading (-1 to stop): ');
+end
+if count &gt; 0
+    fprintf('%d readings, largest %g\n', count, big)
+else
+    disp('No readings')
+end</pre><p>Test: 4, 7, 2, −1 gives 3 readings, largest 7. Test: −1 straight away gives "No readings".</p></div>
+</div>
+
+<div class="prob"><h3>C9. Keep asking until valid <span class="tag c">Core</span></h3>
+<p class="practises">Practises: input validation loop</p>
+<p>Ask for a mark. While it is outside 0 to 100, display an error and ask again. Then display the accepted mark.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> mark
+<b>WHILE</b> mark &lt; 0 <b>OR</b> mark &gt; 100
+    <b>DISPLAY</b> "Must be 0 to 100"
+    <b>INPUT</b> mark
+<b>END WHILE</b>
+<b>DISPLAY</b> "Accepted:", mark</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C9"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>mark = input('Mark: ');
+while mark &lt; 0 || mark &gt; 100
+    disp('Must be 0 to 100')
+    mark = input('Mark: ');
+end
+fprintf('Accepted: %g\n', mark)</pre><p>Test: 120, −3, 75 gives two error messages, then "Accepted: 75".</p></div>
+</div>
+
+<div class="prob"><h3>C10. Countdown in steps <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: a negative step</p>
+<p>Display 10, 8, 6, 4, 2, 0 and then "Lift-off".</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>FOR</b> k = 10 <b>TO</b> 0 <b>STEP</b> −2
+    <b>DISPLAY</b> k
+<b>END FOR</b>
+<b>DISPLAY</b> "Lift-off"</pre><p>When counting down, the test becomes <code>k &gt;= 0</code>, not <code>k &lt;= 0</code>.</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C10"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>for k = 10:-2:0
+    disp(k)
+end
+disp('Lift-off')</pre></div>
+</div>
+
+<div class="prob"><h3>C11. Fibonacci sequence <span class="tag c">Core</span></h3>
+<p class="practises">Practises: keeping two previous values</p>
+<p>Display the first n Fibonacci numbers 1, 1, 2, 3, 5, … where each number is the sum of the two before it.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> n
+a = 1
+b = 1
+<b>FOR</b> k = 1 <b>TO</b> n
+    <b>DISPLAY</b> a
+    c = a + b
+    a = b
+    b = c
+<b>END FOR</b></pre><p>The same "shuffle along" idea as the swap in A9.</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C11"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>n = input('How many terms? ');
+a = 1; b = 1;
+for k = 1:n
+    disp(a)
+    c = a + b;
+    a = b;
+    b = c;
+end</pre><p>Check: n = 10 gives 1 1 2 3 5 8 13 21 34 55.</p></div>
+</div>
+
+<div class="prob"><h3>C12. Every room on every floor <span class="tag x">Stretch</span></h3>
+<p class="practises">Practises: nested loops</p>
+<p>A building has 3 floors with 4 rooms each. Display every floor and room pair, in order: floor 1 rooms 1 to 4, then floor 2, and so on. How many lines are printed?</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>FOR</b> f = 1 <b>TO</b> 3
+    <b>FOR</b> r = 1 <b>TO</b> 4
+        <b>DISPLAY</b> f, r
+    <b>END FOR</b>
+<b>END FOR</b></pre><p>3 × 4 = 12 lines. The inner loop restarts at r = 1 for each new floor.</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="C12"></div><p>The inner loop, from <code>r = 1</code> to its loop-back arrow, sits completely inside the outer loop's body. Note where <code>f = f + 1</code> sits: after the inner loop has finished.</p></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>for f = 1:3
+    for r = 1:4
+        fprintf('Floor %d, room %d\n', f, r)
+    end
+end</pre></div>
+</div>
+</section>
+
+<!-- 16 -->
+<section data-title="Practice D: mixed engineering">
+<div class="kicker">Practice set D / Mixed problems</div>
+<h2>Practice D: loops, decisions and functions together</h2>
+<p class="lead">These are test-style problems. Break each one down (Given, Find, Rules), choose the structures, then plan. Hints are available if you get stuck.</p>
+
+<div class="prob"><h3>D1. Average of the hot readings <span class="tag c">Core</span></h3>
+<p class="practises">Practises: counter and accumulator inside an IF, guarding against divide by zero</p>
+<p>Given <code>temps = [72 85 91 66 88 79]</code> and a limit of 80, display how many readings exceed the limit and their average. If none do, display "None above limit".</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> temps, limit
+count = 0
+total = 0
+<b>FOR</b> k = 1 <b>TO</b> length(temps)
+    <b>IF</b> temps(k) &gt; limit <b>THEN</b>
+        count = count + 1
+        total = total + temps(k)
+    <b>END IF</b>
+<b>END FOR</b>
+<b>IF</b> count &gt; 0 <b>THEN</b>
+    <b>DISPLAY</b> count, total / count
+<b>ELSE</b>
+    <b>DISPLAY</b> "None above limit"
+<b>END IF</b></pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="D1"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>temps = [72 85 91 66 88 79];
+limit = 80;
+count = 0; total = 0;
+for k = 1:length(temps)
+    if temps(k) &gt; limit
+        count = count + 1;
+        total = total + temps(k);
+    end
+end
+if count &gt; 0
+    fprintf('%d readings, average %.1f\n', count, total / count)
+else
+    disp('None above limit')
+end</pre><p>Check: 3 readings (85, 91, 88), average 88.0. With limit 95: "None above limit".</p></div>
+</div>
+
+<div class="prob"><h3>D2. Largest load and where it is <span class="tag c">Core</span></h3>
+<p class="practises">Practises: running maximum with position</p>
+<p>Without using <code>max</code>, find the largest value in a vector and its position. Test with <code>v = [12 7 30 5 30]</code>.</p>
+<button>Show hints</button>
+<div class="ans">Start with <code>big = v(1)</code> and <code>pos = 1</code>, then loop from k = 2. Use <code>&gt;</code> (not <code>&gt;=</code>) if you want the <i>first</i> position of a repeated maximum.</div>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> v
+big = v(1)
+pos = 1
+<b>FOR</b> k = 2 <b>TO</b> length(v)
+    <b>IF</b> v(k) &gt; big <b>THEN</b>
+        big = v(k)
+        pos = k
+    <b>END IF</b>
+<b>END FOR</b>
+<b>DISPLAY</b> big, pos</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="D2"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>v = [12 7 30 5 30];
+big = v(1); pos = 1;
+for k = 2:length(v)
+    if v(k) &gt; big
+        big = v(k);
+        pos = k;
+    end
+end
+fprintf('Largest %g at position %d\n', big, pos)</pre><p>Check: 30 at position 3 (with <code>&gt;=</code> it would report position 5). Built-in: <code>[big, pos] = max(v)</code>.</p></div>
+</div>
+
+<div class="prob"><h3>D3. Class pass rate <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: count, then calculate after the loop</p>
+<p>Given <code>marks = [45 82 67 91 38 55]</code>, count the passes (50 or more) and display the pass rate as a percentage.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> marks
+n = length(marks)
+passes = 0
+<b>FOR</b> k = 1 <b>TO</b> n
+    <b>IF</b> marks(k) &gt;= 50 <b>THEN</b>
+        passes = passes + 1
+    <b>END IF</b>
+<b>END FOR</b>
+rate = 100 × passes / n
+<b>DISPLAY</b> passes, rate</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="D3"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>marks = [45 82 67 91 38 55];
+n = length(marks);
+passes = 0;
+for k = 1:n
+    if marks(k) &gt;= 50
+        passes = passes + 1;
+    end
+end
+rate = 100 * passes / n;
+fprintf('%d passes, %.1f%%\n', passes, rate)   <span class="c">% %% prints a percent sign</span></pre><p>Check: 4 passes, 66.7%.</p></div>
+</div>
+
+<div class="prob"><h3>D4. First reading over 90 <span class="tag c">Core</span></h3>
+<p class="practises">Practises: search with a flag</p>
+<p>Find the position and value of the first temperature above 90 in a vector, or display "None above 90". Test with <code>[72 85 91 66 95]</code> and with <code>[72 85 66]</code>.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> temps
+k = 1
+found = false
+<b>WHILE</b> k &lt;= length(temps) <b>AND NOT</b> found
+    <b>IF</b> temps(k) &gt; 90 <b>THEN</b>
+        found = true
+    <b>ELSE</b>
+        k = k + 1
+    <b>END IF</b>
+<b>END WHILE</b>
+<b>IF</b> found <b>THEN</b>
+    <b>DISPLAY</b> k, temps(k)
+<b>ELSE</b>
+    <b>DISPLAY</b> "None above 90"
+<b>END IF</b></pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="D4"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>temps = [72 85 91 66 95];
+k = 1; found = false;
+while k &lt;= length(temps) &amp;&amp; ~found
+    if temps(k) &gt; 90
+        found = true;
+    else
+        k = k + 1;
+    end
+end
+if found
+    fprintf('Reading %d: %g\n', k, temps(k))
+else
+    disp('None above 90')
+end</pre><p>Check: first test gives reading 3: 91 (95 is never examined). Second test gives "None above 90".</p></div>
+</div>
+
+<div class="prob"><h3>D5. Bolt inspection <span class="tag c">Core</span></h3>
+<p class="practises">Practises: IF/ELSE inside a loop, two counters</p>
+<p>Bolts should be 10 mm in diameter with a tolerance of ±0.05 mm. For measured diameters <code>d = [10.02 9.93 10.04 10.08 9.99]</code>, display "accept" or "reject" for each bolt, then the totals.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> d
+accepted = 0
+rejected = 0
+<b>FOR</b> k = 1 <b>TO</b> length(d)
+    <b>IF</b> abs(d(k) − 10) &lt;= 0.05 <b>THEN</b>
+        accepted = accepted + 1
+        <b>DISPLAY</b> k, "accept"
+    <b>ELSE</b>
+        rejected = rejected + 1
+        <b>DISPLAY</b> k, "reject"
+    <b>END IF</b>
+<b>END FOR</b>
+<b>DISPLAY</b> accepted, rejected</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="D5"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>d = [10.02 9.93 10.04 10.08 9.99];
+accepted = 0; rejected = 0;
+for k = 1:length(d)
+    if abs(d(k) - 10) &lt;= 0.05
+        accepted = accepted + 1;
+        fprintf('Bolt %d: accept\n', k)
+    else
+        rejected = rejected + 1;
+        fprintf('Bolt %d: reject\n', k)
+    end
+end
+fprintf('%d accepted, %d rejected\n', accepted, rejected)</pre><p>Check: bolts 1, 3, 5 accepted; 2 and 4 rejected. 3 accepted, 2 rejected.</p></div>
+</div>
+
+<div class="prob"><h3>D6. Is it prime? <span class="tag x">Stretch</span></h3>
+<p class="practises">Practises: WHILE with two conditions, a flag</p>
+<p>Input a whole number n ≥ 2. Test divisors k = 2, 3, 4, … while k × k ≤ n. If any divides n exactly, n is not prime. Stop testing as soon as one is found.</p>
+<button>Show hints</button>
+<div class="ans">Why stop at k × k ≤ n? If n = a × b, one of a and b must be at most √n. So if nothing up to √n divides n, nothing larger will.</div>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> n
+isPrime = true
+k = 2
+<b>WHILE</b> k × k &lt;= n <b>AND</b> isPrime
+    <b>IF</b> mod(n, k) == 0 <b>THEN</b>
+        isPrime = false
+    <b>END IF</b>
+    k = k + 1
+<b>END WHILE</b>
+<b>IF</b> isPrime <b>THEN</b>
+    <b>DISPLAY</b> "prime"
+<b>ELSE</b>
+    <b>DISPLAY</b> "not prime"
+<b>END IF</b></pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="D6"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>n = input('n (2 or more): ');
+isPrime = true;
+k = 2;
+while k * k &lt;= n &amp;&amp; isPrime
+    if mod(n, k) == 0
+        isPrime = false;
+    end
+    k = k + 1;
+end
+if isPrime
+    disp('prime')
+else
+    disp('not prime')
+end</pre><p>Tests: 2 prime (loop runs zero times), 29 prime, 91 not prime (7 × 13), 49 not prime (boundary: 7 × 7 = 49).</p></div>
+</div>
+
+<div class="prob"><h3>D7. Square root by Newton's method <span class="tag x">Stretch</span></h3>
+<p class="practises">Practises: iterating until a tolerance is met</p>
+<p>To find √a, start with x = a and repeat x<sub>new</sub> = (x + a/x)/2 until the change between steps is less than 10⁻⁶. Display x and compare with <code>sqrt(a)</code>.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>INPUT</b> a (a &gt; 0)
+x = a
+change = 1
+<b>WHILE</b> change &gt;= 1e-6
+    xNew = (x + a / x) / 2
+    change = abs(xNew − x)
+    x = xNew
+<b>END WHILE</b>
+<b>DISPLAY</b> x</pre><p><code>change = 1</code> before the loop is a "priming" value that makes sure the loop runs at least once.</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="D7"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>a = input('a: ');
+x = a;
+change = 1;
+while change &gt;= 1e-6
+    xNew = (x + a / x) / 2;
+    change = abs(xNew - x);
+    x = xNew;
+end
+fprintf('Newton: %.6f   sqrt: %.6f\n', x, sqrt(a))</pre><p>Check: a = 2 gives 1.414214 after 5 passes.</p></div>
+</div>
+
+<div class="prob"><h3>D8. Time-step simulation of a throw <span class="tag x">Stretch</span></h3>
+<p class="practises">Practises: simulation loop, tracking a maximum</p>
+<p>A ball is thrown straight up at 20 m/s. Step time forward by 0.1 s, computing y = v₀t − ½gt² each step, until the ball goes below the ground (y &lt; 0). Track the highest y seen. Display the time when it first goes below ground, and the maximum height.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc">g = 9.81, v0 = 20, dt = 0.1
+t = 0, y = 0, ymax = 0
+<b>WHILE</b> y &gt;= 0
+    t = t + dt
+    y = v0 × t − 0.5 × g × t²
+    <b>IF</b> y &gt; ymax <b>THEN</b>
+        ymax = y
+    <b>END IF</b>
+<b>END WHILE</b>
+<b>DISPLAY</b> t, ymax</pre></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="D8"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>g = 9.81; v0 = 20; dt = 0.1;
+t = 0; y = 0; ymax = 0;
+while y &gt;= 0
+    t = t + dt;
+    y = v0*t - 0.5*g*t^2;
+    if y &gt; ymax
+        ymax = y;
+    end
+end
+fprintf('Below ground at t = %.1f s, max height %.2f m\n', t, ymax)</pre><p>Check: t = 4.1 s, max height 20.38 m (at t = 2.0 s). The exact answers are 4.08 s and 20.39 m; the small difference comes from the 0.1 s step.</p></div>
+</div>
+
+<div class="prob"><h3>D9. Grades using a function <span class="tag c">Core</span></h3>
+<p class="practises">Practises: a function called from a loop, two flowcharts</p>
+<p>Write a function <code>g = markToGrade(mark)</code> that returns HD, D, C, P or F. Then write a main program that displays each mark of <code>[91 77 50 49 68]</code> with its grade.</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc"><b>FUNCTION</b> g = markToGrade(mark)
+    <b>IF</b> mark &gt;= 85 <b>THEN</b>  g = "HD"
+    <b>ELSE IF</b> mark &gt;= 75 <b>THEN</b>  g = "D"
+    <b>ELSE IF</b> mark &gt;= 65 <b>THEN</b>  g = "C"
+    <b>ELSE IF</b> mark &gt;= 50 <b>THEN</b>  g = "P"
+    <b>ELSE</b>  g = "F"
+    <b>END IF</b>
+<b>END FUNCTION</b>
+
+<span style="color:#526072">Main program</span>
+<b>INPUT</b> marks
+<b>FOR</b> k = 1 <b>TO</b> length(marks)
+    g = <b>CALL</b> markToGrade(marks(k))
+    <b>DISPLAY</b> marks(k), g
+<b>END FOR</b></pre></div>
+<button>Show flowcharts</button>
+<div class="ans"><div class="cols"><div><h4>Main</h4><div class="fc" data-fc="D9main"></div></div><div><h4>Function</h4><div class="fc" data-fc="D9fn"></div></div></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre><span class="c">% gradesMain.m</span>
+marks = [91 77 50 49 68];
+for k = 1:length(marks)
+    g = markToGrade(marks(k));
+    fprintf('%d -&gt; %s\n', marks(k), g)
+end
+
+<span class="c">% markToGrade.m</span>
+function g = markToGrade(mark)
+if mark &gt;= 85
+    g = 'HD';
+elseif mark &gt;= 75
+    g = 'D';
+elseif mark &gt;= 65
+    g = 'C';
+elseif mark &gt;= 50
+    g = 'P';
+else
+    g = 'F';
+end
+end</pre><p>Check: 91 HD, 77 D, 50 P, 49 F, 68 C.</p></div>
+</div>
+
+<div class="prob"><h3>D10. Menu-driven calculator <span class="tag x">Stretch</span></h3>
+<p class="practises">Practises: a CASE inside a WHILE loop</p>
+<p>Show a menu: 1 = circle area, 2 = rectangle area, 0 = quit. Read the choice and do the job. Keep showing the menu until the user chooses 0. Any other number displays "Invalid choice".</p>
+<button>Show pseudocode</button>
+<div class="ans"><pre class="pc">choice = −1
+<b>WHILE</b> choice ~= 0
+    <b>DISPLAY</b> menu
+    <b>INPUT</b> choice
+    <b>CASE</b> choice <b>OF</b>
+        1: <b>INPUT</b> r
+           <b>DISPLAY</b> pi × r²
+        2: <b>INPUT</b> L, W
+           <b>DISPLAY</b> L × W
+        0: <b>DISPLAY</b> "Goodbye"
+        <b>OTHERWISE</b>: <b>DISPLAY</b> "Invalid choice"
+    <b>END CASE</b>
+<b>END WHILE</b></pre><p><code>choice = −1</code> is a priming value: anything except 0, so that the loop body runs the first time.</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="D10"></div></div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>choice = -1;
+while choice ~= 0
+    disp('1 = circle area   2 = rectangle area   0 = quit')
+    choice = input('Choice: ');
+    switch choice
+        case 1
+            r = input('Radius: ');
+            fprintf('Area = %.2f\n', pi * r^2)
+        case 2
+            L = input('Length: ');
+            W = input('Width: ');
+            fprintf('Area = %.2f\n', L * W)
+        case 0
+            disp('Goodbye')
+        otherwise
+            disp('Invalid choice')
+    end
+end</pre></div>
+</div>
+</section>
+
+<!-- 17 -->
+<section data-title="Practice E: read, trace, fix">
+<div class="kicker">Practice set E / Reading and debugging</div>
+<h2>Practice E: read, trace, convert and fix</h2>
+<p class="lead">Tests often give you an algorithm instead of a problem. You may be asked to say what it outputs, find the bug, or convert it between pseudocode, flowchart and MATLAB.</p>
+
+<div class="prob"><h3>E1. Read the flowchart <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: following a decision chain</p>
+<p>What does this flowchart display for x = 7, x = 10, x = 3 and x = 12?</p>
+<div class="fc" data-fc="E1"></div>
+<button>Show answer</button>
+<div class="ans">x = 7: Medium. x = 10: Medium, because <code>10 &gt; 10</code> is false but <code>10 &gt; 5</code> is true. x = 3: Small. x = 12: Large.</div>
+<button>Show MATLAB</button>
+<div class="ans"><pre>x = input('x: ');
+if x &gt; 10
+    disp('Large')
+elseif x &gt; 5
+    disp('Medium')
+else
+    disp('Small')
+end</pre></div>
+</div>
+
+<div class="prob"><h3>E2. Trace a loop with a decision <span class="tag c">Core</span></h3>
+<p class="practises">Practises: trace table</p>
+<p>What is displayed? Build a trace table.</p>
+<pre class="pc">total = 0
+<b>FOR</b> k = 1 <b>TO</b> 5
+    <b>IF</b> mod(k, 2) == 1 <b>THEN</b>
+        total = total + k
+    <b>ELSE</b>
+        total = total × 2
+    <b>END IF</b>
+<b>END FOR</b>
+<b>DISPLAY</b> total</pre>
+<button>Show answer</button>
+<div class="ans"><div class="tw"><table class="trace">
+<tr><th>k</th><th>k odd?</th><th>total</th></tr>
+<tr><td>start</td><td></td><td>0</td></tr>
+<tr><td>1</td><td>Yes</td><td>0 + 1 = 1</td></tr>
+<tr><td>2</td><td>No</td><td>1 × 2 = 2</td></tr>
+<tr><td>3</td><td>Yes</td><td>2 + 3 = 5</td></tr>
+<tr><td>4</td><td>No</td><td>5 × 2 = 10</td></tr>
+<tr><td>5</td><td>Yes</td><td>10 + 5 = 15</td></tr>
+</table></div><p>Displays <code>15</code>.</p></div>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="E2"></div></div>
+</div>
+
+<div class="prob"><h3>E3. The program never stops <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: spotting a missing update</p>
+<p>This should display 1 to 5. Instead it displays 1 forever. Why? Fix it.</p>
+<pre class="pc">count = 1
+<b>WHILE</b> count &lt;= 5
+    <b>DISPLAY</b> count
+<b>END WHILE</b></pre>
+<button>Show answer</button>
+<div class="ans"><p>Nothing inside the loop changes <code>count</code>, so <code>count &lt;= 5</code> is always true: an infinite loop. Add the update <code>count = count + 1</code> after the display.</p><div class="fc" data-fc="E3"></div></div>
+</div>
+
+<div class="prob"><h3>E4. Everybody gets a P <span class="tag c">Core</span></h3>
+<p class="practises">Practises: order of tests in a chain</p>
+<p>A student's grading plan gives "P" to every mark of 50 or more, even 95. Find the bug.</p>
+<pre class="pc"><b>IF</b> mark &gt;= 50 <b>THEN</b>  grade = "P"
+<b>ELSE IF</b> mark &gt;= 65 <b>THEN</b>  grade = "C"
+<b>ELSE IF</b> mark &gt;= 75 <b>THEN</b>  grade = "D"
+<b>ELSE IF</b> mark &gt;= 85 <b>THEN</b>  grade = "HD"
+<b>ELSE</b>  grade = "F"
+<b>END IF</b></pre>
+<button>Show answer</button>
+<div class="ans"><p>Any mark ≥ 50 makes the first test true, and an ELSE IF chain stops at the first true test, so the C, D and HD branches can never run. Reverse the order and test 85 first. The correct chain is in Lesson 5:</p><div class="fc" data-fc="chain"></div></div>
+</div>
+
+<div class="prob"><h3>E5. MATLAB to flowchart <span class="tag c">Core</span></h3>
+<p class="practises">Practises: converting code, an IF inside a WHILE</p>
+<p>Draw the flowchart for this code, then trace it for n = 6. What is displayed?</p>
+<pre>n = input('n: ');
+steps = 0;
+while n ~= 1
+    if mod(n, 2) == 0
+        n = n / 2;
+    else
+        n = 3*n + 1;
+    end
+    steps = steps + 1;
+end
+disp(steps)</pre>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="E5"></div></div>
+<button>Show trace</button>
+<div class="ans"><p>n: 6 → 3 → 10 → 5 → 16 → 8 → 4 → 2 → 1. That is 8 changes, so it displays <code>8</code>. (This is the Collatz sequence.)</p></div>
+</div>
+
+<div class="prob"><h3>E6. Flowchart to MATLAB <span class="tag s">Starter</span></h3>
+<p class="practises">Practises: recognising a counted loop in a flowchart</p>
+<p>What does this flowchart calculate? What does it display for n = 5? Write it in MATLAB using a <code>for</code> loop.</p>
+<div class="fc" data-fc="E6"></div>
+<button>Show answer</button>
+<div class="ans"><p>It doubles p, n times, so it calculates 2ⁿ. For n = 5 it displays 32. The pattern "k = 1, test k &lt;= n, k = k + 1, arrow back" is a counted loop, so it becomes a <code>for</code> loop:</p>
+<pre>n = input('n: ');
+p = 1;
+for k = 1:n
+    p = p * 2;
+end
+disp(p)</pre></div>
+</div>
+
+<div class="prob"><h3>E7. Find the flowchart errors <span class="tag c">Core</span></h3>
+<p class="practises">Practises: symbol and structure rules</p>
+<p>A student's flowchart for "input a radius; if the area is over 100 display Large, otherwise Small" is described below. List every error.</p>
+<ol>
+<li>It begins with a rectangle containing <code>Input r</code>.</li>
+<li>Next is a diamond containing <code>area = pi × r²</code>.</li>
+<li>From the diamond, a single unlabelled arrow leads to a rectangle <code>Display "Large"</code>.</li>
+<li>There is no path for "Small".</li>
+<li>The chart ends at the Display box.</li>
+</ol>
+<button>Show answer</button>
+<div class="ans"><ol>
+<li>No Start oval.</li>
+<li><code>Input r</code> should be a parallelogram, not a rectangle.</li>
+<li>The area formula is a calculation, so it belongs in a rectangle. The diamond should ask <code>area &gt; 100 ?</code>.</li>
+<li>The diamond needs two exits, labelled Yes and No.</li>
+<li>The No branch (<code>Display "Small"</code>) is missing.</li>
+<li>Display steps are output, so they need parallelograms.</li>
+<li>The branches must rejoin and end at a Stop oval.</li>
+</ol>
+<div class="fc" data-fc="E7"></div></div>
+</div>
+
+<div class="prob"><h3>E8. One short <span class="tag c">Core</span></h3>
+<p class="practises">Practises: off-by-one errors and boundary testing</p>
+<p>This is meant to add 1 to 10 (answer 55). What does it actually display? Fix it.</p>
+<pre class="pc">total = 0
+k = 1
+<b>WHILE</b> k &lt; 10
+    total = total + k
+    k = k + 1
+<b>END WHILE</b>
+<b>DISPLAY</b> total</pre>
+<button>Show answer</button>
+<div class="ans"><p>When k reaches 10, <code>10 &lt; 10</code> is false, so 10 is never added. It displays 1 + … + 9 = 45. Change the test to <code>k &lt;= 10</code>. Tracing the last pass, the boundary case, finds this kind of bug immediately.</p><div class="fc" data-fc="E8"></div></div>
+</div>
+
+<div class="prob"><h3>E9. Pseudocode to flowchart: speeding fines <span class="tag c">Core</span></h3>
+<p class="practises">Practises: drawing a chain from pseudocode</p>
+<p>Draw the flowchart for this plan, then give the fine for a speed of 72 in a 60 zone and for 58 in a 60 zone.</p>
+<pre class="pc"><b>INPUT</b> speed, limit
+over = speed − limit
+<b>IF</b> over &lt;= 0 <b>THEN</b>
+    fine = 0
+<b>ELSE IF</b> over &lt; 10 <b>THEN</b>
+    fine = 200
+<b>ELSE IF</b> over &lt; 25 <b>THEN</b>
+    fine = 400
+<b>ELSE</b>
+    fine = 900
+    <b>DISPLAY</b> "Licence suspended"
+<b>END IF</b>
+<b>DISPLAY</b> fine</pre>
+<button>Show flowchart</button>
+<div class="ans"><div class="fc" data-fc="E9"></div></div>
+<button>Show answer</button>
+<div class="ans">72 in a 60 zone: over = 12, which fails <code>over &lt;= 0</code> and <code>over &lt; 10</code> but passes <code>over &lt; 25</code>, so the fine is 400. 58 in a 60 zone: over = −2, so the fine is 0.</div>
+</div>
+</section>
+
+<!-- 18 -->
+<section data-title="Cheat sheet">
+<div class="kicker">Reference</div>
+<h2>Cheat sheet</h2>
+<p class="lead">One page to revise from: each structure in all three forms, and the six patterns that solve most ENGG100 problems.</p>
+
+<h3>Structure in three forms</h3>
+<div class="tw"><table>
+<tr><th>Structure</th><th>Flowchart</th><th>Pseudocode</th><th>MATLAB</th></tr>
+<tr><td>Start / end</td><td>Oval</td><td>(first and last line)</td><td>top and bottom of script</td></tr>
+<tr><td>Input / output</td><td>Parallelogram</td><td class="m">INPUT x / DISPLAY y</td><td><code>input</code>, <code>disp</code>, <code>fprintf</code></td></tr>
+<tr><td>Calculation</td><td>Rectangle</td><td class="m">y = 2 × x</td><td><code>y = 2*x;</code></td></tr>
+<tr><td>Decision</td><td>Diamond, Yes/No</td><td class="m">IF … ELSE … END IF</td><td><code>if … else … end</code></td></tr>
+<tr><td>Many outcomes</td><td>Chain of diamonds</td><td class="m">ELSE IF / CASE</td><td><code>elseif</code> / <code>switch</code></td></tr>
+<tr><td>Counted loop</td><td>init → diamond → body → update → back</td><td class="m">FOR k = 1 TO n</td><td><code>for k = 1:n</code></td></tr>
+<tr><td>Condition loop</td><td>diamond → body → back</td><td class="m">WHILE cond</td><td><code>while cond</code></td></tr>
+<tr><td>Function call</td><td>Rectangle with side bars</td><td class="m">y = CALL f(x)</td><td><code>y = f(x);</code></td></tr>
+</table></div>
+
+<h3>Six patterns</h3>
+<div class="cols">
+<div>
+<h4>1. Accumulator (sum)</h4>
+<pre class="pc">total = 0
+<b>FOR</b> k = 1 <b>TO</b> n
+    total = total + v(k)
+<b>END FOR</b></pre>
+<h4>2. Counter</h4>
+<pre class="pc">count = 0
+<b>FOR</b> k = 1 <b>TO</b> n
+    <b>IF</b> v(k) &gt; limit <b>THEN</b>
+        count = count + 1
+    <b>END IF</b>
+<b>END FOR</b></pre>
+<h4>3. Running maximum</h4>
+<pre class="pc">big = v(1)
+<b>FOR</b> k = 2 <b>TO</b> n
+    <b>IF</b> v(k) &gt; big <b>THEN</b>
+        big = v(k)
+    <b>END IF</b>
+<b>END FOR</b></pre>
+</div>
+<div>
+<h4>4. Search with a flag</h4>
+<pre class="pc">k = 1, found = false
+<b>WHILE</b> k &lt;= n <b>AND NOT</b> found
+    <b>IF</b> v(k) == target <b>THEN</b>
+        found = true
+    <b>ELSE</b>
+        k = k + 1
+    <b>END IF</b>
+<b>END WHILE</b></pre>
+<h4>5. Input validation</h4>
+<pre class="pc"><b>INPUT</b> x
+<b>WHILE</b> x is invalid
+    <b>DISPLAY</b> error message
+    <b>INPUT</b> x
+<b>END WHILE</b></pre>
+<h4>6. Iterate to a tolerance</h4>
+<pre class="pc">change = 1   (priming value)
+<b>WHILE</b> change &gt;= tol
+    xNew = update(x)
+    change = abs(xNew − x)
+    x = xNew
+<b>END WHILE</b></pre>
+</div>
+</div>
+
+<h3>Final checklist</h3>
+<ul>
+<li>Start and Stop present; every path reaches Stop.</li>
+<li>Correct shape for every step; diamonds ask questions and have labelled Yes/No exits.</li>
+<li>Every input read before use; every required output displayed.</li>
+<li>Accumulators and counters initialised before their loop.</li>
+<li>Every loop updates the variable it tests; the loop-back arrow returns above the diamond.</li>
+<li>Boundaries checked: ≥ versus &gt;, and the first and last pass of each loop.</li>
+<li>Pseudocode indented, blocks closed, no MATLAB punctuation.</li>
+<li>Traced with at least one test case per branch.</li>
+</ul>
+<p>More MATLAB practice: <a href="matlab-from-zero.html">MATLAB from Zero</a>, Lessons 5 to 10. Original tasks: <a href="practicals/p03.html">Practical 3</a> and <a href="practicals/p04.html">Practical 4</a>.</p>
+</section>
+
+<div class="foot">
+  <button class="btn" id="prev">Previous</button>
+  <button class="btn donebtn" id="done">Mark as done</button>
+  <button class="btn primary" id="next">Next</button>
+</div>
+</main>
+</div>
+
+<script>
+(function(){
+  var secs=[].slice.call(document.querySelectorAll('main section'));
+  var nav=document.getElementById('navlist');
+  var KEY='engg100-flow-done';
+  var done={};
+  try{done=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){done={}}
+  var cur=0;
+  var m=location.hash.match(/^#l(\d+)$/);
+  if(m&&+m[1]>=1&&+m[1]<=secs.length)cur=+m[1]-1;
+  secs.forEach(function(s,i){
+    var li=document.createElement('li'),b=document.createElement('button');
+    b.innerHTML='<span class="n">'+(i+1)+'</span><span>'+s.dataset.title+'</span><span class="tick">done</span>';
+    b.onclick=function(){go(i)};
+    li.appendChild(b);nav.appendChild(li);
+  });
+  var btns=nav.querySelectorAll('button');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
+  function refresh(){
+    var n=0;
+    secs.forEach(function(s,i){
+      s.classList.toggle('show',i===cur);
+      btns[i].classList.toggle('active',i===cur);
+      btns[i].classList.toggle('done',!!done[i]);
+      if(done[i])n++;
+    });
+    document.getElementById('bar').style.width=(100*n/secs.length)+'%';
+    document.getElementById('progtxt').textContent=n+' of '+secs.length+' sections done';
+    var d=document.getElementById('done');
+    d.textContent=done[cur]?'Done':'Mark as done';
+    d.classList.toggle('isdone',!!done[cur]);
+    document.getElementById('prev').disabled=cur===0;
+    document.getElementById('next').style.visibility=cur===secs.length-1?'hidden':'visible';
+  }
+  function go(i){cur=i;refresh();history.replaceState(null,'','#l'+(i+1));window.scrollTo(0,0)}
+  document.getElementById('prev').onclick=function(){if(cur>0)go(cur-1)};
+  document.getElementById('next').onclick=function(){if(cur<secs.length-1)go(cur+1)};
+  document.getElementById('done').onclick=function(){done[cur]=!done[cur];save();refresh()};
+  document.querySelectorAll('.q button, .prob > button').forEach(function(b){
+    var label=b.textContent;
+    b.onclick=function(){
+      var a=b.nextElementSibling,open=a.classList.toggle('open');
+      b.textContent=open?label.replace('Show','Hide'):label;
+    };
+  });
+  document.querySelectorAll('.jump').forEach(function(b){b.onclick=function(){go(+b.dataset.l-1)}});
+  refresh();
+})();
+
+// Flowchart renderer: draws structured flowcharts from nested specs.
+(function(){
+  var INK='#1B2431',RED='#FF3621',G=26,mk='';
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  function lines(s){return String(s).split('\n')}
+  function tw(s){return Math.max.apply(null,lines(s).map(function(l){return l.length}))*6.9}
+  function txt(o,x,cy,s){
+    var ls=lines(s),y0=cy-(ls.length-1)*8+4.5;
+    ls.forEach(function(l,i){o.push('<text x="'+x+'" y="'+(y0+i*16)+'" text-anchor="middle">'+esc(l)+'</text>')});
+  }
+  function lab(o,x,y,s){o.push('<text x="'+x+'" y="'+y+'" class="yn">'+s+'</text>')}
+  function line(o,pts,arrow){
+    o.push('<polyline points="'+pts.map(function(p){return p[0]+','+p[1]}).join(' ')+'" fill="none" stroke="'+INK+'" stroke-width="1.5"'+(arrow?' marker-end="url(#'+mk+')"':'')+'/>');
+  }
+  function shape(o,k,x,y,w,h){
+    var l=x-w/2,r=x+w/2,st=' stroke="'+INK+'" stroke-width="1.5"';
+    if(k==='term')o.push('<rect x="'+l+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(h/2)+'" fill="#EEF1F5"'+st+'/>');
+    else if(k==='io')o.push('<polygon points="'+(l+14)+','+y+' '+r+','+y+' '+(r-14)+','+(y+h)+' '+l+','+(y+h)+'" fill="#fff"'+st+'/>');
+    else if(k==='call'){o.push('<rect x="'+l+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#fff"'+st+'/>');line(o,[[l+9,y],[l+9,y+h]]);line(o,[[r-9,y],[r-9,y+h]])}
+    else if(k==='dec')o.push('<polygon points="'+x+','+y+' '+r+','+(y+h/2)+' '+x+','+(y+h)+' '+l+','+(y+h/2)+'" fill="#FFF4F2" stroke="'+RED+'" stroke-width="1.5"/>');
+    else if(k==='con')o.push('<circle cx="'+x+'" cy="'+(y+h/2)+'" r="'+(h/2)+'" fill="#fff"'+st+'/>');
+    else o.push('<rect x="'+l+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#fff"'+st+'/>');
+  }
+  function dsz(c){
+    var nl=lines(c).length,h=Math.max(58,nl*18+44);
+    return {w:Math.max(120,tw(c)*h/(h-nl*16-6)+14),h:h};
+  }
+  function box(n){
+    var nl=lines(n.s).length,w,h=Math.max(36,nl*16+18);
+    if(n.k==='term'){w=Math.max(90,tw(n.s)+40);h=Math.max(34,nl*16+16)}
+    else if(n.k==='io')w=Math.max(130,tw(n.s)+52);
+    else if(n.k==='call')w=Math.max(130,tw(n.s)+44);
+    else w=Math.max(110,tw(n.s)+28);
+    return {L:w/2,R:w/2,H:h,draw:function(x,y,o){shape(o,n.k,x,y,w,h);txt(o,x,y+h/2,n.s)}};
+  }
+  function lay(n){
+    if(Array.isArray(n))return seq(n);
+    if(n.k==='seq')return seq(n.items);
+    if(n.k==='chain')return chain(n);
+    if(n.k==='while')return loop(n);
+    return box(n);
+  }
+  function seq(a){
+    var ch=a.map(lay);
+    if(!ch.length)return {L:0,R:0,H:0,empty:true,draw:function(){}};
+    var L=0,R=0,H=0;
+    ch.forEach(function(c,i){L=Math.max(L,c.L);R=Math.max(R,c.R);H+=c.H+(i?G:0)});
+    return {L:L,R:R,H:H,loopFirst:!!ch[0].loop||!!ch[0].loopFirst,draw:function(x,y,o){
+      var yy=y;
+      ch.forEach(function(c,i){
+        if(i){line(o,[[x,yy],[x,yy+G]],!(c.loop||c.loopFirst));yy+=G}
+        c.draw(x,yy,o);yy+=c.H;
+      });
+    }};
+  }
+  function into(s){return !s.empty&&!s.loopFirst}
+  function chain(n){
+    var cs=n.cases.map(function(c){return {c:c[0],d:dsz(c[0]),b:seq(c[1])}});
+    var e=seq(n.els),hd=0,bl=0,br=0;
+    cs.forEach(function(q){hd=Math.max(hd,q.d.w/2);bl=Math.max(bl,q.b.L);br=Math.max(br,q.b.R)});
+    var one=cs.length===1,xr=Math.max(hd,e.R)+36+bl,xc=one?xr:xr+br+24,plan=[];
+    cs.forEach(function(q,i){
+      var top=0;
+      if(i){var p=plan[i-1];top=Math.max(p.top+p.dh+G,p.ybe+16-q.d.h/2)}
+      var by=top+q.d.h/2+G;
+      plan.push({top:top,dh:q.d.h,by:by,ybe:by+q.b.H+12});
+    });
+    var last=plan[plan.length-1],et=last.top+last.dh+G,ym=Math.max(et+e.H,last.ybe)+18;
+    return {L:Math.max(hd,e.L),R:one?xr+br:xc,H:ym,draw:function(x,y,o){
+      cs.forEach(function(q,i){
+        var p=plan[i],t=y+p.top,mid=t+q.d.h/2;
+        shape(o,'dec',x,t,q.d.w,q.d.h);txt(o,x,mid,q.c);
+        line(o,[[x+q.d.w/2,mid],[x+xr,mid],[x+xr,y+p.by]],into(q.b));
+        lab(o,x+q.d.w/2+6,mid-6,'Yes');
+        q.b.draw(x+xr,y+p.by,o);
+        if(one)line(o,[[x+xr,y+p.by+q.b.H],[x+xr,y+ym],[x+2,y+ym]],true);
+        else line(o,[[x+xr,y+p.by+q.b.H],[x+xr,y+p.ybe],[x+xc,y+p.ybe]]);
+        var nt=i<cs.length-1?y+plan[i+1].top:y+et;
+        line(o,[[x,t+q.d.h],[x,nt]],i<cs.length-1||into(e));
+        lab(o,x+6,t+q.d.h+14,'No');
+      });
+      e.draw(x,y+et,o);
+      line(o,[[x,y+et+e.H],[x,y+ym]]);
+      if(!one)line(o,[[x+xc,y+plan[0].ybe],[x+xc,y+ym],[x+2,y+ym]],true);
+    }};
+  }
+  function loop(n){
+    var d=dsz(n.c),b=seq(n.body);
+    var l=Math.max(d.w/2,b.L)+26,r=Math.max(d.w/2,b.R)+26;
+    var dt=18,bt=dt+d.h+G,yb=bt+b.H+14,ye=yb+18;
+    return {L:l,R:r,H:ye,loop:true,draw:function(x,y,o){
+      line(o,[[x,y],[x,y+dt]],true);
+      shape(o,'dec',x,y+dt,d.w,d.h);txt(o,x,y+dt+d.h/2,n.c);
+      line(o,[[x,y+dt+d.h],[x,y+bt]],into(b));
+      lab(o,x+6,y+dt+d.h+14,'Yes');
+      b.draw(x,y+bt,o);
+      line(o,[[x,y+bt+b.H],[x,y+yb],[x-l,y+yb],[x-l,y+7],[x-2,y+7]],true);
+      var mid=y+dt+d.h/2;
+      line(o,[[x+d.w/2,mid],[x+r,mid],[x+r,y+ye],[x,y+ye]]);
+      lab(o,x+d.w/2+6,mid-6,'No');
+    }};
+  }
+  var uid=0;
+  function render(el,spec){
+    mk='fa'+(++uid);
+    var o=[],t=seq(spec),m=18,W=Math.ceil(t.L+t.R+2*m),H=Math.ceil(t.H+2*m);
+    t.draw(t.L+m,m,o);
+    el.innerHTML='<svg class="flow" viewBox="0 0 '+W+' '+H+'" width="'+W+'" role="img" aria-label="Flowchart"><defs><marker id="'+mk+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="'+INK+'"/></marker></defs>'+o.join('')+'</svg>';
+  }
+  function sym(el){
+    var k=el.dataset.sym,o=[],w=150,h=56;
+    mk='fs'+(++uid);
+    var lbl={term:'Start / Stop',io:'Input x',proc:'y = 2 × x',dec:'x > 0 ?',call:'f(x)',con:'A'}[k];
+    if(k==='arrow'){line(o,[[20,28],[130,28]],true)}
+    else if(k==='dec'){shape(o,'dec',75,4,120,48);txt(o,75,28,lbl)}
+    else if(k==='con'){shape(o,'con',75,12,32,32);txt(o,75,28,lbl)}
+    else {shape(o,k,75,10,k==='io'?130:120,36);txt(o,75,28,lbl)}
+    el.innerHTML='<svg class="sym" viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'" aria-hidden="true"><defs><marker id="'+mk+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="'+INK+'"/></marker></defs>'+o.join('')+'</svg>';
+  }
+
+  function S(t){return {k:'term',s:t||'Start'}}
+  function E(t){return {k:'term',s:t||'Stop'}}
+  function IO(s){return {k:'io',s:s}}
+  function P(s){return {k:'proc',s:s}}
+  function CALL(s){return {k:'call',s:s}}
+  function IF(c,y,n){return {k:'chain',cases:[[c,y||[]]],els:n||[]}}
+  function CH(cases,els){return {k:'chain',cases:cases,els:els||[]}}
+  function W(c,body){return {k:'while',c:c,body:body}}
+  function FOR(init,c,step,body){return {k:'seq',items:[P(init),W(c,body.concat([P(step)]))]}}
+
+  var grades=CH([['mark >= 85 ?',[P('grade = "HD"')]],['mark >= 75 ?',[P('grade = "D"')]],['mark >= 65 ?',[P('grade = "C"')]],['mark >= 50 ?',[P('grade = "P"')]]],[P('grade = "F"')]);
+  var F={
+    l1:[S(),IO('Input L, W'),P('A = L × W'),IO('Display A'),E()],
+    l3:[S(),IO('Input d'),IF('d > 0 ?',[CALL('A = circleArea(d)'),IO('Display A')],[IO('Display "Invalid diameter"')]),E()],
+    seq_power:[S(),IO('Input V, R'),P('I = V / R'),P('P = V × I'),IO('Display I, P'),E()],
+    if1:[S(),IO('Input speed, limit'),IF('speed > limit ?',[IO('Display "Slow down"')]),IO('Display speed'),E()],
+    if2:[S(),IO('Input mark'),IF('mark >= 50 ?',[IO('Display "Pass"')],[IO('Display "Fail"')]),E()],
+    chain:[S(),IO('Input mark'),grades,IO('Display grade'),E()],
+    nested:[S(),IO('Input load, stress, limit'),IF('load > 0 ?',[IF('stress > limit ?',[IO('Display "FAIL"')],[IO('Display "OK"')])],[IO('Display "No load"')]),E()],
+    and1:[S(),IO('Input T, H'),IF('T >= 18 AND T <= 26\nAND H < 60 ?',[IO('Display "Comfortable"')],[IO('Display "Adjust HVAC"')]),E()],
+    switch1:[S(),IO('Input mode'),CH([['mode == 1 ?',[IO('Display "Pump off"')]],['mode == 2 ?',[IO('Display "Low speed"')]],['mode == 3 ?',[IO('Display "High speed"')]]],[IO('Display "Invalid mode"')]),E()],
+    for_sum:[S(),IO('Input n'),P('total = 0'),FOR('k = 1','k <= n ?','k = k + 1',[P('total = total + k')]),IO('Display total'),E()],
+    while_tank:[S(),P('level = 0\nminutes = 0'),W('level < 5 ?',[P('level = level + 0.8'),P('minutes = minutes + 1')]),IO('Display minutes, level'),E()],
+    sentinel:[S(),P('count = 0\ntotal = 0'),IO('Input x'),W('x >= 0 ?',[P('total = total + x'),P('count = count + 1'),IO('Input x')]),IF('count > 0 ?',[IO('Display total / count')],[IO('Display "No data"')]),E()],
+    count_above:[S(),IO('Input temps, limit'),P('n = length(temps)\ncount = 0'),FOR('k = 1','k <= n ?','k = k + 1',[IF('temps(k) > limit ?',[P('count = count + 1')])]),IO('Display count'),E()],
+    search:[S(),IO('Input v, target'),P('k = 1\nfound = false'),W('k <= length(v)\nAND NOT found ?',[IF('v(k) == target ?',[P('found = true')],[P('k = k + 1')])]),IF('found ?',[IO('Display "Found at", k')],[IO('Display "Not found"')]),E()],
+    fn_main:[S(),IO('Input d'),P('total = 0'),FOR('k = 1','k <= length(d) ?','k = k + 1',[CALL('A = circleArea(d(k))'),IO('Display k, A'),P('total = total + A')]),IO('Display total'),E()],
+    fn_def:[S('Start circleArea(d)'),P('r = d / 2'),P('A = pi × r²'),E('Return A')],
+    p3_fc:[S(),IO('Input F'),P('C = (F − 32) × 5 / 9'),IO('Display C'),E()],
+    p3_throw:[S(),P('g = 9.81, u = 60'),P('t = 0 : 0.01 : 12.3'),P('s = u·t − ½·g·t²\n(every t at once)'),IO('Plot s against t\nwith title, labels, grid'),E()],
+    p3_quad:[S(),IO('Input a, b, c'),IF('a == 0 ?',[IF('b == 0 ?',[IF('c == 0 ?',[IO('Display\n"Indeterminate"')],[IO('Display\n"No solution"')])],[P('x = −c / b'),IO('Display x (linear)')])],[P('d = b² − 4ac'),CH([['d < 0 ?',[P('re = −b / 2a\nim = √(−d) / 2a'),IO('Display complex\nroots')]],['d == 0 ?',[P('x = −b / 2a'),IO('Display equal\nroot x')]]],[P('x1 = (−b + √d) / 2a\nx2 = (−b − √d) / 2a'),IO('Display x1, x2')])]),E()],
+    odd_sum:[S(),P('total = 0\nk = 1'),W('total <= 30 ?',[P('total = total + k'),P('k = k + 2')]),IO('Display total, k'),E()],
+
+    A1:[S(),IO('Input L, W'),P('A = L × W'),P('P = 2 × (L + W)'),IO('Display A, P'),E()],
+    A2:[S(),IO('Input dist_km, time_min'),P('time_h = time_min / 60'),P('v_kmh = dist_km / time_h'),P('v_ms = v_kmh / 3.6'),IO('Display v_kmh, v_ms'),E()],
+    A3:[S(),IO('Input d'),P('r = d / 2'),P('A = pi × r²'),P('C = pi × d'),IO('Display r, A, C'),E()],
+    A4:[S(),P('rho = 1000, g = 9.81'),IO('Input h'),P('P = rho × g × h'),P('P_kPa = P / 1000'),IO('Display P, P_kPa'),E()],
+    A5:[S(),P('g = 9.81'),IO('Input m, v, h'),P('KE = 0.5 × m × v²'),P('PE = m × g × h'),P('E = KE + PE'),IO('Display KE, PE, E'),E()],
+    A6:[S(),IO('Input feet, inches'),P('total_in = 12 × feet + inches'),P('metres = total_in × 0.0254'),IO('Display metres'),E()],
+    A7:[S(),IO('Input total_s'),P('h = floor(total_s / 3600)'),P('left = mod(total_s, 3600)'),P('m = floor(left / 60)'),P('s = mod(left, 60)'),IO('Display h, m, s'),E()],
+    A8:[S(),IO('Input t1, t2, exam'),P('final = 0.2 × t1 + 0.3 × t2\n+ 0.5 × exam'),IO('Display final'),E()],
+    A9:[S(),IO('Input a, b'),P('temp = a'),P('a = b'),P('b = temp'),IO('Display a, b'),E()],
+    A10:[S(),P('g = 9.81'),IO('Input v0, theta (degrees)'),P('th = theta × pi / 180'),P('T = 2 × v0 × sin(th) / g'),P('R = v0² × sin(2 × th) / g'),P('H = (v0 × sin(th))² / (2g)'),IO('Display T, R, H'),E()],
+
+    B1:[S(),IO('Input n'),IF('mod(n, 2) == 0 ?',[IO('Display "even"')],[IO('Display "odd"')]),E()],
+    B2:[S(),IO('Input x'),IF('x < 0 ?',[P('x = −x')]),IO('Display x'),E()],
+    B3:[S(),IO('Input a, b, c'),P('big = a'),IF('b > big ?',[P('big = b')]),IF('c > big ?',[P('big = c')]),IO('Display big'),E()],
+    B4:[S(),IO('Input T'),CH([['T >= 100 ?',[IO('Display "Steam"')]],['T <= 0 ?',[IO('Display "Ice"')]]],[IO('Display "Liquid water"')]),E()],
+    B5:[S(),IO('Input mark'),CH([['mark < 0 OR\nmark > 100 ?',[IO('Display "Invalid"')]],['mark >= 85 ?',[IO('Display "HD"')]],['mark >= 75 ?',[IO('Display "D"')]],['mark >= 65 ?',[IO('Display "C"')]],['mark >= 50 ?',[IO('Display "P"')]]],[IO('Display "F"')]),E()],
+    B6:[S(),IO('Input u'),IF('u <= 100 ?',[P('cost = 0.25 × u')],[P('cost = 25 + 0.32 × (u − 100)')]),IO('Display cost'),E()],
+    B7:[S(),IO('Input a, b, c'),IF('a+b > c AND a+c > b\nAND b+c > a ?',[CH([['a == b AND\nb == c ?',[IO('Display "Equilateral"')]],['a == b OR b == c\nOR a == c ?',[IO('Display "Isosceles"')]]],[IO('Display "Scalene"')])],[IO('Display "Not a triangle"')]),E()],
+    B8:[S(),IO('Input year'),CH([['mod(year, 400) == 0 ?',[P('leap = true')]],['mod(year, 100) == 0 ?',[P('leap = false')]],['mod(year, 4) == 0 ?',[P('leap = true')]]],[P('leap = false')]),IO('Display leap'),E()],
+    B9:[S(),IO('Input yield, stress'),P('SF = yield / stress'),IO('Display SF'),CH([['SF < 1 ?',[IO('Display "Fails"')]],['SF < 1.5 ?',[IO('Display "Marginal"')]]],[IO('Display "Safe"')]),E()],
+    B10:[S(),IO('Input material, V'),P('known = true'),CH([['material is\n"steel" ?',[P('rho = 7850')]],['material is\n"aluminium" ?',[P('rho = 2700')]],['material is\n"copper" ?',[P('rho = 8960')]]],[P('known = false')]),IF('known ?',[P('m = rho × V'),IO('Display m')],[IO('Display "Unknown material"')]),E()],
+    B11:[S(),IO('Input level, pumpOn'),CH([['level < 1.0 ?',[P('pumpOn = true')]],['level > 3.5 ?',[P('pumpOn = false')]]],[]),IO('Display pumpOn'),E()],
+
+    C1:[S(),FOR('k = 1','k <= 10 ?','k = k + 1',[IO('Display k')]),E()],
+    C2:[S(),IO('Input n'),P('total = 0'),FOR('k = 1','k <= n ?','k = k + 1',[P('total = total + k²')]),IO('Display total'),E()],
+    C3:[S(),IO('Input n'),P('f = 1'),FOR('k = 1','k <= n ?','k = k + 1',[P('f = f × k')]),IO('Display f'),E()],
+    C4:[S(),IO('Input m'),FOR('k = 1','k <= 12 ?','k = k + 1',[IO('Display m "x" k "=" m × k')]),E()],
+    C5:[S(),IO('Input loads'),P('total = 0'),FOR('k = 1','k <= length(loads) ?','k = k + 1',[P('total = total + loads(k)')]),IO('Display total'),E()],
+    C6:[S(),P('balance = 1000\nyears = 0'),W('balance < 2000 ?',[P('balance = balance × 1.05'),P('years = years + 1')]),IO('Display years, balance'),E()],
+    C7:[S(),P('T = 90\nminutes = 0'),W('T >= 40 ?',[P('T = T − 0.1 × (T − 20)'),P('minutes = minutes + 1')]),IO('Display minutes, T'),E()],
+    C8:[S(),P('count = 0'),IO('Input x'),P('big = x'),W('x ~= −1 ?',[P('count = count + 1'),IF('x > big ?',[P('big = x')]),IO('Input x')]),IF('count > 0 ?',[IO('Display count, big')],[IO('Display "No readings"')]),E()],
+    C9:[S(),IO('Input mark'),W('mark < 0 OR\nmark > 100 ?',[IO('Display "Must be 0 to 100"'),IO('Input mark')]),IO('Display "Accepted:", mark'),E()],
+    C10:[S(),FOR('k = 10','k >= 0 ?','k = k − 2',[IO('Display k')]),IO('Display "Lift-off"'),E()],
+    C11:[S(),IO('Input n'),P('a = 1\nb = 1'),FOR('k = 1','k <= n ?','k = k + 1',[IO('Display a'),P('c = a + b'),P('a = b'),P('b = c')]),E()],
+    C12:[S(),FOR('f = 1','f <= 3 ?','f = f + 1',[FOR('r = 1','r <= 4 ?','r = r + 1',[IO('Display f, r')])]),E()],
+
+    D1:[S(),IO('Input temps, limit'),P('count = 0\ntotal = 0'),FOR('k = 1','k <= length(temps) ?','k = k + 1',[IF('temps(k) > limit ?',[P('count = count + 1'),P('total = total + temps(k)')])]),IF('count > 0 ?',[IO('Display count,\ntotal / count')],[IO('Display "None above limit"')]),E()],
+    D2:[S(),IO('Input v'),P('big = v(1)\npos = 1'),FOR('k = 2','k <= length(v) ?','k = k + 1',[IF('v(k) > big ?',[P('big = v(k)'),P('pos = k')])]),IO('Display big, pos'),E()],
+    D3:[S(),IO('Input marks'),P('n = length(marks)\npasses = 0'),FOR('k = 1','k <= n ?','k = k + 1',[IF('marks(k) >= 50 ?',[P('passes = passes + 1')])]),P('rate = 100 × passes / n'),IO('Display passes, rate'),E()],
+    D4:[S(),IO('Input temps'),P('k = 1\nfound = false'),W('k <= length(temps)\nAND NOT found ?',[IF('temps(k) > 90 ?',[P('found = true')],[P('k = k + 1')])]),IF('found ?',[IO('Display k, temps(k)')],[IO('Display "None above 90"')]),E()],
+    D5:[S(),IO('Input d'),P('accepted = 0\nrejected = 0'),FOR('k = 1','k <= length(d) ?','k = k + 1',[IF('abs(d(k) − 10)\n<= 0.05 ?',[P('accepted = accepted + 1'),IO('Display k, "accept"')],[P('rejected = rejected + 1'),IO('Display k, "reject"')])]),IO('Display accepted, rejected'),E()],
+    D6:[S(),IO('Input n'),P('isPrime = true\nk = 2'),W('k × k <= n\nAND isPrime ?',[IF('mod(n, k) == 0 ?',[P('isPrime = false')]),P('k = k + 1')]),IF('isPrime ?',[IO('Display "prime"')],[IO('Display "not prime"')]),E()],
+    D7:[S(),IO('Input a'),P('x = a\nchange = 1'),W('change >= 1e-6 ?',[P('xNew = (x + a / x) / 2'),P('change = abs(xNew − x)'),P('x = xNew')]),IO('Display x'),E()],
+    D8:[S(),P('g = 9.81, v0 = 20, dt = 0.1\nt = 0, y = 0, ymax = 0'),W('y >= 0 ?',[P('t = t + dt'),P('y = v0 × t − 0.5 × g × t²'),IF('y > ymax ?',[P('ymax = y')])]),IO('Display t, ymax'),E()],
+    D9main:[S(),IO('Input marks'),FOR('k = 1','k <= length(marks) ?','k = k + 1',[CALL('g = markToGrade(marks(k))'),IO('Display marks(k), g')]),E()],
+    D9fn:[S('Start markToGrade(mark)'),CH([['mark >= 85 ?',[P('g = "HD"')]],['mark >= 75 ?',[P('g = "D"')]],['mark >= 65 ?',[P('g = "C"')]],['mark >= 50 ?',[P('g = "P"')]]],[P('g = "F"')]),E('Return g')],
+    D10:[S(),P('choice = −1'),W('choice ~= 0 ?',[IO('Display menu\nInput choice'),CH([['choice == 1 ?',[IO('Input r'),IO('Display pi × r²')]],['choice == 2 ?',[IO('Input L, W'),IO('Display L × W')]],['choice == 0 ?',[IO('Display "Goodbye"')]]],[IO('Display "Invalid choice"')])]),E()],
+
+    E1:[S(),IO('Input x'),CH([['x > 10 ?',[IO('Display "Large"')]],['x > 5 ?',[IO('Display "Medium"')]]],[IO('Display "Small"')]),E()],
+    E2:[S(),P('total = 0'),FOR('k = 1','k <= 5 ?','k = k + 1',[IF('mod(k, 2) == 1 ?',[P('total = total + k')],[P('total = total × 2')])]),IO('Display total'),E()],
+    E3:[S(),P('count = 1'),W('count <= 5 ?',[IO('Display count'),P('count = count + 1')]),E()],
+    E5:[S(),IO('Input n'),P('steps = 0'),W('n ~= 1 ?',[IF('mod(n, 2) == 0 ?',[P('n = n / 2')],[P('n = 3n + 1')]),P('steps = steps + 1')]),IO('Display steps'),E()],
+    E6:[S(),IO('Input n'),P('p = 1\nk = 1'),W('k <= n ?',[P('p = p × 2'),P('k = k + 1')]),IO('Display p'),E()],
+    E7:[S(),IO('Input r'),P('area = pi × r²'),IF('area > 100 ?',[IO('Display "Large"')],[IO('Display "Small"')]),E()],
+    E8:[S(),P('total = 0\nk = 1'),W('k <= 10 ?',[P('total = total + k'),P('k = k + 1')]),IO('Display total'),E()],
+    E9:[S(),IO('Input speed, limit'),P('over = speed − limit'),CH([['over <= 0 ?',[P('fine = 0')]],['over < 10 ?',[P('fine = 200')]],['over < 25 ?',[P('fine = 400')]]],[P('fine = 900'),IO('Display\n"Licence suspended"')]),IO('Display fine'),E()]
+  };
+  document.querySelectorAll('.fc[data-fc]').forEach(function(el){
+    var s=F[el.dataset.fc];
+    if(s)render(el,s);
+  });
+  document.querySelectorAll('[data-sym]').forEach(sym);
+})();
+</script>
+</body>
+</html>
