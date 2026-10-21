@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modular Forms: From Lattices to Langlands</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f0f4f8;
+  --surf:    #ffffff;
+  --surf2:   #eef2f7;
+  --bord:    #cfd9e6;
+  --text:    #2d3f52;
+  --muted:   #6b8096;
+  --bright:  #1a2b3c;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.75;
+  min-height: 100vh;
+}
+#prog { position:fixed;top:0;left:0;right:0;height:3px;background:var(--bord);z-index:200; }
+#prog-fill { height:100%;background:linear-gradient(90deg,#7c3aed,#0097e2,#00a972,#ff3621);width:0;transition:width .2s; }
+.wrap { max-width:860px;margin:0 auto;padding:56px 24px 100px; }
+.back-link {
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;
+  color:var(--muted);text-decoration:none;margin-bottom:32px;display:inline-block;
+  transition:color .2s;
+}
+.back-link:hover { color:var(--bright); }
+.back-link::before { content:'← ';font-weight:500; }
+.hdr { text-align:center;margin-bottom:52px; }
+.hdr h1 { font-family:'Cinzel',serif;font-size:clamp(20px,4vw,40px);font-weight:600;color:var(--bright);letter-spacing:.05em;line-height:1.2; }
+.hdr p { color:var(--muted);font-style:italic;margin-top:10px;font-size:17px;max-width:620px;margin-left:auto;margin-right:auto; }
+.hdr-rule { width:60px;height:1px;background:var(--bord);margin:16px auto; }
+.epigraph {
+  max-width:540px;margin:0 auto 40px;text-align:center;
+  font-style:italic;color:var(--muted);font-size:15.5px;line-height:1.8;
+  border-top:1px solid var(--bord);border-bottom:1px solid var(--bord);
+  padding:18px 0;
+}
+.epigraph cite { display:block;margin-top:8px;font-size:13px;letter-spacing:.05em;font-style:normal;color:var(--bright); }
+.layout { display:flex;gap:28px;align-items:flex-start; }
+.tower { width:178px;flex-shrink:0;position:sticky;top:28px; }
+.tower-label { font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;padding-left:4px; }
+.tnav { display:flex;flex-direction:column;gap:1px; }
+.ti {
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;
+  padding:7px 10px;border-left:2px solid var(--bord);
+  color:var(--muted);cursor:pointer;transition:all .2s;line-height:1.3;user-select:none;
+}
+.ti:hover { color:var(--bright);border-left-color:var(--muted); }
+.ti.active { color:var(--bright); }
+.cards { flex:1;min-width:0; }
+.cw { margin-bottom:6px;opacity:0;transform:translateY(14px);transition:opacity .4s,transform .4s; }
+.cw.show { opacity:1;transform:none; }
+.conn { width:2px;height:18px;background:var(--bord);margin:0 0 0 20px; }
+.card {
+  border:1px solid var(--bord);border-radius:6px;background:var(--surf);
+  overflow:hidden;cursor:pointer;transition:border-color .25s,box-shadow .25s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.07);
+}
+.card:hover { border-color:var(--ac); }
+.card.open  { border-color:var(--ac);box-shadow:0 2px 20px -4px var(--ac-shadow); }
+.card-head { display:flex;align-items:center;gap:12px;padding:15px 18px;user-select:none; }
+.bdg {
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;
+  border:1px solid var(--ac);color:var(--ac);padding:3px 7px;border-radius:2px;
+  white-space:nowrap;flex-shrink:0;
+}
+.ctitle { font-family:'Cinzel',serif;font-size:15px;color:var(--bright);letter-spacing:.03em;flex:1;line-height:1.3; }
+.csub { font-style:italic;font-size:13px;color:var(--muted);flex-shrink:0; }
+.chev { color:var(--muted);font-size:11px;transition:transform .3s;flex-shrink:0; }
+.card.open .chev { transform:rotate(180deg); }
+.card-body { max-height:0;overflow:hidden;transition:max-height .55s cubic-bezier(.4,0,.2,1); }
+.card-body.open { max-height:16000px; }
+.card-inner { border-top:1px solid var(--bord);padding:22px 22px 28px; }
+.bsec-heading {
+  font-family:'Cinzel',serif;font-size:13px;letter-spacing:.04em;
+  color:var(--ac);margin-top:24px;margin-bottom:4px;
+  border-bottom:1px solid var(--bord);padding-bottom:6px;
+}
+.prose { color:var(--text);font-size:16.5px;line-height:1.82;margin-top:10px; }
+.prose em { font-style:italic;color:var(--bright); }
+.prose strong { font-weight:600;color:var(--ac); }
+.fbox {
+  background:#f7f9fc;border-left:3px solid var(--ac);border-radius:0 4px 4px 0;
+  padding:13px 16px;margin-top:12px;font-family:'EB Garamond',serif;
+  font-size:15.5px;color:var(--bright);line-height:2.0;white-space:pre-wrap;
+}
+.ex {
+  background:#f7f9fc;border:1px dashed var(--bord);border-radius:4px;
+  padding:12px 16px;margin-top:10px;font-size:14.5px;color:var(--muted);
+  white-space:pre-wrap;line-height:1.75;
+}
+.exl { display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--ac);margin-bottom:6px;text-transform:uppercase; }
+.ins {
+  border-radius:4px;padding:13px 16px;margin-top:12px;
+  font-size:15.5px;font-style:italic;
+  background:var(--ac-faint);border:1px solid var(--ac-mid);color:var(--text);
+}
+.ins::before { content:"✦  ";color:var(--ac);font-style:normal; }
+.timeline-item { display:flex;gap:14px;margin-top:14px;align-items:flex-start; }
+.tl-year {
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;
+  color:var(--ac);min-width:52px;padding-top:3px;font-weight:500;flex-shrink:0;
+}
+.tl-text { font-size:14.5px;color:var(--muted);line-height:1.65; }
+.tl-text strong { color:var(--text); }
+.person-block {
+  background:var(--surf2);border:1px solid var(--bord);border-left:3px solid var(--ac);
+  border-radius:0 4px 4px 0;padding:13px 16px;margin-top:14px;
+}
+.person-name { font-family:'Cinzel',serif;font-size:14px;color:var(--bright);margin-bottom:3px; }
+.person-dates { font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:7px; }
+.person-text { font-size:14.5px;color:var(--muted);line-height:1.65; }
+.footer { text-align:center;color:var(--muted);font-style:italic;font-size:15px;margin-top:52px;padding-top:26px;border-top:1px solid var(--bord); }
+@media(max-width:640px){ .tower{display:none;} .csub{display:none;} .card-head{flex-wrap:wrap;} }
+</style>
+</head>
+<body>
+<div id="prog"><div id="prog-fill"></div></div>
+<div class="wrap">
+  <a href="index.html" class="back-link">Back to Mathematics Hub</a>
+  <div class="hdr">
+    <h1>Modular Forms</h1>
+    <div class="hdr-rule"></div>
+    <p>From lattices and elliptic curves to Ramanujan, Hecke, and the Modularity Theorem — built from first principles.</p>
+  </div>
+  <div class="epigraph">
+    "Modular forms are functions on the complex upper half-plane which transform in a certain way under substitutions from the modular group, and which are holomorphic everywhere including at infinity."
+    <cite>— Jean-Pierre Serre, <em>A Course in Arithmetic</em></cite>
+  </div>
+  <div class="layout">
+    <div class="tower">
+      <div class="tower-label">Sections</div>
+      <div class="tnav" id="tnav"></div>
+    </div>
+    <div class="cards" id="cards"></div>
+  </div>
+  <div class="footer">
+    Every q-expansion, every Hecke eigenvalue, every modularity lifting<br>
+    begins with a lattice in the complex plane.
+  </div>
+</div>
+
+<script>
+var LV = [{"badge": "MOTIVATION", "title": "Why Modular Forms?", "sub": "the problems that created a subject", "color": "#7c3aed", "body": [{"t": "h", "s": "Three ordinary questions"}, {"t": "p", "s": "Modular forms look exotic at first glance: holomorphic functions on the upper half-plane that transform under 2×2 integer matrices. The motivation is older and more concrete. Three classical questions keep producing them."}, {"t": "f", "s": "1. How many ways can you write an integer as a sum of squares?\nr₂(n) = #{(a,b) ∈ ℤ² : a² + b² = n}. Jacobi’s answer is a formula involving divisors — and the generating function Σ r₂(n) qⁿ is a modular form.\n\n2. What are the periods of an elliptic integral?\nThe integral ∫ dx/√(cubic) returns when you travel around a closed path on an elliptic curve. The space of such periods is a lattice in ℂ, and changing coordinates of that lattice is exactly the modular group acting on the upper half-plane.\n\n3. How do you count integer points on elliptic curves?\nThe L-function of an elliptic curve over ℚ packages its local point counts. The Modularity Theorem says that L-function equals the L-function of a weight-2 modular form."}, {"t": "h", "s": "What a modular form is, in one sentence"}, {"t": "p", "s": "A modular form of weight <em>k<\/em> is a holomorphic function on the complex upper half-plane that transforms by a precise factor under every matrix in SL₂(ℤ) (or a congruence subgroup), and remains holomorphic at the cusp at infinity. The factor (cτ + d)<sup>k<\/sup> is the whole point: modular forms are not invariant functions — they are sections of a line bundle on the moduli space of elliptic curves."}, {"t": "h", "s": "Why they matter today"}, {"t": "p", "s": "In 1995 Andrew Wiles proved Fermat’s Last Theorem by proving that every semistable elliptic curve over ℚ is modular. That argument sits on a century of modular-form technology: Hecke operators, Galois representations attached to cusp forms, and deformation theory. The same circle of ideas governs the Langlands programme — the vast conjectural dictionary between automorphic forms and Galois representations."}, {"t": "i", "s": "Read this page as a tower. Each level is a prerequisite for the next. The timeline and people sections collect the history once the concepts are in place."}]}, {"badge": "LEVEL 0", "title": "Lattices in the Plane", "sub": "the absolute starting point", "color": "#00a972", "body": [{"t": "h", "s": "Why lattices"}, {"t": "p", "s": "A <strong>lattice<\/strong> in ℂ is a discrete subgroup of the form Λ = ℤω₁ + ℤω₂, where ω₁, ω₂ are ℂ-linearly independent over ℝ — two periods that span a parallelogram. Think of a crystal lattice drawn on the complex plane, or of the integer grid ℤ[i] = ℤ + ℤi."}, {"t": "f", "s": "Definition. A lattice Λ ⊂ ℂ is Λ = ℤω₁ ⊕ ℤω₂ with Im(ω₁/ω₂) ≠ 0.\n\nTwo lattices Λ and Λ′ are homothetic if Λ′ = αΛ for some α ∈ ℂ×.\nHomothety is the natural equivalence: scaling and rotating the whole lattice does not change the shape of the torus ℂ/Λ."}, {"t": "h", "s": "Normalising a lattice"}, {"t": "p", "s": "Every lattice is homothetic to one of the form ℤτ + ℤ, with τ in the upper half-plane ℌ = {τ ∈ ℂ : Im(τ) > 0}. Simply scale by 1/ω₂ and set τ = ω₁/ω₂. If Im(τ) were negative, swap the generators. So:"}, {"t": "f", "s": "{ lattices in ℂ } / homothety   ≅   ℌ / SL₂(ℤ).\n\nThe left side is geometric. The right side will be the domain of modular forms. This identification is the entire reason modular forms live on the upper half-plane."}, {"t": "e", "l": "EXAMPLE", "s": "The square lattice ℤ[i] corresponds to τ = i. The hexagonal lattice ℤ[e^{2πi/3}] corresponds to τ = e^{2πi/3}. These two special points are the elliptic points of the modular surface — places with extra symmetry."}, {"t": "i", "s": "Whenever someone says “a modular form is a function of τ,” they mean: a function of the shape of a lattice, written in the normalised coordinate τ."}]}, {"badge": "LEVEL 1", "title": "Elliptic Curves as ℂ/Λ", "sub": "torus = cubic curve", "color": "#0097e2", "body": [{"t": "h", "s": "From lattice to torus"}, {"t": "p", "s": "The quotient ℂ/Λ is a compact Riemann surface of genus 1 — a torus. Addition of complex numbers descends to the quotient, so ℂ/Λ is an abelian group. This is the analytic model of an elliptic curve."}, {"t": "h", "s": "The Weierstrass ℘-function"}, {"t": "p", "s": "To connect the torus to the algebraic equation y² = 4x³ − g₂x − g₃, Weierstrass introduced"}, {"t": "f", "s": "℘(z; Λ) = 1/z² + Σ_{ω∈Λ\\{0}} ( 1/(z−ω)² − 1/ω² ).\n\nIt is Λ-periodic, meromorphic, and satisfies\n(℘′)² = 4℘³ − g₂(Λ) ℘ − g₃(Λ),\nwhere g₂(Λ) = 60 G₄(Λ) and g₃(Λ) = 140 G₆(Λ) are Eisenstein series of the lattice."}, {"t": "p", "s": "The map z ↦ (℘(z), ℘′(z)) realises ℂ/Λ as a smooth cubic curve in the projective plane. The discriminant Δ(Λ) = g₂³ − 27 g₃² vanishes precisely when the cubic is singular — that is, when Λ fails to be a genuine lattice of rank 2. Non-vanishing of Δ is therefore the geometric condition that ℂ/Λ is an elliptic curve."}, {"t": "h", "s": "j-invariant"}, {"t": "p", "s": "Homothetic lattices give isomorphic elliptic curves. The classical invariant that classifies them over ℂ is"}, {"t": "f", "s": "j(τ) = 1728 · (60 G₄(τ))³ / Δ(τ).\n\nj is a modular function of weight 0: it is invariant under SL₂(ℤ), and it gives a bijection\nℌ / SL₂(ℤ)  ≅  ℂ\nfrom isomorphism classes of elliptic curves over ℂ to the complex numbers."}, {"t": "i", "s": "Modular forms of positive weight are the “coordinates” on the moduli space of elliptic curves. The j-invariant is the weight-0 quotient that forgets scaling."}]}, {"badge": "LEVEL 2", "title": "The Modular Group", "sub": "SL₂(ℤ) acting on ℌ", "color": "#00c4a0", "body": [{"t": "h", "s": "Fractional linear transformations"}, {"t": "p", "s": "A matrix γ = (a b ; c d) in SL₂(ℤ) — integers a,b,c,d with ad − bc = 1 — acts on the upper half-plane by"}, {"t": "f", "s": "γ·τ = (aτ + b) / (cτ + d).\n\nThis preserves ℌ because Im(γ·τ) = Im(τ) / |cτ + d|² > 0 whenever Im(τ) > 0."}, {"t": "h", "s": "Generators"}, {"t": "p", "s": "SL₂(ℤ) is generated by two famous matrices:"}, {"t": "f", "s": "T = (1 1 ; 0 1) :  τ ↦ τ + 1   (translation)\nS = (0 −1 ; 1 0) :  τ ↦ −1/τ  (inversion)\n\nRelations: S² = −I, (ST)³ = −I. The projective group PSL₂(ℤ) = SL₂(ℤ)/{±I} is the free product ℤ/2 ∗ ℤ/3."}, {"t": "h", "s": "Fundamental domain"}, {"t": "p", "s": "Every τ ∈ ℌ is SL₂(ℤ)-equivalent to a unique point in the standard fundamental domain"}, {"t": "f", "s": "ℱ = { τ ∈ ℌ : |Re(τ)| ≤ 1/2, |τ| ≥ 1 },\n\nwith the usual identification of the vertical sides and of the two arcs of the unit circle. The quotient Y(1) = ℌ / SL₂(ℤ) is the moduli space of elliptic curves; compactifying by adding the cusp ∞ gives X(1) ≅ ℂP¹."}, {"t": "e", "l": "GEOMETRIC MEANING", "s": "T replaces the lattice ℤτ+ℤ by ℤ(τ+1)+ℤ = ℤτ+ℤ — same lattice. S replaces it by ℤ(−1/τ)+ℤ, which after scaling by τ becomes ℤ + ℤτ — again the same lattice, generators swapped. So SL₂(ℤ) is precisely the group of changes of basis of a lattice."}, {"t": "i", "s": "A modular form “sees” lattices, not coordinates. That is why it must transform under every change of basis — every element of SL₂(ℤ)."}]}, {"badge": "LEVEL 3", "title": "Definition of a Modular Form", "sub": "holomorphy + transformation + cusp", "color": "#ff8c42", "body": [{"t": "h", "s": "The three axioms"}, {"t": "p", "s": "Fix an integer weight k. A function f : ℌ → ℂ is a <strong>modular form of weight k<\/strong> for SL₂(ℤ) if:"}, {"t": "f", "s": "(M1) Holomorphy on ℌ: f is holomorphic everywhere in the upper half-plane.\n\n(M2) Transformation law: for every γ = (a b ; c d) ∈ SL₂(ℤ),\n     f(γ·τ) = (cτ + d)^k  f(τ).\n\n(M3) Holomorphy at the cusp: f is holomorphic at ∞.\n     Equivalently, writing q = e^{2πiτ}, the q-expansion\n     f(τ) = Σ_{n=0}^∞ a_n q^n\n     has no negative powers of q."}, {"t": "h", "s": "Consequences of the axioms"}, {"t": "p", "s": "From T: τ ↦ τ+1 one gets f(τ+1) = f(τ), so the q-expansion exists. From S: τ ↦ −1/τ one gets f(−1/τ) = τ^k f(τ). Together with the generators, these two functional equations imply the full transformation law."}, {"t": "p", "s": "There are no nonzero modular forms of odd weight for SL₂(ℤ): −I acts by (−1)^k, so k must be even. There are also no nonzero forms of weight k ≤ 2 for SL₂(ℤ) (except constants of weight 0, which are not forms of positive weight). The first interesting weight is k = 4."}, {"t": "f", "s": "Notation.\nM_k = { modular forms of weight k for SL₂(ℤ) }  — a finite-dimensional ℂ-vector space.\nS_k ⊂ M_k = { cusp forms } = { f ∈ M_k : a₀ = 0 }.\n\nThe graded ring ⊕_{k≥0} M_k is the ring of modular forms."}, {"t": "e", "l": "WEAKLY MODULAR VS MODULAR", "s": "A function satisfying (M2) but allowed poles in ℌ is weakly modular. If it is meromorphic on ℌ and at ∞ it is a modular function (e.g. j). Modular forms are the holomorphic ones."}, {"t": "i", "s": "The weight k is not decoration. It records how the function transforms under scaling of the lattice: if you stretch Λ by α, the Eisenstein series G_k scales by α^{−k}. Weight is the homogeneity degree."}]}, {"badge": "LEVEL 4", "title": "Eisenstein Series", "sub": "the first explicit examples", "color": "#e11d48", "body": [{"t": "h", "s": "Summing over the lattice"}, {"t": "p", "s": "For even k ≥ 4, define the Eisenstein series by summing the homogeneous function z ↦ z^{−k} over every nonzero lattice point:"}, {"t": "f", "s": "G_k(τ) = Σ_{(m,n) ≠ (0,0)}  1 / (mτ + n)^k .\n\nConvergence: absolute for k ≥ 4. Holomorphy follows by uniform convergence on compact subsets of ℌ."}, {"t": "h", "s": "Why it is modular"}, {"t": "p", "s": "Replacing τ by (aτ+b)/(cτ+d) reindexes the sum over (m,n) by an invertible integer linear transformation, and produces exactly the factor (cτ+d)^k. Holomorphy at ∞ is checked from the q-expansion:"}, {"t": "f", "s": "G_k(τ) = 2 ζ(k) + 2 (2πi)^k / (k−1)!   ·  Σ_{n≥1} σ_{k−1}(n) q^n ,\n\nwhere σ_{k−1}(n) = Σ_{d|n} d^{k−1} and ζ is the Riemann zeta function.\nIn particular G_k(∞) = 2ζ(k) ≠ 0, so Eisenstein series are modular forms that are not cusp forms."}, {"t": "h", "s": "Normalised Eisenstein series"}, {"t": "p", "s": "It is often convenient to rescale so that the constant term is 1:"}, {"t": "f", "s": "E_k(τ) = G_k(τ) / (2 ζ(k)) = 1 − (2k/B_k) Σ_{n≥1} σ_{k−1}(n) q^n ,\n\nwhere B_k is the k-th Bernoulli number. Then E₄ = 1 + 240 Σ σ₃(n) qⁿ, E₆ = 1 − 504 Σ σ₅(n) qⁿ."}, {"t": "e", "l": "HISTORICAL NOTE", "s": "Eisenstein (1823–1852) studied these series in the 1840s as expansions of elliptic functions. The name “Modulform” is later — Klein popularised it. The connection G_k(∞) = 2ζ(k) already hints that modular forms know about special values of L-functions."}, {"t": "i", "s": "Eisenstein series are the “non-cuspidal” modular forms: they see the cusp. Everything orthogonal to them (in a precise sense) will be a cusp form."}]}, {"badge": "LEVEL 5", "title": "Cusp Forms and Δ", "sub": "Ramanujan’s discriminant", "color": "#db2777", "body": [{"t": "h", "s": "Vanishing at the cusp"}, {"t": "p", "s": "A modular form is a <strong>cusp form<\/strong> if a₀ = 0 in its q-expansion — equivalently, if f(∞) = 0. Geometrically, cusp forms are holomorphic differentials (of weight k) that vanish at the cusps of the modular curve."}, {"t": "h", "s": "The discriminant form"}, {"t": "p", "s": "From the Weierstrass coefficients one builds the modular discriminant of weight 12:"}, {"t": "f", "s": "Δ(τ) = (E₄³ − E₆²) / 1728  =  q  ∏_{n=1}^∞ (1 − qⁿ)²⁴ .\n\nΔ ∈ S₁₂(SL₂(ℤ)). It never vanishes on ℌ (because an elliptic curve has nonzero discriminant), and its q-expansion begins\nΔ = q − 24 q² + 252 q³ − 1472 q⁴ + 4830 q⁵ − ··· ."}, {"t": "h", "s": "Ramanujan’s tau function"}, {"t": "p", "s": "Write Δ(τ) = Σ_{n≥1} τ(n) qⁿ. The coefficients τ(n) are Ramanujan’s tau function. Ramanujan conjectured, and Mordell and later Deligne proved, extraordinary properties:"}, {"t": "f", "s": "• Multiplicativity: τ(mn) = τ(m)τ(n) when gcd(m,n)=1.\n• Recurrence at primes: τ(p^{r+1}) = τ(p) τ(p^r) − p¹¹ τ(p^{r−1}).\n• Bound (Ramanujan–Petersson, proved by Deligne 1974 as a consequence of the Weil conjectures):\n  |τ(p)| ≤ 2 p^{11/2}."}, {"t": "e", "l": "DIMENSION HINT", "s": "dim M₁₂ = 2, with basis {E₁₂, Δ} — or equivalently {E₄³, E₆²}. So every weight-12 form is a linear combination of an Eisenstein series and the unique (up to scalar) cusp form Δ. Ramanujan’s congruence E₁₂ ≡ Δ (mod 691) is the first glimpse of congruences between modular forms."}, {"t": "i", "s": "Δ is the prototype of a cusp form: one-dimensional space, multiplicative coefficients, attached L-function, and a Galois representation. Almost every modern theorem about modular forms was first tested on Δ."}]}, {"badge": "LEVEL 6", "title": "q-Expansions", "sub": "Fourier coefficients as arithmetic", "color": "#ea580c", "body": [{"t": "h", "s": "Why q = e^{2πiτ}"}, {"t": "p", "s": "Because f(τ+1) = f(τ), a modular form is periodic of period 1. The change of variables q = e^{2πiτ} sends the ray τ = iy, y→∞, to the puncture q→0 of the unit disc. Holomorphy at ∞ means the Laurent series in q has no negative terms."}, {"t": "f", "s": "f(τ) = Σ_{n=0}^∞ a_n(f) qⁿ ,   q = e^{2πiτ}.\n\nThe numbers a_n(f) are the Fourier coefficients. For normalised newforms one often has a₁ = 1, and then a_p for primes p determine everything via Hecke relations."}, {"t": "h", "s": "Arithmetic content"}, {"t": "p", "s": "The miracle of modular forms is that the a_n are often integers with number-theoretic meaning:"}, {"t": "e", "l": "EISENSTEIN", "s": "a_n(E_k) is a multiple of σ_{k−1}(n), the sum of (k−1)-st powers of divisors of n."}, {"t": "e", "l": "THETA SERIES", "s": "Jacobi’s θ₃(τ) = Σ_{n∈ℤ} q^{n²} has coefficients 1 for squares and 0 otherwise; products of theta series count representations by quadratic forms."}, {"t": "e", "l": "CUSP FORMS", "s": "For a normalised newform f, the a_p are algebraic integers. Deligne attached to f a Galois representation ρ_f : Gal(ℚ̄/ℚ) → GL₂(ℚ̄_ℓ) with Tr ρ_f(Frob_p) = a_p."}, {"t": "h", "s": "The L-function"}, {"t": "p", "s": "Attach to f the Dirichlet series L(f,s) = Σ a_n n^{−s}. For a Hecke eigenform this has an Euler product ∏_p (1 − a_p p^{−s} + χ(p) p^{k−1−2s})⁻¹ and an analytic continuation with a functional equation — the same shape as the Riemann zeta function, but encoding the arithmetic of f."}, {"t": "i", "s": "The q-expansion is the bridge from analysis (a holomorphic function on ℌ) to arithmetic (a sequence of integers a_n). Everything deep about modular forms travels across that bridge."}]}, {"badge": "LEVEL 7", "title": "Hecke Operators", "sub": "eigenforms and multiplicativity", "color": "#0891b2", "body": [{"t": "h", "s": "Averaging over lattices"}, {"t": "p", "s": "Hecke’s idea (1930s): given a lattice Λ, form all sublattices Λ′ ⊂ Λ of index n, and average the values of f. This produces a linear operator T_n on M_k:"}, {"t": "f", "s": "For f ∈ M_k and n ≥ 1,\n(T_n f)(τ) = n^{k−1} Σ_{ad=n, 0≤b<d}  d^{−k}  f( (aτ+b)/d ).\n\nEach T_n preserves M_k and S_k. The operators commute: T_m T_n = T_n T_m."}, {"t": "h", "s": "Eigenforms"}, {"t": "p", "s": "A modular form that is a simultaneous eigenvector for every T_n is a <strong>Hecke eigenform<\/strong>. Normalise so that a₁ = 1; then the eigenvalue of T_n is exactly a_n:"}, {"t": "f", "s": "T_n f = a_n(f) · f    for a normalised eigenform f.\n\nConsequently the Fourier coefficients are multiplicative:\na_{mn} = a_m a_n when gcd(m,n)=1,\nand satisfy the Hecke recurrence at prime powers."}, {"t": "h", "s": "Why this is decisive"}, {"t": "p", "s": "Multiplicativity turns the Dirichlet series into an Euler product. Without Hecke operators, a modular form is “just” a holomorphic function; with them, it is an arithmetically complete object — a candidate to match an L-function coming from geometry or Galois theory."}, {"t": "e", "l": "HISTORY", "s": "Ramanujan observed the multiplicativity of τ(n) in 1916 without proof. L. J. Mordell proved it in 1917 by inventing (in special cases) what became Hecke operators. Erich Hecke systematised the theory for all levels in the 1930s. Atkin–Lehner later refined it for newforms at higher level."}, {"t": "i", "s": "Hecke eigenforms are the “atoms” of the theory. Spaces of modular forms decompose into eigenlines; each eigenform carries its own L-function and (conjecturally, often provably) its own Galois representation."}]}, {"badge": "LEVEL 8", "title": "Structure of M_k", "sub": "dimension and generators", "color": "#4f46e5", "body": [{"t": "h", "s": "Finite dimensionality"}, {"t": "p", "s": "A fundamental theorem: dim M_k < ∞ for every k. One proof counts zeros of a modular form on the compactified modular curve using the valence formula:"}, {"t": "f", "s": "Valence formula. For 0 ≠ f ∈ M_k,\n(1/2) v_i(f) + (1/3) v_ρ(f) + v_∞(f) + Σ_{τ∈ℱ°} v_τ(f)  =  k/12 ,\n\nwhere ρ = e^{2πi/3}. In particular dim M_k = 0 for odd k, and for even k ≥ 0:\ndim M_k = ⌊k/12⌋     if k ≡ 2 (mod 12),\n         = ⌊k/12⌋ + 1 otherwise."}, {"t": "h", "s": "The structure theorem"}, {"t": "p", "s": "Every modular form of level 1 is a polynomial in the two Eisenstein series E₄ and E₆:"}, {"t": "f", "s": "⊕_{k≥0} M_k  ≅  ℂ[E₄, E₆]   (polynomial ring).\n\nExplicitly, a basis of M_k is { E₄^a E₆^b : 4a+6b = k }.\nThe cusp forms are the ideal generated by Δ: S_k = Δ · M_{k−12}."}, {"t": "e", "l": "LOW WEIGHTS", "s": "M₀ = ℂ (constants).\nM₂ = 0.\nM₄ = ℂ E₄.\nM₆ = ℂ E₆.\nM₈ = ℂ E₄².\nM₁₀ = ℂ E₄ E₆.\nM₁₂ = ℂ E₄³ ⊕ ℂ E₆²  (= ℂ E₁₂ ⊕ ℂ Δ)."}, {"t": "i", "s": "This is why level-1 modular forms feel “solvable by hand”: two generators, an explicit dimension formula, and a single cusp form Δ that generates all the others by multiplication."}]}, {"badge": "LEVEL 9", "title": "Levels and Congruence Subgroups", "sub": "Γ₀(N), newforms, modular curves", "color": "#0d9488", "body": [{"t": "h", "s": "Why higher level?"}, {"t": "p", "s": "Level 1 is beautiful but too small for arithmetic applications. Elliptic curves over ℚ have a conductor N; the matching modular form must live at level N. That means replacing SL₂(ℤ) by a congruence subgroup."}, {"t": "f", "s": "Γ(N) = { γ ∈ SL₂(ℤ) : γ ≡ I (mod N) }   — principal congruence subgroup.\nΓ₀(N) = { γ ∈ SL₂(ℤ) : c ≡ 0 (mod N) }.\nΓ₁(N) = { γ ∈ SL₂(ℤ) : γ ≡ (1 ∗ ; 0 1) (mod N) }.\n\nA subgroup Γ ≤ SL₂(ℤ) is a congruence subgroup if Γ(N) ⊂ Γ for some N."}, {"t": "h", "s": "Modular forms of level N"}, {"t": "p", "s": "A modular form of weight k and level Γ₀(N) satisfies the transformation law for every γ ∈ Γ₀(N), is holomorphic on ℌ, and holomorphic at all cusps (there may be several). The spaces are denoted M_k(Γ₀(N)) and S_k(Γ₀(N))."}, {"t": "h", "s": "Newforms"}, {"t": "p", "s": "At level N one must remove “old” forms that already appeared at proper divisors of N. The Atkin–Lehner theory of <strong>newforms<\/strong> isolates a canonical basis of Hecke eigenforms that are truly of level N. Each normalised newform f has an attached L-function and, by Deligne, an attached Galois representation."}, {"t": "e", "l": "MODULAR CURVES", "s": "The quotient Y₀(N) = ℌ / Γ₀(N) is the moduli space of elliptic curves with a cyclic subgroup of order N. Its compactification X₀(N) is a projective algebraic curve over ℚ. The space S₂(Γ₀(N)) is the space of holomorphic differentials on X₀(N) — this is why weight 2 is special for elliptic curves."}, {"t": "i", "s": "The Modularity Theorem says: every elliptic curve E/ℚ of conductor N is isogenous to a quotient of the Jacobian of X₀(N), and L(E,s) = L(f,s) for a weight-2 newform of level N."}]}, {"badge": "INSIGHTS", "title": "Key Insights", "sub": "the ideas that organise the subject", "color": "#7c3aed", "body": [{"t": "h", "s": "Insight 1 — Moduli, not magic"}, {"t": "p", "s": "Modular forms are functions on the moduli space of elliptic curves (with level structure). The transformation law is the statement that they are well-defined sections of a natural line bundle. Once you see this, the axioms stop looking arbitrary."}, {"t": "h", "s": "Insight 2 — Analysis produces arithmetic"}, {"t": "p", "s": "A holomorphic transformation law on ℌ forces the Fourier coefficients to satisfy multiplicative relations (via Hecke). Holomorphy is an analytic constraint; multiplicativity is an arithmetic conclusion. That leap is the engine of the subject."}, {"t": "h", "s": "Insight 3 — Cusp forms carry Galois representations"}, {"t": "p", "s": "Deligne’s theorem attaches to every normalised eigenform of weight k ≥ 2 a continuous representation Gal(ℚ̄/ℚ) → GL₂(ℚ̄_ℓ) whose Frobenius traces are the a_p. Modular forms are therefore a factory for two-dimensional Galois representations — and conversely, many Galois representations are expected to be modular."}, {"t": "h", "s": "Insight 4 — Congruences deform"}, {"t": "p", "s": "Ramanujan’s congruence Δ ≡ E₁₂ (mod 691) is the seed of a vast theory: congruences between modular forms correspond to congruences between Galois representations, which can be studied by Mazur’s deformation theory. Wiles’s proof of modularity is a theorem about lifting residual modular representations."}, {"t": "h", "s": "Insight 5 — One theorem, many faces"}, {"t": "p", "s": "The Modularity Theorem (Wiles, Taylor–Wiles, Breuil–Conrad–Diamond–Taylor) is simultaneously: (a) every elliptic curve over ℚ is modular; (b) Fermat’s Last Theorem; (c) a special case of Langlands reciprocity for GL₂. Modular forms are the concrete testing ground for the Langlands programme."}, {"t": "i", "s": "If you remember only one sentence: a modular form is a holomorphic avatar of an arithmetic object — an elliptic curve, a Galois representation, or an L-function — packaged as a function on lattices."}]}, {"badge": "TIMELINE", "title": "Historical Timeline", "sub": "from Euler to the Modularity Theorem", "color": "#b45309", "body": [{"t": "h", "s": "Origins in elliptic functions"}, {"t": "tl", "yr": "1748", "s": "<strong>Euler<\/strong> studies the pentagonal number theorem; the generating function ∏ (1−qⁿ) already appears — later the 24th power is Δ."}, {"t": "tl", "yr": "1820s", "s": "<strong>Gauss, Abel, Jacobi<\/strong> develop elliptic functions and theta functions. Jacobi’s four-square theorem is proved via theta series — modular forms before the name."}, {"t": "tl", "yr": "1840s", "s": "<strong>Eisenstein<\/strong> introduces the series G_k as expansions attached to lattices / elliptic functions."}, {"t": "tl", "yr": "1850s", "s": "<strong>Weierstrass<\/strong> puts elliptic functions in modern form (℘, g₂, g₃, Δ)."}, {"t": "h", "s": "Birth of modular functions"}, {"t": "tl", "yr": "1877", "s": "<strong>Dedekind<\/strong> constructs modular functions independently of elliptic functions; introduces the Dedekind η-function, η(τ) = q^{1/24} ∏ (1−qⁿ), so Δ = η²⁴."}, {"t": "tl", "yr": "1879–", "s": "<strong>Klein & Fricke<\/strong> systematise congruence subgroups, fundamental domains, and the term <em>Modulform<\/em>. Study of X₀(N) begins in earnest."}, {"t": "tl", "yr": "1880s", "s": "<strong>Poincaré<\/strong> develops Fuchsian groups and automorphic functions — the wider landscape in which modular forms sit."}, {"t": "h", "s": "Arithmetic awakening"}, {"t": "tl", "yr": "1916", "s": "<strong>Ramanujan<\/strong> publishes the tau conjectures: multiplicativity, the p¹¹ recurrence, and |τ(p)| ≤ 2p^{11/2}."}, {"t": "tl", "yr": "1917", "s": "<strong>Mordell<\/strong> proves multiplicativity of τ(n) using proto-Hecke operators."}, {"t": "tl", "yr": "1930s", "s": "<strong>Hecke<\/strong> defines Hecke operators in general, proves Euler products for eigenforms, and founds the modern arithmetic theory."}, {"t": "tl", "yr": "1937", "s": "<strong>Petersson<\/strong> introduces the Petersson inner product; proves Ramanujan–Petersson for weight 2 by other methods later generalised."}, {"t": "h", "s": "Geometry and Galois"}, {"t": "tl", "yr": "1950s", "s": "<strong>Eichler–Shimura<\/strong>: weight-2 cusp forms correspond to abelian varieties; relation between a_p and #E(𝔽_p)."}, {"t": "tl", "yr": "1955–", "s": "<strong>Taniyama, Shimura, Weil<\/strong>: the conjecture that every elliptic curve over ℚ is modular."}, {"t": "tl", "yr": "1967", "s": "<strong>Langlands<\/strong> proposes the general reciprocity conjectures; modular forms become the GL₂ case of automorphic forms."}, {"t": "tl", "yr": "1974", "s": "<strong>Deligne<\/strong> proves the Ramanujan–Petersson conjecture as a consequence of the Weil conjectures; attaches Galois representations to higher-weight forms."}, {"t": "tl", "yr": "1970s", "s": "<strong>Atkin–Lehner, Li, Miyake<\/strong>: newform theory. <strong>Serre<\/strong> formulates modularity conjectures for residual representations."}, {"t": "h", "s": "Modularity theorem"}, {"t": "tl", "yr": "1995", "s": "<strong>Wiles<\/strong>, with <strong>Taylor<\/strong>: every semistable elliptic curve over ℚ is modular ⇒ Fermat’s Last Theorem."}, {"t": "tl", "yr": "2001", "s": "<strong>Breuil–Conrad–Diamond–Taylor<\/strong>: full Modularity Theorem — every elliptic curve over ℚ is modular."}, {"t": "tl", "yr": "2000s–", "s": "Serre’s conjecture proved (Khare–Wintenberger). Automorphy lifting theorems (Taylor, Clozel, Harris, Thorne, …) push far beyond GL₂."}, {"t": "i", "s": "The subject began as 19th-century function theory and became, by the end of the 20th century, the sharpest available tool for proving theorems about Diophantine equations and Galois groups."}]}, {"badge": "PEOPLE", "title": "Key People", "sub": "who built the theory", "color": "#be123c", "body": [{"t": "h", "s": "Classical founders"}, {"t": "pers", "n": "Carl Gustav Jacob Jacobi", "d": "1804 – 1851", "s": "Theta functions and elliptic function theory. His four-square theorem is the first great arithmetic application of what we now call modular forms."}, {"t": "pers", "n": "Gotthold Eisenstein", "d": "1823 – 1852", "s": "Introduced the series G_k. Gauss ranked him with Archimedes and Newton. Died at 29; the Eisenstein series remain the basic non-cuspidal examples."}, {"t": "pers", "n": "Richard Dedekind", "d": "1831 – 1916", "s": "Gave modular functions an existence independent of elliptic functions. The η-function and the modern lattice viewpoint are his."}, {"t": "pers", "n": "Felix Klein", "d": "1849 – 1925", "s": "Named Modulformen, studied congruence subgroups with Fricke, and connected modular functions to the geometry of the icosahedron and to Galois theory."}, {"t": "h", "s": "Arithmetic architects"}, {"t": "pers", "n": "Srinivasa Ramanujan", "d": "1887 – 1920", "s": "Discovered τ(n) and its conjectures by pure observation of q-series. The Ramanujan congruences (mod 691, 3617, …) opened the theory of congruences between forms."}, {"t": "pers", "n": "Erich Hecke", "d": "1887 – 1947", "s": "Created Hecke operators and the Euler product theory of eigenforms. Without Hecke, modular forms would remain analytic curiosities."}, {"t": "pers", "n": "Hans Petersson", "d": "1902 – 1984", "s": "Petersson inner product; early progress on Ramanujan–Petersson. Made S_k into a Hilbert space on which Hecke operators are normal."}, {"t": "h", "s": "Modern architects"}, {"t": "pers", "n": "Goro Shimura", "d": "1930 – 2019", "s": "Eichler–Shimura theory; Shimura varieties; reciprocity laws beyond GL₂. Central to the formulation of modularity."}, {"t": "pers", "n": "Yutaka Taniyama", "d": "1927 – 1958", "s": "Proposed (with Shimura) that elliptic curves over ℚ should be modular — the conjecture that became the Modularity Theorem."}, {"t": "pers", "n": "André Weil", "d": "1906 – 1998", "s": "Clarified and publicised the Taniyama–Shimura conjecture; Weil conjectures (proved by Deligne) control the size of coefficients of modular forms."}, {"t": "pers", "n": "Pierre Deligne", "d": "b. 1944", "s": "Proved the Weil conjectures and thereby Ramanujan–Petersson; constructed Galois representations for higher-weight cusp forms."}, {"t": "pers", "n": "Jean-Pierre Serre", "d": "b. 1926", "s": "A Course in Arithmetic made modular forms standard; formulated Serre’s modularity conjecture (proved 2008) for odd irreducible residual representations."}, {"t": "pers", "n": "Robert Langlands", "d": "b. 1936", "s": "The Langlands programme embeds modular forms as the GL₂ case of a reciprocity law relating automorphic forms on reductive groups to Galois representations."}, {"t": "pers", "n": "Andrew Wiles", "d": "b. 1953", "s": "Proved modularity for semistable elliptic curves over ℚ (1995), with a correction by Taylor–Wiles — and with it, Fermat’s Last Theorem."}, {"t": "i", "s": "The cast is long because the subject keeps reappearing: first as analysis, then as algebra, then as arithmetic geometry, then as the test case for Langlands."}]}, {"badge": "MODERN", "title": "Toward Langlands", "sub": "where the road goes next", "color": "#6d28d9", "body": [{"t": "h", "s": "The Modularity Theorem"}, {"t": "p", "s": "Every elliptic curve E over ℚ is modular: there exists a weight-2 newform f of level equal to the conductor of E such that L(E,s) = L(f,s) for all s. Equivalent formulations: E is a quotient of the Jacobian of X₀(N); the Galois representation on the Tate module of E is isomorphic to the Deligne representation of f."}, {"t": "h", "s": "Fermat as a corollary"}, {"t": "p", "s": "A nontrivial solution of aⁿ + bⁿ = cⁿ for n ≥ 3 produces (via Frey) a semistable elliptic curve that cannot be modular — Ribet’s level-lowering theorem. Wiles’s modularity theorem therefore implies there is no such solution."}, {"t": "h", "s": "Langlands reciprocity for GL₂"}, {"t": "p", "s": "Roughly: irreducible continuous representations Gal(ℚ̄/ℚ) → GL₂(ℂ̄_ℓ) that are “geometric” (odd, unramified almost everywhere, crystalline/de Rham at ℓ) should arise from modular forms. Serre’s conjecture (now a theorem) is the residual (mod ℓ) version; modularity lifting theorems upgrade residual modularity to characteristic-zero modularity."}, {"t": "h", "s": "Beyond GL₂"}, {"t": "p", "s": "Hilbert modular forms (totally real fields), Siegel modular forms (abelian varieties of higher dimension), automorphic forms on GL_n and other groups — each generalises a piece of the classical story. The same three ingredients recur: a symmetric space, a discrete group, and Hecke operators producing Euler products."}, {"t": "f", "s": "Suggested next steps\n• Serre, A Course in Arithmetic, Ch. VII — still the cleanest short introduction.\n• Diamond–Shurman, A First Course in Modular Forms — modern, careful, with levels.\n• Stein, Modular Forms: A Computational Approach — examples you can compute.\n• For history: Roy, Elliptic and Modular Functions from Gauss to Dedekind to Hecke."}, {"t": "i", "s": "You now have the tower: lattices → elliptic curves → SL₂(ℤ) → modular forms → Eisenstein & Δ → q-expansions → Hecke → levels → modularity. Everything else in the Langlands programme is a vast generalisation of this one story."}]}];
+
+function rgba(hex, a) {
+  var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return "rgba("+r+","+g+","+b+","+a+")";
+}
+function buildBody(blocks) {
+  var html = '';
+  blocks.forEach(function(b) {
+    if (b.t === "h") html += '<div class="bsec-heading">'+b.s+'</div>';
+    else if (b.t === "p") html += '<div class="prose">'+b.s+'</div>';
+    else if (b.t === "f") html += '<div class="fbox">'+b.s+'</div>';
+    else if (b.t === "e") html += '<div class="ex"><span class="exl">'+b.l+'</span>'+b.s+'</div>';
+    else if (b.t === "i") html += '<div class="ins">'+b.s+'</div>';
+    else if (b.t === "tl") html += '<div class="timeline-item"><span class="tl-year">'+b.yr+'</span><div class="tl-text">'+b.s+'</div></div>';
+    else if (b.t === "pers") html += '<div class="person-block"><div class="person-name">'+b.n+'</div><div class="person-dates">'+b.d+'</div><div class="person-text">'+b.s+'</div></div>';
+  });
+  return html;
+}
+function init() {
+  var tnav = document.getElementById("tnav");
+  var cards = document.getElementById("cards");
+  LV.forEach(function(lv, i) {
+    var ti = document.createElement("div");
+    ti.className = "ti"; ti.textContent = lv.title; ti.dataset.i = i;
+    ti.addEventListener("click", function() {
+      var cw = document.querySelector(".cw[data-i='"+i+"']");
+      if (cw) { cw.scrollIntoView({behavior:"smooth",block:"center"}); setTimeout(function(){ openCard(i); },350); }
+    });
+    tnav.appendChild(ti);
+
+    var cw = document.createElement("div");
+    cw.className = "cw"; cw.dataset.i = i;
+    cw.innerHTML =
+      (i > 0 ? '<div class="conn"></div>' : '') +
+      '<div class="card" style="--ac:'+lv.color+';--ac-faint:'+rgba(lv.color,.08)+';--ac-mid:'+rgba(lv.color,.22)+';--ac-shadow:'+rgba(lv.color,.35)+'">' +
+        '<div class="card-head">' +
+          '<span class="bdg">'+lv.badge+'</span>' +
+          '<span class="ctitle">'+lv.title+'</span>' +
+          '<span class="csub">'+lv.sub+'</span>' +
+          '<span class="chev">&#9660;</span>' +
+        '</div>' +
+        '<div class="card-body"><div class="card-inner">'+buildBody(lv.body)+'</div></div>' +
+      '</div>';
+    cards.appendChild(cw);
+
+    var card = cw.querySelector(".card"), body = cw.querySelector(".card-body");
+    card.addEventListener("click", function() {
+      var open = card.classList.contains("open");
+      card.classList.toggle("open", !open); body.classList.toggle("open", !open);
+      document.querySelectorAll(".ti").forEach(function(t,j){ t.classList.toggle("active",!open && j===i); });
+      if (!open) { ti.style.borderLeftColor = lv.color; ti.style.color = lv.color; }
+      else { ti.style.borderLeftColor = ""; ti.style.color = ""; }
+    });
+  });
+
+  var fill = document.getElementById("prog-fill");
+  window.addEventListener("scroll", function(){
+    var pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    fill.style.width = Math.min(pct,100)+"%";
+  },{passive:true});
+
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("show"); });
+  },{threshold:0.05});
+  document.querySelectorAll(".cw").forEach(function(el){ obs.observe(el); });
+  setTimeout(function(){ openCard(0); }, 150);
+}
+function openCard(i) {
+  var cw = document.querySelector(".cw[data-i='"+i+"']");
+  if (!cw) return;
+  var card = cw.querySelector(".card"), body = cw.querySelector(".card-body");
+  if (!card.classList.contains("open")) {
+    card.classList.add("open"); body.classList.add("open");
+    var ti = document.querySelector(".ti[data-i='"+i+"']");
+    if (ti) { ti.style.borderLeftColor = LV[i].color; ti.style.color = LV[i].color; }
+    document.querySelectorAll(".ti").forEach(function(t,j){ t.classList.toggle("active",j===i); });
+  }
+}
+init();
+</script>
+</body>
+</html>
